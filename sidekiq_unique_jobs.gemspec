@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "http://mperham.github.com/sidekiq"
   gem.license       = "LGPL-3.0"
 
-  gem.executables   = ['']
+  # gem.executables   = ['']
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- test/*`.split("\n")
   gem.name          = "sidekiq_unique_jobs"
