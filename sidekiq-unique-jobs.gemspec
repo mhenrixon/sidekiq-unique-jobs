@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/sidekiq_unique_jobs/version', __FILE__)
+require File.expand_path('../lib/sidekiq-unique-jobs/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Mikael Henriksson"]
@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   # gem.executables   = ['']
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- test/*`.split("\n")
-  gem.name          = "sidekiq_unique_jobs"
+  gem.name          = "sidekiq-unique-jobs"
   gem.require_paths = ["lib"]
   gem.version       = SidekiqUniqueJobs::VERSION
   gem.add_dependency                  'sidekiq', '~> 2.1.0'

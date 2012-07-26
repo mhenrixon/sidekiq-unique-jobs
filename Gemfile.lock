@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sidekiq_unique_jobs (2.1.0)
+    sidekiq-unique-jobs (2.1.0)
       sidekiq (~> 2.1.0)
 
 GEM
@@ -125,7 +125,7 @@ DEPENDENCIES
   rails (= 3.2.6)
   rake
   sass
-  sidekiq_unique_jobs!
+  sidekiq-unique-jobs!
   simplecov
   sinatra
   slim

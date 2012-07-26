@@ -1,6 +1,6 @@
 require 'helper'
 require 'sidekiq/worker'
-require "sidekiq_unique_jobs"
+require "sidekiq-unique-jobs"
 
 class TestClient < MiniTest::Unit::TestCase
   describe 'with real redis' do

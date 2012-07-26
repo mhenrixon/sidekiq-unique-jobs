@@ -1,4 +1,4 @@
-# Sidekiq::Unique::Jobs
+# SidekiqUniqueJobs
 
 The missing unique jobs for sidekiq
 
@@ -6,7 +6,7 @@ The missing unique jobs for sidekiq
 
 Add this line to your application's Gemfile:
 
-    gem 'sidekiq_unique_jobs'
+    gem 'sidekiq-unique-jobs'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install sidekiq_unique_jobs
+    $ gem install sidekiq-unique-jobs
 
 ## Usage
 
