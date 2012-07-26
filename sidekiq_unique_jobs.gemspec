@@ -1,0 +1,24 @@
+# -*- encoding: utf-8 -*-
+require File.expand_path('../lib/sidekiq_unique_jobs/version', __FILE__)
+
+Gem::Specification.new do |gem|
+  gem.authors       = ["Mikael Henriksson"]
+  gem.email         = ["mikael@zoolutions.se"]
+  gem.description   = gem.summary = "The unique jobs that were removed from sidekiq"
+  gem.homepage      = "http://mperham.github.com/sidekiq"
+  gem.license       = "LGPL-3.0"
+
+  gem.executables   = ['']
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = `git ls-files -- test/*`.split("\n")
+  gem.name          = "sidekiq_unique_jobs"
+  gem.require_paths = ["lib"]
+  gem.version       = SidekiqUniqueJobs::VERSION
+  gem.add_dependency                  'sidekiq', '~> 2.1.0'
+  gem.add_development_dependency      'minitest', '~> 3'
+  gem.add_development_dependency      'sinatra'
+  gem.add_development_dependency      'slim'
+  gem.add_development_dependency      'rake'
+  gem.add_development_dependency      'actionmailer', '~> 3'
+  gem.add_development_dependency      'activerecord', '~> 3'
+end
