@@ -1,4 +1,4 @@
-# SidekiqUniqueJobs
+# SidekiqUniqueJobs [![Build Status](https://secure.travis-ci.org/form26/sidekiq-unique-jobs.png)](http://travis-ci.org/form26/sidekiq-unique-jobs)
 
 The missing unique jobs for sidekiq
 
