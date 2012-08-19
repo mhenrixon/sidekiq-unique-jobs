@@ -11,3 +11,10 @@ gem 'sqlite3'
 group :test do
   gem 'simplecov', :require => false
 end
+
+group :development do
+  gem 'pry'
+  gem 'pry-doc'
+  gem 'pry-stack_explorer'
+  gem 'pry-debugger'
+end
