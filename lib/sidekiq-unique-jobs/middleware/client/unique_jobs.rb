@@ -7,12 +7,17 @@ module SidekiqUniqueJobs
         HASH_KEY_EXPIRATION = 30 * 60
 
         def call(worker_class, item, queue)
+
           enabled = worker_class.get_sidekiq_options['unique']
+
           if enabled
-            payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(item))
+
+            payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(item['args']))
+
             unique = false
 
             Sidekiq.redis do |conn|
+
               conn.watch(payload_hash)
 
               if conn.get(payload_hash)
