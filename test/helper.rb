@@ -3,7 +3,7 @@ if ENV.has_key?("SIMPLECOV")
   require 'simplecov'
   SimpleCov.start
 end
-
+require 'pry'
 require 'minitest/unit'
 require 'minitest/pride'
 require 'minitest/autorun'
