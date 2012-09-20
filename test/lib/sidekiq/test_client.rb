@@ -44,6 +44,18 @@ class TestClient < MiniTest::Unit::TestCase
       assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
     end
 
+    it 'sets an expiration when provided by sidekiq options' do
+      one_hour_expiration = 60 * 60
+      QueueWorker.sidekiq_options :unique => true, :unique_job_expiration => one_hour_expiration
+      Sidekiq::Client.push('class' => TestClient::QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2])
+
+      md5_arguments = {:class => "TestClient::QueueWorker", :queue => "customqueue", :args => [1, 2]}
+      payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))
+      actual_expires_at = Sidekiq.redis {|c| c.ttl(payload_hash) }
+
+      assert_in_delta one_hour_expiration, actual_expires_at, 2
+    end
+
     it 'does push duplicate messages when not configured for unique only' do
       QueueWorker.sidekiq_options :unique => false
       10.times { Sidekiq::Client.push('class' => TestClient::QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2]) }
