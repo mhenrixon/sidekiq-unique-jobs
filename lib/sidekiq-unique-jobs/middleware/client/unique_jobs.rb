@@ -26,7 +26,7 @@ module SidekiqUniqueJobs
                 conn.unwatch
               else
                 expires_at = unique_job_expiration || HASH_KEY_EXPIRATION
-                expires_at = ((Time.at(item['at']) - Time.now.utc) * 24 * 60 * 60).to_i if item['at']
+                expires_at = ((Time.at(item['at']) - Time.now.utc) + expires_at).to_i if item['at']
 
                 unique = conn.multi do
                   conn.setex(payload_hash, expires_at, 1)

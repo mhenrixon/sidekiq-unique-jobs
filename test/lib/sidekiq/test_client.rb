@@ -9,6 +9,7 @@ class TestClient < MiniTest::Unit::TestCase
     before do
       Sidekiq.redis = REDIS
       Sidekiq.redis {|c| c.flushdb }
+      QueueWorker.sidekiq_options :unique => nil, :unique_job_expiration => nil
     end
 
     class QueueWorker
@@ -69,16 +70,16 @@ class TestClient < MiniTest::Unit::TestCase
       QueueWorker.sidekiq_options :unique => true
 
       at = 15.minutes.from_now
-      expected_expires_at = (Time.at(at) - Time.now.utc).to_f
+      expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs::Middleware::Client::UniqueJobs::HASH_KEY_EXPIRATION
 
       QueueWorker.perform_in(at, 'mike')
       md5_arguments = {:class => "TestClient::QueueWorker", :queue => "customqueue", :args => ['mike']}
       payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))
 
       # deconstruct this into a time format we can use to get a decent delta for
-      actual_expires_at = Sidekiq.redis {|c| c.ttl(payload_hash).to_f  / 24 / 60 / 60 }
+      actual_expires_at = Sidekiq.redis {|c| c.ttl(payload_hash) }
 
-      assert_in_delta expected_expires_at, actual_expires_at, 0.05
+      assert_in_delta expected_expires_at, actual_expires_at, 2
     end
   end
 end
