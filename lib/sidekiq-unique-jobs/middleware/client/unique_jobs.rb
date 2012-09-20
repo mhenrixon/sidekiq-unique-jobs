@@ -12,7 +12,8 @@ module SidekiqUniqueJobs
 
           if enabled
 
-            payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(item['args']))
+            md5_arguments = {:class => item['class'], :queue => item['queue'], :args => item['args']}
+            payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))
 
             unique = false
 
