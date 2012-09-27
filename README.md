@@ -24,6 +24,12 @@ All that is required is that you specifically set the sidekiq option for *unique
 sidekiq_options unique: true
 ```
 
+You can also control the expiration length of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
+
+```ruby
+sidekiq_options unique: true, unique_job_expiration: 120 * 60 # 2 hours
+```
+
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 
