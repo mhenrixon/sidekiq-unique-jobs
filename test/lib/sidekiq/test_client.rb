@@ -19,26 +19,6 @@ class TestClient < MiniTest::Unit::TestCase
       end
     end
 
-    # This spec sometimes fails (unless it's the only spec that runs)
-    # Not sure why, we tried a wide variety of ways to make sure that
-    # there aren't side effects between tests and it still happens
-    it 'is able to enqueue after the server middleware completes' do
-      QueueWorker.sidekiq_options :unique => true
-      request_item = {'class' => TestClient::QueueWorker, 'queue' => 'customqueue', 'args' => ["some arg"]}
-
-      Sidekiq::Client.push(request_item.dup)
-      assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
-
-      # Simulate sidekiq processing the job
-      Sidekiq.redis {|c| c.lpop("queue:customqueue")}
-      assert_equal 0, Sidekiq.redis {|c| c.llen("queue:customqueue") }
-
-      SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new.call("dummy arg", request_item.dup) {}
-
-      Sidekiq::Client.push(request_item.dup) 
-      assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
-    end
-
     it 'does not push duplicate messages when configured for unique only' do
       QueueWorker.sidekiq_options :unique => true
       10.times { Sidekiq::Client.push('class' => TestClient::QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2]) }
