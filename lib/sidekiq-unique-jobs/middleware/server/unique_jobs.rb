@@ -5,9 +5,7 @@ module SidekiqUniqueJobs
     module Server
       class UniqueJobs
         def call(*args)
-          logger.info("About to process a job with args #{args.inspect}")
           yield
-          logger.info("Done processing a job with args #{args.inspect}")
         ensure
           item = args[1]
           md5_arguments = {:class => item['class'], :queue => item['queue'], :args => item['args']}
