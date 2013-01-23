@@ -4,8 +4,6 @@ module SidekiqUniqueJobs
   module Middleware
     module Client
       class UniqueJobs
-        HASH_KEY_EXPIRATION = 30 * 60
-
         def call(worker_class, item, queue)
 
           enabled = worker_class.get_sidekiq_options['unique']
@@ -24,7 +22,7 @@ module SidekiqUniqueJobs
               if conn.get(payload_hash)
                 conn.unwatch
               else
-                expires_at = unique_job_expiration || HASH_KEY_EXPIRATION
+                expires_at = unique_job_expiration || SidekiqUniqueJobs::Config.default_expiration
                 expires_at = ((Time.at(item['at']) - Time.now.utc) + expires_at).to_i if item['at']
 
                 unique = conn.multi do
