@@ -30,8 +30,7 @@ class TestClient < MiniTest::Unit::TestCase
       QueueWorker.sidekiq_options :unique => true, :unique_job_expiration => one_hour_expiration
       Sidekiq::Client.push('class' => TestClient::QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2])
 
-      md5_arguments = {:class => "TestClient::QueueWorker", :queue => "customqueue", :args => [1, 2]}
-      payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))
+      payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload("TestClient::QueueWorker", "customqueue", [1, 2])
       actual_expires_at = Sidekiq.redis {|c| c.ttl(payload_hash) }
 
       assert_in_delta one_hour_expiration, actual_expires_at, 2
@@ -53,8 +52,7 @@ class TestClient < MiniTest::Unit::TestCase
       expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs::Middleware::Client::UniqueJobs::HASH_KEY_EXPIRATION
 
       QueueWorker.perform_in(at, 'mike')
-      md5_arguments = {:class => "TestClient::QueueWorker", :queue => "customqueue", :args => ['mike']}
-      payload_hash = Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))
+      payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload("TestClient::QueueWorker", "customqueue", ['mike'])
 
       # deconstruct this into a time format we can use to get a decent delta for
       actual_expires_at = Sidekiq.redis {|c| c.ttl(payload_hash) }
