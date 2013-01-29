@@ -19,9 +19,19 @@ class TestClient < MiniTest::Unit::TestCase
       end
     end
 
+    class PlainClass
+      def run(x)
+      end
+    end
+
     it 'does not push duplicate messages when configured for unique only' do
       QueueWorker.sidekiq_options :unique => true
       10.times { Sidekiq::Client.push('class' => TestClient::QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2]) }
+      assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
+    end
+
+    it 'does not queue duplicates when when calling delay' do
+      10.times { PlainClass.delay(unique: true, queue: 'customqueue').run(1) }
       assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
     end
 
