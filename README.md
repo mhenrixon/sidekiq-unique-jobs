@@ -30,6 +30,8 @@ You can also control the expiration length of the uniqueness check. If you want 
 sidekiq_options unique: true, unique_job_expiration: 120 * 60 # 2 hours
 ```
 
+Requiring the gem in your gemfile should be sufficient to enable unique jobs.
+
 ### Finer Control over Uniqueness
 
 Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to
@@ -65,8 +67,10 @@ class UniqueJobWithFilterProc
 end
 ```
 
-Requiring the gem in your gemfile should be sufficient to enable unique jobs.
-
+Note that objects passed into workers are converted to JSON *after* running through client middleware. In server
+middleware, the JSON is passed directly to the worker `#perform` method. So, you may run into issues where the
+arguments are different when enqueuing than they are when performing. Your `unique_args` method may need to
+account for this.
 
 ## Contributing
 
