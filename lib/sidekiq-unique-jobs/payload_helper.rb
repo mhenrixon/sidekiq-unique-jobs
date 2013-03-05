@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     end
 
     def self.yield_unique_args(klass, args)
-      worker_class = eval klass
+      worker_class = klass.constantize
       unique_args = worker_class.get_sidekiq_options['unique_args']
       filtered_args = if unique_args
                         case unique_args
