@@ -30,6 +30,41 @@ You can also control the expiration length of the uniqueness check. If you want 
 sidekiq_options unique: true, unique_job_expiration: 120 * 60 # 2 hours
 ```
 
+### Finer Control over Uniqueness
+
+Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to
+set `SidekiqUniqueJobs::Config.unique_args_enabled` to true in an initializer, and then defined either `unique_args` method, or a ruby proc.
+
+```ruby
+SidekiqUniqueJobs::Config.unique_args_enabled = true
+```
+
+The method or the proc can return a modified version of args without the transient arguments included, as shown below:
+
+```ruby
+class UniqueJobWithFilterMethod
+  include Sidekiq::Worker
+  sidekiq_options unique: true,
+                  unique_args: :unique_args
+
+  def self.unique_args(name, id, options)
+    [ name, options[:type] ]
+  end
+
+  ...
+
+end
+
+class UniqueJobWithFilterProc
+  include Sidekiq::Worker
+  sidekiq_options unique: true,
+                  unique_args: ->(args) { [ args.first ] }
+
+  ...
+
+end
+```
+
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 
