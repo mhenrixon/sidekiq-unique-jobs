@@ -7,5 +7,13 @@ module SidekiqUniqueJobs
     def self.unique_prefix
       @unique_prefix || "sidekiq_unique"
     end
+
+    def self.unique_args_enabled=(enabled)
+      @unique_args_enabled = enabled
+    end
+
+    def self.unique_args_enabled?
+      @unique_args_enabled || false
+    end
   end
 end

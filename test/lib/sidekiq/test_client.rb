@@ -42,6 +42,43 @@ class TestClient < MiniTest::Unit::TestCase
       assert_equal 10, Sidekiq.redis {|c| c.llen("queue:customqueue") }
     end
 
+    describe 'when unique_args is defined' do
+      before { SidekiqUniqueJobs::Config.unique_args_enabled = true }
+      after  { SidekiqUniqueJobs::Config.unique_args_enabled = false }
+
+      class QueueWorkerWithFilterMethod < QueueWorker
+        sidekiq_options :unique => true, :unique_args => :args_filter
+
+        def self.args_filter(*args)
+          args.first
+        end
+      end
+
+      class QueueWorkerWithFilterProc < QueueWorker
+        # slightly contrived example of munging args to the worker and removing a random bit.
+        sidekiq_options :unique => true, :unique_args => lambda { |args| a = args.last.dup; a.delete(:random); [ args.first, a ] }
+      end
+
+      it 'does not push duplicate messages based on args filter method' do
+        assert TestClient::QueueWorkerWithFilterMethod.respond_to?(:args_filter)
+        assert_equal :args_filter, TestClient::QueueWorkerWithFilterMethod.get_sidekiq_options['unique_args']
+
+        for i in (0..10).to_a
+          Sidekiq::Client.push('class' => TestClient::QueueWorkerWithFilterMethod, 'queue' => 'customqueue', 'args' => [1, i])
+        end
+        assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
+      end
+
+      it 'does not push duplicate messages based on args filter proc' do
+        assert_kind_of Proc, TestClient::QueueWorkerWithFilterProc.get_sidekiq_options['unique_args']
+
+        10.times do
+          Sidekiq::Client.push('class' => TestClient::QueueWorkerWithFilterProc, 'queue' => 'customqueue', 'args' => [ 1, {:random => rand(), :name => "foobar"} ])
+        end
+        assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
+      end
+    end
+
     # TODO: If anyone know of a better way to check that the expiration for scheduled
     # jobs are set around the same time as the scheduled job itself feel free to improve.
     it 'expires the payload_hash when a scheduled job is scheduled at' do
