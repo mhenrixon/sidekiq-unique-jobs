@@ -1,15 +1,30 @@
 language: ruby
 rvm:
   - 1.9.3
+  - 2.0.0
   - jruby-19mode
+jdk:
+  - openjdk7
+  - oraclejdk7
+  - openjdk6
+matrix:
+  allow_failures:
+    - rvm: jruby-head
+  exclude:
+    - rvm: 1.9.3
+      jdk: openjdk7
+    - rvm: 1.9.3
+      jdk: oraclejdk7
 branches:
   only:
     - master
-# notifications:
-#   irc: "irc.freenode.org#sidekiq"
-#   email:
-#     recipients:
-#       - sidekiq@librelist.org
+before_install:
+  - gem update --system
+  - gem --version
+notifications:
+  email:
+    recipients:
+      - mikael@zoolutions.se
 matrix:
   allow_failures:
     - rvm: jruby-19mode
