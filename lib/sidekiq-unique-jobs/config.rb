@@ -15,5 +15,13 @@ module SidekiqUniqueJobs
     def self.unique_args_enabled?
       @unique_args_enabled || false
     end
+
+    def self.default_expiration=(expiration)
+      @expiration = expiration
+    end
+
+    def self.default_expiration
+      @expiration || 30 * 60
+    end
   end
 end

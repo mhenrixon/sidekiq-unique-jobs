@@ -96,7 +96,7 @@ class TestClient < MiniTest::Unit::TestCase
       QueueWorker.sidekiq_options :unique => true
 
       at = 15.minutes.from_now
-      expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs::Middleware::Client::UniqueJobs::HASH_KEY_EXPIRATION
+      expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs::Config.default_expiration
 
       QueueWorker.perform_in(at, 'mike')
       payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload("TestClient::QueueWorker", "customqueue", ['mike'])
