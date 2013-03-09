@@ -20,11 +20,6 @@ matrix:
 branches:
   only:
     - master
-before_install:
-  only:
-    - rvm: 2.0.0
-      - gem update --system
-      - gem --version
 notifications:
   email:
     recipients:
