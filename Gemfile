@@ -5,10 +5,7 @@ group :test do
   gem 'simplecov', :require => false
 end
 
-group :development do
-  gem 'activesupport'
+group :development, :test do
   gem 'pry'
-  gem 'pry-doc'
-  gem 'pry-stack_explorer'
   gem 'pry-debugger'
 end
