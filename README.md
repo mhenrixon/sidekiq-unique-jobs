@@ -82,6 +82,6 @@ account for this.
 
 ## Contributors
 
-- @sax
-- @eduardosasso
-- @KensoDev
+- https://github.com/sax
+- https://github.com/eduardosasso
+- https://github.com/KensoDev
