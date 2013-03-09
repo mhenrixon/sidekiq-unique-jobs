@@ -4,3 +4,5 @@
 .DS_Store
 
 Gemfile.lock
+
+.ruby-version
