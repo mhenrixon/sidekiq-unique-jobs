@@ -8,7 +8,7 @@ module SidekiqUniqueJobs
 
         def call(worker_class, item, queue)
 
-          enabled = worker_class.get_sidekiq_options['unique']
+          enabled = worker_class.get_sidekiq_options['unique'] || item['unique']
           unique_job_expiration = worker_class.get_sidekiq_options['unique_job_expiration']
 
           if enabled
