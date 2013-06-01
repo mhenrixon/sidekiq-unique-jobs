@@ -1,4 +1,5 @@
 require 'helper'
+require 'celluloid'
 require 'sidekiq/worker'
 require "sidekiq-unique-jobs"
 require 'sidekiq/scheduled'
@@ -32,6 +33,22 @@ class TestClient < MiniTest::Unit::TestCase
 
     it 'does not queue duplicates when when calling delay' do
       10.times { PlainClass.delay(unique: true, queue: 'customqueue').run(1) }
+      assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
+    end
+
+    it 'does not schedule duplicates when calling perform_in' do
+      QueueWorker.sidekiq_options :unique => true
+      10.times { QueueWorker.perform_in(60, [1, 2]) }
+      assert_equal 1, Sidekiq.redis { |c| c.zcount("schedule", -1, Time.now.to_f + 2 * 60) }
+    end
+
+    it 'enqueues previously scheduled job' do
+      QueueWorker.sidekiq_options :unique => true
+      QueueWorker.perform_in(60 * 60, 1, 2)
+
+      # time passes and the job is pulled off the schedule:
+      Sidekiq::Client.push('class' => TestClient::QueueWorker, 'queue' => 'customqueue', 'args' => [1, 2])
+
       assert_equal 1, Sidekiq.redis {|c| c.llen("queue:customqueue") }
     end
 
