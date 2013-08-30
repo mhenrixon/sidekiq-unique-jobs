@@ -72,6 +72,21 @@ middleware, the JSON is passed directly to the worker `#perform` method. So, you
 arguments are different when enqueuing than they are when performing. Your `unique_args` method may need to
 account for this.
 
+### Unlock Ordering
+
+By default the server middleware will release the worker lock after yielding to the next middleware or worker. Alternatively, this can be changed by passing the `unique_unlock_order` option:
+
+```ruby
+class UniqueJobWithFilterMethod
+  include Sidekiq::Worker
+  sidekiq_options unique: true,
+                  unique_unlock_order: :before_yield
+
+  ...
+
+end
+```
+
 ## Contributing
 
 1. Fork it

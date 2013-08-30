@@ -23,5 +23,13 @@ module SidekiqUniqueJobs
     def self.default_expiration
       @expiration || 30 * 60
     end
+
+    def self.default_unlock_order=(order)
+      @default_unlock_order = order
+    end
+
+    def self.default_unlock_order
+      @default_unlock_order || :after_yield
+    end
   end
 end
