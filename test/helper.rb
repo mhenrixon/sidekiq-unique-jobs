@@ -6,6 +6,7 @@ end
 require 'minitest/unit'
 require 'minitest/pride'
 require 'minitest/autorun'
+require 'mocha'
 
 require 'sidekiq-unique-jobs'
 require "sidekiq"
@@ -14,3 +15,7 @@ Sidekiq.logger.level = Logger::ERROR
 
 require 'sidekiq/redis_connection'
 REDIS = Sidekiq::RedisConnection.create(:url => "redis://localhost/15", :namespace => 'testy')
+
+require 'sidekiq/testing'
+# Disable testing or all specs fail since they depend on connecting to Redis.
+Sidekiq::Testing.disable!

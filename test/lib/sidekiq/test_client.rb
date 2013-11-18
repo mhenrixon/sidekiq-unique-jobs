@@ -123,5 +123,37 @@ class TestClient < MiniTest::Unit::TestCase
 
       assert_in_delta expected_expires_at, actual_expires_at, 2
     end
+
+    describe 'when sidekiq/testing is enabled' do
+      subject do
+        SidekiqUniqueJobs::Middleware::Client::UniqueJobs.new
+      end
+
+      it 'does not check for unique messages' do
+        worker = QueueWorker
+        item = { 'unique' => true }
+        queue = 'customqueue'
+
+        Sidekiq::Testing.stubs(:enabled?).returns(true)
+        subject.expects(:unique?).never
+        subject.call(worker, item, queue) {}
+      end
+    end
+
+    describe 'when sidekiq/testing is not enabled' do
+      subject do
+        SidekiqUniqueJobs::Middleware::Client::UniqueJobs.new
+      end
+
+      it 'does check for unique messages' do
+        worker = QueueWorker
+        item = { 'unique' => true }
+        queue = 'customqueue'
+
+        Sidekiq::Testing.stubs(:enabled?).returns(false)
+        subject.expects(:unique?)
+        subject.call(worker, item, queue) {}
+      end
+    end
   end
 end
