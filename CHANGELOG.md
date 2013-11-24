@@ -1,3 +1,9 @@
+## v2.7.0
+- Use mock_redis when testing in fake mode
+- Replace minitest with rspec
+- Add codeclimate badge
+- Update travis with redis-server
+
 ## v2.6.5
 - via @sax - possibility to set which arguments should be counted as unique - https://github.com/form26/sidekiq-unique-jobs/pull/12
 - via @eduardosasso - possibility to set which arguments should be counted as unique - https://github.com/form26/sidekiq-unique-jobs/pull/11

@@ -1,3 +1,3 @@
 module SidekiqUniqueJobs
-  VERSION = "2.6.7"
+  VERSION = "2.7.0"
 end
