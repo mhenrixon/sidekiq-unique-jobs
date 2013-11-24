@@ -1,4 +1,4 @@
-# SidekiqUniqueJobs [![Build Status](https://travis-ci.org/form26/sidekiq-unique-jobs.png?branch=master)](https://travis-ci.org/form26/sidekiq-unique-jobs)
+# SidekiqUniqueJobs [![Build Status](https://travis-ci.org/form26/sidekiq-unique-jobs.png?branch=master)](https://travis-ci.org/form26/sidekiq-unique-jobs) [![Code Climate](https://codeclimate.com/github/form26/sidekiq-unique-jobs.png)](https://codeclimate.com/github/form26/sidekiq-unique-jobs)
 
 The missing unique jobs for sidekiq
 
