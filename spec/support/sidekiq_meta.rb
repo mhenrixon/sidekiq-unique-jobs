@@ -1,5 +1,5 @@
 RSpec.configure do |config|
-  config.before(:each) do # |example| TODO: Add this for RSpec 3
+  config.before(:each) do |example|
     sidekiq = example.metadata[:sidekiq]
     if sidekiq
       sidekiq = :fake if sidekiq == true
@@ -7,7 +7,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each) do # |example| TODO: Add this for RSpec 3
+  config.after(:each) do |example|
     if sidekiq = example.metadata[:sidekiq]
       Sidekiq::Testing.disable!
     end
