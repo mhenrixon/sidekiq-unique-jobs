@@ -24,6 +24,13 @@ All that is required is that you specifically set the sidekiq option for *unique
 sidekiq_options unique: true
 ```
 
+For jobs scheduled in the future it is possible to set for how long the job
+should be unique. The job will be unique for the number of seconds configured
+or until the job has been completed.
+
+*If you want the unique job to stick around even after it has been successfully
+processed then just set the unique_unlock_order to anything except `:before_yield` or `:after_yield` (`unique_unlock_order = :never`)
+
 You can also control the expiration length of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
