@@ -6,6 +6,11 @@ rvm:
   - jruby-19mode
   - rbx-19mode
   - 2.0.0
+gemfile:
+  - gemfiles/sidekiq_2.15.gemfile
+  - gemfiles/sidekiq_2.16.gemfile
+  - gemfiles/sidekiq_2.17.gemfile
+  - gemfiles/sidekiq_develop.gemfile
 branches:
   only:
     - master

@@ -1,10 +1,7 @@
 source 'http://rubygems.org'
 gemspec
 
-group :development do
-  gem 'sidekiq', github: 'mperham/sidekiq'
-end
-
+gem 'appraisal', '~> 1.0.0.beta'
 gem 'pry'
 gem 'pry-stack_explorer'
 gem 'pry-debugger'
