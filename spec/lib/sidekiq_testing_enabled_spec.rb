@@ -100,6 +100,27 @@ describe "Sidekiq::Testing" do
   end # describe 'Enabling/Disabling Mock Redis in Tests'
 
   describe "When Sidekiq::Testing is enabled" do
+    describe 'After unique jobs have been performed' do
+      before { SidekiqUniqueJobs::Config.unique_args_enabled = true }
+      after  { SidekiqUniqueJobs::Config.unique_args_enabled = false }
+
+      let(:payload) { 'foobar' }
+      let(:payload_hash) { SidekiqUniqueJobs::PayloadHelper.get_payload("UniqueWorker", "working", [payload]) }
+
+      # This test is failing
+      it "should remove the unique lock for the job" do
+        expect {
+          UniqueWorker.perform_async(payload)
+        }.to change { redis_mock.get(payload_hash) }.from(nil)
+
+        Object.any_instance.stub(:puts) { }
+
+        expect {
+          UniqueWorker.drain
+        }.to change { redis_mock.get(payload_hash) }.to(nil)
+      end
+    end # describe 'After unique jobs have been performed'
+
     describe 'when set to :fake!', sidekiq: :fake do
       context "with unique worker" do
         it "does not push duplicate messages" do
