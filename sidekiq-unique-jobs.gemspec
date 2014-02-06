@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Mikael Henriksson"]
   gem.email         = ["mikael@zoolutions.se"]
   gem.description   = gem.summary = "The unique jobs that were removed from sidekiq"
-  gem.homepage      = "http://mperham.github.com/sidekiq"
+  gem.homepage      = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   gem.license       = "LGPL-3.0"
 
   # gem.executables   = ['']
