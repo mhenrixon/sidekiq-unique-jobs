@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'sidekiq/worker'
+require 'sidekiq/api'
 require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
 
 describe "Unlock order" do

@@ -6,22 +6,22 @@ module SidekiqUniqueJobs
       class UniqueJobs
         attr_reader :item, :worker_class
 
-        def call(worker_class, item, queue)
+        def call(worker_class, item, queue, redis_pool)
           @worker_class = worker_class_constantize(worker_class)
           @item = item
 
           if unique_enabled?
-            yield if unique?
+            yield if unique?(redis_pool)
           else
             yield
           end
         end
 
-        def unique?
+        def unique?(redis_pool)
           if testing_enabled?
             unique_for_connection?(SidekiqUniqueJobs.redis_mock)
           else
-            Sidekiq.redis do |conn|
+            redis_pool.with do |conn|
               unique_for_connection?(conn)
             end
           end
