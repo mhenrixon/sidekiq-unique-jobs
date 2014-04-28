@@ -4,9 +4,10 @@ module SidekiqUniqueJobs
   module Middleware
     module Client
       class UniqueJobs
-        attr_reader :item, :worker_class
+        attr_reader :item, :worker_class, :redis_pool
 
-        def call(worker_class, item, queue)
+        def call(worker_class, item, queue, redis_pool = nil)
+          @redis_pool = redis_pool
           @worker_class = worker_class_constantize(worker_class)
           @item = item
 
@@ -21,8 +22,14 @@ module SidekiqUniqueJobs
           if testing_enabled?
             unique_for_connection?(SidekiqUniqueJobs.redis_mock)
           else
-            Sidekiq.redis do |conn|
-              unique_for_connection?(conn)
+            if redis_pool
+              redis_pool.with do |conn|
+                unique_for_connection?(conn)
+              end
+            else
+              Sidekiq.redis do |conn|
+                unique_for_connection?(conn)
+              end
             end
           end
         end

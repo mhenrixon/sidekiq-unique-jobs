@@ -4,9 +4,11 @@ module SidekiqUniqueJobs
   module Middleware
     module Server
       class UniqueJobs
-        attr_reader :unlock_order
+        attr_reader :unlock_order, :redis_pool
 
-        def call(worker, item, queue)
+        def call(worker, item, queue, redis_pool = nil)
+          @redis_pool = redis_pool
+
           set_unlock_order(worker.class)
           lock_key = payload_hash(item)
           unlocked = before_yield? ? unlock(lock_key).inspect : 0
@@ -50,7 +52,11 @@ module SidekiqUniqueJobs
         end
 
         def unlock(payload_hash)
-          Sidekiq.redis {|conn| conn.del(payload_hash) }
+          if redis_pool
+            redis_pool.with { |conn| conn.del(payload_hash) }
+          else
+            Sidekiq.redis { |conn| conn.del(payload_hash) }
+          end
         end
 
         def logger

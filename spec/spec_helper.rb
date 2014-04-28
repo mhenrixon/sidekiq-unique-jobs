@@ -5,7 +5,6 @@ begin
 rescue LoadError
 end
 
-require 'rspec/autorun'
 require 'rspec'
 
 require 'celluloid/test'

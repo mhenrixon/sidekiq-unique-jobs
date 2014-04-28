@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'sidekiq/api'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
 

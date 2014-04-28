@@ -2,10 +2,10 @@
 
 source "http://rubygems.org"
 
-gem "appraisal", "~> 1.0.0.beta"
+gem "appraisal", "~> 1.0.0"
 gem "pry"
 gem "pry-stack_explorer"
 gem "pry-debugger"
 gem "sidekiq", "2.15"
 
-gemspec :path=>".././"
+gemspec :path => "../"

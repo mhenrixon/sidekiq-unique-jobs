@@ -13,3 +13,7 @@ end
 appraise "sidekiq-2.15" do
   gem "sidekiq", '2.15'
 end
+
+appraise "sidekiq-3.0" do
+  gem "sidekiq", '3.0'
+end
