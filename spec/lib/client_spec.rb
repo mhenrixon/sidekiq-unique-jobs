@@ -32,6 +32,16 @@ describe "Client" do
       expect(result).to eq 1
     end
 
+    it 'does push duplicate messages to different queues' do
+      QueueWorker.sidekiq_options :unique => true
+      Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2])
+      Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue2',  'args' => [1, 2])
+      q1_length = Sidekiq.redis {|c| c.llen("queue:customqueue") }
+      q2_length = Sidekiq.redis {|c| c.llen("queue:customqueue2") }
+      expect(q1_length).to eq 1
+      expect(q2_length).to eq 1
+    end
+
     it 'does not queue duplicates when when calling delay' do
       10.times { PlainClass.delay(unique: true, queue: 'customqueue').run(1) }
       result = Sidekiq.redis {|c| c.llen("queue:customqueue") }
@@ -115,6 +125,20 @@ describe "Client" do
         result = Sidekiq.redis {|c| c.llen("queue:customqueue") }
         expect(result).to eq 1
       end
+
+      describe 'when unique_on_all_queues is set' do
+        before { QueueWorker.sidekiq_options :unique => true, :unique_on_all_queues => true }
+        before { QueueWorker.sidekiq_options :unique => true }
+        it 'does not push duplicate messages on different queues' do
+          Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2])
+          Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue2',  'args' => [1, 2])
+          q1_length = Sidekiq.redis {|c| c.llen("queue:customqueue") }
+          q2_length = Sidekiq.redis {|c| c.llen("queue:customqueue2") }
+          expect(q1_length).to eq 1
+          expect(q2_length).to eq 0
+        end
+      end
+
     end
 
     # TODO: If anyone know of a better way to check that the expiration for scheduled
