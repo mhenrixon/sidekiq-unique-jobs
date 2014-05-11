@@ -25,8 +25,8 @@ sidekiq_options unique: true
 ```
 
 For jobs scheduled in the future it is possible to set for how long the job
-should be unique. The job will be unique for the number of seconds configured
-or until the job has been completed.
+should be unique. The job will be unique for the number of seconds configured (default 30 minutes)
+or until the job has been completed. Thus, the job will be unique for the shorter of the two.  Note that Sidekiq versions before 3.0 will remove job keys after an hour, which means jobs can remain unique for at most an hour.
 
 *If you want the unique job to stick around even after it has been successfully
 processed then just set the unique_unlock_order to anything except `:before_yield` or `:after_yield` (`unique_unlock_order = :never`)
