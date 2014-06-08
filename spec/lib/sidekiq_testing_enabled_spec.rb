@@ -17,6 +17,14 @@ describe "When Sidekiq::Testing is enabled" do
         UniqueWorker.perform_async(param)
         expect(UniqueWorker.jobs.size).to eq(1)
       end
+
+      it "adds the unique_hash to the message" do
+        param = 'hash'
+        hash = SidekiqUniqueJobs::PayloadHelper.get_payload(UniqueWorker, :working, [param])
+        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(1)
+        expect(UniqueWorker.jobs.first['unique_hash']).to eq(hash)
+      end
     end
 
     context "with non-unique worker" do

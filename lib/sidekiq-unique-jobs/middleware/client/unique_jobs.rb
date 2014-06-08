@@ -12,6 +12,7 @@ module SidekiqUniqueJobs
           @item = item
 
           if unique_enabled?
+            @item['unique_hash'] = payload_hash
             yield if unique?
           else
             yield
