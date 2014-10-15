@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = SidekiqUniqueJobs::VERSION
   gem.add_dependency             'sidekiq', '>= 2.6'
-  gem.add_dependency             'mock_redis'
+  gem.add_development_dependency 'mock_redis'
   gem.add_development_dependency 'rspec', '~> 3.0.0.beta'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec-sidekiq'
