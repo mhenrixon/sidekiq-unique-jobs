@@ -7,7 +7,15 @@ class UniqueWorker
     Sidekiq.logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
   end
 
-  def perform(param)
-    puts param
+  def self.params
+    @params ||= []
   end
+
+  def perform(param)
+    UniqueWorker.params << param
+  end
+end
+
+RSpec.configure do |config|
+  config.before(:each) { UniqueWorker.params.clear }
 end

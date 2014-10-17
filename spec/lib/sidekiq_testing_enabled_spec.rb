@@ -6,6 +6,18 @@ require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
 require 'rspec-sidekiq'
 
 describe "When Sidekiq::Testing is enabled" do
+  describe 'when set to :inline!', sidekiq: :inline do
+    context 'with unique worker' do
+      it 'should run multiple jobs' do
+        param = 'work'
+        expect {
+          UniqueWorker.perform_async(param)
+          UniqueWorker.perform_async(param)
+        }.to change { UniqueWorker.params.size }.by(2)
+      end
+    end
+  end
+
   describe 'when set to :fake!', sidekiq: :fake do
     context "with unique worker" do
       it "does not push duplicate messages" do

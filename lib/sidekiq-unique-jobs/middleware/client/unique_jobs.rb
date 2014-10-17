@@ -13,9 +13,17 @@ module SidekiqUniqueJobs
 
           if unique_enabled?
             @item['unique_hash'] = payload_hash
-            yield if unique?
+            if unique?
+              yield.tap { inline_unlock(payload_hash) }
+            end
           else
             yield
+          end
+        end
+
+        def inline_unlock(payload_hash)
+          if testing_enabled? && Sidekiq::Testing.inline?
+            SidekiqUniqueJobs.redis_mock.del(payload_hash)
           end
         end
 
@@ -40,7 +48,7 @@ module SidekiqUniqueJobs
           conn.watch(payload_hash)
 
           if conn.get(payload_hash).to_i == 1 ||
-            (conn.get(payload_hash).to_i == 2 && item['at'])
+              (conn.get(payload_hash).to_i == 2 && item['at'])
             # if the job is already queued, or is already scheduled and
             # we're trying to schedule again, abort
             conn.unwatch
