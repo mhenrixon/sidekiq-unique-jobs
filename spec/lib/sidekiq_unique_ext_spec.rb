@@ -3,7 +3,7 @@ require 'sidekiq/api'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
 require 'sidekiq-unique-jobs/middleware/client/unique_jobs'
-require 'sidekiq_unique_ext'
+require 'sidekiq-unique-jobs/sidekiq_unique_ext'
 
 class JustAWorker
   include Sidekiq::Worker
