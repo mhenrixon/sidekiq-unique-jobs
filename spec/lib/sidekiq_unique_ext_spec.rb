@@ -53,3 +53,22 @@ describe Sidekiq::Queue::UniqueExtension do
     end
   end
 end
+
+describe Sidekiq::JobSet::UniqueExtension do
+
+  before do
+    Sidekiq.redis = REDIS
+    Sidekiq.redis {|c| c.flushdb }
+  end
+
+  it 'deletes uniqueness locks on clear' do
+    params = {:foo => "bar"}
+    payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload("JustAWorker", "testqueue", [params])
+    JustAWorker.perform_in(60*60*3, :foo => "bar")
+    set = Sidekiq::JobSet.new("schedule")
+    set.clear
+    Sidekiq.redis do |c|
+      expect(c.exists(payload_hash)).to be_falsy
+    end
+  end
+end
