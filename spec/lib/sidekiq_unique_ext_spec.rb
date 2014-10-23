@@ -54,7 +54,7 @@ describe Sidekiq::Queue::UniqueExtension do
   end
 end
 
-describe Sidekiq::JobSet::UniqueExtension do
+describe Sidekiq::JobSet::UniqueExtension, :sidekiq_ver => 3 do
 
   before do
     Sidekiq.redis = REDIS

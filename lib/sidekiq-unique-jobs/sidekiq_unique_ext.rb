@@ -49,8 +49,10 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          alias_method :clear_orig, :clear
-          alias_method :clear, :clear_ext
+          if base.method_defined?(:clear)
+            alias_method :clear_orig, :clear
+            alias_method :clear, :clear_ext
+          end
         end
       end
 
