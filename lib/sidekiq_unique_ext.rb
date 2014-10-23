@@ -24,4 +24,22 @@ module Sidekiq
     end
     include UniqueExtension
   end
+
+  class Queue
+    module UniqueExtension
+      def self.included(base)
+        base.class_eval do
+          alias_method :clear_orig, :clear
+          alias_method :clear, :clear_ext
+        end
+      end
+
+      def clear_ext
+        self.each { |job| job.delete }
+        clear_orig
+      end
+    end
+
+    include UniqueExtension
+  end
 end
