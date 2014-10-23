@@ -1,3 +1,5 @@
+require 'sidekiq/api'
+
 module Sidekiq
   class Job
     module UniqueExtension
