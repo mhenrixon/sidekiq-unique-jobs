@@ -1,8 +1,9 @@
-require 'yaml' if RUBY_VERSION.include?('2.0.0')
+require 'yaml' unless defined?(YAML)
 require 'sidekiq-unique-jobs/middleware'
 require "sidekiq-unique-jobs/version"
 require "sidekiq-unique-jobs/config"
 require "sidekiq-unique-jobs/payload_helper"
+require "sidekiq-unique-jobs/testing"
 
 module SidekiqUniqueJobs
   def self.config
