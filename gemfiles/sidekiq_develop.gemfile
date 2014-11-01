@@ -6,6 +6,6 @@ gem "appraisal", "~> 1.0.0"
 gem "pry"
 gem "pry-stack_explorer"
 gem "pry-debugger"
-gem "sidekiq", :github => "mperham/sidekiq"
+gem "sidekiq", "3.0", :platform => :mri_19
 
 gemspec :path => "../"

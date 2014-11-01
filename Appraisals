@@ -1,5 +1,6 @@
 appraise "sidekiq-develop" do
   gem 'sidekiq', github: 'mperham/sidekiq'
+  gem 'sidekiq', '3.0', :platform => :mri_19
 end
 
 appraise "sidekiq-2.17" do
