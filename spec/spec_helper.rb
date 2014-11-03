@@ -19,10 +19,10 @@ Sidekiq::Testing.disable!
 
 require 'sidekiq/redis_connection'
 redis_url = ENV['REDIS_URL'] || 'redis://localhost/15'
-REDIS = Sidekiq::RedisConnection.create(:url => redis_url, :namespace => 'testy')
+REDIS = Sidekiq::RedisConnection.create(url: redis_url, namespace: 'testy')
 
 Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each { |f| require f }
-RSpec.configure do |config|
+RSpec.configure do |_config|
   # config.treat_symbols_as_metadata_keys_with_true_values = true
 end
 

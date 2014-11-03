@@ -1,5 +1,5 @@
 require 'digest'
-require 'sidekiq-unique-jobs/connectors'
+require 'sidekiq_unique_jobs/connectors'
 
 module SidekiqUniqueJobs
   module Middleware
@@ -36,7 +36,7 @@ module SidekiqUniqueJobs
             conn.watch(payload_hash)
 
             if conn.get(payload_hash).to_i == 1 ||
-              (conn.get(payload_hash).to_i == 2 && item['at'])
+               (conn.get(payload_hash).to_i == 2 && item['at'])
               # if the job is already queued, or is already scheduled and
               # we're trying to schedule again, abort
               conn.unwatch

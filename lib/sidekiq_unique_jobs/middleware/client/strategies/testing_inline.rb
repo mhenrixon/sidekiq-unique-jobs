@@ -1,4 +1,4 @@
-require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
+require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 
 module SidekiqUniqueJobs
   module Middleware
@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
       module Strategies
         class TestingInline < Unique
           def self.elegible?
-            Config.testing_enabled? && Sidekiq::Testing.inline?
+            SidekiqUniqueJobs.config.testing_enabled? && Sidekiq::Testing.inline?
           end
 
           def review

@@ -1,5 +1,5 @@
 require 'digest'
-require 'sidekiq-unique-jobs/connectors'
+require 'sidekiq_unique_jobs/connectors'
 
 module SidekiqUniqueJobs
   module Middleware
@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
       class UniqueJobs
         attr_reader :unlock_order, :redis_pool
 
-        def call(worker, item, queue, redis_pool = nil)
+        def call(worker, item, _queue, redis_pool = nil)
           @redis_pool = redis_pool
 
           set_unlock_order(worker.class)
@@ -23,9 +23,9 @@ module SidekiqUniqueJobs
 
         def set_unlock_order(klass)
           @unlock_order = if unlock_order_configured?(klass)
-            klass.get_sidekiq_options['unique_unlock_order']
-          else
-            default_unlock_order
+                            klass.get_sidekiq_options['unique_unlock_order']
+                          else
+                            default_unlock_order
           end
         end
 

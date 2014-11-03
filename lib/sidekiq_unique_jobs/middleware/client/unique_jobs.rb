@@ -1,5 +1,5 @@
-require 'sidekiq-unique-jobs/middleware/client/strategies/unique'
-require 'sidekiq-unique-jobs/middleware/client/strategies/testing_inline'
+require 'sidekiq_unique_jobs/middleware/client/strategies/unique'
+require 'sidekiq_unique_jobs/middleware/client/strategies/testing_inline'
 
 module SidekiqUniqueJobs
   module Middleware
@@ -28,7 +28,7 @@ module SidekiqUniqueJobs
         end
 
         def strategy
-          Strategies.detect { |s| s.elegible? }
+          Strategies.detect(&:elegible?)
         end
 
         # Attempt to constantize a string worker_class argument, always

@@ -1,14 +1,14 @@
 require 'spec_helper'
 require 'sidekiq/worker'
-require "sidekiq-unique-jobs"
+require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
-require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
+require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 require 'rspec-sidekiq'
 
-describe "When Sidekiq::Testing is enabled" do
+describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
-    context "with unique worker" do
-      it "does not push duplicate messages" do
+    context 'with unique worker' do
+      it 'does not push duplicate messages' do
         param = 'work'
         expect(UniqueWorker.jobs.size).to eq(0)
         UniqueWorker.perform_async(param)
@@ -18,7 +18,7 @@ describe "When Sidekiq::Testing is enabled" do
         expect(UniqueWorker.jobs.size).to eq(1)
       end
 
-      it "adds the unique_hash to the message" do
+      it 'adds the unique_hash to the message' do
         param = 'hash'
         hash = SidekiqUniqueJobs::PayloadHelper.get_payload(UniqueWorker, :working, [param])
         UniqueWorker.perform_async(param)
@@ -27,9 +27,9 @@ describe "When Sidekiq::Testing is enabled" do
       end
     end
 
-    context "with non-unique worker" do
+    context 'with non-unique worker' do
 
-      it "pushes duplicates messages" do
+      it 'pushes duplicates messages' do
         param = 'work'
         expect(MyWorker.jobs.size).to eq(0)
         MyWorker.perform_async(param)
@@ -44,7 +44,7 @@ describe "When Sidekiq::Testing is enabled" do
   describe 'when set to :inline!', sidekiq: :inline do
     class InlineWorker
       include Sidekiq::Worker
-      sidekiq_options :unique => true
+      sidekiq_options unique: true
 
       def perform(x)
         TestClass.run(x)
@@ -53,7 +53,7 @@ describe "When Sidekiq::Testing is enabled" do
 
     class InlineUnlockOrderWorker
       include Sidekiq::Worker
-      sidekiq_options :unique => true, :unique_unlock_order => :never
+      sidekiq_options unique: true, unique_unlock_order: :never
 
       def perform(x)
         TestClass.run(x)
@@ -61,7 +61,7 @@ describe "When Sidekiq::Testing is enabled" do
     end
 
     class TestClass
-      def self.run(x)
+      def self.run(_x)
       end
     end
 

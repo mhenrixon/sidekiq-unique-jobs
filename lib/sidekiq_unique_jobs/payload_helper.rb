@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
         args = yield_unique_args(worker_class, *args)
         unique_on_all_queues = worker_class.get_sidekiq_options['unique_on_all_queues']
       end
-      md5_arguments = {:class => klass, :args => args}
+      md5_arguments = { class: klass, args: args }
       md5_arguments[:queue] = queue unless unique_on_all_queues
       "#{SidekiqUniqueJobs::Config.unique_prefix}:#{Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))}"
     end

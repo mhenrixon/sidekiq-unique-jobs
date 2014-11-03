@@ -1,15 +1,15 @@
 module SidekiqUniqueJobs
   class Config
-    def self.unique_prefix=(prefix)
-      @unique_prefix = prefix
+    class << self
+      attr_writer :unique_prefix
     end
 
     def self.unique_prefix
-      @unique_prefix || "sidekiq_unique"
+      @unique_prefix || 'sidekiq_unique'
     end
 
-    def self.unique_args_enabled=(enabled)
-      @unique_args_enabled = enabled
+    class << self
+      attr_writer :unique_args_enabled
     end
 
     def self.unique_args_enabled?
@@ -24,8 +24,8 @@ module SidekiqUniqueJobs
       @expiration || 30 * 60
     end
 
-    def self.default_unlock_order=(order)
-      @default_unlock_order = order
+    class << self
+      attr_writer :default_unlock_order
     end
 
     def self.default_unlock_order
@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
 
     def self.testing_enabled?
       if Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled?
-        require 'sidekiq-unique-jobs/testing'
+        require 'sidekiq_unique_jobs/testing'
         return true
       end
 
