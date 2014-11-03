@@ -1,14 +1,17 @@
+require 'digest'
+require 'sidekiq-unique-jobs/connectors'
+
 module SidekiqUniqueJobs
   module Middleware
     module Client
-      module Connectors
-        class Connector
-          def self.eligible?(redis_pool = nil)
-            raise 'Should be implemented in a sub class'
+      module Strategies
+        class Unique
+          def self.elegible?
+            true
           end
 
-          def self.review_unique(worker_class, item, queue, redis_pool = nil)
-            new(worker_class, item, queue, redis_pool).review_unique { yield }
+          def self.review(worker_class, item, queue, redis_pool = nil)
+            new(worker_class, item, queue, redis_pool).review { yield }
           end
 
           def initialize(worker_class, item, queue, redis_pool = nil)
@@ -18,7 +21,7 @@ module SidekiqUniqueJobs
             @redis_pool = redis_pool
           end
 
-          def review_unique
+          def review
             item['unique_hash'] = payload_hash
             return unless unique_for_connection?
             yield
@@ -52,7 +55,7 @@ module SidekiqUniqueJobs
           end
 
           def conn
-            raise 'Should be implemented in a sub class'
+            SidekiqUniqueJobs::Connectors.conn(redis_pool)
           end
 
           def payload_hash

@@ -1,4 +1,5 @@
 require 'digest'
+require 'sidekiq-unique-jobs/connectors'
 
 module SidekiqUniqueJobs
   module Middleware
@@ -52,17 +53,15 @@ module SidekiqUniqueJobs
         end
 
         def unlock(payload_hash)
-          connector.del(payload_hash)
+          conn.del(payload_hash)
         end
 
         def logger
           Sidekiq.logger
         end
 
-        def connector
-          return SidekiqUniqueJobs.redis_mock { |conn| conn } if Config.testing_enabled?
-          return redis_pool.with { |conn| conn } if redis_pool
-          Sidekiq.redis { |conn| conn }
+        def conn
+          SidekiqUniqueJobs::Connectors.conn(redis_pool)
         end
       end
     end

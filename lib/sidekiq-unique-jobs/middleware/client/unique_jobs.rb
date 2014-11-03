@@ -1,19 +1,11 @@
-require 'digest'
-require 'sidekiq-unique-jobs/middleware/client/connectors/testing_fake'
-require 'sidekiq-unique-jobs/middleware/client/connectors/testing_inline'
-require 'sidekiq-unique-jobs/middleware/client/connectors/redis_pool'
-require 'sidekiq-unique-jobs/middleware/client/connectors/sidekiq_redis'
+require 'sidekiq-unique-jobs/middleware/client/strategies/unique'
+require 'sidekiq-unique-jobs/middleware/client/strategies/testing_inline'
 
 module SidekiqUniqueJobs
   module Middleware
     module Client
       class UniqueJobs
-        Connectors = [
-          Connectors::TestingFake,
-          Connectors::TestingInline,
-          Connectors::RedisPool,
-          Connectors::SidekiqRedis
-        ]
+        Strategies = [Strategies::TestingInline, Strategies::Unique]
 
         attr_reader :item, :worker_class, :redis_pool
 
@@ -23,7 +15,7 @@ module SidekiqUniqueJobs
           @redis_pool = redis_pool
 
           if unique_enabled?
-            connector.review_unique(worker_class, item, queue, redis_pool) { yield }
+            strategy.review(worker_class, item, queue, redis_pool) { yield }
           else
             yield
           end
@@ -35,8 +27,8 @@ module SidekiqUniqueJobs
           worker_class.get_sidekiq_options['unique'] || item['unique']
         end
 
-        def connector
-          Connectors.detect { |conn| conn.eligible?(redis_pool) }
+        def strategy
+          Strategies.detect { |s| s.elegible? }
         end
 
         # Attempt to constantize a string worker_class argument, always
