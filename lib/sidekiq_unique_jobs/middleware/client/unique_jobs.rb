@@ -1,14 +1,14 @@
 require 'digest'
-require 'sidekiq-unique-jobs/middleware/client/connectors/testing_fake'
-require 'sidekiq-unique-jobs/middleware/client/connectors/testing_inline'
-require 'sidekiq-unique-jobs/middleware/client/connectors/redis_pool'
-require 'sidekiq-unique-jobs/middleware/client/connectors/sidekiq_redis'
+require 'sidekiq_unique_jobs/middleware/client/connectors/testing_fake'
+require 'sidekiq_unique_jobs/middleware/client/connectors/testing_inline'
+require 'sidekiq_unique_jobs/middleware/client/connectors/redis_pool'
+require 'sidekiq_unique_jobs/middleware/client/connectors/sidekiq_redis'
 
 module SidekiqUniqueJobs
   module Middleware
     module Client
       class UniqueJobs
-        Connectors = [
+        CONNECTORS = [
           Connectors::TestingFake,
           Connectors::TestingInline,
           Connectors::RedisPool,
@@ -36,17 +36,16 @@ module SidekiqUniqueJobs
         end
 
         def connector
-          Connectors.detect { |conn| conn.eligible?(redis_pool) }
+          CONNECTORS.detect { |conn| conn.eligible?(redis_pool) }
         end
 
         # Attempt to constantize a string worker_class argument, always
         # failing back to the original argument.
         def worker_class_constantize(worker_class)
-          if worker_class.is_a?(String)
-            worker_class.constantize rescue worker_class
-          else
-            worker_class
-          end
+          return worker_class unless worker_class.is_a?(String)
+          worker_class.constantize
+        rescue NameError
+          worker_class
         end
       end
     end

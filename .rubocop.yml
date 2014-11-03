@@ -1,0 +1,36 @@
+
+Lint/HandleExceptions:
+  Enabled: true
+
+Lint/UselessAssignment:
+  Enabled: true
+
+Metrics/AbcSize:
+  Max: 38
+
+Metrics/CyclomaticComplexity:
+  Max: 7
+
+Metrics/LineLength:
+  Max: 108
+
+Metrics/MethodLength:
+  Max: 13
+
+Metrics/PerceivedComplexity:
+  Max: 8
+
+Style/AccessorMethodName:
+  Enabled: true
+
+Style/ConstantName:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/FileName:
+  Enabled: true
+
+Style/GlobalVars:
+  Enabled: true

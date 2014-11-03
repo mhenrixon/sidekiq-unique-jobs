@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'sidekiq/api'
 require 'sidekiq/worker'
-require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
+require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 
-describe "Unlock order" do
+describe 'Unlock order' do
   QUEUE = 'unlock_ordering'
 
   class BeforeYieldOrderingWorker
@@ -27,7 +27,7 @@ describe "Unlock order" do
   describe 'with real redis' do
     before do
       Sidekiq.redis = REDIS
-      Sidekiq.redis { |c| c.flushdb }
+      Sidekiq.redis(&:flushdb)
       @middleware = SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new
     end
 

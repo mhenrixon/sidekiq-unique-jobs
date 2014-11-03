@@ -1,11 +1,11 @@
-require 'sidekiq-unique-jobs/middleware/client/connectors/connector'
+require 'sidekiq_unique_jobs/middleware/client/connectors/connector'
 
 module SidekiqUniqueJobs
   module Middleware
     module Client
       module Connectors
         class SidekiqRedis < Connector
-          def self.eligible?(redis_pool = nil)
+          def self.eligible?(_redis_pool = nil)
             true
           end
 

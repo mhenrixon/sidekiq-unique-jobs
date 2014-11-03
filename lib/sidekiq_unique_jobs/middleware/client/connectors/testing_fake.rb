@@ -1,12 +1,12 @@
-require 'sidekiq-unique-jobs/middleware/client/connectors/connector'
+require 'sidekiq_unique_jobs/middleware/client/connectors/connector'
 
 module SidekiqUniqueJobs
   module Middleware
     module Client
       module Connectors
         class TestingFake < Connector
-          def self.eligible?(redis_pool = nil)
-            Config.testing_enabled? && Sidekiq::Testing.fake?
+          def self.eligible?(_redis_pool = nil)
+            SidekiqUniqueJobs.config.testing_enabled? && Sidekiq::Testing.fake?
           end
 
           private

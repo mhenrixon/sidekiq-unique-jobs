@@ -1,13 +1,13 @@
-require 'sidekiq-unique-jobs/middleware/client/connectors/connector'
-require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
+require 'sidekiq_unique_jobs/middleware/client/connectors/connector'
+require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 
 module SidekiqUniqueJobs
   module Middleware
     module Client
       module Connectors
         class TestingInline < Connector
-          def self.eligible?(redis_pool = nil)
-            Config.testing_enabled? && Sidekiq::Testing.inline?
+          def self.eligible?(_redis_pool = nil)
+            SidekiqUniqueJobs.config.testing_enabled? && Sidekiq::Testing.inline?
           end
 
           def review_unique
