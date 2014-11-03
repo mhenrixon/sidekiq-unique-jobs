@@ -3,6 +3,7 @@ require 'sidekiq/worker'
 require 'sidekiq_unique_jobs'
 require 'sidekiq/scheduled'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
+require 'active_support/testing/time_helpers'
 require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
@@ -60,6 +61,24 @@ describe 'When Sidekiq::Testing is enabled' do
       end
     end
 
+    class InlineUnlockOrderWorker
+      include Sidekiq::Worker
+      sidekiq_options unique: true, unique_unlock_order: :never
+
+      def perform(x)
+        TestClass.run(x)
+      end
+    end
+
+    class InlineExpirationWorker
+      include Sidekiq::Worker
+      sidekiq_options unique: true, unique_unlock_order: :never,
+                      unique_job_expiration: 10 * 60
+      def perform(x)
+        TestClass.run(x)
+      end
+    end
+
     class TestClass
       def self.run(_x)
       end
@@ -78,5 +97,29 @@ describe 'When Sidekiq::Testing is enabled' do
       InlineUnlockOrderWorker.perform_async('test')
       InlineUnlockOrderWorker.perform_async('test')
     end
+
+    describe 'when a job is set to run once in 10 minutes' do
+      include ActiveSupport::Testing::TimeHelpers
+      it 'only allows 1 call per 10 minutes' do
+        allow(TestClass).to receive(:run).with(1).and_return(true)
+        allow(TestClass).to receive(:run).with(2).and_return(true)
+
+        InlineExpirationWorker.perform_async(1)
+        expect(TestClass).to have_received(:run).with(1).once
+        100.times do
+          InlineExpirationWorker.perform_async(1)
+        end
+        expect(TestClass).to have_received(:run).with(1).once
+        InlineExpirationWorker.perform_async(2)
+        expect(TestClass).to have_received(:run).with(1).once
+        expect(TestClass).to have_received(:run).with(2).once
+        travel_to(11.minutes.from_now) do
+          InlineExpirationWorker.perform_async(1)
+        end
+
+        expect(TestClass).to have_received(:run).with(1).twice
+      end
+    end
+
   end
 end
