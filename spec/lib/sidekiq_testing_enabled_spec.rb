@@ -4,7 +4,6 @@ require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 require 'active_support/testing/time_helpers'
-require 'active_support/core_ext'
 require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
@@ -114,7 +113,7 @@ describe 'When Sidekiq::Testing is enabled' do
         InlineExpirationWorker.perform_async(2)
         expect(TestClass).to have_received(:run).with(1).once
         expect(TestClass).to have_received(:run).with(2).once
-        travel_to(11.minutes.from_now) do
+        travel_to(Time.now + (11 * 60)) do
           InlineExpirationWorker.perform_async(1)
         end
 
