@@ -3,9 +3,7 @@
 source "http://rubygems.org"
 
 gem "appraisal", "~> 1.0.0"
-gem "pry"
-gem "pry-stack_explorer"
-gem "pry-debugger"
+gem "pry", :platform => :mri
 gem "sidekiq", "3.0", :platform => :mri_19
 
 gemspec :path => "../"
