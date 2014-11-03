@@ -9,7 +9,7 @@ require 'rspec'
 require 'celluloid/test'
 require 'sidekiq'
 require 'sidekiq/util'
-require 'sidekiq_unique_jobs'
+require 'sidekiq-unique-jobs'
 Sidekiq.logger.level = Logger::ERROR
 
 require 'rspec-sidekiq'

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'celluloid'
 require 'sidekiq/worker'
-require 'sidekiq_unique_jobs'
+require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 

@@ -1,9 +1,10 @@
 require 'spec_helper'
 require 'sidekiq/worker'
-require 'sidekiq_unique_jobs'
+require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 require 'active_support/testing/time_helpers'
+require 'active_support/core_ext'
 require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do

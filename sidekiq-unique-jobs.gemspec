@@ -13,7 +13,8 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- test/*`.split("\n")
   gem.name          = 'sidekiq-unique-jobs'
   gem.require_paths = ['lib']
-  gem.post_install_message = %(If you are relying on `mock_redis` you will now have to add gem 'mock_redis' to your desired bundler group.)
+  gem.post_install_message = 'If you are relying on `mock_redis` you will now have to add' \
+                             'gem "mock_redis" to your desired bundler group.'
   gem.version       = SidekiqUniqueJobs::VERSION
   gem.add_dependency 'sidekiq', '>= 2.6'
   gem.add_development_dependency 'mock_redis'
