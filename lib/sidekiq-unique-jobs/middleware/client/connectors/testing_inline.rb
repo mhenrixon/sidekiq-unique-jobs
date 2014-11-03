@@ -10,12 +10,16 @@ module SidekiqUniqueJobs
           end
 
           def review_unique
-            Server::UniqueJobs.new.call(worker_class.new, item, queue, redis_pool) do
+            _middleware.call(worker_class.new, item, queue, redis_pool) do
               super
             end
           end
 
           private
+
+          def _middleware
+            SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new
+          end
 
           def conn
             SidekiqUniqueJobs.redis_mock { |conn| conn }
