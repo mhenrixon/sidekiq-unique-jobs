@@ -40,4 +40,43 @@ describe "When Sidekiq::Testing is enabled" do
       end
     end
   end
+
+  describe 'when set to :inline!', sidekiq: :inline do
+    class InlineWorker
+      include Sidekiq::Worker
+      sidekiq_options :unique => true
+
+      def perform(x)
+        TestClass.run(x)
+      end
+    end
+
+    class InlineUnlockOrderWorker
+      include Sidekiq::Worker
+      sidekiq_options :unique => true, :unique_unlock_order => :never
+
+      def perform(x)
+        TestClass.run(x)
+      end
+    end
+
+    class TestClass
+      def self.run(x)
+      end
+    end
+
+    it 'once the job is completed allows to run another one' do
+      expect(TestClass).to receive(:run).exactly(2).times
+
+      InlineWorker.perform_async('test')
+      InlineWorker.perform_async('test')
+    end
+
+    it 'if the unique is kept forever it does not allows to run the job again' do
+      expect(TestClass).to receive(:run).once
+
+      InlineUnlockOrderWorker.perform_async('test')
+      InlineUnlockOrderWorker.perform_async('test')
+    end
+  end
 end
