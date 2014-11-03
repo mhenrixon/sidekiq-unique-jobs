@@ -52,15 +52,17 @@ module SidekiqUniqueJobs
         end
 
         def unlock(payload_hash)
-          if redis_pool
-            redis_pool.with { |conn| conn.del(payload_hash) }
-          else
-            Sidekiq.redis { |conn| conn.del(payload_hash) }
-          end
+          connector.del(payload_hash)
         end
 
         def logger
           Sidekiq.logger
+        end
+
+        def connector
+          return SidekiqUniqueJobs.redis_mock { |conn| conn } if Config.testing_enabled?
+          return redis_pool.with { |conn| conn } if redis_pool
+          Sidekiq.redis { |conn| conn }
         end
       end
     end

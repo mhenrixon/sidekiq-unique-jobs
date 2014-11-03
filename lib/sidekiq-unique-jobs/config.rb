@@ -31,5 +31,14 @@ module SidekiqUniqueJobs
     def self.default_unlock_order
       @default_unlock_order || :after_yield
     end
+
+    def self.testing_enabled?
+      if Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled?
+        require 'sidekiq-unique-jobs/testing'
+        return true
+      end
+
+      false
+    end
   end
 end
