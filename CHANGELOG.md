@@ -1,3 +1,9 @@
+## v3.0.5
+- Fixed the different test modes (major thanks to @salrepe)
+
+## v3.0.2
+- Removed runtime dependency on mock_redis (add `gem 'mock_redis'` to your desired group to use it)
+
 ## v2.7.0
 - Use mock_redis when testing in fake mode
 - Replace minitest with rspec

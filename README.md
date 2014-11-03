@@ -92,6 +92,10 @@ class UniqueJobWithFilterMethod
 end
 ```
 
+### Testing
+
+SidekiqUniqueJobs uses mock_redis for inline testing. Due to complaints about having that as a runtime dependency it was made a development dependency so if you are relying on inline testing you will have to add `gem 'mock_redis'` to your Gemfile.
+
 ## Contributing
 
 1. Fork it
@@ -102,6 +106,7 @@ end
 
 ## Contributors
 
+- https://github.com/salrepe
 - https://github.com/sax
 - https://github.com/eduardosasso
 - https://github.com/KensoDev
