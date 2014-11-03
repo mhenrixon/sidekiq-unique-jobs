@@ -20,5 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec-sidekiq'
   gem.add_development_dependency 'activesupport', '>= 3'
+  gem.add_development_dependency 'rubocop'
   gem.add_development_dependency 'simplecov'
 end

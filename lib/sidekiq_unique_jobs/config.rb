@@ -1,44 +1,47 @@
 module SidekiqUniqueJobs
-  class Config
-    class << self
-      attr_writer :unique_prefix
-    end
-
-    def self.unique_prefix
-      @unique_prefix || 'sidekiq_unique'
-    end
-
-    class << self
-      attr_writer :unique_args_enabled
-    end
-
-    def self.unique_args_enabled?
-      @unique_args_enabled || false
-    end
-
-    def self.default_expiration=(expiration)
-      @expiration = expiration
-    end
-
-    def self.default_expiration
-      @expiration || 30 * 60
-    end
+  class Config < OpenStruct
+    CONFIG_ACCESSORS = [
+      :unique_prefix,
+      :unique_args_enabled,
+      :default_expiration,
+      :default_unlock_order
+    ]
 
     class << self
-      attr_writer :default_unlock_order
+      warn('This method has been deprecated. See readme for information')
+      CONFIG_ACCESSORS.each do |method|
+        define_method(method) do
+          warn('This method has been deprecated. See readme for information')
+          config.send(method)
+        end
+
+        define_method("#{method}=") do |obj|
+          warn('This method has been deprecated. See readme for information')
+          config.send("#{method}=", obj)
+        end
+      end
+
+      def unique_args_enabled?
+        warn('This method has been deprecated. See readme for information')
+        config.unique_args_enabled
+      end
+
+      def config
+        SidekiqUniqueJobs.config
+      end
     end
 
-    def self.default_unlock_order
-      @default_unlock_order || :after_yield
-    end
-
-    def self.testing_enabled?
+    def testing_enabled?
       if Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled?
         require 'sidekiq_unique_jobs/testing'
         return true
       end
 
       false
+    end
+
+    def unique_args_enabled?
+      config.unique_args_enabled
     end
   end
 end

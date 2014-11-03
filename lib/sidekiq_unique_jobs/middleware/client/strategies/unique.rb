@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
             else
               # if the job was previously scheduled and is now being queued,
               # or we've never seen it before
-              expires_at = unique_job_expiration || SidekiqUniqueJobs::Config.default_expiration
+              expires_at = unique_job_expiration || SidekiqUniqueJobs.config.default_expiration
               expires_at = ((Time.at(item['at']) - Time.now.utc) + expires_at).to_i if item['at']
 
               unique = conn.multi do

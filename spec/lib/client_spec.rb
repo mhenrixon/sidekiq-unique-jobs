@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'celluloid'
 require 'sidekiq/worker'
-require 'sidekiq-unique-jobs'
+require 'sidekiq_unique_jobs'
 require 'sidekiq/scheduled'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 
@@ -74,7 +74,7 @@ describe 'Client' do
       payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload('QueueWorker', 'customqueue', [1, 2])
       actual_expires_at = Sidekiq.redis { |c| c.ttl(payload_hash) }
 
-      result = Sidekiq.redis { |c| c.llen('queue:customqueue') }
+      Sidekiq.redis { |c| c.llen('queue:customqueue') }
       expect(actual_expires_at).to be_within(2).of(one_hour_expiration)
     end
 
@@ -88,8 +88,8 @@ describe 'Client' do
     end
 
     describe 'when unique_args is defined' do
-      before { SidekiqUniqueJobs::Config.unique_args_enabled = true }
-      after  { SidekiqUniqueJobs::Config.unique_args_enabled = false }
+      before { SidekiqUniqueJobs.config.unique_args_enabled = true }
+      after  { SidekiqUniqueJobs.config.unique_args_enabled = false }
 
       class QueueWorkerWithFilterMethod < QueueWorker
         sidekiq_options unique: true, unique_args: :args_filter
@@ -100,16 +100,25 @@ describe 'Client' do
       end
 
       class QueueWorkerWithFilterProc < QueueWorker
-        # slightly contrived example of munging args to the worker and removing a random bit.
-        sidekiq_options unique: true, unique_args: lambda { |args| a = args.last.dup; a.delete(:random); [args.first, a] }
+        # slightly contrived example of munging args to the
+        # worker and removing a random bit.
+        sidekiq_options unique: true, unique_args: (lambda do |args|
+          a = args.last.dup
+          a.delete(:random)
+          [args.first, a]
+        end)
       end
 
       it 'does not push duplicate messages based on args filter method' do
         expect(QueueWorkerWithFilterMethod).to respond_to(:args_filter)
         expect(QueueWorkerWithFilterMethod.get_sidekiq_options['unique_args']).to eq :args_filter
 
-        for i in (0..10).to_a
-          Sidekiq::Client.push('class' => QueueWorkerWithFilterMethod, 'queue' => 'customqueue', 'args' => [1, i])
+        (0..10).each do |i|
+          Sidekiq::Client.push(
+            'class' => QueueWorkerWithFilterMethod,
+            'queue' => 'customqueue',
+            'args' => [1, i]
+          )
         end
         result = Sidekiq.redis { |c| c.llen('queue:customqueue') }
         expect(result).to eq 1
@@ -119,7 +128,11 @@ describe 'Client' do
         expect(QueueWorkerWithFilterProc.get_sidekiq_options['unique_args']).to be_a(Proc)
 
         10.times do
-          Sidekiq::Client.push('class' => QueueWorkerWithFilterProc, 'queue' => 'customqueue', 'args' => [1, { random: rand, name: 'foobar' }])
+          Sidekiq::Client.push(
+            'class' => QueueWorkerWithFilterProc,
+            'queue' => 'customqueue',
+            'args' => [1, { random: rand, name: 'foobar' }]
+          )
         end
         result = Sidekiq.redis { |c| c.llen('queue:customqueue') }
         expect(result).to eq 1
@@ -147,7 +160,7 @@ describe 'Client' do
       QueueWorker.sidekiq_options unique: true
 
       at = 15.minutes.from_now
-      expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs::Config.default_expiration
+      expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
 
       QueueWorker.perform_in(at, 'mike')
       payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload('QueueWorker', 'customqueue', ['mike'])

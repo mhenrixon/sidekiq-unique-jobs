@@ -26,21 +26,21 @@ module SidekiqUniqueJobs
           end
         end
 
-        describe '#set_unlock_order' do
+        describe '#decide_unlock_order' do
           context 'when worker has specified unique_unlock_order' do
             it 'changes unlock_order to the configured value' do
               UniqueWorker.sidekiq_options unique_unlock_order: :before_yield
               expect do
-                subject.set_unlock_order(UniqueWorker)
+                subject.decide_unlock_order(UniqueWorker)
               end.to change { subject.unlock_order }.to :before_yield
             end
           end
 
           context "when worker hasn't specified unique_unlock_order" do
             it 'falls back to configured default_unlock_order' do
-              SidekiqUniqueJobs::Config.default_unlock_order = :before_yield
+              SidekiqUniqueJobs.config.default_unlock_order = :before_yield
               expect do
-                subject.set_unlock_order(UniqueWorker)
+                subject.decide_unlock_order(UniqueWorker)
               end.to change { subject.unlock_order }.to :before_yield
             end
           end
@@ -68,10 +68,10 @@ module SidekiqUniqueJobs
 
         describe '#default_unlock_order' do
           it 'returns the default value from config' do
-            SidekiqUniqueJobs::Config.default_unlock_order = :before_yield
+            SidekiqUniqueJobs.config.default_unlock_order = :before_yield
             expect(subject.default_unlock_order).to eq(:before_yield)
 
-            SidekiqUniqueJobs::Config.default_unlock_order = :after_yield
+            SidekiqUniqueJobs.config.default_unlock_order = :after_yield
             expect(subject.default_unlock_order).to eq(:after_yield)
           end
         end

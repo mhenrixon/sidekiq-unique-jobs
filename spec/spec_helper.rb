@@ -1,8 +1,7 @@
-$TESTING = true
-
 begin
   require 'pry'
 rescue LoadError
+  puts 'Pry unavailable'
 end
 
 require 'rspec'
@@ -10,7 +9,7 @@ require 'rspec'
 require 'celluloid/test'
 require 'sidekiq'
 require 'sidekiq/util'
-require 'sidekiq-unique-jobs'
+require 'sidekiq_unique_jobs'
 Sidekiq.logger.level = Logger::ERROR
 
 require 'rspec-sidekiq'

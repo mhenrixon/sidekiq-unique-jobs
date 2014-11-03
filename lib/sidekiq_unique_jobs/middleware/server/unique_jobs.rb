@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
         def call(worker, item, _queue, redis_pool = nil)
           @redis_pool = redis_pool
 
-          set_unlock_order(worker.class)
+          decide_unlock_order(worker.class)
           lock_key = payload_hash(item)
           unlocked = before_yield? ? unlock(lock_key).inspect : 0
 
@@ -21,12 +21,12 @@ module SidekiqUniqueJobs
           end
         end
 
-        def set_unlock_order(klass)
+        def decide_unlock_order(klass)
           @unlock_order = if unlock_order_configured?(klass)
                             klass.get_sidekiq_options['unique_unlock_order']
                           else
                             default_unlock_order
-          end
+                          end
         end
 
         def unlock_order_configured?(klass)
@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
         end
 
         def default_unlock_order
-          SidekiqUniqueJobs::Config.default_unlock_order
+          SidekiqUniqueJobs.config.default_unlock_order
         end
 
         def before_yield?

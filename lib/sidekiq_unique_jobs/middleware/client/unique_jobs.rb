@@ -5,7 +5,10 @@ module SidekiqUniqueJobs
   module Middleware
     module Client
       class UniqueJobs
-        Strategies = [Strategies::TestingInline, Strategies::Unique]
+        STRATEGIES = [
+          Strategies::TestingInline,
+          Strategies::Unique
+        ]
 
         attr_reader :item, :worker_class, :redis_pool
 
@@ -28,17 +31,16 @@ module SidekiqUniqueJobs
         end
 
         def strategy
-          Strategies.detect(&:elegible?)
+          STRATEGIES.detect(&:elegible?)
         end
 
         # Attempt to constantize a string worker_class argument, always
         # failing back to the original argument.
         def worker_class_constantize(worker_class)
-          if worker_class.is_a?(String)
-            worker_class.constantize rescue worker_class
-          else
-            worker_class
-          end
+          return worker_class unless worker_class.is_a?(String)
+          worker_class.constantize
+        rescue NameError
+          worker_class
         end
       end
     end

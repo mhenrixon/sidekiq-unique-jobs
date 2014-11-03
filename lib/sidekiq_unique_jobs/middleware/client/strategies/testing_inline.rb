@@ -10,9 +10,13 @@ module SidekiqUniqueJobs
           end
 
           def review
-            SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new.call(worker_class.new, item, queue, redis_pool) do
+            _middleware.call(worker_class.new, item, queue, redis_pool) do
               super
             end
+          end
+
+          def _middleware
+            SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new
           end
         end
       end
