@@ -1,3 +1,4 @@
+# rubocop:disable FileName
 require 'yaml' if RUBY_VERSION.include?('2.0.0')
 require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/version'
