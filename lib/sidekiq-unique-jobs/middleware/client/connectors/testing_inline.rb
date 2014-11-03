@@ -1,4 +1,5 @@
 require 'sidekiq-unique-jobs/middleware/client/connectors/connector'
+require 'sidekiq-unique-jobs/middleware/server/unique_jobs'
 
 module SidekiqUniqueJobs
   module Middleware
