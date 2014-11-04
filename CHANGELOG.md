@@ -1,3 +1,11 @@
+## v3.0.8
+- Unique extensions for Web GUI by @rickenharp. Uniqueness will now be removed when a job is.
+
+## v3.0.7
+- Internal refactoring
+- Improved coverage
+- Rubocop style validation
+
 ## v3.0.5
 - Fixed the different test modes (major thanks to @salrepe)
 
