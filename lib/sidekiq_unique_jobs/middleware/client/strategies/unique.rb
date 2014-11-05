@@ -15,7 +15,7 @@ module SidekiqUniqueJobs
           end
 
           def initialize(worker_class, item, queue, redis_pool = nil)
-            @worker_class = worker_class
+            @worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
             @item = item
             @queue = queue
             @redis_pool = redis_pool

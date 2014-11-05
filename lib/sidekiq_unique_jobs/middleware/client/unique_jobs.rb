@@ -13,7 +13,7 @@ module SidekiqUniqueJobs
         attr_reader :item, :worker_class, :redis_pool
 
         def call(worker_class, item, queue, redis_pool = nil)
-          @worker_class = worker_class_constantize(worker_class)
+          @worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
           @item = item
           @redis_pool = redis_pool
 
@@ -32,15 +32,6 @@ module SidekiqUniqueJobs
 
         def strategy
           STRATEGIES.detect(&:elegible?)
-        end
-
-        # Attempt to constantize a string worker_class argument, always
-        # failing back to the original argument.
-        def worker_class_constantize(worker_class)
-          return worker_class unless worker_class.is_a?(String)
-          worker_class.constantize
-        rescue NameError
-          worker_class
         end
       end
     end
