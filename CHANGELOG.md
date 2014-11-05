@@ -1,3 +1,6 @@
+## v3.0.9
+- Fixed that all jobs stopped processing
+
 ## v3.0.8
 - Unique extensions for Web GUI by @rickenharp. Uniqueness will now be removed when a job is.
 
