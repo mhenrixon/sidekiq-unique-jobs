@@ -8,21 +8,20 @@ module SidekiqUniqueJobs
     ]
 
     class << self
-      warn('This method has been deprecated. See readme for information')
       CONFIG_ACCESSORS.each do |method|
         define_method(method) do
-          warn('This method has been deprecated. See readme for information')
+          warn("#{method} has been deprecated. See readme for information")
           config.send(method)
         end
 
         define_method("#{method}=") do |obj|
-          warn('This method has been deprecated. See readme for information')
+          warn("#{method} has been deprecated. See readme for information")
           config.send("#{method}=", obj)
         end
       end
 
       def unique_args_enabled?
-        warn('This method has been deprecated. See readme for information')
+        warn('unique_args_enabled has been deprecated. See readme for information')
         config.unique_args_enabled
       end
 
