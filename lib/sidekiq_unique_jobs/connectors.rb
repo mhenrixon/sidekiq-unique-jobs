@@ -1,10 +1,9 @@
-require 'sidekiq_unique_jobs/connectors/testing'
 require 'sidekiq_unique_jobs/connectors/redis_pool'
 require 'sidekiq_unique_jobs/connectors/sidekiq_redis'
 
 module SidekiqUniqueJobs
   module Connectors
-    CONNECTOR_TYPES = [Testing, RedisPool, SidekiqRedis]
+    CONNECTOR_TYPES = [RedisPool, SidekiqRedis]
 
     def self.conn(redis_pool = nil)
       CONNECTOR_TYPES.each do |connector|
