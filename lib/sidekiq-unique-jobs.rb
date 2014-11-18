@@ -23,7 +23,7 @@ module SidekiqUniqueJobs
   end
 
   def configure
-    yield configuration
+    yield config
   end
 
   # Attempt to constantize a string worker_class argument, always
