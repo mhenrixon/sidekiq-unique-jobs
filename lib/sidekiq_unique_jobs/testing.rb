@@ -1,6 +1,6 @@
 begin
   require 'mock_redis'
-rescue
+rescue LoadError
   raise 'To test using Sidekiq::Testing.inline!' \
         ' Please add `gem "mock_redis" to your gemfile.'
 end
