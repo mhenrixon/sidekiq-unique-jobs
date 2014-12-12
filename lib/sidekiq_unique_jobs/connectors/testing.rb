@@ -1,9 +1,10 @@
 module SidekiqUniqueJobs
   module Connectors
     class Testing
-      def self.conn(_redis_pool = nil)
+      def self.connection(_redis_pool = nil, &block)
         return unless SidekiqUniqueJobs.config.testing_enabled?
-        SidekiqUniqueJobs.redis_mock { |conn| conn }
+        yield SidekiqUniqueJobs.redis_mock
+        return true
       end
     end
   end
