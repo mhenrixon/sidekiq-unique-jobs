@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
       def self.connection(redis_pool = nil, &block)
         return if redis_pool.nil?
         redis_pool.with(&block)
-        return true
+        true
       end
     end
   end

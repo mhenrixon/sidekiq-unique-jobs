@@ -53,7 +53,7 @@ module SidekiqUniqueJobs
         end
 
         def unlock(payload_hash)
-          connection{|c| c.del(payload_hash) }
+          connection { |c| c.del(payload_hash) }
         end
 
         def logger
