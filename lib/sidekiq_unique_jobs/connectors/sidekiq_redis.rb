@@ -1,8 +1,8 @@
 module SidekiqUniqueJobs
   module Connectors
     class SidekiqRedis
-      def self.conn(_redis_pool = nil)
-        Sidekiq.redis { |conn| conn }
+      def self.connection(_redis_pool = nil, &block)
+        Sidekiq.redis(&block)
       end
     end
   end

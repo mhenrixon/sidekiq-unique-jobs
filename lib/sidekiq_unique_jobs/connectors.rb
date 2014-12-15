@@ -6,10 +6,10 @@ module SidekiqUniqueJobs
   module Connectors
     CONNECTOR_TYPES = [Testing, RedisPool, SidekiqRedis]
 
-    def self.conn(redis_pool = nil)
+    def self.connection(redis_pool = nil, &block)
       CONNECTOR_TYPES.each do |connector|
-        conn = connector.conn(redis_pool)
-        return conn if conn
+        had_connection = connector.connection(redis_pool, &block)
+        return if had_connection
       end
     end
   end
