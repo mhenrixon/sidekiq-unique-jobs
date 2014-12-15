@@ -31,6 +31,7 @@ module SidekiqUniqueJobs
 
           attr_reader :item, :worker_class, :redis_pool, :queue
 
+          # rubocop:disable MethodLength
           def unique_for_connection?
             unique = false
             connection do |conn|
@@ -55,6 +56,7 @@ module SidekiqUniqueJobs
             end
             unique
           end
+          # rubocop:enable MethodLength
 
           def connection(&block)
             SidekiqUniqueJobs::Connectors.connection(redis_pool, &block)

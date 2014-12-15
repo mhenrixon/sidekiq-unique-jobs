@@ -29,7 +29,6 @@ describe 'When Sidekiq::Testing is enabled' do
     end
 
     context 'with non-unique worker' do
-
       it 'pushes duplicates messages' do
         param = 'work'
         expect(MyWorker.jobs.size).to eq(0)
@@ -120,6 +119,5 @@ describe 'When Sidekiq::Testing is enabled' do
         expect(TestClass).to have_received(:run).with(1).twice
       end
     end
-
   end
 end

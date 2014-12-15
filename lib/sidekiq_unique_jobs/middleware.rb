@@ -9,7 +9,6 @@ Sidekiq.configure_server do |config|
     require 'sidekiq_unique_jobs/middleware/client/unique_jobs'
     chain.add SidekiqUniqueJobs::Middleware::Client::UniqueJobs
   end
-
 end
 
 Sidekiq.configure_client do |config|

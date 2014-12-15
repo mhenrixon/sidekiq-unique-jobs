@@ -150,7 +150,6 @@ describe 'Client' do
           expect(q2_length).to eq 0
         end
       end
-
     end
 
     # TODO: If anyone know of a better way to check that the expiration for scheduled

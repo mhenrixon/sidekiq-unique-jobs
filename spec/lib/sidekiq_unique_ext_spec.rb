@@ -15,7 +15,6 @@ class JustAWorker
 end
 
 describe Sidekiq::Job::UniqueExtension do
-
   before do
     Sidekiq.redis = REDIS
     Sidekiq.redis(&:flushdb)
@@ -35,7 +34,6 @@ describe Sidekiq::Job::UniqueExtension do
 end
 
 describe Sidekiq::Queue::UniqueExtension do
-
   before do
     Sidekiq.redis = REDIS
     Sidekiq.redis(&:flushdb)
@@ -54,7 +52,6 @@ describe Sidekiq::Queue::UniqueExtension do
 end
 
 describe Sidekiq::JobSet::UniqueExtension, sidekiq_ver: 3 do
-
   before do
     Sidekiq.redis = REDIS
     Sidekiq.redis(&:flushdb)
