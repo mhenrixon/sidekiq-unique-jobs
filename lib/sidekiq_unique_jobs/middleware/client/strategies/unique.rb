@@ -23,7 +23,9 @@ module SidekiqUniqueJobs
 
           def review
             item['unique_hash'] = payload_hash
-            return unless unique_for_connection?
+            with_connection do |conn|
+              return unless unique_for_connection?(conn)
+            end
             yield
           end
 
@@ -31,7 +33,7 @@ module SidekiqUniqueJobs
 
           attr_reader :item, :worker_class, :redis_pool, :queue
 
-          def unique_for_connection?
+          def unique_for_connection?(conn)
             unique = false
             conn.watch(payload_hash)
 
@@ -54,8 +56,8 @@ module SidekiqUniqueJobs
             unique
           end
 
-          def conn
-            SidekiqUniqueJobs::Connectors.conn(redis_pool)
+          def with_connection(&block)
+            SidekiqUniqueJobs::Connectors.with_connection(redis_pool, &block)
           end
 
           def payload_hash
