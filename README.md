@@ -111,3 +111,4 @@ SidekiqUniqueJobs uses mock_redis for inline testing. Due to complaints about ha
 - https://github.com/sax
 - https://github.com/eduardosasso
 - https://github.com/KensoDev
+- https://github.com/adstage-david

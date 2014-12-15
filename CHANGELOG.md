@@ -1,3 +1,6 @@
+## v3.0.11
+- Ensure threadsafety (thanks to adstage-david)
+
 ## v3.0.9
 - Fixed that all jobs stopped processing
 
