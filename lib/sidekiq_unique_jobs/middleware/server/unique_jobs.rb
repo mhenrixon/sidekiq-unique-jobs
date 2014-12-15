@@ -53,15 +53,15 @@ module SidekiqUniqueJobs
         end
 
         def unlock(payload_hash)
-          conn.del(payload_hash)
+          with_connection { |conn| conn.del(payload_hash) }
         end
 
         def logger
           Sidekiq.logger
         end
 
-        def conn
-          SidekiqUniqueJobs::Connectors.conn(redis_pool)
+        def with_connection(&block)
+          SidekiqUniqueJobs::Connectors.with_connection(redis_pool, &block)
         end
       end
     end
