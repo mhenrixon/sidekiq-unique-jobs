@@ -20,6 +20,7 @@ module SidekiqUniqueJobs
 
     def self.yield_unique_args(worker_class, args)
       unique_args = worker_class.get_sidekiq_options['unique_args']
+      args = args.map { |arg_hash| arg_hash.delete('job_id'); arg_hash }
       filtered_args(worker_class, unique_args, args)
     rescue NameError
       # fallback to not filtering args when class can't be instantiated
