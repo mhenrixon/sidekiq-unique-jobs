@@ -67,7 +67,7 @@ module SidekiqUniqueJobs
           end
 
           def unique_job_expiration
-            worker_class.get_sidekiq_options['unique_job_expiration']
+            item['unique_job_expiration'] || worker_class.get_sidekiq_options['unique_job_expiration']
           end
         end
       end
