@@ -27,7 +27,7 @@ module SidekiqUniqueJobs
 
       unique_args = worker_class.get_sidekiq_options['unique_args']
       filtered_args(worker_class, unique_args, args)
-    rescue NameError
+    rescue
       # fallback to not filtering args when class can't be instantiated
       args
     end
