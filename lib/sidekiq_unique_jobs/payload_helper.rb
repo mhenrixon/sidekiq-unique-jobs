@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
     end
 
     def self.yield_unique_args(worker_class, args)
-      if defined?(BaseJobWrapper) && worker_class == BaseJobWrapper
+      if defined?(BaseJob) && (worker_class < BaseJob)
         args = args.map do |arg|
           arg.is_a?(Hash) ? arg.dup.tap { |h| h.delete('job_id') } : arg
         end
