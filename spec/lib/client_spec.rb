@@ -170,36 +170,37 @@ describe 'Client' do
       expect(actual_expires_at).to be_within(2).of(expected_expires_at)
     end
 
-    describe "BaseJobWrapper" do
-      context "running a BaseJobWrapper job" do
+    describe "BaseJob" do
+      context "running a BaseJob job" do
         before do
           @args = [ {'job_id' => 123, 'job_class' => 'RegularJob'}, 1, [], nil]
-          class BaseJobWrapper; include Sidekiq::Worker; end
+          class BaseJob; end
+          class BaseJob::BaseJobWrapper < BaseJob; include Sidekiq::Worker; end
         end
 
         it "removes job_id from any hash in args" do
-          unique_args = SidekiqUniqueJobs::PayloadHelper.yield_unique_args(BaseJobWrapper, @args)
+          unique_args = SidekiqUniqueJobs::PayloadHelper.yield_unique_args(BaseJob::BaseJobWrapper, @args)
           expect(unique_args).to eq( [{'job_class' => 'RegularJob'}, 1, [], nil] )
         end
 
         it "leaves job_id in original args array" do
-          SidekiqUniqueJobs::PayloadHelper.yield_unique_args(BaseJobWrapper, @args)
+          SidekiqUniqueJobs::PayloadHelper.yield_unique_args(BaseJob::BaseJobWrapper, @args)
           expect(@args).to eq( [ {'job_id' => 123, 'job_class' => 'RegularJob'}, 1, [], nil] )
         end
 
         it "leaves other types of values in args alone" do
-          unique_args = SidekiqUniqueJobs::PayloadHelper.yield_unique_args(BaseJobWrapper, @args)
+          unique_args = SidekiqUniqueJobs::PayloadHelper.yield_unique_args(BaseJob::BaseJobWrapper, @args)
           expect(unique_args).to eq( [{'job_class' => 'RegularJob'}, 1, [], nil] )
         end
 
-        it "is a noop if not working on a BaseJobWrapper call" do
+        it "is a noop if not working on a BaseJob call" do
           unique_args = SidekiqUniqueJobs::PayloadHelper.yield_unique_args(QueueWorker, @args)
           expect(unique_args).to eq @args
         end
       end
 
-      context "not running a BaseJobWrapper" do
-        it "doesn't blow up if BaseJobWrapper does not exist" do
+      context "not running a BaseJob" do
+        it "doesn't blow up if BaseJob does not exist" do
           args = [ {'job_id' => 123, 'job_class' => 'RegularJob'}, 1, [], nil]
           unique_args = SidekiqUniqueJobs::PayloadHelper.yield_unique_args(QueueWorker, args)
           expect(unique_args).to eq args
