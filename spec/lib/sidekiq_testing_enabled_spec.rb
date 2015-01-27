@@ -3,6 +3,7 @@ require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
+require 'active_support/core_ext/time'
 require 'active_support/testing/time_helpers'
 require 'rspec-sidekiq'
 

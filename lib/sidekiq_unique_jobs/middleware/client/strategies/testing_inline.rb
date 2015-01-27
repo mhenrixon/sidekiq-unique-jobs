@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
       module Strategies
         class TestingInline < Unique
           def self.elegible?
-            SidekiqUniqueJobs.config.testing_enabled? && Sidekiq::Testing.inline?
+            SidekiqUniqueJobs.config.inline_testing_enabled?
           end
 
           def review
