@@ -30,8 +30,8 @@ module SidekiqUniqueJobs
       end
     end
 
-    def testing_enabled?
-      if Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled?
+    def inline_testing_enabled?
+      if Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled? && Sidekiq::Testing.inline?
         require 'sidekiq_unique_jobs/testing'
         return true
       end
