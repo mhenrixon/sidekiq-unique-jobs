@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     def self.connection(redis_pool = nil, &block)
       CONNECTOR_TYPES.each do |connector|
         had_connection = connector.connection(redis_pool, &block)
-        return if had_connection
+        break if had_connection
       end
     end
   end
