@@ -8,6 +8,6 @@ class AnotherUniqueWorker
   end
 
   def perform(*)
-    ; # NO-OP
+    # NO-OP
   end
 end
