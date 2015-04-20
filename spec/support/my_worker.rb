@@ -8,6 +8,6 @@ class MyWorker
   end
 
   def perform(*)
-    ; # NO-OP
+    # NO-OP
   end
 end
