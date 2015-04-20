@@ -23,7 +23,10 @@ module SidekiqUniqueJobs
 
           def review
             item['unique_hash'] = payload_hash
-            return unless unique_for_connection?
+            unless unique_for_connection?
+              Sidekiq.logger.warn "payload is not unique #{item}"
+              return
+            end
             yield
           end
 
