@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
       :unique_args_enabled,
       :default_expiration,
       :default_unlock_order,
-      :log_duplicate_payload,
+      :log_duplicate_payload
     ]
 
     class << self
