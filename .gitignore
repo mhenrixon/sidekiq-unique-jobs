@@ -8,3 +8,4 @@ Gemfile.lock
 .ruby-version
 .idea/
 gemfiles/*.lock
+*.sw?

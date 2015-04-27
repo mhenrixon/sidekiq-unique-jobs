@@ -9,21 +9,26 @@ require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
+
+    # Flush db before each test
+    before :each do
+      Sidekiq.redis(&:flushdb)
+    end
     context 'with unique worker' do
       it 'does not push duplicate messages' do
         param = 'work'
         expect(UniqueWorker.jobs.size).to eq(0)
-        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.perform_async(param)).to_not be_nil
         expect(UniqueWorker.jobs.size).to eq(1)
         expect(UniqueWorker).to have_enqueued_job(param)
-        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.perform_async(param)).to be_nil
         expect(UniqueWorker.jobs.size).to eq(1)
       end
 
       it 'adds the unique_hash to the message' do
         param = 'hash'
         hash = SidekiqUniqueJobs::PayloadHelper.get_payload(UniqueWorker, :working, [param])
-        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.perform_async(param)).to_not be_nil
         expect(UniqueWorker.jobs.size).to eq(1)
         expect(UniqueWorker.jobs.first['unique_hash']).to eq(hash)
       end
