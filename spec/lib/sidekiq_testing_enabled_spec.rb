@@ -25,6 +25,72 @@ describe 'When Sidekiq::Testing is enabled' do
         expect(UniqueWorker.jobs.size).to eq(1)
       end
 
+      it 'unlocks a job after draining a worker' do
+        param = 'work'
+        expect(UniqueWorker.jobs.size).to eq(0)
+        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(1)
+        UniqueWorker.drain
+        expect(UniqueWorker.jobs.size).to eq(0)
+        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(1)
+      end
+
+      it 'unlocks jobs cleared from a single worker' do
+        param = 'work'
+        param2 = 'more work'
+        expect(UniqueWorker.jobs.size).to eq(0)
+        expect(AnotherUniqueWorker.jobs.size).to eq(0)
+        UniqueWorker.perform_async(param)
+        UniqueWorker.perform_async(param2)
+        AnotherUniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(2)
+        expect(AnotherUniqueWorker.jobs.size).to eq(1)
+        UniqueWorker.clear
+        expect(UniqueWorker.jobs.size).to eq(0)
+        expect(AnotherUniqueWorker.jobs.size).to eq(1)
+        UniqueWorker.perform_async(param)
+        UniqueWorker.perform_async(param2)
+        AnotherUniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(2)
+        expect(AnotherUniqueWorker.jobs.size).to eq(1)
+      end
+
+      it 'handles clearing an empty worker queue' do
+        param = 'work'
+        UniqueWorker.perform_async(param)
+        UniqueWorker.clear
+        expect(UniqueWorker.jobs.size).to eq(0)
+        expect { UniqueWorker.clear }.not_to raise_error
+      end
+
+      it 'unlocks jobs when all workers are cleared' do
+        param = 'work'
+        expect(UniqueWorker.jobs.size).to eq(0)
+        expect(AnotherUniqueWorker.jobs.size).to eq(0)
+        UniqueWorker.perform_async(param)
+        AnotherUniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(1)
+        expect(AnotherUniqueWorker.jobs.size).to eq(1)
+        Sidekiq::Worker.clear_all
+        expect(UniqueWorker.jobs.size).to eq(0)
+        expect(AnotherUniqueWorker.jobs.size).to eq(0)
+        UniqueWorker.perform_async(param)
+        AnotherUniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(1)
+        expect(AnotherUniqueWorker.jobs.size).to eq(1)
+      end
+
+      it 'handles clearing all workers when there are no jobs' do
+        param = 'work'
+        UniqueWorker.perform_async(param)
+        AnotherUniqueWorker.perform_async(param)
+        Sidekiq::Worker.clear_all
+        expect(UniqueWorker.jobs.size).to eq(0)
+        expect(AnotherUniqueWorker.jobs.size).to eq(0)
+        expect { Sidekiq::Worker.jobs.size }.not_to raise_error
+      end
+
       it 'adds the unique_hash to the message' do
         param = 'hash'
         hash = SidekiqUniqueJobs::PayloadHelper.get_payload(UniqueWorker, :working, [param])
