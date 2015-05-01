@@ -9,6 +9,11 @@ require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
+    before do
+      Sidekiq.redis = REDIS
+      Sidekiq.redis(&:flushdb)
+    end
+
     context 'with unique worker' do
       it 'does not push duplicate messages' do
         param = 'work'
