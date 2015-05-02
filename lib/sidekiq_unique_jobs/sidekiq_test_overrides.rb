@@ -23,14 +23,14 @@ module Sidekiq
           )
           Sidekiq.redis { |conn| conn.del(payload_hash) }
         end
-      end
 
-      def clear_ext
-        payload_hashes = jobs.map { |job| job['unique_hash'] }
-        clear_orig
-        return if payload_hashes.empty?
+        def clear_ext
+          payload_hashes = jobs.map { |job| job['unique_hash'] }
+          clear_orig
+          return if payload_hashes.empty?
 
-        Sidekiq.redis { |conn| conn.del(*payload_hashes) }
+          Sidekiq.redis { |conn| conn.del(*payload_hashes) }
+        end
       end
 
       include Overrides
@@ -44,7 +44,7 @@ module Sidekiq
       def self.included(base)
         base.extend ClassMethods
 
-        base.instance_eval do
+        base.class_eval do
           class << self
             alias_method :clear_all_orig, :clear_all
             alias_method :clear_all, :clear_all_ext
