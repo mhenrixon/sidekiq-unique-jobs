@@ -94,10 +94,17 @@ end
 
 ### Logging
 
-To see logging in sidekiq when duplicate payload has been filtered out you can enable it in config.  The default value is false
+To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options.  The default value is false
 
 ```ruby
-SidekiqUniqueJobs.config.log_duplicate_payload = true
+class UniqueJobWithFilterMethod
+  include Sidekiq::Worker
+  sidekiq_options unique: true,
+                  log_duplicate_payload: true
+
+  ...
+
+end
 ```
 
 ### Testing
