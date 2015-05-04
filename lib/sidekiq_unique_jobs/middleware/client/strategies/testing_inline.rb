@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
           end
 
           def review
-            _middleware.call(worker_class.new, item, queue, redis_pool) do
+            _middleware.call(worker_class.new, item, queue, redis_pool, log_duplicate_payload) do
               super
             end
           end
