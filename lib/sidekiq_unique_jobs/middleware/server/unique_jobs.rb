@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
       class UniqueJobs
         attr_reader :unlock_order, :redis_pool
 
-        def call(worker, item, _queue, redis_pool = nil)
+        def call(worker, item, _queue, redis_pool = nil, log_duplicate_payload = false)
           @redis_pool = redis_pool
 
           decide_unlock_order(worker.class)

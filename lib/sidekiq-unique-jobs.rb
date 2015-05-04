@@ -14,8 +14,7 @@ module SidekiqUniqueJobs
       unique_prefix: 'sidekiq_unique',
       unique_args_enabled: false,
       default_expiration: 30 * 60,
-      default_unlock_order: :after_yield,
-      log_duplicate_payload: false
+      default_unlock_order: :after_yield
     )
   end
 
