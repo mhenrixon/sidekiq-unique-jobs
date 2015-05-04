@@ -25,15 +25,33 @@ describe 'When Sidekiq::Testing is enabled' do
         expect(UniqueWorker.jobs.size).to eq(1)
       end
 
-      it 'unlocks a job after draining a worker' do
+      it 'unlocks jobs after draining a worker' do
         param = 'work'
+        param2 = 'more work'
         expect(UniqueWorker.jobs.size).to eq(0)
         UniqueWorker.perform_async(param)
-        expect(UniqueWorker.jobs.size).to eq(1)
+        UniqueWorker.perform_async(param2)
+        expect(UniqueWorker.jobs.size).to eq(2)
         UniqueWorker.drain
         expect(UniqueWorker.jobs.size).to eq(0)
         UniqueWorker.perform_async(param)
+        UniqueWorker.perform_async(param2)
+        expect(UniqueWorker.jobs.size).to eq(2)
+      end
+
+      it 'unlocks a single job when calling perform_one' do
+        param = 'work'
+        param2 = 'more work'
+        expect(UniqueWorker.jobs.size).to eq(0)
+        UniqueWorker.perform_async(param)
+        UniqueWorker.perform_async(param2)
+        expect(UniqueWorker.jobs.size).to eq(2)
+        UniqueWorker.perform_one
         expect(UniqueWorker.jobs.size).to eq(1)
+        UniqueWorker.perform_async(param2)
+        expect(UniqueWorker.jobs.size).to eq(1)
+        UniqueWorker.perform_async(param)
+        expect(UniqueWorker.jobs.size).to eq(2)
       end
 
       it 'unlocks jobs cleared from a single worker' do
