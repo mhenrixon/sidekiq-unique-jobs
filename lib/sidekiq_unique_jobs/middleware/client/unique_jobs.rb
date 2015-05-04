@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
           @redis_pool = redis_pool
 
           if unique_enabled?
-            strategy.review(worker_class, item, queue, redis_pool) { yield }
+            strategy.review(worker_class, item, queue, redis_pool, log_duplicate_payload?) { yield }
           else
             yield
           end
@@ -28,6 +28,10 @@ module SidekiqUniqueJobs
 
         def unique_enabled?
           worker_class.get_sidekiq_options['unique'] || item['unique']
+        end
+
+        def log_duplicate_payload?
+          worker_class.get_sidekiq_options['log_duplicate_payload'] || item['log_duplicate_payload']
         end
 
         def strategy

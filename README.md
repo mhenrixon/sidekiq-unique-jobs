@@ -92,6 +92,21 @@ class UniqueJobWithFilterMethod
 end
 ```
 
+### Logging
+
+To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options.  The default value is false
+
+```ruby
+class UniqueJobWithFilterMethod
+  include Sidekiq::Worker
+  sidekiq_options unique: true,
+                  log_duplicate_payload: true
+
+  ...
+
+end
+```
+
 ### Testing
 
 SidekiqUniqueJobs uses mock_redis for inline testing. Due to complaints about having that as a runtime dependency it was made a development dependency so if you are relying on inline testing you will have to add `gem 'mock_redis'` to your Gemfile.
@@ -112,3 +127,4 @@ SidekiqUniqueJobs uses mock_redis for inline testing. Due to complaints about ha
 - https://github.com/eduardosasso
 - https://github.com/KensoDev
 - https://github.com/adstage-david
+- https://github.com/jprincipe

@@ -169,5 +169,25 @@ describe 'Client' do
 
       expect(actual_expires_at).to be_within(2).of(expected_expires_at)
     end
+
+    it 'logs duplicate payload when config turned on' do
+      expect(Sidekiq.logger).to receive(:warn).with(/^payload is not unique/)
+
+      QueueWorker.sidekiq_options unique: true, log_duplicate_payload: true
+
+      2.times { Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2]) }
+      result = Sidekiq.redis { |c| c.llen('queue:customqueue') }
+      expect(result).to eq 1
+    end
+
+    it 'does not log duplicate payload when config turned off' do
+      expect(Sidekiq.logger).to_not receive(:warn).with(/^payload is not unique/)
+
+      QueueWorker.sidekiq_options unique: true, log_duplicate_payload: false
+
+      2.times { Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2]) }
+      result = Sidekiq.redis { |c| c.llen('queue:customqueue') }
+      expect(result).to eq 1
+    end
   end
 end
