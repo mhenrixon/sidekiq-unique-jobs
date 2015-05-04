@@ -5,6 +5,8 @@ module Sidekiq
     module ClassMethods
       module Overrides
         def self.included(base)
+          override_methods(base) unless base.method_defined?(:execute_job)
+
           base.class_eval do
             alias_method :execute_job_orig, :execute_job
             alias_method :execute_job, :execute_job_ext
@@ -31,6 +33,36 @@ module Sidekiq
 
           Sidekiq.redis { |conn| conn.del(*payload_hashes) }
         end
+
+        # Disable rubocop because methods are lifted directly out of Sidekiq
+        # rubocop:disable all
+        def override_methods(base)
+          base.class_eval do
+            define_method(:drain) do
+              while job = jobs.shift do
+                worker = new
+                worker.jid = job['jid']
+                execute_job(worker, job['args'])
+              end
+            end
+
+            define_method(:perform_one) do
+              raise(EmptyQueueError, "perform_one called with empty job queue") if jobs.empty?
+              job = jobs.shift
+              worker = new
+              worker.jid = job['jid']
+              execute_job(worker, job['args'])
+            end
+
+            define_method(:execute_job) do |worker, args|
+              worker.perform(*args)
+            end
+          end
+        end
+        # rubocop:enable all
+
+        module_function :override_methods
+        private_class_method :override_methods
       end
 
       include Overrides
