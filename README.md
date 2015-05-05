@@ -2,6 +2,10 @@
 
 The missing unique jobs for sidekiq
 
+## Requirements
+
+See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 3.0.13 only sidekiq 3 is supported and support for MRI 1.9 is dropped (it might work but won't be worked on)
+
 ## Installation
 
 Add this line to your application's Gemfile:
