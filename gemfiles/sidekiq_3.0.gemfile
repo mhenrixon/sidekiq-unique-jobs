@@ -2,8 +2,8 @@
 
 source "http://rubygems.org"
 
-gem "appraisal", "~> 1.0.0"
+gem "appraisal", "~> 2.0.0"
 gem "pry", :platform => :mri
-gem "sidekiq", "3.0"
+gem "sidekiq", "~> 3.0.0"
 
 gemspec :path => "../"

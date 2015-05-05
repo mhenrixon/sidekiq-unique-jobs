@@ -18,7 +18,7 @@ Sidekiq::Testing.disable!
 
 require 'sidekiq/redis_connection'
 redis_url = ENV['REDIS_URL'] || 'redis://localhost/15'
-REDIS = Sidekiq::RedisConnection.create(url: redis_url, namespace: 'testy')
+REDIS = Sidekiq::RedisConnection.create(url: redis_url, namespace: 'sidekiq-unique-jobs-testing')
 
 Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each { |f| require f }
 RSpec.configure do |_config|
