@@ -1,3 +1,8 @@
+## v3.0.13
+- Improved testing capabilities (testing uniqueness should not work better)
+- Configurable logging of duplicate payloads
+- Now requires `sidekiq_unique_ext` and `sidekiq/api` by default
+
 ## v3.0.11
 - Ensure threadsafety (thanks to adstage-david)
 
