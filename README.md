@@ -43,6 +43,19 @@ sidekiq_options unique: true, unique_job_expiration: 120 * 60 # 2 hours
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
+### Usage with ActiveJob
+
+```ruby
+Sidekiq.default_worker_options = {
+   'unique' => true,
+   'unique_args' => proc do |args|
+     [args.first.except('job_id')]
+   end
+}
+SidekiqUniqueJobs.config.unique_args_enabled = true
+```
+
+
 ### Finer Control over Uniqueness
 
 Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to set `SidekiqUniqueJobs.config.unique_args_enabled` to true in an initializer, and then defined either `unique_args` method, or a ruby proc.
