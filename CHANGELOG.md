@@ -2,6 +2,7 @@
 - Improved testing capabilities (testing uniqueness should not work better)
 - Configurable logging of duplicate payloads
 - Now requires `sidekiq_unique_ext` and `sidekiq/api` by default
+- Drop support for MRI 1.9 and sidekiq 2
 
 ## v3.0.11
 - Ensure threadsafety (thanks to adstage-david)
