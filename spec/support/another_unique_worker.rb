@@ -1,4 +1,4 @@
-class UniqueWorker
+class AnotherUniqueWorker
   include Sidekiq::Worker
   sidekiq_options queue: :working, retry: 1, backtrace: 10
   sidekiq_options unique: true

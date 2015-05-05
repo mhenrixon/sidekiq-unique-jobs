@@ -31,12 +31,16 @@ module SidekiqUniqueJobs
     end
 
     def inline_testing_enabled?
-      if Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled? && Sidekiq::Testing.inline?
-        require 'sidekiq_unique_jobs/testing'
+      if testing_enabled? && Sidekiq::Testing.inline?
+        require 'sidekiq_unique_jobs/inline_testing'
         return true
       end
 
       false
+    end
+
+    def testing_enabled?
+      Sidekiq.const_defined?('Testing') && Sidekiq::Testing.enabled?
     end
 
     def unique_args_enabled?

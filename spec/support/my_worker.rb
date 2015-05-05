@@ -7,7 +7,7 @@ class MyWorker
     Sidekiq.logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
   end
 
-  def perform(param)
-    puts param
+  def perform(*)
+    # NO-OP
   end
 end

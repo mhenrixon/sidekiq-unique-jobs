@@ -1,6 +1,12 @@
 require 'digest'
 require 'sidekiq_unique_jobs/connectors'
 
+REQUIRE_FILES = lambda do
+  if SidekiqUniqueJobs.config.testing_enabled? && Sidekiq::Testing.fake?
+    require 'sidekiq_unique_jobs/sidekiq_test_overrides'
+  end
+end
+
 module SidekiqUniqueJobs
   module Middleware
     module Client
@@ -20,6 +26,7 @@ module SidekiqUniqueJobs
             @queue = queue
             @redis_pool = redis_pool
             @log_duplicate_payload = log_duplicate_payload
+            REQUIRE_FILES.call
           end
 
           def review
