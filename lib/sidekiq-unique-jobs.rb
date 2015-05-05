@@ -4,6 +4,8 @@ require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/config'
 require 'sidekiq_unique_jobs/payload_helper'
+require 'sidekiq_unique_jobs/sidekiq_unique_ext'
+
 require 'ostruct'
 
 module SidekiqUniqueJobs
