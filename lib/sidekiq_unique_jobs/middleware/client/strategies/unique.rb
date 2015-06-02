@@ -63,8 +63,13 @@ module SidekiqUniqueJobs
                 expires_at = ((Time.at(item['at']) - Time.now.utc) + expires_at).to_i if item['at']
 
                 unique = conn.multi do
-                  # set value of 2 for scheduled jobs, 1 for queued jobs.
-                  conn.setex(payload_hash, expires_at, item['at'] ? 2 : 1)
+                  if expires_at > 0
+                    # set value of 2 for scheduled jobs, 1 for queued jobs.
+                    conn.setex(payload_hash, expires_at, item['at'] ? 2 : 1)
+                  else
+                    # Here we are executing a command to ensure another thread has not set a future ex
+                    conn.del(payload_hash)
+                  end
                 end
               end
             end
