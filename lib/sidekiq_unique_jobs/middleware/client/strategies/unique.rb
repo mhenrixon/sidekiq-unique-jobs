@@ -50,8 +50,9 @@ module SidekiqUniqueJobs
             connection do |conn|
               conn.watch(payload_hash)
 
-              if conn.get(payload_hash).to_i == 1 ||
-                 (conn.get(payload_hash).to_i == 2 && item['at'])
+              perform_schedule = conn.get(payload_hash).to_i
+              if perform_schedule == 1 ||
+                 (perform_schedule == 2 && item['at'])
                 # if the job is already queued, or is already scheduled and
                 # we're trying to schedule again, abort
                 conn.unwatch
