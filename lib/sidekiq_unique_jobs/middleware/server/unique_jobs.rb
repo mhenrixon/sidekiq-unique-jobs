@@ -12,13 +12,11 @@ module SidekiqUniqueJobs
 
           decide_unlock_order(worker.class)
           lock_key = payload_hash(item)
-          unlocked = before_yield? ? unlock(lock_key).inspect : 0
+          unlock(lock_key) if before_yield?
 
           yield
         ensure
-          if after_yield? || !defined? unlocked || unlocked != 1
-            unlock(lock_key)
-          end
+          unlock(lock_key) if after_yield?
         end
 
         def decide_unlock_order(klass)
