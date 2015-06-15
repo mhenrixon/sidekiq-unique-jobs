@@ -9,14 +9,14 @@ module SidekiqUniqueJobs
           context "when class isn't a Sidekiq::Worker" do
             it 'returns false' do
               expect(subject.unlock_order_configured?(Class))
-                  .to eq(false)
+                .to eq(false)
             end
           end
 
           context 'when get_sidekiq_options[:unique_unlock_order] is nil' do
             it 'returns false' do
               expect(subject.unlock_order_configured?(MyWorker))
-                  .to eq(false)
+                .to eq(false)
             end
           end
 
