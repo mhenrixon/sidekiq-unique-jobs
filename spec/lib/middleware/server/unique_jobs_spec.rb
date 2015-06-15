@@ -85,22 +85,24 @@ module SidekiqUniqueJobs
         describe '#call' do
           context 'unlock' do
             let(:uj) { SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new }
+            let(:items) { [UniqueWorker.new, { 'class' => 'testClass' }, 'test'] }
+
             it 'should unlock after yield when call succeeds' do
               expect(uj).to receive(:unlock)
 
-              uj.call(UniqueWorker.new, { 'class' => 'testClass' }, 'test') { true }
+              uj.call(*items) { true }
             end
 
             it 'should unlock after yield when call errors' do
               expect(uj).to receive(:unlock)
 
-              expect{ uj.call(UniqueWorker.new, { 'class' => 'testClass' }, 'test') { raise } }.to raise_error(RuntimeError)
+              expect { uj.call(*items) { fail } }.to raise_error(RuntimeError)
             end
 
             it 'should not unlock after yield on shutdown, but still raise error' do
               expect(uj).to_not receive(:unlock)
 
-              expect{ uj.call(UniqueWorker.new, { 'class' => 'testClass' }, 'test') { raise Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
+              expect { uj.call(*items) { fail Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
             end
           end
         end
