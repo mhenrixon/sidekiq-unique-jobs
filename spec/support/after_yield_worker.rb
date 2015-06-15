@@ -1,6 +1,6 @@
 class AfterYieldWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :working, retry: 1, backtrace: 10, after_yield: true
+  sidekiq_options queue: :working, retry: 1, backtrace: 10, unique_unlock_order: :after_yield
   sidekiq_options unique: false
 
   sidekiq_retries_exhausted do |msg|
