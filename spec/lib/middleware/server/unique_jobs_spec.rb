@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'sidekiq/cli'
 
 module SidekiqUniqueJobs
   module Middleware
@@ -73,6 +74,29 @@ module SidekiqUniqueJobs
 
             SidekiqUniqueJobs.config.default_unlock_order = :after_yield
             expect(subject.default_unlock_order).to eq(:after_yield)
+          end
+        end
+
+        describe '#call' do
+          context 'unlock' do
+            let(:uj) { SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new }
+            it 'should unlock after yield when call succeeds' do
+              expect(uj).to receive(:unlock)
+
+              uj.call(UniqueWorker.new, { 'class' => 'testClass' }, 'test') { true }
+            end
+
+            it 'should unlock after yield when call errors' do
+              expect(uj).to receive(:unlock)
+
+              expect{ uj.call(UniqueWorker.new, { 'class' => 'testClass' }, 'test') { raise } }.to raise_error(RuntimeError)
+            end
+
+            it 'should not unlock after yield on shutdown, but still raise error' do
+              expect(uj).to_not receive(:unlock)
+
+              expect{ uj.call(UniqueWorker.new, { 'class' => 'testClass' }, 'test') { raise Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
+            end
           end
         end
       end
