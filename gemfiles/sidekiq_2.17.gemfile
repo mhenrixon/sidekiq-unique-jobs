@@ -2,7 +2,7 @@
 
 source "http://rubygems.org"
 
-gem "appraisal", "~> 1.0.0"
+gem "appraisal", "~> 2.0.0"
 gem "pry", :platform => :mri
 gem "sidekiq", "~> 2.17.0"
 
