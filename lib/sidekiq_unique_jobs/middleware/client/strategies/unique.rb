@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
           def review
             item['unique_hash'] = payload_hash
 
-            unless stored_in_redis?
+            unless unique_for_connection?
               Sidekiq.logger.warn "payload is not unique #{item}" if @log_duplicate_payload
               return
             end
@@ -46,7 +46,34 @@ module SidekiqUniqueJobs
 
           attr_reader :item, :worker_class, :redis_pool, :queue, :log_duplicate_payload
 
-          def stored_in_redis?
+          def unique_for_connection?
+            send("#{storage_method}_unique_for?")
+          end
+
+          def storage_method
+            SidekiqUniqueJobs.config.unique_storage_method
+          end
+
+          def old_unique_for?
+            unique = nil
+            connection do |conn|
+              conn.watch(payload_hash)
+              pid = conn.get(payload_hash).to_i
+              if pid == 1 || (pid == 2 && item['at'])
+                # if the job is already queued, or is already scheduled and
+                # we're trying to schedule again, abort
+                conn.unwatch
+              else
+                unique = conn.multi do
+                  # set value of 2 for scheduled jobs, 1 for queued jobs.
+                  conn.setex(payload_hash, expires_at, item['at'] ? 2 : 1)
+                end
+              end
+            end
+            unique
+          end
+
+          def new_unique_for?
             connection do |conn|
               return conn.set(payload_hash, item['at'] ? 2 : 1, nx: true, ex: expires_at)
             end

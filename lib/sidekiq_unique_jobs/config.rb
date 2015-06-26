@@ -4,7 +4,8 @@ module SidekiqUniqueJobs
       :unique_prefix,
       :unique_args_enabled,
       :default_expiration,
-      :default_unlock_order
+      :default_unlock_order,
+      :unique_storage_method
     ]
 
     class << self
