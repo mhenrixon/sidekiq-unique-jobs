@@ -1,3 +1,8 @@
+## v3.0.14
+- Improve uniqueness check performance thanks @mpherham
+- Remove locks in sidekiq fake testing mode
+- Do not unlock jobs when sidekiq is shutting down 
+
 ## v3.0.13
 - Improved testing capabilities (testing uniqueness should not work better)
 - Configurable logging of duplicate payloads
