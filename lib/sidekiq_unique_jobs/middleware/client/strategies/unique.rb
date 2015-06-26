@@ -17,7 +17,9 @@ module SidekiqUniqueJobs
           end
 
           def self.review(worker_class, item, queue, redis_pool = nil, log_duplicate_payload = false)
-            new(worker_class, item, queue, redis_pool, log_duplicate_payload).review { yield }
+            new(worker_class, item, queue, redis_pool, log_duplicate_payload).review do
+              yield
+            end
           end
 
           def initialize(worker_class, item, queue, redis_pool = nil, log_duplicate_payload = false)
@@ -31,12 +33,12 @@ module SidekiqUniqueJobs
 
           def review
             item['unique_hash'] = payload_hash
-            unless unique_for_connection?
-              if @log_duplicate_payload
-                Sidekiq.logger.warn "payload is not unique #{item}"
-              end
+
+            unless stored_in_redis?
+              Sidekiq.logger.warn "payload is not unique #{item}" if @log_duplicate_payload
               return
             end
+
             yield
           end
 
@@ -44,32 +46,19 @@ module SidekiqUniqueJobs
 
           attr_reader :item, :worker_class, :redis_pool, :queue, :log_duplicate_payload
 
-          # rubocop:disable MethodLength
-          def unique_for_connection?
-            unique = false
+          def stored_in_redis?
             connection do |conn|
-              conn.watch(payload_hash)
-
-              if conn.get(payload_hash).to_i == 1 ||
-                 (conn.get(payload_hash).to_i == 2 && item['at'])
-                # if the job is already queued, or is already scheduled and
-                # we're trying to schedule again, abort
-                conn.unwatch
-              else
-                # if the job was previously scheduled and is now being queued,
-                # or we've never seen it before
-                expires_at = unique_job_expiration || SidekiqUniqueJobs.config.default_expiration
-                expires_at = ((Time.at(item['at']) - Time.now.utc) + expires_at).to_i if item['at']
-
-                unique = conn.multi do
-                  # set value of 2 for scheduled jobs, 1 for queued jobs.
-                  conn.setex(payload_hash, expires_at, item['at'] ? 2 : 1)
-                end
-              end
+              return conn.set(payload_hash, item['at'] ? 2 : 1, nx: true, ex: expires_at)
             end
-            unique
           end
-          # rubocop:enable MethodLength
+
+          def expires_at
+            # if the job was previously scheduled and is now being queued,
+            # or we've never seen it before
+            ex = unique_job_expiration || SidekiqUniqueJobs.config.default_expiration
+            ex = ((Time.at(item['at']) - Time.now.utc) + ex).to_i if item['at']
+            ex
+          end
 
           def connection(&block)
             SidekiqUniqueJobs::Connectors.connection(redis_pool, &block)

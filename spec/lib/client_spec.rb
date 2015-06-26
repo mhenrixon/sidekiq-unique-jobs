@@ -57,7 +57,7 @@ describe 'Client' do
 
     it 'enqueues previously scheduled job' do
       QueueWorker.sidekiq_options unique: true
-      QueueWorker.perform_in(60 * 60, 1, 2)
+      QueueWorker.perform_in(60 * 60, [1, 2])
 
       # time passes and the job is pulled off the schedule:
       Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue', 'args' => [1, 2])

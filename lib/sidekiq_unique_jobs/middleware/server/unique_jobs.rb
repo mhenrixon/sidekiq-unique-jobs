@@ -8,21 +8,17 @@ module SidekiqUniqueJobs
         attr_reader :unlock_order, :redis_pool
 
         def call(worker, item, _queue, redis_pool = nil)
-          shutdown = false
+          operative = true
           @redis_pool = redis_pool
-
           decide_unlock_order(worker.class)
           lock_key = payload_hash(item)
           unlock(lock_key) if before_yield?
-
           yield
         rescue Sidekiq::Shutdown
-          shutdown = true
+          operative = false
           raise
         ensure
-          if !shutdown && (after_yield? || !defined? unlocked || unlocked != 1)
-            unlock(lock_key)
-          end
+          unlock(lock_key) if after_yield? && operative
         end
 
         def decide_unlock_order(klass)
