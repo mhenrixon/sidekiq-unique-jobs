@@ -22,6 +22,7 @@ module SidekiqUniqueJobs
         ensure
           if !shutdown && (after_yield? || !defined? unlocked || unlocked != 1)
             unlock(lock_key)
+            after_unlock_hook(worker)
           end
         end
 
@@ -58,6 +59,12 @@ module SidekiqUniqueJobs
 
         def unlock(payload_hash)
           connection { |c| c.del(payload_hash) }
+        end
+
+        def after_unlock_hook(worker)
+          if worker.respond_to?(:after_unlock)
+            worker.after_unlock
+          end
         end
 
         def logger

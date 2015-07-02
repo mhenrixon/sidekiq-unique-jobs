@@ -78,8 +78,8 @@ module SidekiqUniqueJobs
         end
 
         describe '#call' do
+          let(:uj) { SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new }
           context 'unlock' do
-            let(:uj) { SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new }
             let(:items) { [AfterYieldWorker.new, { 'class' => 'testClass' }, 'test'] }
 
             it 'should unlock after yield when call succeeds' do
@@ -98,6 +98,16 @@ module SidekiqUniqueJobs
               expect(uj).to_not receive(:unlock)
 
               expect { uj.call(*items) { fail Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
+            end
+          end
+
+          context "after unlock" do
+            let(:items) { [AfterUnlockWorker.new, { 'class' => 'testClass' }, 'test'] }
+            it 'should call the after_unlock hook if defined' do
+              expect(uj).to receive(:unlock)
+              expect_any_instance_of(AfterUnlockWorker).to receive(:after_unlock)
+
+              uj.call(*items) { true }
             end
           end
         end
