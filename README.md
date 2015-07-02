@@ -109,6 +109,17 @@ class UniqueJobWithFilterMethod
 end
 ```
 
+### Unique Storage Method
+
+Starting from sidekiq-unique-jobs 3.0.14 we will use the `set` method in a way that has been available since redis 2.6.12. If you are on an older redis version you will have to change a config value like below.
+
+```ruby
+SidekiqUniqueJobs.config.unique_storage_method = :old
+```
+
+That should allow you to keep using redis in the old fashion way. See #89 for mor information.
+
+
 ### Logging
 
 To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options.  The default value is false

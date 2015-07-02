@@ -21,8 +21,10 @@ module SidekiqUniqueJobs
           end
 
           it 'returns true when unique_unlock_order has been set' do
-            UniqueWorker.sidekiq_options unique_unlock_order: :before_yield
-            expect(subject.unlock_order_configured?(UniqueWorker))
+            test_worker_class = UniqueWorker.dup
+            test_worker_class.sidekiq_options unique_unlock_order: :before_yield
+
+            expect(subject.unlock_order_configured?(test_worker_class))
               .to eq(true)
           end
         end
@@ -30,9 +32,11 @@ module SidekiqUniqueJobs
         describe '#decide_unlock_order' do
           context 'when worker has specified unique_unlock_order' do
             it 'changes unlock_order to the configured value' do
-              UniqueWorker.sidekiq_options unique_unlock_order: :before_yield
+              test_worker_class = UniqueWorker.dup
+              test_worker_class.sidekiq_options unique_unlock_order: :before_yield
+
               expect do
-                subject.decide_unlock_order(UniqueWorker)
+                subject.decide_unlock_order(test_worker_class)
               end.to change { subject.unlock_order }.to :before_yield
             end
           end
@@ -40,6 +44,7 @@ module SidekiqUniqueJobs
           context "when worker hasn't specified unique_unlock_order" do
             it 'falls back to configured default_unlock_order' do
               SidekiqUniqueJobs.config.default_unlock_order = :before_yield
+
               expect do
                 subject.decide_unlock_order(UniqueWorker)
               end.to change { subject.unlock_order }.to :before_yield

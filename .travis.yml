@@ -8,11 +8,12 @@ rvm:
   - 2.1.2
   - 2.2.2
 gemfile:
+  - gemfiles/sidekiq_develop.gemfile
+  - gemfiles/sidekiq_2.17.gemfile
   - gemfiles/sidekiq_3.0.gemfile
   - gemfiles/sidekiq_3.1.gemfile
   - gemfiles/sidekiq_3.2.gemfile
   - gemfiles/sidekiq_3.3.gemfile
-  - gemfiles/sidekiq_develop.gemfile
 branches:
   only:
     - master

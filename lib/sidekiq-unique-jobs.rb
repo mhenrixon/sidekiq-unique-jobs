@@ -16,7 +16,8 @@ module SidekiqUniqueJobs
       unique_prefix: 'sidekiq_unique',
       unique_args_enabled: false,
       default_expiration: 30 * 60,
-      default_unlock_order: :after_yield
+      default_unlock_order: :after_yield,
+      unique_storage_method: :new
     )
   end
 
