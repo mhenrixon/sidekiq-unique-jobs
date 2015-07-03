@@ -109,6 +109,23 @@ class UniqueJobWithFilterMethod
 end
 ```
 
+### After Unlock Callback
+
+If you are using :after_yield as your unlock ordering, Unique Job offers a callback to perform some work after the block is yielded.
+
+```ruby
+class UniqueJobWithFilterMethod
+  include Sidekiq::Worker
+  sidekiq_options unique: true,
+
+  def after_unlock
+   # block has yielded and lock is released
+  end
+  ...
+end.
+
+```
+
 ### Unique Storage Method
 
 Starting from sidekiq-unique-jobs 3.0.14 we will use the `set` method in a way that has been available since redis 2.6.12. If you are on an older redis version you will have to change a config value like below.
