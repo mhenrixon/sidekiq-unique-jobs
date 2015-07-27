@@ -1,3 +1,5 @@
+require 'sidekiq_unique_jobs/lib'
+
 begin
   require 'mock_redis'
 rescue LoadError

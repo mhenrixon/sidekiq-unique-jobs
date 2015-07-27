@@ -66,7 +66,7 @@ module SidekiqUniqueJobs
               else
                 unique = conn.multi do
                   # set value of 2 for scheduled jobs, 1 for queued jobs.
-                  conn.setex(payload_hash, expires_at, item['at'] ? 2 : 1)
+                  conn.setex(payload_hash, expires_at, item['jid'])
                 end
               end
             end
@@ -75,7 +75,7 @@ module SidekiqUniqueJobs
 
           def new_unique_for?
             connection do |conn|
-              return conn.set(payload_hash, item['at'] ? 2 : 1, nx: true, ex: expires_at)
+              return conn.set(payload_hash, item['jid'], nx: true, ex: expires_at)
             end
           end
 

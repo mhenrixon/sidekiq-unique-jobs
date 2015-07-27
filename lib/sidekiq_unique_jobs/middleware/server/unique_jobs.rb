@@ -1,10 +1,12 @@
 require 'digest'
 require 'sidekiq_unique_jobs/connectors'
+require 'sidekiq_unique_jobs/lib'
 
 module SidekiqUniqueJobs
   module Middleware
     module Server
       class UniqueJobs
+        include SidekiqUniqueServerLib
         attr_reader :unlock_order, :redis_pool
 
         def call(worker, item, _queue, redis_pool = nil)
@@ -12,13 +14,13 @@ module SidekiqUniqueJobs
           @redis_pool = redis_pool
           decide_unlock_order(worker.class)
           lock_key = payload_hash(item)
-          unlock(lock_key) if before_yield?
+          unlock(lock_key, item) if before_yield?
           yield
         rescue Sidekiq::Shutdown
           operative = false
           raise
         ensure
-          unlock(lock_key) if after_yield? && operative
+          unlock(lock_key, item) if after_yield? && operative
         end
 
         def decide_unlock_order(klass)
@@ -48,12 +50,12 @@ module SidekiqUniqueJobs
 
         protected
 
-        def payload_hash(item)
-          SidekiqUniqueJobs::PayloadHelper.get_payload(item['class'], item['queue'], item['args'])
+        def unlock(lock_key, item)
+          connection {|c| c.eval(remove_if_matches, :keys => [lock_key], :argv => [item['jid']]) }
         end
 
-        def unlock(payload_hash)
-          connection { |c| c.del(payload_hash) }
+        def payload_hash(item)
+          SidekiqUniqueJobs::PayloadHelper.get_payload(item['class'], item['queue'], item['args'])
         end
 
         def logger

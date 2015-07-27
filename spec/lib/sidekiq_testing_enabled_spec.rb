@@ -8,6 +8,8 @@ require 'active_support/testing/time_helpers'
 require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
+  SidekiqUniqueJobs::Middleware::Server::UniqueJobs.prepend(SidekiqUniqueServerMockLib)
+
   describe 'when set to :fake!', sidekiq: :fake do
     before do
       Sidekiq.redis = REDIS

@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'sidekiq/api'
 require 'sidekiq/worker'
 require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
+require 'sidekiq_unique_jobs/lib'
 
 describe 'Unlock order' do
   QUEUE = 'unlock_ordering'
@@ -31,6 +32,23 @@ describe 'Unlock order' do
       @middleware = SidekiqUniqueJobs::Middleware::Server::UniqueJobs.new
     end
 
+    describe "#unlock" do
+      it 'does not unlock mutexes it does not own' do
+        jid = AfterYieldOrderingWorker.perform_async
+        item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
+        Sidekiq.redis do |c|
+          c.set(SidekiqUniqueJobs::PayloadHelper.get_payload(item['class'], item['queue'], item['args']), "NOT_DELETED")
+        end
+
+        result = @middleware.call(AfterYieldOrderingWorker.new, item, QUEUE) do
+          Sidekiq.redis do |c|
+            c.get(SidekiqUniqueJobs::PayloadHelper.get_payload(item['class'], item['queue'], item['args']))
+          end
+        end
+        expect(result).to eq "NOT_DELETED"
+      end
+    end
+
     describe ':before_yield' do
       it 'removes the lock before yielding to the worker' do
         jid = BeforeYieldOrderingWorker.perform_async
@@ -57,7 +75,7 @@ describe 'Unlock order' do
           end
         end
 
-        expect(result).to eq '1'
+        expect(result).to eq jid
       end
     end
   end

@@ -14,6 +14,16 @@ class JustAWorker
   end
 end
 
+class Sidekiq::Job
+  def _sidekiq_redis
+    Sidekiq.redis do |con|
+      yield con
+    end
+  end
+  include SidekiqUniqueServerMockLib
+  alias_method :connection, :_sidekiq_redis
+end
+
 describe Sidekiq::Job::UniqueExtension do
   before do
     Sidekiq.redis = REDIS
