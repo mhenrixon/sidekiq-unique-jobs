@@ -18,7 +18,7 @@ module Sidekiq
 
         def execute_job_ext(worker, args)
           execute_job_orig(worker, args)
-          payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload(
+          payload_hash = SidekiqUniqueJobs.get_payload(
             worker.class.name,
             get_sidekiq_options['queue'],
             args

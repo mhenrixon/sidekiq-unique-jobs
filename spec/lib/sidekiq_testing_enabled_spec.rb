@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
-require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 require 'active_support/core_ext/time'
 require 'active_support/testing/time_helpers'
+require 'sidekiq_unique_jobs/server/mock_lib'
 require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
-  SidekiqUniqueJobs::Middleware::Server::UniqueJobs.prepend(SidekiqUniqueServerMockLib)
+  SidekiqUniqueJobs::Server::Middleware.prepend(SidekiqUniqueJobs::Server::MockLib)
 
   describe 'when set to :fake!', sidekiq: :fake do
     before do
@@ -113,7 +113,7 @@ describe 'When Sidekiq::Testing is enabled' do
 
       it 'adds the unique_hash to the message' do
         param = 'hash'
-        hash = SidekiqUniqueJobs::PayloadHelper.get_payload(UniqueWorker, :working, [param])
+        hash = SidekiqUniqueJobs.get_payload(UniqueWorker, :working, [param])
         expect(UniqueWorker.perform_async(param)).to_not be_nil
         expect(UniqueWorker.jobs.size).to eq(1)
         expect(UniqueWorker.jobs.first['unique_hash']).to eq(hash)
