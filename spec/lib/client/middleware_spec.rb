@@ -3,9 +3,8 @@ require 'celluloid'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
-require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 
-describe 'Client' do
+describe SidekiqUniqueJobs::Client::Middleware do
   describe 'with real redis' do
     before do
       Sidekiq.redis = REDIS
@@ -71,7 +70,7 @@ describe 'Client' do
       QueueWorker.sidekiq_options unique: true, unique_job_expiration: one_hour_expiration
       Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2])
 
-      payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload('QueueWorker', 'customqueue', [1, 2])
+      payload_hash = SidekiqUniqueJobs.get_payload('QueueWorker', 'customqueue', [1, 2])
       actual_expires_at = Sidekiq.redis { |c| c.ttl(payload_hash) }
 
       Sidekiq.redis { |c| c.llen('queue:customqueue') }
@@ -162,7 +161,7 @@ describe 'Client' do
       expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
 
       QueueWorker.perform_in(at, 'mike')
-      payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload('QueueWorker', 'customqueue', ['mike'])
+      payload_hash = SidekiqUniqueJobs.get_payload('QueueWorker', 'customqueue', ['mike'])
 
       # deconstruct this into a time format we can use to get a decent delta for
       actual_expires_at = Sidekiq.redis { |c| c.ttl(payload_hash) }

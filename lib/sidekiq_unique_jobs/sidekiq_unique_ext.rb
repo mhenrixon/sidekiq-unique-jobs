@@ -1,8 +1,10 @@
 require 'sidekiq/api'
+require 'sidekiq_unique_jobs/server/extensions'
 
 module Sidekiq
   class Job
     module UniqueExtension
+      include SidekiqUniqueJobs::Server::Extensions
       def self.included(base)
         base.class_eval do
           alias_method :delete_orig, :delete
@@ -11,18 +13,20 @@ module Sidekiq
       end
 
       def delete_ext
-        unlock(payload_hash(item))
+        unlock(payload_hash(item), item)
         delete_orig
       end
 
       protected
 
       def payload_hash(item)
-        SidekiqUniqueJobs::PayloadHelper.get_payload(item['class'], item['queue'], item['args'])
+        SidekiqUniqueJobs.get_payload(item['class'], item['queue'], item['args'])
       end
 
-      def unlock(payload_hash)
-        Sidekiq.redis { |conn| conn.del(payload_hash) }
+      def unlock(lock_key, item)
+        Sidekiq.redis do |con|
+          con.eval(remove_if_matches, keys: [lock_key], argv: [item['jid']])
+        end
       end
     end
     include UniqueExtension
