@@ -64,8 +64,13 @@ module SidekiqUniqueJobs
               conn.unwatch
             else
               unique = conn.multi do
-                # set value of 2 for scheduled jobs, 1 for queued jobs.
-                conn.setex(payload_hash, expires_at, item['jid'])
+                if expires_at > 0
+                  # set value of 2 for scheduled jobs, 1 for queued jobs.
+                  conn.setex(payload_hash, expires_at, item['jid'])
+                else
+                  # Here we are executing a command to ensure another thread has not set a future ex
+                  conn.del(payload_hash)
+                end
               end
             end
           end
