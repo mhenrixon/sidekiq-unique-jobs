@@ -7,7 +7,7 @@ require 'active_support/testing/time_helpers'
 require 'sidekiq_unique_jobs/server/mock_lib'
 require 'rspec-sidekiq'
 
-describe 'When Sidekiq::Testing is enabled' do
+describe 'When Sidekiq::Testing is enabled', ruby_ver: '2.1'  do
   SidekiqUniqueJobs::Server::Middleware.prepend(SidekiqUniqueJobs::Server::MockLib)
 
   describe 'when set to :fake!', sidekiq: :fake do
