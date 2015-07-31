@@ -53,29 +53,26 @@ module SidekiqUniqueJobs
           SidekiqUniqueJobs.config.unique_storage_method
         end
 
+        # rubocop:disable MethodLength
         def old_unique_for?
-          unique = nil
           connection do |conn|
             conn.watch(payload_hash)
             pid = conn.get(payload_hash).to_i
             if pid == 1 || (pid == 2 && item['at'])
-              # if the job is already queued, or is already scheduled and
-              # we're trying to schedule again, abort
               conn.unwatch
+              nil
             else
-              unique = conn.multi do
+              conn.multi do
                 if expires_at > 0
-                  # set value of 2 for scheduled jobs, 1 for queued jobs.
                   conn.setex(payload_hash, expires_at, item['jid'])
                 else
-                  # Here we are executing a command to ensure another thread has not set a future ex
                   conn.del(payload_hash)
                 end
               end
             end
           end
-          unique
         end
+        # rubocop:enable MethodLength
 
         def new_unique_for?
           connection do |conn|
