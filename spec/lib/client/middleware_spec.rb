@@ -14,13 +14,28 @@ describe SidekiqUniqueJobs::Client::Middleware do
 
     class QueueWorker
       include Sidekiq::Worker
-      sidekiq_options queue: 'customqueue'
-      def perform(_x)
+      sidekiq_options queue: :customqueue
+      def perform(_)
       end
     end
 
     class PlainClass
       def run(_x)
+      end
+    end
+
+    class MyUniqueWorker
+      include Sidekiq::Worker
+      sidekiq_options queue: :customqueue, retry: true, unique: true,
+                      unique_job_expiration: 7200, retry_count: 10
+      def perform(_)
+      end
+    end
+
+    describe 'when a job is already scheduled' do
+      before { MyUniqueWorker.perform_in(3600, 1) }
+      it 'rejects new jobs with the same argument' do
+        expect(MyUniqueWorker.perform_async(1)).to eq(nil)
       end
     end
 
