@@ -84,7 +84,7 @@ module SidekiqUniqueJobs
       describe '#call' do
         context 'unlock' do
           let(:uj) { SidekiqUniqueJobs::Server::Middleware.new }
-          let(:items) { [AfterYieldWorker.new, { 'class' => 'testClass' }, 'test'] }
+          let(:items) { [AfterYieldWorker.new, { 'class' => 'testClass' }, 'fudge'] }
 
           it 'should unlock after yield when call succeeds' do
             expect(uj).to receive(:unlock)

@@ -15,7 +15,8 @@ module SidekiqUniqueJobs
       unique_args_enabled: false,
       default_expiration: 30 * 60,
       default_unlock_order: :after_yield,
-      unique_storage_method: :new
+      unique_storage_method: :new,
+      redis_test_mode: :redis # :mock
     )
   end
 

@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'sidekiq/api'
 require 'sidekiq/worker'
 require 'sidekiq_unique_jobs/server/middleware'
-require 'sidekiq_unique_jobs/server/mock_lib'
 require 'sidekiq_unique_jobs/client/middleware'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
@@ -14,18 +13,6 @@ class JustAWorker
   def perform
   end
 end
-
-# rubocop:disable ClassAndModuleChildren
-class Sidekiq::Job
-  def _sidekiq_redis
-    Sidekiq.redis do |con|
-      yield con
-    end
-  end
-  include SidekiqUniqueJobs::Server::MockLib
-  alias_method :connection, :_sidekiq_redis
-end
-# rubocop:enable ClassAndModuleChildren
 
 describe Sidekiq::Job::UniqueExtension do
   before do
