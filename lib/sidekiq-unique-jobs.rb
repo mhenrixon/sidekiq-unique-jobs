@@ -16,7 +16,12 @@ module SidekiqUniqueJobs
       default_expiration: 30 * 60,
       default_unlock_order: :after_yield,
       unique_storage_method: :new,
-      redis_test_mode: :redis # :mock
+      redis_test_mode: :redis, # :mock
+      default_run_lock: false,
+      default_run_lock_retry_interval: 0,
+      default_run_lock_retries: 0,
+      default_reschedule_on_lock_fail: false,
+      default_run_lock_expire: 60
     )
   end
 
