@@ -19,6 +19,7 @@ module SidekiqUniqueJobs
         send("#{unlock_order}_call", item, &blk)
       end
 
+      # rubocop:disable MethodLength
       def run_lock_call(item)
         lock_key = payload_hash(item)
         run_lock = try_acquire_run_lock(lock_key, item)
@@ -29,14 +30,13 @@ module SidekiqUniqueJobs
           if reschedule_on_lock_fail
             reschedule(item)
           else # Not sure if we want to raise?
-            raise SidekiqUniqueJobs::RunLockFailedError
+            fail SidekiqUniqueJobs::RunLockFailedError
           end
         end
       ensure
-        if run_lock
-          unlock_run(lock_key, item)
-        end
+        unlock_run(lock_key, item) if run_lock
       end
+      # rubocop:enable MethodLength
 
       def before_yield_call(item)
         unlock(payload_hash(item), item)
@@ -66,7 +66,11 @@ module SidekiqUniqueJobs
       end
 
       def unlock_order
-        options['unique_unlock_order'] || SidekiqUniqueJobs.config.default_unlock_order
+        if !options[:unique]
+          :never
+        else
+          options['unique_unlock_order'] || SidekiqUniqueJobs.config.default_unlock_order
+        end
       end
 
       def reschedule_on_lock_fail
@@ -115,6 +119,7 @@ module SidekiqUniqueJobs
         Sidekiq::Client.new(redis_pool).raw_push([item])
       end
 
+      # rubocop:disable HandleExceptions
       def try_acquire_run_lock(lock_key, item)
         status = begin
           (run_lock_retries + 1).times do
@@ -129,6 +134,7 @@ module SidekiqUniqueJobs
           # Don't say I didn't warn you about spinlocks
         end
       end
+      # rubocop:enable HandleExceptions
     end
   end
 end

@@ -91,20 +91,20 @@ describe 'Unlock order' do
         jid = RunLockOrderingWorker.perform_async
         item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
         Sidekiq.redis do |c|
-          c.set("#{get_payload(item)}:run", "LOCKED_OUT")
+          c.set("#{get_payload(item)}:run", 'LOCKED_OUT')
         end
-        expect {
+        expect do
           @middleware.call(RunLockOrderingWorker.new, item, QUEUE) do
             true
           end
-        }.to raise_error SidekiqUniqueJobs::RunLockFailedError
+        end.to raise_error SidekiqUniqueJobs::RunLockFailedError
       end
 
       it 'should spin_lock is run_lock_retries are set' do
         jid = RunLockSpinningWorker.perform_async
         item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
         Sidekiq.redis do |c|
-          c.set("#{get_payload(item)}:run", "LOCKED_OUT")
+          c.set("#{get_payload(item)}:run", 'LOCKED_OUT')
         end
         expect(Sidekiq).to receive(:redis).exactly(11).times.and_call_original
         @middleware.call(RunLockSpinningWorker.new, item, QUEUE) do
@@ -116,7 +116,7 @@ describe 'Unlock order' do
         jid = RunLockSpinningWorker.perform_async
         item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
         Sidekiq.redis do |c|
-          c.set("#{get_payload(item)}:run", "LOCKED_OUT")
+          c.set("#{get_payload(item)}:run", 'LOCKED_OUT')
         end
         expect_any_instance_of(Sidekiq::Client).to receive(:raw_push).with([item])
         @middleware.call(RunLockSpinningWorker.new, item, QUEUE) do

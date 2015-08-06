@@ -4,15 +4,22 @@ require 'sidekiq/cli'
 module SidekiqUniqueJobs
   module Server
     describe Middleware do
-      describe '#unlock_order_configured?' do
+      describe '#options' do
         context "when class isn't a Sidekiq::Worker" do
           it 'class defaults are not set' do
             expect(subject.setup_options(Class)).to eq(nil)
           end
         end
+
+        context 'when class is a Sidekiq::Worker' do
+          it 'setup_options sets defaults' do
+            subject.setup_options(UniqueWorker)
+            expect(subject.options).to eq(UniqueWorker.get_sidekiq_options)
+          end
+        end
       end
 
-      describe '#decide_unlock_order' do
+      describe '#unlock_order' do
         context 'when worker has specified unique_unlock_order' do
           it 'changes unlock_order to the configured value' do
             test_worker_class = UniqueWorker.dup
@@ -30,12 +37,12 @@ module SidekiqUniqueJobs
             expect(subject.unlock_order).to eq :before_yield
           end
         end
-      end
 
-      describe 'on :after_yield' do
-        it '#after_yield_call is called' do
-          allow(subject).to receive(:unlock_order).and_return(:after_yield)
-          #expect(subject.call).to call(:after_yield_call)
+        context 'when :unique is not used' do
+          it 'unlock_order is :never' do
+            subject.setup_options(RegularWorker)
+            expect(subject.unlock_order).to eq(:never)
+          end
         end
       end
 
