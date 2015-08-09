@@ -1,9 +1,12 @@
-require 'sidekiq_unique_jobs/server/middleware'
 require 'sidekiq_unique_jobs/connectors'
+require 'sidekiq_unique_jobs/client/extensions'
+require 'sidekiq_unique_jobs/server/middleware'
 
 module SidekiqUniqueJobs
   module Client
     class Middleware
+      include Extensions
+
       def call(worker_class, item, queue, redis_pool = nil)
         @worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
         @item = item
@@ -44,14 +47,14 @@ module SidekiqUniqueJobs
       def old_unique_for?
         connection do |conn|
           conn.watch(payload_hash)
-          pid = conn.get(payload_hash).to_i
-          if pid == 1 || (pid == 2 && item['at'])
+          pid = conn.get(payload_hash)
+          if pid && (pid != 'scheduled' || item['at'])
             conn.unwatch
             nil
           else
             conn.multi do
               if expires_at > 0
-                conn.setex(payload_hash, expires_at, item['jid'])
+                conn.setex(payload_hash, expires_at, item['at'] ? 'scheduled' : item['jid'])
               else
                 conn.del(payload_hash)
               end
@@ -62,8 +65,18 @@ module SidekiqUniqueJobs
       # rubocop:enable MethodLength
 
       def new_unique_for?
+        item['at'] ? unique_for_schedule : unique_for_queue
+      end
+
+      def unique_for_schedule
         connection do |conn|
-          return conn.set(payload_hash, item['jid'], nx: true, ex: expires_at)
+          conn.set(payload_hash, 'scheduled', nx: true, ex: expires_at)
+        end
+      end
+
+      def unique_for_queue
+        connection do |conn|
+          conn.eval(lock_queue_script, keys: [payload_hash], argv: [expires_at, item['jid']])
         end
       end
 
