@@ -1,6 +1,5 @@
 require 'sidekiq_unique_jobs/connectors'
 require 'sidekiq_unique_jobs/client/extensions'
-require 'sidekiq_unique_jobs/server/middleware'
 
 module SidekiqUniqueJobs
   module Client
