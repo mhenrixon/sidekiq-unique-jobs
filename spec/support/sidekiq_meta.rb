@@ -1,5 +1,6 @@
 RSpec.configure do |config|
   config.before(:each) do |example|
+    Sidekiq::Worker.clear_all
     if (sidekiq = example.metadata[:sidekiq])
       sidekiq = :fake if sidekiq == true
       Sidekiq::Testing.send("#{sidekiq}!")

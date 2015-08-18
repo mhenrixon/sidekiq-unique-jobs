@@ -2,10 +2,8 @@ require 'spec_helper'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
-require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 require 'active_support/core_ext/time'
 require 'active_support/testing/time_helpers'
-require 'rspec-sidekiq'
 
 describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
@@ -111,7 +109,7 @@ describe 'When Sidekiq::Testing is enabled' do
 
       it 'adds the unique_hash to the message' do
         param = 'hash'
-        hash = SidekiqUniqueJobs::PayloadHelper.get_payload(UniqueWorker, :working, [param])
+        hash = SidekiqUniqueJobs.get_payload(UniqueWorker, :working, [param])
         expect(UniqueWorker.perform_async(param)).to_not be_nil
         expect(UniqueWorker.jobs.size).to eq(1)
         expect(UniqueWorker.jobs.first['unique_hash']).to eq(hash)
@@ -150,15 +148,6 @@ describe 'When Sidekiq::Testing is enabled' do
       end
     end
 
-    class InlineUnlockOrderWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true, unique_unlock_order: :never
-
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
     class InlineExpirationWorker
       include Sidekiq::Worker
       sidekiq_options unique: true, unique_unlock_order: :never,
@@ -169,44 +158,48 @@ describe 'When Sidekiq::Testing is enabled' do
     end
 
     class TestClass
-      def self.run(_x)
+      def self.run(_)
       end
     end
 
     it 'once the job is completed allows to run another one' do
-      expect(TestClass).to receive(:run).exactly(2).times
-
+      expect(TestClass).to receive(:run).with('test')
       InlineWorker.perform_async('test')
+      expect(TestClass).to receive(:run).with('test')
       InlineWorker.perform_async('test')
     end
 
     it 'if the unique is kept forever it does not allows to run the job again' do
-      expect(TestClass).to receive(:run).once
+      expect(TestClass).to receive(:run).with('args').once
 
-      InlineUnlockOrderWorker.perform_async('test')
-      InlineUnlockOrderWorker.perform_async('test')
+      InlineUnlockOrderWorker.perform_async('args')
+      InlineUnlockOrderWorker.perform_async('args')
     end
 
     describe 'when a job is set to run once in 10 minutes' do
       include ActiveSupport::Testing::TimeHelpers
-      it 'only allows 1 call per 10 minutes' do
-        allow(TestClass).to receive(:run).with(1).and_return(true)
-        allow(TestClass).to receive(:run).with(2).and_return(true)
 
-        InlineExpirationWorker.perform_async(1)
-        expect(TestClass).to have_received(:run).with(1).once
-        100.times do
-          InlineExpirationWorker.perform_async(1)
+      context 'when spammed' do
+        it 'only allows 1 call per 10 minutes' do
+          expect(TestClass).to receive(:run).with(1).once
+          100.times do
+            InlineExpirationWorker.perform_async(1)
+          end
         end
-        expect(TestClass).to have_received(:run).with(1).once
-        InlineExpirationWorker.perform_async(2)
-        expect(TestClass).to have_received(:run).with(1).once
-        expect(TestClass).to have_received(:run).with(2).once
-        travel_to(Time.now + (11 * 60)) do
-          InlineExpirationWorker.perform_async(1)
-        end
+      end
 
-        expect(TestClass).to have_received(:run).with(1).twice
+      context 'with different arguments' do
+        it 'only allows 1 call per 10 minutes' do
+          expect(TestClass).to receive(:run).with(9).once
+          2.times do
+            InlineExpirationWorker.perform_async(9)
+          end
+
+          expect(TestClass).to receive(:run).with(2).once
+          2.times do
+            InlineExpirationWorker.perform_async(2)
+          end
+        end
       end
     end
   end

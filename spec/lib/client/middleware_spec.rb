@@ -3,9 +3,8 @@ require 'celluloid'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
-require 'sidekiq_unique_jobs/middleware/server/unique_jobs'
 
-describe 'Client' do
+describe SidekiqUniqueJobs::Client::Middleware do
   describe 'with real redis' do
     before do
       Sidekiq.redis = REDIS
@@ -15,13 +14,28 @@ describe 'Client' do
 
     class QueueWorker
       include Sidekiq::Worker
-      sidekiq_options queue: 'customqueue'
-      def perform(_x)
+      sidekiq_options queue: :customqueue
+      def perform(_)
       end
     end
 
     class PlainClass
       def run(_x)
+      end
+    end
+
+    class MyUniqueWorker
+      include Sidekiq::Worker
+      sidekiq_options queue: :customqueue, retry: true, unique: true,
+                      unique_job_expiration: 7200, retry_count: 10
+      def perform(_)
+      end
+    end
+
+    describe 'when a job is already scheduled' do
+      before { MyUniqueWorker.perform_in(3600, 1) }
+      it 'rejects new jobs with the same argument' do
+        expect(MyUniqueWorker.perform_async(1)).to eq(nil)
       end
     end
 
@@ -57,7 +71,7 @@ describe 'Client' do
 
     it 'enqueues previously scheduled job' do
       QueueWorker.sidekiq_options unique: true
-      QueueWorker.perform_in(60 * 60, 1, 2)
+      QueueWorker.perform_in(60 * 60, [1, 2])
 
       # time passes and the job is pulled off the schedule:
       Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue', 'args' => [1, 2])
@@ -71,7 +85,7 @@ describe 'Client' do
       QueueWorker.sidekiq_options unique: true, unique_job_expiration: one_hour_expiration
       Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue',  'args' => [1, 2])
 
-      payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload('QueueWorker', 'customqueue', [1, 2])
+      payload_hash = SidekiqUniqueJobs.get_payload('QueueWorker', 'customqueue', [1, 2])
       actual_expires_at = Sidekiq.redis { |c| c.ttl(payload_hash) }
 
       Sidekiq.redis { |c| c.llen('queue:customqueue') }
@@ -162,7 +176,7 @@ describe 'Client' do
       expected_expires_at = (Time.at(at) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
 
       QueueWorker.perform_in(at, 'mike')
-      payload_hash = SidekiqUniqueJobs::PayloadHelper.get_payload('QueueWorker', 'customqueue', ['mike'])
+      payload_hash = SidekiqUniqueJobs.get_payload('QueueWorker', 'customqueue', ['mike'])
 
       # deconstruct this into a time format we can use to get a decent delta for
       actual_expires_at = Sidekiq.redis { |c| c.ttl(payload_hash) }

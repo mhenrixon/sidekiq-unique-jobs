@@ -4,7 +4,9 @@ module SidekiqUniqueJobs
       :unique_prefix,
       :unique_args_enabled,
       :default_expiration,
-      :default_unlock_order
+      :default_unlock_order,
+      :unique_storage_method,
+      :redis_mode
     ]
 
     class << self
@@ -31,12 +33,11 @@ module SidekiqUniqueJobs
     end
 
     def inline_testing_enabled?
-      if testing_enabled? && Sidekiq::Testing.inline?
-        require 'sidekiq_unique_jobs/inline_testing'
-        return true
-      end
+      testing_enabled? && Sidekiq::Testing.inline?
+    end
 
-      false
+    def mocking?
+      inline_testing_enabled? && redis_test_mode.to_sym == :mock
     end
 
     def testing_enabled?
