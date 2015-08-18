@@ -63,7 +63,7 @@ module SidekiqUniqueJobs
 
       def new_unique_for?
         connection do |conn|
-          return conn.set(payload_hash, item['jid'], nx: true, ex: expires_at)
+          return conn.set(payload_hash, item['jid'], nx: true, ex: expires_at) || conn.get(payload_hash) == item['jid']
         end
       end
 
