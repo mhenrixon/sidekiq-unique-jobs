@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
         operative = false
         raise
       ensure
-        after_yield_hook(worker, item, lock_key) if after_yield? && operative
+        after_yield(worker, item, lock_key) if after_yield? && operative
       end
 
       def decide_unlock_order(klass)
@@ -50,7 +50,7 @@ module SidekiqUniqueJobs
 
       protected
 
-      def after_yield_hook(worker, item, lock_key)
+      def after_yield(worker, item, lock_key)
         after_unlock_hook(worker)
         unlock(lock_key, item)
       end
