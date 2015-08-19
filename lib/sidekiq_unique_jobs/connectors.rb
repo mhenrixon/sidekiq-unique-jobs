@@ -1,16 +1,12 @@
-require 'sidekiq_unique_jobs/connectors/testing'
-require 'sidekiq_unique_jobs/connectors/redis_pool'
-require 'sidekiq_unique_jobs/connectors/sidekiq_redis'
-
 module SidekiqUniqueJobs
   module Connectors
-    CONNECTOR_TYPES = [Testing, RedisPool, SidekiqRedis]
-
     def self.connection(redis_pool = nil, &block)
-      CONNECTOR_TYPES.each do |connector|
-        had_connection = connector.connection(redis_pool, &block)
-        break if had_connection
-      end
+      return mock_redis if SidekiqUniqueJobs.config.mocking?
+      redis_pool ? redis_pool.with(&block) : Sidekiq.redis(&block)
+    end
+
+    def self.mock_redis
+      @redis_mock ||= MockRedis.new
     end
   end
 end

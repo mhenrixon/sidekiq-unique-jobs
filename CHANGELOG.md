@@ -1,3 +1,9 @@
+## v3.0.15 - unreleased
+- Jobs only ever unlock themselves now (see #96 & #94 for info) thanks @pik
+- Slight refactoring and internal renaming. Shouldn't affect anyone
+- Run locks #99
+- Fixes #97, #98, #100, #101, 
+
 ## v3.0.14
 - Improve uniqueness check performance thanks @mpherham
 - Remove locks in sidekiq fake testing mode
