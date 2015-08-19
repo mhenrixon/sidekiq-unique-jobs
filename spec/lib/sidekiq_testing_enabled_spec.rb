@@ -162,10 +162,9 @@ describe 'When Sidekiq::Testing is enabled' do
       end
     end
 
-    it 'once the job is completed allows to run another one' do
+    it 'once the job is completed it unlocks so another one can be run' do
       expect(TestClass).to receive(:run).with('test')
-      InlineWorker.perform_async('test')
-      expect(TestClass).to receive(:run).with('test')
+      expect_any_instance_of(SidekiqUniqueJobs::Server::Middleware).to receive(:unlock).and_call_original
       InlineWorker.perform_async('test')
     end
 
