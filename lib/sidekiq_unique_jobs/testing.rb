@@ -1,4 +1,5 @@
 require 'sidekiq_unique_jobs/testing/sidekiq_overrides'
+require 'sidekiq_unique_jobs/server/middleware'
 
 module SidekiqUniqueJobs
   module Client

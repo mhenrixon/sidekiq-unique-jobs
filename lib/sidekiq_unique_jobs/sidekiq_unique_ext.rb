@@ -25,7 +25,11 @@ module Sidekiq
 
       def unlock(lock_key, item)
         Sidekiq.redis do |con|
-          con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
+          if @parent && @parent.name == 'schedule'.freeze
+            con.eval(remove_scheduled_on_match, keys: [lock_key], argv: [item['jid']])
+          else
+            con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
+          end
         end
       end
     end
