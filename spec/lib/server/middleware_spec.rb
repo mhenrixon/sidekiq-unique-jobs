@@ -105,7 +105,7 @@ module SidekiqUniqueJobs
           end
         end
 
-        context "after unlock" do
+        context 'after unlock' do
           let(:items) { [AfterUnlockWorker.new, { 'class' => 'testClass' }, 'test'] }
           it 'should call the after_unlock hook if defined' do
             expect(uj).to receive(:unlock)
