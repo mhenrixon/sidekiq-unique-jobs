@@ -8,7 +8,7 @@ module SidekiqUniqueJobs
       extend Forwardable
       def_delegators :SidekiqUniqueJobs, :connection, :payload_hash
       def_delegators :'SidekiqUniqueJobs.config', :default_unlock_order,
-                    :default_reschedule_on_lock_fail
+                     :default_reschedule_on_lock_fail
       def_delegators :Sidekiq, :logger
 
       include Extensions

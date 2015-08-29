@@ -8,4 +8,3 @@ platform :mri do
   gem 'let_it_go'
   gem 'memory-profiler'
 end
-

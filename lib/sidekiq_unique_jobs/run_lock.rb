@@ -35,6 +35,7 @@ module SidekiqUniqueJobs
 
     private
 
+    # rubocop:disable MethodLength
     def locked?
       got_lock = false
       if @redis.setnx @key, Time.now.to_i + 60
@@ -56,6 +57,7 @@ module SidekiqUniqueJobs
 
       got_lock
     end
+    # rubocop:enable MethodLength
 
     def run_lock_retries
       options['run_lock_retries'] || default_run_lock_retries.to_i
