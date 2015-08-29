@@ -4,7 +4,7 @@ require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
 
-describe SidekiqUniqueJobs::Client::Middleware do
+RSpec.describe SidekiqUniqueJobs::Client::Middleware do
   describe 'with real redis' do
     before do
       Sidekiq.redis = REDIS
@@ -33,9 +33,29 @@ describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
-      before { MyUniqueWorker.perform_in(3600, 1) }
-      it 'rejects new jobs with the same argument' do
-        expect(MyUniqueWorker.perform_async(1)).to eq(nil)
+      before 'schedule a job' do
+        MyUniqueWorker.perform_in(3600, 1)
+      end
+
+      context '#old_unique_for' do
+        it 'rejects new scheduled jobs with the same argument' do
+          allow(SidekiqUniqueJobs.config).to receive(:unique_storage_method).and_return(:old)
+          expect(MyUniqueWorker.perform_in(1800, 1)).to eq(nil)
+        end
+        it 'will run a job in real time with the same arguments' do
+          allow(SidekiqUniqueJobs.config).to receive(:unique_storage_method).and_return(:old)
+          expect(MyUniqueWorker.perform_async(1)).not_to eq(nil)
+        end
+      end
+      context '#new_unique_for' do
+        it 'rejects new scheduled jobs with the same argument' do
+          allow(SidekiqUniqueJobs.config).to receive(:unique_storage_method).and_return(:new)
+          expect(MyUniqueWorker.perform_in(3600, 1)).to eq(nil)
+        end
+        it 'will run a job in real time with the same arguments' do
+          allow(SidekiqUniqueJobs.config).to receive(:unique_storage_method).and_return(:new)
+          expect(MyUniqueWorker.perform_async(1)).not_to eq(nil)
+        end
       end
     end
 

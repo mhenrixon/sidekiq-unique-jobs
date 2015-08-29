@@ -1,119 +1,142 @@
 require 'spec_helper'
+require 'sidekiq/api'
 require 'sidekiq/cli'
+require 'sidekiq/worker'
+require 'sidekiq_unique_jobs/server/middleware'
 
-module SidekiqUniqueJobs
-  module Server
-    describe Middleware do
-      describe '#unlock_order_configured?' do
-        context "when class isn't a Sidekiq::Worker" do
-          it 'returns false' do
-            expect(subject.unlock_order_configured?(Class))
-              .to eq(false)
-          end
-        end
+RSpec.describe SidekiqUniqueJobs::Server::Middleware do
+  describe '#call' do
+    describe 'unlock order' do
+      QUEUE = 'unlock_ordering'.freeze unless defined?(QUEUE)
 
-        context 'when get_sidekiq_options[:unique_unlock_order] is nil' do
-          it 'returns false' do
-            expect(subject.unlock_order_configured?(MyWorker))
-              .to eq(false)
-          end
-        end
+      def get_payload(item)
+        SidekiqUniqueJobs.get_payload(
+          item['class'], item['queue'], item['args'])
+      end
 
-        it 'returns true when unique_unlock_order has been set' do
-          test_worker_class = UniqueWorker.dup
-          test_worker_class.sidekiq_options unique_unlock_order: :before_yield
+      class BeforeYieldOrderingWorker
+        include Sidekiq::Worker
 
-          expect(subject.unlock_order_configured?(test_worker_class))
-            .to eq(true)
+        sidekiq_options unique: true, unique_unlock_order: :before_yield, queue: QUEUE
+
+        def perform
         end
       end
 
-      describe '#decide_unlock_order' do
-        context 'when worker has specified unique_unlock_order' do
-          it 'changes unlock_order to the configured value' do
-            test_worker_class = UniqueWorker.dup
-            test_worker_class.sidekiq_options unique_unlock_order: :before_yield
+      class AfterYieldOrderingWorker
+        include Sidekiq::Worker
 
-            expect do
-              subject.decide_unlock_order(test_worker_class)
-            end.to change { subject.unlock_order }.to :before_yield
-          end
-        end
+        sidekiq_options unique: true, unique_unlock_order: :after_yield, queue: QUEUE
 
-        context "when worker hasn't specified unique_unlock_order" do
-          it 'falls back to configured default_unlock_order' do
-            SidekiqUniqueJobs.config.default_unlock_order = :before_yield
-
-            expect do
-              subject.decide_unlock_order(UniqueWorker)
-            end.to change { subject.unlock_order }.to :before_yield
-          end
+        def perform
         end
       end
 
-      describe '#before_yield?' do
-        it 'returns unlock_order == :before_yield' do
-          allow(subject).to receive(:unlock_order).and_return(:after_yield)
-          expect(subject.before_yield?).to eq(false)
+      class RunLockOrderingWorker
+        include Sidekiq::Worker
 
-          allow(subject).to receive(:unlock_order).and_return(:before_yield)
-          expect(subject.before_yield?).to eq(true)
+        sidekiq_options unique: true, unique_unlock_order: :run_lock, queue: QUEUE
+        def perform
         end
       end
 
-      describe '#after_yield?' do
-        it 'returns unlock_order == :before_yield' do
-          allow(subject).to receive(:unlock_order).and_return(:before_yield)
-          expect(subject.after_yield?).to eq(false)
+      class RunLockSpinningWorker
+        include Sidekiq::Worker
 
-          allow(subject).to receive(:unlock_order).and_return(:after_yield)
-          expect(subject.after_yield?).to eq(true)
+        sidekiq_options unique: true,
+                        unique_unlock_order: :run_lock,
+                        queue: QUEUE,
+                        run_lock_retries: 10,
+                        run_lock_retry_interval: 0,
+                        reschedule_on_lock_fail: true
+        def perform
         end
       end
 
-      describe '#default_unlock_order' do
-        it 'returns the default value from config' do
-          SidekiqUniqueJobs.config.default_unlock_order = :before_yield
-          expect(subject.default_unlock_order).to eq(:before_yield)
+      before do
+        Sidekiq.redis = REDIS
+        Sidekiq.redis(&:flushdb)
+      end
 
-          SidekiqUniqueJobs.config.default_unlock_order = :after_yield
-          expect(subject.default_unlock_order).to eq(:after_yield)
+      describe '#unlock' do
+        it 'does not unlock mutexes it does not own' do
+          jid = AfterYieldOrderingWorker.perform_async
+          item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
+          Sidekiq.redis do |c|
+            c.set(get_payload(item), 'NOT_DELETED')
+          end
+
+          result = subject.call(AfterYieldOrderingWorker.new, item, QUEUE) do
+            Sidekiq.redis do |c|
+              c.get(get_payload(item))
+            end
+          end
+          expect(result).to eq 'NOT_DELETED'
         end
       end
 
-      describe '#call' do
-        let(:uj) { SidekiqUniqueJobs::Server::Middleware.new }
-        context 'unlock' do
-          let(:items) { [AfterYieldWorker.new, { 'class' => 'testClass' }, 'fudge'] }
+      describe ':before_yield' do
+        it 'removes the lock before yielding to the worker' do
+          jid = BeforeYieldOrderingWorker.perform_async
+          item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
 
-          it 'should unlock after yield when call succeeds' do
-            expect(uj).to receive(:unlock)
-
-            uj.call(*items) { true }
+          result = subject.call(BeforeYieldOrderingWorker.new, item, QUEUE) do
+            Sidekiq.redis do |c|
+              c.get(get_payload(item))
+            end
           end
 
-          it 'should unlock after yield when call errors' do
-            expect(uj).to receive(:unlock)
-
-            expect { uj.call(*items) { fail } }.to raise_error(RuntimeError)
-          end
-
-          it 'should not unlock after yield on shutdown, but still raise error' do
-            expect(uj).to_not receive(:unlock)
-
-            expect { uj.call(*items) { fail Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
-          end
+          expect(result).to eq nil
         end
+      end
 
-        context 'after unlock' do
-          let(:items) { [AfterUnlockWorker.new, { 'class' => 'testClass' }, 'test'] }
-          it 'should call the after_unlock hook if defined' do
-            expect(uj).to receive(:unlock)
-            expect_any_instance_of(AfterUnlockWorker).to receive(:after_unlock)
+      describe ':after_yield' do
+        it 'removes the lock after yielding to the worker' do
+          jid = AfterYieldOrderingWorker.perform_async
+          item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
 
-            uj.call(*items) { true }
+          result = subject.call(AfterYieldOrderingWorker.new, item, QUEUE) do
+            Sidekiq.redis do |c|
+              c.get(get_payload(item))
+            end
           end
+
+          expect(result).to eq jid
         end
+      end
+    end
+
+    context 'unlock' do
+      let(:items) { [AfterYieldWorker.new, { 'class' => 'testClass' }, 'fudge'] }
+
+      it 'should unlock after yield when call succeeds' do
+        expect(subject).to receive(:unlock)
+
+        subject.call(*items) { true }
+      end
+
+      it 'should unlock after yield when call errors' do
+        expect(subject).to receive(:unlock)
+
+        expect { subject.call(*items) { fail } }.to raise_error(RuntimeError)
+      end
+
+      it 'should not unlock after yield on shutdown, but still raise error' do
+        expect(subject).to_not receive(:unlock)
+
+        expect { subject.call(*items) { fail Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
+      end
+    end
+
+    context 'after unlock' do
+      let(:worker) { AfterUnlockWorker.new }
+      let(:items) { [worker, { 'class' => 'testClass' }, 'test'] }
+      it 'should call the after_unlock hook if defined' do
+        expect(subject).to receive(:unlock).and_call_original
+        # expect(subject).to receive(:after_unlock_hook)
+        expect(worker).to receive(:after_unlock)
+
+        subject.call(*items) { true }
       end
     end
   end

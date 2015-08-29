@@ -5,7 +5,7 @@ require 'sidekiq/scheduled'
 require 'active_support/core_ext/time'
 require 'active_support/testing/time_helpers'
 
-describe 'When Sidekiq::Testing is enabled' do
+RSpec.describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
     before do
       Sidekiq.redis = REDIS
