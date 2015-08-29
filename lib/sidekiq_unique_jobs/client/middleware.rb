@@ -1,9 +1,14 @@
 require 'sidekiq_unique_jobs/server/middleware'
-require 'sidekiq_unique_jobs/connectors'
 
 module SidekiqUniqueJobs
   module Client
     class Middleware
+      SCHEDULED = 'scheduled'.freeze
+      extend Forwardable
+      def_delegators :SidekiqUniqueJobs, :connection, :config, :payload_hash
+      def_delegators :config, :unique_storage_method
+      def_delegators :Sidekiq, :logger
+
       def call(worker_class, item, queue, redis_pool = nil)
         @worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
         @item = item
@@ -11,9 +16,9 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
 
         return yield unless unique_enabled?
-        item['unique_hash'] = payload_hash
+        item['unique_hash'] = payload_hash(item)
         unless unique_for_connection?
-          Sidekiq.logger.warn "payload is not unique #{item}" if log_duplicate_payload?
+          logger.warn "payload is not unique #{item}" if log_duplicate_payload?
           return
         end
 
@@ -33,59 +38,75 @@ module SidekiqUniqueJobs
       end
 
       def unique_for_connection?
-        send("#{storage_method}_unique_for?")
+        send("#{unique_storage_method}_unique_for?")
       end
 
-      def storage_method
-        SidekiqUniqueJobs.config.unique_storage_method
-      end
-
-      # rubocop:disable MethodLength
       def old_unique_for?
+        item['at'] ? unique_schedule_old : unique_enqueue_old
+      end
+
+      def unique_enqueue_old
         connection do |conn|
-          conn.watch(payload_hash)
-          pid = conn.get(payload_hash).to_i
-          if pid == 1 || (pid == 2 && item['at'])
-            conn.unwatch
-            nil
-          else
+          conn.watch(payload_hash(item))
+          lock_val = conn.get(payload_hash(item))
+          if !lock_val || lock_val[0..8] == SCHEDULED
             conn.multi do
-              if expires_at > 0
-                conn.setex(payload_hash, expires_at, item['jid'])
-              else
-                conn.del(payload_hash)
-              end
+              conn.setex(payload_hash(item), expires_at, item['jid'])
             end
+          else
+            conn.unwatch
+            false
           end
         end
       end
-      # rubocop:enable MethodLength
+
+      def unique_schedule_old
+        connection do |conn|
+          conn.watch(payload_hash(item))
+          if expires_at < 0 || conn.get(payload_hash(item))
+            conn.unwatch
+            false
+          else
+            conn.setex(payload_hash(item), expires_at, "scheduled-#{item['jid']}")
+          end
+        end
+      end
 
       def new_unique_for?
+        item['at'] ? unique_schedule : unique_enqueue
+      end
+
+      def unique_schedule
         connection do |conn|
-          return (conn.set(payload_hash, item['jid'], nx: true, ex: expires_at) ||
-            conn.get(payload_hash) == item['jid'])
+          conn.set(payload_hash(item), "scheduled-#{item['jid']}", nx: true, ex: expires_at)
+        end
+      end
+
+      def unique_enqueue
+        connection do |conn|
+          conn.eval(lock_queue_script, keys: [payload_hash(item)], argv: [expires_at, item['jid']])
         end
       end
 
       def expires_at
         # if the job was previously scheduled and is now being queued,
         # or we've never seen it before
-        ex = unique_job_expiration || SidekiqUniqueJobs.config.default_expiration
+        ex = unique_job_expiration || config.default_expiration
         ex = ((Time.at(item['at']) - Time.now.utc) + ex).to_i if item['at']
         ex
       end
 
-      def connection(&block)
-        SidekiqUniqueJobs::Connectors.connection(redis_pool, &block)
-      end
-
-      def payload_hash
-        SidekiqUniqueJobs.get_payload(item['class'], item['queue'], item['args'])
-      end
-
       def unique_job_expiration
         worker_class.get_sidekiq_options['unique_job_expiration']
+      end
+
+      def lock_queue_script
+        <<-LUA
+          local ret = redis.call('GET', KEYS[1])
+          if not ret or string.sub(ret, 1, 9) == 'scheduled' then
+            return redis.call('SETEX', KEYS[1], ARGV[1], ARGV[2])
+          end
+        LUA
       end
     end
   end

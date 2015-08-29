@@ -1,4 +1,4 @@
-class AfterYieldWorker
+class AfterUnlockWorker
   include Sidekiq::Worker
   sidekiq_options queue: :working, retry: 1, backtrace: 10, unique_unlock_order: :after_yield,
                   unique: true
@@ -8,6 +8,10 @@ class AfterYieldWorker
   end
 
   def perform(*)
+    # NO-OP
+  end
+
+  def after_unlock(*)
     # NO-OP
   end
 end

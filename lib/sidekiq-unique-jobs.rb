@@ -40,7 +40,7 @@ module SidekiqUniqueJobs
   def get_payload(klass, queue, *args)
     unique_on_all_queues = false
     if config.unique_args_enabled
-      worker_class = klass.constantize
+      worker_class = worker_class_constantize(klass)
       args = yield_unique_args(worker_class, *args)
       unique_on_all_queues =
         worker_class.get_sidekiq_options['unique_on_all_queues']
@@ -51,12 +51,25 @@ module SidekiqUniqueJobs
       "#{Digest::MD5.hexdigest(Sidekiq.dump_json(md5_arguments))}"
   end
 
+  def payload_hash(item)
+    get_payload(item['class'], item['queue'], item['args'])
+  end
+
   def yield_unique_args(worker_class, args)
     unique_args = worker_class.get_sidekiq_options['unique_args']
     filtered_args(worker_class, unique_args, args)
   rescue NameError
     # fallback to not filtering args when class can't be instantiated
     args
+  end
+
+  def connection(redis_pool = nil, &block)
+    return mock_redis if SidekiqUniqueJobs.config.mocking?
+    redis_pool ? redis_pool.with(&block) : Sidekiq.redis(&block)
+  end
+
+  def self.mock_redis
+    @redis_mock ||= MockRedis.new
   end
 
   def filtered_args(worker_class, unique_args, args)
@@ -70,5 +83,9 @@ module SidekiqUniqueJobs
     else
       args
     end
+  end
+
+  def synchronize(key, redis, item = nil, &blk)
+    SidekiqUniqueJobs::RunLock.synchronize(key, redis, item, &blk)
   end
 end

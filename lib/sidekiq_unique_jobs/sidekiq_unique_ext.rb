@@ -5,6 +5,8 @@ module Sidekiq
   class Job
     module UniqueExtension
       include SidekiqUniqueJobs::Server::Extensions
+      extend Forwardable
+      def_delegator :SidekiqUniqueJobs, :payload_hash
       def self.included(base)
         base.class_eval do
           alias_method :delete_orig, :delete
@@ -19,13 +21,14 @@ module Sidekiq
 
       protected
 
-      def payload_hash(item)
-        SidekiqUniqueJobs.get_payload(item['class'], item['queue'], item['args'])
-      end
-
       def unlock(lock_key, item)
         Sidekiq.redis do |con|
           con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
+          if @parent && @parent.name == 'schedule'.freeze
+            con.eval(remove_scheduled_on_match, keys: [lock_key], argv: [item['jid']])
+          else
+            con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
+          end
         end
       end
     end

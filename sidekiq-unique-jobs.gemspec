@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.post_install_message = 'If you are relying on `mock_redis` you will now have to add' \
                              'gem "mock_redis" to your desired bundler group.'
-  gem.version       = SidekiqUniqueJobs::VERSION
+  gem.version = SidekiqUniqueJobs::VERSION
   gem.add_dependency 'sidekiq', '>= 2.6'
   gem.add_development_dependency 'mock_redis'
   gem.add_development_dependency 'rspec', '~> 3.1.0'
