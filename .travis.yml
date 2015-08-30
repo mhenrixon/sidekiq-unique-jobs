@@ -16,9 +16,9 @@ gemfile:
   - gemfiles/sidekiq_3.1.gemfile
   - gemfiles/sidekiq_3.2.gemfile
   - gemfiles/sidekiq_3.3.gemfile
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 notifications:
   email:
     recipients:
