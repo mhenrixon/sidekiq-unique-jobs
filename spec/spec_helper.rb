@@ -1,3 +1,22 @@
+require 'simplecov'
+
+if ENV['CI']
+  require 'codeclimate-test-reporter'
+  CodeClimate::TestReporter.start
+else
+  require 'simplecov-json'
+  SimpleCov.refuse_coverage_drop
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::JSONFormatter
+  ]
+  SimpleCov.start do
+    add_filter '/spec/'
+    add_filter '/bin/'
+    add_filter '/gemfiles/'
+  end
+end
+
 begin
   require 'pry-suite'
 rescue LoadError
