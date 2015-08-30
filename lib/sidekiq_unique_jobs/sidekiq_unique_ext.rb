@@ -27,7 +27,8 @@ module Sidekiq
         end
       end
     end
-    include UniqueExtension
+
+    include UniqueExtension if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('3.1')
   end
 
   class Job
