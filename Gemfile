@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'appraisal', '~> 2.0.0'
-gem 'codeclimate-test-reporter', require: false
+gem 'codeclimate-test-reporter'
 
 platform :mri do
   gem 'pry-suite'
