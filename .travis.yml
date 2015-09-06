@@ -1,14 +1,15 @@
 sudo: false
 language: ruby
+cache: bundler
 services:
   - redis-server
 rvm:
   - jruby-19mode
   - jruby-9.0.0.0
-  - rbx2
+  - rbx-2
   - 2.0.0
-  - 2.1.2
-  - 2.2.2
+  - 2.1.7
+  - 2.2.3
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_2.17.gemfile
@@ -24,5 +25,6 @@ notifications:
     recipients:
       - mikael@zoolutions.se
 matrix:
+  fast_finish: true
   allow_failures:
-    - rvm: rbx2
+    - rvm: rbx-2
