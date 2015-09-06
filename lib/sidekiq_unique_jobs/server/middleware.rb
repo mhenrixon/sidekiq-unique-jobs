@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   module Server
     class Middleware
       extend Forwardable
-      def_delegators :SidekiqUniqueJobs, :connection, :payload_hash
+      def_delegators :SidekiqUniqueJobs, :connection, :payload_hash, :synchronize
       def_delegators :'SidekiqUniqueJobs.config', :default_unlock_order,
                      :default_reschedule_on_lock_fail
       def_delegators :Sidekiq, :logger
@@ -22,19 +22,6 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
         setup_options(worker.class)
         send("#{unlock_order}_call", item, &blk)
-      end
-
-      def run_lock_call(item)
-        lock_key = payload_hash(item)
-        SidekiqUniqueJobs.connection do |con|
-          SidekiqUniqueJobs.synchronize(lock_key, con, item.dup.merge(options)) do
-            unlock(lock_key, item)
-            yield
-          end
-        end
-      rescue SidekiqUniqueJobs::RunLockFailed
-        return reschedule(item) if reschedule_on_lock_fail
-        raise
       end
 
       def setup_options(klass)
@@ -55,6 +42,19 @@ module SidekiqUniqueJobs
         raise
       ensure
         unlock(payload_hash(item), item) if operative
+      end
+
+      def run_lock_call(item)
+        lock_key = payload_hash(item)
+        connection do |con|
+          synchronize(lock_key, con, item.dup.merge(options)) do
+            unlock(lock_key, item)
+            yield
+          end
+        end
+      rescue SidekiqUniqueJobs::RunLockFailed
+        return reschedule(item) if reschedule_on_lock_fail
+        raise
       end
 
       def unlock_order
