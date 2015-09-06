@@ -26,5 +26,3 @@ notifications:
       - mikael@zoolutions.se
 matrix:
   fast_finish: true
-  allow_failures:
-    - rvm: rbx-2
