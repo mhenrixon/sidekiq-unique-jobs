@@ -14,7 +14,7 @@ RSpec.configure do |config|
     end
 
     unless Sidekiq::VERSION.send(operator, version)
-      skip("Skipped due to version check (requirement was that sidekiq version is " \
+      skip('Skipped due to version check (requirement was that sidekiq version is ' \
            "#{operator} #{version}; was #{Sidekiq::VERSION})")
     end if version && operator
   end
