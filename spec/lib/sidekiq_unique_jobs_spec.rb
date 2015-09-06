@@ -1,5 +1,4 @@
 require 'spec_helper'
-
 RSpec.describe SidekiqUniqueJobs do
   describe '.configure_middleware' do
     it 'configures both client and server middleware' do
