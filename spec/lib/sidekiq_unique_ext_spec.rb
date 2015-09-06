@@ -31,7 +31,7 @@ RSpec.describe 'Sidekiq::Api' do
     JustAWorker.perform_async(foo: 'bar')
   end
 
-  describe Sidekiq::SortedEntry::UniqueExtension, :focus, sidekiq_ver: '>= 3.1' do
+  describe Sidekiq::SortedEntry::UniqueExtension, sidekiq_ver: '>= 3.1' do
     it 'deletes uniqueness lock on delete' do
       schedule_job
 
