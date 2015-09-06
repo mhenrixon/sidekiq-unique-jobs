@@ -1,4 +1,7 @@
-## v3.0.15 - unreleased
+## v3.0.16 (Unreleased)
+
+
+## v3.0.15
 - Jobs only ever unlock themselves now (see #96 & #94 for info) thanks @pik
 - Slight refactoring and internal renaming. Shouldn't affect anyone
 - Run locks as an alternative when you only need to prevent the same job running twice but want to be able to schedule it multiple times. See #99 (thanks @pik)
