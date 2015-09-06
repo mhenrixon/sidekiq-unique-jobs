@@ -3,6 +3,10 @@ language: ruby
 cache: bundler
 services:
   - redis-server
+before_script:
+  - bundle exec rubocop
+script:
+  - bundle exec rspec spec
 rvm:
   - jruby-19mode
   - jruby-9.0.0.0
