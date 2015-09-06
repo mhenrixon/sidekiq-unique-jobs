@@ -32,6 +32,14 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       end
     end
 
+    class MainJob
+      include Sidekiq::Worker
+      sidekiq_options queue: :customqueue, unique: true, log_duplicate_payload: true
+
+      def perform(_)
+      end
+    end
+
     describe 'when a job is already scheduled' do
       before 'schedule a job' do
         MyUniqueWorker.perform_in(3600, 1)
@@ -46,6 +54,13 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           allow(SidekiqUniqueJobs.config).to receive(:unique_storage_method).and_return(:old)
           expect(MyUniqueWorker.perform_async(1)).not_to eq(nil)
         end
+        it 'schedules new jobs when arguments differ' do
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
+            MainJob.perform_in(x.seconds.from_now, x)
+          end
+          result = Sidekiq.redis { |c| c.zcount('schedule', -1, Time.now.to_f + 2 * 60) }
+          expect(result).to eq(20)
+        end
       end
       context '#new_unique_for' do
         it 'rejects new scheduled jobs with the same argument' do
@@ -55,6 +70,13 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         it 'will run a job in real time with the same arguments' do
           allow(SidekiqUniqueJobs.config).to receive(:unique_storage_method).and_return(:new)
           expect(MyUniqueWorker.perform_async(1)).not_to eq(nil)
+        end
+        it 'schedules new jobs when arguments differ' do
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
+            MainJob.perform_in(x.seconds.from_now, x)
+          end
+          result = Sidekiq.redis { |c| c.zcount('schedule', -1, Time.now.to_f + 2 * 60) }
+          expect(result).to eq(20)
         end
       end
     end
