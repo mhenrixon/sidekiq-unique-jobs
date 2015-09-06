@@ -1,8 +1,8 @@
 ## v3.0.15 - unreleased
 - Jobs only ever unlock themselves now (see #96 & #94 for info) thanks @pik
 - Slight refactoring and internal renaming. Shouldn't affect anyone
-- Run locks #99
-- Fixes #97, #98, #100, #101, 
+- Run locks as an alternative when you only need to prevent the same job running twice but want to be able to schedule it multiple times. See #99 (thanks @pik)
+- Fixes #90, #92, #93, #97, #98, #100, #101, #105
 
 ## v3.0.14
 - Improve uniqueness check performance thanks @mpherham
