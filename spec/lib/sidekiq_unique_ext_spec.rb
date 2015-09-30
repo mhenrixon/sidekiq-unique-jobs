@@ -17,7 +17,7 @@ RSpec.describe 'Sidekiq::Api' do
       'args'  => [foo: 'bar'] }
   end
 
-  def unique_key(it = item)
+  def unique_key(_it = item)
     SidekiqUniqueJobs::UniqueArgs.digest(
       'class' => JustAWorker,
       'queue' => 'testqueue',

@@ -9,7 +9,7 @@ module Sidekiq
 
       # Drain and run all jobs for this worker
       def drain
-        while job = jobs.shift do
+        while (job = jobs.shift)
           worker = new
           worker.jid = job['jid']
           worker.bid = job['bid'] if worker.respond_to?(:bid=)
@@ -20,7 +20,7 @@ module Sidekiq
 
       # Pop out a single job and perform it
       def perform_one
-        raise(EmptyQueueError, "perform_one called with empty job queue") if jobs.empty?
+        fail(EmptyQueueError, 'perform_one called with empty job queue') if jobs.empty?
         job = jobs.shift
         worker = new
         worker.jid = job['jid']

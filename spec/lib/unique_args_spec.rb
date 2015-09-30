@@ -91,11 +91,16 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   end
 
   describe '#filter_by_symbol' do
-    let(:item) { { 'class' => 'UniqueJobWithFilterMethod', 'queue' => 'myqueue', 'args' => [[1, 2]] } }
+    let(:item) do
+      { 'class' => 'UniqueJobWithFilterMethod',
+        'queue' => 'myqueue',
+        'args' => [[1, 2]] }
+    end
     subject { described_class.new(item) }
 
     it 'returns the value of the provided class method' do
-      expect(subject.filter_by_symbol(['name', 2, 'whatever' => nil, 'type' => 'test'])).to eq(['name', 'test'])
+      expect(subject.filter_by_symbol(['name', 2, 'whatever' => nil, 'type' => 'test']))
+        .to eq(%w(name test))
     end
   end
 end

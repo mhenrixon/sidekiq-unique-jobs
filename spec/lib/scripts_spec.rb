@@ -1,9 +1,9 @@
 require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Scripts do
   include ActiveSupport::Testing::TimeHelpers
-  MD5_DIGEST  ||= 'unique'.freeze
-  UNIQUE_KEY  ||= 'uniquejobs:unique'.freeze
-  JID         ||= 'fuckit'.freeze
+  MD5_DIGEST ||= 'unique'.freeze
+  UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
+  JID ||= 'fuckit'.freeze
   ANOTHER_JID ||= 'anotherjid'.freeze
 
   context 'class methods' do
@@ -25,9 +25,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
     end
 
     def lock_for(seconds = 1, jid = JID, key = UNIQUE_KEY)
-      subject.call(:aquire_lock, nil, {
-        keys: [key], argv: [jid, seconds]
-      })
+      subject.call(:aquire_lock, nil,         keys: [key], argv: [jid, seconds])
     end
 
     def unlock(key = UNIQUE_KEY, jid = JID)

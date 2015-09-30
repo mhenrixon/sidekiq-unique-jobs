@@ -2,6 +2,7 @@ require 'sidekiq_unique_jobs/expiring_lock/time_calculator'
 
 module SidekiqUniqueJobs
   # This class exists to be testable and the entire api should be considered private
+  # rubocop:disable MethodLength
   class ExpiringLock
     OK ||= 'OK'.freeze
     extend Forwardable

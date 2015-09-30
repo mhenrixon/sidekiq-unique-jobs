@@ -12,6 +12,6 @@ class AfterYieldWorker
   end
 
   def after_unlock
-    raise "HELL"
+    fail 'HELL'
   end
 end

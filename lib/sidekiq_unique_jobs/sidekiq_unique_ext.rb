@@ -120,9 +120,7 @@ module Sidekiq
       end
 
       def delete_by_value_ext(name, value)
-        if delete_by_value_orig(name, value)
-          unlock(JSON.parse(value))
-        end
+        unlock(JSON.parse(value)) if delete_by_value_orig(name, value)
       end
 
       def unlock(item)

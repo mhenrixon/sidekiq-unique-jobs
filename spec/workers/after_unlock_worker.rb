@@ -8,6 +8,6 @@ class AfterUnlockWorker
   end
 
   def perform(_)
-    raise 'HELL'
+    fail 'HELL'
   end
 end

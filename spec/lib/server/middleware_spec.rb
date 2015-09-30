@@ -76,14 +76,14 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       it 'unlocks after yield when call errors' do
         expect(subject).to receive(:unlock)
-        allow(subject).to receive(:after_yield_yield) { fail "WAT!" }
+        allow(subject).to receive(:after_yield_yield) { fail 'WAT!' }
         expect { subject.call(worker, @item, 'unlock_ordering') }
           .to raise_error
       end
 
       it 'should not unlock after yield on shutdown, but still raise error' do
         expect(subject).not_to receive(:unlock)
-        allow(subject).to receive(:after_yield_yield) { fail Sidekiq::Shutdown  }
+        allow(subject).to receive(:after_yield_yield) { fail Sidekiq::Shutdown }
         expect { subject.call(worker, @item, 'unlock_ordering') }
           .to raise_error(Sidekiq::Shutdown)
       end

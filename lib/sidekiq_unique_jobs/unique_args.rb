@@ -2,6 +2,7 @@ require 'sidekiq_unique_jobs/normalizer'
 
 module SidekiqUniqueJobs
   # This class exists to be testable and the entire api should be considered private
+  # rubocop:disable ClassLength
   class UniqueArgs
     extend Forwardable
     include Normalizer
@@ -17,9 +18,9 @@ module SidekiqUniqueJobs
     def initialize(job)
       Sidekiq::Logging.with_context(self.class.name) do
         @item = job
-        @worker_class                 ||= worker_class_constantize(@item['class'.freeze])
+        @worker_class ||= worker_class_constantize(@item['class'.freeze])
         @item['unique_prefix'.freeze] ||= unique_prefix
-        @item['unique_args'.freeze]   ||= unique_args(@item['args'.freeze])
+        @item['unique_args'.freeze] ||= unique_args(@item['args'.freeze])
         @item['unique_digest'.freeze] ||= unique_digest
       end
     end
@@ -81,7 +82,8 @@ module SidekiqUniqueJobs
     end
 
     def sidekiq_worker_class?
-      if @worker_class.respond_to?(:get_sidekiq_options) || @worker_class.class.respond_to?(:get_sidekiq_options)
+      if @worker_class.respond_to?(:get_sidekiq_options) ||
+         @worker_class.class.respond_to?(:get_sidekiq_options)
         true
       else
         debug { "#{@worker_class} does not respond to :get_sidekiq_options" }
@@ -115,7 +117,10 @@ module SidekiqUniqueJobs
 
     def filter_by_symbol(args)
       unless @worker_class.respond_to?(unique_args_method)
-        warn { "#{__method__} : #{unique_args_method}) not defined in #{@worker_class} returning #{args} unchanged" }
+        warn do
+          "#{__method__} : #{unique_args_method}) not defined in #{@worker_class} " \
+               "returning #{args} unchanged"
+        end
         return args
       end
 
@@ -125,7 +130,8 @@ module SidekiqUniqueJobs
     end
 
     def unique_args_method
-      @unique_args_method ||= @worker_class.get_sidekiq_options['unique_args'.freeze] if sidekiq_worker_class?
+      @unique_args_method ||=
+        @worker_class.get_sidekiq_options['unique_args'.freeze] if sidekiq_worker_class?
     end
   end
 end

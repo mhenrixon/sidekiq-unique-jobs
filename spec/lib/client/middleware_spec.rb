@@ -74,9 +74,10 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     it 'enqueues previously scheduled job' do
       jid = MyUniqueWorker.perform_in(60 * 60, 1, 2)
+      item = { 'class' => MyUniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid }
 
       # time passes and the job is pulled off the schedule:
-      Sidekiq::Client.push('class' => MyUniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid)
+      Sidekiq::Client.push(item)
 
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
@@ -155,9 +156,13 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     # TODO: If anyone know of a better way to check that the expiration for scheduled
     # jobs are set around the same time as the scheduled job itself feel free to improve.
     it 'expires the payload_hash when a scheduled job is scheduled at' do
-      expected_expires_at = (Time.at(15.minutes.from_now) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
+      expected_expires_at =
+        (Time.at(15.minutes.from_now) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
       jid = MyUniqueWorker.perform_in(expected_expires_at, 'mike')
-      item = { 'class' => MyUniqueWorker, 'queue' => 'customqueue', 'args' => ['mike'], 'at' => expected_expires_at }
+      item = { 'class' => MyUniqueWorker,
+               'queue' => 'customqueue',
+               'args' => ['mike'],
+               'at' => expected_expires_at }
       digest = digest_for(item.merge('jid' => jid))
       Sidekiq.redis do |c|
         expect(c.ttl(digest)).to eq(9_899)
