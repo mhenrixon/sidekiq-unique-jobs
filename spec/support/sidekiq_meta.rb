@@ -1,6 +1,7 @@
 RSpec.configure do |config|
   VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m.freeze
   config.before(:each) do |example|
+    Sidekiq.redis(&:flushdb)
     Sidekiq::Worker.clear_all
     if (sidekiq = example.metadata[:sidekiq])
       sidekiq = :fake if sidekiq == true
