@@ -17,7 +17,6 @@ Gem::Specification.new do |gem|
                              'gem "mock_redis" to your desired bundler group.'
   gem.version = SidekiqUniqueJobs::VERSION
   gem.add_dependency 'sidekiq', '>= 2.6'
-  gem.add_development_dependency 'mock_redis'
   gem.add_development_dependency 'rspec', '~> 3.1.0'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec-sidekiq'

@@ -1,11 +1,8 @@
 require 'sidekiq/api'
-require 'sidekiq_unique_jobs/server/extensions'
 
 module Sidekiq
   class SortedEntry
     module UniqueExtension
-      include SidekiqUniqueJobs::Server::Extensions
-
       def self.included(base)
         base.class_eval do
           alias_method :delete_orig, :delete
@@ -16,13 +13,42 @@ module Sidekiq
       end
 
       def delete_ext
-        unlock(payload_hash(item), item)
-        delete_orig
+        unlock(item) if delete_orig
+      end
+
+      private
+
+      def remove_job_ext
+        remove_job_orig do |message|
+          unlock(Sidekiq.load_json(message))
+          yield message
+        end
+      end
+    end
+
+    include UniqueExtension if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('3.1')
+  end
+
+  class ScheduledSet
+    module UniqueExtension
+      def self.included(base)
+        base.class_eval do
+          alias_method :delete_orig, :delete
+          alias_method :delete, :delete_ext
+        end
+      end
+
+      def delete_ext
+        unlock(item) if delete_orig
+      end
+
+      def unlock(item)
+        SidekiqUniqueJobs::ExpiringLock.new(item).release!
       end
 
       def remove_job_ext
         remove_job_orig do |message|
-          unlock(payload_hash(Sidekiq.load_json(message)), item)
+          unlock(Sidekiq.load_json(message))
           yield message
         end
       end
@@ -33,11 +59,6 @@ module Sidekiq
 
   class Job
     module UniqueExtension
-      SCHEDULED ||= 'schedule'.freeze
-      include SidekiqUniqueJobs::Server::Extensions
-      extend Forwardable
-      def_delegator :SidekiqUniqueJobs, :payload_hash
-
       def self.included(base)
         base.class_eval do
           alias_method :delete_orig, :delete
@@ -46,21 +67,14 @@ module Sidekiq
       end
 
       def delete_ext
-        unlock(payload_hash(item), item)
+        unlock(item)
         delete_orig
       end
 
       protected
 
-      def unlock(lock_key, item)
-        Sidekiq.redis do |con|
-          con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
-          if defined?(@parent) && @parent && @parent.name == SCHEDULED
-            con.eval(remove_scheduled_on_match, keys: [lock_key], argv: [item['jid']])
-          else
-            con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
-          end
-        end
+      def unlock(item)
+        SidekiqUniqueJobs::ExpiringLock.new(item).release!
       end
     end
     include UniqueExtension
@@ -92,12 +106,27 @@ module Sidekiq
             alias_method :clear_orig, :clear
             alias_method :clear, :clear_ext
           end
+
+          if base.method_defined?(:delete_by_value)
+            alias_method :delete_by_value_orig, :delete_by_value
+            alias_method :delete_by_value, :delete_by_value_ext
+          end
         end
       end
 
       def clear_ext
-        each(&:delete_ext)
+        each(&:delete)
         clear_orig
+      end
+
+      def delete_by_value_ext(name, value)
+        if delete_by_value_orig(name, value)
+          unlock(JSON.parse(value))
+        end
+      end
+
+      def unlock(item)
+        SidekiqUniqueJobs::ExpiringLock.new(item).release!
       end
     end
 

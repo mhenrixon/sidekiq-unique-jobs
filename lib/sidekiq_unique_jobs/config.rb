@@ -5,7 +5,6 @@ module SidekiqUniqueJobs
       :unique_args_enabled,
       :default_expiration,
       :default_unlock_order,
-      :unique_storage_method,
       :redis_mode,
       :default_run_lock,
       :default_run_lock_retry_interval,

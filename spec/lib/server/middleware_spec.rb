@@ -5,54 +5,14 @@ require 'sidekiq/worker'
 require 'sidekiq_unique_jobs/server/middleware'
 
 RSpec.describe SidekiqUniqueJobs::Server::Middleware do
+  QUEUE ||= 'unlock_ordering'
+
+  def digest_for(item)
+    SidekiqUniqueJobs::UniqueArgs.digest(item)
+  end
+
   describe '#call' do
     describe 'unlock order' do
-      QUEUE = 'unlock_ordering'.freeze unless defined?(QUEUE)
-
-      def get_payload(item)
-        SidekiqUniqueJobs.get_payload(
-          item['class'], item['queue'], item['args'])
-      end
-
-      class BeforeYieldOrderingWorker
-        include Sidekiq::Worker
-
-        sidekiq_options unique: true, unique_unlock_order: :before_yield, queue: QUEUE
-
-        def perform
-        end
-      end
-
-      class AfterYieldOrderingWorker
-        include Sidekiq::Worker
-
-        sidekiq_options unique: true, unique_unlock_order: :after_yield, queue: QUEUE
-
-        def perform
-        end
-      end
-
-      class RunLockOrderingWorker
-        include Sidekiq::Worker
-
-        sidekiq_options unique: true, unique_unlock_order: :run_lock, queue: QUEUE
-        def perform
-        end
-      end
-
-      class RunLockSpinningWorker
-        include Sidekiq::Worker
-
-        sidekiq_options unique: true,
-                        unique_unlock_order: :run_lock,
-                        queue: QUEUE,
-                        run_lock_retries: 10,
-                        run_lock_retry_interval: 0,
-                        reschedule_on_lock_fail: true
-        def perform
-        end
-      end
-
       before do
         Sidekiq.redis = REDIS
         Sidekiq.redis(&:flushdb)
@@ -60,83 +20,80 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe '#unlock' do
         it 'does not unlock mutexes it does not own' do
-          jid = AfterYieldOrderingWorker.perform_async
+          jid = AfterYieldWorker.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
           Sidekiq.redis do |c|
-            c.set(get_payload(item), 'NOT_DELETED')
+            c.set(digest_for(item), 'NOT_DELETED')
           end
 
-          result = subject.call(AfterYieldOrderingWorker.new, item, QUEUE) do
+          subject.call(AfterYieldWorker.new, item, QUEUE) do
             Sidekiq.redis do |c|
-              c.get(get_payload(item))
+              expect(c.get(digest_for(item))).to eq('NOT_DELETED')
             end
           end
-          expect(result).to eq 'NOT_DELETED'
         end
       end
 
       describe ':before_yield' do
         it 'removes the lock before yielding to the worker' do
-          jid = BeforeYieldOrderingWorker.perform_async
+          jid = BeforeYieldWorker.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
-
-          result = subject.call(BeforeYieldOrderingWorker.new, item, QUEUE) do
+          worker = BeforeYieldWorker.new
+          subject.call(worker, item, QUEUE) do
             Sidekiq.redis do |c|
-              c.get(get_payload(item))
+              expect(c.ttl(digest_for(item))).to eq(-2) # key does not exist
             end
           end
-
-          expect(result).to eq nil
         end
       end
 
       describe ':after_yield' do
         it 'removes the lock after yielding to the worker' do
-          jid = AfterYieldOrderingWorker.perform_async
+          jid = AfterYieldWorker.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
 
-          result = subject.call(AfterYieldOrderingWorker.new, item, QUEUE) do
+          subject.call('AfterYieldWorker', item, QUEUE) do
             Sidekiq.redis do |c|
-              c.get(get_payload(item))
+              expect(c.get(digest_for(item))).to eq jid
             end
           end
-
-          expect(result).to eq jid
         end
       end
     end
 
     context 'unlock' do
-      let(:items) { [AfterYieldWorker.new, { 'class' => 'testClass' }, 'fudge'] }
+      let(:worker) { AfterYieldWorker.new }
 
-      it 'should unlock after yield when call succeeds' do
-        expect(subject).to receive(:unlock)
-
-        subject.call(*items) { true }
+      before do
+        jid  = AfterYieldWorker.perform_async
+        @item = Sidekiq::Queue.new('unlock_ordering').find_job(jid).item
       end
 
-      it 'should unlock after yield when call errors' do
+      it 'unlocks after yield when call succeeds' do
         expect(subject).to receive(:unlock)
+        subject.call(worker, @item, 'unlock_ordering') { true }
+      end
 
-        expect { subject.call(*items) { fail } }.to raise_error(RuntimeError)
+      it 'unlocks after yield when call errors' do
+        expect(subject).to receive(:unlock)
+        allow(subject).to receive(:after_yield_yield) { fail "WAT!" }
+        expect { subject.call(worker, @item, 'unlock_ordering') }
+          .to raise_error
       end
 
       it 'should not unlock after yield on shutdown, but still raise error' do
-        expect(subject).to_not receive(:unlock)
-
-        expect { subject.call(*items) { fail Sidekiq::Shutdown } }.to raise_error(Sidekiq::Shutdown)
+        expect(subject).not_to receive(:unlock)
+        allow(subject).to receive(:after_yield_yield) { fail Sidekiq::Shutdown  }
+        expect { subject.call(worker, @item, 'unlock_ordering') }
+          .to raise_error(Sidekiq::Shutdown)
       end
-    end
 
-    context 'after unlock' do
-      let(:worker) { AfterUnlockWorker.new }
-      let(:items) { [worker, { 'class' => 'testClass' }, 'test'] }
-      it 'should call the after_unlock hook if defined' do
-        expect(subject).to receive(:unlock).and_call_original
-        # expect(subject).to receive(:after_unlock_hook)
+      it 'calls after_unlock_hook if defined' do
+        allow(subject).to receive(:unlock).and_call_original
+        allow(subject).to receive(:after_unlock_hook).and_call_original
+
         expect(worker).to receive(:after_unlock)
-
-        subject.call(*items) { true }
+        subject.call(worker, @item, 'unlock_ordering') { true }
       end
     end
   end
