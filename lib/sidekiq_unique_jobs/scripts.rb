@@ -2,17 +2,7 @@ require 'pathname'
 require 'digest/sha1'
 
 module SidekiqUniqueJobs
-  class ScriptError < StandardError
-    def initialize(file_name, script_source)
-      @message = "There was an error in #{file_name}.lua"
-      @script_source = script_source
-    end
-
-    def to_s
-      "#{@message} \n\n" \
-      "Source: #{@script_source}"
-    end
-  end
+  ScriptError = Class.new(StandardError)
 
   module Scripts
     extend Forwardable
@@ -35,8 +25,8 @@ module SidekiqUniqueJobs
         script_shas[file_name] ||= redis.script(:load, script_source(file_name))
         redis.evalsha(script_shas[file_name], options)
       end
-    rescue Redis::CommandError
-      raise ScriptError.new(file_name, script_source(file_name))
+    rescue Redis::CommandError => ex
+      raise ScriptError, "#{file_name}.lua\n\n" + ex.message + "\n\n" + script_source(file_name) + ex.backtrace.join("\n")
     end
 
     def connection(redis_pool, &_block)

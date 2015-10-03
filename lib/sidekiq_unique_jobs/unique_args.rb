@@ -39,8 +39,6 @@ module SidekiqUniqueJobs
       @worker_class.get_sidekiq_options['unique_prefix'.freeze] || config.unique_prefix
     end
 
-    # private under this commment
-
     def digestable_hash
       @item['unique_schedule'] ||= @item.key?('at')
       hash = @item.slice('class', 'queue', 'unique_args', 'unique_schedule')

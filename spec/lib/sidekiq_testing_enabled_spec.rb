@@ -131,38 +131,6 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
   end
 
   describe 'when set to :inline!', sidekiq: :inline do
-    class InlineWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true
-
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
-    class InlineUnlockOrderWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true, unique_unlock_order: :never
-
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
-    class InlineExpirationWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true, unique_unlock_order: :never,
-                      unique_job_expiration: 10 * 60
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
-    class TestClass
-      def self.run(_)
-      end
-    end
-
     it 'once the job is completed allows to run another one' do
       expect(TestClass).to receive(:run).with('test').twice
       InlineWorker.perform_async('test')

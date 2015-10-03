@@ -13,6 +13,7 @@ end
 
 require 'rspec'
 require 'rspec/its'
+require 'celluloid/current'
 require 'celluloid/test'
 require 'sidekiq'
 require 'sidekiq/util'

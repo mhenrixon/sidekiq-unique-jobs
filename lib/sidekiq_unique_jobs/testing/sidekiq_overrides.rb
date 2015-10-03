@@ -4,7 +4,7 @@ module Sidekiq
   module Worker
     module ClassMethods
       def unlock(job)
-        SidekiqUniqueJobs::ExpiringLock.new(job).release!
+        SidekiqUniqueJobs::Lock::UntilExecuting.new(job).release!(:server)
       end
 
       # Drain and run all jobs for this worker

@@ -5,33 +5,30 @@ module SidekiqUniqueJobs
   module Server
     class Middleware
       extend Forwardable
-      def_delegators :SidekiqUniqueJobs, :connection, :payload_hash, :synchronize
-      def_delegators :'SidekiqUniqueJobs.config', :default_unlock_order,
-                     :default_reschedule_on_lock_fail
       def_delegators :Sidekiq, :logger
+      def_instance_delegator :@worker, :class, :worker_class
 
-      attr_reader :redis_pool, :worker, :options, :lock
+      include OptionsWithFallback
 
       def call(worker, item, queue, redis_pool = nil, &blk)
         @worker = worker
         @redis_pool = redis_pool
         @queue = queue
-        setup_options(item, worker.class)
-        @lock = ExpiringLock.new(item, redis_pool)
-        send("#{unlock_order}_call", &blk)
+        @item = item
+
+        send(unique_lock, &blk)
       end
 
-      def setup_options(_item, _klass)
-        @options = {}
-        options.merge!(worker.class.get_sidekiq_options) if worker_class?
-      end
+      private
 
-      def before_yield_call
+      attr_reader :redis_pool, :worker, :item, :worker_class
+
+      def until_executing
         unlock
         yield
       end
 
-      def after_yield_call(&block)
+      def until_executed(&block)
         operative = true
         after_yield_yield(&block)
       rescue Sidekiq::Shutdown
@@ -45,38 +42,23 @@ module SidekiqUniqueJobs
         yield
       end
 
-      def run_lock_call
-        connection(redis) do |con|
-          synchronize(lock.unique_key, con, lock.item.dup.merge(options)) do
-            unlock
-            yield
-          end
+      def while_executing
+        lock.synchronize do
+          yield
         end
       rescue SidekiqUniqueJobs::RunLockFailed
         return reschedule if reschedule_on_lock_fail
         raise
       end
 
-      def unlock_order
-        options.fetch('unique_unlock_order') { default_unlock_order }
-      end
-
-      def never_call(*)
+      def until_timeout
         yield if block_given?
-      end
-
-      def reschedule_on_lock_fail
-        options.fetch('reschedule_on_lock_fail') { default_reschedule_on_lock_fail }
       end
 
       protected
 
-      def worker_class?
-        worker.respond_to?(:get_sidekiq_options) || worker.class.respond_to?(:get_sidekiq_options)
-      end
-
       def unlock
-        after_unlock_hook if lock.release!
+        after_unlock_hook if lock.release!(:server)
       end
 
       def after_unlock_hook

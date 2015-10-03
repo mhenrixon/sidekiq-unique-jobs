@@ -1,7 +1,7 @@
 class RunLockWorker
   include Sidekiq::Worker
 
-  sidekiq_options unique: true, unique_unlock_order: :run_lock, queue: :unlock_ordering
+  sidekiq_options unique: true, unique_locks: :while_executing, queue: :unlock_ordering
   def perform
   end
 end

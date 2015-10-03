@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'celluloid'
+require 'celluloid/current'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
@@ -13,7 +13,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     before do
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
-      QueueWorker.sidekiq_options unique: nil, unique_job_expiration: nil
+      QueueWorker.sidekiq_options unique: nil, unique_expiration: nil
     end
 
     describe 'when a job is already scheduled' do
@@ -58,7 +58,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does not queue duplicates when when calling delay' do
-      10.times { PlainClass.delay(unique: true, queue: 'customqueue').run(1) }
+      10.times { PlainClass.delay(unique_lock: :until_executed, unique: true, queue: 'customqueue').run(1) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
       end
@@ -91,7 +91,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
         expect(c.ttl(digest_for(item)))
-          .to eq(ExpiringWorker.get_sidekiq_options['unique_job_expiration'])
+          .to eq(ExpiringWorker.get_sidekiq_options['unique_expiration'])
       end
     end
 
@@ -155,7 +155,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     # TODO: If anyone know of a better way to check that the expiration for scheduled
     # jobs are set around the same time as the scheduled job itself feel free to improve.
-    it 'expires the payload_hash when a scheduled job is scheduled at' do
+    it 'expires the digest when a scheduled job is scheduled at' do
       expected_expires_at =
         (Time.at(15.minutes.from_now) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
       jid = MyUniqueWorker.perform_in(expected_expires_at, 'mike')
@@ -171,24 +171,24 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     it 'logs duplicate payload when config turned on' do
       expect(Sidekiq.logger).to receive(:warn).with(/^payload is not unique/)
-
-      QueueWorker.sidekiq_options unique: true, log_duplicate_payload: true
-
-      2.times { Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      UniqueWorker.sidekiq_options log_duplicate_payload: true
+      2.times { Sidekiq::Client.push('class' => UniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
       end
+      UniqueWorker.sidekiq_options log_duplicate_payload: true
     end
 
     it 'does not log duplicate payload when config turned off' do
       expect(Sidekiq.logger).to_not receive(:warn).with(/^payload is not unique/)
 
-      QueueWorker.sidekiq_options unique: true, log_duplicate_payload: false
+      UniqueWorker.sidekiq_options log_duplicate_payload: false
 
-      2.times { Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      2.times { Sidekiq::Client.push('class' => UniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
       end
+      UniqueWorker.sidekiq_options log_duplicate_payload: true
     end
   end
 end

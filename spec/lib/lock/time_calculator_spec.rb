@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::ExpiringLock::TimeCalculator do
+RSpec.describe SidekiqUniqueJobs::Lock::TimeCalculator do
   include ActiveSupport::Testing::TimeHelpers
   shared_context 'undefined worker class' do
     subject { described_class.new('class' => 'test') }
@@ -13,8 +13,8 @@ RSpec.describe SidekiqUniqueJobs::ExpiringLock::TimeCalculator do
   describe 'public api' do
     subject { described_class.new(nil) }
     it { is_expected.to respond_to(:time_until_scheduled) }
-    it { is_expected.to respond_to(:unique_job_expiration) }
-    it { is_expected.to respond_to(:worker_class_unique_job_expiration) }
+    it { is_expected.to respond_to(:unique_expiration) }
+    it { is_expected.to respond_to(:worker_class_unique_expiration) }
     it { is_expected.to respond_to(:worker_class) }
     it { is_expected.to respond_to(:seconds) }
   end
@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::ExpiringLock::TimeCalculator do
 
     before do
       allow(subject).to receive(:time_until_scheduled).and_return(10)
-      allow(subject).to receive(:unique_job_expiration).and_return(9)
+      allow(subject).to receive(:unique_expiration).and_return(9)
     end
     its(:seconds) { is_expected.to eq(19) }
   end
@@ -52,22 +52,22 @@ RSpec.describe SidekiqUniqueJobs::ExpiringLock::TimeCalculator do
     end
   end
 
-  describe '#unique_job_expiration' do
+  describe '#unique_expiration' do
     it_behaves_like 'undefined worker class' do
-      its(:unique_job_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_expiration) }
+      its(:unique_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_expiration) }
     end
 
     subject { described_class.new('class' => 'MyUniqueWorker') }
-    its(:unique_job_expiration) { is_expected.to eq(7_200) }
+    its(:unique_expiration) { is_expected.to eq(7_200) }
   end
 
-  describe '#worker_class_unique_job_expiration' do
+  describe '#worker_class_unique_expiration' do
     it_behaves_like 'undefined worker class' do
-      its(:worker_class_unique_job_expiration) { is_expected.to eq(nil) }
+      its(:worker_class_unique_expiration) { is_expected.to eq(nil) }
     end
 
     subject { described_class.new('class' => 'MyUniqueWorker') }
-    its(:worker_class_unique_job_expiration) { is_expected.to eq(7_200) }
+    its(:worker_class_unique_expiration) { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class' do

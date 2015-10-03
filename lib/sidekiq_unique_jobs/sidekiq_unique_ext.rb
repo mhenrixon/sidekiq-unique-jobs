@@ -43,7 +43,7 @@ module Sidekiq
       end
 
       def unlock(item)
-        SidekiqUniqueJobs::ExpiringLock.new(item).release!
+        SidekiqUniqueJobs::Lock::UntilExecuting.new(item).release!(:server)
       end
 
       def remove_job_ext
@@ -74,7 +74,7 @@ module Sidekiq
       protected
 
       def unlock(item)
-        SidekiqUniqueJobs::ExpiringLock.new(item).release!
+        SidekiqUniqueJobs::Lock::UntilExecuting.new(item).release!(:server)
       end
     end
     include UniqueExtension
@@ -124,7 +124,7 @@ module Sidekiq
       end
 
       def unlock(item)
-        SidekiqUniqueJobs::ExpiringLock.new(item).release!
+        SidekiqUniqueJobs::Lock::UntilExecuting.new(item).release!(:server)
       end
     end
 

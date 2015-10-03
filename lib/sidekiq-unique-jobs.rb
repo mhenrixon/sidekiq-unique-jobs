@@ -1,8 +1,9 @@
 require 'yaml' if RUBY_VERSION.include?('2.0.0') # rubocop:disable FileName
 require 'sidekiq_unique_jobs/core_ext'
+require 'sidekiq_unique_jobs/options_with_fallback'
 require 'sidekiq_unique_jobs/scripts'
 require 'sidekiq_unique_jobs/unique_args'
-require 'sidekiq_unique_jobs/expiring_lock'
+require 'sidekiq_unique_jobs/lock'
 require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/config'
@@ -18,13 +19,17 @@ module SidekiqUniqueJobs
       unique_prefix: 'uniquejobs',
       unique_args_enabled: true,
       default_expiration: 30 * 60,
-      default_unlock_order: :after_yield,
+      default_lock: :while_executing,
       redis_test_mode: :redis # :mock
     )
   end
 
   def unique_args_enabled?
     config.unique_args_enabled
+  end
+
+  def default_lock
+    config.default_lock
   end
 
   def configure(options = {})
@@ -38,7 +43,7 @@ module SidekiqUniqueJobs
   end
 
   def namespace
-    @namespace ||= Sidekiq.redis { |conn| conn.respond_to?(:namespace) ? conn.namespace : nil }
+    @namespace ||= Sidekiq.redis { |c| c.respond_to?(:namespace) ? c.namespace : nil }
   end
 
   # Attempt to constantize a string worker_class argument, always
@@ -48,10 +53,6 @@ module SidekiqUniqueJobs
     worker_class.constantize
   rescue NameError
     worker_class
-  end
-
-  def digest(item)
-    UniqueArgs.digest(item)
   end
 
   def redis_version
@@ -67,7 +68,7 @@ module SidekiqUniqueJobs
     @redis_mock ||= MockRedis.new if defined?(MockRedis)
   end
 
-  def synchronize(key, redis, item = nil, &blk)
-    RunLock.synchronize(key, redis, item, &blk)
+  def synchronize(item, redis_pool, &blk)
+    Lock::WhileExecuting.synchronize(item, redis_pool, &blk)
   end
 end

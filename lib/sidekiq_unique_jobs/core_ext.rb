@@ -19,5 +19,26 @@ module SidekiqUniqueJobs
         omit
       end unless {}.respond_to?(:slice!)
     end
+
+    class String
+      # File activesupport/lib/active_support/inflector/methods.rb, line 178
+      def classify
+        # strip out any leading schema name
+        camelize(singularize(self.sub(/.*\./, '')))
+      end unless "".respond_to?(:classify)
+
+      # File activesupport/lib/active_support/inflector/methods.rb, line 67
+      def camelize(uppercase_first_letter = true)
+        string = self
+        if uppercase_first_letter
+          string = string.sub(/^[a-z\d]*/) { $&.capitalize }
+        else
+          string = string.sub(/^(?:(?=\b|[A-Z_])|\w)/) { $&.downcase }
+        end
+        string.gsub!(/(?:_|(\/))([a-z\d]*)/i) { "#{$1}#{$2.capitalize}" }
+        string.gsub!(/\//, '::')
+        string
+      end unless "".respond_to?(:camelize)
+    end
   end
 end
