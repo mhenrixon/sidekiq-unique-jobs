@@ -39,8 +39,7 @@ module SidekiqUniqueJobs
     end
 
     def digestable_hash
-      @item['unique_schedule'] ||= @item.key?('at')
-      hash = @item.slice('class', 'queue', 'unique_args', 'unique_schedule')
+      hash = @item.slice('class', 'queue', 'unique_args')
 
       if unique_on_all_queues?
         debug { "uniqueness specified across all queues (deleting queue: #{@item['queue']} from hash)" }

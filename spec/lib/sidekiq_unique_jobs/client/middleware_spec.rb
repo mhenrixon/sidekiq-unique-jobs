@@ -24,9 +24,10 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         end
 
         it 'will run a job in real time with the same arguments' do
-          MyUniqueWorker.perform_in(3600, 1)
-          expect(MyUniqueWorker.perform_async(1)).not_to eq(nil)
+          WhileExecutingWorker.perform_in(3600, 1)
+          expect(WhileExecutingWorker.perform_async(1)).not_to eq(nil)
         end
+
         it 'schedules new jobs when arguments differ' do
           [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
             MainJob.perform_in(x.seconds.from_now, x)
@@ -73,8 +74,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'enqueues previously scheduled job' do
-      jid = MyUniqueWorker.perform_in(60 * 60, 1, 2)
-      item = { 'class' => MyUniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid }
+      jid = WhileExecutingWorker.perform_in(60 * 60, 1, 2)
+      item = { 'class' => WhileExecutingWorker, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid }
 
       # time passes and the job is pulled off the schedule:
       Sidekiq::Client.push(item)
