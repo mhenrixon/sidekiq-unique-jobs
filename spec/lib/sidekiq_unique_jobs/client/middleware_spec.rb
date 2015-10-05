@@ -17,26 +17,41 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
-      context '#new_unique_for' do
-        it 'rejects new scheduled jobs with the same argument' do
-          MyUniqueWorker.perform_in(3600, 1)
-          expect(MyUniqueWorker.perform_in(3600, 1)).to eq(nil)
+      it 'rejects new scheduled jobs with the same argument' do
+        MyUniqueWorker.perform_in(3600, 1)
+        expect(MyUniqueWorker.perform_in(3600, 1)).to eq(nil)
+      end
+
+      it 'will run a job in real time with the same arguments' do
+        WhileExecutingWorker.perform_in(3600, 1)
+        expect(WhileExecutingWorker.perform_async(1)).not_to eq(nil)
+      end
+
+      it 'schedules new jobs when arguments differ' do
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
+          MainJob.perform_in(x.seconds.from_now, x)
         end
 
-        it 'will run a job in real time with the same arguments' do
-          WhileExecutingWorker.perform_in(3600, 1)
-          expect(WhileExecutingWorker.perform_async(1)).not_to eq(nil)
+        Sidekiq.redis do |c|
+          count = c.zcount('schedule', -1, Time.now.to_f + 2 * 60)
+          expect(count).to eq(20)
+        end
+      end
+
+      it 'schedules allows jobs to be scheduled ' do
+        class ShitClass
+          def do_it(arg)
+            # whatever
+          end
         end
 
-        it 'schedules new jobs when arguments differ' do
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-            MainJob.perform_in(x.seconds.from_now, x)
-          end
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
+          ShitClass.delay_for(x.seconds, unique_lock: :while_executing).do_it(1)
+        end
 
-          Sidekiq.redis do |c|
-            count = c.zcount('schedule', -1, Time.now.to_f + 2 * 60)
-            expect(count).to eq(20)
-          end
+        Sidekiq.redis do |c|
+          count = c.zcount('schedule', -1, Time.now.to_f + 2 * 60)
+          expect(count).to eq(20)
         end
       end
     end
