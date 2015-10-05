@@ -20,6 +20,34 @@ Or install it yourself as:
 
     $ gem install sidekiq-unique-jobs
 
+## A word on locking
+
+Like @mperham mentions on (this wiki page)[https://github.com/mperham/sidekiq/wiki/Related-Projects#unique-jobs] it is hard to enforce uniqueness with redis in a distributed redis setting. 
+
+To make things worse there are many ways of wanting to enforce uniqueness. 
+
+### While Executing
+
+Is to make sure that a job can be scheduled any number of times but only executed a single time per argument provided to the job we call this runtime uniqueness. This is probably most useful forbackground jobs that are fast to execute. (See mhenrixon/sidekiq-unique-jobs#111 for a great example of when this would be right.) While the job is executing/performing no other jobs can be executed at the same time.
+
+### Until Executing
+
+This means that a job can only be scheduled into redis once per whatever the configuration of unique arguments. Any jobs added until the first one of the same arguments has been unlocked will just be dropped. This is what was tripping many people up. They would schedule a job to run in the future and it would be impossible to schedule new jobs with those same arguments even immediately. There was some forth and back between also locking jobs on the scheduled queue and the regular queues but in the end I decided it was best to separate these two features out into different locking mechanisms. I think what most people are after is to be able to lock a job while executing or that seems to be what people are most missing at the moment.
+
+### Until Executed
+
+This is the combination of the two above. First we lock the job until it executes, then as the job begins executes we keep the lock so that no other jobs with the same arguments can execute at the same time.
+
+### Until Timeout
+
+The job won't be unlocked until the timeout/expiry runs out.
+
+### Uniqueness Scope
+
+- Queue specific locks
+- Across all queues.
+- Timed / Scheduled jobs
+
 ## Usage
 
 All that is required is that you specifically set the sidekiq option for *unique* to true like below:
@@ -33,12 +61,12 @@ should be unique. The job will be unique for the number of seconds configured (d
 or until the job has been completed. Thus, the job will be unique for the shorter of the two.  Note that Sidekiq versions before 3.0 will remove job keys after an hour, which means jobs can remain unique for at most an hour.
 
 *If you want the unique job to stick around even after it has been successfully
-processed then just set the unique_unlock_order to anything except `:before_yield` or `:after_yield` (`unique_unlock_order = :never`)
+processed then just set the unique_lock to anything except `:before_yield` or `:after_yield` (`unique_lock = :until_timeout`)
 
 You can also control the expiration length of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
-sidekiq_options unique: true, unique_job_expiration: 120 * 60 # 2 hours
+sidekiq_options unique: true, unique_expiration: 120 * 60 # 2 hours
 ```
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
@@ -96,13 +124,13 @@ Note that objects passed into workers are converted to JSON *after* running thro
 
 ### Unlock Ordering
 
-By default the server middleware will release the worker lock after yielding to the next middleware or worker. Alternatively, this can be changed by passing the `unique_unlock_order` option:
+By default the server middleware will release the worker lock after yielding to the next middleware or worker. Alternatively, this can be changed by passing the `unique_lock` option:
 
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options unique: true,
-                  unique_unlock_order: :before_yield
+                  unique_locks: :until_executing
 
   ...
 
