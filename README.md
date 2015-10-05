@@ -6,6 +6,13 @@ The missing unique jobs for sidekiq
 
 See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 3.0.13 only sidekiq 3 is supported and support for MRI 1.9 is dropped (it might work but won't be worked on)
 
+Version 4 requires redis 2.6.2!! Don't upgrade to version 4 unless you are on redis 2.6.2.
+
+## Upgrade instructions
+
+Easy path - Drop all your unique jobs before upgrading the gem!
+Hard path - See above... Start with a clean slate :)
+
 ## Installation
 
 Add this line to your application's Gemfile:
