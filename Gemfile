@@ -13,6 +13,6 @@ platform :mri do
   gem 'pry-rescue',                require: false
   gem 'pry-byebug',                require: false
   gem 'simplecov-json',            require: false
-  gem 'memory-profiler',           require: false
+  gem 'memory_profiler',           require: false
   gem 'codeclimate-test-reporter', require: false
 end
