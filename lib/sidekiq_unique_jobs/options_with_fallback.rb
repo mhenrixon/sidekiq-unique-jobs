@@ -1,7 +1,7 @@
 module SidekiqUniqueJobs
   module OptionsWithFallback
-    UNIQUE_KEY        ||= 'unique'.freeze
-    UNIQUE_LOCK_KEY   ||= 'unique_lock'.freeze
+    UNIQUE_KEY ||= 'unique'.freeze
+    UNIQUE_LOCK_KEY ||= 'unique_lock'.freeze
     LOG_DUPLICATE_KEY ||= 'log_duplicate_payload'.freeze
 
     def unique_enabled?

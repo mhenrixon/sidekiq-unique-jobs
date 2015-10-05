@@ -26,7 +26,11 @@ module SidekiqUniqueJobs
         redis.evalsha(script_shas[file_name], options)
       end
     rescue Redis::CommandError => ex
-      raise ScriptError, "#{file_name}.lua\n\n" + ex.message + "\n\n" + script_source(file_name) + ex.backtrace.join("\n")
+      raise ScriptError,
+            "#{file_name}.lua\n\n" +
+              ex.message + "\n\n" +
+              script_source(file_name) +
+              ex.backtrace.join("\n")
     end
 
     def connection(redis_pool, &_block)

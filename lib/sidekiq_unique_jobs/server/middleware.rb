@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
       protected
 
       def unlock
-        after_unlock_hook if lock.release!(:server)
+        after_unlock_hook if lock.unlock(:server)
       end
 
       def after_unlock_hook

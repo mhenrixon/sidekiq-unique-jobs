@@ -1,10 +1,17 @@
 require 'sidekiq/api'
 
 module Sidekiq
+  module UnlockMethod
+    def unlock(item)
+      SidekiqUniqueJobs::Unlockable.unlock(item['unique_digest'.freeze], item['jid'.freeze])
+    end
+  end
+
   class SortedEntry
     module UniqueExtension
       def self.included(base)
         base.class_eval do
+          include UnlockMethod
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
           alias_method :remove_job_orig, :remove_job
@@ -33,6 +40,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
+          include UnlockMethod
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
@@ -42,10 +50,6 @@ module Sidekiq
         unlock(item) if delete_orig
       end
 
-      def unlock(item)
-        SidekiqUniqueJobs::Lock::UntilExecuting.new(item).release!(:server)
-      end
-
       def remove_job_ext
         remove_job_orig do |message|
           unlock(Sidekiq.load_json(message))
@@ -53,7 +57,6 @@ module Sidekiq
         end
       end
     end
-
     include UniqueExtension if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('3.1')
   end
 
@@ -61,6 +64,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
+          include UnlockMethod
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
@@ -70,13 +74,8 @@ module Sidekiq
         unlock(item)
         delete_orig
       end
-
-      protected
-
-      def unlock(item)
-        SidekiqUniqueJobs::Lock::UntilExecuting.new(item).release!(:server)
-      end
     end
+
     include UniqueExtension
   end
 
@@ -84,6 +83,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
+          include UnlockMethod
           alias_method :clear_orig, :clear
           alias_method :clear, :clear_ext
         end
@@ -102,6 +102,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
+          include UnlockMethod
           if base.method_defined?(:clear)
             alias_method :clear_orig, :clear
             alias_method :clear, :clear_ext
@@ -121,10 +122,6 @@ module Sidekiq
 
       def delete_by_value_ext(name, value)
         unlock(JSON.parse(value)) if delete_by_value_orig(name, value)
-      end
-
-      def unlock(item)
-        SidekiqUniqueJobs::Lock::UntilExecuting.new(item).release!(:server)
       end
     end
 

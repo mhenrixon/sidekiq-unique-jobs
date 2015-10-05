@@ -30,11 +30,11 @@ module SidekiqUniqueJobs
       end
 
       def lockable?
-        lock.respond_to?(:aquire!)
+        lock.respond_to?(:lock)
       end
 
       def aquire_lock
-        locked = lock.aquire!(:client)
+        locked = lock.lock(:client)
         warn_about_duplicate(item) unless locked
         locked
       end

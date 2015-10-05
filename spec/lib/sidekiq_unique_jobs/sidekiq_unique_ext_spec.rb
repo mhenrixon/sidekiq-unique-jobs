@@ -17,7 +17,7 @@ RSpec.describe 'Sidekiq::Api' do
       'args'  => [foo: 'bar'] }
   end
 
-  def unique_key(_it = item)
+  def unique_key
     SidekiqUniqueJobs::UniqueArgs.digest(
       'class' => JustAWorker,
       'queue' => 'testqueue',
@@ -39,7 +39,6 @@ RSpec.describe 'Sidekiq::Api' do
 
       Sidekiq::ScheduledSet.new.each(&:delete)
       Sidekiq.redis do |c|
-        unique_key(item)
         expect(c.exists(unique_key)).to be_falsy
       end
 

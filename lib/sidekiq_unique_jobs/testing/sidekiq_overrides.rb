@@ -3,9 +3,7 @@ require 'sidekiq/testing'
 module Sidekiq
   module Worker
     module ClassMethods
-      def unlock(job)
-        SidekiqUniqueJobs::Lock::UntilExecuting.new(job).release!(:server)
-      end
+      include SidekiqUniqueJobs::Unlockable
 
       # Drain and run all jobs for this worker
       def drain
@@ -14,7 +12,7 @@ module Sidekiq
           worker.jid = job['jid']
           worker.bid = job['bid'] if worker.respond_to?(:bid=)
           execute_job(worker, job['args'])
-          unlock(job) if Sidekiq::Testing.fake?
+          unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
         end
       end
 
@@ -26,13 +24,13 @@ module Sidekiq
         worker.jid = job['jid']
         worker.bid = job['bid'] if worker.respond_to?(:bid=)
         execute_job(worker, job['args'])
-        unlock(job) if Sidekiq::Testing.fake?
+        unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
       end
 
       # Clear all jobs for this worker
       def clear
         jobs.each do |job|
-          unlock(job) if Sidekiq::Testing.fake?
+          unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
         end
         jobs.clear
       end

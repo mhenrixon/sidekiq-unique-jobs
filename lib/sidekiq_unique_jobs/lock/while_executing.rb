@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
       end
 
-      def synchronize(&block)
+      def synchronize(&_block)
         @mutex.lock
         sleep 0.001 until locked?
 
