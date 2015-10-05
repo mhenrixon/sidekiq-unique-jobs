@@ -1,8 +1,10 @@
-if ENV['CI'] && RUBY_ENGINE == 'ruby'
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start
-else
-  require 'simplecov'
+if RUBY_ENGINE == 'ruby'
+  if ENV['CI']
+    require 'codeclimate-test-reporter'
+    CodeClimate::TestReporter.start
+  else
+    require 'simplecov'
+  end
 end
 
 begin
