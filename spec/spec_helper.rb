@@ -1,45 +1,40 @@
-if RUBY_ENGINE == 'ruby'
-  if ENV['CI']
-    require 'codeclimate-test-reporter'
-    CodeClimate::TestReporter.start
-  else
-    require 'simplecov'
-    require 'simplecov-json'
-    SimpleCov.refuse_coverage_drop
-    SimpleCov.formatters = [
-      SimpleCov::Formatter::HTMLFormatter,
-      SimpleCov::Formatter::JSONFormatter
-    ]
-    SimpleCov.start do
-      add_filter '/spec/'
-      add_filter '/bin/'
-      add_filter '/gemfiles/'
-    end
-  end
+if ENV['CI'] && RUBY_ENGINE == 'ruby'
+  require 'codeclimate-test-reporter'
+  CodeClimate::TestReporter.start
+else
+  require 'simplecov'
 end
 
 begin
-  require 'pry-suite'
+  require 'pry-byebug'
 rescue LoadError
   puts 'Pry unavailable'
 end
 
 require 'rspec'
-
+require 'rspec/its'
+require 'celluloid/current'
 require 'celluloid/test'
 require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
-Sidekiq.logger.level = Logger::ERROR
 require 'sidekiq_unique_jobs/testing'
+require 'active_support/all'
+require 'active_support/testing/time_helpers'
 
 require 'rspec-sidekiq'
 
 Sidekiq::Testing.disable!
+Sidekiq.logger.level = "Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}".constantize
 
 require 'sidekiq/redis_connection'
-redis_url = ENV['REDIS_URL'] || 'redis://localhost/15'
-REDIS = Sidekiq::RedisConnection.create(url: redis_url, namespace: 'sidekiq-unique-jobs-testing')
+REDIS_URL ||= ENV['REDIS_URL'] || 'redis://localhost/15'.freeze
+REDIS_NAMESPACE ||= 'unique-test'.freeze
+REDIS ||= Sidekiq::RedisConnection.create(url: REDIS_URL, namespace: REDIS_NAMESPACE)
+
+Sidekiq.configure_client do |config|
+  config.redis = { url: REDIS_URL, namespace: REDIS_NAMESPACE }
+end
 
 Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each { |f| require f }
 RSpec.configure do |config|
@@ -68,3 +63,5 @@ RSpec::Sidekiq.configure do |config|
   # Warn when jobs are not enqueued to Redis but to a job array
   config.warn_when_jobs_not_processed_by_sidekiq = false
 end
+
+Dir[File.join(File.dirname(__FILE__), 'workers', '**', '*.rb')].each { |f| require f }

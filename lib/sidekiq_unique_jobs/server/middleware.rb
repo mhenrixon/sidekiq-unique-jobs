@@ -1,89 +1,71 @@
 require 'digest'
 require 'forwardable'
-require 'sidekiq_unique_jobs/server/extensions'
 
 module SidekiqUniqueJobs
   module Server
     class Middleware
       extend Forwardable
-      def_delegators :SidekiqUniqueJobs, :connection, :payload_hash, :synchronize
-      def_delegators :'SidekiqUniqueJobs.config', :default_unlock_order,
-                     :default_reschedule_on_lock_fail
       def_delegators :Sidekiq, :logger
+      def_instance_delegator :@worker, :class, :worker_class
 
-      include Extensions
+      include OptionsWithFallback
 
-      attr_reader :redis_pool,
-                  :worker,
-                  :options
-
-      def call(worker, item, _queue, redis_pool = nil, &blk)
+      def call(worker, item, queue, redis_pool = nil, &blk)
         @worker = worker
         @redis_pool = redis_pool
-        setup_options(worker.class)
-        send("#{unlock_order}_call", item, &blk)
+        @queue = queue
+        @item = item
+
+        send(unique_lock, &blk)
       end
 
-      def setup_options(klass)
-        @options = {}
-        options.merge!(klass.get_sidekiq_options) if klass.respond_to?(:get_sidekiq_options)
-      end
+      private
 
-      def before_yield_call(item)
-        unlock(payload_hash(item), item)
+      attr_reader :redis_pool, :worker, :item, :worker_class
+
+      def until_executing
+        unlock
         yield
       end
 
-      def after_yield_call(item)
+      def until_executed(&block)
         operative = true
-        yield
+        after_yield_yield(&block)
       rescue Sidekiq::Shutdown
         operative = false
         raise
       ensure
-        unlock(payload_hash(item), item) if operative
+        unlock if operative
       end
 
-      def run_lock_call(item)
-        lock_key = payload_hash(item)
-        connection do |con|
-          synchronize(lock_key, con, item.dup.merge(options)) do
-            unlock(lock_key, item)
-            yield
-          end
+      def after_yield_yield
+        yield
+      end
+
+      def while_executing
+        lock.synchronize do
+          yield
         end
       rescue SidekiqUniqueJobs::RunLockFailed
-        return reschedule(item) if reschedule_on_lock_fail
+        return reschedule if reschedule_on_lock_fail
         raise
       end
 
-      def unlock_order
-        return :never unless options['unique']
-        options['unique_unlock_order'] || default_unlock_order
-      end
-
-      def never_call(*)
+      def until_timeout
         yield if block_given?
-      end
-
-      def reschedule_on_lock_fail
-        options['reschedule_on_lock_fail'] || default_reschedule_on_lock_fail
       end
 
       protected
 
-      def unlock(lock_key, item)
-        connection do |con|
-          con.eval(remove_on_match, keys: [lock_key], argv: [item['jid']])
-        end
-        after_unlock_hook
+      def unlock
+        after_unlock_hook if lock.unlock(:server)
       end
 
       def after_unlock_hook
         worker.after_unlock if worker.respond_to?(:after_unlock)
       end
 
-      def reschedule(item)
+      def reschedule
         Sidekiq::Client.new(redis_pool).raw_push([item])
       end
     end

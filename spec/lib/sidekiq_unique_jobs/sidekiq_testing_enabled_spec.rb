@@ -107,12 +107,13 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect { Sidekiq::Worker.jobs.size }.not_to raise_error
       end
 
-      it 'adds the unique_hash to the message' do
+      it 'adds the unique_digest to the message' do
         param = 'hash'
-        hash = SidekiqUniqueJobs.get_payload(UniqueWorker, :working, [param])
+        item = { 'class' => 'UniqueWorker', 'queue' => 'working', 'args' => [param] }
+        hash = SidekiqUniqueJobs::UniqueArgs.digest(item)
         expect(UniqueWorker.perform_async(param)).to_not be_nil
         expect(UniqueWorker.jobs.size).to eq(1)
-        expect(UniqueWorker.jobs.first['unique_hash']).to eq(hash)
+        expect(UniqueWorker.jobs.last['unique_digest']).to eq(hash)
       end
     end
 
@@ -130,42 +131,9 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
   end
 
   describe 'when set to :inline!', sidekiq: :inline do
-    class InlineWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true
-
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
-    class InlineUnlockOrderWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true, unique_unlock_order: :never
-
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
-    class InlineExpirationWorker
-      include Sidekiq::Worker
-      sidekiq_options unique: true, unique_unlock_order: :never,
-                      unique_job_expiration: 10 * 60
-      def perform(x)
-        TestClass.run(x)
-      end
-    end
-
-    class TestClass
-      def self.run(_)
-      end
-    end
-
     it 'once the job is completed allows to run another one' do
-      expect(TestClass).to receive(:run).with('test')
+      expect(TestClass).to receive(:run).with('test').twice
       InlineWorker.perform_async('test')
-      expect(TestClass).to receive(:run).with('test')
       InlineWorker.perform_async('test')
     end
 

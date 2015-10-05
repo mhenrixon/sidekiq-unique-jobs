@@ -1,12 +1,9 @@
 require 'spec_helper'
-require 'sidekiq_unique_jobs/run_lock'
 
-RSpec.describe SidekiqUniqueJobs::RunLock do
+RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   it 'allows only one mutex object to have the lock at a time' do
     mutexes = (1..10).map do
-      SidekiqUniqueJobs.connection do |conn|
-        SidekiqUniqueJobs::RunLock.new('test_mutex_key', conn)
-      end
+      described_class.new('test_mutex_key')
     end
 
     x = 0
@@ -24,12 +21,10 @@ RSpec.describe SidekiqUniqueJobs::RunLock do
   end
 
   it 'handles auto cleanup correctly' do
-    m = SidekiqUniqueJobs.connection do |conn|
-      SidekiqUniqueJobs::RunLock.new('test_mutex_key', conn)
-    end
+    m = described_class.new('test_mutex_key')
 
     SidekiqUniqueJobs.connection do |conn|
-      conn.setnx 'test_mutex_key', Time.now.to_i - 1
+      conn.set 'test_mutex_key', Time.now.to_i - 1, nx: true
     end
 
     start = Time.now.to_i
@@ -42,9 +37,7 @@ RSpec.describe SidekiqUniqueJobs::RunLock do
   end
 
   it 'maintains mutex semantics' do
-    m = SidekiqUniqueJobs.connection do |conn|
-      SidekiqUniqueJobs::RunLock.new('test_mutex_key', conn)
-    end
+    m = described_class.new('test_mutex_key')
 
     expect do
       m.synchronize do

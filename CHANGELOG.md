@@ -1,5 +1,7 @@
 ## v3.0.16 (Unreleased)
 
+- Improved uniqueness handling (complete refactoring, upgrade with causion)
+- 100% breaking changes
 
 ## v3.0.15
 - Jobs only ever unlock themselves now (see #96 & #94 for info) thanks @pik

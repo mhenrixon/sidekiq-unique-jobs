@@ -6,25 +6,27 @@ require 'sidekiq_unique_jobs/client/middleware'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
 RSpec.describe 'Sidekiq::Api' do
-  class JustAWorker
-    include Sidekiq::Worker
-
-    sidekiq_options unique: true, queue: 'testqueue'
-
-    def perform
-    end
-  end
-
   before do
     Sidekiq.redis = REDIS
     Sidekiq.redis(&:flushdb)
   end
 
-  let(:params) { { foo: 'bar' } }
-  let(:payload_hash) { SidekiqUniqueJobs.get_payload('JustAWorker', 'testqueue', [params]) }
+  let(:item) do
+    { 'class' => JustAWorker,
+      'queue' => 'testqueue',
+      'args'  => [foo: 'bar'] }
+  end
+
+  def unique_key
+    SidekiqUniqueJobs::UniqueArgs.digest(
+      'class' => JustAWorker,
+      'queue' => 'testqueue',
+      'args'  => [foo: 'bar'],
+      'at'    => Time.now.tomorrow.to_i)
+  end
 
   def schedule_job
-    JustAWorker.perform_in(60 * 60 * 3, params)
+    JustAWorker.perform_in(60 * 60 * 3, foo: 'bar')
   end
 
   def perform_async
@@ -33,14 +35,14 @@ RSpec.describe 'Sidekiq::Api' do
 
   describe Sidekiq::SortedEntry::UniqueExtension, sidekiq_ver: '>= 3.1' do
     it 'deletes uniqueness lock on delete' do
-      schedule_job
+      expect(schedule_job).to be_truthy
 
       Sidekiq::ScheduledSet.new.each(&:delete)
       Sidekiq.redis do |c|
-        expect(c.exists(payload_hash)).to be_falsy
+        expect(c.exists(unique_key)).to be_falsy
       end
 
-      expect(schedule_job).not_to eq(nil)
+      expect(schedule_job).to be_truthy
     end
   end
 
@@ -49,8 +51,9 @@ RSpec.describe 'Sidekiq::Api' do
       jid = perform_async
       Sidekiq::Queue.new('testqueue').find_job(jid).delete
       Sidekiq.redis do |c|
-        expect(c.exists(payload_hash)).to be_falsy
+        expect(c.exists(unique_key)).to be_falsy
       end
+      expect(true).to be_truthy
     end
   end
 
@@ -59,7 +62,7 @@ RSpec.describe 'Sidekiq::Api' do
       perform_async
       Sidekiq::Queue.new('testqueue').clear
       Sidekiq.redis do |c|
-        expect(c.exists(payload_hash)).to be_falsy
+        expect(c.exists(unique_key)).to be_falsy
       end
     end
   end
@@ -69,7 +72,7 @@ RSpec.describe 'Sidekiq::Api' do
       schedule_job
       Sidekiq::JobSet.new('schedule').clear
       Sidekiq.redis do |c|
-        expect(c.exists(payload_hash)).to be_falsy
+        expect(c.exists(unique_key)).to be_falsy
       end
     end
   end
