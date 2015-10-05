@@ -36,8 +36,10 @@ rescue LoadError
       else
         string = string.sub(/^(?:(?=\b|[A-Z_])|\w)/) { $&.downcase }
       end
-      string.gsub!(/(?:_|(\/))([a-z\d]*)/i) { "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}" }
-      string.gsub!(/\//, '::')
+      string.gsub!(%r{(?:_|(\/))([a-z\d]*)}i) do
+        "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}"
+      end
+      string.gsub!(%r{/}, '::')
       string
     end unless ''.respond_to?(:camelize)
   end

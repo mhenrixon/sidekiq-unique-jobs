@@ -8,8 +8,7 @@ module SidekiqUniqueJobs
     include Normalizer
 
     def_delegators :SidekiqUniqueJobs, :config, :worker_class_constantize
-    def_delegators :Sidekiq, :logger
-    def_delegators :logger, :debug, :warn, :error, :fatal
+    def_delegators :'Sidekiq.logger', :logger, :debug, :warn, :error, :fatal
 
     def self.digest(item)
       new(item).unique_digest
@@ -80,8 +79,7 @@ module SidekiqUniqueJobs
     end
 
     def sidekiq_worker_class?
-      if @worker_class.respond_to?(:get_sidekiq_options) ||
-         @worker_class.class.respond_to?(:get_sidekiq_options)
+      if @worker_class.respond_to?(:get_sidekiq_options)
         true
       else
         debug { "#{@worker_class} does not respond to :get_sidekiq_options" }

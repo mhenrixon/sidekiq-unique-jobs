@@ -1,4 +1,5 @@
 #!/usr/bin/env rake
+
 require 'rubygems'
 require 'bundler/setup'
 require 'bundler/gem_tasks'
@@ -8,4 +9,4 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:style)
 RSpec::Core::RakeTask.new(:spec)
 
-task default: [:spec, :style]
+task default: [:style, :spec]

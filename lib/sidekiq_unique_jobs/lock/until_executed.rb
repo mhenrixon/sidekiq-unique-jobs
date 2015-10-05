@@ -18,6 +18,7 @@ module SidekiqUniqueJobs
         SidekiqUniqueJobs::Unlockable.unlock(unique_key, item['jid'.freeze], redis_pool)
       end
 
+      # rubocop:disable MethodLength
       def lock(scope)
         if scope.to_sym != :client
           fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
@@ -37,6 +38,7 @@ module SidekiqUniqueJobs
           fail "#{__method__} returned an unexpected value (#{result})"
         end
       end
+      # rubocop:enable MethodLength
 
       def unique_key
         @unique_key ||= UniqueArgs.digest(item)
