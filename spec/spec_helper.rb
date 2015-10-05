@@ -15,7 +15,13 @@ end
 
 require 'rspec'
 require 'rspec/its'
-require 'celluloid/current'
+
+begin
+  require 'celluloid/current'
+rescue LoadError
+  puts 'Old celluloid version?'
+end
+
 require 'celluloid/test'
 require 'sidekiq'
 require 'sidekiq/util'
