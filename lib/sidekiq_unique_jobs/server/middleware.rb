@@ -1,4 +1,3 @@
-require 'digest'
 require 'forwardable'
 
 module SidekiqUniqueJobs
@@ -46,9 +45,6 @@ module SidekiqUniqueJobs
         lock.synchronize do
           yield
         end
-      rescue SidekiqUniqueJobs::RunLockFailed
-        return reschedule if reschedule_on_lock_fail
-        raise
       end
 
       def until_timeout

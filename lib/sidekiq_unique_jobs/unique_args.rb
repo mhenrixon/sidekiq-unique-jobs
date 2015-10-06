@@ -1,3 +1,4 @@
+require 'digest'
 require 'sidekiq_unique_jobs/normalizer'
 
 module SidekiqUniqueJobs
