@@ -19,28 +19,33 @@ rescue LoadError
     end unless {}.respond_to?(:slice!)
   end
 end
-begin
-  require 'active_support/core_ext/string/inflections'
-rescue LoadError
-  class String
-    # File activesupport/lib/active_support/inflector/methods.rb, line 178
-    def classify
-      camelize(singularize(sub(/.*\./, '')))
-    end unless ''.respond_to?(:classify)
 
-    # File activesupport/lib/active_support/inflector/methods.rb, line 67
-    def camelize(uppercase_first_letter = true)
-      string = self
-      if uppercase_first_letter
-        string = string.sub(/^[a-z\d]*/) { $&.capitalize }
-      else
-        string = string.sub(/^(?:(?=\b|[A-Z_])|\w)/) { $&.downcase }
-      end
-      string.gsub!(%r{(?:_|(\/))([a-z\d]*)}i) do
-        "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}"
-      end
-      string.gsub!(%r{/}, '::')
-      string
-    end unless ''.respond_to?(:camelize)
-  end
+class Array
+  def extract_options!
+    if last.is_a?(Hash) && last.instance_of?(Hash)
+      pop
+    else
+      {}
+    end
+  end unless [].respond_to?(:extract_options!)
+end
+
+class String
+  def classify
+    camelize(sub(/.*\./, ''))
+  end unless ''.respond_to?(:classify)
+
+  def camelize(uppercase_first_letter = true)
+    string = self
+    if uppercase_first_letter
+      string = string.sub(/^[a-z\d]*/) { $&.capitalize }
+    else
+      string = string.sub(/^(?:(?=\b|[A-Z_])|\w)/) { $&.downcase }
+    end
+    string.gsub!(%r{(?:_|(\/))([a-z\d]*)}i) do
+      "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}"
+    end
+    string.gsub!(%r{/}, '::')
+    string
+  end unless ''.respond_to?(:camelize)
 end

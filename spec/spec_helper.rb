@@ -16,19 +16,14 @@ end
 require 'rspec'
 require 'rspec/its'
 
-begin
-  require 'celluloid/current'
-rescue LoadError
-  puts 'Old celluloid version?'
-end
-
+require 'celluloid/current'
 require 'celluloid/test'
+Celluloid.boot
 require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
 require 'sidekiq_unique_jobs/testing'
-require 'active_support/all'
-require 'active_support/testing/time_helpers'
+require 'timecop'
 
 require 'rspec-sidekiq'
 

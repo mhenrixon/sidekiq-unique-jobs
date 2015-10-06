@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'appraisal', '~> 2.0.0'
-
 gem 'rspec-its',     require: false
 
 platform :mri do

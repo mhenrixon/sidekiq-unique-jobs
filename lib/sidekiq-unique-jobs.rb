@@ -38,7 +38,7 @@ module SidekiqUniqueJobs
       yield config
     else
       options.each do |key, val|
-        config[key] = val
+        config.send("#{key}=", val)
       end
     end
   end

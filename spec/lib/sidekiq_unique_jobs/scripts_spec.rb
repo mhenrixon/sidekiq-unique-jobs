@@ -1,6 +1,5 @@
 require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Scripts do
-  include ActiveSupport::Testing::TimeHelpers
   MD5_DIGEST ||= 'unique'.freeze
   UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
   JID ||= 'fuckit'.freeze
@@ -36,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
       context 'when job is unique' do
         specify { expect(lock_for).to eq(1) }
         specify do
-          expect(lock_for(0.5.seconds)).to eq(1)
+          expect(lock_for(0.5)).to eq(1)
           expect(Redis)
             .to have_key(UNIQUE_KEY)
             .for_seconds(1)
@@ -54,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
     describe '.release_lock' do
       context 'when job is locked by another jid' do
-        before  { expect(lock_for(10.seconds, 'anotherjid')).to eq(1) }
+        before  { expect(lock_for(10, 'anotherjid')).to eq(1) }
         specify { expect(unlock).to eq(0) }
         after { unlock(UNIQUE_KEY, ANOTHER_JID) }
       end
@@ -65,7 +64,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
       context 'when job is locked by the same jid' do
         specify do
-          expect(lock_for(10.seconds)).to eq(1)
+          expect(lock_for(10)).to eq(1)
           expect(unlock).to eq(1)
         end
       end

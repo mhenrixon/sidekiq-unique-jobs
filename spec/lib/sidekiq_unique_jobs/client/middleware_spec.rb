@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'celluloid/current'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
@@ -29,7 +28,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
       it 'schedules new jobs when arguments differ' do
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-          MainJob.perform_in(x.seconds.from_now, x)
+          MainJob.perform_in(x, x)
         end
 
         Sidekiq.redis do |c|
@@ -46,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         end
 
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-          ShitClass.delay_for(x.seconds, unique_lock: :while_executing).do_it(1)
+          ShitClass.delay_for(x, unique_lock: :while_executing).do_it(1)
         end
 
         Sidekiq.redis do |c|
@@ -173,7 +172,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     # jobs are set around the same time as the scheduled job itself feel free to improve.
     it 'expires the digest when a scheduled job is scheduled at' do
       expected_expires_at =
-        (Time.at(15.minutes.from_now) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
+        (Time.at(Time.now.to_i + 15 * 60) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
       jid = MyUniqueWorker.perform_in(expected_expires_at, 'mike')
       item = { 'class' => MyUniqueWorker,
                'queue' => 'customqueue',

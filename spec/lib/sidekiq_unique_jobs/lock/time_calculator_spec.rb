@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::TimeCalculator do
-  include ActiveSupport::Testing::TimeHelpers
   shared_context 'undefined worker class' do
     subject { described_class.new('class' => 'test') }
   end
@@ -42,12 +41,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::TimeCalculator do
     end
 
     subject { described_class.new('class' => 'MyUniqueWorker', 'at' => schedule_time) }
-    let(:schedule_time) { 1.day.from_now.to_i }
+    let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
     let(:now_in_utc) { Time.now.utc.to_i }
 
     its(:time_until_scheduled) do
-      travel_to(Time.at(now_in_utc)) do
-        is_expected.to eq(schedule_time - now_in_utc)
+      Timecop.travel(Time.at(now_in_utc)) do
+        is_expected.to be_within(1).of(schedule_time - now_in_utc)
       end
     end
   end

@@ -2,8 +2,6 @@ require 'spec_helper'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'sidekiq/scheduled'
-require 'active_support/core_ext/time'
-require 'active_support/testing/time_helpers'
 
 RSpec.describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
@@ -145,8 +143,6 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
     end
 
     describe 'when a job is set to run once in 10 minutes' do
-      include ActiveSupport::Testing::TimeHelpers
-
       context 'when spammed' do
         it 'only allows 1 call per 10 minutes' do
           expect(TestClass).to receive(:run).with(1).once
