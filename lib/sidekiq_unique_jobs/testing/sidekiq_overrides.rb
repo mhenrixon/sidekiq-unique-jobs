@@ -34,6 +34,10 @@ module Sidekiq
         end
         jobs.clear
       end
+
+      def execute_job(worker, args)
+        worker.perform(*args)
+      end unless respond_to?(:execute_job)
     end
 
     module Overrides

@@ -30,5 +30,5 @@ matrix:
   fast_finish: true
   include:
     - rvm: 2.2.3
-      gemfile: gemfiles/sidekiq_3.3.gemfile
+      gemfile: gemfiles/sidekiq_develop.gemfile
       env: STYLE=true

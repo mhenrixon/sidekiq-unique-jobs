@@ -3,7 +3,7 @@ appraise 'sidekiq-develop' do
 end
 
 appraise 'sidekiq-2.17' do
-  gem 'sidekiq', '~> 2.17.0'
+  gem 'sidekiq', '~> 2.17.4'
 end
 
 appraise 'sidekiq-3.0' do
