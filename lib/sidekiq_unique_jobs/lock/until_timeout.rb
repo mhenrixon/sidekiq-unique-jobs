@@ -5,6 +5,10 @@ module SidekiqUniqueJobs
         return true if scope.to_sym == :server
         fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
       end
+
+      def execute(_after_unlock_hook)
+        yield if block_given?
+      end
     end
   end
 end

@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
       end
 
-      def synchronize(&_block)
+      def synchronize
         @mutex.lock
         sleep 0.001 until locked?
 
@@ -25,6 +25,12 @@ module SidekiqUniqueJobs
 
       def locked?
         Scripts.call(:synchronize, @redis_pool, keys: [@run_key], argv: [Time.now.to_i]) == 1
+      end
+
+      def execute(_after_unlock_hook)
+        synchronize do
+          yield
+        end
       end
     end
   end

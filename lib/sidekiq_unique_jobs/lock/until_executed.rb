@@ -11,6 +11,16 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
       end
 
+      def execute(after_unlock_hook, &blk)
+        operative = true
+        send(:after_yield_yield, &blk)
+      rescue Sidekiq::Shutdown
+        operative = false
+        raise
+      ensure
+        after_unlock_hook.call if operative && unlock(:server)
+      end
+
       def unlock(scope)
         unless [:server, :api, :test].include?(scope)
           fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
@@ -46,6 +56,10 @@ module SidekiqUniqueJobs
 
       def max_lock_time
         @max_lock_time ||= TimeoutCalculator.for_item(item).seconds
+      end
+
+      def after_yield_yield
+        yield
       end
 
       private
