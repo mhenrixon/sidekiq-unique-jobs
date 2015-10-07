@@ -1,6 +1,6 @@
 class InlineWorker
   include Sidekiq::Worker
-  sidekiq_options unique: true
+  sidekiq_options unique: :while_executing
 
   def perform(x)
     TestClass.run(x)

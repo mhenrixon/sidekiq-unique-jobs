@@ -1,6 +1,5 @@
 module SidekiqUniqueJobs
   class Config < OpenStruct
-    TESTING_CONSTANT ||= 'Testing'.freeze
     CONFIG_ACCESSORS = [
       :unique_prefix,
       :default_expiration,

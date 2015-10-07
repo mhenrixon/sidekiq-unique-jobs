@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         end
 
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-          ShitClass.delay_for(x, unique_lock: :while_executing).do_it(1)
+          ShitClass.delay_for(x, unique: :while_executing).do_it(1)
         end
 
         Sidekiq.redis do |c|
@@ -73,7 +73,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does not queue duplicates when when calling delay' do
-      10.times { PlainClass.delay(unique_lock: :until_executed, unique: true, queue: 'customqueue').run(1) }
+      10.times { PlainClass.delay(unique: :until_executed, queue: 'customqueue').run(1) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
       end

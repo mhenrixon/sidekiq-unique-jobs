@@ -1,9 +1,5 @@
 module SidekiqUniqueJobs
   module OptionsWithFallback
-    UNIQUE_KEY ||= 'unique'.freeze
-    UNIQUE_LOCK_KEY ||= 'unique_lock'.freeze
-    LOG_DUPLICATE_KEY ||= 'log_duplicate_payload'.freeze
-
     def unique_enabled?
       options[UNIQUE_KEY] || item[UNIQUE_KEY]
     end
@@ -25,7 +21,12 @@ module SidekiqUniqueJobs
     end
 
     def unique_lock
-      options[UNIQUE_LOCK_KEY] || item[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
+      if options.key?(UNIQUE_KEY) && options[UNIQUE_KEY] == true
+        warn "unique: true is no longer valid. Please set it to the type of lock required like: `unique: :until_executed`"
+        options[UNIQUE_LOCK_KEY] || item[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
+      else
+        options[UNIQUE_KEY] || item[UNIQUE_KEY] || SidekiqUniqueJobs.default_lock
+      end
     end
 
     def options

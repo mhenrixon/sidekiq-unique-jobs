@@ -1,8 +1,7 @@
 class RunLockWithRetriesWorker
   include Sidekiq::Worker
 
-  sidekiq_options unique: true,
-                  unique_lock: :while_executing,
+  sidekiq_options unique: :while_executing,
                   queue: :unlock_ordering,
                   run_lock_retries: 10,
                   run_lock_retry_interval: 0,

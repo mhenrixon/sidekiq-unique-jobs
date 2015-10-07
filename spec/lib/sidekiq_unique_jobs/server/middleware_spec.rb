@@ -20,13 +20,13 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe '#unlock' do
         it 'does not unlock mutexes it does not own' do
-          jid = AfterYieldWorker.perform_async
+          jid = UntilExecutedWorker.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
           Sidekiq.redis do |c|
             c.set(digest_for(item), 'NOT_DELETED')
           end
 
-          subject.call(AfterYieldWorker.new, item, QUEUE) do
+          subject.call(UntilExecutedWorker.new, item, QUEUE) do
             Sidekiq.redis do |c|
               expect(c.get(digest_for(item))).to eq('NOT_DELETED')
             end
@@ -36,9 +36,9 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe ':before_yield' do
         it 'removes the lock before yielding to the worker' do
-          jid = BeforeYieldWorker.perform_async
+          jid = UntilExecutingWorker.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
-          worker = BeforeYieldWorker.new
+          worker = UntilExecutingWorker.new
           subject.call(worker, item, QUEUE) do
             Sidekiq.redis do |c|
               expect(c.ttl(digest_for(item))).to eq(-2) # key does not exist
@@ -49,10 +49,10 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe ':after_yield' do
         it 'removes the lock after yielding to the worker' do
-          jid = AfterYieldWorker.perform_async
+          jid = UntilExecutedWorker.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
 
-          subject.call('AfterYieldWorker', item, QUEUE) do
+          subject.call('UntilExecutedWorker', item, QUEUE) do
             Sidekiq.redis do |c|
               expect(c.get(digest_for(item))).to eq jid
             end
@@ -62,10 +62,10 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
     end
 
     context 'unlock' do
-      let(:worker) { AfterYieldWorker.new }
+      let(:worker) { UntilExecutedWorker.new }
 
       before do
-        jid  = AfterYieldWorker.perform_async
+        jid  = UntilExecutedWorker.perform_async
         @item = Sidekiq::Queue.new('unlock_ordering').find_job(jid).item
       end
 

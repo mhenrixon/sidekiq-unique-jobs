@@ -36,10 +36,10 @@ To make things worse there are many ways of wanting to enforce uniqueness.
 
 ### While Executing
 
-Due to discoverability of the different lock types `unique_lock` sidekiq option it was decided to use the `while_executing` as a default. Most people will note that scheduling any number of jobs with the same arguments is possible.
+Due to discoverability of the different lock types `unique` sidekiq option it was decided to use the `while_executing` as a default. Most people will note that scheduling any number of jobs with the same arguments is possible.
 
 ```ruby
-sidekiq_options unique: true, unique_lock: :while_executing
+sidekiq_options unique: :while_executing
 ```
 
 Is to make sure that a job can be scheduled any number of times but only executed a single time per argument provided to the job we call this runtime uniqueness. This is probably most useful forbackground jobs that are fast to execute. (See mhenrixon/sidekiq-unique-jobs#111 for a great example of when this would be right.) While the job is executing/performing no other jobs can be executed at the same time.
@@ -47,7 +47,7 @@ Is to make sure that a job can be scheduled any number of times but only execute
 ### Until Executing
 
 ```ruby
-sidekiq_options unique: true, unique_lock: :until_executing
+sidekiq_options unique: :until_executing
 ```
 
 This means that a job can only be scheduled into redis once per whatever the configuration of unique arguments. Any jobs added until the first one of the same arguments has been unlocked will just be dropped. This is what was tripping many people up. They would schedule a job to run in the future and it would be impossible to schedule new jobs with those same arguments even immediately. There was some forth and back between also locking jobs on the scheduled queue and the regular queues but in the end I decided it was best to separate these two features out into different locking mechanisms. I think what most people are after is to be able to lock a job while executing or that seems to be what people are most missing at the moment.
@@ -55,7 +55,7 @@ This means that a job can only be scheduled into redis once per whatever the con
 ### Until Executed
 
 ```ruby
-sidekiq_options unique: true, unique_lock: :until_executed
+sidekiq_options unique: :until_executed
 ```
 
 This is the combination of the two above. First we lock the job until it executes, then as the job begins executes we keep the lock so that no other jobs with the same arguments can execute at the same time.
@@ -63,7 +63,7 @@ This is the combination of the two above. First we lock the job until it execute
 ### Until Timeout
 
 ```ruby
-sidekiq_options unique: true, unique_lock: :until_timeout
+sidekiq_options unique: :until_timeout
 ```
 
 The job won't be unlocked until the timeout/expiry runs out.
@@ -79,7 +79,7 @@ The job won't be unlocked until the timeout/expiry runs out.
 All that is required is that you specifically set the sidekiq option for *unique* to true like below:
 
 ```ruby
-sidekiq_options unique: true, unique_lock: :while_executing
+sidekiq_options unique: :while_executing
 ```
 
 For jobs scheduled in the future it is possible to set for how long the job
@@ -87,12 +87,12 @@ should be unique. The job will be unique for the number of seconds configured (d
 or until the job has been completed. Thus, the job will be unique for the shorter of the two.  Note that Sidekiq versions before 3.0 will remove job keys after an hour, which means jobs can remain unique for at most an hour.
 
 *If you want the unique job to stick around even after it has been successfully
-processed then just set the unique_lock to anything except `:before_yield` or `:after_yield` (`unique_lock = :until_timeout`)
+processed then just set `unique: :until_timeout`.
 
 You can also control the expiration length of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
-sidekiq_options unique: true, unique_lock: :until_timeout, unique_expiration: 120 * 60 # 2 hours
+sidekiq_options unique: :until_timeout, unique_expiration: 120 * 60 # 2 hours
 ```
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
@@ -101,7 +101,7 @@ Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 ```ruby
 Sidekiq.default_worker_options = {
-   'unique' => true,
+   'unique' => :until_executing,
    'unique_args' => proc do |args|
      [args.first.except('job_id')]
    end
@@ -125,7 +125,7 @@ The method or the proc can return a modified version of args without the transie
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: true,
+  sidekiq_options unique: :until_and_during_execution,
                   unique_args: :unique_args
 
   def self.unique_args(name, id, options)
@@ -138,7 +138,7 @@ end
 
 class UniqueJobWithFilterProc
   include Sidekiq::Worker
-  sidekiq_options unique: true,
+  sidekiq_options unique: :until_executed,
                   unique_args: ->(args) { [ args.first ] }
 
   ...
@@ -155,7 +155,7 @@ If you are using :after_yield as your unlock ordering, Unique Job offers a callb
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: true,
+  sidekiq_options unique: :while_executing,
 
   def after_unlock
    # block has yielded and lock is released
@@ -172,7 +172,7 @@ To see logging in sidekiq when duplicate payload has been filtered out you can e
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: true,
+  sidekiq_options unique: :while_executing,
                   log_duplicate_payload: true
 
   ...
@@ -183,8 +183,6 @@ end
 ### Testing
 
 To enable the testing for `sidekiq-unique-jobs`, add `require 'sidekiq_unique_jobs/testing'` to your testing helper.
-
-SidekiqUniqueJobs uses mock_redis for inline testing. Due to complaints about having that as a runtime dependency it was made a development dependency so if you are relying on inline testing you will have to add `gem 'mock_redis'` to your Gemfile.
 
 ## Contributing
 

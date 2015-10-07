@@ -1,4 +1,5 @@
 require 'yaml' if RUBY_VERSION.include?('2.0.0') # rubocop:disable FileName
+require 'sidekiq_unique_jobs/constants'
 require 'sidekiq_unique_jobs/core_ext'
 require 'sidekiq_unique_jobs/options_with_fallback'
 require 'sidekiq_unique_jobs/scripts'
