@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::Lock::TimeCalculator do
+RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
   shared_context 'undefined worker class' do
     subject { described_class.new('class' => 'test') }
   end

@@ -18,10 +18,10 @@ module SidekiqUniqueJobs
     def initialize(job)
       Sidekiq::Logging.with_context(self.class.name) do
         @item = job
-        @worker_class ||= worker_class_constantize(@item['class'.freeze])
-        @item['unique_prefix'.freeze] ||= unique_prefix
-        @item['unique_args'.freeze] ||= unique_args(@item['args'.freeze])
-        @item['unique_digest'.freeze] ||= unique_digest
+        @worker_class ||= worker_class_constantize(@item[CLASS_KEY])
+        @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
+        @item[UNIQUE_ARGS_KEY] ||= unique_args(@item[ARGS_KEY])
+        @item[UNIQUE_DIGEST_KEY] ||= unique_digest
       end
     end
 
@@ -36,15 +36,15 @@ module SidekiqUniqueJobs
 
     def unique_prefix
       return config.unique_prefix unless sidekiq_worker_class?
-      @worker_class.get_sidekiq_options['unique_prefix'.freeze] || config.unique_prefix
+      @worker_class.get_sidekiq_options[UNIQUE_PREFIX_KEY] || config.unique_prefix
     end
 
     def digestable_hash
-      hash = @item.slice('class', 'queue', 'unique_args')
+      hash = @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY)
 
       if unique_on_all_queues?
-        debug { "uniqueness specified across all queues (deleting queue: #{@item['queue']} from hash)" }
-        hash.delete('queue')
+        debug { "uniqueness specified across all queues (deleting queue: #{@item[QUEUE_KEY]} from hash)" }
+        hash.delete(QUEUE_KEY)
       end
       hash
     end
@@ -64,7 +64,7 @@ module SidekiqUniqueJobs
     def unique_on_all_queues?
       return unless sidekiq_worker_class?
       return unless unique_args_enabled?
-      @worker_class.get_sidekiq_options['unique_on_all_queues'.freeze]
+      @worker_class.get_sidekiq_options[UNIQUE_ON_ALL_QUEUES_KEY]
     end
 
     def unique_args_enabled?
@@ -74,8 +74,8 @@ module SidekiqUniqueJobs
 
     def unique_args_enabled_in_worker?
       return unless sidekiq_worker_class?
-      @worker_class.get_sidekiq_options['unique_args_enabled'.freeze] ||
-        @worker_class.get_sidekiq_options['unique_args'.freeze]
+      @worker_class.get_sidekiq_options[UNIQUE_ARGS_ENABLED_KEY] ||
+        @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY]
     end
 
     def sidekiq_worker_class?
@@ -127,7 +127,7 @@ module SidekiqUniqueJobs
 
     def unique_args_method
       @unique_args_method ||=
-        @worker_class.get_sidekiq_options['unique_args'.freeze] if sidekiq_worker_class?
+        @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY] if sidekiq_worker_class?
     end
   end
 end

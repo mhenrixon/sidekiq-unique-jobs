@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
       end
 
       def initialize(item, redis_pool = nil)
-        @unique_digest = item['unique_digest'.freeze]
+        @unique_digest = item[UNIQUE_DIGEST_KEY]
         @run_key = "#{@unique_digest}:run"
         @mutex = Mutex.new
         @redis_pool = redis_pool

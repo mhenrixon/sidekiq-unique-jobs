@@ -1,3 +1,13 @@
+## v4.0.3
+
+- Remove `unique_lock` and use `unique: ` to set this like in `unique: :until_timeout`
+- Warn when using `unique: true` and suggest to change it to what we need with a fallback.
+- Create constants for hash keys to avoid having to fix spelling or for renaming keys only having to be done in one place and avoid having to type .freeze everywhere.
+
+## v4.0.2
+
+- Fix a problem with an unresolved reference
+
 ## v4.0.1
 
 - Get rid of development dependency on active support (causing trouble with jruby)

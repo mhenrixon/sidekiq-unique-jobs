@@ -1,5 +1,12 @@
 module SidekiqUniqueJobs
   module OptionsWithFallback
+    def self.included(base)
+      base.class_exec do
+        class_attribute :lock_cache
+      end
+      base.lock_cache ||= {}
+    end
+
     def unique_enabled?
       options[UNIQUE_KEY] || item[UNIQUE_KEY]
     end
@@ -17,13 +24,13 @@ module SidekiqUniqueJobs
     end
 
     def lock_class
-      "SidekiqUniqueJobs::Lock::#{unique_lock.to_s.classify}".constantize
+      lock_cache[unique_lock.to_sym] ||= "SidekiqUniqueJobs::Lock::#{unique_lock.to_s.classify}".constantize
     end
 
     def unique_lock
       if options.key?(UNIQUE_KEY) && options[UNIQUE_KEY] == true
         warn "unique: true is no longer valid. Please set it to the type of lock required like: `unique: :until_executed`"
-        options[UNIQUE_LOCK_KEY] || item[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
+        options[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
       else
         options[UNIQUE_KEY] || item[UNIQUE_KEY] || SidekiqUniqueJobs.default_lock
       end

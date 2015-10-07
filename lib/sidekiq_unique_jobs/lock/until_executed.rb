@@ -15,7 +15,7 @@ module SidekiqUniqueJobs
         unless [:server, :api, :test].include?(scope)
           fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
-        SidekiqUniqueJobs::Unlockable.unlock(unique_key, item['jid'.freeze], redis_pool)
+        SidekiqUniqueJobs::Unlockable.unlock(unique_key, item[JID_KEY], redis_pool)
       end
 
       # rubocop:disable MethodLength
@@ -26,7 +26,7 @@ module SidekiqUniqueJobs
 
         result = Scripts.call(:aquire_lock, redis_pool,
                               keys: [unique_key],
-                              argv: [item['jid'.freeze], max_lock_time])
+                              argv: [item[JID_KEY], max_lock_time])
         case result
         when 1
           logger.debug { "successfully locked #{unique_key} for #{max_lock_time} seconds" }
@@ -45,7 +45,7 @@ module SidekiqUniqueJobs
       end
 
       def max_lock_time
-        @max_lock_time ||= TimeCalculator.for_item(item).seconds
+        @max_lock_time ||= TimeoutCalculator.for_item(item).seconds
       end
 
       private
