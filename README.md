@@ -36,17 +36,35 @@ To make things worse there are many ways of wanting to enforce uniqueness.
 
 ### While Executing
 
+Due to discoverability of the different lock types `unique_lock` sidekiq option it was decided to use the `while_executing` as a default. Most people will note that scheduling any number of jobs with the same arguments is possible.
+
+```ruby
+sidekiq_options unique: true, unique_lock: :while_executing
+```
+
 Is to make sure that a job can be scheduled any number of times but only executed a single time per argument provided to the job we call this runtime uniqueness. This is probably most useful forbackground jobs that are fast to execute. (See mhenrixon/sidekiq-unique-jobs#111 for a great example of when this would be right.) While the job is executing/performing no other jobs can be executed at the same time.
 
 ### Until Executing
+
+```ruby
+sidekiq_options unique: true, unique_lock: :until_executing
+```
 
 This means that a job can only be scheduled into redis once per whatever the configuration of unique arguments. Any jobs added until the first one of the same arguments has been unlocked will just be dropped. This is what was tripping many people up. They would schedule a job to run in the future and it would be impossible to schedule new jobs with those same arguments even immediately. There was some forth and back between also locking jobs on the scheduled queue and the regular queues but in the end I decided it was best to separate these two features out into different locking mechanisms. I think what most people are after is to be able to lock a job while executing or that seems to be what people are most missing at the moment.
 
 ### Until Executed
 
+```ruby
+sidekiq_options unique: true, unique_lock: :until_executed
+```
+
 This is the combination of the two above. First we lock the job until it executes, then as the job begins executes we keep the lock so that no other jobs with the same arguments can execute at the same time.
 
 ### Until Timeout
+
+```ruby
+sidekiq_options unique: true, unique_lock: :until_timeout
+```
 
 The job won't be unlocked until the timeout/expiry runs out.
 
@@ -61,7 +79,7 @@ The job won't be unlocked until the timeout/expiry runs out.
 All that is required is that you specifically set the sidekiq option for *unique* to true like below:
 
 ```ruby
-sidekiq_options unique: true
+sidekiq_options unique: true, unique_lock: :while_executing
 ```
 
 For jobs scheduled in the future it is possible to set for how long the job
@@ -74,7 +92,7 @@ processed then just set the unique_lock to anything except `:before_yield` or `:
 You can also control the expiration length of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
-sidekiq_options unique: true, unique_expiration: 120 * 60 # 2 hours
+sidekiq_options unique: true, unique_lock: :until_timeout, unique_expiration: 120 * 60 # 2 hours
 ```
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
@@ -128,22 +146,7 @@ class UniqueJobWithFilterProc
 end
 ```
 
-Note that objects passed into workers are converted to JSON *after* running through client middleware. In server middleware, the JSON is passed directly to the worker `#perform` method. So, you may run into issues where the arguments are different when enqueuing than they are when performing. Your `unique_args` method may need to account for this.
-
-### Unlock Ordering
-
-By default the server middleware will release the worker lock after yielding to the next middleware or worker. Alternatively, this can be changed by passing the `unique_lock` option:
-
-```ruby
-class UniqueJobWithFilterMethod
-  include Sidekiq::Worker
-  sidekiq_options unique: true,
-                  unique_locks: :until_executing
-
-  ...
-
-end
-```
+The previous problems with unique args being string in server and symbol in client is no longer a problem because the `UniqueArgs` class accounts for this and converts everything to json now. If you find an edge case please provide and example so that we can add coverage and fix it.
 
 ### After Unlock Callback
 
@@ -161,17 +164,6 @@ class UniqueJobWithFilterMethod
 end.
 
 ```
-
-### Unique Storage Method
-
-Starting from sidekiq-unique-jobs 3.0.14 we will use the `set` method in a way that has been available since redis 2.6.12. If you are on an older redis version you will have to change a config value like below.
-
-```ruby
-SidekiqUniqueJobs.config.unique_storage_method = :old
-```
-
-That should allow you to keep using redis in the old fashion way. See #89 for mor information.
-
 
 ### Logging
 
