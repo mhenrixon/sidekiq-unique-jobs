@@ -42,7 +42,7 @@ module Sidekiq
 
     module Overrides
       def self.included(base)
-        base.extend Sidekiq::Worker::Overrides::ClassMethods
+        base.extend Testing
         base.class_eval do
           class << self
             alias_method :clear_all_orig, :clear_all
@@ -51,7 +51,7 @@ module Sidekiq
         end
       end
 
-      module ClassMethods
+      module Testing
         def clear_all_ext
           Sidekiq.redis do |c|
             unique_keys = c.keys("#{SidekiqUniqueJobs.config.unique_prefix}:*")

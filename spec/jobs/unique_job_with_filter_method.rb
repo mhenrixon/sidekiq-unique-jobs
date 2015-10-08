@@ -1,7 +1,7 @@
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options queue: :customqueue, retry: 1, backtrace: 10
-  sidekiq_options unique: :while_executing, unique_args: :filtered_args
+  sidekiq_options queue: :customqueue, retry: 1, backtrace: 10,
+                  unique: :while_executing, unique_args: :filtered_args
 
   sidekiq_retries_exhausted do |msg|
     Sidekiq.logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
