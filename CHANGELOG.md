@@ -3,6 +3,7 @@
 - Remove `unique_lock` and use `unique: ` to set this like in `unique: :until_timeout`
 - Warn when using `unique: true` and suggest to change it to what we need with a fallback.
 - Create constants for hash keys to avoid having to fix spelling or for renaming keys only having to be done in one place and avoid having to type .freeze everywhere.
+- Move all explicit logic out from the server middle ware and make it just call execute on the instance of the lock class (prepare for allowing custom locking classes to be used).
 
 ## v4.0.2
 

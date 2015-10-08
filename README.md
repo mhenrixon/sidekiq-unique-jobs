@@ -68,6 +68,20 @@ sidekiq_options unique: :until_timeout
 
 The job won't be unlocked until the timeout/expiry runs out.
 
+### Unique Until And While Executing
+
+```ruby
+sidekiq_options unique: :until_and_while_executing
+```
+
+This lock is exactly what you would expect. It is considered unique in a way until executing begins and it is locked while executing so what differs from `UntilExecuted`? 
+
+The difference is that this job has two types of uniqueness:
+1. It is unique until execution
+2. It is unique while executing
+
+That means it locks for any job with the same arguments to be persisted into redis and just like you would expect it will only ever allow one job of the same unique arguments to run at any given time but as soon as the runtime lock has been aquired the schedule/async lock is released.
+
 ### Uniqueness Scope
 
 - Queue specific locks

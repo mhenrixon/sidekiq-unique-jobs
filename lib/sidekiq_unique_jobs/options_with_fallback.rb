@@ -1,9 +1,7 @@
 module SidekiqUniqueJobs
   module OptionsWithFallback
     def self.included(base)
-      base.class_exec do
-        class_attribute :lock_cache
-      end
+      base.class_attribute :lock_cache unless base.respond_to?(:lock_cache)
       base.lock_cache ||= {}
     end
 

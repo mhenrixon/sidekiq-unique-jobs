@@ -36,9 +36,9 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe ':before_yield' do
         it 'removes the lock before yielding to the worker' do
-          jid = UntilExecutingWorker.perform_async
+          jid = UntilExecutingJob.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
-          worker = UntilExecutingWorker.new
+          worker = UntilExecutingJob.new
           subject.call(worker, item, QUEUE) do
             Sidekiq.redis do |c|
               expect(c.ttl(digest_for(item))).to eq(-2) # key does not exist

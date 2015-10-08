@@ -1,4 +1,4 @@
-class UntilExecutingWorker
+class UntilExecutingJob
   include Sidekiq::Worker
 
   sidekiq_options queue: :working
