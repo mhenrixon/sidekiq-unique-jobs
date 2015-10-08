@@ -76,7 +76,7 @@ The job won't be unlocked until the timeout/expiry runs out.
 
 ## Usage
 
-All that is required is that you specifically set the sidekiq option for *unique* to true like below:
+All that is required is that you specifically set the sidekiq option for *unique* to a valid value like below:
 
 ```ruby
 sidekiq_options unique: :while_executing
