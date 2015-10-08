@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
         fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
       end
 
-      def execute(_after_unlock_hook)
+      def execute(_callback)
         yield if block_given?
       end
     end

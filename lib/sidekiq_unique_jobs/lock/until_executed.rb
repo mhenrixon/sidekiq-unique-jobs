@@ -11,14 +11,14 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
       end
 
-      def execute(after_unlock_hook, &blk)
+      def execute(callback, &blk)
         operative = true
         send(:after_yield_yield, &blk)
       rescue Sidekiq::Shutdown
         operative = false
         raise
       ensure
-        after_unlock_hook.call if operative && unlock(:server)
+        callback.call if operative && unlock(:server)
       end
 
       def unlock(scope)

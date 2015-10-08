@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
         @run_key = "#{@unique_digest}:run"
         @mutex = Mutex.new
         @redis_pool = redis_pool
+        yield self if block_given?
       end
 
       def synchronize
@@ -27,7 +28,7 @@ module SidekiqUniqueJobs
         Scripts.call(:synchronize, @redis_pool, keys: [@run_key], argv: [Time.now.to_i]) == 1
       end
 
-      def execute(_after_unlock_hook)
+      def execute(_callback)
         synchronize do
           yield
         end
