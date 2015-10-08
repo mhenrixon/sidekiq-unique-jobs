@@ -72,4 +72,4 @@ RSpec::Sidekiq.configure do |config|
   config.warn_when_jobs_not_processed_by_sidekiq = false
 end
 
-Dir[File.join(File.dirname(__FILE__), 'workers', '**', '*.rb')].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].each { |f| require f }
