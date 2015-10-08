@@ -1,4 +1,4 @@
-class QueueWorkerWithFilterProc < QueueWorker
+class CustomQueueJobWithFilterProc < CustomQueueJob
   # slightly contrived example of munging args to the
   # worker and removing a random bit.
   sidekiq_options unique: :until_timeout,

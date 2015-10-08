@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::UniqueArgs do
-  let(:item) { { 'class' => 'UniqueWorker', 'queue' => 'myqueue', 'args' => [[1, 2]] } }
+  let(:item) { { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue', 'args' => [[1, 2]] } }
   subject { described_class.new(item) }
 
   describe '#unique_args_enabled_in_worker?' do
-    with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args) do
+    with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
       its(:unique_args_enabled_in_worker?) { is_expected.to eq(:unique_args) }
     end
 
-    with_sidekiq_options_for(UniqueWorker, unique_args: false) do
+    with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
       its(:unique_args_enabled_in_worker?) { is_expected.to eq(false) }
     end
 
@@ -21,21 +21,21 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
   describe '#unique_args_enabled?' do
     with_global_config(unique_args_enabled: true) do
-      with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
         its(:unique_args_enabled?) { is_expected.to eq(:unique_args) }
       end
 
-      with_sidekiq_options_for(UniqueWorker, unique_args: false) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
         its(:unique_args_enabled?) { is_expected.to eq(true) }
       end
     end
 
     with_global_config(unique_args_enabled: false) do
-      with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
         its(:unique_args_enabled?) { is_expected.to eq(:unique_args) }
       end
 
-      with_sidekiq_options_for(UniqueWorker, unique_args: false) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
         its(:unique_args_enabled?) { is_expected.to eq(false) }
       end
 
@@ -47,11 +47,11 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     with_global_config(unique_args_enabled: true) do
       its(:unique_on_all_queues?) { is_expected.to eq(nil) }
 
-      with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args, unique_on_all_queues: true) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: true) do
         its(:unique_on_all_queues?) { is_expected.to eq(true) }
       end
 
-      with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args, unique_on_all_queues: false) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: false) do
         its(:unique_on_all_queues?) { is_expected.to eq(false) }
       end
 
@@ -64,11 +64,11 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     with_global_config(unique_args_enabled: false) do
       its(:unique_on_all_queues?) { is_expected.to eq(nil) }
 
-      with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args, unique_on_all_queues: false) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: false) do
         its(:unique_on_all_queues?) { is_expected.to eq(false) }
       end
 
-      with_sidekiq_options_for(UniqueWorker, unique_args: :unique_args, unique_on_all_queues: true) do
+      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: true) do
         its(:unique_on_all_queues?) { is_expected.to eq(true) }
       end
 

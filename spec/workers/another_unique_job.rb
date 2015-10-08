@@ -1,6 +1,6 @@
-class UntilExecutedWorker
+class AnotherUniqueJob
   include Sidekiq::Worker
-  sidekiq_options queue: :unlock_ordering, retry: 1, backtrace: 10
+  sidekiq_options queue: :working, retry: 1, backtrace: 10
   sidekiq_options unique: :until_executed
 
   sidekiq_retries_exhausted do |msg|
@@ -9,9 +9,5 @@ class UntilExecutedWorker
 
   def perform(*)
     # NO-OP
-  end
-
-  def after_unlock
-    fail 'HELL'
   end
 end

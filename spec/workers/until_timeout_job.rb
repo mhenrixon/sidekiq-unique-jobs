@@ -1,4 +1,4 @@
-class InlineExpirationWorker
+class UntilTimeoutJob
   include Sidekiq::Worker
   sidekiq_options unique: :until_timeout,
                   unique_expiration: 10 * 60

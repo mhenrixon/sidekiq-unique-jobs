@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
   end
 
   shared_context 'item not scheduled' do
-    subject { described_class.new('class' => 'MyUniqueWorker') }
+    subject { described_class.new('class' => 'MyUniqueJob') }
   end
 
   describe 'public api' do
@@ -40,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       its(:time_until_scheduled) { is_expected.to eq(0) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueWorker', 'at' => schedule_time) }
+    subject { described_class.new('class' => 'MyUniqueJob', 'at' => schedule_time) }
     let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
     let(:now_in_utc) { Time.now.utc.to_i }
 
@@ -56,7 +56,7 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       its(:unique_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_expiration) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueWorker') }
+    subject { described_class.new('class' => 'MyUniqueJob') }
     its(:unique_expiration) { is_expected.to eq(7_200) }
   end
 
@@ -65,7 +65,7 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       its(:worker_class_unique_expiration) { is_expected.to eq(nil) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueWorker') }
+    subject { described_class.new('class' => 'MyUniqueJob') }
     its(:worker_class_unique_expiration) { is_expected.to eq(7_200) }
   end
 
@@ -74,7 +74,7 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       its(:worker_class) { is_expected.to eq('test') }
     end
 
-    subject { described_class.new('class' => 'MyWorker') }
-    its(:worker_class) { is_expected.to eq(MyWorker) }
+    subject { described_class.new('class' => 'MyJob') }
+    its(:worker_class) { is_expected.to eq(MyJob) }
   end
 end

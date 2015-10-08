@@ -4,9 +4,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
   describe '#execute' do
     subject { described_class.new(item) }
     let(:item) do
-      { 'jid' => 'maaaahjid', 'class' => 'UntilExecutedWorker', 'unique' => 'until_executed' }
+      { 'jid' => 'maaaahjid', 'class' => 'UntilExecutedJob', 'unique' => 'until_executed' }
     end
-    let(:empty_callback) { ->{} }
+    let(:empty_callback) { -> {} }
 
     def execute
       subject.execute(empty_callback)
@@ -27,7 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
 
     context 'when yield fails with other errors' do
       before do
-        allow(subject).to receive(:after_yield_yield) { raise 'Hell'  }
+        allow(subject).to receive(:after_yield_yield) { fail 'Hell' }
       end
 
       it 'raises Sidekiq::Shutdown' do

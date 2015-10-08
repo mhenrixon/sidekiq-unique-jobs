@@ -12,18 +12,18 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     before do
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
-      QueueWorker.sidekiq_options unique: nil, unique_expiration: nil
+      CustomQueueJob.sidekiq_options unique: nil, unique_expiration: nil
     end
 
     describe 'when a job is already scheduled' do
       it 'rejects new scheduled jobs with the same argument' do
-        MyUniqueWorker.perform_in(3600, 1)
-        expect(MyUniqueWorker.perform_in(3600, 1)).to eq(nil)
+        MyUniqueJob.perform_in(3600, 1)
+        expect(MyUniqueJob.perform_in(3600, 1)).to eq(nil)
       end
 
       it 'will run a job in real time with the same arguments' do
-        WhileExecutingWorker.perform_in(3600, 1)
-        expect(WhileExecutingWorker.perform_async(1)).not_to eq(nil)
+        WhileExecutingJob.perform_in(3600, 1)
+        expect(WhileExecutingJob.perform_async(1)).not_to eq(nil)
       end
 
       it 'schedules new jobs when arguments differ' do
@@ -39,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
       it 'schedules allows jobs to be scheduled ' do
         class ShitClass
-          def do_it(arg)
+          def do_it(_arg)
             # whatever
           end
         end
@@ -56,7 +56,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does not push duplicate messages when configured for unique only' do
-      item = { 'class' => MyUniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2] }
+      item = { 'class' => MyUniqueJob, 'queue' => 'customqueue', 'args' => [1, 2] }
       10.times { Sidekiq::Client.push(item) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
@@ -64,8 +64,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does push duplicate messages to different queues' do
-      Sidekiq::Client.push('class' => MyUniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2])
-      Sidekiq::Client.push('class' => MyUniqueWorker, 'queue' => 'customqueue2', 'args' => [1, 2])
+      Sidekiq::Client.push('class' => MyUniqueJob, 'queue' => 'customqueue', 'args' => [1, 2])
+      Sidekiq::Client.push('class' => MyUniqueJob, 'queue' => 'customqueue2', 'args' => [1, 2])
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
         expect(c.llen('queue:customqueue2')).to eq 1
@@ -80,7 +80,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does not schedule duplicates when calling perform_in' do
-      10.times { MyUniqueWorker.perform_in(60, [1, 2]) }
+      10.times { MyUniqueJob.perform_in(60, [1, 2]) }
       Sidekiq.redis do |c|
         expect(c.zcount('schedule', -1, Time.now.to_f + 2 * 60))
           .to eq(1)
@@ -88,8 +88,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'enqueues previously scheduled job' do
-      jid = WhileExecutingWorker.perform_in(60 * 60, 1, 2)
-      item = { 'class' => WhileExecutingWorker, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid }
+      jid = WhileExecutingJob.perform_in(60 * 60, 1, 2)
+      item = { 'class' => WhileExecutingJob, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid }
 
       # time passes and the job is pulled off the schedule:
       Sidekiq::Client.push(item)
@@ -100,18 +100,18 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'sets an expiration when provided by sidekiq options' do
-      item = { 'class' => ExpiringWorker, 'queue' => 'customqueue', 'args' => [1, 2] }
+      item = { 'class' => ExpiringJob, 'queue' => 'customqueue', 'args' => [1, 2] }
       Sidekiq::Client.push(item)
 
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
         expect(c.ttl(digest_for(item)))
-          .to eq(ExpiringWorker.get_sidekiq_options['unique_expiration'])
+          .to eq(ExpiringJob.get_sidekiq_options['unique_expiration'])
       end
     end
 
     it 'does push duplicate messages when not configured for unique only' do
-      10.times { Sidekiq::Client.push('class' => QueueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      10.times { Sidekiq::Client.push('class' => CustomQueueJob, 'queue' => 'customqueue', 'args' => [1, 2]) }
 
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(10)
@@ -123,12 +123,12 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       after(:all)  { SidekiqUniqueJobs.config.unique_args_enabled = false }
 
       it 'does not push duplicate messages based on args filter method' do
-        expect(QueueWorkerWithFilterMethod).to respond_to(:args_filter)
-        expect(QueueWorkerWithFilterMethod.get_sidekiq_options['unique_args']).to eq :args_filter
+        expect(CustomQueueJobWithFilterMethod).to respond_to(:args_filter)
+        expect(CustomQueueJobWithFilterMethod.get_sidekiq_options['unique_args']).to eq :args_filter
 
         (0..10).each do |i|
           Sidekiq::Client.push(
-            'class' => QueueWorkerWithFilterMethod,
+            'class' => CustomQueueJobWithFilterMethod,
             'queue' => 'customqueue',
             'args' => [1, i]
           )
@@ -140,11 +140,11 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       end
 
       it 'does not push duplicate messages based on args filter proc' do
-        expect(QueueWorkerWithFilterProc.get_sidekiq_options['unique_args']).to be_a(Proc)
+        expect(CustomQueueJobWithFilterProc.get_sidekiq_options['unique_args']).to be_a(Proc)
 
         100.times do
           Sidekiq::Client.push(
-            'class' => QueueWorkerWithFilterProc,
+            'class' => CustomQueueJobWithFilterProc,
             'queue' => 'customqueue',
             'args' => [1, { random: rand, name: 'foobar' }]
           )
@@ -157,7 +157,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
       describe 'when unique_on_all_queues is set' do
         it 'does not push duplicate messages on different queues' do
-          item = { 'class' => UniqueOnAllQueuesWorker, 'args' => [1, 2] }
+          item = { 'class' => UniqueOnAllQueuesJob, 'args' => [1, 2] }
           Sidekiq::Client.push(item.merge('queue' => 'customqueue'))
           Sidekiq::Client.push(item.merge('queue' => 'customqueue2'))
           Sidekiq.redis do |c|
@@ -173,8 +173,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     it 'expires the digest when a scheduled job is scheduled at' do
       expected_expires_at =
         (Time.at(Time.now.to_i + 15 * 60) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
-      jid = MyUniqueWorker.perform_in(expected_expires_at, 'mike')
-      item = { 'class' => MyUniqueWorker,
+      jid = MyUniqueJob.perform_in(expected_expires_at, 'mike')
+      item = { 'class' => MyUniqueJob,
                'queue' => 'customqueue',
                'args' => ['mike'],
                'at' => expected_expires_at }
@@ -186,24 +186,24 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     it 'logs duplicate payload when config turned on' do
       expect(Sidekiq.logger).to receive(:warn).with(/^payload is not unique/)
-      UniqueWorker.sidekiq_options log_duplicate_payload: true
-      2.times { Sidekiq::Client.push('class' => UniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      UntilExecutedJob.sidekiq_options log_duplicate_payload: true
+      2.times { Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2]) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
       end
-      UniqueWorker.sidekiq_options log_duplicate_payload: true
+      UntilExecutedJob.sidekiq_options log_duplicate_payload: true
     end
 
     it 'does not log duplicate payload when config turned off' do
       expect(Sidekiq.logger).to_not receive(:warn).with(/^payload is not unique/)
 
-      UniqueWorker.sidekiq_options log_duplicate_payload: false
+      UntilExecutedJob.sidekiq_options log_duplicate_payload: false
 
-      2.times { Sidekiq::Client.push('class' => UniqueWorker, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      2.times { Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2]) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
       end
-      UniqueWorker.sidekiq_options log_duplicate_payload: true
+      UntilExecutedJob.sidekiq_options log_duplicate_payload: true
     end
   end
 end

@@ -14,7 +14,9 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       it 'warns when unique is set to true' do
         expect(subject)
           .to receive(:warn)
-          .with("unique: true is no longer valid. Please set it to the type of lock required like: `unique: :until_executed`")
+          .with(
+            'unique: true is no longer valid. Please set it to the type of lock required like: ' \
+            '`unique: :until_executed`')
 
         subject.unique_lock
       end

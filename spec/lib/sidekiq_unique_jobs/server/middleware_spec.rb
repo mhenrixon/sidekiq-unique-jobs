@@ -5,7 +5,7 @@ require 'sidekiq/worker'
 require 'sidekiq_unique_jobs/server/middleware'
 
 RSpec.describe SidekiqUniqueJobs::Server::Middleware do
-  QUEUE ||= 'unlock_ordering'
+  QUEUE ||= 'working'
 
   def digest_for(item)
     SidekiqUniqueJobs::UniqueArgs.digest(item)
@@ -20,13 +20,13 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe '#unlock' do
         it 'does not unlock mutexes it does not own' do
-          jid = UntilExecutedWorker.perform_async
+          jid = UntilExecutedJob.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
           Sidekiq.redis do |c|
             c.set(digest_for(item), 'NOT_DELETED')
           end
 
-          subject.call(UntilExecutedWorker.new, item, QUEUE) do
+          subject.call(UntilExecutedJob.new, item, QUEUE) do
             Sidekiq.redis do |c|
               expect(c.get(digest_for(item))).to eq('NOT_DELETED')
             end
@@ -49,10 +49,10 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
       describe ':after_yield' do
         it 'removes the lock after yielding to the worker' do
-          jid = UntilExecutedWorker.perform_async
+          jid = UntilExecutedJob.perform_async
           item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
 
-          subject.call('UntilExecutedWorker', item, QUEUE) do
+          subject.call('UntilExecutedJob', item, QUEUE) do
             Sidekiq.redis do |c|
               expect(c.get(digest_for(item))).to eq jid
             end
