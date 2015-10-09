@@ -1,3 +1,8 @@
+## v4.0.4
+
+- Fix usage with active job
+- Get rid of unneeded configuration options `unique_args_enabled` (just use whatever unique argument that is configured).
+
 ## v4.0.3
 
 - Remove `unique_lock` and use `unique: ` to set this like in `unique: :until_timeout`
