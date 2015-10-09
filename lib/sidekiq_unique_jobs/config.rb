@@ -18,9 +18,5 @@ module SidekiqUniqueJobs
     def testing_enabled?
       Sidekiq.const_defined?(TESTING_CONSTANT) && Sidekiq::Testing.enabled?
     end
-
-    def unique_args_enabled?
-      config.unique_args_enabled
-    end
   end
 end

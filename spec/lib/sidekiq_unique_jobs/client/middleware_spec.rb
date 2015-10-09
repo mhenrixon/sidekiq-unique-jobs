@@ -118,9 +118,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when unique_args is defined' do
-      before(:all) { SidekiqUniqueJobs.config.unique_args_enabled = true }
-      after(:all)  { SidekiqUniqueJobs.config.unique_args_enabled = false }
-
       it 'does not push duplicate messages based on args filter method' do
         expect(CustomQueueJobWithFilterMethod).to respond_to(:args_filter)
         expect(CustomQueueJobWithFilterMethod.get_sidekiq_options['unique_args']).to eq :args_filter

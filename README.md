@@ -115,24 +115,17 @@ Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 ```ruby
 Sidekiq.default_worker_options = {
-   'unique' => :until_executing,
-   'unique_args' => proc do |args|
-     [args.first.except('job_id')]
-   end
+  unique: :until_executing,
+  unique_args: ->(args) { args.first.except('job_id') }
 }
-SidekiqUniqueJobs.config.unique_args_enabled = true
 ```
 
 
 ### Finer Control over Uniqueness
 
-Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to set `SidekiqUniqueJobs.config.unique_args_enabled` to true in an initializer, and then defined either `unique_args` method, or a ruby proc.
+Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to define either a `unique_args` method, or a ruby proc.
 
 The unique_args method need to return an array of values to use for uniqueness check.
-
-```ruby
-SidekiqUniqueJobs.config.unique_args_enabled = true
-```
 
 The method or the proc can return a modified version of args without the transient arguments included, as shown below:
 

@@ -63,19 +63,12 @@ module SidekiqUniqueJobs
 
     def unique_on_all_queues?
       return unless sidekiq_worker_class?
-      return unless unique_args_enabled?
-      @worker_class.get_sidekiq_options[UNIQUE_ON_ALL_QUEUES_KEY]
+      @item[UNIQUE_ON_ALL_QUEUES_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ON_ALL_QUEUES_KEY]
     end
 
     def unique_args_enabled?
-      unique_args_enabled_in_worker? ||
-        config.unique_args_enabled
-    end
-
-    def unique_args_enabled_in_worker?
       return unless sidekiq_worker_class?
-      @worker_class.get_sidekiq_options[UNIQUE_ARGS_ENABLED_KEY] ||
-        @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY]
+      unique_args_method
     end
 
     def sidekiq_worker_class?
@@ -127,6 +120,7 @@ module SidekiqUniqueJobs
 
     def unique_args_method
       @unique_args_method ||= @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY] if sidekiq_worker_class?
+      @unique_args_method ||= :unique_args if @worker_class.respond_to?(:unique_args)
       @unique_args_method ||= Sidekiq.default_worker_options[UNIQUE_ARGS_KEY]
     end
   end

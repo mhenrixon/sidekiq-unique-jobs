@@ -20,15 +20,10 @@ module SidekiqUniqueJobs
   def config
     @config ||= Config.new(
       unique_prefix: 'uniquejobs',
-      unique_args_enabled: true,
       default_expiration: 30 * 60,
       default_lock: :while_executing,
       redis_test_mode: :redis # :mock
     )
-  end
-
-  def unique_args_enabled?
-    config.unique_args_enabled
   end
 
   def default_lock
