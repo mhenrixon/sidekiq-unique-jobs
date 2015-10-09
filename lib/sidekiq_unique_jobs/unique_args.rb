@@ -126,8 +126,8 @@ module SidekiqUniqueJobs
     end
 
     def unique_args_method
-      @unique_args_method ||=
-        @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY] if sidekiq_worker_class?
+      @unique_args_method ||= @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY] if sidekiq_worker_class?
+      @unique_args_method ||= Sidekiq.default_worker_options[UNIQUE_ARGS_KEY]
     end
   end
 end

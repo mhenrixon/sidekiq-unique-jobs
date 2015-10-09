@@ -80,13 +80,21 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   end
 
   describe '#filter_by_proc' do
-    let(:proc) { ->(args) { args[1]['test'] } }
-    before do
-      allow(subject).to receive(:unique_args_method).and_return(proc)
+    let(:filter) { ->(args) { args[1]['test'] } }
+    context 'without any default worker options configured' do
+      before do
+        allow(subject).to receive(:unique_args_method).and_return(filter)
+      end
+
+      it 'returns the value of theoptions hash ' do
+        expect(subject.filter_by_proc([1, 'test' => 'it'])).to eq('it')
+      end
     end
 
-    it 'returns the value of the provided ' do
-      expect(subject.filter_by_proc([1, 'test' => 'it'])).to eq('it')
+    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]['test'] }) do
+      it 'returns the value of the provided options' do
+        expect(subject.filter_by_proc([1, 'test' => 'it'])).to eq('it')
+      end
     end
   end
 

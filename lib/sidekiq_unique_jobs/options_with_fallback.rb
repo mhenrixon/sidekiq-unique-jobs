@@ -37,6 +37,7 @@ module SidekiqUniqueJobs
 
     def options
       @options ||= worker_class.get_sidekiq_options if worker_class.respond_to?(:get_sidekiq_options)
+      @options ||= Sidekiq.default_worker_options
       @options ||= {}
     end
   end

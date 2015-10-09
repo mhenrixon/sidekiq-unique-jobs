@@ -12,7 +12,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     before do
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
-      CustomQueueJob.sidekiq_options unique: nil, unique_expiration: nil
     end
 
     describe 'when a job is already scheduled' do

@@ -55,7 +55,7 @@ RSpec.configure do |config|
   config.filter_run :focus unless ENV['CI']
   config.run_all_when_everything_filtered = true
   config.disable_monkey_patching!
-  config.warnings = true
+  config.warnings = false
   config.default_formatter = 'doc' if config.files_to_run.one?
   config.order = :random
   Kernel.srand config.seed
