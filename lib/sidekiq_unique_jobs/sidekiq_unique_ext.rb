@@ -37,6 +37,7 @@ module Sidekiq
   end
 
   class ScheduledSet
+    # rubocop:disable Style/ClassAndModuleCamelCase
     module UniqueExtension3_0
       def self.included(base)
         base.class_eval do
@@ -81,7 +82,9 @@ module Sidekiq
     end
     sidekiq_version = Gem::Version.new(Sidekiq::VERSION)
     include UniqueExtension3_4 if sidekiq_version >= Gem::Version.new('3.4')
-    include UniqueExtension3_0 if sidekiq_version >= Gem::Version.new('3.0') && sidekiq_version < Gem::Version.new('3.4')
+    include UniqueExtension3_0 if sidekiq_version >= Gem::Version.new('3.0') &&
+                                  sidekiq_version < Gem::Version.new('3.4')
+    # rubocop:enable Style/ClassAndModuleCamelCase
   end
 
   class Job

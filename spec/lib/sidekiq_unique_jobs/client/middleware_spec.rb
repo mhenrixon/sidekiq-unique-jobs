@@ -110,7 +110,9 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does push duplicate messages when not configured for unique only' do
-      10.times { Sidekiq::Client.push('class' => CustomQueueJob, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      10.times do
+        Sidekiq::Client.push('class' => CustomQueueJob, 'queue' => 'customqueue', 'args' => [1, 2])
+      end
 
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(10)
@@ -183,7 +185,9 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     it 'logs duplicate payload when config turned on' do
       expect(Sidekiq.logger).to receive(:warn).with(/^payload is not unique/)
       UntilExecutedJob.sidekiq_options log_duplicate_payload: true
-      2.times { Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      2.times do
+        Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2])
+      end
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
       end
@@ -195,7 +199,9 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
       UntilExecutedJob.sidekiq_options log_duplicate_payload: false
 
-      2.times { Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2]) }
+      2.times do
+        Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2])
+      end
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq 1
       end

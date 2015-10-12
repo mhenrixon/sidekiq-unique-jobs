@@ -17,10 +17,13 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
     let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item, nil) }
 
     it 'unlocks the unique key before yielding' do
-      expect(SidekiqUniqueJobs::Lock::WhileExecuting).to receive(:new).with(item, nil).and_return(runtime_lock)
-      expect(callback).to receive(:call)
-      subject.execute(callback) do
+      expect(SidekiqUniqueJobs::Lock::WhileExecuting)
+        .to receive(:new).with(item, nil)
+        .and_return(runtime_lock)
 
+      expect(callback).to receive(:call)
+
+      subject.execute(callback) do
         Sidekiq.redis do |c|
           expect(c.keys('uniquejobs:*').size).to eq(1)
         end
