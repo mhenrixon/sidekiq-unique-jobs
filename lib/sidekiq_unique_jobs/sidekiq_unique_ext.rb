@@ -37,7 +37,29 @@ module Sidekiq
   end
 
   class ScheduledSet
-    module UniqueExtension
+    module UniqueExtension3_0
+      def self.included(base)
+        base.class_eval do
+          include UnlockMethod
+          alias_method :delete_orig, :delete
+          alias_method :delete, :delete_ext
+        end
+      end
+
+      def delete_ext(score, jid = nil)
+        item = find_job(jid)
+        unlock(item) if delete_orig(score, jid)
+      end
+
+      def remove_job_ext
+        remove_job_orig do |message|
+          unlock(Sidekiq.load_json(message))
+          yield message
+        end
+      end
+    end
+
+    module UniqueExtension3_4
       def self.included(base)
         base.class_eval do
           include UnlockMethod
@@ -57,7 +79,9 @@ module Sidekiq
         end
       end
     end
-    include UniqueExtension if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('3.1')
+    sidekiq_version = Gem::Version.new(Sidekiq::VERSION)
+    include UniqueExtension3_4 if sidekiq_version >= Gem::Version.new('3.4')
+    include UniqueExtension3_0 if sidekiq_version >= Gem::Version.new('3.0') && sidekiq_version < Gem::Version.new('3.4')
   end
 
   class Job

@@ -67,7 +67,7 @@ RSpec.describe 'Sidekiq::Api' do
     end
   end
 
-  describe Sidekiq::JobSet::UniqueExtension, sidekiq_ver: '>= 3' do
+  describe Sidekiq::JobSet::UniqueExtension, sidekiq_ver: '>= 3.1' do
     it 'deletes uniqueness locks on clear' do
       schedule_job
       Sidekiq::JobSet.new('schedule').clear
