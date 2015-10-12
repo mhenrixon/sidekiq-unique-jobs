@@ -1,5 +1,7 @@
 machine:
-  ruby: 2.2.3
+  ruby:
+    version:
+      2.2.3
   java:
     version: oraclejdk8
   environment:
