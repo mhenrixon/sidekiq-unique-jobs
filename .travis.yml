@@ -10,7 +10,6 @@ rvm:
   - jruby-19mode
   - jruby-9.0.0.0
   - rbx-2
-  - 2.0.0
   - 2.1.7
   - 2.2.3
 env: STYLE=false
