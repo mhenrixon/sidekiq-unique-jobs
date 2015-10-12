@@ -1,16 +1,16 @@
-if RUBY_ENGINE == 'ruby'
+if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.2.3'
   if ENV['CI']
     require 'codeclimate-test-reporter'
     CodeClimate::TestReporter.start
   else
     require 'simplecov'
   end
-end
 
-begin
-  require 'pry-byebug'
-rescue LoadError
-  puts 'Pry unavailable'
+  begin
+    require 'pry-byebug'
+  rescue LoadError
+    puts 'Pry unavailable'
+  end
 end
 
 require 'rspec'
