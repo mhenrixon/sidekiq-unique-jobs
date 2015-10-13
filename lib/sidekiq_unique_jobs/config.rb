@@ -16,7 +16,7 @@ module SidekiqUniqueJobs
     end
 
     def testing_enabled?
-      Sidekiq.const_defined?(TESTING_CONSTANT) && Sidekiq::Testing.enabled?
+      Sidekiq.const_defined?(TESTING_CONSTANT,false) && Sidekiq::Testing.enabled?
     end
   end
 end
