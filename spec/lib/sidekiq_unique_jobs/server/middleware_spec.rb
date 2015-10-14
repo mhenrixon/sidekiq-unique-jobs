@@ -22,7 +22,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
         allow(subject).to receive(:unique_enabled?).and_return(false)
         expect(subject).not_to receive(:lock)
         args = [WhileExecutingJob, { 'class' => 'WhileExecutingJob' }, 'working', nil]
-        subject.call(*args) { }
+        subject.call(*args) {}
       end
     end
 
@@ -34,7 +34,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
         expect(subject).to receive(:lock).and_return(lock)
 
         args = [WhileExecutingJob, { 'class' => 'WhileExecutingJob' }, 'working', nil]
-        subject.call(*args) { }
+        subject.call(*args) {}
       end
     end
 
