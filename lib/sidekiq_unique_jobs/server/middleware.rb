@@ -14,7 +14,7 @@ module SidekiqUniqueJobs
         @redis_pool = redis_pool
         @queue = queue
         @item = item
-
+        return yield unless unique_enabled?
         lock.send(:execute, after_unlock_hook, &blk)
       end
 

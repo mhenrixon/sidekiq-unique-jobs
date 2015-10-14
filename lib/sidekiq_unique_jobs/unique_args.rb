@@ -70,7 +70,7 @@ module SidekiqUniqueJobs
 
     def unique_args_enabled?
       return unless sidekiq_worker_class?
-      unique_args_method
+      unique_args_method # && !unique_args_method.is_a?(Boolean)
     end
 
     def sidekiq_worker_class?

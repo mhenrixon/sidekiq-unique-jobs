@@ -1,3 +1,11 @@
+## v4.0.6
+
+- Removes enforced uniqueness for all jobs (#127)
+
+## v4.0.5
+
+- Forces look for `Sidekiq::Testing` in Sidekiq without ancestors #129
+
 ## v4.0.4
 
 - Fix usage with active job
