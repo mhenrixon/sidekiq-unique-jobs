@@ -8,7 +8,7 @@ See https://github.com/mperham/sidekiq#requirements for what is required. Starti
 
 ### Version 4 Upgrade instructions
 
-Version 4 requires redis 2.6.2!! Don't upgrade to version 4 unless you are on redis 2.6.2.
+Version 4 requires redis >= 2.6.2!! Don't upgrade to version 4 unless you are on redis >= 2.6.2.
 
 Easy path - Drop all your unique jobs before upgrading the gem!
 
