@@ -1,9 +1,20 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
+  let(:item) do
+    {
+      'jid' => 'maaaahjid',
+      'queue' => 'dupsallowed',
+      'class' => 'UntilAndWhileExecuting',
+      'unique' => 'until_executed',
+      'unique_digest' => 'test_mutex_key',
+      'args' => [1]
+    }
+  end
+
   it 'allows only one mutex object to have the lock at a time' do
     mutexes = (1..10).map do
-      described_class.new('test_mutex_key')
+      described_class.new(item)
     end
 
     x = 0
@@ -21,10 +32,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   end
 
   it 'handles auto cleanup correctly' do
-    m = described_class.new('test_mutex_key')
+    m = described_class.new(item)
 
     SidekiqUniqueJobs.connection do |conn|
-      conn.set 'test_mutex_key', Time.now.to_i - 1, nx: true
+      conn.set 'test_mutex_key:run', Time.now.to_i - 1, nx: true
     end
 
     start = Time.now.to_i
@@ -37,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   end
 
   it 'maintains mutex semantics' do
-    m = described_class.new('test_mutex_key')
+    m = described_class.new(item)
 
     expect do
       m.synchronize do

@@ -1,3 +1,7 @@
+## v4.0.7
+
+- Use unique arguments for the `WhileExecuting` lock (#127)
+
 ## v4.0.6
 
 - Removes enforced uniqueness for all jobs (#127)

@@ -6,10 +6,10 @@ module SidekiqUniqueJobs
       end
 
       def initialize(item, redis_pool = nil)
-        @unique_digest = item[UNIQUE_DIGEST_KEY]
-        @run_key = "#{@unique_digest}:run"
+        @item = item
         @mutex = Mutex.new
         @redis_pool = redis_pool
+        @unique_digest = "#{create_digest}:run"
         yield self if block_given?
       end
 
@@ -20,18 +20,23 @@ module SidekiqUniqueJobs
         yield
 
       ensure
-        SidekiqUniqueJobs.connection(@redis_pool) { |c| c.del @run_key }
+        SidekiqUniqueJobs.connection(@redis_pool) { |c| c.del @unique_digest }
         @mutex.unlock
       end
 
       def locked?
-        Scripts.call(:synchronize, @redis_pool, keys: [@run_key], argv: [Time.now.to_i]) == 1
+        Scripts.call(:synchronize, @redis_pool, keys: [@unique_digest], argv: [Time.now.to_i]) == 1
       end
 
       def execute(_callback)
         synchronize do
           yield
         end
+      end
+
+      def create_digest
+        @unique_digest ||= @item[UNIQUE_DIGEST_KEY]
+        @unique_digest ||= SidekiqUniqueJobs::UniqueArgs.digest(@item)
       end
     end
   end
