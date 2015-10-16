@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['mikael@zoolutions.se']
   gem.description   = gem.summary = 'The unique jobs that were removed from sidekiq'
   gem.homepage      = 'https://github.com/mhenrixon/sidekiq-unique-jobs'
-  gem.license       = 'LGPL-3.0'
+  gem.license       = 'WTFPL-2.0'
 
   # gem.executables   = ['']
   gem.files         = `git ls-files`.split("\n")
