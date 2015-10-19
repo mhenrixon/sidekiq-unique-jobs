@@ -30,7 +30,7 @@ Or install it yourself as:
 
 ## A word on locking
 
-Like @mperham mentions on (this wiki page)[https://github.com/mperham/sidekiq/wiki/Related-Projects#unique-jobs] it is hard to enforce uniqueness with redis in a distributed redis setting. 
+Like @mperham mentions on [this wiki page](https://github.com/mperham/sidekiq/wiki/Related-Projects#unique-jobs) it is hard to enforce uniqueness with redis in a distributed redis setting. 
 
 To make things worse there are many ways of wanting to enforce uniqueness. 
 
