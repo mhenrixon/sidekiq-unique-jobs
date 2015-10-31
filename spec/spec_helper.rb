@@ -16,14 +16,7 @@ end
 require 'rspec'
 require 'rspec/its'
 
-begin
-  require 'celluloid/current'
-rescue LoadError
-  warn 'Celluloid is old'
-  require 'celluloid'
-end
-require 'celluloid/test'
-Celluloid.boot
+require 'celluloid_with_fallback'
 require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
