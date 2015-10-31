@@ -4,6 +4,44 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:item) { { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue', 'args' => [[1, 2]] } }
   subject { described_class.new(item) }
 
+  context '#unique_digest' do
+    let(:item) { item_options.merge('args' => [1, 2, 'type' => 'it'] ) }
+
+    shared_context 'unique digest' do
+      context 'given another item' do
+        let(:another_subject) { described_class.new(another_item) }
+
+        context 'with the same unique args' do
+          let(:another_item) { item_options.merge('args' => [1, 2, 'type' => 'it']) }
+          it 'equals to unique_digest for that item' do
+            expect(subject.unique_digest).to eq(another_subject.unique_digest)
+          end
+        end
+
+        context 'with different unique args' do
+          let(:another_item) { item_options.merge('args' => [1, 3, 'type' => 'that']) }
+          it 'differs from unique_digest for that item' do
+            expect(subject.unique_digest).to_not eq(another_subject.unique_digest)
+          end
+        end
+      end
+    end
+
+    context 'when unique_args is a proc' do
+      let(:item_options) { {'class' => 'UntilExecutedJob', 'queue' => 'myqueue',
+                            'unique_args' => Proc.new { |args| args[1] }} }
+
+      include_context 'unique digest'
+    end
+
+    context 'when unique_args is a symbol' do
+      let(:item_options) { {'class' => 'UniqueJobWithFilterMethod', 'queue' => 'myqueue',
+                            'unique_args' => :filtered_args} }
+
+      include_context 'unique digest'
+    end
+  end
+
   describe '#unique_args_enabled?' do
     with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]['test'] }) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do

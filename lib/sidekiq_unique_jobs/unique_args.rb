@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
         @item = job
         @worker_class ||= worker_class_constantize(@item[CLASS_KEY])
         @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
-        @item[UNIQUE_ARGS_KEY] ||= unique_args(@item[ARGS_KEY])
+        @item[UNIQUE_ARGS_KEY] = unique_args(@item[ARGS_KEY]) # SIC! Calculate unique_args unconditionally
         @item[UNIQUE_DIGEST_KEY] ||= unique_digest
       end
     end
