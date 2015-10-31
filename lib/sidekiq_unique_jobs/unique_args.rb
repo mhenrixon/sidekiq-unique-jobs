@@ -5,6 +5,7 @@ module SidekiqUniqueJobs
   # This class exists to be testable and the entire api should be considered private
   # rubocop:disable ClassLength
   class UniqueArgs
+    CLASS_NAME = 'SidekiqUniqueJobs::UniqueArgs'.freeze
     extend Forwardable
     include Normalizer
 
@@ -16,7 +17,7 @@ module SidekiqUniqueJobs
     end
 
     def initialize(job)
-      Sidekiq::Logging.with_context(self.class.name) do
+      Sidekiq::Logging.with_context(CLASS_NAME) do
         @item = job
         @worker_class ||= worker_class_constantize(@item[CLASS_KEY])
         @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
