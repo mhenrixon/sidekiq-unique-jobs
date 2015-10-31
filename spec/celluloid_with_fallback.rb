@@ -1,17 +1,18 @@
 begin
   require 'celluloid/current'
 rescue LoadError
-  warn 'Celluloid is old'
+  debug 'Celluloid is old require the old way'
+
   begin
-    require 'celluloid' rescue LoadError
+    require 'celluloid'
   rescue LoadError
-    warn 'Celluloid not found'
+    debug 'Sidekiq removed dependency on celluloid'
   end
 end
-begin
-  require 'celluloid' rescue LoadError
-rescue LoadError
-  # do nothing we already know
-end
 
-Celluloid.boot if defined?(Celluloid)
+begin
+  require 'celluloid/test'
+  Celluloid.boot
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+  # do nothing we already know celluloid is not in use
+end

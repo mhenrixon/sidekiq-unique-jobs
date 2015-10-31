@@ -5,7 +5,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   subject { described_class.new(item) }
 
   describe '#unique_digest' do
-    let(:item) { item_options.merge('args' => [1, 2, 'type' => 'it'] ) }
+    let(:item) { item_options.merge('args' => [1, 2, 'type' => 'it']) }
 
     shared_examples 'unique digest' do
       context 'given another item' do
@@ -30,9 +30,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     context 'when unique_args is a proc' do
       let(:item_options) do
         { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue',
-          'unique_args' => Proc.new { |args| args[1] } }
+          'unique_args' => proc { |args| args[1] } }
       end
-
 
       it_behaves_like 'unique digest'
     end
