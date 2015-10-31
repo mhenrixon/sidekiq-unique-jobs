@@ -4,10 +4,10 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:item) { { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue', 'args' => [[1, 2]] } }
   subject { described_class.new(item) }
 
-  context '#unique_digest' do
+  describe '#unique_digest' do
     let(:item) { item_options.merge('args' => [1, 2, 'type' => 'it'] ) }
 
-    shared_context 'unique digest' do
+    shared_examples 'unique digest' do
       context 'given another item' do
         let(:another_subject) { described_class.new(another_item) }
 
@@ -28,17 +28,22 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
 
     context 'when unique_args is a proc' do
-      let(:item_options) { {'class' => 'UntilExecutedJob', 'queue' => 'myqueue',
-                            'unique_args' => Proc.new { |args| args[1] }} }
+      let(:item_options) do
+        { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue',
+          'unique_args' => Proc.new { |args| args[1] } }
+      end
 
-      include_context 'unique digest'
+
+      it_behaves_like 'unique digest'
     end
 
     context 'when unique_args is a symbol' do
-      let(:item_options) { {'class' => 'UniqueJobWithFilterMethod', 'queue' => 'myqueue',
-                            'unique_args' => :filtered_args} }
+      let(:item_options) do
+        { 'class' => 'UniqueJobWithFilterMethod', 'queue' => 'myqueue',
+          'unique_args' => :filtered_args }
+      end
 
-      include_context 'unique digest'
+      it_behaves_like 'unique digest'
     end
   end
 
