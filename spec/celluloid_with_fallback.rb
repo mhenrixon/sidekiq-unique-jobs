@@ -1,12 +1,12 @@
 begin
   require 'celluloid/current'
 rescue LoadError
-  debug 'Celluloid is old require the old way'
+  warn 'Celluloid is old require the old way'
 
   begin
     require 'celluloid'
   rescue LoadError
-    debug 'Sidekiq removed dependency on celluloid'
+    warn 'Sidekiq removed dependency on celluloid'
   end
 end
 
