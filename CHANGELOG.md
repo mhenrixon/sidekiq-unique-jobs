@@ -1,3 +1,8 @@
+## v4.0.8
+
+- Delicensed code (#132)
+- Fix queuing unique jobs (#138)
+
 ## v4.0.7
 
 - Use unique arguments for the `WhileExecuting` lock (#127)
