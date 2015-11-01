@@ -6,6 +6,7 @@
 ## v4.0.7
 
 - Use unique arguments for the `WhileExecuting` lock (#127)
+- See also https://github.com/mhenrixon/sidekiq-unique-jobs/releases/tag/v4.0.7
 
 ## v4.0.6
 
