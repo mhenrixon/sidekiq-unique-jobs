@@ -15,6 +15,43 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
+      it 'rejects nested subsequent jobs with the same arguments' do
+        Sidekiq::Testing.disable! do
+          jid = SimpleWorker.perform_async 1
+          expect(SimpleWorker.perform_async 1).to eq(nil)
+          expect(SpawnSimpleWorker.perform_async 1).not_to eq(nil)
+
+          Sidekiq.redis do |c|
+            wait_for { c.llen('queue:default') }.to eq(1)
+            wait_for { c.llen('queue:not_default') }.to eq(1)
+          end
+
+          launcher = Sidekiq::Launcher.new(queues: %w(not_default))
+          launcher.run
+
+          Sidekiq.redis do |c|
+            expect(c.llen('queue:default')).to eq(1)
+            wait_for { c.llen('queue:not_default') }.to eq(0)
+          end
+
+          launcher.stop
+
+          Sidekiq.redis do |c|
+            expect(c.llen('queue:default')).to eq(1)
+          end
+
+          launcher = Sidekiq::Launcher.new(queues: %w(default))
+          launcher.run
+
+          Sidekiq.redis do |c|
+            expect(c.llen('queue:not_default')).to eq(0)
+            wait_for { c.llen('queue:default') }.to eq(0)
+          end
+
+          launcher.stop
+        end
+      end
+
       it 'rejects new scheduled jobs with the same argument' do
         MyUniqueJob.perform_in(3600, 1)
         expect(MyUniqueJob.perform_in(3600, 1)).to eq(nil)
