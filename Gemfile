@@ -2,7 +2,8 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'appraisal', '~> 2.0.0'
-gem 'rspec-its',     require: false
+gem 'rspec-its',  require: false
+gem 'rspec-wait', require: false
 
 platform :mri_22 do
   gem 'pry',                       require: false
