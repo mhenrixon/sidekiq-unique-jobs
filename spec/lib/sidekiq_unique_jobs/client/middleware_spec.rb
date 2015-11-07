@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
-require 'sidekiq/scheduled'
+require 'rspec/wait'
 
 RSpec.describe SidekiqUniqueJobs::Client::Middleware do
   def digest_for(item)
@@ -15,40 +15,42 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
-      it 'rejects nested subsequent jobs with the same arguments' do
+      around(:each) do |example|
+        logger = Sidekiq.logger
+        Sidekiq.logger = nil
+        example.run
+        Sidekiq::Logging.logger = logger
+      end
+
+      it 'rejects nested subsequent jobs with the same arguments', sidekiq_ver: '>= 3.5.3' do
         Sidekiq::Testing.disable! do
-          jid = SimpleWorker.perform_async 1
+          expect(SimpleWorker.perform_async 1).not_to eq(nil)
           expect(SimpleWorker.perform_async 1).to eq(nil)
           expect(SpawnSimpleWorker.perform_async 1).not_to eq(nil)
 
           Sidekiq.redis do |c|
-            wait_for { c.llen('queue:default') }.to eq(1)
-            wait_for { c.llen('queue:not_default') }.to eq(1)
-          end
-
-          launcher = Sidekiq::Launcher.new(queues: %w(not_default))
-          launcher.run
-
-          Sidekiq.redis do |c|
             expect(c.llen('queue:default')).to eq(1)
-            wait_for { c.llen('queue:not_default') }.to eq(0)
+            expect(c.llen('queue:not_default')).to eq(1)
           end
 
-          launcher.stop
+          Sidekiq::Simulator.process_queue(:not_default) do
+            Sidekiq.redis do |c|
+              expect(c.llen('queue:default')).to eq(1)
+              wait(10).for { c.llen('queue:not_default') }.to eq(0)
+              expect(c.llen('queue:default')).to eq(1)
+            end
+          end
 
           Sidekiq.redis do |c|
             expect(c.llen('queue:default')).to eq(1)
           end
 
-          launcher = Sidekiq::Launcher.new(queues: %w(default))
-          launcher.run
-
-          Sidekiq.redis do |c|
-            expect(c.llen('queue:not_default')).to eq(0)
-            wait_for { c.llen('queue:default') }.to eq(0)
+          Sidekiq::Simulator.process_queue(:default) do
+            Sidekiq.redis do |c|
+              expect(c.llen('queue:not_default')).to eq(0)
+              wait(10).for { c.llen('queue:default') }.to eq(0)
+            end
           end
-
-          launcher.stop
         end
       end
 

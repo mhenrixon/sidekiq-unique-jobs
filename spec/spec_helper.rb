@@ -24,6 +24,7 @@ require 'sidekiq_unique_jobs/testing'
 require 'timecop'
 
 require 'rspec-sidekiq'
+require 'sidekiq/simulator'
 
 Sidekiq::Testing.disable!
 Sidekiq.logger.level = "Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}".constantize
