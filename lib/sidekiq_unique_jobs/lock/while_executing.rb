@@ -1,8 +1,8 @@
 module SidekiqUniqueJobs
   module Lock
     class WhileExecuting
-      def self.synchronize(item, redis_pool = nil, &block)
-        new(item, redis_pool).synchronize(&block)
+      def self.synchronize(item, redis_pool = nil)
+        new(item, redis_pool).synchronize { yield }
       end
 
       def initialize(item, redis_pool = nil)
@@ -10,7 +10,6 @@ module SidekiqUniqueJobs
         @mutex = Mutex.new
         @redis_pool = redis_pool
         @unique_digest = "#{create_digest}:run"
-        yield self if block_given?
       end
 
       def synchronize

@@ -57,16 +57,20 @@ module SidekiqUniqueJobs
     @redis_version ||= Sidekiq.redis { |c| c.info('server')['redis_version'] }
   end
 
-  def connection(redis_pool = nil, &block)
+  def connection(redis_pool = nil)
     return mock_redis if config.mocking?
-    redis_pool ? redis_pool.with(&block) : Sidekiq.redis(&block)
+    if redis_pool
+      redis_pool.with { |conn| yield conn }
+    else
+      Sidekiq.redis { |conn| yield conn }
+    end
   end
 
   def mock_redis
     @redis_mock ||= MockRedis.new if defined?(MockRedis)
   end
 
-  def synchronize(item, redis_pool, &blk)
-    Lock::WhileExecuting.synchronize(item, redis_pool, &blk)
+  def synchronize(item, redis_pool)
+    Lock::WhileExecuting.synchronize(item, redis_pool) { yield }
   end
 end
