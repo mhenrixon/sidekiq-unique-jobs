@@ -6,8 +6,8 @@ gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
 
 platform :mri_22 do
-  gem 'pry',                       require: false
-  gem 'pry-rescue',                require: false
+  gem 'fasterer',                  require: false
+  gem 'benchmark-ips',             require: false
   gem 'pry-byebug',                require: false
   gem 'simplecov-json',            require: false
   gem 'memory_profiler',           require: false
