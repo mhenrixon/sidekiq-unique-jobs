@@ -5,7 +5,7 @@ class SimpleWorker
                   queue: :default,
                   default_expiration: 3 * 60 * 60
 
-  def perform(some_arg)
-  	sleep 60
+  def perform(_some_arg)
+    sleep 60
   end
 end
