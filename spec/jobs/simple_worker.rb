@@ -1,7 +1,7 @@
 class SimpleWorker
   include Sidekiq::Worker
   sidekiq_options unique: :until_executed,
-                  unique_args: -> (args) { [args.first] },
+                  unique_args: lambda { |args| [args.first] },
                   queue: :default,
                   default_expiration: 5 * 60 * 60
 

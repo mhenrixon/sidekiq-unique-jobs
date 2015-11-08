@@ -11,7 +11,7 @@ module Sidekiq
 
     def initialize(queue)
       @queues = [queue].flatten.uniq
-      @launcher = Sidekiq::Launcher.new(sidekiq_options(queues: queues))
+      @launcher = Sidekiq::Launcher.new(sidekiq_options(queues))
     end
 
     def process_queue
@@ -60,7 +60,7 @@ module Sidekiq
       end
     end
 
-    def sidekiq_options(queues: [])
+    def sidekiq_options(queues = [])
       { queues: queues,
         concurrency: 3,
         timeout: 3,
