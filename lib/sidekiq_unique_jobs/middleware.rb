@@ -15,6 +15,11 @@ module SidekiqUniqueJobs
 
     def configure_server_middleware
       Sidekiq.configure_server do |config|
+        config.client_middleware do |chain|
+          require 'sidekiq_unique_jobs/client/middleware'
+          chain.add SidekiqUniqueJobs::Client::Middleware
+        end
+
         config.server_middleware do |chain|
           require 'sidekiq_unique_jobs/server/middleware'
           chain.add SidekiqUniqueJobs::Server::Middleware

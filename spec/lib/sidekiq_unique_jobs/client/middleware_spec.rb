@@ -247,4 +247,24 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       UntilExecutedJob.sidekiq_options log_duplicate_payload: true
     end
   end
+
+  describe '#call' do
+    let(:worker_class) { SimpleWorker }
+    let(:item) do
+      { 'class' => SimpleWorker,
+        'queue' => 'default',
+        'args'  => [1] }
+    end
+    let(:queue) { 'default' }
+    context 'when ordinary_or_locked?' do
+      before do
+        allow(subject).to receive(:ordinary_or_locked?).and_return(false)
+      end
+
+      it 'returns nil' do
+        expect(subject.call(worker_class, item, queue))
+          .to eq(nil)
+      end
+    end
+  end
 end

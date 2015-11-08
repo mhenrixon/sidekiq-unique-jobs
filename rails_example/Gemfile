@@ -1,0 +1,20 @@
+source 'https://rubygems.org'
+
+ruby '2.2.3'
+
+platforms :ruby do
+  gem 'sqlite3'
+  gem 'pry-byebug'
+  gem 'ruby-prof'
+end
+
+platforms :jruby do
+  gem 'jruby-openssl'
+  gem 'activerecord-jdbcsqlite3-adapter'
+end
+
+gem 'rails'
+gem 'sidekiq-unique-jobs', path: '..'
+gem 'sinatra'
+gem 'web-console', '~> 2.0'
+
