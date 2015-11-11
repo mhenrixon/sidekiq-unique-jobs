@@ -1,6 +1,12 @@
+## v4.0.8
+
+- Delicensed code (#132)
+- Fix queuing unique jobs (#138)
+
 ## v4.0.7
 
 - Use unique arguments for the `WhileExecuting` lock (#127)
+- See also https://github.com/mhenrixon/sidekiq-unique-jobs/releases/tag/v4.0.7
 
 ## v4.0.6
 
