@@ -8,11 +8,11 @@ module SidekiqUniqueJobs
       Util.keys(pattern, options[:count])
     end
 
-    desc 'del_by PATTERN', 'deletes unique keys from redis by pattern'
+    desc 'del PATTERN', 'deletes unique keys from redis by pattern'
     option :dry_run, aliases: :d, type: :boolean, desc: 'set to false to perform deletion'
     option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
-    def del_by(pattern)
-      Util.del_by(pattern, count, dry_run)
+    def del(pattern)
+      Util.del(pattern, count, dry_run)
     end
 
     desc 'drop into a console', 'easy access to helper methods'

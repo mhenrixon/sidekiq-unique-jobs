@@ -194,15 +194,14 @@ There are two ways to display and remove keys regarding uniqueness. The console 
 Start the console with the following command `bundle exec jobs console`.
 
 #### List Unique Keys
-`keys '*', count: 100`
+`keys '*', 100`
 
 #### Remove Unique Keys
-`del_by '*', count: 100, dry_run: false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
+`del '*', 100, false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
 
 ### Command Line
 
 `bundle exec jobs` displays help on how to use the unique jobs command line.
-
 
 ## Testing
 

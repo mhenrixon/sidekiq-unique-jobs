@@ -18,18 +18,18 @@ RSpec.describe SidekiqUniqueJobs::Util do
   describe '.keys' do
   end
 
-  describe '.del_by' do
+  describe '.del' do
     context 'given a key named "keyz" with value "valz"' do
       before do
         set('uniquejobs:keyz', 'valz')
       end
 
       it 'deletes the keys by pattern' do
-        expect(described_class.del_by('*', 100, false)).to eq(1)
+        expect(described_class.del('*', 100, false)).to eq(1)
       end
 
       it 'deletes the keys by pattern' do
-        expect(described_class.del_by('keyz', 100, false)).to eq(1)
+        expect(described_class.del('keyz', 100, false)).to eq(1)
       end
     end
   end
