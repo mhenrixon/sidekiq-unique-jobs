@@ -14,7 +14,7 @@ module Sidekiq
           execute_job(worker, job['args'])
           unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
         end
-      end
+      end unless Sidekiq::Testing.respond_to?(:server_middleware)
 
       # Pop out a single job and perform it
       def perform_one
@@ -25,14 +25,18 @@ module Sidekiq
         worker.bid = job['bid'] if worker.respond_to?(:bid=)
         execute_job(worker, job['args'])
         unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
-      end
+      end unless Sidekiq::Testing.respond_to?(:server_middleware)
 
       # Clear all jobs for this worker
       def clear
         jobs.each do |job|
           unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
         end
-        jobs.clear
+        if Sidekiq::VERSION >= '4'
+          Queues.jobs[queue].clear
+        else
+          jobs.clear
+        end
       end
 
       def execute_job(worker, args)
@@ -53,10 +57,7 @@ module Sidekiq
 
       module Testing
         def clear_all_ext
-          Sidekiq.redis do |c|
-            unique_keys = c.keys("#{SidekiqUniqueJobs.config.unique_prefix}:*")
-            c.del(*unique_keys) unless unique_keys.empty?
-          end
+          SidekiqUniqueJobs::Util.del('*', 1000, false)
           clear_all_orig
         end
       end
@@ -65,3 +66,4 @@ module Sidekiq
     include Overrides
   end
 end
+

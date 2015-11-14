@@ -8,6 +8,13 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
     before do
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
+      Sidekiq::Testing.server_middleware do |chain|
+        chain.add SidekiqUniqueJobs::Server::Middleware
+      end if Sidekiq::Testing.respond_to?(:server_middleware)
+    end
+
+    after do
+      Sidekiq::Testing.server_middleware(&:clear) if Sidekiq::Testing.respond_to?(:server_middleware)
     end
 
     context 'with unique worker' do
@@ -16,9 +23,17 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect(UntilExecutedJob.jobs.size).to eq(0)
         expect(UntilExecutedJob.perform_async(param)).to_not be_nil
         expect(UntilExecutedJob.jobs.size).to eq(1)
-        expect(UntilExecutedJob).to have_enqueued_job(param)
         expect(UntilExecutedJob.perform_async(param)).to be_nil
         expect(UntilExecutedJob.jobs.size).to eq(1)
+      end
+
+      it 'does not push duplicate messages', sidekiq_ver: '>= 4' do
+        param = 'work'
+        expect(UntilExecutedJob.jobs.size).to eq(0)
+        expect(UntilExecutedJob.perform_async(param)).to_not be_nil
+        expect(Sidekiq::Queues['working'].size).to eq(1)
+        expect(UntilExecutedJob.perform_async(param)).to be_nil
+        expect(Sidekiq::Queues['working'].size).to eq(1)
       end
 
       it 'unlocks jobs after draining a worker' do
@@ -78,6 +93,7 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect { UntilExecutedJob.clear }.not_to raise_error
       end
 
+      # it 'unlocks jobs when all workers are cleared', :focus do
       it 'unlocks jobs when all workers are cleared' do
         param = 'work'
         expect(UntilExecutedJob.jobs.size).to eq(0)
@@ -90,8 +106,8 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect(UntilExecutedJob.jobs.size).to eq(0)
         expect(AnotherUniqueJob.jobs.size).to eq(0)
         UntilExecutedJob.perform_async(param)
-        AnotherUniqueJob.perform_async(param)
         expect(UntilExecutedJob.jobs.size).to eq(1)
+        AnotherUniqueJob.perform_async(param)
         expect(AnotherUniqueJob.jobs.size).to eq(1)
       end
 
@@ -121,7 +137,6 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect(MyJob.jobs.size).to eq(0)
         MyJob.perform_async(param)
         expect(MyJob.jobs.size).to eq(1)
-        expect(MyJob).to have_enqueued_job(param)
         MyJob.perform_async(param)
         expect(MyJob.jobs.size).to eq(2)
       end

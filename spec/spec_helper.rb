@@ -23,19 +23,27 @@ require 'sidekiq-unique-jobs'
 require 'sidekiq_unique_jobs/testing'
 require 'timecop'
 
-require 'rspec-sidekiq'
 require 'sidekiq/simulator'
 
 Sidekiq::Testing.disable!
 Sidekiq.logger.level = "Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}".constantize
 
 require 'sidekiq/redis_connection'
+
+begin
+  require 'redis-namespace'
+rescue LoadError
+  puts 'Redis Namespace unavailable'
+end
+
 REDIS_URL ||= ENV['REDIS_URL'] || 'redis://localhost/15'.freeze
 REDIS_NAMESPACE ||= 'unique-test'.freeze
-REDIS ||= Sidekiq::RedisConnection.create(url: REDIS_URL, namespace: REDIS_NAMESPACE)
+REDIS_OPTIONS ||= { url: REDIS_URL }
+REDIS_OPTIONS.merge!(namespace: REDIS_NAMESPACE) if defined?(Redis::Namespace)
+REDIS ||= Sidekiq::RedisConnection.create(REDIS_OPTIONS)
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: REDIS_URL, namespace: REDIS_NAMESPACE }
+  config.redis = REDIS_OPTIONS
 end
 
 Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each { |f| require f }
@@ -53,17 +61,6 @@ RSpec.configure do |config|
   config.default_formatter = 'doc' if config.files_to_run.one?
   config.order = :random
   Kernel.srand config.seed
-end
-
-RSpec::Sidekiq.configure do |config|
-  # Clears all job queues before each example
-  config.clear_all_enqueued_jobs = true
-
-  # Whether to use terminal colours when outputting messages
-  config.enable_terminal_colours = true
-
-  # Warn when jobs are not enqueued to Redis but to a job array
-  config.warn_when_jobs_not_processed_by_sidekiq = false
 end
 
 Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].each { |f| require f }

@@ -1,6 +1,6 @@
 class AnotherUniqueJob
   include Sidekiq::Worker
-  sidekiq_options queue: :working, retry: 1, backtrace: 10,
+  sidekiq_options queue: :working2, retry: 1, backtrace: 10,
                   unique: :until_executed
 
   sidekiq_retries_exhausted do |msg|
