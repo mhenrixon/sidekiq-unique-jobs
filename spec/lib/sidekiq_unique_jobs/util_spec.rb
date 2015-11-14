@@ -25,11 +25,11 @@ RSpec.describe SidekiqUniqueJobs::Util do
       end
 
       it 'deletes the keys by pattern' do
-        expect(described_class.del_by('*', count: 100, dry_run: false)).to eq(1)
+        expect(described_class.del_by('*', 100, false)).to eq(1)
       end
 
       it 'deletes the keys by pattern' do
-        expect(described_class.del_by('keyz', count: 100, dry_run: false)).to eq(1)
+        expect(described_class.del_by('keyz', 100, false)).to eq(1)
       end
     end
   end

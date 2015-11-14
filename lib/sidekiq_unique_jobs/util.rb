@@ -5,13 +5,13 @@ module SidekiqUniqueJobs
 
     module_function
 
-    def keys(pattern = SCAN_PATTERN, count: DEFAULT_COUNT)
+    def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
       scan(pattern, count: count)
     end
 
-    def del_by(pattern = SCAN_PATTERN, count:, dry_run: true)
+    def del_by(pattern = SCAN_PATTERN, count = 0, dry_run = true)
       logger.debug { "Deleting keys by: #{pattern}" }
-      keys, time = timed { scan(pattern, count: count) }
+      keys, time = timed { scan(pattern, count) }
       logger.debug { "#{keys.size} matching keys found in #{time} sec." }
       keys = dry_run(keys)
       logger.debug { "#{keys.size} matching keys after postprocessing" }
@@ -48,7 +48,7 @@ module SidekiqUniqueJobs
       [result, elapsed]
     end
 
-    def scan(pattern, count: 1000)
+    def scan(pattern, count = 1000)
       connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
