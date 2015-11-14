@@ -56,7 +56,7 @@ module SidekiqUniqueJobs
   end
 
   def redis_version
-    @redis_version ||= connection { |c| c.info('server')['redis_version'] }
+    @redis_version ||= connection { |c| c.info('server'.freeze)['redis_version'.freeze] }
   end
 
   def connection(redis_pool = nil)
@@ -65,10 +65,6 @@ module SidekiqUniqueJobs
     else
       Sidekiq.redis { |conn| yield conn }
     end
-  end
-
-  def mock_redis
-    @redis_mock ||= MockRedis.new if defined?(MockRedis)
   end
 
   def synchronize(item, redis_pool)
