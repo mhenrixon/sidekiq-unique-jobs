@@ -251,7 +251,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     let(:queue) { 'default' }
     context 'when ordinary_or_locked?' do
       before do
-        allow(subject).to receive(:ordinary_or_locked?).and_return(false)
+        allow(subject).to receive(:disabled_or_successfully_locked?).and_return(false)
       end
 
       it 'returns nil' do

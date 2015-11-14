@@ -7,6 +7,6 @@ class WhileExecutingJob
   end
 
   def perform(_)
-    fail 'HELL'
+    # NO OP
   end
 end

@@ -12,6 +12,6 @@ class UntilExecutedJob
   end
 
   def after_unlock
-    fail 'HELL'
+    # NO OP
   end
 end
