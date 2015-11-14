@@ -2,9 +2,10 @@ AllCops:
   Include:
     - '**/Rakefile'
     - '**/lib'
+    - '**/bin'
     - '**/spec'
   Exclude:
-    - 'bin/**/*'
+    - 'Gemfile.lock'
     - 'gemfiles/**/*'
 
 Lint/HandleExceptions:

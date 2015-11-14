@@ -28,11 +28,11 @@ Or install it yourself as:
 
     $ gem install sidekiq-unique-jobs
 
-## A word on locking
+## Locking
 
-Like @mperham mentions on [this wiki page](https://github.com/mperham/sidekiq/wiki/Related-Projects#unique-jobs) it is hard to enforce uniqueness with redis in a distributed redis setting. 
+Like @mperham mentions on [this wiki page](https://github.com/mperham/sidekiq/wiki/Related-Projects#unique-jobs) it is hard to enforce uniqueness with redis in a distributed redis setting.
 
-To make things worse there are many ways of wanting to enforce uniqueness. 
+To make things worse there are many ways of wanting to enforce uniqueness.
 
 ### While Executing
 
@@ -74,7 +74,7 @@ The job won't be unlocked until the timeout/expiry runs out.
 sidekiq_options unique: :until_and_while_executing
 ```
 
-This lock is exactly what you would expect. It is considered unique in a way until executing begins and it is locked while executing so what differs from `UntilExecuted`? 
+This lock is exactly what you would expect. It is considered unique in a way until executing begins and it is locked while executing so what differs from `UntilExecuted`?
 
 The difference is that this job has two types of uniqueness:
 1. It is unique until execution
@@ -187,7 +187,24 @@ class UniqueJobWithFilterMethod
 end
 ```
 
-### Testing
+## Debugging
+There are two ways to display and remove keys regarding uniqueness. The console way and the command line way.
+
+### Console
+Start the console with the following command `bundle exec jobs console`.
+
+#### List Unique Keys
+`keys '*', count: 100`
+
+#### Remove Unique Keys
+`del_by '*', count: 100, dry_run: false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
+
+### Command Line
+
+`bundle exec jobs` displays help on how to use the unique jobs command line.
+
+
+## Testing
 
 To enable the testing for `sidekiq-unique-jobs`, add `require 'sidekiq_unique_jobs/testing'` to your testing helper.
 

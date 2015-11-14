@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'sidekiq-unique-jobs'
+
+SidekiqUniqueJobs::Cli.start(ARGV)

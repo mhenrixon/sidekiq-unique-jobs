@@ -5,12 +5,14 @@ module SidekiqUniqueJobs
   ScriptError = Class.new(StandardError)
 
   module Scripts
-    extend Forwardable
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
     SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
     DEFINED_METHODS ||= []
 
     module_function
+
+    extend SingleForwardable
+    def_delegator :SidekiqUniqueJobs, :connection
 
     def script_shas
       @script_shas ||= {}
@@ -31,12 +33,6 @@ module SidekiqUniqueJobs
               ex.message + "\n\n" +
               script_source(file_name) +
               ex.backtrace.join("\n")
-    end
-
-    def connection(redis_pool, &_block)
-      SidekiqUniqueJobs.connection(redis_pool) do |conn|
-        yield conn
-      end
     end
 
     def script_source(file_name)

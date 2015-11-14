@@ -1,5 +1,8 @@
 require 'yaml' if RUBY_VERSION.include?('2.0.0') # rubocop:disable FileName
+require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/constants'
+require 'sidekiq_unique_jobs/util'
+require 'sidekiq_unique_jobs/cli'
 require 'sidekiq_unique_jobs/core_ext'
 require 'sidekiq_unique_jobs/timeout_calculator'
 require 'sidekiq_unique_jobs/options_with_fallback'
@@ -8,7 +11,6 @@ require 'sidekiq_unique_jobs/unique_args'
 require 'sidekiq_unique_jobs/unlockable'
 require 'sidekiq_unique_jobs/lock'
 require 'sidekiq_unique_jobs/middleware'
-require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/config'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
@@ -41,7 +43,7 @@ module SidekiqUniqueJobs
   end
 
   def namespace
-    @namespace ||= Sidekiq.redis { |c| c.respond_to?(:namespace) ? c.namespace : nil }
+    @namespace ||= connection { |c| c.respond_to?(:namespace) ? c.namespace : nil }
   end
 
   # Attempt to constantize a string worker_class argument, always
@@ -54,11 +56,10 @@ module SidekiqUniqueJobs
   end
 
   def redis_version
-    @redis_version ||= Sidekiq.redis { |c| c.info('server')['redis_version'] }
+    @redis_version ||= connection { |c| c.info('server')['redis_version'] }
   end
 
   def connection(redis_pool = nil)
-    return mock_redis if config.mocking?
     if redis_pool
       redis_pool.with { |conn| yield conn }
     else

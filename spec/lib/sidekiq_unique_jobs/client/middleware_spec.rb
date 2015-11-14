@@ -15,13 +15,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
-      around(:each) do |example|
-        logger = Sidekiq.logger
-        Sidekiq.logger = nil
-        example.run
-        Sidekiq::Logging.logger = logger
-      end
-
       it 'rejects nested subsequent jobs with the same arguments', sidekiq_ver: '>= 3.5.3' do
         Sidekiq::Testing.disable! do
           expect(SimpleWorker.perform_async 1).not_to eq(nil)
