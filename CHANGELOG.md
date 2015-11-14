@@ -1,6 +1,17 @@
+## v4.0.9
+
+- Add command line and console extensions for removal of unique jobs (c292d87)
+
+## v4.0.8
+
+- Use unique arguments for the `WhileExecuting` lock (#127)
+- Delicensed code (#132)
+- Fix queuing unique jobs (#138)
+
 ## v4.0.7
 
 - Use unique arguments for the `WhileExecuting` lock (#127)
+- See also https://github.com/mhenrixon/sidekiq-unique-jobs/releases/tag/v4.0.7
 
 ## v4.0.6
 
@@ -47,7 +58,7 @@
 
 - Improve uniqueness check performance thanks @mpherham
 - Remove locks in sidekiq fake testing mode
-- Do not unlock jobs when sidekiq is shutting down 
+- Do not unlock jobs when sidekiq is shutting down
 
 ## v3.0.13
 
