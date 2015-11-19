@@ -32,11 +32,11 @@ module Sidekiq
         jobs.each do |job|
           unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
         end
-        if Sidekiq::VERSION >= '4'
-          Queues.jobs[queue].clear
-        else
+        # if Sidekiq::VERSION >= '4'
+        #   Queues.jobs[queue].clear
+        # else
           jobs.clear
-        end
+        # end
       end
 
       def execute_job(worker, args)

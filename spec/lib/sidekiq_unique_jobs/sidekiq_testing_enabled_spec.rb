@@ -27,14 +27,14 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect(UntilExecutedJob.jobs.size).to eq(1)
       end
 
-      it 'does not push duplicate messages', sidekiq_ver: '>= 4' do
-        param = 'work'
-        expect(UntilExecutedJob.jobs.size).to eq(0)
-        expect(UntilExecutedJob.perform_async(param)).to_not be_nil
-        expect(Sidekiq::Queues['working'].size).to eq(1)
-        expect(UntilExecutedJob.perform_async(param)).to be_nil
-        expect(Sidekiq::Queues['working'].size).to eq(1)
-      end
+      # it 'does not push duplicate messages', sidekiq_ver: '>= 4' do
+      #   param = 'work'
+      #   expect(UntilExecutedJob.jobs.size).to eq(0)
+      #   expect(UntilExecutedJob.perform_async(param)).to_not be_nil
+      #   expect(Sidekiq::Queues['working'].size).to eq(1)
+      #   expect(UntilExecutedJob.perform_async(param)).to be_nil
+      #   expect(Sidekiq::Queues['working'].size).to eq(1)
+      # end
 
       it 'unlocks jobs after draining a worker' do
         param = 'work'
