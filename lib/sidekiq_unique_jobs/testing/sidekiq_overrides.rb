@@ -35,7 +35,7 @@ module Sidekiq
         # if Sidekiq::VERSION >= '4'
         #   Queues.jobs[queue].clear
         # else
-          jobs.clear
+        jobs.clear
         # end
       end
 
@@ -66,4 +66,3 @@ module Sidekiq
     include Overrides
   end
 end
-

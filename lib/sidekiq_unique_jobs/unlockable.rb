@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
       end
     end
 
-    def unlock_by_arguments(worker_class, unique_arguments = {})
+    def unlock_by_arguments(_worker_class, _unique_arguments = {})
       Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
         after_unlock(result, __method__)
       end

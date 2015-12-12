@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
       connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
-    def keys_by_keys(pattern, count)
+    def keys_by_keys(pattern, _count)
       connection { |conn| conn.keys(prefix(pattern)).to_a }
     end
 
