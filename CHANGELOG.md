@@ -1,3 +1,7 @@
+## v4.0.11
+
+- Always load forwardable - https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152#issuecomment-164199978
+
 ## v4.0.10
 
 - Fix https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152

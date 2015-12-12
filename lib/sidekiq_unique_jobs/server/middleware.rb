@@ -1,5 +1,3 @@
-require 'forwardable'
-
 module SidekiqUniqueJobs
   module Server
     class Middleware
