@@ -20,6 +20,7 @@ gemfile:
   - gemfiles/sidekiq_3.1.gemfile
   - gemfiles/sidekiq_3.2.gemfile
   - gemfiles/sidekiq_3.3.gemfile
+  - gemfiles/sidekiq_4.0.gemfile
 
 notifications:
   email:
