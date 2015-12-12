@@ -3,6 +3,8 @@ module SidekiqUniqueJobs
     class UntilExecuted
       OK ||= 'OK'.freeze
 
+      include SidekiqUniqueJobs::Unlockable
+
       extend Forwardable
       def_delegators :Sidekiq, :logger
 
@@ -25,7 +27,8 @@ module SidekiqUniqueJobs
         unless [:server, :api, :test].include?(scope)
           fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
-        SidekiqUniqueJobs::Unlockable.unlock(unique_key, item[JID_KEY], redis_pool)
+
+        unlock_by_key(unique_key, item[JID_KEY], redis_pool)
       end
 
       # rubocop:disable MethodLength

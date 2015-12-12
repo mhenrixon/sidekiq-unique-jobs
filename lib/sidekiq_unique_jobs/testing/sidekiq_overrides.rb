@@ -12,7 +12,7 @@ module Sidekiq
           worker.jid = job['jid']
           worker.bid = job['bid'] if worker.respond_to?(:bid=)
           execute_job(worker, job['args'])
-          unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
+          unlock(job) if Sidekiq::Testing.fake?
         end
       end unless Sidekiq::Testing.respond_to?(:server_middleware)
 
@@ -24,13 +24,13 @@ module Sidekiq
         worker.jid = job['jid']
         worker.bid = job['bid'] if worker.respond_to?(:bid=)
         execute_job(worker, job['args'])
-        unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
+        unlock(job) if Sidekiq::Testing.fake?
       end unless Sidekiq::Testing.respond_to?(:server_middleware)
 
       # Clear all jobs for this worker
       def clear
         jobs.each do |job|
-          unlock(job['unique_digest'], job['jid']) if Sidekiq::Testing.fake?
+          unlock(job) if Sidekiq::Testing.fake?
         end
         # if Sidekiq::VERSION >= '4'
         #   Queues.jobs[queue].clear

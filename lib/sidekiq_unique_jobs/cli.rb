@@ -18,17 +18,20 @@ module SidekiqUniqueJobs
     desc 'drop into a console', 'easy access to helper methods'
     def console
       puts "Use `keys '*', 1000 to display the first 1000 unique keys matching '*'"
-      puts "Use `del '*', 1000 to see how many keys would be deleted for the pattern '*'"
+      puts "Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'"
       puts "Use `del '*', 1000, false to delete the first 1000 keys matching '*'"
-      begin
-        require 'pry'
-        Object.include SidekiqUniqueJobs::Util
-        Pry.start
-      rescue LoadError
-        require 'irb'
-        Object.include SidekiqUniqueJobs::Util
-        IRB.start
-      end
+      Object.include SidekiqUniqueJobs::Util
+      console_class.start
+    end
+
+    private
+
+    def console_class
+      require 'pry'
+      Pry
+    rescue LoadError
+      require 'irb'
+      IRB
     end
   end
 end

@@ -2,25 +2,46 @@ module SidekiqUniqueJobs
   module Unlockable
     module_function
 
-    # rubocop:disable MethodLength
-    def unlock(unique_key, jid, redis_pool = nil)
-      result = Scripts.call(:release_lock, redis_pool,
-                            keys: [unique_key],
-                            argv: [jid])
-      case result
-      when 1
-        Sidekiq.logger.debug { "successfully unlocked #{unique_key}" }
-        true
-      when 0
-        Sidekiq.logger.debug { "expiring lock #{unique_key} is not owned by #{jid}" }
-        false
-      when -1
-        Sidekiq.logger.debug { "#{unique_key} is not a known key" }
-        false
-      else
-        fail "#{__method__} returned an unexpected value (#{result})"
+    def unlock(item)
+      unlock_by_key(item[UNIQUE_DIGEST_KEY], item[JID_KEY])
+    end
+
+    def unlock_by_key(unique_key, jid, redis_pool = nil)
+      Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
+        after_unlock(result, __method__)
       end
     end
-    # rubocop:enable MethodLength
+
+    def unlock_by_jid(jid, redis_pool = nil)
+      Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
+        after_unlock(result, __method__)
+      end
+    end
+
+    def unlock_by_arguments(worker_class, unique_arguments = {})
+      Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
+        after_unlock(result, __method__)
+      end
+    end
+
+    def after_unlock(result, calling_method)
+      case result
+      when 1
+        logger.debug { "successfully unlocked #{unique_key}" }
+        true
+      when 0
+        logger.debug { "expiring lock #{unique_key} is not owned by #{jid}" }
+        false
+      when -1
+        logger.debug { "#{unique_key} is not a known key" }
+        false
+      else
+        fail "#{calling_method} returned an unexpected value (#{result})"
+      end
+    end
+
+    def logger
+      Sidekiq.logger
+    end
   end
 end

@@ -1,17 +1,11 @@
 require 'sidekiq/api'
 
 module Sidekiq
-  module UnlockMethod
-    def unlock(item)
-      SidekiqUniqueJobs::Unlockable.unlock(item['unique_digest'.freeze], item['jid'.freeze])
-    end
-  end
-
   class SortedEntry
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include UnlockMethod
+          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
           alias_method :remove_job_orig, :remove_job
@@ -41,7 +35,7 @@ module Sidekiq
     module UniqueExtension3_0
       def self.included(base)
         base.class_eval do
-          include UnlockMethod
+          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
@@ -63,7 +57,7 @@ module Sidekiq
     module UniqueExtension3_4
       def self.included(base)
         base.class_eval do
-          include UnlockMethod
+          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
@@ -91,7 +85,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include UnlockMethod
+          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
@@ -110,7 +104,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include UnlockMethod
+          include SidekiqUniqueJobs::Unlockable
           alias_method :clear_orig, :clear
           alias_method :clear, :clear_ext
         end
@@ -129,7 +123,7 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include UnlockMethod
+          include SidekiqUniqueJobs::Unlockable
           if base.method_defined?(:clear)
             alias_method :clear_orig, :clear
             alias_method :clear, :clear_ext
