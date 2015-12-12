@@ -1,3 +1,8 @@
+## v4.0.10
+
+- Fix https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152
+- Minor improvement to internal esthetics
+
 ## v4.0.9
 
 - Add command line and console extensions for removal of unique jobs (c292d87)
