@@ -24,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
     end
 
     def lock_for(seconds = 1, jid = JID, key = UNIQUE_KEY)
-      subject.call(:aquire_lock, nil,         keys: [key], argv: [jid, seconds])
+      subject.call(:aquire_lock, nil, keys: [key], argv: [jid, seconds])
     end
 
     def unlock(key = UNIQUE_KEY, jid = JID)
@@ -45,8 +45,8 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
         end
 
         context 'when job is locked' do
-          before  { expect(lock_for).to eq(1) }
-          specify { expect(lock_for).to eq(0) }
+          before  { expect(lock_for(10)).to eq(1) }
+          specify { expect(lock_for(5, 'anotherjid')).to eq(0) }
         end
       end
     end

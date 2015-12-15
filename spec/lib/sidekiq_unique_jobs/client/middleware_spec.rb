@@ -15,6 +15,30 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
+
+      it 'processes jobs properly', sidekiq_ver: '>= 4.0.0' do
+        Sidekiq::Testing.disable! do
+          jid = NotifyWorker.perform_in(1, 183, 'xxxx')
+          expect(jid).not_to eq(nil)
+          Sidekiq.redis do |c|
+            expect(c.zcard('schedule')).to eq(1)
+            expect(c.keys).to match_array(%w(schedule uniquejobs:6e47d668ad22db2a3ba0afd331514ce2))
+          end
+          sleep 1
+          Sidekiq::Scheduled::Enq.new.enqueue_jobs
+
+          Sidekiq.redis do |c|
+            wait(10).for { c.llen('queue:notify_worker') }.to eq(1)
+          end
+
+          Sidekiq::Simulator.process_queue(:notify_worker) do
+            Sidekiq.redis do |c|
+              wait(10).for { c.llen('queue:notify_worker') }.to eq(0)
+            end
+          end
+        end
+      end
+
       it 'rejects nested subsequent jobs with the same arguments', sidekiq_ver: '>= 3.5.3' do
         Sidekiq::Testing.disable! do
           expect(SimpleWorker.perform_async 1).not_to eq(nil)
@@ -87,8 +111,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does not push duplicate messages when configured for unique only' do
-      item = { 'class' => MyUniqueJob, 'queue' => 'customqueue', 'args' => [1, 2] }
-      10.times { Sidekiq::Client.push(item) }
+      10.times { MyUniqueJob.perform_async(1, 2) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
       end

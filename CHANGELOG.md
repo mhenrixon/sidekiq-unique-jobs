@@ -1,3 +1,12 @@
+## v4.0.12
+
+- Allow jobs to be pushed to processing
+- Close #150
+- Close #151
+- Close #146
+- Close #136
+- Close #133
+
 ## v4.0.11
 
 - Always load forwardable - https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152#issuecomment-164199978
