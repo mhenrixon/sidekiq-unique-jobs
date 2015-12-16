@@ -32,3 +32,6 @@ matrix:
     - rvm: 2.2.3
       gemfile: gemfiles/sidekiq_develop.gemfile
       env: STYLE=true
+addons:
+  code_climate:
+    repo_token: 88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
