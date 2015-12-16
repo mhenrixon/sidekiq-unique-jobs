@@ -1,3 +1,7 @@
+## v4.0.13
+
+- Allow deleting locks by jid
+
 ## v4.0.12
 
 - Allow jobs to be pushed to processing

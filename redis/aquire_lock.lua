@@ -1,7 +1,6 @@
 local unique_key = KEYS[1]
 local job_id     = ARGV[1]
 local expires    = ARGV[2]
-local scheduled  = ARGV[3]
 local stored_jid = redis.pcall('get', unique_key)
 
 if stored_jid then
@@ -13,6 +12,7 @@ if stored_jid then
 end
 
 if redis.pcall('set', unique_key, job_id, 'nx', 'ex', expires) then
+  redis.pcall('hsetnx', 'uniquejobs', job_id, unique_key)
   return 1
 else
   return 0

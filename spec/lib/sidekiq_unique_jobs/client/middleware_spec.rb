@@ -21,7 +21,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           expect(jid).not_to eq(nil)
           Sidekiq.redis do |c|
             expect(c.zcard('schedule')).to eq(1)
-            expect(c.keys).to match_array(%w(schedule uniquejobs:6e47d668ad22db2a3ba0afd331514ce2))
+            expected = %w(schedule uniquejobs:6e47d668ad22db2a3ba0afd331514ce2 uniquejobs)
+            expect(c.keys).to match_array(expected)
           end
           sleep 1
           Sidekiq::Scheduled::Enq.new.enqueue_jobs

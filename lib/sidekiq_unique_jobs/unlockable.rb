@@ -13,7 +13,7 @@ module SidekiqUniqueJobs
     end
 
     def unlock_by_jid(jid, redis_pool = nil)
-      Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
+      Scripts.call(:release_lock_by_jid, redis_pool, keys: [jid]) do |result|
         after_unlock(result, __method__)
       end
     end
