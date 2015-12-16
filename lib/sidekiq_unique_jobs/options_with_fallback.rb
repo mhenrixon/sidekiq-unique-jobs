@@ -41,10 +41,8 @@ module SidekiqUniqueJobs
     end
 
     def lock_type_from(hash, key = UNIQUE_KEY)
-      if (klass = hash[key])
-        return nil if klass.is_a?(TrueClass)
-        klass
-      end
+      return nil if hash[key].is_a?(TrueClass)
+      hash[key]
     end
 
     def options
