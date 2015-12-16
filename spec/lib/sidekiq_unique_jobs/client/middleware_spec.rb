@@ -15,7 +15,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     describe 'when a job is already scheduled' do
-
       it 'processes jobs properly', sidekiq_ver: '>= 4.0.0' do
         Sidekiq::Testing.disable! do
           jid = NotifyWorker.perform_in(1, 183, 'xxxx')
