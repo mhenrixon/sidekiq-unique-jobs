@@ -39,6 +39,12 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       let(:options) { {} }
       let(:item) { { 'unique' => 'until_executed' } }
       its(:unique_enabled?) { is_expected.to eq('until_executed') }
+
+      context 'when true' do
+        let(:options) { {} }
+        let(:item) { { 'unique' => true } }
+        its(:unique_enabled?) { is_expected.to eq(true) }
+      end
     end
   end
 
@@ -57,6 +63,32 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       let(:options) { {} }
       let(:item) { { 'unique' => 'until_executed' } }
       its(:unique_disabled?) { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#lock_type' do
+    context 'when options["unique"] is while_executing' do
+      let(:options) { { 'unique' => 'while_executing' } }
+      let(:item) { { 'unique' => 'until_executed' } }
+      its(:lock_type) { is_expected.to eq('while_executing') }
+    end
+
+    context 'when options["unique"] is true' do
+      let(:options) { { 'unique' => true } }
+      let(:item) { { 'unique' => 'until_executed' } }
+      its(:lock_type) { is_expected.to eq('until_executed') }
+    end
+
+    context 'when item["unique"] is until_executed' do
+      let(:options) { {} }
+      let(:item) { { 'unique' => 'until_executed' } }
+      its(:lock_type) { is_expected.to eq('until_executed') }
+    end
+
+    context 'when item["unique"] is true' do
+      let(:options) { { 'unique' => true } }
+      let(:item) { { 'unique' => true } }
+      its(:lock_type) { is_expected.to eq(nil) }
     end
   end
 

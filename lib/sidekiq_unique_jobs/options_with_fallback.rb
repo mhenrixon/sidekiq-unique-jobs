@@ -26,12 +26,24 @@ module SidekiqUniqueJobs
     end
 
     def unique_lock
-      if options.key?(UNIQUE_KEY) && options[UNIQUE_KEY] == true
-        warn('unique: true is no longer valid. Please set it to the type of lock required like: ' \
-             '`unique: :until_executed`')
-        options[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
-      else
-        options[UNIQUE_KEY] || item[UNIQUE_KEY] || SidekiqUniqueJobs.default_lock
+      @unique_lock ||=
+        if options.key?(UNIQUE_KEY) && options[UNIQUE_KEY].to_s == 'true'
+          warn('unique: true is no longer valid. Please set it to the type of lock required like: ' \
+               '`unique: :until_executed`')
+          options[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
+        else
+          lock_type || SidekiqUniqueJobs.default_lock
+        end
+    end
+
+    def lock_type
+      lock_type_from(options) || lock_type_from(item)
+    end
+
+    def lock_type_from(hash, key = UNIQUE_KEY)
+      if (klass = hash[key])
+        return nil if klass.is_a?(TrueClass)
+        klass
       end
     end
 
