@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
 
       private
 
-      attr_reader :redis_pool, :worker, :item, :worker_class
+      attr_reader :redis_pool, :worker, :item
 
       protected
 
