@@ -3,8 +3,6 @@ require 'sidekiq/testing'
 module Sidekiq
   module Worker
     module ClassMethods
-      include SidekiqUniqueJobs::Unlockable
-
       # Drain and run all jobs for this worker
       def drain
         while (job = jobs.shift)
@@ -42,6 +40,10 @@ module Sidekiq
       def execute_job(worker, args)
         worker.perform(*args)
       end unless respond_to?(:execute_job)
+
+      def unlock(job)
+        SidekiqUniqueJobs::Unlockable.unlock(job)
+      end
     end
 
     module Overrides
