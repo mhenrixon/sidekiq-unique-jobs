@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
       end
 
       def max_lock_time
-        @max_lock_time ||= TimeoutCalculator.for_item(item).seconds
+        @max_lock_time ||= QueueLockTimeoutCalculator.for_item(item).seconds
       end
 
       def after_yield_yield

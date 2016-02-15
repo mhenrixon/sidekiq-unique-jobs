@@ -6,6 +6,8 @@ require 'sidekiq_unique_jobs/util'
 require 'sidekiq_unique_jobs/cli'
 require 'sidekiq_unique_jobs/core_ext'
 require 'sidekiq_unique_jobs/timeout_calculator'
+require 'sidekiq_unique_jobs/queue_lock_timeout_calculator'
+require 'sidekiq_unique_jobs/run_lock_timeout_calculator'
 require 'sidekiq_unique_jobs/options_with_fallback'
 require 'sidekiq_unique_jobs/scripts'
 require 'sidekiq_unique_jobs/unique_args'
@@ -23,7 +25,8 @@ module SidekiqUniqueJobs
   def config
     @config ||= Config.new(
       unique_prefix: 'uniquejobs',
-      default_expiration: 30 * 60,
+      default_queue_lock_expiration: 30 * 60,
+      default_run_lock_expiration: 60,
       default_lock: :while_executing,
       redis_test_mode: :redis # :mock
     )

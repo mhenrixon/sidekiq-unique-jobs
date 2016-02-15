@@ -2,45 +2,49 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
   shared_context 'undefined worker class' do
-    subject { described_class.new('class' => 'test') }
+    subject do
+      Class.new do
+        include SidekiqUniqueJobs::TimeoutCalculator
+        def initialize(item)
+          @item = item
+        end
+      end.new('class' => 'test')
+    end
   end
 
-  shared_context 'item not scheduled' do
-    subject { described_class.new('class' => 'MyUniqueJob') }
+  shared_context 'generic unscheduled job' do
+    subject do
+      Class.new do
+        include SidekiqUniqueJobs::TimeoutCalculator
+        def initialize(item)
+          @item = item
+        end
+      end.new('class' => 'MyUniqueJob')
+    end
   end
 
   describe 'public api' do
-    subject { described_class.new(nil) }
-    it { is_expected.to respond_to(:time_until_scheduled) }
-    it { is_expected.to respond_to(:unique_expiration) }
-    it { is_expected.to respond_to(:worker_class_unique_expiration) }
-    it { is_expected.to respond_to(:worker_class) }
-    it { is_expected.to respond_to(:seconds) }
-  end
-
-  describe '.for_item' do
-    it 'initializes a new calculator' do
-      expect(described_class).to receive(:new).with('WAT')
-      described_class.for_item('WAT')
+    it_behaves_like 'generic unscheduled job' do
+      it { is_expected.to respond_to(:time_until_scheduled) }
+      it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
+      it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
+      it { is_expected.to respond_to(:worker_class) }
     end
-  end
-
-  describe '#seconds' do
-    subject { described_class.new(nil) }
-
-    before do
-      allow(subject).to receive(:time_until_scheduled).and_return(10)
-      allow(subject).to receive(:unique_expiration).and_return(9)
-    end
-    its(:seconds) { is_expected.to eq(19) }
   end
 
   describe '#time_until_scheduled' do
-    it_behaves_like 'item not scheduled' do
+    it_behaves_like 'generic unscheduled job' do
       its(:time_until_scheduled) { is_expected.to eq(0) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueJob', 'at' => schedule_time) }
+    subject do
+      Class.new do
+        include SidekiqUniqueJobs::TimeoutCalculator
+        def initialize(item)
+          @item = item
+        end
+      end.new('class' => 'MyUniqueJob', 'at' => schedule_time)
+    end
     let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
     let(:now_in_utc) { Time.now.utc.to_i }
 
@@ -51,22 +55,30 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
     end
   end
 
-  describe '#unique_expiration' do
+  describe '#worker_class_queue_lock_expiration' do
     it_behaves_like 'undefined worker class' do
-      its(:unique_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_expiration) }
+      its (:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueJob') }
-    its(:unique_expiration) { is_expected.to eq(7_200) }
+    it_behaves_like 'generic unscheduled job' do
+      its (:worker_class_queue_lock_expiration) { is_expected.to eq(7_200) }
+    end
   end
 
-  describe '#worker_class_unique_expiration' do
+  describe '#worker_class_run_lock_expiration' do
     it_behaves_like 'undefined worker class' do
-      its(:worker_class_unique_expiration) { is_expected.to eq(nil) }
+      its (:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueJob') }
-    its(:worker_class_unique_expiration) { is_expected.to eq(7_200) }
+    subject do
+      Class.new do
+        include SidekiqUniqueJobs::TimeoutCalculator
+        def initialize(item)
+          @item = item
+        end
+      end.new('class' => 'LongRunningJob')
+    end
+    its (:worker_class_run_lock_expiration) { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class' do
@@ -74,7 +86,14 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       its(:worker_class) { is_expected.to eq('test') }
     end
 
-    subject { described_class.new('class' => 'MyJob') }
+    subject do
+      Class.new do
+        include SidekiqUniqueJobs::TimeoutCalculator
+        def initialize(item)
+          @item = item
+        end
+      end.new('class' => 'MyJob')
+    end
     its(:worker_class) { is_expected.to eq(MyJob) }
   end
 end

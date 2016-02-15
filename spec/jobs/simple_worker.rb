@@ -3,7 +3,7 @@ class SimpleWorker
   sidekiq_options unique: :until_executed,
                   unique_args: ->(args) { [args.first] },
                   queue: :default,
-                  default_expiration: 5 * 60 * 60
+                  default_queue_lock_expiration: 5 * 60 * 60
 
   def perform(_arg)
     sleep 5

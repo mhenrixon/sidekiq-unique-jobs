@@ -24,7 +24,13 @@ module SidekiqUniqueJobs
       end
 
       def locked?
-        Scripts.call(:synchronize, @redis_pool, keys: [@unique_digest], argv: [Time.now.to_i]) == 1
+        Scripts.call(:synchronize, @redis_pool,
+                     keys: [@unique_digest],
+                     argv: [Time.now.to_i, max_lock_time]) == 1
+      end
+
+      def max_lock_time
+        @max_lock_time ||= RunLockTimeoutCalculator.for_item(@item).seconds
       end
 
       def execute(_callback)
