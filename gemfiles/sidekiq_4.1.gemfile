@@ -5,7 +5,7 @@ source "http://rubygems.org"
 gem "appraisal", "~> 2.0.0"
 gem "rspec-its", :require => false
 gem "rspec-wait", :require => false
-gem "sidekiq", "~> 3.1.0"
+gem "sidekiq", "~> 4.1.0"
 
 platforms :mri_23 do
   gem "fasterer", :require => false

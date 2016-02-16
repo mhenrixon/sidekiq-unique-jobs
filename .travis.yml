@@ -8,10 +8,11 @@ script:
   - bundle exec rspec spec
 rvm:
   - jruby-19mode
-  - jruby-9.0.0.0
+  - jruby-9.0.4.0
   - rbx-2
-  - 2.1.7
-  - 2.2.3
+  - 2.1.8
+  - 2.2.4
+  - 2.3.0
 env: STYLE=false
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
@@ -21,6 +22,7 @@ gemfile:
   - gemfiles/sidekiq_3.2.gemfile
   - gemfiles/sidekiq_3.3.gemfile
   - gemfiles/sidekiq_4.0.gemfile
+  - gemfiles/sidekiq_4.1.gemfile
 
 notifications:
   email:
@@ -29,7 +31,7 @@ notifications:
 matrix:
   fast_finish: true
   include:
-    - rvm: 2.2.3
+    - rvm: 2.3.0
       gemfile: gemfiles/sidekiq_develop.gemfile
       env: STYLE=true
 addons:
