@@ -1,4 +1,4 @@
-if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.2.3'
+if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.3.0'
   if ENV['CI']
     require 'codeclimate-test-reporter'
     CodeClimate::TestReporter.start
