@@ -51,9 +51,9 @@ module SidekiqUniqueJobs
       keys.select { |k| regex.match k }
     end
 
-    def timed(&block)
+    def timed(&_block)
       start = Time.now
-      result = block.call
+      result = yield
       elapsed = (Time.now - start).round(2)
       [result, elapsed]
     end

@@ -36,7 +36,7 @@ module SidekiqUniqueJobs
         logger.debug { "#{unique_key} is not a known key" }
         false
       else
-        fail "#{calling_method} returned an unexpected value (#{result})"
+        raise "#{calling_method} returned an unexpected value (#{result})"
       end
     end
 

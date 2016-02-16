@@ -1,5 +1,5 @@
 RSpec.configure do |config|
-  VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m.freeze
+  VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
   config.before(:each) do |example|
     Sidekiq.redis(&:flushdb)
     Sidekiq::Worker.clear_all
@@ -10,7 +10,7 @@ RSpec.configure do |config|
 
     sidekiq_ver = example.metadata[:sidekiq_ver]
     version, operator = VERSION_REGEX.match(sidekiq_ver.to_s) do |m|
-      fail 'Please specify how to compare the version with >= or < or =' unless m[:operator]
+      raise 'Please specify how to compare the version with >= or < or =' unless m[:operator]
       [m[:version], m[:operator]]
     end
 

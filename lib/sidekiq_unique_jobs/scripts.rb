@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
   module Scripts
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
     SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
-    DEFINED_METHODS ||= []
+    DEFINED_METHODS ||= [].freeze
 
     module_function
 
@@ -30,9 +30,9 @@ module SidekiqUniqueJobs
     rescue Redis::CommandError => ex
       raise ScriptError,
             "#{file_name}.lua\n\n" +
-              ex.message + "\n\n" +
-              script_source(file_name) +
-              ex.backtrace.join("\n")
+            ex.message + "\n\n" +
+            script_source(file_name) +
+            ex.backtrace.join("\n")
     end
 
     def script_source(file_name)

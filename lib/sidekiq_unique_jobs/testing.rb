@@ -3,7 +3,7 @@ require 'sidekiq_unique_jobs/testing/sidekiq_overrides'
 module SidekiqUniqueJobs
   module Client
     class Middleware
-      alias_method :call_real, :call
+      alias call_real call
       def call(worker_class, item, queue, redis_pool = nil)
         worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
 

@@ -46,7 +46,7 @@ module Sidekiq
       if launcher.respond_to?(:alive?)
         launcher.alive?
       else
-        launcher.manager.workers.size > 0
+        launcher.manager.workers.any?
       end
     end
 

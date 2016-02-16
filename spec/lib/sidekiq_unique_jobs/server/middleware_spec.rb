@@ -5,7 +5,7 @@ require 'sidekiq/worker'
 require 'sidekiq_unique_jobs/server/middleware'
 
 RSpec.describe SidekiqUniqueJobs::Server::Middleware do
-  QUEUE ||= 'working'
+  QUEUE ||= 'working'.freeze
 
   def digest_for(item)
     SidekiqUniqueJobs::UniqueArgs.digest(item)

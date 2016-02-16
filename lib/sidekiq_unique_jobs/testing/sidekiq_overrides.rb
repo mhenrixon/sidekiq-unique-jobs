@@ -16,7 +16,7 @@ module Sidekiq
 
       # Pop out a single job and perform it
       def perform_one
-        fail(EmptyQueueError, 'perform_one called with empty job queue') if jobs.empty?
+        raise(EmptyQueueError, 'perform_one called with empty job queue') if jobs.empty?
         job = jobs.shift
         worker = new
         worker.jid = job['jid']

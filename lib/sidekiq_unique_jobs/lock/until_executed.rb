@@ -25,7 +25,7 @@ module SidekiqUniqueJobs
 
       def unlock(scope)
         unless [:server, :api, :test].include?(scope)
-          fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
+          raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
 
         unlock_by_key(unique_key, item[JID_KEY], redis_pool)
@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
       # rubocop:disable MethodLength
       def lock(scope)
         if scope.to_sym != :client
-          fail ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
+          raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
 
         result = Scripts.call(:aquire_lock, redis_pool,
@@ -48,7 +48,7 @@ module SidekiqUniqueJobs
           logger.debug { "failed to aquire lock for #{unique_key}" }
           false
         else
-          fail "#{__method__} returned an unexpected value (#{result})"
+          raise "#{__method__} returned an unexpected value (#{result})"
         end
       end
       # rubocop:enable MethodLength
