@@ -2,7 +2,9 @@ sudo: false
 language: ruby
 cache: bundler
 before_install:
-   - rvm get head
+  - rvm get head
+  - gem update --system
+  - gem install bundler
 services:
   - redis-server
 script:
