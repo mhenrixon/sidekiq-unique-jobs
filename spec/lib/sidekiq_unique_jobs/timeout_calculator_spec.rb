@@ -2,49 +2,35 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
   shared_context 'undefined worker class' do
-    subject do
-      Class.new do
-        include SidekiqUniqueJobs::TimeoutCalculator
-        def initialize(item)
-          @item = item
-        end
-      end.new('class' => 'test')
-    end
+    subject { described_class.new('class' => 'test') }
   end
 
-  shared_context 'generic unscheduled job' do
-    subject do
-      Class.new do
-        include SidekiqUniqueJobs::TimeoutCalculator
-        def initialize(item)
-          @item = item
-        end
-      end.new('class' => 'MyUniqueJob')
-    end
+  shared_context 'item not scheduled' do
+    subject { described_class.new('class' => 'MyUniqueJob') }
   end
 
   describe 'public api' do
-    it_behaves_like 'generic unscheduled job' do
-      it { is_expected.to respond_to(:time_until_scheduled) }
-      it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
-      it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
-      it { is_expected.to respond_to(:worker_class) }
+    subject { described_class.new(nil) }
+    it { is_expected.to respond_to(:time_until_scheduled) }
+    it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
+    it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
+    it { is_expected.to respond_to(:worker_class) }
+    it { is_expected.to respond_to(:seconds) }
+  end
+
+  describe '.for_item' do
+    it 'initializes a new calculator' do
+      expect(described_class).to receive(:new).with('WAT')
+      described_class.for_item('WAT')
     end
   end
 
   describe '#time_until_scheduled' do
-    it_behaves_like 'generic unscheduled job' do
+    it_behaves_like 'item not scheduled' do
       its(:time_until_scheduled) { is_expected.to eq(0) }
     end
 
-    subject do
-      Class.new do
-        include SidekiqUniqueJobs::TimeoutCalculator
-        def initialize(item)
-          @item = item
-        end
-      end.new('class' => 'MyUniqueJob', 'at' => schedule_time)
-    end
+    subject { described_class.new('class' => 'MyUniqueJob', 'at' => schedule_time) }
     let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
     let(:now_in_utc) { Time.now.utc.to_i }
 
@@ -57,28 +43,20 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
 
   describe '#worker_class_queue_lock_expiration' do
     it_behaves_like 'undefined worker class' do
-      its (:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
+      its(:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
     end
 
-    it_behaves_like 'generic unscheduled job' do
-      its (:worker_class_queue_lock_expiration) { is_expected.to eq(7_200) }
-    end
+    subject { described_class.new('class' => 'MyUniqueJob') }
+    its(:worker_class_queue_lock_expiration) { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class_run_lock_expiration' do
     it_behaves_like 'undefined worker class' do
-      its (:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
+      its(:worker_class_run_lock_expiration) { is_expected.to eq(nil) }
     end
 
-    subject do
-      Class.new do
-        include SidekiqUniqueJobs::TimeoutCalculator
-        def initialize(item)
-          @item = item
-        end
-      end.new('class' => 'LongRunningJob')
-    end
-    its (:worker_class_run_lock_expiration) { is_expected.to eq(7_200) }
+    subject { described_class.new('class' => 'LongRunningJob') }
+    its(:worker_class_run_lock_expiration) { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class' do
@@ -86,14 +64,7 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       its(:worker_class) { is_expected.to eq('test') }
     end
 
-    subject do
-      Class.new do
-        include SidekiqUniqueJobs::TimeoutCalculator
-        def initialize(item)
-          @item = item
-        end
-      end.new('class' => 'MyJob')
-    end
+    subject { described_class.new('class' => 'MyJob') }
     its(:worker_class) { is_expected.to eq(MyJob) }
   end
 end

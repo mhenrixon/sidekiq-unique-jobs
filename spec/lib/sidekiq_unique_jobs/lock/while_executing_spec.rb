@@ -38,10 +38,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
     worker = SidekiqUniqueJobs.worker_class_constantize(item[SidekiqUniqueJobs::CLASS_KEY])
     allow(worker).to receive(:get_sidekiq_options)
-                 .and_return({"retry"=>true,
-                              "queue"=>:dupsallowed,
-                              "run_lock_expiration" => 0,
-                              "unique"=>:until_and_while_executing})
+      .and_return('retry'               => true,
+                  'queue'               => :dupsallowed,
+                  'run_lock_expiration' => 0,
+                  'unique'              => :until_and_while_executing)
 
     start_times = []
     sleep_time = 0.1

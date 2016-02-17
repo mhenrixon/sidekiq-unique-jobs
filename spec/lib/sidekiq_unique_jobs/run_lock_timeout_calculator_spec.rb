@@ -7,7 +7,6 @@ RSpec.describe SidekiqUniqueJobs::RunLockTimeoutCalculator do
 
   describe 'public api' do
     it_behaves_like 'generic unscheduled job' do
-      it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
       it { is_expected.to respond_to(:seconds) }
     end
   end
@@ -20,21 +19,18 @@ RSpec.describe SidekiqUniqueJobs::RunLockTimeoutCalculator do
   end
 
   describe '#seconds' do
-    subject { described_class.new(nil) }
+    context 'using default run_lock_expiration' do
+      subject { described_class.new(nil) }
+      before { allow(subject).to receive(:worker_class_run_lock_expiration).and_return(9) }
 
-    before do
-      allow(subject).to receive(:run_lock_expiration).and_return(9)
-    end
-    its(:seconds) { is_expected.to eq(9) }
-  end
-
-  describe '#run_lock_expiration' do
-    it_behaves_like 'generic unscheduled job' do
-      its(:run_lock_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_run_lock_expiration) }
+      its(:seconds) { is_expected.to eq(9) }
     end
 
-    subject { described_class.new('class' => 'LongRunningJob') }
-    its(:run_lock_expiration) { is_expected.to eq(7_200) }
-  end
+    context 'using specified sidekiq option run_lock_expiration' do
+      subject { described_class.new(nil) }
+      before { allow(subject).to receive(:worker_class_run_lock_expiration).and_return(nil) }
 
+      its(:seconds) { is_expected.to eq(60) }
+    end
+  end
 end

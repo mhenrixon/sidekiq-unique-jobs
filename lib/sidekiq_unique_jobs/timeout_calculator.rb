@@ -1,5 +1,13 @@
 module SidekiqUniqueJobs
-  module TimeoutCalculator
+  class TimeoutCalculator
+    def self.for_item(item)
+      new(item)
+    end
+
+    def initialize(item)
+      @item = item
+    end
+
     def time_until_scheduled
       scheduled = item[AT_KEY]
       return 0 unless scheduled
@@ -30,5 +38,28 @@ module SidekiqUniqueJobs
     end
 
     attr_reader :item
+  end
+
+  class RunLockTimeoutCalculator < TimeoutCalculator
+    def seconds
+      @seconds ||= (
+        worker_class_run_lock_expiration ||
+        SidekiqUniqueJobs.config.default_run_lock_expiration
+      ).to_i
+    end
+  end
+
+  class QueueLockTimeoutCalculator < TimeoutCalculator
+    def seconds
+      queue_lock_expiration + time_until_scheduled
+    end
+
+    def queue_lock_expiration
+      @queue_lock_expiration ||=
+        (
+          worker_class_queue_lock_expiration ||
+          SidekiqUniqueJobs.config.default_queue_lock_expiration
+        ).to_i
+    end
   end
 end

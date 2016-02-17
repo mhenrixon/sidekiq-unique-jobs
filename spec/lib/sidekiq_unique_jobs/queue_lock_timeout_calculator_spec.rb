@@ -7,8 +7,8 @@ RSpec.describe SidekiqUniqueJobs::QueueLockTimeoutCalculator do
 
   describe 'public api' do
     it_behaves_like 'generic unscheduled job' do
-      it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
       it { is_expected.to respond_to(:seconds) }
+      it { is_expected.to respond_to(:queue_lock_expiration) }
     end
   end
 
@@ -30,12 +30,18 @@ RSpec.describe SidekiqUniqueJobs::QueueLockTimeoutCalculator do
   end
 
   describe '#queue_lock_expiration' do
-    it_behaves_like 'generic unscheduled job' do
-      its(:queue_lock_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_queue_lock_expiration) }
+    context 'using default unique_expiration' do
+      subject { described_class.new(nil) }
+      before { allow(subject).to receive(:worker_class_queue_lock_expiration).and_return(nil) }
+
+      its(:queue_lock_expiration) { is_expected.to eq(1_800) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueJob') }
-    its(:queue_lock_expiration) { is_expected.to eq(7_200) }
-  end
+    context 'using specified sidekiq option unique_expiration' do
+      subject { described_class.new(nil) }
+      before { allow(subject).to receive(:worker_class_queue_lock_expiration).and_return(9) }
 
+      its(:queue_lock_expiration) { is_expected.to eq(9) }
+    end
+  end
 end
