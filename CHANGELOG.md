@@ -1,3 +1,14 @@
+## v4.0.16
+
+- Allow run & queue lock timeout (expiration) to be different [#164](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/164)
+- Fix a bug with loading sidekiq test overrides ([#167](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/167)
+
+## v4.0.15
+
+- Close [#156](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/156)
+- Close [#158](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/158)
+- Style fixes and some minor adjustments to the console/cmd line app
+
 ## v4.0.13
 
 - Allow deleting locks by jid
@@ -5,19 +16,19 @@
 ## v4.0.12
 
 - Allow jobs to be pushed to processing
-- Close #150
-- Close #151
-- Close #146
-- Close #136
-- Close #133
+- Close [#150](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/150)
+- Close [#151](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/151)
+- Close [#146](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/146)
+- Close [#136](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/136)
+- Close [#133](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/133)
 
 ## v4.0.11
 
-- Always load forwardable - https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152#issuecomment-164199978
+- Always load forwardable [#152](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152#issuecomment-164199978)
 
 ## v4.0.10
 
-- Fix https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152
+- Fix [#152](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152)
 - Minor improvement to internal esthetics
 
 ## v4.0.9
@@ -26,18 +37,18 @@
 
 ## v4.0.8
 
-- Use unique arguments for the `WhileExecuting` lock (#127)
-- Delicensed code (#132)
-- Fix queuing unique jobs (#138)
+- Use unique arguments for the `WhileExecuting` lock ([#127](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/127)
+- Delicensed code ([#132](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/132)
+- Fix queuing unique jobs ([#138](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/138)
 
 ## v4.0.7
 
-- Use unique arguments for the `WhileExecuting` lock (#127)
+- Use unique arguments for the `WhileExecuting` lock ([#127](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/127)
 - See also https://github.com/mhenrixon/sidekiq-unique-jobs/releases/tag/v4.0.7
 
 ## v4.0.6
 
-- Removes enforced uniqueness for all jobs (#127)
+- Removes enforced uniqueness for all jobs ([#127](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/127)
 
 ## v4.0.5
 
