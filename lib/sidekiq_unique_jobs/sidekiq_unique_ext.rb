@@ -54,7 +54,7 @@ module Sidekiq
       end
     end
 
-    module UniqueExtension3_4
+    module UniqueExtension3_5
       def self.included(base)
         base.class_eval do
           include SidekiqUniqueJobs::Unlockable
@@ -75,9 +75,9 @@ module Sidekiq
       end
     end
     sidekiq_version = Gem::Version.new(Sidekiq::VERSION)
-    include UniqueExtension3_4 if sidekiq_version >= Gem::Version.new('3.4')
+    include UniqueExtension3_5 if sidekiq_version >= Gem::Version.new('3.5')
     include UniqueExtension3_0 if sidekiq_version >= Gem::Version.new('3.0') &&
-                                  sidekiq_version < Gem::Version.new('3.4')
+                                  sidekiq_version < Gem::Version.new('3.5')
     # rubocop:enable Style/ClassAndModuleCamelCase
   end
 
