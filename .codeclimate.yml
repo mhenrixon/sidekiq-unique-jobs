@@ -1,0 +1,22 @@
+engines:
+  bundler-audit:
+    enabled: true
+  fixme:
+    enabled: true
+  duplication:
+    enabled: true
+  rubocop:
+    enabled: true
+  golint:
+    enabled: true
+ratings:
+  paths:
+    - lib/**
+    - bin/**
+    - "**.rb"
+exclude_paths:
+  - spec/
+  - gemfiles/
+  - rails_example/
+  - redis/
+  - tmp/
