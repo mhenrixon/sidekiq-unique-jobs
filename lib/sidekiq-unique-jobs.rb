@@ -23,7 +23,8 @@ module SidekiqUniqueJobs
   def config
     @config ||= Config.new(
       unique_prefix: 'uniquejobs',
-      default_expiration: 30 * 60,
+      default_queue_lock_expiration: 30 * 60,
+      default_run_lock_expiration: 60,
       default_lock: :while_executing,
       redis_test_mode: :redis # :mock
     )

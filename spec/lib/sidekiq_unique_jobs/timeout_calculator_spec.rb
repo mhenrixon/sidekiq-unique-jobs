@@ -12,8 +12,8 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
   describe 'public api' do
     subject { described_class.new(nil) }
     it { is_expected.to respond_to(:time_until_scheduled) }
-    it { is_expected.to respond_to(:unique_expiration) }
-    it { is_expected.to respond_to(:worker_class_unique_expiration) }
+    it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
+    it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
     it { is_expected.to respond_to(:worker_class) }
     it { is_expected.to respond_to(:seconds) }
   end
@@ -23,16 +23,6 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
       expect(described_class).to receive(:new).with('WAT')
       described_class.for_item('WAT')
     end
-  end
-
-  describe '#seconds' do
-    subject { described_class.new(nil) }
-
-    before do
-      allow(subject).to receive(:time_until_scheduled).and_return(10)
-      allow(subject).to receive(:unique_expiration).and_return(9)
-    end
-    its(:seconds) { is_expected.to eq(19) }
   end
 
   describe '#time_until_scheduled' do
@@ -51,22 +41,22 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
     end
   end
 
-  describe '#unique_expiration' do
+  describe '#worker_class_queue_lock_expiration' do
     it_behaves_like 'undefined worker class' do
-      its(:unique_expiration) { is_expected.to eq(SidekiqUniqueJobs.config.default_expiration) }
+      its(:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
     end
 
     subject { described_class.new('class' => 'MyUniqueJob') }
-    its(:unique_expiration) { is_expected.to eq(7_200) }
+    its(:worker_class_queue_lock_expiration) { is_expected.to eq(7_200) }
   end
 
-  describe '#worker_class_unique_expiration' do
+  describe '#worker_class_run_lock_expiration' do
     it_behaves_like 'undefined worker class' do
-      its(:worker_class_unique_expiration) { is_expected.to eq(nil) }
+      its(:worker_class_run_lock_expiration) { is_expected.to eq(nil) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueJob') }
-    its(:worker_class_unique_expiration) { is_expected.to eq(7_200) }
+    subject { described_class.new('class' => 'LongRunningJob') }
+    its(:worker_class_run_lock_expiration) { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class' do

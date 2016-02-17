@@ -225,7 +225,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     # jobs are set around the same time as the scheduled job itself feel free to improve.
     it 'expires the digest when a scheduled job is scheduled at' do
       expected_expires_at =
-        (Time.at(Time.now.to_i + 15 * 60) - Time.now.utc) + SidekiqUniqueJobs.config.default_expiration
+        (Time.at(Time.now.to_i + 15 * 60) - Time.now.utc) +
+        SidekiqUniqueJobs.config.default_queue_lock_expiration
       jid = MyUniqueJob.perform_in(expected_expires_at, 'mike')
       item = { 'class' => MyUniqueJob,
                'queue' => 'customqueue',
