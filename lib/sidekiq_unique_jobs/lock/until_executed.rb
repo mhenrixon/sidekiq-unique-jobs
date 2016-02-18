@@ -46,16 +46,16 @@ module SidekiqUniqueJobs
                               argv: [item[JID_KEY], max_lock_time])
         case result
         when 3 # previously 1, was considered a success
-          logger.debug { "successfully locked #{unique_key} for #{max_lock_time} seconds (hsetnx called)" }
+          logger.debug { "?? successfully locked #{unique_key} for #{max_lock_time} seconds (hsetnx called)" }
           true
         when 2 # previously 0, was considered a failure
-          logger.debug { "failed to acquire lock for #{unique_key} (hsetnx not called)" }
+          logger.debug { "failed to acquire lock for #{unique_key} (hsetnx not called) -- #{item.inspect}" }
           false
         when 1
           logger.debug { "successfully locked #{unique_key} for #{max_lock_time} seconds (already set?)" }
           true
         when 0
-          logger.debug { "failed to acquire lock for #{unique_key} (stored_jid did not match job_id)" }
+          logger.debug { "failed to acquire lock for #{unique_key} (stored_jid did not match job_id) -- #{item.inspect}" }
           false
         else
           raise "#{__method__} returned an unexpected value (#{result})"
