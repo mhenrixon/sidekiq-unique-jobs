@@ -1,5 +1,9 @@
 ## v4.0.16
 
+- Always release lock in the lua script `release_lock.lua` and return success [#169](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/169)
+
+## v4.0.16
+
 - Allow run & queue lock timeout (expiration) to be different [#164](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/164)
 - Fix a bug with loading sidekiq test overrides ([#167](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/167)
 
