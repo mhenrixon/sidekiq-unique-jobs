@@ -12,10 +12,10 @@ module SidekiqUniqueJobs
     option :dry_run, aliases: :d, type: :boolean, desc: 'set to false to perform deletion'
     option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
     def del(pattern)
-      Util.del(pattern, count, dry_run)
+      Util.del(pattern, options[:count], options[:dry_run])
     end
 
-    desc 'drop into a console', 'easy access to helper methods'
+    desc 'console', 'drop into a console with easy access to helper methods'
     def console
       puts "Use `keys '*', 1000 to display the first 1000 unique keys matching '*'"
       puts "Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'"
