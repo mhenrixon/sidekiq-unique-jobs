@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 gemspec
 
 gem 'appraisal', '~> 2.0.0'
