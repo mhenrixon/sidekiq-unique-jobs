@@ -24,14 +24,14 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
     end
 
     def lock_for(seconds = 1, jid = JID, key = UNIQUE_KEY)
-      subject.call(:aquire_lock, nil, keys: [key], argv: [jid, seconds])
+      subject.call(:acquire_lock, nil, keys: [key], argv: [jid, seconds])
     end
 
     def unlock(key = UNIQUE_KEY, jid = JID)
       subject.call(:release_lock, nil, keys: [key], argv: [jid])
     end
 
-    describe '.aquire_lock' do
+    describe '.acquire_lock' do
       context 'when job is unique' do
         specify { expect(lock_for).to eq(1) }
         specify do

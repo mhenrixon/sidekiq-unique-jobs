@@ -23,10 +23,10 @@ module SidekiqUniqueJobs
       attr_reader :item, :worker_class, :redis_pool, :queue
 
       def disabled_or_successfully_locked?
-        unique_disabled? || aquire_lock
+        unique_disabled? || acquire_lock
       end
 
-      def aquire_lock
+      def acquire_lock
         return true unless lock.respond_to?(:lock)
         locked = lock.lock(:client)
         warn_about_duplicate(item) unless locked

@@ -37,7 +37,7 @@ module SidekiqUniqueJobs
           raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
 
-        result = Scripts.call(:aquire_lock, redis_pool,
+        result = Scripts.call(:acquire_lock, redis_pool,
                               keys: [unique_key],
                               argv: [item[JID_KEY], max_lock_time])
         case result
@@ -45,7 +45,7 @@ module SidekiqUniqueJobs
           logger.debug { "successfully locked #{unique_key} for #{max_lock_time} seconds" }
           true
         when 0
-          logger.debug { "failed to aquire lock for #{unique_key}" }
+          logger.debug { "failed to acquire lock for #{unique_key}" }
           false
         else
           raise "#{__method__} returned an unexpected value (#{result})"

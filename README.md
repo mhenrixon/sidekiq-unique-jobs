@@ -81,7 +81,7 @@ The difference is that this job has two types of uniqueness:
 1. It is unique until execution
 2. It is unique while executing
 
-That means it locks for any job with the same arguments to be persisted into redis and just like you would expect it will only ever allow one job of the same unique arguments to run at any given time but as soon as the runtime lock has been aquired the schedule/async lock is released.
+That means it locks for any job with the same arguments to be persisted into redis and just like you would expect it will only ever allow one job of the same unique arguments to run at any given time but as soon as the runtime lock has been acquired the schedule/async lock is released.
 
 ### Uniqueness Scope
 
