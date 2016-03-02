@@ -1,4 +1,4 @@
-## v4.0.16
+## v4.0.17
 
 - Always release lock in the lua script `release_lock.lua` and return success [#169](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/169)
 
