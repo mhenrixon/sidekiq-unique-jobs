@@ -20,7 +20,11 @@ module SidekiqUniqueJobs
         operative = false
         raise
       ensure
-        callback.call if operative && unlock(:server)
+        if operative && unlock(:server)
+          callback.call
+        else
+          logger.fatal { "the unique_key: #{unique_key} needs to be unlocked manually" }
+        end
       end
 
       def unlock(scope)
