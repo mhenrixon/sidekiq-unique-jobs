@@ -17,7 +17,9 @@ module SidekiqUniqueJobs
         sleep 0.001 until locked?
 
         yield
-
+      rescue Sidekiq::Shutdown
+        logger.fatal { "the unique_key: #{@unique_digest} needs to be unlocked manually" }
+        raise
       ensure
         SidekiqUniqueJobs.connection(@redis_pool) { |c| c.del @unique_digest }
         @mutex.unlock
