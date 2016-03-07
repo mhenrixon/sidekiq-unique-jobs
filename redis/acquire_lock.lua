@@ -13,7 +13,7 @@ end
 
 if redis.pcall('set', unique_key, job_id, 'nx', 'ex', expires) then
   redis.pcall('hsetnx', 'uniquejobs', job_id, unique_key)
-  return 1
+  return 3
 else
-  return 0
+  return 2
 end
