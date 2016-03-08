@@ -7,6 +7,7 @@ if stored_jid then
   if stored_jid == job_id then
     return 1
   else
+    -- maybe we should do something special in this case?
     return 0
   end
 end
