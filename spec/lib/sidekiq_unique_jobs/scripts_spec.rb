@@ -33,19 +33,19 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
     describe '.acquire_lock' do
       context 'when job is unique' do
-        specify { expect(lock_for).to eq(1) }
+        specify { expect(lock_for).to eq(3) }
         specify do
-          expect(lock_for(0.5)).to eq(1)
+          expect(lock_for(0.5)).to eq(3)
           expect(Redis)
             .to have_key(UNIQUE_KEY)
             .for_seconds(1)
             .with_value('fuckit')
           sleep 0.5
-          expect(lock_for).to eq(1)
+          expect(lock_for).to eq(3)
         end
 
         context 'when job is locked' do
-          before  { expect(lock_for(10)).to eq(1) }
+          before  { expect(lock_for(10)).to eq(3) }
           specify { expect(lock_for(5, 'anotherjid')).to eq(0) }
         end
       end
@@ -53,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
     describe '.release_lock' do
       context 'when job is locked by another jid' do
-        before  { expect(lock_for(10, 'anotherjid')).to eq(1) }
+        before  { expect(lock_for(10, 'anotherjid')).to eq(3) }
         specify { expect(unlock).to eq(0) }
         after { unlock(UNIQUE_KEY, ANOTHER_JID) }
       end
@@ -64,7 +64,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
       context 'when job is locked by the same jid' do
         specify do
-          expect(lock_for(10)).to eq(1)
+          expect(lock_for(10)).to eq(3)
           expect(unlock).to eq(1)
         end
       end
