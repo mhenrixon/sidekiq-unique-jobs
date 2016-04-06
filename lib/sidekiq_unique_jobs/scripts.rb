@@ -33,10 +33,8 @@ module SidekiqUniqueJobs
         call(file_name, redis_pool, options)
       else
         raise ScriptError,
-              "#{file_name}.lua\n\n" +
-              ex.message + "\n\n" +
-              script_source(file_name) +
-              ex.backtrace.join("\n")
+              "#{file_name}.lua\n\n#{ex.message}\n\n#{script_source(file_name)}" \
+              "#{ex.backtrace.join("\n")}"
       end
     end
 
