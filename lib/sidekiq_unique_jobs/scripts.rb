@@ -28,11 +28,14 @@ module SidekiqUniqueJobs
         redis.evalsha(script_shas[file_name], options)
       end
     rescue Redis::CommandError => ex
-      raise ScriptError,
-            "#{file_name}.lua\n\n" +
-            ex.message + "\n\n" +
-            script_source(file_name) +
-            ex.backtrace.join("\n")
+      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
+        script_shas[file_name] = nil
+        call(file_name, redis_pool, options)
+      else
+        raise ScriptError,
+              "#{file_name}.lua\n\n#{ex.message}\n\n#{script_source(file_name)}" \
+              "#{ex.backtrace.join("\n")}"
+      end
     end
 
     def script_source(file_name)
