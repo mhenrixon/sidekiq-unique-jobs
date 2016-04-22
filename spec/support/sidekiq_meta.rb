@@ -14,10 +14,10 @@ RSpec.configure do |config|
       [m[:version], m[:operator]]
     end
 
-    unless Sidekiq::VERSION.send(operator, version)
+    if version && operator && Sidekiq::VERSION.send(operator, version).nil?
       skip('Skipped due to version check (requirement was that sidekiq version is ' \
            "#{operator} #{version}; was #{Sidekiq::VERSION})")
-    end if version && operator
+    end
   end
 
   config.after(:each) do |example|

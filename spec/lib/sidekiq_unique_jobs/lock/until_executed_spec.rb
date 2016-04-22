@@ -15,26 +15,23 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
     context 'when yield fails with Sidekiq::Shutdown' do
       before do
         allow(subject).to receive(:after_yield_yield) { raise Sidekiq::Shutdown }
-      end
-
-      it 'raises Sidekiq::Shutdown' do
         allow(subject).to receive(:unlock).and_return(true)
         expect(subject).not_to receive(:unlock)
+        expect(subject.logger).to receive(:fatal)
         expect(empty_callback).not_to receive(:call)
-        expect { subject.execute(empty_callback) }.to raise_error(Sidekiq::Shutdown)
       end
+
+      specify { expect { subject.execute(empty_callback) }.to raise_error(Sidekiq::Shutdown) }
     end
 
     context 'when yield fails with other errors' do
       before do
         allow(subject).to receive(:after_yield_yield) { raise 'Hell' }
-      end
-
-      it 'raises Sidekiq::Shutdown' do
         expect(subject).to receive(:unlock).and_return(true)
         expect(empty_callback).to receive(:call)
-        expect { subject.execute(empty_callback) }.to raise_error('Hell')
       end
+
+      specify { expect { subject.execute(empty_callback) }.to raise_error('Hell') }
     end
   end
 end

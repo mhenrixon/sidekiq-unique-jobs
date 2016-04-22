@@ -5,6 +5,6 @@ class NotifyWorker
                   unique: :until_executed
 
   def perform(id, _blob)
-    puts "NotifyWorker -- #{id}"
+    # puts "NotifyWorker -- #{id}"
   end
 end
