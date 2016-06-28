@@ -43,7 +43,7 @@ Due to discoverability of the different lock types `unique` sidekiq option it wa
 sidekiq_options unique: :while_executing
 ```
 
-Is to make sure that a job can be scheduled any number of times but only executed a single time per argument provided to the job we call this runtime uniqueness. This is probably most useful forbackground jobs that are fast to execute. (See mhenrixon/sidekiq-unique-jobs#111 for a great example of when this would be right.) While the job is executing/performing no other jobs can be executed at the same time.
+Is to make sure that a job can be scheduled any number of times but only executed a single time per argument provided to the job we call this runtime uniqueness. This is probably most useful for background jobs that are fast to execute. (See mhenrixon/sidekiq-unique-jobs#111 for a great example of when this would be right.) While the job is executing/performing no other jobs can be executed at the same time.
 
 ### Until Executing
 
