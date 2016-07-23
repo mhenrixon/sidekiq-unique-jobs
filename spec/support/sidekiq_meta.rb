@@ -8,15 +8,18 @@ RSpec.configure do |config|
       Sidekiq::Testing.send("#{sidekiq}!")
     end
 
-    sidekiq_ver = example.metadata[:sidekiq_ver]
-    version, operator = VERSION_REGEX.match(sidekiq_ver.to_s) do |m|
-      raise 'Please specify how to compare the version with >= or < or =' unless m[:operator]
-      [m[:version], m[:operator]]
-    end
+    if (sidekiq_ver = example.metadata[:sidekiq_ver])
+      VERSION_REGEX.match(sidekiq_ver.to_s) do |match|
+        version  = match[:version]
+        operator = match[:operator]
 
-    if version && operator && Sidekiq::VERSION.send(operator, version).nil?
-      skip('Skipped due to version check (requirement was that sidekiq version is ' \
-           "#{operator} #{version}; was #{Sidekiq::VERSION})")
+        raise 'Please specify how to compare the version with >= or < or =' unless operator
+
+        unless Sidekiq::VERSION.send(operator, version)
+          skip('Skipped due to version check (requirement was that sidekiq version is ' \
+               "#{operator} #{version}; was #{Sidekiq::VERSION})")
+        end
+      end
     end
   end
 
