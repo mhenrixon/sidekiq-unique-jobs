@@ -22,7 +22,8 @@ RSpec.describe 'Sidekiq::Api' do
       'class' => JustAWorker,
       'queue' => 'testqueue',
       'args'  => [foo: 'bar'],
-      'at'    => (Date.today + 1).to_time.to_i)
+      'at'    => (Date.today + 1).to_time.to_i
+    )
   end
 
   def schedule_job
