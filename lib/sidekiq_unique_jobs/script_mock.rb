@@ -21,12 +21,9 @@ module SidekiqUniqueJobs
 
         return stored_jid == job_id ? 1 : 0 if stored_jid
 
-        if redis.set(unique_key, job_id, nx: true, ex: expires)
-          redis.hsetnx('uniquejobs', job_id, unique_key)
-          return 1
-        else
-          return 0
-        end
+        return 0 unless redis.set(unique_key, job_id, nx: true, ex: expires)
+        redis.hsetnx('uniquejobs', job_id, unique_key)
+        return 1
       end
     end
 
@@ -50,7 +47,6 @@ module SidekiqUniqueJobs
         time       = options[:argv][0].to_i
         expires    = options[:argv][1].to_f
 
-        stored_jid = redis.get(unique_key).to_i
         return 1 if redis.set(unique_key, time + expires, nx: true, ex: expires)
 
         stored_time = redis.get(unique_key)

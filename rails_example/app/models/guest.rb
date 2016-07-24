@@ -13,9 +13,6 @@ class Guest
   def disappear
   end
 
-  def appear
-  end
-
   def away
   end
 end
