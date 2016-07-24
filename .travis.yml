@@ -35,9 +35,9 @@ notifications:
 matrix:
   allow_failures:
     - rvm: jruby-19mode
-      gemfile:
-        - gemfiles/sidekiq_4.1.gemfile
-        - gemfiles/sidekiq_develop.gemfile
+      gemfile: gemfiles/sidekiq_4.1.gemfile
+    - rvm: jruby-19mode
+      gemfile: gemfiles/sidekiq_develop.gemfile
   fast_finish: true
   include:
     - rvm: 2.3.1
