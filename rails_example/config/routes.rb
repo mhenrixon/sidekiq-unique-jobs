@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: '/sidekiq'
   get 'work/duplicate_simple' => 'work#duplicate_simple'
   get 'work/duplicate_nested' => 'work#duplicate_nested'
+  get 'work/duplicate_slow' => 'work#duplicate_slow'
 end
