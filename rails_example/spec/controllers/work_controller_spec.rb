@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe WorkController do
+describe WorkController, :focus do
   context 'with real redis' do
     before do
       SidekiqUniqueJobs.configure do |config|
@@ -32,8 +32,11 @@ describe WorkController do
 
       context 'when test mode is inline', sidekiq: :inline do
         specify do
-          expect_any_instance_of(SimpleWorker).to receive(:perform).with(1).exactly(:once)
           get :duplicate_simple
+          Sidekiq.redis do |c|
+            expect(c.llen('queue:default')).to eq(0)
+            expect(c.keys).not_to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
+          end
         end
       end
     end
@@ -45,6 +48,11 @@ describe WorkController do
             .to change { SpawnSimpleWorker.jobs.size }
             .from(0)
             .to(4)
+
+          SpawnSimpleWorker.perform_one
+          SpawnSimpleWorker.perform_one
+          expect(SpawnSimpleWorker.jobs.size).to eq(2)
+          expect(SimpleWorker.jobs.size).to eq(1)
         end
       end
 
@@ -61,12 +69,11 @@ describe WorkController do
 
       context 'when test mode is inline', sidekiq: :inline do
         specify do
-          expect_any_instance_of(SimpleWorker).to receive(:perform).with(1).exactly(:once).and_call_original
           get :duplicate_nested
 
           Sidekiq.redis do |c|
-            expect(c.llen('queue:default')).to eq(1)
-            expect(c.keys).to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
+            expect(c.llen('queue:default')).to eq(0)
+            expect(c.keys).not_to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
           end
         end
       end
@@ -78,8 +85,10 @@ describe WorkController do
       SidekiqUniqueJobs.configure do |config|
         config.redis_test_mode = :mock
       end
+      Sidekiq.redis(&:flushdb)
       allow(Redis).to receive(:new).and_return(MockRedis.new)
     end
+
     describe 'GET /work/duplicate_simple' do
       context 'when test mode is fake', sidekiq: :fake do
         specify do
@@ -102,8 +111,11 @@ describe WorkController do
 
       context 'when test mode is inline', sidekiq: :inline do
         specify do
-          expect_any_instance_of(SimpleWorker).to receive(:perform).with(1).exactly(:once)
           get :duplicate_simple
+          Sidekiq.redis do |c|
+            expect(c.llen('queue:default')).to eq(0)
+            expect(c.keys).not_to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
+          end
         end
       end
     end
@@ -115,6 +127,11 @@ describe WorkController do
             .to change { SpawnSimpleWorker.jobs.size }
             .from(0)
             .to(4)
+
+          SpawnSimpleWorker.perform_one
+          SpawnSimpleWorker.perform_one
+          expect(SpawnSimpleWorker.jobs.size).to eq(2)
+          expect(SimpleWorker.jobs.size).to eq(1)
         end
       end
 
@@ -123,7 +140,7 @@ describe WorkController do
           get :duplicate_nested
 
           Sidekiq.redis do |c|
-            expect(c.llen('queue:default')).to eq(5)
+            expect(c.llen('queue:default')).to eq(4)
             expect(c.keys).not_to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
           end
         end
@@ -131,12 +148,11 @@ describe WorkController do
 
       context 'when test mode is inline', sidekiq: :inline do
         specify do
-          expect_any_instance_of(SimpleWorker).to receive(:perform).with(1).exactly(:once).and_call_original
           get :duplicate_nested
 
           Sidekiq.redis do |c|
-            expect(c.llen('queue:default')).to eq(1)
-            expect(c.keys).to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
+            expect(c.llen('queue:default')).to eq(0)
+            expect(c.keys).not_to include('uniquejobs:83bda9f47b05071ffcb35cbb59e1fada')
           end
         end
       end

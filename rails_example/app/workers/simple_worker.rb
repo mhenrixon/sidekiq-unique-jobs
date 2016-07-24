@@ -6,7 +6,7 @@ class SimpleWorker
                     [args.first]
                   end)
 
-  def perform(some_args)
+  def perform(_some_args)
     sleep 5
   end
 end

@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
   alias redis_version_real redis_version
   def redis_version
     if mocked?
-      "0.0"
+      '0.0'
     else
       redis_version_real
     end

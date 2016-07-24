@@ -110,7 +110,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       end
     end
 
-    it 'does not push duplicate messages when configured for unique only'do
+    it 'does not push duplicate messages when configured for unique only' do
       10.times { MyUniqueJob.perform_async(1, 2) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)

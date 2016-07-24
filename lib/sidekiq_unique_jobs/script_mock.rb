@@ -17,21 +17,11 @@ module SidekiqUniqueJobs
         unique_key = options[:keys][0]
         job_id     = options[:argv][0]
         expires    = options[:argv][1]
-
         stored_jid = redis.get(unique_key)
-        if stored_jid
-          if stored_jid == job_id
-            return 1
-          else
-            return 0
-          end
-        end
 
-        if redis.set(unique_key, job_id, nx: true, ex: expires)
-          return 1
-        else
-          return 0
-        end
+        return stored_jid == job_id ? 1 : 0 if stored_jid
+
+        redis.set(unique_key, job_id, nx: true, ex: expires) ? 1 : 0
       end
     end
 
@@ -41,22 +31,16 @@ module SidekiqUniqueJobs
         job_id     = options[:argv][0]
 
         stored_jid = redis.get(unique_key)
-        if stored_jid
-          if stored_jid == job_id || stored_jid == '2'
-            redis.del(unique_key)
-            redis.hdel('uniquejobs', job_id)
-            return 1
-          else
-            return 0
-          end
-        else
-          return -1
-        end
+        return -1 unless stored_jid
+        return 0 unless stored_jid == job_id || stored_jid == '2'
+
+        redis.del(unique_key)
+        return 1
       end
     end
 
     def synhronize
-
     end
   end
+  # rubocop:enable MethodLength
 end
