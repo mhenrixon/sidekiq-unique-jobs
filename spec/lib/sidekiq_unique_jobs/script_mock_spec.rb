@@ -1,9 +1,11 @@
 require 'spec_helper'
-require 'mock_redis'
+begin
+  require 'mock_redis'
+  MOCK_REDIS ||= MockRedis.new
+rescue LoadError
+end
 
-MOCK_REDIS ||= MockRedis.new
-
-RSpec.describe SidekiqUniqueJobs::ScriptMock do
+RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '2.3.1' do
   MD5_DIGEST ||= 'unique'.freeze
   UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
   JID ||= 'fuckit'.freeze
