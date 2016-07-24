@@ -110,11 +110,45 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
       end
     end
 
-    it 'does not push duplicate messages when configured for unique only' do
+    it 'does not push duplicate messages when configured for unique only', :focus do
       10.times { MyUniqueJob.perform_async(1, 2) }
       Sidekiq.redis do |c|
         expect(c.llen('queue:customqueue')).to eq(1)
       end
+    end
+
+    it 'does not push duplicate messages when unique_args are filtered with a proc', :focus do
+      10.times { MyUniqueJobWithFilterProc.perform_async(1) }
+      Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(1) }
+
+      Sidekiq.redis(&:flushdb)
+      Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(0) }
+
+      10.times do
+        Sidekiq::Client.push(
+          'class' => MyUniqueJobWithFilterProc,
+          'queue' => 'customqueue',
+          'args' => [1, type: 'value', some: 'not used']
+        )
+      end
+      Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(1) }
+    end
+
+    it 'does not push duplicate messages when unique_args are filtered with a method', :focus do
+      10.times { MyUniqueJobWithFilterMethod.perform_async(1) }
+      Sidekiq.redis do |c|
+        expect(c.llen('queue:customqueue')).to eq(1)
+      end
+      Sidekiq.redis(&:flushdb)
+      Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(0) }
+      10.times do
+        Sidekiq::Client.push(
+          'class' => MyUniqueJobWithFilterMethod,
+          'queue' => 'customqueue',
+          'args' => [1, type: 'value', some: 'not used']
+        )
+      end
+      Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(1) }
     end
 
     it 'does push duplicate messages to different queues' do
