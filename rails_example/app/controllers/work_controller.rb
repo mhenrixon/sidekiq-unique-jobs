@@ -1,9 +1,12 @@
 class WorkController < ApplicationController
-  def duplicate
-    SimpleWorker.perform_async(1)
-    4.times do |_x|
-      SpawnSimpleWorker.perform_async(1)
-    end
+  def duplicate_simple
+    4.times { SimpleWorker.perform_async(1) }
+
+    redirect_to '/sidekiq'
+  end
+
+  def duplicate_nested
+    4.times { SpawnSimpleWorker.perform_async(1) }
 
     redirect_to '/sidekiq'
   end

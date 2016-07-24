@@ -1,0 +1,90 @@
+version: '2'
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  gems:
+    driver: local
+
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
+
+services:
+  jobs: &app
+    extends:
+      file: common-services.yml
+      service: rails
+    entrypoint: /usr/src/app/dev-entrypoint.sh
+    command: bundle exec sidekiq -c 25
+    networks:
+      - back-tier
+    depends_on:
+      - postgres
+      - redis
+
+  web:
+    extends:
+      file: common-services.yml
+      service: rails
+    entrypoint: /usr/src/app/dev-entrypoint.sh
+    command: bundle exec puma --bind tcp://0.0.0.0:3000
+    ports:
+      - 3000:3000
+    networks:
+      - front-tier
+      - back-tier
+    depends_on:
+      - postgres
+      - redis
+
+  cable:
+    extends:
+      file: common-services.yml
+      service: rails
+    entrypoint: /usr/src/app/dev-entrypoint.sh
+    command: bundle exec puma --bind tcp://0.0.0.0:28080 cable.ru
+    ports:
+      - 28080:28080
+    networks:
+      - front-tier
+      - back-tier
+    depends_on:
+      - postgres
+      - redis
+
+  redis:
+    image: redis
+    ports:
+      # We'll bind our host's port 6379 to redis's port 6379, so we can use
+      # Redis Desktop Manager (or other tools) with it:
+      - 6379:6379
+    volumes:
+      # We'll store the redis data in the 'redis-data' volume we defined:
+      - redis-data:/var/lib/redis
+    command: redis-server --appendonly yes
+    # Make the redis service available only on the "back-tier" network:
+    # NOTE: See networks comment on the postgres service above.
+    networks: [ "back-tier" ]
+
+
+  postgres:
+    image: postgres
+    ports:
+      # We'll bind our host's port 5432 to postgres's port 5432, so we can use
+            # our database IDEs with it:
+      - 5432:5432
+    volumes:
+      # We'll store the postgres data in the 'postgres-data' volume we defined:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      # Make the database service available only on the "back-tier" network:
+      # NOTE: Although the service is available only on the "back-tier" network,
+      # the host-to-container port binding we've defined for development
+      # purposes will allow connection from the development host.
+      - back-tier
+    environment:
+      POSTGRES_PASSWORD: 3x4mpl3

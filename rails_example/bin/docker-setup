@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+# ln -s ../ gems/sidekiq-unique-jobs
+cp -f config/database.docker.yml config/database.yml
+# cp -f config/application.docker.yml config/application.yml
+
+# build app image
+docker-compose build
+
+# start mysql and redis in background
+docker-compose start postgres
+docker-compose start redis
+
+# setup database
+docker-compose run web rake db:create db:migrate
+
+# ensure all containers are up and running
+docker-compose up

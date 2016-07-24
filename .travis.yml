@@ -17,7 +17,6 @@ rvm:
   - rbx-3.9
   - 2.1.8
   - 2.2.4
-  - 2.3.0
 env: STYLE=false
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
@@ -36,7 +35,7 @@ notifications:
 matrix:
   fast_finish: true
   include:
-    - rvm: 2.3.0
+    - rvm: 2.3.1
       gemfile: gemfiles/sidekiq_develop.gemfile
       env: STYLE=true
 addons:

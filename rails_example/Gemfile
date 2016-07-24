@@ -1,20 +1,30 @@
 source 'https://rubygems.org'
 
-ruby '2.2.3'
+ruby '2.3.1'
+
+gem 'rails', '~> 5.0'
+gem 'puma'
+gem 'json'
+gem 'bigdecimal'
 
 platforms :ruby do
-  gem 'sqlite3'
+  gem 'pg'
   gem 'pry-byebug'
   gem 'ruby-prof'
 end
 
 platforms :jruby do
   gem 'jruby-openssl'
-  gem 'activerecord-jdbcsqlite3-adapter'
+  gem 'jdbc-pg'
+  gem 'activerecord-jdbc-adapter'
 end
 
-gem 'rails'
-gem 'sidekiq-unique-jobs', path: '..'
-gem 'sinatra'
-gem 'web-console', '~> 2.0'
+gem 'sidekiq-unique-jobs', github: 'mhenrixon/sidekiq-unique-jobs'
+gem 'sinatra', github: 'sinatra/sinatra'
+gem 'web-console'
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+end
 
