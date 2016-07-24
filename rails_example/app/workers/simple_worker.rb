@@ -7,6 +7,6 @@ class SimpleWorker
                   end)
 
   def perform(_some_args)
-    sleep 5
+    sleep 1
   end
 end

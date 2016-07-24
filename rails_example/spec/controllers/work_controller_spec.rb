@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe WorkController, :focus do
+describe WorkController do
   context 'with real redis' do
     before do
       SidekiqUniqueJobs.configure do |config|
@@ -85,6 +85,8 @@ describe WorkController, :focus do
       SidekiqUniqueJobs.configure do |config|
         config.redis_test_mode = :mock
       end
+      SimpleWorker.jobs.clear
+      SpawnSimpleWorker.jobs.clear
       Sidekiq.redis(&:flushdb)
       allow(Redis).to receive(:new).and_return(MockRedis.new)
     end
