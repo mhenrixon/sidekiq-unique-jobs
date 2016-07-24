@@ -19,12 +19,16 @@ platforms :jruby do
   gem 'activerecord-jdbc-adapter'
 end
 
-gem 'sidekiq-unique-jobs', github: 'mhenrixon/sidekiq-unique-jobs'
+gem 'sidekiq-unique-jobs', path: '../'
 gem 'sinatra', github: 'sinatra/sinatra'
-gem 'web-console'
+
+group :development do
+  gem 'web-console'
+end
 
 group :development, :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
+  gem 'mock_redis'
 end
 

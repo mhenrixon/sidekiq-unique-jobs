@@ -20,9 +20,8 @@ require 'celluloid_with_fallback'
 require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
-require 'sidekiq_unique_jobs/testing'
 require 'timecop'
-
+require 'sidekiq_unique_jobs/testing'
 require 'sidekiq/simulator'
 
 Sidekiq::Testing.disable!

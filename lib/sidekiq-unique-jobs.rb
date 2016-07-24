@@ -57,6 +57,10 @@ module SidekiqUniqueJobs
     worker_class
   end
 
+  def mocked?
+    config.redis_test_mode == :mock
+  end
+
   def redis_version
     @redis_version ||= connection { |c| c.info('server'.freeze)['redis_version'.freeze] }
   end

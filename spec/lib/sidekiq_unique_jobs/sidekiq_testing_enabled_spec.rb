@@ -93,7 +93,6 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect { UntilExecutedJob.clear }.not_to raise_error
       end
 
-      # it 'unlocks jobs when all workers are cleared', :focus do
       it 'unlocks jobs when all workers are cleared' do
         param = 'work'
         expect(UntilExecutedJob.jobs.size).to eq(0)

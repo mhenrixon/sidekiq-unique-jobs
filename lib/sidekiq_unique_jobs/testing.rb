@@ -1,6 +1,42 @@
 require 'sidekiq_unique_jobs/testing/sidekiq_overrides'
+require 'sidekiq_unique_jobs/script_mock'
 
 module SidekiqUniqueJobs
+  alias redis_version_real redis_version
+  def redis_version
+    if mocked?
+      "0.0"
+    else
+      redis_version_real
+    end
+  end
+
+  module Scripts
+    module Overrides
+      def self.included(base)
+        base.extend Testing
+        base.class_eval do
+          class << self
+            alias_method :call_orig, :call
+            alias_method :call, :call_ext
+          end
+        end
+      end
+
+      module Testing
+        def call_ext(file_name, redis_pool, options = {})
+          if SidekiqUniqueJobs.config.redis_test_mode == :mock
+            SidekiqUniqueJobs::ScriptMock.call(file_name, redis_pool, options)
+          else
+            call_orig(file_name, redis_pool, options)
+          end
+        end
+      end
+    end
+
+    include Overrides
+  end
+
   module Client
     class Middleware
       alias call_real call
