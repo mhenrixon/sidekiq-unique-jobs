@@ -222,6 +222,20 @@ You can if you want use `gem 'mock_redis'` to prevent sidekiq unique jobs using 
 
 See https://github.com/mhenrixon/sidekiq-unique-jobs/tree/master/rails_example/spec/controllers/work_controller_spec.rb for an example of how to configure sidekiq and unique jobs without redis.
 
+If you really don't care about testing uniquness and trust we get that stuff right you can (in newer sidekiq versions) remove the client middleware.
+
+```ruby
+describe "Some test" do
+  before(:each) do
+    Sidekiq.configure_client do |config|
+      config.client_middleware do |chain|
+        chain.remove SidekiqUniqueJobs::Client::Middleware
+      end
+    end
+  end
+end
+```
+
 ## Contributing
 
 1. Fork it
