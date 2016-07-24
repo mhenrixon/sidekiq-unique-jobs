@@ -1,3 +1,8 @@
+## v4.0.18
+
+- Allow mock_redis to be used over redis
+- Fixes some locking inconsistencies
+
 ## v4.0.17
 
 - Always release lock in the lua script `release_lock.lua` and return success [#169](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/169)
