@@ -6,6 +6,10 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
   ANOTHER_JID ||= 'anotherjid'.freeze
 
   context 'class methods' do
+    before do
+      Sidekiq.redis(&:flushdb)
+      Sidekiq::Worker.clear_all
+    end
     subject { SidekiqUniqueJobs::Scripts }
 
     it { is_expected.to respond_to(:call).with(3).arguments }

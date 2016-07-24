@@ -13,7 +13,11 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
   let(:callback) { -> {} }
   subject { described_class.new(item) }
   describe '#execute' do
-    before { subject.lock(:client) }
+    before do
+      Sidekiq.redis(&:flushdb)
+      Sidekiq::Worker.clear_all
+      subject.lock(:client)
+    end
     let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item, nil) }
 
     it 'unlocks the unique key before yielding' do

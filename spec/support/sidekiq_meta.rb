@@ -1,6 +1,10 @@
 RSpec.configure do |config|
   VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
   config.before(:each) do |example|
+    SidekiqUniqueJobs.configure do |config|
+      config.redis_test_mode = :redis
+    end
+
     if (sidekiq = example.metadata[:sidekiq])
       sidekiq = :fake if sidekiq == true
       Sidekiq::Testing.send("#{sidekiq}!")

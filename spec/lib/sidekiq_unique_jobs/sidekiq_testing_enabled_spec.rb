@@ -6,14 +6,19 @@ require 'sidekiq/scheduled'
 RSpec.describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
     before do
+      SidekiqUniqueJobs.configure do |config|
+        config.redis_test_mode = :redis
+      end
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
+      Sidekiq::Worker.clear_all
       Sidekiq::Testing.server_middleware do |chain|
         chain.add SidekiqUniqueJobs::Server::Middleware
       end if Sidekiq::Testing.respond_to?(:server_middleware)
     end
 
     after do
+      Sidekiq.redis(&:flushdb)
       Sidekiq::Testing.server_middleware(&:clear) if Sidekiq::Testing.respond_to?(:server_middleware)
     end
 
@@ -27,18 +32,10 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
         expect(UntilExecutedJob.jobs.size).to eq(1)
       end
 
-      # it 'does not push duplicate messages', sidekiq_ver: '>= 4' do
-      #   param = 'work'
-      #   expect(UntilExecutedJob.jobs.size).to eq(0)
-      #   expect(UntilExecutedJob.perform_async(param)).to_not be_nil
-      #   expect(Sidekiq::Queues['working'].size).to eq(1)
-      #   expect(UntilExecutedJob.perform_async(param)).to be_nil
-      #   expect(Sidekiq::Queues['working'].size).to eq(1)
-      # end
-
       it 'unlocks jobs after draining a worker' do
         param = 'work'
         param2 = 'more work'
+
         expect(UntilExecutedJob.jobs.size).to eq(0)
         UntilExecutedJob.perform_async(param)
         UntilExecutedJob.perform_async(param2)
@@ -88,7 +85,7 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
       it 'handles clearing an empty worker queue' do
         param = 'work'
         UntilExecutedJob.perform_async(param)
-        UntilExecutedJob.clear
+        UntilExecutedJob.drain
         expect(UntilExecutedJob.jobs.size).to eq(0)
         expect { UntilExecutedJob.clear }.not_to raise_error
       end

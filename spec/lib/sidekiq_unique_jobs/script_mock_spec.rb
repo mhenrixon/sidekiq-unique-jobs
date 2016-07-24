@@ -15,11 +15,22 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock do
     end
     Sidekiq::Worker.clear_all
 
-    MOCK_REDIS.keys.each do |key|
-      MOCK_REDIS.del(key)
+    keys = MOCK_REDIS.keys
+    if keys.respond_to?(:each)
+      keys.each do |key|
+        MOCK_REDIS.del(key)
+      end
+    else
+      MOCK_REDIS.del(keys)
     end
 
     allow(Redis).to receive(:new).and_return(MOCK_REDIS)
+  end
+
+  after do
+    SidekiqUniqueJobs.configure do |config|
+      config.redis_test_mode = :redis
+    end
   end
 
   subject { SidekiqUniqueJobs::Scripts }
@@ -36,12 +47,12 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock do
     context 'when job is unique' do
       specify { expect(lock_for).to eq(1) }
       specify do
-        expect(lock_for(0.5)).to eq(1)
+        expect(lock_for(1)).to eq(1)
         expect(Redis)
           .to have_key(UNIQUE_KEY)
           .for_seconds(1)
           .with_value('fuckit')
-        sleep 0.5
+        sleep 1
         expect(lock_for).to eq(1)
       end
 
