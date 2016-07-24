@@ -59,7 +59,7 @@ module Sidekiq
 
       module Testing
         def clear_all_ext
-          SidekiqUniqueJobs::Util.del('*', 1000, false)
+          SidekiqUniqueJobs::Util.del('*', 1000, false) unless SidekiqUniqueJobs.mocked?
           clear_all_orig
         end
       end

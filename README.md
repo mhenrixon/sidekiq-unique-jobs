@@ -218,6 +218,10 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 To enable the testing for `sidekiq-unique-jobs`, add `require 'sidekiq_unique_jobs/testing'` to your testing helper.
 
+You can if you want use `gem 'mock_redis'` to prevent sidekiq unique jobs using redis.
+
+See https://github.com/mhenrixon/sidekiq-unique-jobs/tree/master/rails_example/spec/controllers/work_controller_spec.rb for an example of how to configure sidekiq and unique jobs without redis.
+
 ## Contributing
 
 1. Fork it

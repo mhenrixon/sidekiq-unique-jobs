@@ -4,6 +4,7 @@ gemspec
 gem 'appraisal', '~> 2.0.0'
 gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
+gem 'mock_redis', require: false
 
 platforms :mri_23 do
   gem 'fasterer',                  require: false
