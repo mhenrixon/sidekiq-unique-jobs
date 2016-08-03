@@ -25,6 +25,8 @@ services:
       # to our redis container:
       REDIS_URL: redis://redis:6379
 
+      DATABASE_URL: postgresql://postgres:3x4mpl3@postgres:5432/rails_example_dev
+
       # We'll set the RAILS_ENV and RACK_ENV environment variables to
       # 'development', so our app containers will start in 'development' mode
       # on this compose project:

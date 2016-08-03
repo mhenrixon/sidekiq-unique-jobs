@@ -29,6 +29,7 @@ services:
     environment:
       PATH: /usr/src/app/bin:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://postgres:3x4mpl3@postgres:5432/rails_example_test
       RAILS_ENV: test
       RACK_ENV: test
 
