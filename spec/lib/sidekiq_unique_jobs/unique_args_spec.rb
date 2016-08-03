@@ -15,7 +15,9 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
         end
       end
     end
+
     shared_examples 'unique digest' do
+      subject { described_class.new(item_options) }
       context 'given another item' do
         let(:another_subject) { described_class.new(another_item) }
 
@@ -29,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
         context 'with different unique args' do
           let(:another_item) { item_options.merge('args' => [1, 3, 'type' => 'that']) }
           it 'differs from unique_digest for that item' do
-            expect(subject.unique_digest).to_not eq(another_subject.unique_digest)
+            expect(subject.unique_digest).not_to eq(another_subject.unique_digest)
           end
         end
       end
@@ -37,8 +39,11 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     context 'when unique_args is a proc' do
       let(:item_options) do
-        { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue',
-          'unique_args' => proc { |args| args[1] } }
+        {
+          'class' => 'MyUniqueJobWithFilterProc',
+          'queue' => 'customqueue',
+          'args' => [1, 2, 'type' => 'it']
+        }
       end
 
       it_behaves_like 'unique digest'
@@ -46,8 +51,11 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     context 'when unique_args is a symbol' do
       let(:item_options) do
-        { 'class' => 'UniqueJobWithFilterMethod', 'queue' => 'myqueue',
-          'unique_args' => :filtered_args }
+        {
+          'class' => 'MyUniqueJobWithFilterMethod',
+          'queue' => 'customqueue',
+          'args' => [1, 2, 'type' => 'it']
+        }
       end
 
       it_behaves_like 'unique digest'
