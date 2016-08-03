@@ -5,8 +5,16 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   subject { described_class.new(item) }
 
   describe '#unique_digest' do
-    let(:item) { item_options.merge('args' => [1, 2, 'type' => 'it']) }
+    context 'when args are empty', :focus do
+      let(:item) { { 'class' => 'WithoutArgumentJob', 'args' => [] }}
+      let(:another_subject) { described_class.new(item) }
 
+      context 'with the same unique args' do
+        it 'equals to unique_digest for that item' do
+          expect(subject.unique_digest).to eq(another_subject.unique_digest)
+        end
+      end
+    end
     shared_examples 'unique digest' do
       context 'given another item' do
         let(:another_subject) { described_class.new(another_item) }

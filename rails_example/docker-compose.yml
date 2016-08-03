@@ -14,6 +14,24 @@ networks:
     driver: bridge
 
 services:
+  rspec:
+    extends:
+      file: common-services.yml
+      service: rails
+    entrypoint: /usr/src/app/dev-entrypoint.sh
+    command: bundle exec rspec
+    networks:
+      - back-tier
+      - front-tier
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      PATH: /usr/src/app/bin:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      REDIS_URL: redis://redis:6379
+      RAILS_ENV: test
+      RACK_ENV: test
+
   jobs: &app
     extends:
       file: common-services.yml
@@ -57,7 +75,7 @@ services:
       - redis
 
   redis:
-    image: redis
+    image: redis:latest
     ports:
       # We'll bind our host's port 6379 to redis's port 6379, so we can use
       # Redis Desktop Manager (or other tools) with it:
@@ -72,7 +90,7 @@ services:
 
 
   postgres:
-    image: postgres
+    image: postgres:latest
     ports:
       # We'll bind our host's port 5432 to postgres's port 5432, so we can use
             # our database IDEs with it:

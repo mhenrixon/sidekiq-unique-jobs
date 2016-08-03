@@ -3,8 +3,8 @@ defaults: &defaults
   adapter: postgresql
   host: <%= ENV.fetch('DB_HOST') { 'localhost' } %>
   port: <%= ENV.fetch('DB_PORT') { 5432 } %>
-  username: <%= ENV.fetch('DB_USERNAME') { 'postgres' } %>
-  password: <%= ENV.fetch('DB_PASSWORD') { '' } %>
+  username: <%= ENV.fetch('DB_USERNAME') { 'mhenrixon' } %>
+  password: <%= ENV.fetch('DB_PASSWORD') { nil } %>
   pool: <%= ENV.fetch('DB_POOL') { 25 } %>
   timeout: <%= ENV.fetch('DB_TIMEOUT') { 5000 } %>
   reaping_frequency: <%= ENV.fetch('DB_REAPING_FREQUENCY') { 5000 } %>

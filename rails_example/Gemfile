@@ -21,6 +21,7 @@ end
 
 gem 'sidekiq-unique-jobs'
 # gem 'sidekiq-unique-jobs', path: '../'
+gem 'rack-protection', github: 'sinatra/rack-protection'
 gem 'sinatra', github: 'sinatra/sinatra'
 
 group :development do
@@ -31,5 +32,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'mock_redis'
+  gem 'dockerspec'
 end
 
