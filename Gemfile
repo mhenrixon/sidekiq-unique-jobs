@@ -6,6 +6,7 @@ gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
 
 platforms :mri_23 do
+  gem 'rubocop',                   require: false
   gem 'fasterer',                  require: false
   gem 'benchmark-ips',             require: false
   gem 'pry-byebug',                require: false

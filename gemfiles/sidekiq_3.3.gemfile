@@ -8,6 +8,7 @@ gem "rspec-wait", :require => false
 gem "sidekiq", "~> 3.3.0"
 
 platforms :mri_23 do
+  gem "rubocop", :require => false
   gem "fasterer", :require => false
   gem "benchmark-ips", :require => false
   gem "pry-byebug", :require => false
