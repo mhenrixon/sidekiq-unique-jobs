@@ -5,7 +5,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   subject { described_class.new(item) }
 
   describe '#unique_digest' do
-    context 'when args are empty', :focus do
+    context 'when args are empty' do
       let(:item) { { 'class' => 'WithoutArgumentJob', 'args' => [] }}
       let(:another_subject) { described_class.new(item) }
 
