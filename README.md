@@ -123,7 +123,7 @@ Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 ```ruby
 Sidekiq.default_worker_options = {
   unique: :until_executing,
-  unique_args: ->(args) { args.first.except('job_id') }
+  unique_args: ->(args) { [ args.first.except('job_id') ] }
 }
 ```
 
