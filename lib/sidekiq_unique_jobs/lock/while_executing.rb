@@ -14,7 +14,7 @@ module SidekiqUniqueJobs
 
       def synchronize
         @mutex.lock
-        sleep 0.001 until locked?
+        sleep 0.1 until locked?
 
         yield
       rescue Sidekiq::Shutdown
