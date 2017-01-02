@@ -5,9 +5,10 @@ engines:
     enabled: true
   duplication:
     enabled: true
+    config:
+      languages:
+        - ruby
   rubocop:
-    enabled: true
-  golint:
     enabled: true
 ratings:
   paths:
@@ -20,3 +21,4 @@ exclude_paths:
   - rails_example/
   - redis/
   - tmp/
+
