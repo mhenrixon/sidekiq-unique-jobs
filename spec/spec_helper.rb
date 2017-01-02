@@ -1,10 +1,5 @@
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.0'
-  if ENV['CI']
-    require 'codeclimate-test-reporter'
-    CodeClimate::TestReporter.start
-  else
-    require 'simplecov'
-  end
+  require 'simplecov'
 
   begin
     require 'pry-byebug'
