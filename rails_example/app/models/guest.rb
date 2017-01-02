@@ -1,18 +1,18 @@
 class Guest
+  GUEST_NAME = 'Guest Visitor'.freeze
+  GUEST_EMAIL = 'unknown@domain.com'.freeze
+
   def name
-    'Guest Visitor'.freeze
+    GUEST_NAME
   end
 
   def email
-    'unknown@domain.com'.freeze
+    GUEST_EMAIL
   end
 
-  def appear
-  end
+  def appear; end
 
-  def disappear
-  end
+  def disappear; end
 
-  def away
-  end
+  def away; end
 end

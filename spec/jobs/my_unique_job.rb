@@ -7,6 +7,5 @@ class MyUniqueJob
     unique_expiration: 7_200,
     retry_count: 10
   )
-  def perform(_one, _two)
-  end
+  def perform(_one, _two); end
 end

@@ -7,6 +7,7 @@ AllCops:
   Exclude:
     - 'Gemfile.lock'
     - 'gemfiles/**/*'
+  TargetRubyVersion: 2.4
 
 Lint/HandleExceptions:
   Enabled: true
@@ -26,6 +27,11 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Max: 13
 
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - '**/spec/**/*_spec.rb'
+
 Metrics/PerceivedComplexity:
   Max: 8
 
@@ -35,11 +41,16 @@ Style/AccessorMethodName:
 Style/ConstantName:
   Enabled: true
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
 Style/FileName:
   Enabled: true
+  Exclude:
+    - 'lib/sidekiq-unique-jobs.rb'
 
 Style/GlobalVars:
   Enabled: true

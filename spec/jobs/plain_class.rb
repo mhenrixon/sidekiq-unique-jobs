@@ -1,4 +1,3 @@
 class PlainClass
-  def run(_x)
-  end
+  def run(_x); end
 end

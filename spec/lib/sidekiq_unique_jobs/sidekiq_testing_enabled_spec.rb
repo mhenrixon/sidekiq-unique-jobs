@@ -12,9 +12,11 @@ RSpec.describe 'When Sidekiq::Testing is enabled' do
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
       Sidekiq::Worker.clear_all
-      Sidekiq::Testing.server_middleware do |chain|
-        chain.add SidekiqUniqueJobs::Server::Middleware
-      end if Sidekiq::Testing.respond_to?(:server_middleware)
+      if Sidekiq::Testing.respond_to?(:server_middleware)
+        Sidekiq::Testing.server_middleware do |chain|
+          chain.add SidekiqUniqueJobs::Server::Middleware
+        end
+      end
     end
 
     after do

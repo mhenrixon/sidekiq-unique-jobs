@@ -5,7 +5,7 @@ gem 'appraisal', '~> 2.0.0'
 gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
 
-platforms :mri_23 do
+platforms :mri_24 do
   gem 'rubocop',                   require: false
   gem 'fasterer',                  require: false
   gem 'benchmark-ips',             require: false

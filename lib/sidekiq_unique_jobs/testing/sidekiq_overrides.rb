@@ -4,26 +4,30 @@ module Sidekiq
   module Worker
     module ClassMethods
       # Drain and run all jobs for this worker
-      def drain
-        while (job = jobs.shift)
+      unless Sidekiq::Testing.respond_to?(:server_middleware)
+        def drain
+          while (job = jobs.shift)
+            worker = new
+            worker.jid = job['jid']
+            worker.bid = job['bid'] if worker.respond_to?(:bid=)
+            execute_job(worker, job['args'])
+            unlock(job) if Sidekiq::Testing.fake?
+          end
+        end
+      end
+
+      # Pop out a single job and perform it
+      unless Sidekiq::Testing.respond_to?(:server_middleware)
+        def perform_one
+          raise(EmptyQueueError, 'perform_one called with empty job queue') if jobs.empty?
+          job = jobs.shift
           worker = new
           worker.jid = job['jid']
           worker.bid = job['bid'] if worker.respond_to?(:bid=)
           execute_job(worker, job['args'])
           unlock(job) if Sidekiq::Testing.fake?
         end
-      end unless Sidekiq::Testing.respond_to?(:server_middleware)
-
-      # Pop out a single job and perform it
-      def perform_one
-        raise(EmptyQueueError, 'perform_one called with empty job queue') if jobs.empty?
-        job = jobs.shift
-        worker = new
-        worker.jid = job['jid']
-        worker.bid = job['bid'] if worker.respond_to?(:bid=)
-        execute_job(worker, job['args'])
-        unlock(job) if Sidekiq::Testing.fake?
-      end unless Sidekiq::Testing.respond_to?(:server_middleware)
+      end
 
       # Clear all jobs for this worker
       def clear
@@ -37,9 +41,11 @@ module Sidekiq
         # end
       end
 
-      def execute_job(worker, args)
-        worker.perform(*args)
-      end unless respond_to?(:execute_job)
+      unless respond_to?(:execute_job)
+        def execute_job(worker, args)
+          worker.perform(*args)
+        end
+      end
 
       def unlock(job)
         SidekiqUniqueJobs::Unlockable.unlock(job)

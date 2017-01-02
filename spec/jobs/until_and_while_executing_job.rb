@@ -3,6 +3,5 @@ class UntilAndWhileExecuting
 
   sidekiq_options queue: :working, unique: :until_and_while_executing
 
-  def perform
-  end
+  def perform; end
 end
