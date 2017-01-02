@@ -3,10 +3,10 @@ begin
   require 'mock_redis'
   MOCK_REDIS ||= MockRedis.new
 rescue LoadError # rubocop:disable Lint/HandleExceptions
-  # This is a known issue (we only run this spec for ruby 2.3.1)
+  # This is a known issue (we only run this spec for ruby 2.4.0)
 end
 
-RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '2.3.1' do
+RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '2.4.0' do
   MD5_DIGEST ||= 'unique'.freeze
   UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
   JID ||= 'fuckit'.freeze
