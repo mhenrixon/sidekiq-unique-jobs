@@ -1,3 +1,4 @@
+VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.0'
   require 'simplecov'
 

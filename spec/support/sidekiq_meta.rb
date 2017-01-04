@@ -1,5 +1,4 @@
 RSpec.configure do |config|
-  VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
   config.before(:each) do |example|
     SidekiqUniqueJobs.configure do |c|
       c.redis_test_mode = :redis
