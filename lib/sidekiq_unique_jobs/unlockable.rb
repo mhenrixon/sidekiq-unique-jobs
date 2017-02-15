@@ -25,6 +25,8 @@ module SidekiqUniqueJobs
     end
 
     def after_unlock(result, calling_method)
+      ensure_job_id_removed
+
       case result
       when 1
         logger.debug { "successfully unlocked #{unique_key}" }
@@ -38,6 +40,10 @@ module SidekiqUniqueJobs
       else
         raise "#{calling_method} returned an unexpected value (#{result})"
       end
+    end
+
+    def ensure_job_id_removed
+      Sidekiq.redis { |redis| redis.hdel("uniquejobs", jid) }
     end
 
     def logger
