@@ -40,7 +40,7 @@ matrix:
       gemfile: gemfiles/sidekiq_develop.gemfile
   fast_finish: true
   include:
-    - rvm: 2.4.0
+    - rvm: 2.4.1
       gemfile: gemfiles/sidekiq_develop.gemfile
       env: STYLE=true
 addons:
