@@ -12,6 +12,7 @@ module SidekiqUniqueJobs
     end
 
     def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
+      raise 'Please provide a number of keys to delete greater than zero' if count.zero?
       logger.debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
       logger.debug { "#{keys.size} matching keys found in #{time} sec." }
