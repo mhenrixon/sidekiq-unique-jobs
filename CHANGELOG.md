@@ -1,3 +1,7 @@
+## v5.0.0
+
+- Only support Sidekiq >= 4
+
 ## v4.0.18
 
 - Allow mock_redis to be used over redis

@@ -7,25 +7,12 @@ module SidekiqUniqueJobs
     end
 
     def unlock_by_key(unique_key, jid, redis_pool = nil)
-      Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
-        after_unlock(result, __method__)
-      end
+      result = Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid])
+      after_unlock(result, __method__, unique_key, jid)
     end
 
-    def unlock_by_jid(jid, redis_pool = nil)
-      Scripts.call(:release_lock_by_jid, redis_pool, keys: [jid]) do |result|
-        after_unlock(result, __method__)
-      end
-    end
-
-    def unlock_by_arguments(_worker_class, _unique_arguments = {})
-      Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid]) do |result|
-        after_unlock(result, __method__)
-      end
-    end
-
-    def after_unlock(result, calling_method) # rubocop:disable Metrics/MethodLength
-      ensure_job_id_removed
+    def after_unlock(result, calling_method, unique_key, jid) # rubocop:disable Metrics/MethodLength
+      ensure_job_id_removed(jid)
 
       case result
       when 1
@@ -42,8 +29,8 @@ module SidekiqUniqueJobs
       end
     end
 
-    def ensure_job_id_removed
-      Sidekiq.redis { |redis| redis.hdel('uniquejobs', jid) }
+    def ensure_job_id_removed(jid)
+      Sidekiq.redis { |redis| redis.hdel(SidekiqUniqueJobs::HASH_KEY, jid) }
     end
 
     def logger

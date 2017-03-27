@@ -22,7 +22,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       Thread.new do
         m.synchronize do
           y = x
-          sleep 0.001
+          sleep 0.1
           x = y + 1
         end
       end

@@ -11,6 +11,12 @@ module SidekiqUniqueJobs
       send("keys_by_#{redis_keys_method}", pattern, count)
     end
 
+    def unique_key(jid)
+      connection do |redis|
+        redis.hget(SidekiqUniqueJobs::HASH_KEY, jid)
+      end
+    end
+
     def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
       raise 'Please provide a number of keys to delete greater than zero' if count.zero?
       logger.debug { "Deleting keys by: #{pattern}" }

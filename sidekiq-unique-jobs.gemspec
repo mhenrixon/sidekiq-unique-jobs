@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.post_install_message = 'WARNING: VERSION 4.0.0 HAS BREAKING CHANGES! Please see Readme for info'
   gem.version = SidekiqUniqueJobs::VERSION
-  gem.add_dependency 'sidekiq', '>= 2.6'
+  gem.add_dependency 'sidekiq', '>= 4.0'
   gem.add_dependency 'thor', '>= 0'
   gem.add_development_dependency 'rspec', '~> 3.1'
   gem.add_development_dependency 'rake'

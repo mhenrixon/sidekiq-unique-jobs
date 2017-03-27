@@ -5,6 +5,7 @@ module SidekiqUniqueJobs
   JID_KEY ||= 'jid'.freeze
   LOG_DUPLICATE_KEY ||= 'log_duplicate_payload'.freeze
   QUEUE_KEY ||= 'queue'.freeze
+  HASH_KEY ||= 'uniquejobs'.freeze
   QUEUE_LOCK_TIMEOUT_KEY ||= 'unique_expiration'.freeze
   RUN_LOCK_TIMEOUT_KEY ||= 'run_lock_expiration'.freeze
   TESTING_CONSTANT ||= 'Testing'.freeze

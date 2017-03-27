@@ -12,7 +12,6 @@ end
 require 'rspec'
 require 'rspec/its'
 
-require 'celluloid_with_fallback'
 require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
@@ -24,12 +23,6 @@ Sidekiq::Testing.disable!
 Sidekiq.logger.level = "Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}".constantize
 
 require 'sidekiq/redis_connection'
-
-begin
-  require 'redis-namespace'
-rescue LoadError
-  puts 'Redis Namespace unavailable'
-end
 
 REDIS_URL ||= ENV['REDIS_URL'] || 'redis://localhost/15'.freeze
 REDIS_NAMESPACE ||= 'unique-test'.freeze

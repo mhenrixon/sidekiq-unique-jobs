@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 begin
   require 'mock_redis'
   MOCK_REDIS ||= MockRedis.new
@@ -6,13 +7,14 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
   # This is a known issue (we only run this spec for ruby 2.4.0)
 end
 
-RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.0' do
+RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
   MD5_DIGEST ||= 'unique'.freeze
   UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
   JID ||= 'fuckit'.freeze
   ANOTHER_JID ||= 'anotherjid'.freeze
 
   before do
+    Sidekiq.redis(&:flushdb)
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :mock
     end
@@ -34,6 +36,7 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.0' do
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :redis
     end
+    Sidekiq.redis(&:flushdb)
   end
 
   subject { SidekiqUniqueJobs::Scripts }
@@ -61,13 +64,13 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.0' do
 
       context 'when job is locked' do
         before  { expect(lock_for(10)).to eq(1) }
-        specify { expect(lock_for(5, 'anotherjid')).to eq(0) }
+        specify { expect(lock_for(5, ANOTHER_JID)).to eq(0) }
       end
     end
 
     describe '.release_lock' do
       context 'when job is locked by another jid' do
-        before  { expect(lock_for(10, 'anotherjid')).to eq(1) }
+        before  { expect(lock_for(10, ANOTHER_JID)).to eq(1) }
         specify { expect(unlock).to eq(0) }
         after { unlock(UNIQUE_KEY, ANOTHER_JID) }
       end

@@ -34,7 +34,7 @@ RSpec.describe 'Sidekiq::Api' do
     JustAWorker.perform_async(foo: 'bar')
   end
 
-  describe Sidekiq::SortedEntry::UniqueExtension, sidekiq_ver: '>= 3.1' do
+  describe Sidekiq::SortedEntry::UniqueExtension do
     it 'deletes uniqueness lock on delete' do
       expect(schedule_job).to be_truthy
 
@@ -68,7 +68,7 @@ RSpec.describe 'Sidekiq::Api' do
     end
   end
 
-  describe Sidekiq::JobSet::UniqueExtension, sidekiq_ver: '>= 3.1' do
+  describe Sidekiq::JobSet::UniqueExtension do
     it 'deletes uniqueness locks on clear' do
       schedule_job
       Sidekiq::JobSet.new('schedule').clear

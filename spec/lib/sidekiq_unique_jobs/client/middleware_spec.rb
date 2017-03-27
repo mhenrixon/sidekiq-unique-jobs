@@ -10,12 +10,13 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
   describe 'with real redis' do
     before do
+      Sidekiq::Extensions.enable_delay! if defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
     end
 
     describe 'when a job is already scheduled' do
-      it 'processes jobs properly', sidekiq_ver: '>= 4.0.0' do
+      it 'processes jobs properly' do
         Sidekiq::Testing.disable! do
           jid = NotifyWorker.perform_in(1, 183, 'xxxx')
           expect(jid).not_to eq(nil)
@@ -39,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         end
       end
 
-      it 'rejects nested subsequent jobs with the same arguments', sidekiq_ver: '>= 3.5.3' do
+      it 'rejects nested subsequent jobs with the same arguments' do
         Sidekiq::Testing.disable! do
           expect(SimpleWorker.perform_async(1)).not_to eq(nil)
           expect(SimpleWorker.perform_async(1)).to eq(nil)
