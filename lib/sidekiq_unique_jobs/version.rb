@@ -1,3 +1,3 @@
 module SidekiqUniqueJobs
-  VERSION = '4.0.18'.freeze
+  VERSION = '5.0.0.beta'.freeze
 end
