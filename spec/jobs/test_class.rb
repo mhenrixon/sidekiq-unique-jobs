@@ -1,4 +1,3 @@
 class TestClass
-  def self.run(_)
-  end
+  def self.run(_); end
 end

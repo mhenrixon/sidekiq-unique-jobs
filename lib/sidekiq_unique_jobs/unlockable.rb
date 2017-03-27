@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
     end
 
     def ensure_job_id_removed
-      Sidekiq.redis { |redis| redis.hdel("uniquejobs", jid) }
+      Sidekiq.redis { |redis| redis.hdel('uniquejobs', jid) }
     end
 
     def logger
