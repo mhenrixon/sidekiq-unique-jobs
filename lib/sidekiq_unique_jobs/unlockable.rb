@@ -24,7 +24,7 @@ module SidekiqUniqueJobs
       end
     end
 
-    def after_unlock(result, calling_method)
+    def after_unlock(result, calling_method) # rubocop:disable Metrics/MethodLength
       ensure_job_id_removed
 
       case result
