@@ -23,4 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'gem-release'
+  gem.add_development_dependency 'codeclimate-test-reporter', '~> 1.0.0'
 end

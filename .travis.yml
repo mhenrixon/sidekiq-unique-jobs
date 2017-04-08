@@ -15,7 +15,7 @@ rvm:
   - 2.2.5
   - 2.3.2
   - 2.4.1
-env: STYLE=false
+env: STYLE=false CODECLIMATE_REPO_TOKEN=88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_4.0.gemfile

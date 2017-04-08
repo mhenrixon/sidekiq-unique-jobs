@@ -3,7 +3,7 @@ require 'simplecov-json'
 # SimpleCov.refuse_coverage_drop
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::JSONFormatter
+  SimpleCov::Formatter::JSONFormatter,
 ]
 SimpleCov.start do
   add_filter '/spec/'
