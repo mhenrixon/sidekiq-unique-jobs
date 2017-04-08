@@ -1,6 +1,8 @@
 ## v5.0.0
 
 - Only support Sidekiq >= 4
+- Removed overrides and support for older Sidekiq testing
+- Added coverage
 
 ## v4.0.18
 
