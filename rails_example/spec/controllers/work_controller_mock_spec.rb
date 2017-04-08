@@ -20,7 +20,7 @@ describe WorkController, "with mock redis" do
   describe 'GET /work/duplicate_simple' do
     context 'when test mode is fake', sidekiq: :fake do
       specify do
-        expect { get :duplicate_simple, params: {  id:10 } }
+        expect { get :duplicate_simple, params: {  id: 10 } }
           .to change { SimpleWorker.jobs.size }
           .from(0)
           .to(1)
@@ -31,7 +31,8 @@ describe WorkController, "with mock redis" do
       specify do
         get :duplicate_simple, params: { id: 11 }
         Sidekiq.redis do |c|
-          expect(c.llen('queue:default')).to eq(1)
+          expect(c.keys.size).to eq(2)
+          expect(c.llen('queue:default')).to eq(0)
         end
       end
     end
@@ -40,6 +41,8 @@ describe WorkController, "with mock redis" do
       specify do
         get :duplicate_simple, params: { id: 12 }
         Sidekiq.redis do |c|
+          expect(c).to be_a(MockRedis)
+          expect(c.keys.size).to eq(0)
           expect(c.llen('queue:default')).to eq(0)
         end
       end
@@ -49,7 +52,7 @@ describe WorkController, "with mock redis" do
   describe 'GET /work/duplicate_nested' do
     context 'when test mode is fake', sidekiq: :fake do
       specify do
-        expect { get :duplicate_nested, params: {  id:20 } }
+        expect { get :duplicate_nested, params: {  id: 20 } }
           .to change { SpawnSimpleWorker.jobs.size }
           .from(0)
           .to(4)
@@ -66,7 +69,9 @@ describe WorkController, "with mock redis" do
         get :duplicate_nested, params: { id: 21 }
 
         Sidekiq.redis do |c|
-          expect(c.llen('queue:default')).to eq(4)
+          expect(c).to be_a(MockRedis)
+          expect(c.keys.size).to eq(0)
+          expect(c.llen('queue:default')).to eq(0)
         end
       end
     end
@@ -76,6 +81,8 @@ describe WorkController, "with mock redis" do
         get :duplicate_nested, params: { id: 22 }
 
         Sidekiq.redis do |c|
+          expect(c).to be_a(MockRedis)
+          expect(c.keys.size).to eq(0)
           expect(c.llen('queue:default')).to eq(0)
         end
       end
