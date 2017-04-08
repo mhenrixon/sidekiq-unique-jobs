@@ -1,3 +1,5 @@
+# rubocop:disable Style/FileName
+
 appraise 'sidekiq-develop' do
   gem 'sidekiq', github: 'mperham/sidekiq'
 end

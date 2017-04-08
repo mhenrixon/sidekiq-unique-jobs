@@ -141,7 +141,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     it 'returns the value of the provided class method' do
       expect(subject.filter_by_symbol(['name', 2, 'whatever' => nil, 'type' => 'test']))
-        .to eq(%w(name test))
+        .to eq(%w[name test])
     end
   end
 end

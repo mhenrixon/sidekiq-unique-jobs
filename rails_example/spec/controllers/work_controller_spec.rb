@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe WorkController, "with real redis" do
+describe WorkController, 'with real redis' do
   before(:each) do
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :redis
@@ -13,7 +13,7 @@ describe WorkController, "with real redis" do
   describe 'GET /work/duplicate_simple' do
     context 'when test mode is fake', sidekiq: :fake do
       specify do
-        expect { get :duplicate_simple, params: {  id:40 } }
+        expect { get :duplicate_simple, params: { id: 40 } }
           .to change { SimpleWorker.jobs.size }
           .from(0)
           .to(1)
@@ -42,7 +42,7 @@ describe WorkController, "with real redis" do
   describe 'GET /work/duplicate_nested' do
     context 'when test mode is fake', sidekiq: :fake do
       specify do
-        expect { get :duplicate_nested, params: { id: 34 }  }
+        expect { get :duplicate_nested, params: { id: 34 } }
           .to change { SpawnSimpleWorker.jobs.size }
           .from(0)
           .to(4)

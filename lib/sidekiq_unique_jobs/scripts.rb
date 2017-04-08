@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
     SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
     DEFINED_METHODS ||= [].freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
+
     module_function
 
     extend SingleForwardable
@@ -19,10 +20,11 @@ module SidekiqUniqueJobs
       Sidekiq.logger
     end
 
-    def call(file_name, redis_pool, options = {})
+    def call(file_name, redis_pool, options = {}) # rubocop:disable MethodLength
       connection(redis_pool) do |redis|
-        binding.pry if redis.is_a?(MockRedis)
-        SCRIPT_SHAS[file_name] = redis.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
+        if SCRIPT_SHAS[file_name].nil?
+          SCRIPT_SHAS[file_name] = redis.script(:load, script_source(file_name))
+        end
         redis.evalsha(SCRIPT_SHAS[file_name], options)
       end
     rescue Redis::CommandError => ex

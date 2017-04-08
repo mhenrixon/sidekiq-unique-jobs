@@ -28,7 +28,7 @@ module SidekiqUniqueJobs
       end
 
       def unlock(scope)
-        unless [:server, :api, :test].include?(scope)
+        unless %i[server api test].include?(scope)
           raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
 

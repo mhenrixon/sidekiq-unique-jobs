@@ -10,7 +10,9 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
   describe 'with real redis' do
     before do
-      Sidekiq::Extensions.enable_delay! if defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
+      if defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
+        Sidekiq::Extensions.enable_delay!
+      end
       Sidekiq.redis = REDIS
       Sidekiq.redis(&:flushdb)
     end
@@ -22,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           expect(jid).not_to eq(nil)
           Sidekiq.redis do |c|
             expect(c.zcard('schedule')).to eq(1)
-            expected = %w(schedule uniquejobs:6e47d668ad22db2a3ba0afd331514ce2 uniquejobs)
+            expected = %w[schedule uniquejobs:6e47d668ad22db2a3ba0afd331514ce2 uniquejobs]
             expect(c.keys).to match_array(expected)
           end
           sleep 1

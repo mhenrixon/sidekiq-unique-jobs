@@ -28,7 +28,6 @@ rescue PG::ConnectionBad
   end
   1
 rescue ActiveRecord::NoDatabaseError, ActiveRecord::AdapterNotSpecified
-
   include ActiveRecord::Tasks
 
   DatabaseTasks.root = File.expand_path '../..', __FILE__

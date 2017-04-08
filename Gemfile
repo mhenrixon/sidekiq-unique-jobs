@@ -1,3 +1,5 @@
+# rubocop:disable Style/FileName
+
 source 'https://rubygems.org'
 gemspec
 
@@ -6,14 +8,14 @@ gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
 
 platforms :mri_24 do
-  gem 'rubocop',                   require: false
-  gem 'fasterer',                  require: false
   gem 'benchmark-ips',             require: false
-  gem 'pry-byebug',                require: false
-  gem 'simplecov-json',            require: false
-  gem 'memory_profiler',           require: false
   gem 'codeclimate-test-reporter', require: false
-  gem 'travis',                    require: false
-  gem 'mock_redis',                require: false
+  gem 'fasterer',                  require: false
   gem 'fuubar',                    require: false
+  gem 'memory_profiler',           require: false
+  gem 'mock_redis',                require: false
+  gem 'pry-byebug',                require: false
+  gem 'rubocop',                   require: false
+  gem 'simplecov-json',            require: false
+  gem 'travis',                    require: false
 end

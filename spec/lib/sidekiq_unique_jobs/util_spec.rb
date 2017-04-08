@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Util do
-  let(:keys) { %w(uniquejobs:keyz) }
+  let(:keys) { %w[uniquejobs:keyz] }
 
   def set(key, value)
     described_class.connection do |c|

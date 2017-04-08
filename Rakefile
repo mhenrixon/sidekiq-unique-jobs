@@ -10,4 +10,4 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:style)
 RSpec::Core::RakeTask.new(:spec)
 
-task default: [:style, :spec]
+task default: %i[style spec]

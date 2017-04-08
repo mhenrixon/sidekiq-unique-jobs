@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# rubocop:disable Style/FileName
+
 require File.expand_path('../lib/sidekiq_unique_jobs/version', __FILE__)
 
 Gem::Specification.new do |gem|
@@ -8,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://github.com/mhenrixon/sidekiq-unique-jobs'
   gem.license       = 'WTFPL-2.0'
 
-  gem.executables   = %w(jobs)
+  gem.executables   = %w[jobs]
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- test/*`.split("\n")
   gem.name          = 'sidekiq-unique-jobs'

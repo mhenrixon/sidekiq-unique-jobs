@@ -9,15 +9,12 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
   let(:item) do
     { 'class' => MyUniqueJob,
       'queue' => 'customqueue',
-      'args' => [1, 2],
-    }
+      'args' => [1, 2] }
   end
 
   let(:unique_digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] }
   describe '.unlock_by_key' do
     before do
-
-
     end
 
     specify do

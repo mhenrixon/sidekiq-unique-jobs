@@ -2,7 +2,7 @@ require 'rails_helper'
 
 MOCK_REDIS = MockRedis.new
 
-describe WorkController, "with mock redis" do
+describe WorkController, 'with mock redis' do
   before do
     MOCK_REDIS.keys.each do |key|
       MOCK_REDIS.del(key)
@@ -20,7 +20,7 @@ describe WorkController, "with mock redis" do
   describe 'GET /work/duplicate_simple' do
     context 'when test mode is fake', sidekiq: :fake do
       specify do
-        expect { get :duplicate_simple, params: {  id: 10 } }
+        expect { get :duplicate_simple, params: { id: 10 } }
           .to change { SimpleWorker.jobs.size }
           .from(0)
           .to(1)
