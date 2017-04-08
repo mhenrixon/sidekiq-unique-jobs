@@ -1,4 +1,5 @@
 require 'simplecov-json'
+require 'codeclimate-test-reporter'
 
 # SimpleCov.refuse_coverage_drop
 SimpleCov.formatters = [
