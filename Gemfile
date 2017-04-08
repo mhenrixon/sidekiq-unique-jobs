@@ -11,7 +11,6 @@ platforms :mri_24 do
   gem 'benchmark-ips',             require: false
   gem 'codeclimate-test-reporter', require: false
   gem 'fasterer',                  require: false
-  gem 'fuubar',                    require: false
   gem 'memory_profiler',           require: false
   gem 'mock_redis',                require: false
   gem 'pry-byebug',                require: false
