@@ -4,7 +4,7 @@ begin
   require 'mock_redis'
   MOCK_REDIS ||= MockRedis.new
 rescue LoadError # rubocop:disable Lint/HandleExceptions
-  # This is a known issue (we only run this spec for ruby 2.4.0)
+  # This is a known issue (we only run this spec for ruby 2.4.1)
 end
 
 RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
@@ -29,7 +29,7 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
       MOCK_REDIS.del(keys)
     end
 
-    allow(Redis).to receive(:new).and_return(MOCK_REDIS)
+    allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
   end
 
   after do

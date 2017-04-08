@@ -14,14 +14,9 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
     it { is_expected.to respond_to(:call).with(3).arguments }
     it { is_expected.to respond_to(:logger) }
-    it { is_expected.to respond_to(:script_shas) }
     it { is_expected.to respond_to(:connection).with(1).arguments }
     it { is_expected.to respond_to(:script_source).with(1).arguments }
     it { is_expected.to respond_to(:script_path).with(1).arguments }
-
-    describe '.script_shas' do
-      its(:script_shas) { is_expected.to be_a(Hash) }
-    end
 
     describe '.logger' do
       its(:logger) { is_expected.to eq(Sidekiq.logger) }

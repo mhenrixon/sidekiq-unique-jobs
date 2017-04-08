@@ -1,5 +1,6 @@
 require 'pathname'
 require 'digest/sha1'
+require 'concurrent/map'
 
 module SidekiqUniqueJobs
   ScriptError = Class.new(StandardError)
@@ -8,15 +9,11 @@ module SidekiqUniqueJobs
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
     SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
     DEFINED_METHODS ||= [].freeze
-
+    SCRIPT_SHAS ||= Concurrent::Map.new
     module_function
 
     extend SingleForwardable
     def_delegator :SidekiqUniqueJobs, :connection
-
-    def script_shas
-      @script_shas ||= {}
-    end
 
     def logger
       Sidekiq.logger
@@ -24,13 +21,15 @@ module SidekiqUniqueJobs
 
     def call(file_name, redis_pool, options = {})
       connection(redis_pool) do |redis|
-        script_shas[file_name] ||= redis.script(:load, script_source(file_name))
-        redis.evalsha(script_shas[file_name], options)
+        binding.pry if redis.is_a?(MockRedis)
+        SCRIPT_SHAS[file_name] = redis.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
+        redis.evalsha(SCRIPT_SHAS[file_name], options)
       end
     rescue Redis::CommandError => ex
       if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
-        script_shas[file_name] = nil
+        SCRIPT_SHAS.delete(file_name)
         call(file_name, redis_pool, options)
+        raise
       else
         raise ScriptError,
               "#{file_name}.lua\n\n#{ex.message}\n\n#{script_source(file_name)}" \

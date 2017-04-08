@@ -1,4 +1,4 @@
-version: '2'
+version: '3.1'
 volumes:
   postgres-data:
     driver: local
@@ -15,9 +15,13 @@ networks:
 
 services:
   rspec:
-    extends:
-      file: common-services.yml
-      service: rails
+    image: ruby:2.4
+    working_dir: /usr/src/app
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/usr/src/app
+      - gems:/usr/local/bundle
     entrypoint: /usr/src/app/dev-entrypoint.sh
     command: bundle exec rspec
     networks:
@@ -29,51 +33,9 @@ services:
     environment:
       PATH: /usr/src/app/bin:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       REDIS_URL: redis://redis:6379
-      DATABASE_URL: postgresql://postgres:3x4mpl3@postgres:5432/rails_example_test
+      DATABASE_URL: postgresql://postgres:3x4mpl3@postgres:5433/rails_example_test
       RAILS_ENV: test
       RACK_ENV: test
-
-  jobs: &app
-    extends:
-      file: common-services.yml
-      service: rails
-    entrypoint: /usr/src/app/dev-entrypoint.sh
-    command: bundle exec sidekiq -c 25
-    networks:
-      - back-tier
-    depends_on:
-      - postgres
-      - redis
-
-  web:
-    extends:
-      file: common-services.yml
-      service: rails
-    entrypoint: /usr/src/app/dev-entrypoint.sh
-    command: bundle exec puma --bind tcp://0.0.0.0:3000
-    ports:
-      - 3000:3000
-    networks:
-      - front-tier
-      - back-tier
-    depends_on:
-      - postgres
-      - redis
-
-  cable:
-    extends:
-      file: common-services.yml
-      service: rails
-    entrypoint: /usr/src/app/dev-entrypoint.sh
-    command: bundle exec puma --bind tcp://0.0.0.0:28080 cable.ru
-    ports:
-      - 28080:28080
-    networks:
-      - front-tier
-      - back-tier
-    depends_on:
-      - postgres
-      - redis
 
   redis:
     image: redis:latest
@@ -95,7 +57,7 @@ services:
     ports:
       # We'll bind our host's port 5432 to postgres's port 5432, so we can use
             # our database IDEs with it:
-      - 5432:5432
+      - 5433:5433
     volumes:
       # We'll store the postgres data in the 'postgres-data' volume we defined:
       - postgres-data:/var/lib/postgresql/data
