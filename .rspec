@@ -1,3 +1,4 @@
 --color
---format progress
+--require fuubar
+--format Fuubar
 --order random

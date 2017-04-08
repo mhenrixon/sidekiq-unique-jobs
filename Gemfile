@@ -15,4 +15,5 @@ platforms :mri_24 do
   gem 'codeclimate-test-reporter', require: false
   gem 'travis',                    require: false
   gem 'mock_redis',                require: false
+  gem 'fuubar',                    require: false
 end
