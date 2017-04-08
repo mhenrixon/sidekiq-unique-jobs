@@ -11,8 +11,7 @@ script:
   - if [[ "${STYLE}" = "true" ]]; then bundle exec rubocop; fi;
   - bundle exec rspec spec
 rvm:
-  - jruby-9.0.4.0
-  - jruby-9.1.2.0
+  - jruby-9.1.8.0
   - 2.2.5
   - 2.3.2
 env: STYLE=false
