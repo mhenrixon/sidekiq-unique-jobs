@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       'class' => 'UntilAndWhileExecuting',
       'unique' => 'until_executed',
       'unique_digest' => 'test_mutex_key',
-      'args' => [1]
+      'args' => [1],
     }
   end
 

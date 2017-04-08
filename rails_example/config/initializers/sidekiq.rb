@@ -1,6 +1,6 @@
 Sidekiq.default_worker_options = {
   backtrace: true,
-  retry: false
+  retry: false,
 }
 
 Sidekiq.configure_server do |config|

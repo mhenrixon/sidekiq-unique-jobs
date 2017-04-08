@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
         {
           'class' => 'MyUniqueJobWithFilterProc',
           'queue' => 'customqueue',
-          'args' => [1, 2, 'type' => 'it']
+          'args' => [1, 2, 'type' => 'it'],
         }
       end
 
@@ -54,7 +54,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
         {
           'class' => 'MyUniqueJobWithFilterMethod',
           'queue' => 'customqueue',
-          'args' => [1, 2, 'type' => 'it']
+          'args' => [1, 2, 'type' => 'it'],
         }
       end
 

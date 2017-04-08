@@ -54,3 +54,11 @@ Style/FileName:
 
 Style/GlobalVars:
   Enabled: true
+
+Style/SymbolArray:
+  Enabled: true
+  EnforcedStyle: brackets
+
+Style/TrailingCommaInLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma

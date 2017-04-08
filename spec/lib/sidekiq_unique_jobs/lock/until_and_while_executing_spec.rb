@@ -7,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       'queue' => 'dupsallowed',
       'class' => 'UntilAndWhileExecuting',
       'unique' => 'until_executed',
-      'args' => [1]
+      'args' => [1],
     }
   end
   let(:callback) { -> {} }

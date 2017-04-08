@@ -1,11 +1,11 @@
 module SidekiqUniqueJobs
   class Config < OpenStruct
-    CONFIG_ACCESSORS = %i[
-      unique_prefix
-      default_queue_lock_expiration
-      default_run_lock_expiration
-      default_lock
-      redis_mode
+    CONFIG_ACCESSORS = [
+      :unique_prefix,
+      :default_queue_lock_expiration,
+      :default_run_lock_expiration,
+      :default_lock,
+      :redis_mode,
     ].freeze
 
     def inline_testing_enabled?
