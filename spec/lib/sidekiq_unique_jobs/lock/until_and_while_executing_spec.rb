@@ -12,6 +12,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
   end
   let(:callback) { -> {} }
   subject { described_class.new(item) }
+
   describe '#execute' do
     before do
       Sidekiq.redis(&:flushdb)
