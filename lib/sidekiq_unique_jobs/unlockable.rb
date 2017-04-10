@@ -16,16 +16,27 @@ module SidekiqUniqueJobs
 
       case result
       when 1
-        logger.debug { "successfully unlocked #{unique_key}" }
+        logger.debug { "#{calling_method}: successfully unlocked #{unique_key} (del Ok, hdel Ok)" }
         true
+      when 2
+        logger.debug { "#{calling_method}: successfully unlocked #{unique_key} (del Ok, hdel failed)" }
+        true # previously considered a success
+      when 3
+        logger.debug { "#{calling_method}: successfully unlocked #{unique_key} (del failed, hdel Ok)" }
+        true # previously considered a success
+      when 4
+        logger.debug { "#{calling_method}: successfully unlocked #{unique_key} (del failed, hdel failed)" }
+        true # previously considered a success
       when 0
-        logger.debug { "expiring lock #{unique_key} is not owned by #{jid}" }
+        logger.debug { "#{calling_method}: expiring lock #{unique_key} is not owned by #{jid}" }
         false
       when -1
-        logger.debug { "#{unique_key} is not a known key" }
+        logger.debug { "#{calling_method}: #{unique_key} is not a known key" }
         false
       else
-        raise "#{calling_method} returned an unexpected value (#{result})"
+        msg = "#{calling_method}: returned an unexpected value (#{result})"
+        logger.debug { msg }
+        raise msg
       end
     end
 
