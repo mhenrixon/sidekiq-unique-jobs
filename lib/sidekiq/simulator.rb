@@ -3,6 +3,9 @@ require 'timeout'
 
 module Sidekiq
   class Simulator
+    extend Forwardable
+    def_delegator SidekiqUniqueJobs, :logger
+
     attr_reader :queues, :launcher
 
     def self.process_queue(queue)
@@ -66,10 +69,6 @@ module Sidekiq
         timeout: 3,
         verbose: false,
         logfile: './tmp/sidekiq.log' }
-    end
-
-    def logger
-      @logger ||= Sidekiq.logger
     end
   end
 end

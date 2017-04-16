@@ -11,11 +11,6 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
     SidekiqUniqueJobs::UniqueArgs.digest(item)
   end
 
-  before do
-    Sidekiq.redis = REDIS
-    Sidekiq.redis(&:flushdb)
-  end
-
   describe '#call' do
     context 'when unique is disabled' do
       it 'does not use locking' do

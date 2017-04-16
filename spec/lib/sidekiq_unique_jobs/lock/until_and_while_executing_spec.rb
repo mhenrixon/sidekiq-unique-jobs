@@ -15,8 +15,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
 
   describe '#execute' do
     before do
-      Sidekiq.redis(&:flushdb)
-      Sidekiq::Worker.clear_all
       subject.lock(:client)
     end
     let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item, nil) }

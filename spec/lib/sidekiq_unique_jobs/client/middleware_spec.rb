@@ -9,14 +9,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
   end
 
   describe 'with real redis' do
-    before do
-      if defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
-        Sidekiq::Extensions.enable_delay!
-      end
-      Sidekiq.redis = REDIS
-      Sidekiq.redis(&:flushdb)
-    end
-
     describe 'when a job is already scheduled' do
       it 'processes jobs properly' do
         Sidekiq::Testing.disable! do
@@ -288,7 +280,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
 
     it 'does not log duplicate payload when config turned off' do
-      expect(Sidekiq.logger).to_not receive(:warn).with(/^payload is not unique/)
+      expect(SidekiqUniqueJobs.logger).to_not receive(:warn).with(/^payload is not unique/)
 
       UntilExecutedJob.sidekiq_options log_duplicate_payload: false
 

@@ -25,7 +25,7 @@ module SidekiqUniqueJobs
 
       module Testing
         def call_ext(file_name, redis_pool, options = {})
-          if SidekiqUniqueJobs.config.redis_test_mode == :mock
+          if SidekiqUniqueJobs.mocked?
             SidekiqUniqueJobs::ScriptMock.call(file_name, redis_pool, options)
           else
             call_orig(file_name, redis_pool, options)

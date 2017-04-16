@@ -7,26 +7,12 @@ module SidekiqUniqueJobs
     end
 
     def unlock_by_key(unique_key, jid, redis_pool = nil)
-      result = Scripts.call(:release_lock, redis_pool, keys: [unique_key], argv: [jid])
-      after_unlock(result, __method__, unique_key, jid)
+      return false unless Scripts::ReleaseLock.execute(redis_pool, unique_key, jid)
+      after_unlock(jid)
     end
 
-    def after_unlock(result, calling_method, unique_key, jid) # rubocop:disable Metrics/MethodLength
+    def after_unlock(jid)
       ensure_job_id_removed(jid)
-
-      case result
-      when 1
-        logger.debug { "successfully unlocked #{unique_key}" }
-        true
-      when 0
-        logger.debug { "expiring lock #{unique_key} is not owned by #{jid}" }
-        false
-      when -1
-        logger.debug { "#{unique_key} is not a known key" }
-        false
-      else
-        raise "#{calling_method} returned an unexpected value (#{result})"
-      end
     end
 
     def ensure_job_id_removed(jid)
@@ -34,7 +20,7 @@ module SidekiqUniqueJobs
     end
 
     def logger
-      Sidekiq.logger
+      SidekiqUniqueJobs.logger
     end
   end
 end

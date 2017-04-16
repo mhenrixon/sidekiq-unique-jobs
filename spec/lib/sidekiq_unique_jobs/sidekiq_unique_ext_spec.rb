@@ -6,11 +6,6 @@ require 'sidekiq_unique_jobs/client/middleware'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
 RSpec.describe 'Sidekiq::Api' do
-  before do
-    Sidekiq.redis = REDIS
-    Sidekiq.redis(&:flushdb)
-  end
-
   let(:item) do
     { 'class' => JustAWorker,
       'queue' => 'testqueue',

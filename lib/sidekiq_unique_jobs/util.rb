@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
     end
 
     def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
-      raise 'Please provide a number of keys to delete greater than zero' if count.zero?
+      raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
       logger.debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
       logger.debug { "#{keys.size} matching keys found in #{time} sec." }
@@ -30,6 +30,24 @@ module SidekiqUniqueJobs
         logger.debug { "Deleted in #{time} sec." }
       end
       keys.size
+    end
+
+    def unique_hash
+      connection do |conn|
+        conn.hgetall(SidekiqUniqueJobs::HASH_KEY)
+      end
+    end
+
+    def expire
+      removed_keys = {}
+      connection do |conn|
+        conn.hgetall(SidekiqUniqueJobs::HASH_KEY).each do |jid, unique_key|
+          next if conn.get(unique_key)
+          conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
+          removed_keys[jid] = unique_key
+        end
+      end
+      removed_keys
     end
 
     def keys_by_scan(pattern, count)
@@ -72,6 +90,7 @@ module SidekiqUniqueJobs
 
     def prefix(key)
       return key if unique_prefix.nil?
+      return key if key.start_with?("#{unique_prefix}:")
       "#{unique_prefix}:#{key}"
     end
 
@@ -92,7 +111,7 @@ module SidekiqUniqueJobs
     end
 
     def logger
-      Sidekiq.logger
+      SidekiqUniqueJobs.logger
     end
   end
 end

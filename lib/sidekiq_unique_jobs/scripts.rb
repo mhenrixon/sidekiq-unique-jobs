@@ -1,9 +1,15 @@
 require 'pathname'
 require 'digest/sha1'
 require 'concurrent/map'
+require 'sidekiq_unique_jobs/scripts/acquire_lock'
+require 'sidekiq_unique_jobs/scripts/release_lock'
 
 module SidekiqUniqueJobs
-  ScriptError = Class.new(StandardError)
+  ScriptError         = Class.new(StandardError)
+  UniqueKeyMissing    = Class.new(ArgumentError)
+  JidMissing          = Class.new(ArgumentError)
+  MaxLockTimeMissing  = Class.new(ArgumentError)
+  UnexpectedValue     = Class.new(StandardError)
 
   module Scripts
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
@@ -14,11 +20,7 @@ module SidekiqUniqueJobs
     module_function
 
     extend SingleForwardable
-    def_delegator :SidekiqUniqueJobs, :connection
-
-    def logger
-      Sidekiq.logger
-    end
+    def_delegators :SidekiqUniqueJobs, :connection, :logger
 
     def call(file_name, redis_pool, options = {}) # rubocop:disable MethodLength
       connection(redis_pool) do |redis|

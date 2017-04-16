@@ -1,3 +1,8 @@
+## v5.0.1
+
+- Added a command line util for cleaning out expired keys
+- Use `SidekiqUniqueJobs.logger` instead of spreading out `Sidekiq.logger` everywhere.
+
 ## v5.0.0
 
 - Only support Sidekiq >= 4
