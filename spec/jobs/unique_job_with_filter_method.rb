@@ -4,7 +4,7 @@ class UniqueJobWithFilterMethod
                   unique: :while_executing, unique_args: :filtered_args
 
   sidekiq_retries_exhausted do |msg|
-    Sidekiq.logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
+    logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
   end
 
   def perform(*)

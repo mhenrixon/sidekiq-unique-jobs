@@ -26,8 +26,12 @@ module SidekiqUniqueJobs
       default_queue_lock_expiration: 30 * 60,
       default_run_lock_expiration: 60,
       default_lock: :while_executing,
-      redis_test_mode: :redis # :mock
+      redis_test_mode: :redis, # :mock
     )
+  end
+
+  def logger
+    Sidekiq.logger
   end
 
   def default_lock

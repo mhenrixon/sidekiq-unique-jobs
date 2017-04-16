@@ -6,10 +6,6 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
   ANOTHER_JID ||= 'anotherjid'.freeze
 
   context 'class methods' do
-    before do
-      Sidekiq.redis(&:flushdb)
-      Sidekiq::Worker.clear_all
-    end
     subject { SidekiqUniqueJobs::Scripts }
 
     it { is_expected.to respond_to(:call).with(3).arguments }
@@ -34,12 +30,12 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
       context 'when job is unique' do
         specify { expect(lock_for).to eq(1) }
         specify do
-          expect(lock_for(0.5)).to eq(1)
-          expect(Redis)
+          expect(lock_for(2)).to eq(1)
+          expect(SidekiqUniqueJobs)
             .to have_key(UNIQUE_KEY)
             .for_seconds(1)
-            .with_value('fuckit')
-          sleep 0.5
+            .with_value(JID)
+          sleep 2
           expect(lock_for).to eq(1)
         end
 

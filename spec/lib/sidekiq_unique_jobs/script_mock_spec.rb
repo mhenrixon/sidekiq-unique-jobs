@@ -14,7 +14,6 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
   ANOTHER_JID ||= 'anotherjid'.freeze
 
   before do
-    Sidekiq.redis(&:flushdb)
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :mock
     end
@@ -36,7 +35,6 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :redis
     end
-    Sidekiq.redis(&:flushdb)
   end
 
   subject { SidekiqUniqueJobs::Scripts }
@@ -54,7 +52,7 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
       specify { expect(lock_for).to eq(1) }
       specify do
         expect(lock_for(1)).to eq(1)
-        expect(Redis)
+        expect(SidekiqUniqueJobs)
           .to have_key(UNIQUE_KEY)
           .for_seconds(1)
           .with_value('fuckit')

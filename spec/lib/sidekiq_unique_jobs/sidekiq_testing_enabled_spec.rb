@@ -5,25 +5,6 @@ require 'sidekiq/scheduled'
 
 RSpec.describe 'When Sidekiq::Testing is enabled' do
   describe 'when set to :fake!', sidekiq: :fake do
-    before do
-      SidekiqUniqueJobs.configure do |config|
-        config.redis_test_mode = :redis
-      end
-      Sidekiq.redis = REDIS
-      Sidekiq.redis(&:flushdb)
-      Sidekiq::Worker.clear_all
-      if Sidekiq::Testing.respond_to?(:server_middleware)
-        Sidekiq::Testing.server_middleware do |chain|
-          chain.add SidekiqUniqueJobs::Server::Middleware
-        end
-      end
-    end
-
-    after do
-      Sidekiq.redis(&:flushdb)
-      Sidekiq::Testing.server_middleware(&:clear) if Sidekiq::Testing.respond_to?(:server_middleware)
-    end
-
     context 'with unique worker' do
       it 'does not push duplicate messages' do
         param = 'work'

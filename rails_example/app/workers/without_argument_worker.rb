@@ -5,7 +5,7 @@ class WithoutArgumentWorker
 
   def perform
     Sidekiq::Logging.with_context(self.class.name) do
-      Sidekiq.logger.debug { __method__.to_s }
+      logger.debug { __method__.to_s }
     end
     sleep 20
   end

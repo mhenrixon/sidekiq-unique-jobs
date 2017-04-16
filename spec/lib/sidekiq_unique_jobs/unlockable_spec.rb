@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Unlockable do
-  before { Sidekiq.redis(&:flushdb) }
   def item_with_digest
     SidekiqUniqueJobs::UniqueArgs.digest(item)
     item

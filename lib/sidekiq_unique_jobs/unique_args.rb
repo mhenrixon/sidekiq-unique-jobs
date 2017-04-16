@@ -19,10 +19,10 @@ module SidekiqUniqueJobs
     def initialize(job)
       Sidekiq::Logging.with_context(CLASS_NAME) do
         @item = job
-        @worker_class ||= worker_class_constantize(@item[CLASS_KEY])
+        @worker_class            ||= worker_class_constantize(@item[CLASS_KEY])
         @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
-        @item[UNIQUE_ARGS_KEY] = unique_args(@item[ARGS_KEY]) # SIC! Calculate unique_args unconditionally
-        @item[UNIQUE_DIGEST_KEY] = unique_digest
+        @item[UNIQUE_ARGS_KEY]     = unique_args(@item[ARGS_KEY])
+        @item[UNIQUE_DIGEST_KEY]   = unique_digest
       end
     end
 

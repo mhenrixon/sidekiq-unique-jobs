@@ -25,6 +25,7 @@ gem 'sidekiq-unique-jobs', path: '../'
 gem 'sinatra', github: 'sinatra/sinatra'
 
 group :development do
+  gem 'foreman'
   gem 'web-console'
 end
 
