@@ -202,6 +202,9 @@ Start the console with the following command `bundle exec jobs console`.
 #### Remove Unique Keys
 `del '*', 100, false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
 
+#### Expire
+`expire` clears the unique hash from expired keys
+
 ### Command Line
 
 `bundle exec jobs` displays help on how to use the unique jobs command line.
