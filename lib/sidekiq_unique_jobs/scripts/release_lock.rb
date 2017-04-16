@@ -10,10 +10,11 @@ module SidekiqUniqueJobs
 
       attr_reader :redis_pool, :unique_key, :jid
 
-      def initialize(_redis_pool, unique_key, jid)
+      def initialize(redis_pool, unique_key, jid)
         raise UniqueKeyMissing, 'unique_key is required' if unique_key.nil?
         raise JidMissing, 'jid is required' if jid.nil?
 
+        @redis_pool    = redis_pool
         @unique_key    = unique_key
         @jid           = jid
       end
@@ -38,7 +39,7 @@ module SidekiqUniqueJobs
           logger.debug { "#{unique_key} is not a known key" }
           false
         else
-          raise "#{calling_method} returned an unexpected value (#{result})"
+          raise UnexpectedValue, "failed to release lock : unexpected return value (#{result})"
         end
       end
     end
