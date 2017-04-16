@@ -92,7 +92,7 @@ RSpec.describe SidekiqUniqueJobs::Cli do
     end
 
     context 'when a key exists' do
-      let(:keys) { ['defghayl', jid, 'poilkij'] }
+      let(:keys) { ['defghayl', jid, 'poilkij'].sort }
       before do
         keys.each do |jid|
           unique_key = "uniquejobs:#{jid}"
@@ -107,9 +107,14 @@ RSpec.describe SidekiqUniqueJobs::Cli do
       after { SidekiqUniqueJobs::Util.del('*', 1000, false) }
 
       let(:expected) do
-        "Found 3 keys matching '#{pattern}':\nuniquejobs:poilkij   uniquejobs:abcdefab  uniquejobs:defghayl\n"
+        <<~EOS
+        Found 3 keys matching '#{pattern}':
+        uniquejobs:abcdefab  uniquejobs:defghayl  uniquejobs:poilkij
+        EOS
       end
-      specify { expect(output).to eq(expected) }
+      specify do
+        expect(output).to eq(expected)
+      end
     end
   end
 

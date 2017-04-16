@@ -15,7 +15,7 @@ module SidekiqUniqueJobs
     def keys(pattern)
       keys = Util.keys(pattern, options[:count])
       say "Found #{keys.size} keys matching '#{pattern}':"
-      print_in_columns(keys) if keys.any?
+      print_in_columns(keys.sort) if keys.any?
     end
 
     desc 'del PATTERN', 'deletes unique keys from redis by pattern'
