@@ -108,8 +108,8 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
 
       let(:expected) do
         <<~EOS
-        Found 3 keys matching '#{pattern}':
-        uniquejobs:abcdefab  uniquejobs:defghayl  uniquejobs:poilkij
+          Found 3 keys matching '#{pattern}':
+          uniquejobs:abcdefab  uniquejobs:defghayl  uniquejobs:poilkij
         EOS
       end
       specify do
