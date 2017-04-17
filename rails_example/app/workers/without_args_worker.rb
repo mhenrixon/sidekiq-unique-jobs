@@ -6,11 +6,11 @@ class WithoutArgsWorker
                   unique: :until_executed,
                   unique_args: :custom_args
 
-  def perform(conditional = nil)
+  def perform(_conditional = nil)
     sleep 2
   end
 
   def self.custom_args
-    puts "testing"
+    puts 'testing'
   end
 end

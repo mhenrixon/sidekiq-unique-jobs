@@ -10,7 +10,7 @@ class UniqueJobWithNilUniqueArgs
     # NO-OP
   end
 
-  def self.unique_args(args)
+  def self.unique_args(_args)
     nil
   end
 end

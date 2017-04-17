@@ -9,7 +9,7 @@ RSpec.configure do |config|
       raise 'Please specify how to compare the version with >= or < or =' unless operator
 
       unless RUBY_VERSION.send(operator, version)
-        skip('Skipped due to version check (requirement was that ruby version is ' \
+        skip("Skipped due to version check (requirement was that ruby version is " \
              "#{operator} #{version}; was #{RUBY_VERSION})")
       end
     end

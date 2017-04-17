@@ -17,7 +17,7 @@ RSpec.configure do |config|
         raise 'Please specify how to compare the version with >= or < or =' unless operator
 
         unless Sidekiq::VERSION.send(operator, version)
-          skip('Skipped due to version check (requirement was that sidekiq version is ' \
+          skip("Skipped due to version check (requirement was that sidekiq version is " \
                "#{operator} #{version}; was #{Sidekiq::VERSION})")
         end
       end

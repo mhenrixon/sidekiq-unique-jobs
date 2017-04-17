@@ -44,7 +44,9 @@ module SidekiqUniqueJobs
       hash = @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY)
 
       if unique_on_all_queues?
-        logger.debug { "#{__method__} uniqueness specified across all queues (deleting queue: #{@item[QUEUE_KEY]} from hash)" }
+        logger.debug do
+          "#{__method__} uniqueness specified across all queues (deleting queue: #{@item[QUEUE_KEY]} from hash)"
+        end
         hash.delete(QUEUE_KEY)
       end
       hash

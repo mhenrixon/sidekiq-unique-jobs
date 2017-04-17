@@ -10,6 +10,5 @@ class UniqueJobWithoutUniqueArgsParameter
     # NO-OP
   end
 
-  def self.unique_args
-  end
+  def self.unique_args; end
 end

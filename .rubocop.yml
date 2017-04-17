@@ -55,6 +55,15 @@ Style/FileName:
 Style/GlobalVars:
   Enabled: true
 
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
+  ConsistentQuotesInMultiline: true
+
+Style/StringLiteralsInInterpolation:
+  Enabled: true
+  EnforcedStyle: single_quotes
+
 Style/SymbolArray:
   Enabled: true
   EnforcedStyle: brackets

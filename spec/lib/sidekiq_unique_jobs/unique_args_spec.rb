@@ -170,7 +170,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
     end
 
-    context "when worker takes conditional parameters"  do
+    context 'when worker takes conditional parameters' do
       let(:item) do
         { 'class' => 'UniqueJobWithoutUniqueArgsParameter',
           'queue' => 'myqueue',
@@ -192,7 +192,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
     end
 
-    context "when workers unique_args method doesn't take parameters"  do
+    context "when workers unique_args method doesn't take parameters" do
       let(:item) do
         { 'class' => 'UniqueJobWithoutUniqueArgsParameter',
           'queue' => 'myqueue',
@@ -212,7 +212,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
     end
 
-    context "when @worker_class does not respond_to unique_args_method"  do
+    context 'when @worker_class does not respond_to unique_args_method' do
       let(:item) do
         { 'class' => 'UniqueJobWithNoUniqueArgsMethod',
           'queue' => 'myqueue',
@@ -225,14 +225,17 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       it 'returns the value of the provided class method' do
         expect(unique_args.logger).to receive(:warn) do |&block|
           expect(block.call)
-            .to eq("filter_by_symbol : UniqueJobWithNoUniqueArgsMethod does not respond to filtered_args). Returning (#{args})")
+            .to eq(
+              "filter_by_symbol : UniqueJobWithNoUniqueArgsMethod does not respond to filtered_args). " \
+              "Returning (#{args})"
+            )
         end
 
         expect(subject).to eq(args)
       end
     end
 
-    context "when workers unique_args method returns nil"  do
+    context 'when workers unique_args method returns nil' do
       let(:item) do
         { 'class' => 'UniqueJobWithNilUniqueArgs',
           'queue' => 'myqueue',
