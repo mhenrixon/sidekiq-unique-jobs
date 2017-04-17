@@ -1,3 +1,6 @@
+## v5.0.2
+- Added more helpful debug, warning and error messages for failures to collect unique arghuments
+
 ## v5.0.1
 
 - Added a command line util for cleaning out expired keys
