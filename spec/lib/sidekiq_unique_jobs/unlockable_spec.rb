@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
 
       described_class.unlock_by_key(
         unique_digest,
-        jid
+        jid,
       )
 
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)

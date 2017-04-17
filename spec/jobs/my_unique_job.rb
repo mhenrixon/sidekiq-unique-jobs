@@ -5,7 +5,7 @@ class MyUniqueJob
     retry: true,
     unique: :until_executed,
     unique_expiration: 7_200,
-    retry_count: 10
+    retry_count: 10,
   )
   def perform(_one, _two); end
 end

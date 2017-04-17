@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
         expires    = options[:argv][1].to_i
         stored_jid = redis.get(unique_key)
 
-        return stored_jid == job_id ? 1 : 0 if stored_jid
+        return (stored_jid == job_id) ? 1 : 0 if stored_jid
 
         return 0 unless redis.set(unique_key, job_id, nx: true, ex: expires)
         redis.hsetnx(SidekiqUniqueJobs::HASH_KEY, job_id, unique_key)

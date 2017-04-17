@@ -123,7 +123,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         Sidekiq::Client.push(
           'class' => MyUniqueJobWithFilterProc,
           'queue' => 'customqueue',
-          'args' => [1, type: 'value', some: 'not used']
+          'args' => [1, type: 'value', some: 'not used'],
         )
       end
       Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(1) }
@@ -140,7 +140,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         Sidekiq::Client.push(
           'class' => MyUniqueJobWithFilterMethod,
           'queue' => 'customqueue',
-          'args' => [1, type: 'value', some: 'not used']
+          'args' => [1, type: 'value', some: 'not used'],
         )
       end
       Sidekiq.redis { |c| expect(c.llen('queue:customqueue')).to eq(1) }
@@ -212,7 +212,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           Sidekiq::Client.push(
             'class' => CustomQueueJobWithFilterMethod,
             'queue' => 'customqueue',
-            'args' => [1, i]
+            'args' => [1, i],
           )
         end
 
@@ -228,7 +228,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           Sidekiq::Client.push(
             'class' => CustomQueueJobWithFilterProc,
             'queue' => 'customqueue',
-            'args' => [1, { random: rand, name: 'foobar' }]
+            'args' => [1, { random: rand, name: 'foobar' }],
           )
         end
 

@@ -13,7 +13,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
           .to receive(:warn)
           .with(
             'unique: true is no longer valid. Please set it to the type of lock required like: ' \
-            '`unique: :until_executed`'
+            '`unique: :until_executed`',
           )
 
         subject.unique_lock

@@ -227,7 +227,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
           expect(block.call)
             .to eq(
               "filter_by_symbol : UniqueJobWithNoUniqueArgsMethod does not respond to filtered_args). " \
-              "Returning (#{args})"
+              "Returning (#{args})",
             )
         end
 

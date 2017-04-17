@@ -107,7 +107,7 @@ module SidekiqUniqueJobs
     end
 
     def redis_keys_method
-      redis_version >= '2.8' ? SCAN_METHOD : KEYS_METHOD
+      (redis_version >= '2.8') ? SCAN_METHOD : KEYS_METHOD
     end
 
     def logger

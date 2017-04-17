@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts::AcquireLock do
           redis_pool,
           key,
           myjid,
-          max_lock
+          max_lock,
         )
       end
 

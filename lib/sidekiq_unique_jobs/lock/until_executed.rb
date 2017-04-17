@@ -44,7 +44,7 @@ module SidekiqUniqueJobs
           redis_pool,
           unique_key,
           item[JID_KEY],
-          max_lock_time
+          max_lock_time,
         )
       end
       # rubocop:enable MethodLength

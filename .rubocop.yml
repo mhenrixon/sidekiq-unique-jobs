@@ -68,6 +68,15 @@ Style/SymbolArray:
   Enabled: true
   EnforcedStyle: brackets
 
+Style/TernaryParentheses:
+  Enabled: true
+  EnforcedStyle: require_parentheses_when_complex
+  AllowSafeAssignment: true
+
+Style/TrailingCommaInArguments:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
 Style/TrailingCommaInLiteral:
   Enabled: true
   EnforcedStyleForMultiline: comma
