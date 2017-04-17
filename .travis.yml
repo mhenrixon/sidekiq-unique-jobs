@@ -14,7 +14,6 @@ script:
 rvm:
   - 2.4.1
   - 2.3.2
-  - 2.2.5
   - jruby-9.1.8.0
 env: STYLE=false
 gemfile:

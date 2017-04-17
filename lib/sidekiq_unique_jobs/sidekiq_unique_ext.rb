@@ -14,47 +14,24 @@ module Sidekiq
       end
 
       def delete_ext
-        unlock(item) if delete_orig
+        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
       end
 
       private
 
       def remove_job_ext
         remove_job_orig do |message|
-          unlock(Sidekiq.load_json(message))
+          SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(message))
           yield message
         end
       end
     end
 
-    include UniqueExtension if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('3.1')
+    include UniqueExtension
   end
 
   class ScheduledSet
-    # rubocop:disable Style/ClassAndModuleCamelCase
-    module UniqueExtension3_0
-      def self.included(base)
-        base.class_eval do
-          include SidekiqUniqueJobs::Unlockable
-          alias_method :delete_orig, :delete
-          alias_method :delete, :delete_ext
-        end
-      end
-
-      def delete_ext(score, jid = nil)
-        item = find_job(jid)
-        unlock(item) if delete_orig(score, jid)
-      end
-
-      def remove_job_ext
-        remove_job_orig do |message|
-          unlock(Sidekiq.load_json(message))
-          yield message
-        end
-      end
-    end
-
-    module UniqueExtension3_5
+    module UniqueExtension
       def self.included(base)
         base.class_eval do
           include SidekiqUniqueJobs::Unlockable
@@ -64,21 +41,17 @@ module Sidekiq
       end
 
       def delete_ext
-        unlock(item) if delete_orig
+        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
       end
 
       def remove_job_ext
         remove_job_orig do |message|
-          unlock(Sidekiq.load_json(message))
+          SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(message))
           yield message
         end
       end
     end
-    sidekiq_version = Gem::Version.new(Sidekiq::VERSION)
-    include UniqueExtension3_5 if sidekiq_version >= Gem::Version.new('3.5')
-    include UniqueExtension3_0 if sidekiq_version >= Gem::Version.new('3.0') &&
-                                  sidekiq_version < Gem::Version.new('3.5')
-    # rubocop:enable Style/ClassAndModuleCamelCase
+    include UniqueExtension
   end
 
   class Job
@@ -92,7 +65,7 @@ module Sidekiq
       end
 
       def delete_ext
-        unlock(item)
+        SidekiqUniqueJobs::Unlockable.unlock(item)
         delete_orig
       end
     end
@@ -142,7 +115,7 @@ module Sidekiq
       end
 
       def delete_by_value_ext(name, value)
-        unlock(JSON.parse(value)) if delete_by_value_orig(name, value)
+        SidekiqUniqueJobs::Unlockable.unlock(JSON.parse(value)) if delete_by_value_orig(name, value)
       end
     end
 
