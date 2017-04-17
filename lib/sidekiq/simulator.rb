@@ -38,19 +38,11 @@ module Sidekiq
     end
 
     def terminate_launcher
-      if launcher.respond_to?(:alive?)
-        launcher.terminate # Better to be fast than graceful for our purposes
-      else
-        launcher.stop # New sidekiq works better
-      end
+      launcher.stop
     end
 
     def alive?
-      if launcher.respond_to?(:alive?)
-        launcher.alive?
-      else
-        launcher.manager.workers.any?
-      end
+      launcher.manager.workers.any?
     end
 
     def stopped?
