@@ -34,18 +34,17 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
           call_count = 0
           allow(described_class).to receive(:internal_call).with(script_name, nil, options) do
             call_count += 1
-            if call_count.odd?
-              raise(Redis::CommandError, error_message)
-            else
-              1
-            end
+            (call_count == 1) ? raise(Redis::CommandError, error_message) : 1
           end
         end
 
         specify do
           expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
           expect(described_class).to receive(:internal_call).with(script_name, nil, options).once
-          expect { subject }.to raise_error(SidekiqUniqueJobs::ScriptError, "Problem compiling #{script_name}. Invalid LUA syntax?")
+          expect { subject }.to raise_error(
+            SidekiqUniqueJobs::ScriptError,
+            "Problem compiling #{script_name}. Invalid LUA syntax?",
+          )
         end
 
         context 'when error message is No matching script' do
