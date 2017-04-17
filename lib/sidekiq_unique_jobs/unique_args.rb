@@ -44,9 +44,7 @@ module SidekiqUniqueJobs
       hash = @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY)
 
       if unique_on_all_queues?
-        logger.debug do
-          "uniqueness specified across all queues (deleting queue: #{@item[QUEUE_KEY]} from hash)"
-        end
+        logger.debug { "#{__method__} uniqueness specified across all queues (deleting queue: #{@item[QUEUE_KEY]} from hash)" }
         hash.delete(QUEUE_KEY)
       end
       hash
@@ -78,7 +76,7 @@ module SidekiqUniqueJobs
       if @worker_class.respond_to?(:get_sidekiq_options)
         true
       else
-        logger.debug { "#{@worker_class} does not respond to :get_sidekiq_options" }
+        logger.debug { "#{__method__} #{@worker_class} does not respond to :get_sidekiq_options" }
         nil
       end
     end
@@ -96,14 +94,14 @@ module SidekiqUniqueJobs
       when Symbol
         filter_by_symbol(json_args)
       else
-        logger.debug { 'arguments not filtered (the combined arguments count towards uniqueness)' }
+        logger.debug { "#{__method__} arguments not filtered (using all arguments for uniqueness)" }
         json_args
       end
     end
 
     def filter_by_proc(args)
       if unique_args_method.nil?
-        warn { "#{__method__} : Proc was nil, returning args as is #{args} -> #{filter_args}" }
+        logger.warn { "#{__method__} : unique_args_method is nil. Returning (#{args})" }
         return args
       end
       filter_args = unique_args_method.call(args)
@@ -114,8 +112,7 @@ module SidekiqUniqueJobs
     def filter_by_symbol(args)
       unless @worker_class.respond_to?(unique_args_method)
         logger.warn do
-          "#{__method__} : #{unique_args_method}) not defined in #{@worker_class} " \
-               "returning #{args} unchanged"
+          "#{__method__} : #{@worker_class} does not respond to #{unique_args_method}). Returning (#{args})"
         end
         return args
       end
@@ -123,6 +120,10 @@ module SidekiqUniqueJobs
       filter_args = @worker_class.send(unique_args_method, args)
       logger.debug { "#{__method__} : #{unique_args_method}(#{args}) => #{filter_args}" }
       filter_args
+    rescue ArgumentError => ex
+      logger.fatal "#{__method__} : #{@worker_class}'s #{unique_args_method} needs at least one argument"
+      logger.fatal ex
+      args
     end
 
     def unique_args_method

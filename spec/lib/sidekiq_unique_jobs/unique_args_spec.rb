@@ -3,7 +3,6 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:item) { { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue', 'args' => [[1, 2]] } }
   subject { described_class.new(item) }
-
   describe '#unique_digest' do
     context 'when args are empty' do
       let(:item) { { 'class' => 'WithoutArgumentJob', 'args' => [] } }
@@ -114,34 +113,120 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
   describe '#filter_by_proc' do
     let(:filter) { ->(args) { args[1]['test'] } }
+    let(:args) { [1, 'test' => 'it'] }
+    let(:unique_args) { described_class.new(item) }
+
+    subject { unique_args.filter_by_proc(args) }
+
     context 'without any default worker options configured' do
       before do
-        allow(subject).to receive(:unique_args_method).and_return(filter)
+        allow(unique_args).to receive(:unique_args_method).and_return(filter)
       end
 
       it 'returns the value of theoptions hash ' do
-        expect(subject.filter_by_proc([1, 'test' => 'it'])).to eq('it')
+        expect(subject).to eq('it')
+      end
+    end
+
+    context 'when #unique_args_method is nil' do
+      before do
+        allow(unique_args).to receive(:unique_args_method).and_return(nil)
+      end
+
+      it 'returns the value of theoptions hash ' do
+        expect(SidekiqUniqueJobs.logger).to receive(:warn) do |&block|
+          expect(block.call).to eq('filter_by_proc : unique_args_method is nil. Returning ([1, {"test"=>"it"}])')
+        end
+        expect(subject).to eq(args)
       end
     end
 
     with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]['test'] }) do
       it 'returns the value of the provided options' do
-        expect(subject.filter_by_proc([1, 'test' => 'it'])).to eq('it')
+        expect(subject).to eq('it')
       end
     end
   end
 
   describe '#filter_by_symbol' do
-    let(:item) do
-      { 'class' => 'UniqueJobWithFilterMethod',
-        'queue' => 'myqueue',
-        'args' => [[1, 2]] }
-    end
-    subject { described_class.new(item) }
+    let(:unique_args) { described_class.new(item) }
 
-    it 'returns the value of the provided class method' do
-      expect(subject.filter_by_symbol(['name', 2, 'whatever' => nil, 'type' => 'test']))
-        .to eq(%w[name test])
+    context 'when filter is a working symbol' do
+      let(:item) do
+        { 'class' => 'UniqueJobWithFilterMethod',
+          'queue' => 'myqueue',
+          'args' => [[1, 2]] }
+      end
+
+      let(:args) { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      subject { unique_args.filter_by_symbol(args) }
+
+      it 'returns the value of the provided class method' do
+        expected = %w[name test]
+        expect(unique_args.logger).to receive(:debug) do |&block|
+          expect(block.call).to eq("filter_by_symbol : filtered_args(#{args}) => #{expected}")
+        end
+        expect(subject).to eq(expected)
+      end
+    end
+
+    context "when workers unique_args method doesn't take parameters"  do
+      let(:item) do
+        { 'class' => 'UniqueJobWithoutUniqueArgsParameter',
+          'queue' => 'myqueue',
+          'args' => [[1, 2]] }
+      end
+
+      let(:args) { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      subject { unique_args.filter_by_symbol(args) }
+
+      it 'returns the value of the provided class method' do
+        expect(unique_args.logger)
+          .to receive(:fatal)
+          .with('filter_by_symbol : UniqueJobWithoutUniqueArgsParameter\'s unique_args needs at least one argument')
+        expect(unique_args.logger).to receive(:fatal).with a_kind_of(ArgumentError)
+
+        expect(subject).to eq(args)
+      end
+    end
+
+    context "when @worker_class does not respond_to unique_args_method"  do
+      let(:item) do
+        { 'class' => 'UniqueJobWithNoUniqueArgsMethod',
+          'queue' => 'myqueue',
+          'args' => [[1, 2]] }
+      end
+
+      let(:args) { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      subject { unique_args.filter_by_symbol(args) }
+
+      it 'returns the value of the provided class method' do
+        expect(unique_args.logger).to receive(:warn) do |&block|
+          expect(block.call)
+            .to eq("filter_by_symbol : UniqueJobWithNoUniqueArgsMethod does not respond to filtered_args). Returning (#{args})")
+        end
+
+        expect(subject).to eq(args)
+      end
+    end
+
+    context "when workers unique_args method returns nil"  do
+      let(:item) do
+        { 'class' => 'UniqueJobWithNilUniqueArgs',
+          'queue' => 'myqueue',
+          'args' => [[1, 2]] }
+      end
+
+      let(:args) { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      subject { unique_args.filter_by_symbol(args) }
+
+      it 'returns the value of the provided class method' do
+        expect(unique_args.logger).to receive(:debug) do |&block|
+          expect(block.call).to eq("filter_by_symbol : unique_args(#{args}) => ")
+        end
+
+        expect(subject).to eq(nil)
+      end
     end
   end
 end

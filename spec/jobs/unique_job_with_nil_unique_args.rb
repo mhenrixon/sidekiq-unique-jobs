@@ -1,0 +1,16 @@
+class UniqueJobWithNilUniqueArgs
+  include Sidekiq::Worker
+  sidekiq_options queue: :customqueue,
+                  retry: true,
+                  backtrace: true,
+                  unique: :until_executed,
+                  unique_args: :unique_args
+
+  def perform(*)
+    # NO-OP
+  end
+
+  def self.unique_args(args)
+    nil
+  end
+end
