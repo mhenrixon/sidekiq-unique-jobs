@@ -51,6 +51,9 @@ Style/FileName:
   Enabled: true
   Exclude:
     - 'lib/sidekiq-unique-jobs.rb'
+    - '**/Gemfile'
+    - '**/Appraisals'
+    - '**/*.gemspec'
 
 Style/GlobalVars:
   Enabled: true
