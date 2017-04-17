@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   module Util
-    SCAN_PATTERN ||= '*'.freeze
+    SCAN_PATTERN ||= '*'
     DEFAULT_COUNT ||= 1_000
-    KEYS_METHOD ||= 'keys'.freeze
-    SCAN_METHOD ||= 'scan'.freeze
+    KEYS_METHOD ||= 'keys'
+    SCAN_METHOD ||= 'scan'
 
     module_function
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UniqueOnAllQueuesJob
   include Sidekiq::Worker
   sidekiq_options queue: :working, retry: 1, backtrace: 10,

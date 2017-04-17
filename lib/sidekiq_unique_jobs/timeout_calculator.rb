@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   class TimeoutCalculator
     def self.for_item(item)

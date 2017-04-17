@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SimpleWorker
   include Sidekiq::Worker
   sidekiq_options unique: :until_executed,

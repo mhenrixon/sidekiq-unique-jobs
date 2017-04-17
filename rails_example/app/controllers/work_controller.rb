@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkController < ApplicationController
   def duplicate_simple
     4.times { SimpleWorker.perform_async(unique_argument) }

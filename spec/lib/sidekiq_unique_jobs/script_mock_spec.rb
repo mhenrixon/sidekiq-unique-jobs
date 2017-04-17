@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 begin
@@ -8,10 +10,10 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
-  MD5_DIGEST ||= 'unique'.freeze
-  UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
-  JID ||= 'fuckit'.freeze
-  ANOTHER_JID ||= 'anotherjid'.freeze
+  MD5_DIGEST ||= 'unique'
+  UNIQUE_KEY ||= 'uniquejobs:unique'
+  JID ||= 'fuckit'
+  ANOTHER_JID ||= 'anotherjid'
 
   before do
     SidekiqUniqueJobs.configure do |config|

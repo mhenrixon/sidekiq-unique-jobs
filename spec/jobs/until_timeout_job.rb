@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UntilTimeoutJob
   include Sidekiq::Worker
   sidekiq_options unique: :until_timeout,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'sidekiq_unique_jobs/normalizer'
 
@@ -5,7 +7,7 @@ module SidekiqUniqueJobs
   # This class exists to be testable and the entire api should be considered private
   # rubocop:disable ClassLength
   class UniqueArgs
-    CLASS_NAME = 'SidekiqUniqueJobs::UniqueArgs'.freeze
+    CLASS_NAME = 'SidekiqUniqueJobs::UniqueArgs'
     extend Forwardable
     include Normalizer
 

@@ -14,7 +14,7 @@ ITERATIONS ||= 10_000
 Benchmark.ips do |x|
   x.config(time: 5, warmup: 2)
   x.report('new_shit') do |_times|
-    SidekiqUniqueJobs::Scripts.call(:acquire_lock, nil, keys: [SecureRandom.hex], argv: [SecureRandom.hex])
+    SidekiqUniqueJobs::Scripts::AcquireLock.execute(nil, SecureRandom.hex, SecureRandom.hex)
   end
   x.compare!
 end

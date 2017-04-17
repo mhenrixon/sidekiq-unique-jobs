@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Guest
-  GUEST_NAME = 'Guest Visitor'.freeze
-  GUEST_EMAIL = 'unknown@domain.com'.freeze
+  GUEST_NAME = 'Guest Visitor'
+  GUEST_EMAIL = 'unknown@domain.com'
 
   def name
     GUEST_NAME

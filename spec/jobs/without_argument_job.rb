@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WithoutArgumentJob
   include Sidekiq::Worker
   sidekiq_options unique: :until_executed,

@@ -42,7 +42,7 @@ Style/ConstantName:
   Enabled: true
 
 Style/FrozenStringLiteralComment:
-  Enabled: false
+  Enabled: true
 
 Style/Documentation:
   Enabled: false

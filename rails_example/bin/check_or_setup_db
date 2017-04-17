@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # This script is used in the development environment with Docker to check if the
 # app database exists, and runs the database setup if it doesn't, as it is the

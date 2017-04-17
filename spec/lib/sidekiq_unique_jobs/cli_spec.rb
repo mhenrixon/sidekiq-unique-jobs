@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'thor/runner'
 
@@ -5,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
   describe '#help' do
     let(:output) { capture(:stdout) { described_class.start(%w[help]) } }
     let(:banner) do
-      <<~EOS.freeze
+      <<~EOS
         Commands:
           jobs  console         # drop into a console with easy access to helper methods
           jobs  del PATTERN     # deletes unique keys from redis by pattern
@@ -22,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
     describe '#help del' do
       let(:output) { capture(:stdout) { described_class.start(%w[help del]) } }
       let(:banner) do
-        <<~EOS.freeze
+        <<~EOS
           Usage:
             jobs  del PATTERN
 
@@ -44,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
       let(:output) { capture(:stdout) { described_class.start(%w[help expire]) } }
 
       let(:banner) do
-        <<~EOS.freeze
+        <<~EOS
           Usage:
             jobs  expire
 
@@ -60,7 +62,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
     describe '#help keys' do
       let(:output) { capture(:stdout) { described_class.start(%w[help keys]) } }
       let(:banner) do
-        <<~EOS.freeze
+        <<~EOS
           Usage:
             jobs  keys PATTERN
 

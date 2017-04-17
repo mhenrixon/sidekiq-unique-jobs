@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WhileExecutingJob
   include Sidekiq::Worker
   sidekiq_options queue: :working, retry: 1, backtrace: 10, unique: :while_executing

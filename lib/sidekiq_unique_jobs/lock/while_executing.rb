@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   module Lock
     class WhileExecuting

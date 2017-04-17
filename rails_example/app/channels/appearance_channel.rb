@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppearanceChannel < ApplicationCable::Channel
   def subscribed
     current_user.appear

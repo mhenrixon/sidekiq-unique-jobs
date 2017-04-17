@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SlowUntilExecutingWorker
   include Sidekiq::Worker
   sidekiq_options unique: :until_executing,

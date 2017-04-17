@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   module Lock
     class UntilExecuted
-      OK ||= 'OK'.freeze
+      OK ||= 'OK'
 
       include SidekiqUniqueJobs::Unlockable
 

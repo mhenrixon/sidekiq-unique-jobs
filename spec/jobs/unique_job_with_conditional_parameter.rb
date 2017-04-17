@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UniqueJobWithoutUniqueArgsParameter
   include Sidekiq::Worker
   sidekiq_options queue: :customqueue,

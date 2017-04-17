@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LongRunningJob
   include Sidekiq::Worker
   sidekiq_options queue: :customqueue, retry: true, unique: :until_and_while_executing,

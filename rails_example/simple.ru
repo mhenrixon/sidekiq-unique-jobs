@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Easiest way to run Sidekiq::Web.
 # Run with "bundle exec rackup simple.ru"
 

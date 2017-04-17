@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.0'
   require 'simplecov'
@@ -24,8 +26,8 @@ SidekiqUniqueJobs.logger.level = "Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.up
 
 require 'sidekiq/redis_connection'
 
-REDIS_URL ||= ENV['REDIS_URL'] || 'redis://localhost/15'.freeze
-REDIS_NAMESPACE ||= 'unique-test'.freeze
+REDIS_URL ||= ENV['REDIS_URL'] || 'redis://localhost/15'
+REDIS_NAMESPACE ||= 'unique-test'
 REDIS_OPTIONS ||= { url: REDIS_URL } # rubocop:disable MutableConstant
 REDIS_OPTIONS[:namespace] = REDIS_NAMESPACE if defined?(Redis::Namespace)
 REDIS ||= Sidekiq::RedisConnection.create(REDIS_OPTIONS)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.configure do |config|
   config.before(:each) do |example|
     SidekiqUniqueJobs.configure do |c|

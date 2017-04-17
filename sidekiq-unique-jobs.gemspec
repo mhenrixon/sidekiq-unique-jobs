@@ -1,4 +1,4 @@
-# rubocop:disable Style/FileName
+# frozen_string_literal: true
 
 require File.expand_path('../lib/sidekiq_unique_jobs/version', __FILE__)
 

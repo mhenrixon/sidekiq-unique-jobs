@@ -1,4 +1,4 @@
-# rubocop:disable Style/FileName
+# frozen_string_literal: true
 
 appraise 'sidekiq-develop' do
   gem 'sidekiq', github: 'mperham/sidekiq'

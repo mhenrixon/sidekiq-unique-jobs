@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.configure do |config|
   config.before(:each) do |example|
     ruby_ver = example.metadata[:ruby_ver]

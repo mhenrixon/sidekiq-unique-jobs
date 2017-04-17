@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 begin
   require 'active_support/core_ext/hash/keys'
   require 'active_support/core_ext/hash/deep_merge'

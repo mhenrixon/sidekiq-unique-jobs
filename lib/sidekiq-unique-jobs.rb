@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml' if RUBY_VERSION.include?('2.0.0')
 require 'forwardable'
 require 'sidekiq_unique_jobs/version'
@@ -66,7 +68,7 @@ module SidekiqUniqueJobs
   end
 
   def redis_version
-    @redis_version ||= connection { |c| c.info('server'.freeze)['redis_version'.freeze] }
+    @redis_version ||= connection { |c| c.info('server')['redis_version'] }
   end
 
   def connection(redis_pool = nil)

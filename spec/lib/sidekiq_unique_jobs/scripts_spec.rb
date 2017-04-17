@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Scripts do
-  MD5_DIGEST ||= 'unique'.freeze
-  UNIQUE_KEY ||= 'uniquejobs:unique'.freeze
-  JID ||= 'fuckit'.freeze
-  ANOTHER_JID ||= 'anotherjid'.freeze
+  MD5_DIGEST ||= 'unique'
+  UNIQUE_KEY ||= 'uniquejobs:unique'
+  JID ||= 'fuckit'
+  ANOTHER_JID ||= 'anotherjid'
 
   context 'class methods' do
     subject { SidekiqUniqueJobs::Scripts }

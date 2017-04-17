@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   module OptionsWithFallback
     def self.included(base)

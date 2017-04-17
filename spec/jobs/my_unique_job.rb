@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MyUniqueJob
   include Sidekiq::Worker
   sidekiq_options(

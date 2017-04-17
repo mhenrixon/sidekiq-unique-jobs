@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CustomQueueJobWithFilterProc < CustomQueueJob
   # slightly contrived example of munging args to the
   # worker and removing a random bit.
