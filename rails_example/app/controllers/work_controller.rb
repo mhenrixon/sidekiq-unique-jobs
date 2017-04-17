@@ -23,6 +23,12 @@ class WorkController < ApplicationController
     redirect_to '/sidekiq'
   end
 
+  def duplicate_with_args
+    4.times { WithoutArgsWorker.perform_async 1 }
+
+    redirect_to '/sidekiq'
+  end
+
   def unique_argument
     params[:id]
   end

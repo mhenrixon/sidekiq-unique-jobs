@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   get 'work/duplicate_simple' => 'work#duplicate_simple'
   get 'work/duplicate_nested' => 'work#duplicate_nested'
   get 'work/duplicate_without_args' => 'work#duplicate_without_args'
+  get 'work/duplicate_with_args' => 'work#duplicate_with_args'
 end

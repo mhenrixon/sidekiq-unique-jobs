@@ -10,7 +10,7 @@ class WithoutArgsWorker
     sleep 2
   end
 
-  def self.custom_args(args)
+  def self.custom_args
     puts "testing"
   end
 end
