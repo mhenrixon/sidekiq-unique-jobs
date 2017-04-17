@@ -6,7 +6,7 @@ class UniqueJobWithoutUniqueArgsParameter
                   unique: :until_executed,
                   unique_args: :unique_args
 
-  def perform(optional = true)
+  def perform(conditional = nil)
     # NO-OP
   end
 

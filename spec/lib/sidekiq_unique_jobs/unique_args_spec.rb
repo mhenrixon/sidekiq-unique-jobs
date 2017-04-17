@@ -170,6 +170,28 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
     end
 
+    context "when worker takes conditional parameters"  do
+      let(:item) do
+        { 'class' => 'UniqueJobWithoutUniqueArgsParameter',
+          'queue' => 'myqueue',
+          'args' => [1] }
+      end
+      let(:args) { [1] }
+
+      subject { unique_args.filter_by_symbol(args) }
+
+      it 'returns the value of the provided class method' do
+        expect(subject).to eq(args)
+      end
+
+      context 'when provided nil' do
+        let(:args) { [] }
+        it 'returns the value of the provided class method' do
+          expect(subject).to eq(args)
+        end
+      end
+    end
+
     context "when workers unique_args method doesn't take parameters"  do
       let(:item) do
         { 'class' => 'UniqueJobWithoutUniqueArgsParameter',
