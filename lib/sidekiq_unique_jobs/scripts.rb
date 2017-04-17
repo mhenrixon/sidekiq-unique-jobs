@@ -22,22 +22,25 @@ module SidekiqUniqueJobs
     extend SingleForwardable
     def_delegators :SidekiqUniqueJobs, :connection, :logger
 
-    def call(file_name, redis_pool, options = {}) # rubocop:disable MethodLength
+    def call(file_name, redis_pool, options = {})
+      internal_call(file_name, redis_pool, options)
+    rescue Redis::CommandError => ex
+      handle_error(ex, file_name, redis_pool, options)
+    end
+
+    def internal_call(file_name, redis_pool, options = {})
       connection(redis_pool) do |redis|
-        if SCRIPT_SHAS[file_name].nil?
-          SCRIPT_SHAS[file_name] = redis.script(:load, script_source(file_name))
-        end
+        SCRIPT_SHAS[file_name] = redis.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
         redis.evalsha(SCRIPT_SHAS[file_name], options)
       end
-    rescue Redis::CommandError => ex
+    end
+
+    def handle_error(ex, file_name, redis_pool, options = {})
       if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
         SCRIPT_SHAS.delete(file_name)
         call(file_name, redis_pool, options)
-        raise
       else
-        raise ScriptError,
-              "#{file_name}.lua\n\n#{ex.message}\n\n#{script_source(file_name)}" \
-              "#{ex.backtrace.join("\n")}"
+        raise ScriptError, "Problem compiling #{file_name}. Invalid LUA syntax?"
       end
     end
 

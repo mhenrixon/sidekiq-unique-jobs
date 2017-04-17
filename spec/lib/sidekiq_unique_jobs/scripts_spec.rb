@@ -18,49 +18,44 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
       its(:logger) { is_expected.to eq(Sidekiq.logger) }
     end
 
-    def lock_for(seconds = 1, jid = JID, key = UNIQUE_KEY)
-      subject.call(:acquire_lock, nil, keys: [key], argv: [jid, seconds])
-    end
+    describe '.call' do
+      let(:jid) { 'abcefab' }
+      let(:unique_key) { 'uniquejobs:abcefab' }
+      let(:max_lock_time) { 1 }
+      let(:options) { { keys: [unique_key], argv: [jid, max_lock_time] } }
+      let(:scriptsha) { 'abcdefab' }
+      let(:script_name) { :acquire_lock }
+      let(:error_message) { 'Some interesting error' }
 
-    def unlock(key = UNIQUE_KEY, jid = JID)
-      subject.call(:release_lock, nil, keys: [key], argv: [jid])
-    end
+      subject { described_class.call(script_name, nil, options) }
 
-    describe '.acquire_lock' do
-      context 'when job is unique' do
-        specify { expect(lock_for).to eq(1) }
-        specify do
-          expect(lock_for(2)).to eq(1)
-          expect(SidekiqUniqueJobs)
-            .to have_key(UNIQUE_KEY)
-            .for_seconds(1)
-            .with_value(JID)
-          sleep 2
-          expect(lock_for).to eq(1)
+      context 'when redis.evalsha raises Redis::CommandError' do
+        before do
+          call_count = 0
+          allow(described_class).to receive(:internal_call).with(script_name, nil, options) do
+            call_count += 1
+            if call_count.odd?
+              raise(Redis::CommandError, error_message)
+            else
+              1
+            end
+          end
         end
 
-        context 'when job is locked' do
-          before  { expect(lock_for(10)).to eq(1) }
-          specify { expect(lock_for(5, 'anotherjid')).to eq(0) }
-        end
-      end
-    end
-
-    describe '.release_lock' do
-      context 'when job is locked by another jid' do
-        before  { expect(lock_for(10, 'anotherjid')).to eq(1) }
-        specify { expect(unlock).to eq(0) }
-        after { unlock(UNIQUE_KEY, ANOTHER_JID) }
-      end
-
-      context 'when job is not locked at all' do
-        specify { expect(unlock).to eq(-1) }
-      end
-
-      context 'when job is locked by the same jid' do
         specify do
-          expect(lock_for(10)).to eq(1)
-          expect(unlock).to eq(1)
+          expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
+          expect(described_class).to receive(:internal_call).with(script_name, nil, options).once
+          expect { subject }.to raise_error(SidekiqUniqueJobs::ScriptError, "Problem compiling #{script_name}. Invalid LUA syntax?")
+        end
+
+        context 'when error message is No matching script' do
+          let(:error_message) { 'NOSCRIPT No matching script. Please use EVAL.' }
+
+          specify do
+            expect(described_class::SCRIPT_SHAS).to receive(:delete).with(script_name)
+            expect(described_class).to receive(:internal_call).with(script_name, nil, options).twice
+            expect { subject }.not_to raise_error
+          end
         end
       end
     end
