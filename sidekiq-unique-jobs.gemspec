@@ -2,27 +2,31 @@
 
 require File.expand_path('../lib/sidekiq_unique_jobs/version', __FILE__)
 
-Gem::Specification.new do |gem|
-  gem.authors       = ['Mikael Henriksson']
-  gem.email         = ['mikael@zoolutions.se']
-  gem.description   = gem.summary = 'The unique jobs that were removed from sidekiq'
-  gem.homepage      = 'https://github.com/mhenrixon/sidekiq-unique-jobs'
-  gem.license       = 'WTFPL-2.0'
+Gem::Specification.new do |spec|
+  spec.name          = 'sidekiq-unique-jobs'
+  spec.version       = SidekiqUniqueJobs::VERSION
+  spec.authors       = ['Mikael Henriksson']
+  spec.email         = ['mikael@zoolutions.se']
 
-  gem.executables   = %w[jobs]
-  gem.files         = `git ls-files`.split("\n")
-  gem.test_files    = `git ls-files -- test/*`.split("\n")
-  gem.name          = 'sidekiq-unique-jobs'
-  gem.require_paths = ['lib']
-  gem.post_install_message = 'WARNING: VERSION 4.0.0 HAS BREAKING CHANGES! Please see Readme for info'
-  gem.version = SidekiqUniqueJobs::VERSION
-  gem.add_dependency 'sidekiq', '>= 4.0'
-  gem.add_dependency 'thor', '>= 0'
-  gem.add_development_dependency 'rspec', '~> 3.1'
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'timecop'
-  gem.add_development_dependency 'yard'
-  gem.add_development_dependency 'gem-release'
-  gem.add_development_dependency 'aruba'
-  gem.add_development_dependency 'codeclimate-test-reporter', '~> 1.0.0'
+  spec.summary       = 'Uniqueness for Sidekiq Jobs'
+  spec.description   = 'Handles various types of unique jobs for Sidekiq'
+  spec.homepage      = 'https://github.com/mhenrixon/sidekiq-unique-jobs'
+  spec.license       = 'MIT'
+
+  spec.bindir        = "bin"
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) == 'jobs' }
+  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+    f.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
+  end
+
+  spec.require_paths = ["lib"]
+  spec.add_dependency 'sidekiq', '>= 4.0.0', '<= 6.0.0'
+  spec.add_dependency 'thor', '~> 0'
+
+  spec.add_development_dependency 'rspec', '~> 3.1'
+  spec.add_development_dependency '~> 12.0', '~> 12.0', '>= 12.0.0'
+  spec.add_development_dependency 'timecop', '~> 0.8.1'
+  spec.add_development_dependency 'yard', '~> 0.9.8'
+  spec.add_development_dependency 'gem-release', '~> 0.7.4'
+  spec.add_development_dependency 'codeclimate-test-reporter', '~> 1.0', '>= 1.0.8'
 end
