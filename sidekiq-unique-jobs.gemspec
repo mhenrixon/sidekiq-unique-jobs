@@ -14,18 +14,18 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.bindir        = "bin"
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) == 'jobs' }
+  spec.executables   = %w[jobs]
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
   end
 
   spec.require_paths = ["lib"]
-  spec.add_dependency 'sidekiq', '>= 4.0.0', '<= 6.0.0'
+  spec.add_dependency 'sidekiq', '>= 4.0', '<= 6.0'
   spec.add_dependency 'thor', '~> 0'
 
   spec.add_development_dependency 'rspec', '~> 3.1'
-  spec.add_development_dependency '~> 12.0', '~> 12.0', '>= 12.0.0'
-  spec.add_development_dependency 'timecop', '~> 0.8.1'
+  spec.add_development_dependency 'rake', '~> 12.0', '~> 0'
+  spec.add_development_dependency 'timecop', '~> 0.8'
   spec.add_development_dependency 'yard', '~> 0.9.8'
   spec.add_development_dependency 'gem-release', '~> 0.7.4'
   spec.add_development_dependency 'codeclimate-test-reporter', '~> 1.0', '>= 1.0.8'

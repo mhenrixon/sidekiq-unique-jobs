@@ -1,3 +1,6 @@
+## v5.0.4
+- Fixes a problem with installing the gem
+
 ## v5.0.3
 - Removes test files and appraisals and such from the released gem version to speed up gem installs 
 
