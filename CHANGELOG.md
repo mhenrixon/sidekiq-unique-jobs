@@ -1,3 +1,6 @@
+## v5.0.3
+- Removes test files and appraisals and such from the released gem version to speed up gem installs 
+
 ## v5.0.2
 - Added more helpful debug, warning and error messages for failures to collect unique arghuments
 
