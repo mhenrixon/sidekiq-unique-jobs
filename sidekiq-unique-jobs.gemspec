@@ -13,13 +13,13 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/mhenrixon/sidekiq-unique-jobs'
   spec.license       = 'MIT'
 
-  spec.bindir        = "bin"
+  spec.bindir        = 'bin'
   spec.executables   = %w[jobs]
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
   end
 
-  spec.require_paths = ["lib"]
+  spec.require_paths = ['lib']
   spec.add_dependency 'sidekiq', '>= 4.0', '<= 6.0'
   spec.add_dependency 'thor', '~> 0'
 
