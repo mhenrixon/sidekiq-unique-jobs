@@ -17,5 +17,6 @@ module SidekiqUniqueJobs
   UNIQUE_PREFIX_KEY ||= 'unique_prefix'
   UNIQUE_DIGEST_KEY ||= 'unique_digest'
   UNIQUE_ON_ALL_QUEUES_KEY ||= 'unique_on_all_queues'
+  UNIQUE_ACROSS_WORKERS_KEY ||= 'unique_across_workers'
   UNIQUE_ARGS_ENABLED_KEY ||= 'unique_args_enabled'
 end

@@ -250,6 +250,30 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           end
         end
       end
+
+      describe 'when unique_on_all_queues is set' do
+        it 'does not push duplicate messages for other workers' do
+          item_one = {
+            'queue' => 'customqueue1',
+            'class' => UniqueAcrossWorkersJob,
+            'unique_across_workers' => true,
+            'args' => [1, 2],
+          }
+
+          item_two = {
+            'queue' => 'customqueue1',
+            'class' => MyUniqueJob,
+            'unique_across_workers' => true,
+            'args' => [1, 2],
+          }
+
+          Sidekiq::Client.push(item_one)
+          Sidekiq::Client.push(item_two)
+          Sidekiq.redis do |conn|
+            expect(conn.llen('queue:customqueue1')).to eq(1)
+          end
+        end
+      end
     end
 
     # TODO: If anyone know of a better way to check that the expiration for scheduled

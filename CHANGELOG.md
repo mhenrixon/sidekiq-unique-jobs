@@ -1,3 +1,6 @@
+## v5.0.6
+- Allow across worker uniquenes: See https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_acrosss_workers_job.rb for information
+
 ## v5.0.5
 - Use a class level mutex for `while_executing`
 

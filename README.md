@@ -102,8 +102,10 @@ That means it locks for any job with the same arguments to be persisted into red
 
 ### Uniqueness Scope
 
+
 - Queue specific locks
-- Across all queues.
+- Across all queues - [spec/jobs/unique_on_all_queues_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_on_all_queues_job.rb)
+- Across all workers - [spec/jobs/unique_across_workers_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_across_workers_job.rb)
 - Timed / Scheduled jobs
 
 ## Usage
@@ -180,7 +182,7 @@ end
 The previous problems with unique args being string in server and symbol in client is no longer a problem because the `UniqueArgs` class accounts for this and converts everything to json now. If you find an edge case please provide and example so that we can add coverage and fix it.
 
 
-It is also quite possible to ensure different types of unique args based on context. I can't vouch for the below example but see https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203 for the discussion.
+It is also quite possible to ensure different types of unique args based on context. I can't vouch for the below example but see [#203](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203) for the discussion.
 
 ```ruby
 class UniqueJobWithFilterMethod

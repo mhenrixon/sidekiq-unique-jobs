@@ -18,9 +18,9 @@ module SidekiqUniqueJobs
       new(item).unique_digest
     end
 
-    def initialize(job)
+    def initialize(item)
       Sidekiq::Logging.with_context(CLASS_NAME) do
-        @item = job
+        @item = item
         @worker_class            ||= worker_class_constantize(@item[CLASS_KEY])
         @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
         @item[UNIQUE_ARGS_KEY]     = unique_args(@item[ARGS_KEY])
@@ -43,15 +43,16 @@ module SidekiqUniqueJobs
     end
 
     def digestable_hash
-      hash = @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY)
-
-      if unique_on_all_queues?
-        logger.debug do
-          "#{__method__} uniqueness specified across all queues (deleting queue: #{@item[QUEUE_KEY]} from hash)"
+      @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY).tap do |hash|
+        if unique_on_all_queues?
+          logger.debug { "#{__method__} deleting queue: #{@item[QUEUE_KEY]}" }
+          hash.delete(QUEUE_KEY)
         end
-        hash.delete(QUEUE_KEY)
+        if unique_across_workers?
+          logger.debug { "#{__method__} deleting class: #{@item[CLASS_KEY]}" }
+          hash.delete(CLASS_KEY)
+        end
       end
-      hash
     end
 
     def unique_args(args)
@@ -69,6 +70,11 @@ module SidekiqUniqueJobs
     def unique_on_all_queues?
       return unless sidekiq_worker_class?
       @item[UNIQUE_ON_ALL_QUEUES_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ON_ALL_QUEUES_KEY]
+    end
+
+    def unique_across_workers?
+      return unless sidekiq_worker_class?
+      @item[UNIQUE_ACROSS_WORKERS_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ACROSS_WORKERS_KEY]
     end
 
     def unique_args_enabled?

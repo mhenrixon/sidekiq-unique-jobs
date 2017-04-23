@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Util do
-  let(:job) do
+  let(:item) do
     {
       'class' => 'MyUniqueJob',
       'args' => [[1, 2]],
@@ -17,7 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Util do
       'created_at' => 1_492_341_790.358217,
     }
   end
-  let(:unique_args) { SidekiqUniqueJobs::UniqueArgs.new(job) }
+  let(:unique_args) { SidekiqUniqueJobs::UniqueArgs.new(item) }
   let(:unique_key) { unique_args.unique_digest }
   let(:jid) { 'e3049b05b0bd9c809182bbe0' }
 
