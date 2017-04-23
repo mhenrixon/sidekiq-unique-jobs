@@ -179,6 +179,27 @@ end
 
 The previous problems with unique args being string in server and symbol in client is no longer a problem because the `UniqueArgs` class accounts for this and converts everything to json now. If you find an edge case please provide and example so that we can add coverage and fix it.
 
+
+It is also quite possible to ensure different types of unique args based on context. I can't vouch for the below example but see https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203 for the discussion.
+
+```ruby
+class UniqueJobWithFilterMethod
+  include Sidekiq::Worker
+  sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args
+
+  def self.unique_args(args)
+    if Sidekiq::ProcessSet.new.size > 1
+      # sidekiq runtime; uniqueness for the object (first arg)
+      args.first
+    else
+      # queuing from the app; uniqueness for all params
+      args
+    end
+  end
+end
+```
+
+
 ### After Unlock Callback
 
 If you are using :after_yield as your unlock ordering, Unique Job offers a callback to perform some work after the block is yielded.
