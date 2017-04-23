@@ -1,3 +1,6 @@
+## v5.0.5
+- Use a class level mutex for `while_executing`
+
 ## v5.0.4
 - Fixes a problem with installing the gem
 
