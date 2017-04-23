@@ -135,7 +135,7 @@ The method or the proc can return a modified version of args without the transie
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: :until_and_while_execution,
+  sidekiq_options unique: :until_and_while_executing,
                   unique_args: :unique_args
 
   def self.unique_args(name, id, options)
