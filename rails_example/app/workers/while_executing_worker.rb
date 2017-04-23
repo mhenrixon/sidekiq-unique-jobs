@@ -5,9 +5,9 @@ class WhileExecutingWorker
 
   sidekiq_options unique: :while_executing
 
-  def perform(_one, _two)
+  def perform(one, two)
     Sidekiq::Logging.with_context(self.class.name) do
-      logger.debug { "#{__method__}(#{some_args})" }
+      logger.info { "#{__method__}(#{one}, #{two})" }
     end
     sleep 10
   end

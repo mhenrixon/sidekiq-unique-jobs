@@ -31,6 +31,11 @@ class WorkController < ApplicationController
     redirect_to '/sidekiq'
   end
 
+  def duplicate_while_executing
+    4.times { WhileExecutingWorker.perform_async(1, 2) }
+    redirect_to '/sidekiq'
+  end
+
   def unique_argument
     params[:id]
   end
