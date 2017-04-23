@@ -31,9 +31,9 @@ module SidekiqUniqueJobs
     end
 
     def internal_call(file_name, redis_pool, options = {})
-      connection(redis_pool) do |redis|
-        SCRIPT_SHAS[file_name] = redis.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
-        redis.evalsha(SCRIPT_SHAS[file_name], options)
+      connection(redis_pool) do |conn|
+        SCRIPT_SHAS[file_name] = conn.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
+        conn.evalsha(SCRIPT_SHAS[file_name], options)
       end
     end
 

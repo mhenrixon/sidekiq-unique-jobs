@@ -15,46 +15,46 @@ module SidekiqUniqueJobs
     end
 
     def acquire_lock(redis_pool, options = {})
-      connection(redis_pool) do |redis|
+      connection(redis_pool) do |conn|
         unique_key = options[:keys][0]
         job_id     = options[:argv][0]
         expires    = options[:argv][1].to_i
-        stored_jid = redis.get(unique_key)
+        stored_jid = conn.get(unique_key)
 
         return (stored_jid == job_id) ? 1 : 0 if stored_jid
 
-        return 0 unless redis.set(unique_key, job_id, nx: true, ex: expires)
-        redis.hsetnx(SidekiqUniqueJobs::HASH_KEY, job_id, unique_key)
+        return 0 unless conn.set(unique_key, job_id, nx: true, ex: expires)
+        conn.hsetnx(SidekiqUniqueJobs::HASH_KEY, job_id, unique_key)
         return 1
       end
     end
 
     def release_lock(redis_pool, options = {})
-      connection(redis_pool) do |redis|
+      connection(redis_pool) do |conn|
         unique_key = options[:keys][0]
         job_id     = options[:argv][0]
-        stored_jid = redis.get(unique_key)
+        stored_jid = conn.get(unique_key)
 
         return -1 unless stored_jid
         return 0 unless stored_jid == job_id || stored_jid == '2'
 
-        redis.del(unique_key)
-        redis.hdel(SidekiqUniqueJobs::HASH_KEY, job_id)
+        conn.del(unique_key)
+        conn.hdel(SidekiqUniqueJobs::HASH_KEY, job_id)
         return 1
       end
     end
 
     def synchronize(redis_pool, options = {})
-      connection(redis_pool) do |redis|
+      connection(redis_pool) do |conn|
         unique_key = options[:keys][0]
         time       = options[:argv][0].to_i
         expires    = options[:argv][1].to_f
 
-        return 1 if redis.set(unique_key, time + expires, nx: true, ex: expires)
+        return 1 if conn.set(unique_key, time + expires, nx: true, ex: expires)
 
-        stored_time = redis.get(unique_key)
+        stored_time = conn.get(unique_key)
         if stored_time && stored_time < time
-          if redis.set(unique_key, time + expires, xx: true, ex: expires)
+          if conn.set(unique_key, time + expires, xx: true, ex: expires)
             return 1
           end
         end

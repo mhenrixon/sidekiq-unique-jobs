@@ -39,13 +39,13 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
       it 'does not unlock mutexes it does not own' do
         jid = UntilExecutedJob.perform_async
         item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
-        Sidekiq.redis do |c|
-          c.set(digest_for(item), 'NOT_DELETED')
+        Sidekiq.redis do |conn|
+          conn.set(digest_for(item), 'NOT_DELETED')
         end
 
         subject.call(UntilExecutedJob.new, item, QUEUE) do
-          Sidekiq.redis do |c|
-            expect(c.get(digest_for(item))).to eq('NOT_DELETED')
+          Sidekiq.redis do |conn|
+            expect(conn.get(digest_for(item))).to eq('NOT_DELETED')
           end
         end
       end
@@ -57,8 +57,8 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
         item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
         worker = UntilExecutingJob.new
         subject.call(worker, item, QUEUE) do
-          Sidekiq.redis do |c|
-            expect(c.ttl(digest_for(item))).to eq(-2) # key does not exist
+          Sidekiq.redis do |conn|
+            expect(conn.ttl(digest_for(item))).to eq(-2) # key does not exist
           end
         end
       end
@@ -70,8 +70,8 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
         item = Sidekiq::Queue.new(QUEUE).find_job(jid).item
 
         subject.call('UntilExecutedJob', item, QUEUE) do
-          Sidekiq.redis do |c|
-            expect(c.get(digest_for(item))).to eq jid
+          Sidekiq.redis do |conn|
+            expect(conn.get(digest_for(item))).to eq jid
           end
         end
       end

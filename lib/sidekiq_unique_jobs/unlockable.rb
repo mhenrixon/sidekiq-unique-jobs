@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
     end
 
     def ensure_job_id_removed(jid)
-      Sidekiq.redis { |redis| redis.hdel(SidekiqUniqueJobs::HASH_KEY, jid) }
+      Sidekiq.redis { |conn| conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid) }
     end
 
     def logger

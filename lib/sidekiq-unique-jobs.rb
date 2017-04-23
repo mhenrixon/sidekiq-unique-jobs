@@ -51,7 +51,7 @@ module SidekiqUniqueJobs
   end
 
   def namespace
-    @namespace ||= connection { |c| c.respond_to?(:namespace) ? c.namespace : nil }
+    @namespace ||= connection { |conn| conn.respond_to?(:namespace) ? conn.namespace : nil }
   end
 
   # Attempt to constantize a string worker_class argument, always
@@ -68,7 +68,7 @@ module SidekiqUniqueJobs
   end
 
   def redis_version
-    @redis_version ||= connection { |c| c.info('server')['redis_version'] }
+    @redis_version ||= connection { |conn| conn.info('server')['redis_version'] }
   end
 
   def connection(redis_pool = nil)

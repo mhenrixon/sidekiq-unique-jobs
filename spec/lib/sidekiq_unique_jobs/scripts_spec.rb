@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts do
 
       subject { described_class.call(script_name, nil, options) }
 
-      context 'when redis.evalsha raises Redis::CommandError' do
+      context 'when conn.evalsha raises Redis::CommandError' do
         before do
           call_count = 0
           allow(described_class).to receive(:internal_call).with(script_name, nil, options) do

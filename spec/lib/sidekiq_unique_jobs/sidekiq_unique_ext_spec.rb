@@ -36,8 +36,8 @@ RSpec.describe 'Sidekiq::Api' do
       expect(schedule_job).to be_truthy
 
       Sidekiq::ScheduledSet.new.each(&:delete)
-      Sidekiq.redis do |c|
-        expect(c.exists(unique_key)).to be_falsy
+      Sidekiq.redis do |conn|
+        expect(conn.exists(unique_key)).to be_falsy
       end
 
       expect(schedule_job).to be_truthy
@@ -48,8 +48,8 @@ RSpec.describe 'Sidekiq::Api' do
     it 'deletes uniqueness lock on delete' do
       jid = perform_async
       Sidekiq::Queue.new('testqueue').find_job(jid).delete
-      Sidekiq.redis do |c|
-        expect(c.exists(unique_key)).to be_falsy
+      Sidekiq.redis do |conn|
+        expect(conn.exists(unique_key)).to be_falsy
       end
       expect(true).to be_truthy
     end
@@ -59,8 +59,8 @@ RSpec.describe 'Sidekiq::Api' do
     it 'deletes uniqueness locks on clear' do
       perform_async
       Sidekiq::Queue.new('testqueue').clear
-      Sidekiq.redis do |c|
-        expect(c.exists(unique_key)).to be_falsy
+      Sidekiq.redis do |conn|
+        expect(conn.exists(unique_key)).to be_falsy
       end
     end
   end
@@ -69,8 +69,8 @@ RSpec.describe 'Sidekiq::Api' do
     it 'deletes uniqueness locks on clear' do
       schedule_job
       Sidekiq::JobSet.new('schedule').clear
-      Sidekiq.redis do |c|
-        expect(c.exists(unique_key)).to be_falsy
+      Sidekiq.redis do |conn|
+        expect(conn.exists(unique_key)).to be_falsy
       end
     end
   end

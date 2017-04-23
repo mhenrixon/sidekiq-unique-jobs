@@ -14,8 +14,8 @@ module SidekiqUniqueJobs
     end
 
     def unique_key(jid)
-      connection do |redis|
-        redis.hget(SidekiqUniqueJobs::HASH_KEY, jid)
+      connection do |conn|
+        conn.hget(SidekiqUniqueJobs::HASH_KEY, jid)
       end
     end
 

@@ -29,14 +29,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       expect(callback).to receive(:call)
 
       subject.execute(callback) do
-        Sidekiq.redis do |c|
-          expect(c.keys('uniquejobs:*').size).to eq(1)
+        Sidekiq.redis do |conn|
+          expect(conn.keys('uniquejobs:*').size).to eq(1)
         end
 
         10.times { Sidekiq::Client.push(item) }
 
-        Sidekiq.redis do |c|
-          expect(c.keys('uniquejobs:*').size).to eq(2)
+        Sidekiq.redis do |conn|
+          expect(conn.keys('uniquejobs:*').size).to eq(2)
         end
       end
     end

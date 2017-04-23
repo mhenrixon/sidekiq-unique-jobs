@@ -25,8 +25,8 @@ describe WorkController, 'with real redis' do
     context 'when test mode is disabled', sidekiq: :disable do
       specify do
         get :duplicate_simple, params: { id: 41 }
-        Sidekiq.redis do |c|
-          expect(c.llen('queue:default')).to eq(1)
+        Sidekiq.redis do |conn|
+          expect(conn.llen('queue:default')).to eq(1)
         end
       end
     end
@@ -34,8 +34,8 @@ describe WorkController, 'with real redis' do
     context 'when test mode is inline', sidekiq: :inline do
       specify do
         get :duplicate_simple, params: { id: 42 }
-        Sidekiq.redis do |c|
-          expect(c.llen('queue:default')).to eq(0)
+        Sidekiq.redis do |conn|
+          expect(conn.llen('queue:default')).to eq(0)
         end
       end
     end
@@ -60,8 +60,8 @@ describe WorkController, 'with real redis' do
       specify do
         get :duplicate_nested, params: { id: 35 }
 
-        Sidekiq.redis do |c|
-          expect(c.llen('queue:default')).to eq(4)
+        Sidekiq.redis do |conn|
+          expect(conn.llen('queue:default')).to eq(4)
         end
       end
     end
@@ -70,8 +70,8 @@ describe WorkController, 'with real redis' do
       specify do
         get :duplicate_nested, params: { id: 36 }
 
-        Sidekiq.redis do |c|
-          expect(c.llen('queue:default')).to eq(0)
+        Sidekiq.redis do |conn|
+          expect(conn.llen('queue:default')).to eq(0)
         end
       end
     end

@@ -3,10 +3,10 @@
 require 'rspec/expectations'
 
 RSpec::Matchers.define :have_key do |unique_key|
-  Sidekiq.redis do |redis|
+  Sidekiq.redis do |conn|
     match do |_unique_jobs|
-      @value = redis.get(unique_key)
-      @ttl = redis.ttl(unique_key)
+      @value = conn.get(unique_key)
+      @ttl = conn.ttl(unique_key)
 
       @value && with_value && for_seconds
     end

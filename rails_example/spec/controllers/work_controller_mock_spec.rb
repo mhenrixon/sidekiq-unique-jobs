@@ -32,9 +32,9 @@ describe WorkController, 'with mock redis' do
     context 'when test mode is disabled', sidekiq: :disable do
       specify do
         get :duplicate_simple, params: { id: 11 }
-        Sidekiq.redis do |c|
-          expect(c.keys.size).to eq(2)
-          expect(c.llen('queue:default')).to eq(0)
+        Sidekiq.redis do |conn|
+          expect(conn.keys.size).to eq(2)
+          expect(conn.llen('queue:default')).to eq(0)
         end
       end
     end
@@ -42,10 +42,10 @@ describe WorkController, 'with mock redis' do
     context 'when test mode is inline', sidekiq: :inline do
       specify do
         get :duplicate_simple, params: { id: 12 }
-        Sidekiq.redis do |c|
+        Sidekiq.redis do |conn|
           expect(c).to be_a(MockRedis)
-          expect(c.keys.size).to eq(0)
-          expect(c.llen('queue:default')).to eq(0)
+          expect(conn.keys.size).to eq(0)
+          expect(conn.llen('queue:default')).to eq(0)
         end
       end
     end
@@ -70,10 +70,10 @@ describe WorkController, 'with mock redis' do
       specify do
         get :duplicate_nested, params: { id: 21 }
 
-        Sidekiq.redis do |c|
+        Sidekiq.redis do |conn|
           expect(c).to be_a(MockRedis)
-          expect(c.keys.size).to eq(0)
-          expect(c.llen('queue:default')).to eq(0)
+          expect(conn.keys.size).to eq(0)
+          expect(conn.llen('queue:default')).to eq(0)
         end
       end
     end
@@ -82,10 +82,10 @@ describe WorkController, 'with mock redis' do
       specify do
         get :duplicate_nested, params: { id: 22 }
 
-        Sidekiq.redis do |c|
+        Sidekiq.redis do |conn|
           expect(c).to be_a(MockRedis)
-          expect(c.keys.size).to eq(0)
-          expect(c.llen('queue:default')).to eq(0)
+          expect(conn.keys.size).to eq(0)
+          expect(conn.llen('queue:default')).to eq(0)
         end
       end
     end

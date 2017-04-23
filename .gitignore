@@ -14,3 +14,5 @@ tmp/
 rails_example/spec/examples.txt
 
 *.sublime-*
+
+/sidekiq/

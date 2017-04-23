@@ -2,8 +2,8 @@
 
 RSpec.configure do |config|
   config.before(:each) do |example|
-    SidekiqUniqueJobs.configure do |c|
-      c.redis_test_mode = :redis
+    SidekiqUniqueJobs.configure do |conn|
+      conn.redis_test_mode = :redis
     end
 
     if (sidekiq = example.metadata[:sidekiq])
