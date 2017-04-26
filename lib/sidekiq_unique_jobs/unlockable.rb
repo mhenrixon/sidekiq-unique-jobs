@@ -5,6 +5,7 @@ module SidekiqUniqueJobs
     module_function
 
     def unlock(item)
+      return unless item[UNIQUE_DIGEST_KEY]
       unlock_by_key(item[UNIQUE_DIGEST_KEY], item[JID_KEY])
     end
 
