@@ -1,3 +1,6 @@
+## v5.0.7
+- Fixes [#218](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/218)
+
 ## v5.0.6
 - Allow across worker uniquenes: See https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_acrosss_workers_job.rb for information
 
