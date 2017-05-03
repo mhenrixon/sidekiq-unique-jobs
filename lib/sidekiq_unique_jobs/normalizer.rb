@@ -5,7 +5,7 @@ require 'json'
 module SidekiqUniqueJobs
   module Normalizer
     def self.jsonify(args)
-      JSON.parse(args.to_json)
+      Sidekiq.load_json(Sidekiq.dump_json(args))
     end
   end
 end

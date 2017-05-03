@@ -117,7 +117,7 @@ module Sidekiq
       end
 
       def delete_by_value_ext(name, value)
-        SidekiqUniqueJobs::Unlockable.unlock(JSON.parse(value)) if delete_by_value_orig(name, value)
+        SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(value)) if delete_by_value_orig(name, value)
       end
     end
 
