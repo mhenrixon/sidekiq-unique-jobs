@@ -161,8 +161,8 @@ class UniqueJobWithFilterMethod
   sidekiq_options unique: :until_and_while_executing,
                   unique_args: :unique_args
 
-  def self.unique_args(name, id, options)
-    [ name, options[:type] ]
+  def self.unique_args(args)
+    [ args[0], args[2][:type] ]
   end
 
   ...
