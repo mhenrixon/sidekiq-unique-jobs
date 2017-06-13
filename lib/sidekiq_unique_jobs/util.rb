@@ -6,6 +6,7 @@ module SidekiqUniqueJobs
     DEFAULT_COUNT ||= 1_000
     KEYS_METHOD ||= 'keys'
     SCAN_METHOD ||= 'scan'
+    EXPIRE_BATCH_SIZE ||= 100
 
     module_function
 
@@ -44,8 +45,7 @@ module SidekiqUniqueJobs
       removed_keys = {}
       connection do |conn|
         cursor = '0'
-        batch_size = 100
-        cursor, jobs = conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, 'MATCH', '*', 'COUNT', batch_size])
+        cursor, jobs = conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, 'MATCH', '*', 'COUNT', EXPIRE_BATCH_SIZE])
         jobs.each do |job_array|
           jid, unique_key = job_array
           next if conn.get(unique_key)
