@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pry'
 
 module SidekiqUniqueJobs
   module Util
@@ -43,11 +44,17 @@ module SidekiqUniqueJobs
     def expire
       removed_keys = {}
       connection do |conn|
-        conn.hgetall(SidekiqUniqueJobs::HASH_KEY).each do |jid, unique_key|
+        cursor = '0'
+        batch_size = 100
+        cursor, jobs = conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, 'MATCH', '*', 'COUNT', batch_size])
+        jobs.each do |job_array|
+          jid, unique_key = job_array
           next if conn.get(unique_key)
           conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
           removed_keys[jid] = unique_key
         end
+
+        break if cursor == '0'
       end
       removed_keys
     end
