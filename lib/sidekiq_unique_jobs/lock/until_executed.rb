@@ -41,9 +41,11 @@ module SidekiqUniqueJobs
           raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
         end
 
+        puts "lock for #{unique_key}"
         result = Scripts.call(:acquire_lock, redis_pool,
                               keys: [unique_key],
                               argv: [item[JID_KEY], max_lock_time])
+        puts "<- lock for #{unique_key}"
         case result
         when 1
           logger.debug { "successfully locked #{unique_key} for #{max_lock_time} seconds" }

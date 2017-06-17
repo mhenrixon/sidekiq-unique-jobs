@@ -44,8 +44,8 @@ module SidekiqUniqueJobs
         worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
 
         if Sidekiq::Testing.inline?
-          _server.call(worker_class.new, item, queue, redis_pool) do
-            call_real(worker_class, item, queue, redis_pool) do
+          call_real(worker_class, item, queue, redis_pool) do
+            _server.call(worker_class.new, item, queue, redis_pool) do
               yield
             end
           end
