@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
   # failing back to the original argument.
   def worker_class_constantize(worker_class)
     return worker_class unless worker_class.is_a?(String)
-    worker_class.constantize
+    Object.const_get(worker_class)
   rescue NameError
     worker_class
   end
