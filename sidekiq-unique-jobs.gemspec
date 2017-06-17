@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.add_dependency 'sidekiq', '>= 4.0', '<= 6.0'
   spec.add_dependency 'thor', '~> 0'
+  spec.add_dependency 'activesupport'
 
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'rake', '~> 12.0'

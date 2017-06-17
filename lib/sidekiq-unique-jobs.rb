@@ -18,6 +18,7 @@ require 'sidekiq_unique_jobs/config'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
 require 'ostruct'
+require 'active_support/core_ext/string/inflections'
 
 module SidekiqUniqueJobs
   module_function
