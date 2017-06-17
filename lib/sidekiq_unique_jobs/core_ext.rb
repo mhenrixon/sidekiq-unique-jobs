@@ -14,7 +14,7 @@ rescue LoadError
 
     unless {}.respond_to?(:stringify_keys)
       def stringify_keys
-        transform_keys{ |key| key.to_s }
+        transform_keys(&:to_s)
       end
     end
 
@@ -27,7 +27,6 @@ rescue LoadError
         result
       end
     end
-
 
     unless {}.respond_to?(:slice!)
       def slice!(*keys)
