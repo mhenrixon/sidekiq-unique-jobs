@@ -24,7 +24,9 @@ module SidekiqUniqueJobs
         return (stored_jid == job_id) ? 1 : 0 if stored_jid
 
         return 0 unless conn.set(unique_key, job_id, nx: true, ex: expires)
+        puts "+. acquire_lock start with #{options}"
         conn.hsetnx(SidekiqUniqueJobs::HASH_KEY, job_id, unique_key)
+        puts "=. acquire_lock done #{options}"
         return 1
       end
     end
@@ -38,8 +40,10 @@ module SidekiqUniqueJobs
         return -1 unless stored_jid
         return 0 unless stored_jid == job_id || stored_jid == '2'
 
+        puts "-. release_lock start with #{options}"
         conn.del(unique_key)
         conn.hdel(SidekiqUniqueJobs::HASH_KEY, job_id)
+        puts "=. release_lock done #{options}"
         return 1
       end
     end
