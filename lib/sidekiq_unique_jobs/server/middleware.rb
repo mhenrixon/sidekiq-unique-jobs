@@ -10,7 +10,6 @@ module SidekiqUniqueJobs
       include OptionsWithFallback
 
       def call(worker, item, queue, redis_pool = nil, &blk)
-        puts "* Server processing: #{worker.class}"
         @worker = worker
         @redis_pool = redis_pool
         @queue = queue

@@ -12,7 +12,6 @@ module SidekiqUniqueJobs
       include OptionsWithFallback
 
       def call(worker_class, item, queue, redis_pool = nil)
-        puts "* Client processing: #{worker_class}"
         @worker_class = worker_class_constantize(worker_class)
         @item = item
         @queue = queue
