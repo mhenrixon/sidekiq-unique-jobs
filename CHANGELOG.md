@@ -1,3 +1,10 @@
+## v5.0.9
+- [#229](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/#229) Use HSCAN for expiring keys
+- [#232](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/#232) Fix testing helper
+
+## v5.0.8
+- Fixes [#220](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/220)
+
 ## v5.0.7
 - Fixes [#218](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/218)
 
