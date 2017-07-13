@@ -78,7 +78,7 @@ RSpec.configure do |config| # rubocop:disable BlockLength
   end
 end
 
-Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].sort.each { |f| require f }
 
 def capture(stream)
   begin
