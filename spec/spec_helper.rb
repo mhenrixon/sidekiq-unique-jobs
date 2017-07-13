@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.0'
   require 'simplecov'
@@ -36,7 +35,7 @@ Sidekiq.configure_client do |config|
   config.redis = REDIS_OPTIONS
 end
 
-Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].sort.each { |f| require f }
 
 RSpec.configure do |config| # rubocop:disable BlockLength
   config.expect_with :rspec do |expectations|
