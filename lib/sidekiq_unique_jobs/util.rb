@@ -45,15 +45,17 @@ module SidekiqUniqueJobs
       removed_keys = {}
       connection do |conn|
         cursor = '0'
-        cursor, jobs = conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, 'MATCH', '*', 'COUNT', EXPIRE_BATCH_SIZE])
-        jobs.each do |job_array|
-          jid, unique_key = job_array
-          next if conn.get(unique_key)
-          conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
-          removed_keys[jid] = unique_key
-        end
+        loop do
+          cursor, jobs = conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, 'MATCH', '*', 'COUNT', EXPIRE_BATCH_SIZE])
+          jobs.each do |job_array|
+            jid, unique_key = job_array
+            next if conn.get(unique_key)
+            conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
+            removed_keys[jid] = unique_key
+          end
 
-        break if cursor == '0'
+          break if cursor == '0'
+        end
       end
       removed_keys
     end
