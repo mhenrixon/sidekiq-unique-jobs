@@ -44,18 +44,18 @@ module SidekiqUniqueJobs
       console_class.start
     end
 
-    private
+    no_commands do
+      def logger
+        SidekiqUniqueJobs.logger
+      end
 
-    def logger
-      SidekiqUniqueJobs.logger
-    end
-
-    def console_class
-      require 'pry'
-      Pry
-    rescue LoadError
-      require 'irb'
-      IRB
+      def console_class
+        require 'pry'
+        Pry
+      rescue LoadError
+        require 'irb'
+        IRB
+      end
     end
   end
 end
