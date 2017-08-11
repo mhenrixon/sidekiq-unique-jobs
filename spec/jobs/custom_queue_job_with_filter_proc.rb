@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './custom_queue_job'
+
 class CustomQueueJobWithFilterProc < CustomQueueJob
   # slightly contrived example of munging args to the
   # worker and removing a random bit.
