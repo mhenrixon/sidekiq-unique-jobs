@@ -3,8 +3,6 @@
 module SidekiqUniqueJobs
   module Lock
     class WhileExecuting
-      MUTEX = Mutex.new
-
       def self.synchronize(item, redis_pool = nil)
         new(item, redis_pool).synchronize { yield }
       end
@@ -13,19 +11,19 @@ module SidekiqUniqueJobs
         @item = item
         @redis_pool = redis_pool
         @unique_digest = "#{create_digest}:run"
+        @mutex = Mutex.new
       end
 
       def synchronize
-        MUTEX.lock
-        sleep 0.1 until locked?
-
-        yield
+        @mutex.synchronize do
+          sleep 0.1 until locked?
+          yield
+        end
       rescue Sidekiq::Shutdown
         logger.fatal { "the unique_key: #{@unique_digest} needs to be unlocked manually" }
         raise
       ensure
         SidekiqUniqueJobs.connection(@redis_pool) { |conn| conn.del @unique_digest }
-        MUTEX.unlock
       end
 
       def locked?

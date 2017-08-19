@@ -1,3 +1,11 @@
+## v5.0.10
+
+- Cleans up test setup and make tests more readable
+- Allow raising all errors 
+- Log previously hidden errors
+- Revert the changes of v5.0.5 (8a4b7648b8b0ee5d7dc1f5f5a036f41d52ad9a42)
+- Allow name errors in unique args method to be raised
+
 ## v5.0.9
 - [#229](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/#229) Use HSCAN for expiring keys
 - [#232](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/#232) Fix testing helper
