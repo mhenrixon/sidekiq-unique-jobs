@@ -10,11 +10,6 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
-  MD5_DIGEST ||= 'unique'
-  UNIQUE_KEY ||= 'uniquejobs:unique'
-  JID ||= 'fuckit'
-  ANOTHER_JID ||= 'anotherjid'
-
   before do
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :mock
@@ -39,52 +34,76 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
     end
   end
 
-  subject { SidekiqUniqueJobs::Scripts }
-
-  def lock_for(seconds = 1, jid = JID, key = UNIQUE_KEY)
-    subject.call(:acquire_lock, nil, keys: [key], argv: [jid, seconds])
+  shared_context 'shared SciptMock setup' do
+    let(:redis_pool)  { nil }
+    let(:unique_key)  { 'uniquejobs:unique' }
+    let(:jid)         { 'fuckit' }
+    let(:another_jid) { 'anotherjid' }
+    let(:seconds)     { 1 }
   end
 
-  def unlock(key = UNIQUE_KEY, jid = JID)
-    subject.call(:release_lock, nil, keys: [key], argv: [jid])
+  def acquire_lock(custom_jid = nil)
+    described_class.acquire_lock(
+      redis_pool,
+      keys: [unique_key],
+      argv: [custom_jid || jid, seconds]
+    )
   end
 
   describe '.acquire_lock' do
+    subject { acquire_lock }
+
+    include_context 'shared SciptMock setup'
+
     context 'when job is unique' do
-      specify { expect(lock_for).to eq(1) }
-      specify do
-        expect(lock_for(1)).to eq(1)
+      it do
+        expect(acquire_lock).to eq(1)
         expect(SidekiqUniqueJobs)
-          .to have_key(UNIQUE_KEY)
+          .to have_key(unique_key)
           .for_seconds(1)
           .with_value('fuckit')
         sleep 1
-        expect(lock_for).to eq(1)
-      end
-
-      context 'when job is locked' do
-        before  { expect(lock_for(10)).to eq(1) }
-        specify { expect(lock_for(5, ANOTHER_JID)).to eq(0) }
+        expect(acquire_lock).to eq(1)
       end
     end
 
-    describe '.release_lock' do
-      context 'when job is locked by another jid' do
-        before  { expect(lock_for(10, ANOTHER_JID)).to eq(1) }
-        specify { expect(unlock).to eq(0) }
-        after { unlock(UNIQUE_KEY, ANOTHER_JID) }
-      end
+    context 'when job is not unique' do
+      let(:seconds) { 10 }
+      before { expect(acquire_lock(another_jid)).to eq(1) }
 
-      context 'when job is not locked at all' do
-        specify { expect(unlock).to eq(-1) }
-      end
+      it { is_expected.to eq(0) }
+    end
+  end
 
-      context 'when job is locked by the same jid' do
-        specify do
-          expect(lock_for(10)).to eq(1)
-          expect(unlock).to eq(1)
-        end
-      end
+  def release_lock(custom_jid = nil)
+    described_class.release_lock(
+      redis_pool,
+      keys: [unique_key],
+      argv: [custom_jid || jid, seconds]
+    )
+  end
+
+  describe '.release_lock' do
+    subject { release_lock }
+
+    include_context 'shared SciptMock setup'
+
+    context 'when job is locked by another jid' do
+      before { expect(acquire_lock(another_jid)).to eq(1) }
+      after { expect(release_lock(another_jid)).to eq(1) }
+
+      it { is_expected.to eq(0) }
+    end
+
+    context 'when job is not locked at all' do
+      specify { expect(release_lock).to eq(-1) }
+    end
+
+    context 'when job is locked by the same jid' do
+      let(:seconds) { 10 }
+      before { expect(acquire_lock).to eq(1) }
+
+      it { is_expected.to eq(1) }
     end
   end
 end

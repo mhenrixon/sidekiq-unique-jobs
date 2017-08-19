@@ -59,25 +59,26 @@ RSpec.describe SidekiqUniqueJobs::Util do
   end
 
   describe '.prefix' do
-    before do
-      allow(SidekiqUniqueJobs.config).to receive(:unique_prefix).and_return('test-uniqueness')
-    end
+    subject { described_class.send(:prefix, key) }
 
-    it 'returns a prefixed key' do
-      expect(described_class.prefix('key')).to eq('test-uniqueness:key')
+    let(:key) { 'key' }
+
+    context 'when prefix is configured' do
+      before { allow(SidekiqUniqueJobs.config).to receive(:unique_prefix).and_return('test-uniqueness') }
+
+      it { is_expected.to eq('test-uniqueness:key') }
+
+      context 'when key is already prefixed' do
+        let(:key) { 'test-uniqueness:key' }
+
+        it { is_expected.to eq('test-uniqueness:key') }
+      end
     end
 
     context 'when .unique_prefix is nil?' do
-      it 'does not prefix with unique_prefix' do
-        allow(SidekiqUniqueJobs.config).to receive(:unique_prefix).and_return(nil)
-        expect(described_class.prefix('key')).to eq('key')
-      end
-    end
+      before { allow(SidekiqUniqueJobs.config).to receive(:unique_prefix).and_return(nil) }
 
-    context 'when key is already prefixed' do
-      it 'does not add another prefix' do
-        expect(described_class.prefix('test-uniqueness:key')).to eq('test-uniqueness:key')
-      end
+      it { is_expected.to eq('key') }
     end
   end
 end

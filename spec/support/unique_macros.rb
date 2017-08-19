@@ -3,7 +3,6 @@
 module SidekiqUniqueJobs
   module RSpec
     module InstanceMethods
-      # enable versioning for specific blocks (at instance-level)
       def with_global_config(config)
         was_config = SidekiqUniqueJobs.config
         SidekiqUniqueJobs.configure(config)
@@ -27,6 +26,7 @@ module SidekiqUniqueJobs
         was_options = Sidekiq.default_worker_options
         Sidekiq.default_worker_options.clear
         Sidekiq.default_worker_options = options
+
         yield
       ensure
         Sidekiq.default_worker_options.clear
@@ -44,7 +44,6 @@ module SidekiqUniqueJobs
         end
       end
 
-      # enable versioning for specific blocks (at class-level)
       def with_global_config(config = {}, &block)
         context "with global configuration #{config}" do
           around(:each) do |ex|
@@ -54,7 +53,6 @@ module SidekiqUniqueJobs
         end
       end
 
-      # enable versioning for specific blocks (at class-level)
       def with_default_worker_options(config = {}, &block)
         context "with default sidekiq options #{config}" do
           around(:each) do |ex|

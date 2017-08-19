@@ -29,6 +29,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           end
 
           Sidekiq::Simulator.process_queue(:notify_worker) do
+            sleep 1
             Sidekiq.redis do |conn|
               wait(10).for { conn.llen('queue:notify_worker') }.to eq(0)
             end
@@ -48,6 +49,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           end
 
           Sidekiq::Simulator.process_queue(:not_default) do
+            sleep(1)
             Sidekiq.redis do |conn|
               expect(conn.llen('queue:default')).to eq(1)
               wait(10).for { conn.llen('queue:not_default') }.to eq(0)
@@ -60,6 +62,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
           end
 
           Sidekiq::Simulator.process_queue(:default) do
+            sleep(1)
             Sidekiq.redis do |conn|
               expect(conn.llen('queue:not_default')).to eq(0)
               wait(10).for { conn.llen('queue:default') }.to eq(0)
