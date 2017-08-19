@@ -176,9 +176,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
 
     specify do
       expect(Object).to receive(:include).with(SidekiqUniqueJobs::Util).and_return(true)
-      console = double(:console)
-      allow_any_instance_of(SidekiqUniqueJobs::Cli).to receive(:console_class).and_return(console)
-      allow(console).to receive(:start)
+      allow(Pry).to receive(:start).and_return(true)
       expect(output).to eq(expected)
     end
   end

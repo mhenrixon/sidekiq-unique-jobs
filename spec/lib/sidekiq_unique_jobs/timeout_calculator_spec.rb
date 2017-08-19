@@ -3,16 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
-  shared_context 'undefined worker class' do
-    subject { described_class.new('class' => 'test') }
-  end
-
-  shared_context 'item not scheduled' do
-    subject { described_class.new('class' => 'MyUniqueJob') }
-  end
+  let(:calculator)    { described_class.new('class' => worker_class, 'at' => schedule_time) }
+  let(:worker_class)  { 'MyUniqueJob' }
+  let(:schedule_time) { nil }
 
   describe 'public api' do
     subject { described_class.new(nil) }
+
     it { is_expected.to respond_to(:time_until_scheduled) }
     it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
     it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
@@ -28,45 +25,56 @@ RSpec.describe SidekiqUniqueJobs::TimeoutCalculator do
   end
 
   describe '#time_until_scheduled' do
-    it_behaves_like 'item not scheduled' do
-      its(:time_until_scheduled) { is_expected.to eq(0) }
+    subject { calculator.time_until_scheduled }
+
+    context 'when not scheduled' do
+      it { is_expected.to eq(0) }
     end
 
-    subject { described_class.new('class' => 'MyUniqueJob', 'at' => schedule_time) }
-    let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
-    let(:now_in_utc) { Time.now.utc.to_i }
+    context 'when scheduled' do
+      let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
+      let(:now_in_utc)    { Time.now.utc.to_i }
 
-    its(:time_until_scheduled) do
-      Timecop.travel(Time.at(now_in_utc)) do
-        is_expected.to be_within(1).of(schedule_time - now_in_utc)
+      it do
+        Timecop.travel(Time.at(now_in_utc)) do
+          is_expected.to be_within(1).of(schedule_time - now_in_utc)
+        end
       end
     end
   end
 
   describe '#worker_class_queue_lock_expiration' do
-    it_behaves_like 'undefined worker class' do
-      its(:worker_class_queue_lock_expiration) { is_expected.to eq(nil) }
-    end
+    subject { calculator.worker_class_queue_lock_expiration }
 
-    subject { described_class.new('class' => 'MyUniqueJob') }
-    its(:worker_class_queue_lock_expiration) { is_expected.to eq(7_200) }
+    it { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class_run_lock_expiration' do
-    it_behaves_like 'undefined worker class' do
-      its(:worker_class_run_lock_expiration) { is_expected.to eq(nil) }
-    end
+    subject { calculator.worker_class_run_lock_expiration }
+    let(:worker_class) { 'LongRunningJob' }
 
-    subject { described_class.new('class' => 'LongRunningJob') }
-    its(:worker_class_run_lock_expiration) { is_expected.to eq(7_200) }
+    it { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class' do
-    it_behaves_like 'undefined worker class' do
-      its(:worker_class) { is_expected.to eq('test') }
+    subject { calculator.worker_class }
+
+    let(:worker_class) { 'MyUniqueJob' }
+
+    it { is_expected.to eq(MyUniqueJob) }
+
+    context 'when worker class is a constant' do
+      let(:worker_class) { 'MissingWorker' }
+
+      it { is_expected.to eq('MissingWorker') }
     end
 
-    subject { described_class.new('class' => 'MyJob') }
-    its(:worker_class) { is_expected.to eq(MyJob) }
+    context 'when worker class is not a constant' do
+      let(:worker_class) { 'missing_worker' }
+
+      it do
+        expect { subject }.to raise_error(NameError, 'wrong constant name missing_worker')
+      end
+    end
   end
 end

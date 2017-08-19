@@ -9,7 +9,6 @@ module SidekiqUniqueJobs
   class UniqueArgs
     CLASS_NAME = 'SidekiqUniqueJobs::UniqueArgs'
     extend Forwardable
-    include Normalizer
 
     def_delegators :SidekiqUniqueJobs, :config, :worker_class_constantize
     def_delegators :Sidekiq, :logger
@@ -62,9 +61,9 @@ module SidekiqUniqueJobs
         logger.debug { "#{__method__} : unique arguments disabled" }
         args
       end
-    rescue NameError
-      # fallback to not filtering args when class can't be instantiated
-      return args
+    rescue NameError => ex
+      logger.error "#{__method__}(#{args}) : failed"
+      logger.error ex
     end
 
     def unique_on_all_queues?
@@ -114,6 +113,7 @@ module SidekiqUniqueJobs
         logger.warn { "#{__method__} : unique_args_method is nil. Returning (#{args})" }
         return args
       end
+
       filter_args = unique_args_method.call(args)
       logger.debug { "#{__method__} : #{args} -> #{filter_args}" }
       filter_args
