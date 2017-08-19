@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module Util
-    COUNT             ='COUNT'
+  module Util # rubocop:disable Metrics/ModuleLength
+    COUNT             = 'COUNT'
     DEFAULT_COUNT     = 1_000
     EXPIRE_BATCH_SIZE = 100
     MATCH             = 'MATCH'
@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
     SCAN_METHOD       = 'scan'
     SCAN_PATTERN      = '*'
 
-    extend self
+    extend self # rubocop:disable Style/ModuleFunction
 
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
       send("keys_by_#{redis_keys_method}", pattern, count)
@@ -43,27 +43,32 @@ module SidekiqUniqueJobs
       end
     end
 
-    def expire
+    def expire # rubocop:disable Metrics/MethodLength
       removed_keys = {}
       connection do |conn|
         cursor = '0'
-        cursor, jobs = conn.hscan(
-          SidekiqUniqueJobs::HASH_KEY,
-          [cursor, MATCH, SCAN_PATTERN, COUNT, EXPIRE_BATCH_SIZE]
-        )
-        jobs.each do |job_array|
-          jid, unique_key = job_array
-          next if conn.get(unique_key)
-          conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
-          removed_keys[jid] = unique_key
-        end
+        loop do
+          cursor, jobs = get_jobs(conn, cursor)
+          jobs.each do |job_array|
+            jid, unique_key = job_array
 
-        break if cursor == '0'
+            next if conn.get(unique_key)
+            conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
+            removed_keys[jid] = unique_key
+          end
+
+          break if cursor == '0'
+        end
       end
+
       removed_keys
     end
 
     private
+
+    def get_jobs(conn, cursor)
+      conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, MATCH, SCAN_PATTERN, COUNT, EXPIRE_BATCH_SIZE])
+    end
 
     def keys_by_scan(pattern, count)
       connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
