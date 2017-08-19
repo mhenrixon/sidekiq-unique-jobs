@@ -69,25 +69,22 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   describe '#digestable_hash' do
     subject { unique_args.digestable_hash }
 
+    let(:expected_hash) do
+      { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue', 'unique_args' => [[1, 2]] }
+    end
+
+    it { is_expected.to eq(expected_hash) }
+
     with_global_config(unique_args_enabled: true) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: true) do
-        it do
-          is_expected.to eq('class' => 'UntilExecutedJob',
-                            'unique_args' => [[1, 2]])
-        end
+        let(:expected_hash) { { 'class' => 'UntilExecutedJob', 'unique_args' => [[1, 2]] } }
+        it { is_expected.to eq(expected_hash) }
       end
 
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_across_workers: true) do
-        it do
-          is_expected.to eq('queue' => 'myqueue',
-                            'unique_args' => [[1, 2]])
-        end
-      end
+        let(:expected_hash) { { 'queue' => 'myqueue', 'unique_args' => [[1, 2]] } }
 
-      it do
-        is_expected.to eq('class' => 'UntilExecutedJob',
-                          'queue' => 'myqueue',
-                          'unique_args' => [[1, 2]])
+        it { is_expected.to eq(expected_hash) }
       end
     end
   end
@@ -102,6 +99,17 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
       with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
         it { is_expected.to be_a(Proc) }
+
+        context 'when raise_unique_args_errors is true' do
+          before { SidekiqUniqueJobs.config.raise_unique_args_errors = true }
+          after { SidekiqUniqueJobs.config.raise_unique_args_errors = false }
+
+          it { expect { subject }.to raise_error(NoMethodError, "undefined method `[]' for nil:NilClass") }
+        end
+
+        context 'when raise_unique_args_errors is false' do
+          it { is_expected.to be_a(Proc) }
+        end
       end
     end
 

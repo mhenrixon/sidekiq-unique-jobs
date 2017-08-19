@@ -29,6 +29,7 @@ module SidekiqUniqueJobs
       default_run_lock_expiration: 60,
       default_lock: :while_executing,
       redis_test_mode: :redis, # :mock
+      raise_unique_args_errors: false,
     )
   end
 

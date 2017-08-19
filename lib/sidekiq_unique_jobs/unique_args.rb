@@ -62,8 +62,12 @@ module SidekiqUniqueJobs
         args
       end
     rescue NameError => ex
-      logger.error "#{__method__}(#{args}) : failed"
+      logger.error "#{__method__}(#{args}) : failed with (#{ex.message})"
       logger.error ex
+
+      raise if config.raise_unique_args_errors
+
+      args
     end
 
     def unique_on_all_queues?
