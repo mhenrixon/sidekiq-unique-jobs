@@ -46,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
     described_class.acquire_lock(
       redis_pool,
       keys: [unique_key],
-      argv: [custom_jid || jid, seconds]
+      argv: [custom_jid || jid, seconds],
     )
   end
 
@@ -79,7 +79,7 @@ RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
     described_class.release_lock(
       redis_pool,
       keys: [unique_key],
-      argv: [custom_jid || jid, seconds]
+      argv: [custom_jid || jid, seconds],
     )
   end
 
