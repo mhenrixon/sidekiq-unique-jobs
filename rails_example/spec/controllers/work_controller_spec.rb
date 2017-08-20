@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe WorkController, 'with real redis' do
+describe WorkController, 'with real redis', redis: :redis, redis_db: 1 do
   before(:each) do
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :redis
@@ -22,7 +22,7 @@ describe WorkController, 'with real redis' do
       end
     end
 
-    context 'when test mode is disabled', sidekiq: :disable do
+    context 'when test mode is disabled' do
       specify do
         get :duplicate_simple, params: { id: 41 }
         Sidekiq.redis do |conn|
@@ -56,7 +56,7 @@ describe WorkController, 'with real redis' do
       end
     end
 
-    context 'when test mode is disabled', sidekiq: :disable do
+    context 'when test mode is disabled' do
       specify do
         get :duplicate_nested, params: { id: 35 }
 

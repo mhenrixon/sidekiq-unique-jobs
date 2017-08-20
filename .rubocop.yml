@@ -47,6 +47,10 @@ Style/FrozenStringLiteralComment:
 Style/Documentation:
   Enabled: false
 
+Style/SignalException:
+  EnforcedStyle: only_fail
+  Enabled: false
+
 Style/FileName:
   Enabled: true
   Exclude:

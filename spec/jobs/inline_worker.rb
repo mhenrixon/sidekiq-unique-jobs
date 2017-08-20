@@ -2,9 +2,9 @@
 
 class InlineWorker
   include Sidekiq::Worker
-  sidekiq_options unique: :while_executing
+  sidekiq_options unique: :while_executing, lock_timeout: 5
 
-  def perform(x)
-    TestClass.run(x)
+  def perform(one)
+    TestClass.run(one)
   end
 end

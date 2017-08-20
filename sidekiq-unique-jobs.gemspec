@@ -23,10 +23,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sidekiq', '>= 4.0', '<= 6.0'
   spec.add_dependency 'thor', '~> 0'
 
+  spec.add_development_dependency 'bundler', '~> 1.5'
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'timecop', '~> 0.8'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'gem-release', '~> 0.7'
-  spec.add_development_dependency 'codeclimate-test-reporter', '~> 1.0', '>= 1.0.8'
+  spec.add_development_dependency 'awesome_print', '~> 1.8'
 end

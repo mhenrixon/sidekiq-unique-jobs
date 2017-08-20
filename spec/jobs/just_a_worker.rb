@@ -5,5 +5,7 @@ class JustAWorker
 
   sidekiq_options unique: :until_executed, queue: 'testqueue'
 
-  def perform; end
+  def perform(options = {})
+    options
+  end
 end

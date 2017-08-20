@@ -2,9 +2,13 @@
 
 module SidekiqUniqueJobs
   module OptionsWithFallback
-    def self.included(base)
-      base.send(:extend, SidekiqUniqueJobs::OptionsWithFallback::ClassMethods)
-    end
+    LOCKS = {
+      until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
+      until_executed: SidekiqUniqueJobs::Lock::UntilExecuted,
+      until_executing: SidekiqUniqueJobs::Lock::UntilExecuting,
+      until_timeout: SidekiqUniqueJobs::Lock::UntilTimeout,
+      while_executing: SidekiqUniqueJobs::Lock::WhileExecuting,
+    }.freeze
 
     def unique_enabled?
       options[UNIQUE_KEY] || item[UNIQUE_KEY]
@@ -23,7 +27,7 @@ module SidekiqUniqueJobs
     end
 
     def lock_class
-      lock_cache[unique_lock.to_sym] ||= Object.const_get("SidekiqUniqueJobs::Lock::#{unique_lock.to_s.classify}")
+      @lock_class ||= LOCKS[unique_lock.to_sym]
     end
 
     def unique_lock
@@ -46,29 +50,11 @@ module SidekiqUniqueJobs
       hash[key]
     end
 
-    def lock_cache
-      self.class.lock_cache
-    end
-
-    def lock_cache=(obj)
-      self.class.lock_cache = obj
-    end
-
     def options
       @options ||= worker_class.get_sidekiq_options if worker_class.respond_to?(:get_sidekiq_options)
       @options ||= Sidekiq.default_worker_options
       @options ||= {}
       @options &&= @options.stringify_keys
-    end
-
-    module ClassMethods
-      def lock_cache
-        @lock_cache ||= {}
-      end
-
-      def lock_cache=(obj)
-        @lock_cache = obj
-      end
     end
   end
 end

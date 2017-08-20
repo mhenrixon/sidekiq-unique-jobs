@@ -5,8 +5,9 @@ require 'rspec/expectations'
 RSpec::Matchers.define :have_key do |unique_key|
   Sidekiq.redis do |conn|
     match do |_unique_jobs|
-      @value = conn.get(unique_key)
-      @ttl = conn.ttl(unique_key)
+      @exists_key  = "#{unique_key}:EXISTS"
+      @value       = conn.get(@exists_key)
+      @ttl         = conn.ttl(@exists_key)
 
       @value && with_value && for_seconds
     end
@@ -22,9 +23,9 @@ RSpec::Matchers.define :have_key do |unique_key|
     end
 
     failure_message do |_actual|
-      msg = "expected Redis to have key #{unique_key}"
-      msg << " with value #{@expected_value} was (#{@value})" if @expected_value
-      msg << " with value #{@expected_ttl} was (#{@ttl})" if @expected_ttl
+      msg = "expected Redis to have key #{@exists_key}"
+      msg += " with value #{@expected_value} was (#{@value})" if @expected_value
+      msg += " with value #{@expected_ttl} was (#{@ttl})" if @expected_ttl
       msg
     end
   end
