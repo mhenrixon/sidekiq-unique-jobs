@@ -45,31 +45,27 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
   describe Sidekiq::Job::UniqueExtension do
     it 'deletes uniqueness lock on delete' do
       jid = JustAWorker.perform_async(roo: 'baf')
+      expect(SidekiqUniqueJobs::Util.keys).not_to match_array([])
       Sidekiq::Queue.new('testqueue').find_job(jid).delete
-      Sidekiq.redis do |conn|
-        expect(conn.keys).to match_array(%w[queues])
-      end
-      expect(true).to be_truthy
+      expect(SidekiqUniqueJobs::Util.keys).to match_array([])
     end
   end
 
   describe Sidekiq::Queue::UniqueExtension do
     it 'deletes uniqueness locks on clear' do
       JustAWorker.perform_async(oob: 'far')
+      expect(SidekiqUniqueJobs::Util.keys).not_to match_array([])
       Sidekiq::Queue.new('testqueue').clear
-      Sidekiq.redis do |conn|
-        expect(conn.keys).to match_array([])
-      end
+      expect(SidekiqUniqueJobs::Util.keys).to match_array([])
     end
   end
 
   describe Sidekiq::JobSet::UniqueExtension do
     it 'deletes uniqueness locks on clear' do
       JustAWorker.perform_in(60 * 60 * 3, roo: 'fab')
+      expect(SidekiqUniqueJobs::Util.keys).not_to match_array([])
       Sidekiq::JobSet.new('schedule').clear
-      Sidekiq.redis do |conn|
-        expect(conn.keys).to match_array([])
-      end
+      expect(SidekiqUniqueJobs::Util.keys).to match_array([])
     end
   end
 end
