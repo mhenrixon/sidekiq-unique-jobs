@@ -11,7 +11,6 @@ platforms :mri_24 do
   gem 'benchmark-ips',             require: false
   gem 'fasterer',                  require: false
   gem 'memory_profiler',           require: false
-  gem 'mock_redis',                require: false
   gem 'pry-byebug',                require: false
   gem 'rubocop',                   require: false
   gem 'simplecov-json',            require: false

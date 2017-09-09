@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
-if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.0'
+if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.1'
   require 'simplecov'
 
   begin
-    require 'byebug'
     require 'pry'
+    require 'byebug'
   rescue LoadError
     puts 'Pry unavailable'
   end
