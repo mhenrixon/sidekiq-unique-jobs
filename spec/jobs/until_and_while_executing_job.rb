@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class UntilAndWhileExecuting
+class UntilAndWhileExecutingJob
   include Sidekiq::Worker
 
   sidekiq_options queue: :working, unique: :until_and_while_executing
 
-  def perform; end
+  def perform(one)
+    [one]
+  end
 end

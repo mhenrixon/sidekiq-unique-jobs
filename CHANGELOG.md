@@ -1,3 +1,7 @@
+## v5.1.0
+
+- Refactoring the runtime locks (WhileExecuting)
+
 ## v5.0.10
 
 - Cleans up test setup and make tests more readable

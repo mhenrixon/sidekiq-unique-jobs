@@ -1,29 +1,31 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module Util # rubocop:disable Metrics/ModuleLength
+  module Util
     COUNT             = 'COUNT'
     DEFAULT_COUNT     = 1_000
     EXPIRE_BATCH_SIZE = 100
-    MATCH             = 'MATCH'
-    KEYS_METHOD       = 'keys'
-    SCAN_METHOD       = 'scan'
+    SCAN_METHOD       = 'SCAN'
     SCAN_PATTERN      = '*'
 
     extend self # rubocop:disable Style/ModuleFunction
 
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
-      send("keys_by_#{redis_keys_method}", pattern, count)
+      connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
-    def unique_key(jid)
-      connection do |conn|
-        conn.hget(SidekiqUniqueJobs::HASH_KEY, jid)
-      end
-    end
-
+    # Deletes unique keys from redis
+    #
+    #
+    # @param pattern [String] a pattern to scan for in redis
+    # @param count [Integer] the maximum number of keys to delete
+    # @param dry_run [Boolean] set to false to perform deletion, `true` or `false`
+    # @return [Boolean] report success
+    # @raise [SidekiqUniqueJobs::LockTimeout] when lock fails within configured timeout
     def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
+      pattern = "#{pattern}:*" unless pattern.end_with?(':*')
+
       logger.debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
       logger.debug { "#{keys.size} matching keys found in #{time} sec." }
@@ -37,46 +39,7 @@ module SidekiqUniqueJobs
       keys.size
     end
 
-    def unique_hash
-      connection do |conn|
-        conn.hgetall(SidekiqUniqueJobs::HASH_KEY)
-      end
-    end
-
-    def expire # rubocop:disable Metrics/MethodLength
-      removed_keys = {}
-      connection do |conn|
-        cursor = '0'
-        loop do
-          cursor, jobs = get_jobs(conn, cursor)
-          jobs.each do |job_array|
-            jid, unique_key = job_array
-
-            next if conn.get(unique_key)
-            conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid)
-            removed_keys[jid] = unique_key
-          end
-
-          break if cursor == '0'
-        end
-      end
-
-      removed_keys
-    end
-
     private
-
-    def get_jobs(conn, cursor)
-      conn.hscan(SidekiqUniqueJobs::HASH_KEY, [cursor, MATCH, SCAN_PATTERN, COUNT, EXPIRE_BATCH_SIZE])
-    end
-
-    def keys_by_scan(pattern, count)
-      connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
-    end
-
-    def keys_by_keys(pattern, _count)
-      connection { |conn| conn.keys(prefix(pattern)).to_a }
-    end
 
     def batch_delete(keys)
       connection do |conn|
@@ -120,14 +83,6 @@ module SidekiqUniqueJobs
 
     def connection(&block)
       SidekiqUniqueJobs.connection(&block)
-    end
-
-    def redis_version
-      SidekiqUniqueJobs.redis_version
-    end
-
-    def redis_keys_method
-      (redis_version >= '2.8') ? SCAN_METHOD : KEYS_METHOD
     end
 
     def logger

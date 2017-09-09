@@ -13,7 +13,5 @@ class AppearanceChannel < ApplicationCable::Channel
     current_user.appear on: data['appearing_on']
   end
 
-  def away
-    current_user.away
-  end
+  delegate :away, to: :current_user
 end

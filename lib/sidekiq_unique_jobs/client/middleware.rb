@@ -13,23 +13,22 @@ module SidekiqUniqueJobs
 
       def call(worker_class, item, queue, redis_pool = nil)
         @worker_class = worker_class_constantize(worker_class)
+        SidekiqUniqueJobs::UniqueArgs.digest(item)
         @item = item
         @queue = queue
         @redis_pool = redis_pool
-
-        yield if disabled_or_successfully_locked?
+        yield if successfully_locked?
       end
 
       private
 
       attr_reader :item, :worker_class, :redis_pool, :queue
 
-      def disabled_or_successfully_locked?
+      def successfully_locked?
         unique_disabled? || acquire_lock
       end
 
       def acquire_lock
-        return true unless lock.respond_to?(:lock)
         locked = lock.lock(:client)
         warn_about_duplicate(item) unless locked
         locked

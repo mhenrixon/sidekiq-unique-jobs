@@ -10,6 +10,7 @@ require 'rspec/rails'
 require 'pry-byebug'
 require 'sidekiq_unique_jobs/testing'
 
+require_relative '../../spec/support/sidekiq_meta'
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!

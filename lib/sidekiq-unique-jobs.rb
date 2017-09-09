@@ -4,15 +4,16 @@ require 'yaml' if RUBY_VERSION.include?('2.0.0')
 require 'forwardable'
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/constants'
+require 'sidekiq_unique_jobs/exceptions'
 require 'sidekiq_unique_jobs/util'
 require 'sidekiq_unique_jobs/cli'
 require 'sidekiq_unique_jobs/core_ext'
-require 'sidekiq_unique_jobs/timeout_calculator'
-require 'sidekiq_unique_jobs/options_with_fallback'
+require 'sidekiq_unique_jobs/timeout'
 require 'sidekiq_unique_jobs/scripts'
 require 'sidekiq_unique_jobs/unique_args'
 require 'sidekiq_unique_jobs/unlockable'
 require 'sidekiq_unique_jobs/lock'
+require 'sidekiq_unique_jobs/options_with_fallback'
 require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/config'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
@@ -27,6 +28,7 @@ module SidekiqUniqueJobs
       unique_prefix: 'uniquejobs',
       default_queue_lock_expiration: 30 * 60,
       default_run_lock_expiration: 60,
+      default_lock_timeout: 0,
       default_lock: :while_executing,
       redis_test_mode: :redis, # :mock
       raise_unique_args_errors: false,
