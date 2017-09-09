@@ -6,6 +6,7 @@ if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.0'
 
   begin
     require 'byebug'
+    require 'pry'
   rescue LoadError
     puts 'Pry unavailable'
   end
@@ -19,8 +20,6 @@ require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
 require 'timecop'
-require 'pry'
-require 'byebug'
 require 'sidekiq_unique_jobs/testing'
 require 'sidekiq/simulator'
 
