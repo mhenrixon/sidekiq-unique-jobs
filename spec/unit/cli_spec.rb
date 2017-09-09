@@ -119,7 +119,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
     end
   end
 
-  describe '.console' do
+  describe '.console', ruby_ver: '>= 2.4.1' do
     let(:expected) do
       <<~EOS
         Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
