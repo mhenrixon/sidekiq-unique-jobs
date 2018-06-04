@@ -11,6 +11,7 @@ engines:
         - ruby
   rubocop:
     enabled: true
+    channel: rubocop-0-54
 ratings:
   paths:
     - lib/**

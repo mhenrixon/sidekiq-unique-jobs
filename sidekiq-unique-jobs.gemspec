@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.require_paths = ['lib']
+  spec.add_dependency 'concurrent-ruby', '~> 1.0', '>= 1.0.5'
   spec.add_dependency 'sidekiq', '>= 4.0', '<= 6.0'
   spec.add_dependency 'thor', '~> 0'
 
