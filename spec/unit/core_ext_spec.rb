@@ -13,15 +13,3 @@ RSpec.describe Hash do
     specify { expect { subject.slice!(:test) }.to change { subject }.to(test: :me) }
   end
 end
-
-RSpec.describe String do
-  describe '#classify' do
-    subject { 'under_scored_string' }
-    its(:classify) { is_expected.to eq('UnderScoredString') }
-  end
-
-  describe '#camelize' do
-    subject { 'under_scored_string' }
-    its(:camelize) { is_expected.to eq('UnderScoredString') }
-  end
-end

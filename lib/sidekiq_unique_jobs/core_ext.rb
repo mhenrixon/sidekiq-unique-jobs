@@ -48,27 +48,3 @@ class Array
     end
   end
 end
-
-class String
-  unless ''.respond_to?(:classify)
-    def classify
-      camelize(sub(/.*\./, ''))
-    end
-  end
-
-  unless ''.respond_to?(:camelize)
-    def camelize(uppercase_first_letter = true)
-      string = self
-      string = if uppercase_first_letter
-                 string.sub(/^[a-z\d]*/) { $&.capitalize }
-               else
-                 string.sub(/^(?:(?=\b|[A-Z_])|\w)/) { $&.downcase }
-               end
-      string.gsub!(%r{(?:_|(\/))([a-z\d]*)}i) do
-        "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}"
-      end
-      string.gsub!(%r{/}, '::')
-      string
-    end
-  end
-end
