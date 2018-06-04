@@ -3,16 +3,8 @@
 require 'pathname'
 require 'digest/sha1'
 require 'concurrent/map'
-require 'sidekiq_unique_jobs/scripts/acquire_lock'
-require 'sidekiq_unique_jobs/scripts/release_lock'
 
 module SidekiqUniqueJobs
-  ScriptError         = Class.new(StandardError)
-  UniqueKeyMissing    = Class.new(ArgumentError)
-  JidMissing          = Class.new(ArgumentError)
-  MaxLockTimeMissing  = Class.new(ArgumentError)
-  UnexpectedValue     = Class.new(StandardError)
-
   module Scripts
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
     SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
@@ -42,7 +34,7 @@ module SidekiqUniqueJobs
         SCRIPT_SHAS.delete(file_name)
         call(file_name, redis_pool, options)
       else
-        raise ScriptError, "Problem compiling #{file_name}. Invalid LUA syntax?"
+        raise ScriptError, "Problem compiling #{file_name}. Message: #{ex.message}"
       end
     end
 

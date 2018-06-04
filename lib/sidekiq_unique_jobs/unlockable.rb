@@ -5,21 +5,16 @@ module SidekiqUniqueJobs
     module_function
 
     def unlock(item)
-      return unless item[UNIQUE_DIGEST_KEY]
-      unlock_by_key(item[UNIQUE_DIGEST_KEY], item[JID_KEY])
+      SidekiqUniqueJobs::UniqueArgs.digest(item)
+      lock = SidekiqUniqueJobs::Lock.new(item)
+      lock.unlock
     end
 
-    def unlock_by_key(unique_key, jid, redis_pool = nil)
-      return false unless Scripts::ReleaseLock.execute(redis_pool, unique_key, jid)
-      after_unlock(jid)
-    end
-
-    def after_unlock(jid)
-      ensure_job_id_removed(jid)
-    end
-
-    def ensure_job_id_removed(jid)
-      Sidekiq.redis { |conn| conn.hdel(SidekiqUniqueJobs::HASH_KEY, jid) }
+    def delete!(item)
+      SidekiqUniqueJobs::UniqueArgs.digest(item)
+      lock = SidekiqUniqueJobs::Lock.new(item)
+      lock.unlock
+      lock.delete!
     end
 
     def logger

@@ -4,21 +4,7 @@ require 'rails_helper'
 
 MOCK_REDIS = MockRedis.new
 
-describe WorkController, 'with mock redis' do
-  before do
-    MOCK_REDIS.keys.each do |key|
-      MOCK_REDIS.del(key)
-    end
-
-    Sidekiq::Queues.clear_all
-    Sidekiq::Worker.clear_all
-
-    SidekiqUniqueJobs.configure do |config|
-      config.redis_test_mode = :mock
-    end
-    allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
-  end
-
+describe WorkController, 'with mock redis', redis: :mock_redis do
   describe 'GET /work/duplicate_simple' do
     context 'when test mode is fake', sidekiq: :fake do
       specify do
@@ -29,11 +15,19 @@ describe WorkController, 'with mock redis' do
       end
     end
 
-    context 'when test mode is disabled', sidekiq: :disable do
+    context 'when test mode is disabled' do
+      let(:expected_keys) do
+        %w[
+          uniquejobs:5f0092e13b3956c663a91d0d05d10a4b:EXISTS
+          uniquejobs:5f0092e13b3956c663a91d0d05d10a4b:GRABBED
+        ]
+      end
+
       specify do
         get :duplicate_simple, params: { id: 11 }
         Sidekiq.redis do |conn|
-          expect(conn.keys.size).to eq(2)
+          expect(conn.keys).to match_array(expected_keys)
+          expect(conn.keys.size).to eq(3)
           expect(conn.llen('queue:default')).to eq(0)
         end
       end
@@ -43,7 +37,7 @@ describe WorkController, 'with mock redis' do
       specify do
         get :duplicate_simple, params: { id: 12 }
         Sidekiq.redis do |conn|
-          expect(c).to be_a(MockRedis)
+          expect(conn).to be_a(MockRedis)
           expect(conn.keys.size).to eq(0)
           expect(conn.llen('queue:default')).to eq(0)
         end
@@ -66,12 +60,12 @@ describe WorkController, 'with mock redis' do
       end
     end
 
-    context 'when test mode is disabled', sidekiq: :disable do
+    context 'when test mode is disabled' do
       specify do
         get :duplicate_nested, params: { id: 21 }
 
         Sidekiq.redis do |conn|
-          expect(c).to be_a(MockRedis)
+          expect(conn).to be_a(MockRedis)
           expect(conn.keys.size).to eq(0)
           expect(conn.llen('queue:default')).to eq(0)
         end
@@ -83,7 +77,7 @@ describe WorkController, 'with mock redis' do
         get :duplicate_nested, params: { id: 22 }
 
         Sidekiq.redis do |conn|
-          expect(c).to be_a(MockRedis)
+          expect(conn).to be_a(MockRedis)
           expect(conn.keys.size).to eq(0)
           expect(conn.llen('queue:default')).to eq(0)
         end

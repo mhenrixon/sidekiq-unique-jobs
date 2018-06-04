@@ -4,7 +4,6 @@ The missing unique jobs for sidekiq
 
 ## Requirements
 
-
 See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <=  2.1 is dropped.
 
 ### Version 4 Upgrade instructions
@@ -27,21 +26,48 @@ Or install it yourself as:
 
 ## Locking
 
-Like @mperham mentions on [this wiki page](https://github.com/mperham/sidekiq/wiki/Related-Projects#unique-jobs) it is hard to enforce uniqueness with redis in a distributed redis setting.
+Sidekiq consists of a client and a server. The client is responsible for pushing jobs to the queue and the worker is responsible for popping jobs from the queue. Most of the uniqueness is handled when the client is pushing jobs to the queue. The client checks if it is allowed to put a job on the queue. 
+This is probably the most common way of locking.
 
-To make things worse there are many ways of wanting to enforce uniqueness.
+The server can also lock a job. It does so by creating a lock when it is executing and removing the lock after it is done executing.
+
+### Options
+
+#### Lock Expiration
+
+This is the a number in seconds that the lock should be considered unique for. By default the lock doesn't expire at all. 
+
+If you want to experiment with various expirations please provide the following argument: 
+
+```ruby
+sidekiq_options lock_expiration: (2 * 60) # 2 minutes
+```
+
+#### Lock Timeout
+
+This is the timeout (how long to wait) for creating the lock. By default we don't use a timeout so we won't wait for the lock to be created. If you want it is possible to set this like below.
+
+```ruby
+sidekiq_options lock_timeout: 5 # 5 seconds
+```
+
+#### Lock Resources
+
+This allows us to perform multiple locks for a unique key. 
+
+```ruby
+sidekiq_options lock_resources: 2 # Use 2 locks
+```
+
+#### 
 
 ### While Executing
 
-Due to discoverability of the different lock types `unique` sidekiq option it was decided to use the `while_executing` as a default. Most people will note that scheduling any number of jobs with the same arguments is possible.
+With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It *looks* like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
 
 ```ruby
 sidekiq_options unique: :while_executing
 ```
-
-Is to make sure that a job can be scheduled any number of times but only executed a single time per argument provided to the job we call this runtime uniqueness. This is probably most useful for background jobs that are fast to execute. (See mhenrixon/sidekiq-unique-jobs#111 for a great example of when this would be right.) While the job is executing/performing no other jobs can be executed at the same time.
-
-The way it currently works is that the jobs can be put on the queue but any succeedent job will wait until the first one finishes. 
 
 There is an example of this to try it out in the `rails_example` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
 
@@ -64,44 +90,41 @@ In the console you should see something like:
 
 ### Until Executing
 
+These jobs will be unique until they have been taken off the queue by the sidekiq server. Then new jobs can be pushed to the queue again. 
+
+**Note:** For slow running jobs this is probably not the best choice as another slow running job with the same arguments could potentially be started. There is nothing that prevents simultaneous jobs to be running.
+
 ```ruby
 sidekiq_options unique: :until_executing
 ```
 
-This means that a job can only be scheduled into redis once per whatever the configuration of unique arguments. Any jobs added until the first one of the same arguments has been unlocked will just be dropped. This is what was tripping many people up. They would schedule a job to run in the future and it would be impossible to schedule new jobs with those same arguments even immediately. There was some forth and back between also locking jobs on the scheduled queue and the regular queues but in the end I decided it was best to separate these two features out into different locking mechanisms. I think what most people are after is to be able to lock a job while executing or that seems to be what people are most missing at the moment.
-
 ### Until Executed
+
+When these jobs are pushed to the queue by the sidekiq client a key is created that won't be removed until the sidekiq server successfully executed the job. 
+
+**Note:** Uniqueness is kept from when the job is pushed to the queue until after it is processed.
 
 ```ruby
 sidekiq_options unique: :until_executed
 ```
 
-This is the combination of the two above. First we lock the job until it executes, then as the job begins executes we keep the lock so that no other jobs with the same arguments can execute at the same time.
-
 ### Until Timeout
+
+These jobs will be unique until they timeout. In the meantime no further jobs will be created with the given unique arguments.
 
 ```ruby
 sidekiq_options unique: :until_timeout
 ```
 
-The job won't be unlocked until the timeout/expiry runs out.
-
 ### Unique Until And While Executing
+
+First a unique key is created when the Sidekiq client pushes the job to the queue. No job with the same arguments can be pushed to the queue. Then as the server pops the job off of the queue the original lock is unlocked and the server then creates a 
 
 ```ruby
 sidekiq_options unique: :until_and_while_executing
 ```
 
-This lock is exactly what you would expect. It is considered unique in a way until executing begins and it is locked while executing so what differs from `UntilExecuted`?
-
-The difference is that this job has two types of uniqueness:
-1. It is unique until execution
-2. It is unique while executing
-
-That means it locks for any job with the same arguments to be persisted into redis and just like you would expect it will only ever allow one job of the same unique arguments to run at any given time but as soon as the runtime lock has been acquired the schedule/async lock is released.
-
 ### Uniqueness Scope
-
 
 - Queue specific locks
 - Across all queues - [spec/jobs/unique_on_all_queues_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_on_all_queues_job.rb)
@@ -123,16 +146,16 @@ or until the job has been completed. Thus, the job will be unique for the shorte
 If you want the unique job to stick around even after it has been successfully
 processed then just set `unique: :until_timeout`.
 
-You can also control the expiration length of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
+You can also control the `lock_expiration` of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
-sidekiq_options unique: :until_timeout, unique_expiration: 120 * 60 # 2 hours
+sidekiq_options unique: :until_timeout, lock_expiration: 120 * 60 # 2 hours
 ```
 
 For locking modes (`:while_executing` and `:until_and_while_executing`) you can control the expiration length of the runtime uniqueness. If you want to enforce uniqueness over a longer period than the default of 60 seconds, then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
-sidekiq_options unique: :while_executing, run_lock_expiration: 2 * 60 # 2 minutes
+sidekiq_options unique: :while_executing, lock_expiration: 2 * 60 # 2 minutes
 ```
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
@@ -245,9 +268,6 @@ Start the console with the following command `bundle exec jobs console`.
 
 #### Remove Unique Keys
 `del '*', 100, false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
-
-#### Expire
-`expire` clears the unique hash from expired keys
 
 ### Command Line
 

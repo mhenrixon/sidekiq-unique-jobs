@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class WorkController < ApplicationController
+  def index
+    render :index
+  end
+
   def duplicate_simple
     4.times { SimpleWorker.perform_async(unique_argument) }
 
@@ -33,8 +37,17 @@ class WorkController < ApplicationController
 
   def duplicate_while_executing
     4.times { WhileExecutingWorker.perform_async(1, 2) }
+
     redirect_to '/sidekiq'
   end
+
+  def duplicate_while_executing_with_timeout
+    4.times { WhileExecutingWithTimeoutWorker.perform_async(1, 2) }
+
+    redirect_to '/sidekiq'
+  end
+
+  private
 
   def unique_argument
     params[:id]

@@ -28,13 +28,6 @@ module SidekiqUniqueJobs
       say "Deleted #{deleted_count} keys matching '#{pattern}'"
     end
 
-    desc 'expire', 'removes all expired unique keys from the hash in redis'
-    def expire
-      expired = Util.expire
-      say "Removed #{expired.values.size} left overs from redis."
-      print_in_columns(expired.values)
-    end
-
     desc 'console', 'drop into a console with easy access to helper methods'
     def console
       say "Use `keys '*', 1000 to display the first 1000 unique keys matching '*'"
@@ -44,18 +37,18 @@ module SidekiqUniqueJobs
       console_class.start
     end
 
-    private
+    no_commands do
+      def logger
+        SidekiqUniqueJobs.logger
+      end
 
-    def logger
-      SidekiqUniqueJobs.logger
-    end
-
-    def console_class
-      require 'pry'
-      Pry
-    rescue LoadError
-      require 'irb'
-      IRB
+      def console_class
+        require 'pry'
+        Pry
+      rescue LoadError
+        require 'irb'
+        IRB
+      end
     end
   end
 end

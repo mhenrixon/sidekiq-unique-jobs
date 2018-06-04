@@ -35,11 +35,23 @@ Metrics/BlockLength:
 Metrics/PerceivedComplexity:
   Max: 8
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: true
 
-Style/ConstantName:
+Naming/ConstantName:
   Enabled: true
+
+Naming/FileName:
+  Enabled: true
+  Exclude:
+    - 'lib/sidekiq-unique-jobs.rb'
+    - '**/Gemfile'
+    - '**/Appraisals'
+    - '**/*.gemspec'
+
+Naming/UncommunicativeMethodParamName:
+  AllowedNames:
+    - ex
 
 Style/FrozenStringLiteralComment:
   Enabled: true
@@ -47,13 +59,9 @@ Style/FrozenStringLiteralComment:
 Style/Documentation:
   Enabled: false
 
-Style/FileName:
-  Enabled: true
-  Exclude:
-    - 'lib/sidekiq-unique-jobs.rb'
-    - '**/Gemfile'
-    - '**/Appraisals'
-    - '**/*.gemspec'
+Style/SignalException:
+  EnforcedStyle: only_fail
+  Enabled: false
 
 Style/GlobalVars:
   Enabled: true
@@ -80,6 +88,10 @@ Style/TrailingCommaInArguments:
   Enabled: true
   EnforcedStyleForMultiline: comma
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: comma

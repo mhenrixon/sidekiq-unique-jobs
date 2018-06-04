@@ -9,13 +9,17 @@ module SidekiqUniqueJobs
 
       include OptionsWithFallback
 
-      def call(worker, item, queue, redis_pool = nil, &blk)
-        @worker = worker
+      def call(worker, item, queue, redis_pool = nil)
+        SidekiqUniqueJobs::UniqueArgs.digest(item)
+        @worker     = worker
         @redis_pool = redis_pool
-        @queue = queue
-        @item = item
-        return yield unless unique_enabled?
-        lock.send(:execute, after_unlock_hook, &blk)
+        @queue      = queue
+        @item       = item
+        return yield if unique_disabled?
+
+        lock.execute(after_unlock_hook) do
+          yield
+        end
       end
 
       private

@@ -7,7 +7,6 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
           alias_method :remove_job_orig, :remove_job
@@ -16,14 +15,14 @@ module Sidekiq
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
+        SidekiqUniqueJobs::Unlockable.delete!(item) if delete_orig
       end
 
       private
 
       def remove_job_ext
         remove_job_orig do |message|
-          SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(message))
+          SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(message))
           yield message
         end
       end
@@ -36,21 +35,13 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
-      end
-
-      def remove_job_ext
-        remove_job_orig do |message|
-          SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(message))
-          yield message
-        end
+        SidekiqUniqueJobs::Unlockable.delete!(item) if delete_orig
       end
     end
     include UniqueExtension
@@ -60,15 +51,14 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include SidekiqUniqueJobs::Unlockable
           alias_method :delete_orig, :delete
           alias_method :delete, :delete_ext
         end
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item)
         delete_orig
+        SidekiqUniqueJobs::Unlockable.delete!(item)
       end
     end
 
@@ -79,7 +69,6 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include SidekiqUniqueJobs::Unlockable
           alias_method :clear_orig, :clear
           alias_method :clear, :clear_ext
         end
@@ -98,7 +87,6 @@ module Sidekiq
     module UniqueExtension
       def self.included(base)
         base.class_eval do
-          include SidekiqUniqueJobs::Unlockable
           if base.method_defined?(:clear)
             alias_method :clear_orig, :clear
             alias_method :clear, :clear_ext
@@ -117,7 +105,7 @@ module Sidekiq
       end
 
       def delete_by_value_ext(name, value)
-        SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(value)) if delete_by_value_orig(name, value)
+        SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(value)) if delete_by_value_orig(name, value)
       end
     end
 
