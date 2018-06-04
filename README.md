@@ -63,7 +63,7 @@ sidekiq_options lock_resources: 2 # Use 2 locks
 
 ### While Executing
 
-With this lock type it is possible to put any number of these jobs on the queue at but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It *looks* like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
+With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It *looks* like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
 
 ```ruby
 sidekiq_options unique: :while_executing
