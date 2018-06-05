@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
-if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.4.1'
+if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.5.1'
   require 'simplecov'
 
   begin
