@@ -16,3 +16,7 @@ rails_example/spec/examples.txt
 *.sublime-*
 
 /sidekiq/
+
+/spec/examples.txt
+
+/doc/

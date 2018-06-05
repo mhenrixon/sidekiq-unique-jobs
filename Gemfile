@@ -3,11 +3,11 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'appraisal', '~> 2.0.0'
+gem 'appraisal', '>= 2.0.0'
 gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
 
-platforms :mri_24 do
+platforms :mri_25 do
   gem 'benchmark-ips',             require: false
   gem 'codeclimate-test-reporter', require: false
   gem 'fasterer',                  require: false

@@ -1,21 +1,41 @@
-sudo: false
+env:
+  matrix:
+    - STYLE=false
+  global:
+    - CC_TEST_REPORTER_ID=88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
+    - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
+dist: trusty
+sudo: required
 language: ruby
 cache: bundler
-# before_install:
-#   - rvm get head
-#   - gem update --system
-#   - gem install bundler
-services:
-  - redis-server
+
+
+before_install:
+  - sudo rm -rf /etc/apt/sources.list.d/rwky-redis.list
+  - sudo add-apt-repository ppa:chris-lea/redis-server -y
+  - sudo apt-get update -qy
+  - sudo apt-get install redis-server
+  - sudo service redis-server start
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
   - if [[ "${STYLE}" = "true" ]]; then bundle exec rubocop - P; fi;
   - bundle exec rspec spec
-  - if [[ "${STYLE}" = "true" ]]; then CODECLIMATE_REPO_TOKEN=88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5 bundle exec codeclimate-test-reporter; fi;
+  - if [[ "${STYLE}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
+
 rvm:
-  - 2.4.1
+  - 2.5.1
+  - 2.4.2
   - 2.3.2
   - jruby-9.1.8.0
-env: STYLE=false
+matrix:
+  fast_finish: true
+  include:
+    - rvm: 2.5.1
+      gemfile: gemfiles/sidekiq_develop.gemfile
+      env: STYLE=true
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_4.0.gemfile
@@ -27,12 +47,3 @@ notifications:
   email:
     recipients:
       - mikael@zoolutions.se
-matrix:
-  fast_finish: true
-  include:
-    - rvm: 2.4.1
-      gemfile: gemfiles/sidekiq_develop.gemfile
-      env: STYLE=true
-addons:
-  code_climate:
-    repo_token: 88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5

@@ -9,7 +9,7 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
   # This is a known issue (we only run this spec for ruby 2.4.1)
 end
 
-RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.4.1' do
+RSpec.describe SidekiqUniqueJobs::ScriptMock, ruby_ver: '>= 2.5.1' do
   before do
     SidekiqUniqueJobs.configure do |config|
       config.redis_test_mode = :mock
