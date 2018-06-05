@@ -7,7 +7,7 @@ gem 'appraisal', '~> 2.2.0'
 gem 'rspec-its',  require: false
 gem 'rspec-wait', require: false
 
-platforms :mri_24 do
+platforms :mri_25 do
   gem 'benchmark-ips',             require: false
   gem 'fasterer',                  require: false
   gem 'memory_profiler',           require: false

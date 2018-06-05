@@ -1,7 +1,7 @@
 version: '2'
 services:
   rails:
-    image: ruby:2.3
+    image: ruby:2.5
     # build:
     #   context: .
     #   dockerfile: docker/rails.Dockerfile
