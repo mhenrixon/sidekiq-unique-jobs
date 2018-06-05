@@ -8,7 +8,7 @@ gem "rspec-wait", require: false
 gem "mock_redis"
 gem "sidekiq", "~> 4.1.0"
 
-platforms :mri_24 do
+platforms :mri_25 do
   gem "benchmark-ips", require: false
   gem "fasterer", require: false
   gem "memory_profiler", require: false
