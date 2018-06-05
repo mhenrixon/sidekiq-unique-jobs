@@ -3,15 +3,14 @@
 RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
   config.before(:each, redis: :mock_redis) do
     require 'mock_redis'
-    mock_redis = MockRedis.new
+    @redis = MockRedis.new
     SidekiqUniqueJobs.configure do |unique|
       unique.redis_test_mode = :mock
     end
     allow(SidekiqUniqueJobs).to receive(:mocked?).and_return(true)
     allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('0.0')
-    Sidekiq::Worker.clear_all
 
-    allow(Sidekiq).to receive(:redis).and_yield(mock_redis)
+    allow(Sidekiq).to receive(:redis).and_yield(@redis)
   end
 
   config.before(:each, redis: :redis) do |example|

@@ -17,14 +17,15 @@ module SidekiqUniqueJobs
       # @return [Boolean] report success
       # @raise [SidekiqUniqueJobs::LockTimeout] when lock fails within configured timeout
       def execute(callback)
-        jid = @lock.lock
-        if jid == @item[JID_KEY]
-          callback&.call
-          unlock(:server)
+        locked = @lock.lock(@calculator.lock_timeout)
+
+        if locked
           yield
         else
           fail_with_lock_timeout!
         end
+      ensure
+        callback&.call if locked && unlock(:server)
       end
 
       # Unlock the current item
@@ -32,6 +33,7 @@ module SidekiqUniqueJobs
       def unlock(_scope)
         @lock.unlock
         @lock.delete!
+        true
       end
     end
   end
