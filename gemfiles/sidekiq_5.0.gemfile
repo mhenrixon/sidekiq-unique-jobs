@@ -6,7 +6,7 @@ gem "appraisal", "~> 2.2.0"
 gem "rspec-its", require: false
 gem "rspec-wait", require: false
 gem "mock_redis"
-gem "sidekiq", "~> 4.1.0"
+gem "sidekiq", ">= 5.0.0.beta", "< 6"
 
 platforms :mri_25 do
   gem "benchmark-ips", require: false

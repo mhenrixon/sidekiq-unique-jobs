@@ -1,11 +1,14 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
-ruby '2.3.1'
+ruby '2.5.1'
 
-gem 'rails', '~> 5.0'
-gem 'puma'
-gem 'json'
 gem 'bigdecimal'
+gem 'json'
+gem 'puma'
+gem 'rails', '~> 5.1'
+gem 'slim-rails'
 
 platforms :ruby do
   gem 'pg'
@@ -14,21 +17,25 @@ platforms :ruby do
 end
 
 platforms :jruby do
-  gem 'jruby-openssl'
-  gem 'jdbc-pg'
   gem 'activerecord-jdbc-adapter'
+  gem 'jdbc-pg'
+  gem 'jruby-openssl'
 end
 
+# gem 'sidekiq-unique-jobs'
+gem 'rack-protection' # , github: 'sinatra/rack-protection'
 gem 'sidekiq-unique-jobs', path: '../'
-gem 'sinatra', github: 'sinatra/sinatra'
+gem 'sinatra' # , github: 'sinatra/sinatra'
 
 group :development do
+  gem 'foreman'
   gem 'web-console'
 end
 
 group :development, :test do
-  gem 'rspec-rails'
+  gem 'dockerspec'
   gem 'factory_girl_rails'
+  gem 'fuubar'
   gem 'mock_redis'
+  gem 'rspec-rails'
 end
-

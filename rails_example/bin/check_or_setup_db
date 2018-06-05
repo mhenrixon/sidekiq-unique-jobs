@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # This script is used in the development environment with Docker to check if the
 # app database exists, and runs the database setup if it doesn't, as it is the
@@ -28,10 +29,9 @@ rescue PG::ConnectionBad
   end
   1
 rescue ActiveRecord::NoDatabaseError, ActiveRecord::AdapterNotSpecified
+  include ActiveRecord::Tasks # rubocop:disable Style/MixinUsage
 
-  include ActiveRecord::Tasks
-
-  DatabaseTasks.root = File.expand_path '../..', __FILE__
+  DatabaseTasks.root = File.expand_path '..', __dir__
   DatabaseTasks.db_dir = File.join DatabaseTasks.root, 'db'
   DatabaseTasks.env = ENV.fetch 'ENV', ENV.fetch('RAILS_ENV', 'development')
 
