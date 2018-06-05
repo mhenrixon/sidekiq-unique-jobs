@@ -29,9 +29,9 @@ rescue PG::ConnectionBad
   end
   1
 rescue ActiveRecord::NoDatabaseError, ActiveRecord::AdapterNotSpecified
-  include ActiveRecord::Tasks
+  include ActiveRecord::Tasks # rubocop:disable Style/MixinUsage
 
-  DatabaseTasks.root = File.expand_path '../..', __FILE__
+  DatabaseTasks.root = File.expand_path '..', __dir__
   DatabaseTasks.db_dir = File.join DatabaseTasks.root, 'db'
   DatabaseTasks.env = ENV.fetch 'ENV', ENV.fetch('RAILS_ENV', 'development')
 
