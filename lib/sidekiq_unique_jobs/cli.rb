@@ -14,7 +14,7 @@ module SidekiqUniqueJobs
 
     desc 'keys PATTERN', 'list all unique keys and their expiry time'
     option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
-    def keys(pattern)
+    def keys(pattern = '*')
       keys = Util.keys(pattern, options[:count])
       say "Found #{keys.size} keys matching '#{pattern}':"
       print_in_columns(keys.sort) if keys.any?
