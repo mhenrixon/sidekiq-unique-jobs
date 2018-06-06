@@ -5,5 +5,5 @@ class MainJob
   sidekiq_options queue: :customqueue, unique: :until_executed,
                   log_duplicate_payload: true
 
-  def perform(_); end
+  def perform(_arg); end
 end

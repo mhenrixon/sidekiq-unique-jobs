@@ -6,7 +6,7 @@ class NotifyWorker
   sidekiq_options queue: :notify_worker,
                   unique: :until_executed
 
-  def perform(id, _blob)
+  def perform(_id, _blob)
     # puts "NotifyWorker -- #{id}"
   end
 end
