@@ -146,4 +146,5 @@ module SidekiqUniqueJobs
       @unique_args_method ||= Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS_KEY]
     end
   end
+  # rubocop:enable ClassLength
 end

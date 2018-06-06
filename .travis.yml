@@ -21,7 +21,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - if [[ "${STYLE}" = "true" ]]; then bundle exec rubocop - P; fi;
+  - if [[ "${STYLE}" = "true" ]]; then bundle exec rubocop -P; fi;
   - bundle exec rspec spec
   - if [[ "${STYLE}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 

@@ -38,9 +38,7 @@ module SidekiqUniqueJobs
       end
 
       def lock(scope)
-        if scope.to_sym != :client
-          raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}"
-        end
+        raise ArgumentError, "#{scope} middleware can't #{__method__} #{unique_key}" if scope.to_sym != :client
 
         Scripts::AcquireLock.execute(
           redis_pool,
@@ -49,7 +47,6 @@ module SidekiqUniqueJobs
           max_lock_time,
         )
       end
-      # rubocop:enable MethodLength
 
       def unique_key
         @unique_key ||= UniqueArgs.digest(item)

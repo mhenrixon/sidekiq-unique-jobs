@@ -8,7 +8,7 @@ class WhileExecutingJob
     logger.warn "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}"
   end
 
-  def perform(_)
+  def perform(_arg)
     # NO OP
   end
 end

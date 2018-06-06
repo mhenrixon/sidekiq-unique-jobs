@@ -7,14 +7,14 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
   describe '#help' do
     let(:output) { capture(:stdout) { described_class.start(%w[help]) } }
     let(:banner) do
-      <<~EOS
+      <<~HEADER
         Commands:
           jobs  console         # drop into a console with easy access to helper methods
           jobs  del PATTERN     # deletes unique keys from redis by pattern
           jobs  expire          # removes all expired unique keys from the hash in redis
           jobs  help [COMMAND]  # Describe available commands or one specific command
           jobs  keys PATTERN    # list all unique keys and their expiry time
-      EOS
+      HEADER
     end
 
     it 'displays help' do
@@ -24,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
     describe '#help del' do
       let(:output) { capture(:stdout) { described_class.start(%w[help del]) } }
       let(:banner) do
-        <<~EOS
+        <<~HEADER
           Usage:
             jobs  del PATTERN
 
@@ -34,7 +34,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
                                             # Default: 1000
 
           deletes unique keys from redis by pattern
-        EOS
+        HEADER
       end
 
       it 'displays help about the `del` command' do
@@ -46,12 +46,12 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
       let(:output) { capture(:stdout) { described_class.start(%w[help expire]) } }
 
       let(:banner) do
-        <<~EOS
+        <<~HEADER
           Usage:
             jobs  expire
 
           removes all expired unique keys from the hash in redis
-        EOS
+        HEADER
       end
 
       it 'displays help about the `expire` command' do
@@ -62,7 +62,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
     describe '#help keys' do
       let(:output) { capture(:stdout) { described_class.start(%w[help keys]) } }
       let(:banner) do
-        <<~EOS
+        <<~HEADER
           Usage:
             jobs  keys PATTERN
 
@@ -71,7 +71,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
                             # Default: 1000
 
           list all unique keys and their expiry time
-        EOS
+        HEADER
       end
 
       it 'displays help about the `key` command' do
@@ -109,10 +109,10 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
       after { SidekiqUniqueJobs::Util.del('*', 1000, false) }
 
       let(:expected) do
-        <<~EOS
+        <<~HEADER
           Found 3 keys matching '#{pattern}':
           uniquejobs:abcdefab  uniquejobs:defghayl  uniquejobs:poilkij
-        EOS
+        HEADER
       end
       specify do
         expect(output).to eq(expected)
@@ -122,9 +122,9 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
 
   describe '.del' do
     let(:expected) do
-      <<~EOS
+      <<~HEADER
         Deleted 1 keys matching '*'
-      EOS
+      HEADER
     end
 
     before do
@@ -151,10 +151,10 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
         .with_value(jid)
     end
     let(:expected) do
-      <<~EOS
+      <<~HEADER
         Removed 1 left overs from redis.
         uniquejobs:abcdefab
-      EOS
+      HEADER
     end
 
     specify do
@@ -166,11 +166,11 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
 
   describe '.console' do
     let(:expected) do
-      <<~EOS
+      <<~HEADER
         Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
         Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
         Use `del '*', 1000, false to delete the first 1000 keys matching '*'
-      EOS
+      HEADER
     end
     let(:output) { capture(:stdout) { described_class.start(%w[console]) } }
 

@@ -37,8 +37,8 @@ module SidekiqUniqueJobs
       end
     end
 
-    def handle_error(ex, file_name, redis_pool, options = {})
-      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.' # rubocop:disable Style/GuardClause
+    def handle_error(exception, file_name, redis_pool, options = {})
+      if exception.message == 'NOSCRIPT No matching script. Please use EVAL.' # rubocop:disable Style/GuardClause
         SCRIPT_SHAS.delete(file_name)
         call(file_name, redis_pool, options)
       else
