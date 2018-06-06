@@ -18,3 +18,5 @@ rails_example/spec/examples.txt
 /sidekiq/
 
 /spec/examples.txt
+
+/gemfiles/.bundle/

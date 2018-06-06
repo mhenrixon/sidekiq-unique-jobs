@@ -34,7 +34,7 @@ end
 
 group :development, :test do
   gem 'dockerspec'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'mock_redis'
   gem 'rspec-rails'
