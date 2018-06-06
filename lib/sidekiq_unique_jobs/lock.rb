@@ -213,7 +213,7 @@ module SidekiqUniqueJobs
         begin
           instant = SidekiqUniqueJobs.connection(@redis_pool, &:time)
           Time.at(instant[0], instant[1])
-        rescue
+        rescue StandardError
           @use_local_time = true
           current_time
         end

@@ -27,7 +27,6 @@ describe WorkController, 'with mock redis', redis: :mock_redis do
         get :duplicate_simple, params: { id: 11 }
         Sidekiq.redis do |conn|
           expect(conn.keys).to match_array(expected_keys)
-          expect(conn.keys.size).to eq(3)
           expect(conn.llen('queue:default')).to eq(0)
         end
       end

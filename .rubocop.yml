@@ -1,13 +1,13 @@
 AllCops:
   Include:
     - '**/Rakefile'
-    - '**/lib'
-    - '**/bin'
-    - '**/spec'
+    - 'lib/**/*.rb'
+    - 'bin/**/*.rb'
+    - 'spec/**/*.rb'
   Exclude:
     - 'Gemfile.lock'
     - 'gemfiles/**/*'
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
 
 Lint/HandleExceptions:
   Enabled: true
