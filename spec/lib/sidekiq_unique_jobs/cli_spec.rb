@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'thor/runner'
 
-RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.4' do
+RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.5.1' do
   describe '#help' do
     let(:output) { capture(:stdout) { described_class.start(%w[help]) } }
     let(:banner) do
