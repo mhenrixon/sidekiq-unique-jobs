@@ -35,25 +35,25 @@ Metrics/BlockLength:
 Metrics/PerceivedComplexity:
   Max: 8
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: true
 
-Style/ConstantName:
+Naming/ConstantName:
   Enabled: true
 
-Style/FrozenStringLiteralComment:
-  Enabled: true
-
-Style/Documentation:
-  Enabled: false
-
-Style/FileName:
+Naming/FileName:
   Enabled: true
   Exclude:
     - 'lib/sidekiq-unique-jobs.rb'
     - '**/Gemfile'
     - '**/Appraisals'
     - '**/*.gemspec'
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
 
 Style/GlobalVars:
   Enabled: true
