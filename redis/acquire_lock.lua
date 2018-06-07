@@ -12,7 +12,7 @@ if stored_jid then
 end
 
 if redis.pcall('set', unique_key, job_id, 'nx', 'ex', expires) then
-  redis.pcall('hsetnx', 'uniquejobs', job_id, unique_key)
+  -- redis.pcall('hsetnx', 'uniquejobs', job_id, unique_key)
   return 1
 else
   return 0

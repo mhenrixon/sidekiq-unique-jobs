@@ -43,7 +43,6 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
 
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(1)
       expect(SidekiqUniqueJobs::Util.keys).to match_array([unique_digest])
-      expect(SidekiqUniqueJobs::Util.unique_key(jid)).to eq(unique_digest)
 
       described_class.unlock_by_key(
         unique_digest,

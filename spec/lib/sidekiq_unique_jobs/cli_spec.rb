@@ -152,8 +152,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: '>= 2.5.1' do
     end
     let(:expected) do
       <<~HEADER
-        Removed 1 left overs from redis.
-        uniquejobs:abcdefab
+        Removed 0 left overs from redis.
       HEADER
     end
 
