@@ -2,13 +2,27 @@
 
 The missing unique jobs for sidekiq
 
+# Documentation
+
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10. 
+
+Below are links to the latest major versions (4 & 5):
+- [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
+- [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
+
 ## Requirements
 
-See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <=  2.1 is dropped.
-
-### Version 4 Upgrade instructions
+See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <=  2.1 is dropped. ActiveJob is not supported 
 
 Version 5 requires redis >= 3
+
+### ActiveJob
+
+Due to the simplicity of ActiveJob and the complexity of this game there is no officially supported way of doing ActiveJob. If you want to use uniqueness you should be using sidekiq directly. I know some projects started by using ActiveJob out of ignorance and someone has to do a whole lot of work to migrate the workers to use sidekiq directly... 
+
+If you are in this position and you can't figure it out; I have done such migrations for really big clients before. I am a consultant with a ton of experience on such jobs. My rate is fair and I am easy to get along with.
+
+If that is not an option I apologize. This gem won't support ActiveJob moving forward. It would require monkey patching too much.
 
 ## Installation
 
@@ -26,10 +40,7 @@ Or install it yourself as:
 
 ## Locking
 
-Sidekiq consists of a client and a server. The client is responsible for pushing jobs to the queue and the worker is responsible for popping jobs from the queue. Most of the uniqueness is handled when the client is pushing jobs to the queue. The client checks if it is allowed to put a job on the queue. 
-This is probably the most common way of locking.
-
-The server can also lock a job. It does so by creating a lock when it is executing and removing the lock after it is done executing.
+Sidekiq consists of a client and a server. The client is responsible for pushing jobs to the queue and the server is responsible for actually processing the jobs. When the client puts the job to the queue the middleware checks for uniqueness and creates a lock. When the server then processes the job that lock is released.
 
 ### Options
 
@@ -90,9 +101,9 @@ In the console you should see something like:
 
 ### Until Executing
 
-These jobs will be unique until they have been taken off the queue by the sidekiq server. Then new jobs can be pushed to the queue again. 
+Locks from when the client pushes the job to the queue. Will be unlocked before the server starts processing the job.
 
-**Note:** For slow running jobs this is probably not the best choice as another slow running job with the same arguments could potentially be started. There is nothing that prevents simultaneous jobs to be running.
+**NOTE** this is probably not so good for jobs that shouldn't be running simultaneously (aka slow jobs).
 
 ```ruby
 sidekiq_options unique: :until_executing
@@ -100,9 +111,8 @@ sidekiq_options unique: :until_executing
 
 ### Until Executed
 
-When these jobs are pushed to the queue by the sidekiq client a key is created that won't be removed until the sidekiq server successfully executed the job. 
+Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.
 
-**Note:** Uniqueness is kept from when the job is pushed to the queue until after it is processed.
 
 ```ruby
 sidekiq_options unique: :until_executed
@@ -110,7 +120,7 @@ sidekiq_options unique: :until_executed
 
 ### Until Timeout
 
-These jobs will be unique until they timeout. In the meantime no further jobs will be created with the given unique arguments.
+Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached. 
 
 ```ruby
 sidekiq_options unique: :until_timeout
@@ -118,7 +128,7 @@ sidekiq_options unique: :until_timeout
 
 ### Unique Until And While Executing
 
-First a unique key is created when the Sidekiq client pushes the job to the queue. No job with the same arguments can be pushed to the queue. Then as the server pops the job off of the queue the original lock is unlocked and the server then creates a 
+Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. 
 
 ```ruby
 sidekiq_options unique: :until_and_while_executing
@@ -159,16 +169,6 @@ sidekiq_options unique: :while_executing, lock_expiration: 2 * 60 # 2 minutes
 ```
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
-
-### Usage with ActiveJob
-
-```ruby
-Sidekiq.default_worker_options = {
-  unique: :until_executing,
-  unique_args: ->(args) { [ args.first.except('job_id') ] }
-}
-```
-
 
 ### Finer Control over Uniqueness
 
