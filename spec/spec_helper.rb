@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.5.1'
   require 'simplecov'
@@ -29,7 +28,17 @@ SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL
 
 require 'sidekiq/redis_connection'
 
-Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each { |f| require f }
+REDIS_URL ||= ENV['REDIS_URL'] || 'redis://localhost/15'
+REDIS_NAMESPACE ||= 'unique-test'
+REDIS_OPTIONS ||= { url: REDIS_URL } # rubocop:disable MutableConstant
+REDIS_OPTIONS[:namespace] = REDIS_NAMESPACE if defined?(Redis::Namespace)
+REDIS ||= Sidekiq::RedisConnection.create(REDIS_OPTIONS)
+
+Sidekiq.configure_client do |config|
+  config.redis = REDIS_OPTIONS
+end
+
+Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.define_derived_metadata do |meta|
@@ -51,7 +60,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].sort.each { |f| require f }
 
 def capture(stream)
   begin
