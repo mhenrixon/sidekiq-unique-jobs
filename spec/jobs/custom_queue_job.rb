@@ -3,5 +3,7 @@
 class CustomQueueJob
   include Sidekiq::Worker
   sidekiq_options queue: :customqueue
-  def perform(_arg); end
+  def perform(one, two)
+    [one, two]
+  end
 end

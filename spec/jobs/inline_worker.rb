@@ -4,7 +4,7 @@ class InlineWorker
   include Sidekiq::Worker
   sidekiq_options unique: :while_executing
 
-  def perform(arg)
-    TestClass.run(arg)
+  def perform(one)
+    TestClass.run(one)
   end
 end
