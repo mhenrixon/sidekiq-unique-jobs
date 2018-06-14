@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe WithoutArgumentJob do
   it_behaves_like 'sidekiq with options', options: {
     'log_duplicate_payload' => true,
