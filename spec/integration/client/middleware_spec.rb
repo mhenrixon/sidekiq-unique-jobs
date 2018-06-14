@@ -281,16 +281,14 @@ RSpec.shared_examples_for 'unique client middleware' do
   # TODO: If anyone know of a better way to check that the expiration for scheduled
   # jobs are set around the same time as the scheduled job itself feel free to improve.
   it 'expires the digest when a scheduled job is scheduled at' do
-    expected_expires_at =
-      (Time.at(Time.now.to_i + 15 * 60) - Time.now.utc) +
-      SidekiqUniqueJobs.config.default_queue_lock_expiration.to_f
+    expected_expires_at = Time.at(Time.now.to_i + 15 * 60) - Time.now.utc
 
     MyUniqueJob.perform_in(expected_expires_at, 'mika', 'hel')
 
     Sidekiq.redis do |conn|
       conn.keys('uniquejobs:*').each do |key|
         next if key.end_with?(':GRABBED')
-        expect(conn.ttl(key)).to be_within(10).of(9_900)
+        expect(conn.ttl(key)).to be_within(10).of(8_099)
       end
     end
   end

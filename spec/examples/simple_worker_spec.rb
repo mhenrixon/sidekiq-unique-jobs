@@ -5,7 +5,6 @@ RSpec.describe SimpleWorker do
     'queue'       => :default,
     'retry'       => true,
     'unique'      => :until_executed,
-    'default_queue_lock_expiration' => 18_000,
   }
 
   it_behaves_like 'a performing worker',
