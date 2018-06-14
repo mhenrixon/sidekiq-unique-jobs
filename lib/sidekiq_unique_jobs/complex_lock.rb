@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  class Lock # rubocop:disable ClassLength
+  class ComplexLock # rubocop:disable ClassLength
     API_VERSION = '1'
     EXPIRES_IN = 10
 
@@ -23,8 +23,6 @@ module SidekiqUniqueJobs
       @lock_timeout         = @item[SidekiqUniqueJobs::LOCK_TIMEOUT_KEY]
       @stale_client_timeout = @item[SidekiqUniqueJobs::STALE_CLIENT_TIMEOUT_KEY]
       @use_local_time       = @item[SidekiqUniqueJobs::USE_LOCAL_TIME_KEY]
-      @reschedule           = @item[SidekiqUniqueJobs::RESCHEDULE_KEY]
-      @tokens               = []
     end
 
     def exists_or_create!

@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
         @calculator = Timeout::RunLock.new(item)
         @item       = prepare_item(item, @calculator)
         @redis_pool = redis_pool
-        @lock       = SidekiqUniqueJobs::Lock.new(@item)
+        @lock       = SidekiqUniqueJobs::SimpleLock.new(@item)
       end
 
       def lock(_scope)

@@ -12,7 +12,7 @@ RSpec.shared_examples_for 'unique client middleware' do
       expect(jid).not_to eq(nil)
       Sidekiq.redis do |conn|
         expect(conn.zcard('schedule')).to eq(1)
-        expected = %w[uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS]
+        expected = %w[uniquejobs:6e47d668ad22db2a3ba0afd331514ce2]
 
         expect(conn.keys).to include(*expected)
       end

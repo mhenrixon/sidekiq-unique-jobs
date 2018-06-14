@@ -6,13 +6,13 @@ module SidekiqUniqueJobs
 
     def unlock(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
-      lock = SidekiqUniqueJobs::Lock.new(item)
+      lock = SidekiqUniqueJobs::SimpleLock.new(item)
       lock.unlock
     end
 
     def delete!(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
-      lock = SidekiqUniqueJobs::Lock.new(item)
+      lock = SidekiqUniqueJobs::SimpleLock.new(item)
       lock.unlock
       lock.delete!
     end

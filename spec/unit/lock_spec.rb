@@ -198,7 +198,7 @@ RSpec.shared_examples 'a real lock' do
   end
 end
 
-RSpec.describe SidekiqUniqueJobs::Lock, 'with Redis', redis: :redis do
+RSpec.describe SidekiqUniqueJobs::ComplexLock, 'with Redis', redis: :redis do
   include_context 'a lock setup'
   it_behaves_like 'a real lock'
 
@@ -223,7 +223,7 @@ RSpec.describe SidekiqUniqueJobs::Lock, 'with Redis', redis: :redis do
   end
 end
 
-RSpec.describe SidekiqUniqueJobs::Lock, 'with MockRedis', redis: :mock_redis do
+RSpec.describe SidekiqUniqueJobs::ComplexLock, 'with MockRedis', redis: :mock_redis do
   require 'mock_redis'
   include_context 'a lock setup'
   it_behaves_like 'a real lock'

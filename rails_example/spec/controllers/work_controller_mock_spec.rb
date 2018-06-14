@@ -18,8 +18,7 @@ describe WorkController, 'with mock redis', redis: :mock_redis do
     context 'when test mode is disabled' do
       let(:expected_keys) do
         %w[
-          uniquejobs:5f0092e13b3956c663a91d0d05d10a4b:EXISTS
-          uniquejobs:5f0092e13b3956c663a91d0d05d10a4b:GRABBED
+          uniquejobs:5f0092e13b3956c663a91d0d05d10a4b
         ]
       end
 
