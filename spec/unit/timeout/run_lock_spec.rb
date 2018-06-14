@@ -50,9 +50,5 @@ RSpec.describe SidekiqUniqueJobs::Timeout::RunLock do
 
       it { is_expected.to eq(30) }
     end
-
-    context 'without further configuration' do
-      it { is_expected.to eq(60) }
-    end
   end
 end

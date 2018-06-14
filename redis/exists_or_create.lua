@@ -1,10 +1,10 @@
 -- redis.replicate_commands();
 
-local exists_key      = KEYS[1]
-local grabbed_key     = KEYS[2]
-local available_key   = KEYS[3]
-local current_jid     = ARGV[1]
-local expiration      = tonumber(ARGV[2])
+local exists_key    = KEYS[1]
+local grabbed_key   = KEYS[2]
+local available_key = KEYS[3]
+local current_jid   = ARGV[1]
+local expiration    = tonumber(ARGV[2])
 local persisted_jid = redis.call('GETSET', exists_key, current_jid)
 
 if persisted_jid then

@@ -7,8 +7,6 @@ RSpec.describe SidekiqUniqueJobs::Config do
     {
 
       unique_prefix: 'unique',
-      default_queue_lock_expiration: 30 * 60,
-      default_run_lock_expiration: 60,
       default_lock: :while_executing,
       redis_test_mode: :redis,
     }

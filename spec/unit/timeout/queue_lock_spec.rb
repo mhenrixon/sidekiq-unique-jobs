@@ -90,7 +90,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::QueueLock do
           }
         end
 
-        it { is_expected.to eq(1_810) }
+        it { is_expected.to eq(nil) }
       end
     end
   end
