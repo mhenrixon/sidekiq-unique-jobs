@@ -40,6 +40,42 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
 
       expect(JustAWorker.perform_in(60 * 60 * 3, boo: 'far')).to be_truthy
     end
+
+    it 'deletes uniqueness lock on remove_job' do
+      expect(JustAWorker.perform_in(60 * 60 * 3, foo: 'bar')).to be_truthy
+      Sidekiq.redis do |conn|
+        expect(conn.keys).to include(
+          'uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS',
+          'uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED',
+        )
+      end
+
+      Sidekiq::ScheduledSet.new.each do |entry|
+        entry.send(:remove_job) do |message|
+          item = Sidekiq.load_json(message)
+          expect(item).to match(
+            hash_including(
+              'args' => [{ 'foo' => 'bar' }],
+              'class' => 'JustAWorker',
+              'jid' => kind_of(String),
+              'lock_expiration' => nil,
+              'lock_timeout' => 0,
+              'queue' => 'testqueue',
+              'retry' => true,
+              'unique' => 'until_executed',
+              'unique_args' => [{ 'foo' => 'bar' }],
+              'unique_digest' => 'uniquejobs:863b7cb639bd71c828459b97788b2ada',
+              'unique_prefix' => 'uniquejobs',
+            ),
+          )
+        end
+      end
+      Sidekiq.redis do |conn|
+        expect(conn.keys).to match_array([])
+      end
+
+      expect(JustAWorker.perform_in(60 * 60 * 3, boo: 'far')).to be_truthy
+    end
   end
 
   describe Sidekiq::Job::UniqueExtension do
