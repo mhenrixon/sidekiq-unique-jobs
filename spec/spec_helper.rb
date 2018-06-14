@@ -51,7 +51,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-Dir[File.join(File.dirname(__FILE__), 'jobs', '**', '*.rb')].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), '..', 'examples', '**', '*.rb')].each { |f| require f }
 
 def capture(stream)
   begin
