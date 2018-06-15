@@ -5,7 +5,7 @@ require 'rails_helper'
 describe WorkController, 'with real redis', redis: :redis, redis_db: 1 do
   before(:each) do
     SidekiqUniqueJobs.configure do |config|
-      config.redis_test_mode = :redis
+      config.enabled = true
     end
 
     Sidekiq::Queues.clear_all

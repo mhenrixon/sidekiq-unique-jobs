@@ -22,10 +22,9 @@ platforms :jruby do
   gem 'jruby-openssl'
 end
 
-# gem 'sidekiq-unique-jobs'
-gem 'rack-protection' # , github: 'sinatra/rack-protection'
+gem 'rack-protection'
 gem 'sidekiq-unique-jobs', path: '../'
-gem 'sinatra' # , github: 'sinatra/sinatra'
+gem 'sinatra'
 
 group :development do
   gem 'foreman'
@@ -36,6 +35,5 @@ group :development, :test do
   gem 'dockerspec'
   gem 'factory_bot_rails'
   gem 'fuubar'
-  gem 'mock_redis'
   gem 'rspec-rails'
 end
