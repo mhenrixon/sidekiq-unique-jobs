@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'rspec/wait'
 
 RSpec.shared_context 'a lock setup' do
-  let(:lock)                      { described_class.new(lock_item) }
+  let(:locksmith)                 { described_class.new(lock_item) }
   let(:lock_expiration)           { nil }
   let(:lock_use_local_time)       { false }
   let(:lock_stale_client_timeout) { nil }
@@ -31,30 +31,30 @@ end
 
 RSpec.shared_examples_for 'a lock' do
   it 'should not exist from the start' do
-    expect(lock.exists?).to eq(false)
-    lock.lock
-    expect(lock.exists?).to eq(true)
+    expect(locksmith.exists?).to eq(false)
+    locksmith.lock
+    expect(locksmith.exists?).to eq(true)
   end
 
   it 'should be unlocked from the start' do
-    expect(lock.locked?).to eq(false)
+    expect(locksmith.locked?).to eq(false)
   end
 
   it 'should lock and unlock' do
-    lock.lock(1)
-    expect(lock.locked?).to eq(true)
-    lock.unlock
-    expect(lock.locked?).to eq(false)
+    locksmith.lock(1)
+    expect(locksmith.locked?).to eq(true)
+    locksmith.unlock
+    expect(locksmith.locked?).to eq(false)
   end
 
   it 'should not lock twice as a mutex' do
-    expect(lock.lock(1)).not_to eq(false)
-    expect(lock.lock(1)).to eq(false)
+    expect(locksmith.lock(1)).not_to eq(false)
+    expect(locksmith.lock(1)).to eq(false)
   end
 
   it 'should execute the given code block' do
     code_executed = false
-    lock.lock(1) do
+    locksmith.lock(1) do
       code_executed = true
     end
     expect(code_executed).to eq(true)
@@ -62,7 +62,7 @@ RSpec.shared_examples_for 'a lock' do
 
   it 'should pass an exception right through' do
     expect do
-      lock.lock(1) do
+      locksmith.lock(1) do
         raise Exception, 'redis lock exception'
       end
     end.to raise_error(Exception, 'redis lock exception')
@@ -70,16 +70,16 @@ RSpec.shared_examples_for 'a lock' do
 
   it 'should not leave the lock locked after raising an exception' do
     expect do
-      lock.lock(1) do
+      locksmith.lock(1) do
         raise Exception, 'redis lock exception'
       end
     end.to raise_error(Exception, 'redis lock exception')
 
-    expect(lock.locked?).to eq(false)
+    expect(locksmith.locked?).to eq(false)
   end
 
   it 'should return the value of the block if block-style locking is used' do
-    block_value = lock.lock(1) do
+    block_value = locksmith.lock(1) do
       42
     end
     expect(block_value).to eq(42)
@@ -88,8 +88,8 @@ RSpec.shared_examples_for 'a lock' do
   it 'should disappear without a trace when calling `delete!`' do
     original_key_size = SidekiqUniqueJobs.connection { |conn| conn.keys.count }
 
-    lock.exists_or_create!
-    lock.delete!
+    locksmith.create!
+    locksmith.delete!
 
     expect(SidekiqUniqueJobs.connection { |conn| conn.keys.count }).to eq(original_key_size)
   end
@@ -97,8 +97,8 @@ RSpec.shared_examples_for 'a lock' do
   it 'should not block when the timeout is zero' do
     did_we_get_in = false
 
-    lock.lock do
-      lock.lock(0) do
+    locksmith.lock do
+      locksmith.lock(0) do
         did_we_get_in = true
       end
     end
@@ -107,8 +107,8 @@ RSpec.shared_examples_for 'a lock' do
   end
 
   it 'should be locked when the timeout is zero' do
-    lock.lock(0) do
-      expect(lock.locked?).to be true
+    locksmith.lock(0) do
+      expect(locksmith.locked?).to be true
     end
   end
 end
@@ -125,14 +125,14 @@ RSpec.shared_examples 'a real lock' do
 
     it 'expires keys' do
       Sidekiq.redis(&:flushdb)
-      lock.exists_or_create!
+      locksmith.create!
       keys = current_keys
       expect(current_keys).not_to include(keys)
     end
 
     it 'expires keys after unlocking' do
       Sidekiq.redis(&:flushdb)
-      lock.lock do
+      locksmith.lock do
         # noop
       end
       keys = current_keys
@@ -144,18 +144,34 @@ RSpec.shared_examples 'a real lock' do
   describe 'lock without staleness checking' do
     it_behaves_like 'a lock'
 
-    xit 'can have stale locks released by a third process' do
-      watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
-      lock.lock
+    it 'can dynamically add resources' do
+      locksmith.create!
 
-      sleep 0.3
-      watchdog.release_stale_locks!
-      expect(lock.locked?).to eq(true)
+      3.times do
+        locksmith.signal
+      end
+
+      expect(locksmith.available_count).to eq(4)
+
+      locksmith.wait(1)
+      locksmith.wait(1)
+      locksmith.wait(1)
+
+      expect(locksmith.available_count).to eq(1)
+    end
+
+    it 'can have stale locks released by a third process' do
+      watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
+      locksmith.lock
+
+      sleep 0.5
+      watchdog.release!
+      expect(locksmith.locked?).to eq(true)
 
       sleep 0.6
 
-      watchdog.release_stale_locks!
-      expect(lock.locked?).to eq(false)
+      watchdog.release!
+      expect(locksmith.locked?).to eq(false)
     end
   end
 
@@ -171,34 +187,34 @@ RSpec.shared_examples 'a real lock' do
 
       it 'should restore resources of stale clients', redis: :redis do
         another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
-        hyper_aggressive_lock = described_class.new(another_lock_item)
+        hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
-        expect(hyper_aggressive_lock.lock(1)).not_to eq(false)
-        expect(hyper_aggressive_lock.lock(1)).to eq(false)
-        expect(hyper_aggressive_lock.lock(1)).not_to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
       end
     end
 
     context 'when redis_version is new', redis: :redis do
       before do
-        allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('4.0')
+        allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2')
       end
 
       it_behaves_like 'a lock'
 
       it 'should restore resources of stale clients' do
         another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
-        hyper_aggressive_lock = described_class.new(another_lock_item)
+        hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
-        expect(hyper_aggressive_lock.lock(1)).not_to eq(false)
-        expect(hyper_aggressive_lock.lock(1)).to eq(false)
-        expect(hyper_aggressive_lock.lock(1)).not_to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
       end
     end
   end
 end
 
-RSpec.describe SidekiqUniqueJobs::ComplexLock, 'with Redis', redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Locksmith, 'with Redis', redis: :redis do
   include_context 'a lock setup'
   it_behaves_like 'a real lock'
 
@@ -210,41 +226,15 @@ RSpec.describe SidekiqUniqueJobs::ComplexLock, 'with Redis', redis: :redis do
     end
 
     it 'with time support should return a different time than frozen time' do
-      expect(lock.send(:current_time)).not_to eq(Time.now)
+      expect(locksmith.send(:current_time)).not_to eq(Time.now)
     end
 
     context 'when use_local_time is true' do
       let(:lock_use_local_time) { true }
 
       it 'with use_local_time should return the same time as frozen time' do
-        expect(lock.send(:current_time)).to eq(Time.now)
+        expect(locksmith.send(:current_time)).to eq(Time.now)
       end
-    end
-  end
-end
-
-RSpec.describe SidekiqUniqueJobs::ComplexLock, 'with MockRedis', redis: :mock_redis do
-  require 'mock_redis'
-  include_context 'a lock setup'
-  it_behaves_like 'a real lock'
-
-  describe 'redis time' do
-    subject { lock.send(:current_time) }
-
-    let(:lock_stale_client_timeout) { 5 }
-
-    before(:all) do
-      Timecop.freeze(Time.local(1990))
-    end
-
-    # Since we are never hitting a redis server
-    # MockRedis uses ruby time for this
-    it { is_expected.to eq(Time.now) }
-
-    context 'when use_local_time is true' do
-      let(:lock_use_local_time) { true }
-
-      it { is_expected.to eq(Time.now) }
     end
   end
 end

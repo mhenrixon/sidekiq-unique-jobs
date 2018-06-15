@@ -9,11 +9,11 @@ module SidekiqUniqueJobs
 
       def time_until_scheduled
         return 0 unless @item[AT_KEY]
-        (Time.at(@item[AT_KEY]) - Time.now.utc).to_i
+        @item[AT_KEY].to_i - Time.now.utc.to_i
       end
 
       def seconds
-        raise NotImplementedError, "#{__method__} needs to be implemented in #{self.class}"
+        raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
       end
 
       def lock_timeout

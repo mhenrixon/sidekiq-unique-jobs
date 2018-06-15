@@ -12,7 +12,10 @@ RSpec.shared_examples_for 'unique client middleware' do
       expect(jid).not_to eq(nil)
       Sidekiq.redis do |conn|
         expect(conn.zcard('schedule')).to eq(1)
-        expected = %w[uniquejobs:6e47d668ad22db2a3ba0afd331514ce2]
+        expected = %w[
+          uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS
+          uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:VERSION
+        ]
 
         expect(conn.keys).to include(*expected)
       end
@@ -157,8 +160,7 @@ RSpec.shared_examples_for 'unique client middleware' do
   it 'does not schedule duplicates when calling perform_in' do
     10.times { MyUniqueJob.perform_in(60, 1, 2) }
     Sidekiq.redis do |conn|
-      expect(conn.zcount('schedule', -1, Time.now.to_f + 2 * 60))
-        .to eq(1)
+      expect(conn.zcount('schedule', -1, Time.now.to_f + 2 * 60)).to eq(1)
     end
   end
 

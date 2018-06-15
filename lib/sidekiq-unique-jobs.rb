@@ -12,8 +12,7 @@ require 'sidekiq_unique_jobs/timeout'
 require 'sidekiq_unique_jobs/scripts'
 require 'sidekiq_unique_jobs/unique_args'
 require 'sidekiq_unique_jobs/unlockable'
-require 'sidekiq_unique_jobs/complex_lock'
-require 'sidekiq_unique_jobs/simple_lock'
+require 'sidekiq_unique_jobs/locksmith'
 require 'sidekiq_unique_jobs/options_with_fallback'
 require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/config'
@@ -26,11 +25,11 @@ module SidekiqUniqueJobs
 
   def config
     @config ||= Config.new(
-      unique_prefix: 'uniquejobs',
       default_lock_timeout: 0,
       default_lock: :while_executing,
-      redis_test_mode: :redis, # :mock
+      enabled: true,
       raise_unique_args_errors: false,
+      unique_prefix: 'uniquejobs',
     )
   end
 
@@ -70,10 +69,6 @@ module SidekiqUniqueJobs
     else
       raise
     end
-  end
-
-  def mocked?
-    config.redis_test_mode == :mock
   end
 
   def redis_version

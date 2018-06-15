@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  class ComplexLock # rubocop:disable ClassLength
+  class Locksmith # rubocop:disable ClassLength
     API_VERSION = '1'
     EXPIRES_IN = 10
+    EXISTS_TOKEN = 1
+
+    attr_reader :item, :unique_digest, :use_local_time, :resource_count
+    attr_reader :lock_expiration, :lock_timeout, :stale_client_timeout
 
     # stale_client_timeout is the threshold of time before we assume
     # that something has gone terribly wrong with a client and we
@@ -19,44 +23,58 @@ module SidekiqUniqueJobs
       @current_jid          = @item[JID_KEY]
       @unique_digest        = @item[UNIQUE_DIGEST_KEY]
       @redis_pool           = redis_pool
+      @resource_count       = @item[SidekiqUniqueJobs::LOCK_RESOURCES_KEY] || 1
       @lock_expiration      = @item[SidekiqUniqueJobs::LOCK_EXPIRATION_KEY]
       @lock_timeout         = @item[SidekiqUniqueJobs::LOCK_TIMEOUT_KEY]
       @stale_client_timeout = @item[SidekiqUniqueJobs::STALE_CLIENT_TIMEOUT_KEY]
       @use_local_time       = @item[SidekiqUniqueJobs::USE_LOCAL_TIME_KEY]
+      @tokens               = []
     end
 
-    def exists_or_create!
+    def create!
       SidekiqUniqueJobs::Scripts.call(
-        :exists_or_create,
+        :create_locks,
         @redis_pool,
-        keys: [exists_key, grabbed_key, available_key],
-        argv: [@current_jid, @lock_expiration],
+        keys: [exists_key, grabbed_key, available_key, version_key],
+        argv: [current_jid, lock_expiration, API_VERSION, resource_count],
       )
     end
 
-    def exists?
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        conn.exists(exists_key)
+    def exists?(conn = nil)
+      if conn
+        exists_in_redis?(conn)
+      else
+        SidekiqUniqueJobs.connection(@redis_pool) do |my_conn|
+          exists?(my_conn)
+        end
       end
     end
 
+    def exists_in_redis?(conn)
+      conn.exists(exists_key)
+    end
+
     def available_count
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        conn.llen(available_key) if conn.exists(exists_key)
+      if exists?
+        SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+          conn.llen(available_key) if exists?(conn)
+        end
+      else
+        @resource_count
       end
     end
 
     def delete!
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        conn.del(available_key)
-        conn.del(grabbed_key)
-        conn.del(exists_key)
-      end
+      SidekiqUniqueJobs::Scripts.call(
+        :delete_locks,
+        @redis_pool,
+        keys: [exists_key, grabbed_key, available_key, version_key],
+      )
     end
 
     def lock(timeout = nil) # rubocop:disable MethodLength
-      exists_or_create!
-      release_stale_locks!
+      create!
+      release!
 
       SidekiqUniqueJobs.connection(@redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
@@ -66,8 +84,9 @@ module SidekiqUniqueJobs
           current_token = conn.lpop(available_key)
         end
 
-        return false unless current_token == @current_jid
+        return false if current_token.nil?
 
+        @tokens.push(current_token)
         conn.hset(grabbed_key, current_token, current_time.to_f)
         return_value = current_token
 
@@ -75,7 +94,7 @@ module SidekiqUniqueJobs
           begin
             return_value = yield current_token
           ensure
-            signal(conn, current_token)
+            signal(current_token)
           end
         end
 
@@ -86,33 +105,55 @@ module SidekiqUniqueJobs
 
     def unlock
       return false unless locked?
+      result = signal(@tokens.pop)
+      result && result[1]
+    end
+
+    def locked?(token = nil)
+      if token
+        SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+          conn.hexists(grabbed_key, token)
+        end
+      else
+        @tokens.each do |my_token|
+          return true if locked?(my_token)
+        end
+
+        false
+      end
+    end
+
+    def signal(token = nil)
+      token ||= generate_unique_token
+
+      SidekiqUniqueJobs::Scripts.call(
+        :signal_locks,
+        @redis_pool,
+        keys: [exists_key, grabbed_key, available_key, version_key],
+        argv: [token, lock_expiration],
+      )
+    end
+
+    def all_tokens
       SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        signal(conn)[1]
-      end
-
-      locked?
-    end
-
-    def locked?
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        conn.hexists(grabbed_key, @current_jid)
+        conn.multi do
+          conn.lrange(available_key, 0, -1)
+          conn.hkeys(grabbed_key)
+        end.flatten
       end
     end
 
-    def signal(conn, token = nil)
-      token ||= @current_jid
-      conn.multi do
-        conn.hdel grabbed_key, token
-        conn.lpush available_key, token
+    def generate_unique_token
+      tokens = all_tokens
+      token = Random.rand.to_s
 
-        expire_when_necessary(conn)
-      end
+      token = Random.rand.to_s while tokens.include? token
     end
 
-    def release_stale_locks!
+    def release!
       return unless check_staleness?
 
-      if SidekiqUniqueJobs.redis_version >= '3.2'
+      if Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new('3.2')
         release_stale_locks_lua!
       else
         release_stale_locks_ruby!
@@ -135,6 +176,10 @@ module SidekiqUniqueJobs
       @release_key ||= namespaced_key('RELEASE')
     end
 
+    def version_key
+      @version_key ||= namespaced_key('VERSION')
+    end
+
     private
 
     def release_stale_locks_lua!
@@ -142,7 +187,7 @@ module SidekiqUniqueJobs
         :release_stale_locks,
         @redis_pool,
         keys:  [exists_key, grabbed_key, available_key, release_key],
-        argv: [EXPIRES_IN, @stale_client_timeout, @lock_expiration],
+        argv: [EXPIRES_IN, stale_client_timeout, lock_expiration],
       )
     end
 
@@ -150,49 +195,36 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs.connection(@redis_pool) do |conn|
         simple_expiring_mutex(conn) do
           conn.hgetall(grabbed_key).each do |token, locked_at|
-            timed_out_at = locked_at.to_f + @stale_client_timeout
+            timed_out_at = locked_at.to_f + stale_client_timeout
 
-            signal(conn, token) if timed_out_at < current_time.to_f
+            signal(token) if timed_out_at < current_time.to_f
           end
         end
       end
     end
 
-    def simple_expiring_mutex(conn)
-      # Using the locking mechanism as described in
-      # http://redis.io/commands/setnx
-
+    def simple_expiring_mutex(conn) # rubocop:disable Metrics/MethodLength
+      key_name = namespaced_key(key_name)
       cached_current_time = current_time.to_f
-      my_lock_expires_at = cached_current_time + EXPIRES_IN + 1
-      return false unless create_mutex(conn, my_lock_expires_at, cached_current_time)
+      my_lock_expires_at = cached_current_time + 10 + 1
 
-      yield
-    ensure
-      # Make sure not to delete the lock in case someone else already expired
-      # our lock, with one second in between to account for some lag.
-      conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
-    end
+      got_lock = conn.setnx(key_name, my_lock_expires_at)
 
-    def create_mutex(conn, my_lock_expires_at, cached_current_time)
-      # return true if we got the lock
-      return true if conn.setnx(release_key, my_lock_expires_at)
+      unless got_lock
+        other_lock_expires_at = conn.get(key_name).to_f
 
-      # Check if expired
-      other_lock_expires_at = conn.get(release_key).to_f
+        if other_lock_expires_at < cached_current_time
+          old_expires_at = conn.getset(key_name, my_lock_expires_at).to_f
+          got_lock = (old_expires_at == other_lock_expires_at)
+        end
+      end
 
-      return false unless other_lock_expires_at < cached_current_time
+      return false unless got_lock
 
-      old_expires_at = conn.getset(release_key, my_lock_expires_at).to_f
-      # Check if another client started cleanup yet. If not,
-      # then we now have the lock.
-      old_expires_at == other_lock_expires_at
-    end
-
-    def expire_when_necessary(conn)
-      return if @lock_expiration.nil?
-
-      [available_key, exists_key].each do |key|
-        conn.expire(key, @lock_expiration)
+      begin
+        yield
+      ensure
+        conn.del(key_name) if my_lock_expires_at > (current_time.to_f - 1)
       end
     end
 
@@ -215,6 +247,14 @@ module SidekiqUniqueJobs
           @use_local_time = true
           current_time
         end
+      end
+    end
+
+    def current_jid
+      if @item.key?('at')
+        '2'
+      else
+        @current_jid
       end
     end
   end

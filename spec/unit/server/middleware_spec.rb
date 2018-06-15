@@ -46,16 +46,16 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
         jid = UntilExecutedJob.perform_async
         item = Sidekiq::Queue.new(queue).find_job(jid).item
 
-        lock = SidekiqUniqueJobs::Lock.new(item)
+        locksmith = SidekiqUniqueJobs::Locksmith.new(item)
 
         Sidekiq.redis do |conn|
-          expect(conn.get(lock.exists_key)).to eq(jid)
-          conn.set(lock.exists_key, 'NOT_DELETED')
+          expect(conn.get(locksmith.exists_key)).to eq(jid)
+          conn.set(locksmith.exists_key, 'NOT_DELETED')
         end
 
         middleware.call(UntilExecutedJob.new, item, queue) do
           Sidekiq.redis do |conn|
-            expect(conn.get(lock.exists_key)).to eq('NOT_DELETED')
+            expect(conn.get(locksmith.exists_key)).to eq('NOT_DELETED')
           end
         end
       end

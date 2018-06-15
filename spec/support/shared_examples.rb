@@ -4,18 +4,16 @@ RSpec.shared_examples 'a performing worker' do |args:, splat: true|
   let(:worker_instance) { described_class.new }
 
   it do
-    Sidekiq::Testing.inline! do
-      allow(described_class).to receive(:new).and_return(worker_instance)
-      if args.nil?
-        expect(worker_instance).to receive(:perform).with(no_args)
-        described_class.perform_async
-      elsif splat
-        expect(worker_instance).to receive(:perform).with(*args)
-        described_class.perform_async(*args)
-      else
-        expect(worker_instance).to receive(:perform).with(args)
-        described_class.perform_async(args)
-      end
+    allow(described_class).to receive(:new).and_return(worker_instance)
+    if args.nil?
+      expect(worker_instance).to receive(:perform).with(no_args)
+      described_class.new.perform
+    elsif splat
+      expect(worker_instance).to receive(:perform).with(*args)
+      described_class.new.perform(*args)
+    else
+      expect(worker_instance).to receive(:perform).with(args)
+      described_class.new.perform(args)
     end
   end
 end

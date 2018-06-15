@@ -19,7 +19,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
     let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item) }
 
     before do
-      Sidekiq.redis(&:flushdb)
       allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
       lock.lock(:client)
     end
@@ -29,13 +28,13 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
 
       lock.execute(callback) do
         Sidekiq.redis do |conn|
-          expect(conn.keys('uniquejobs:*').size).to eq(0)
+          expect(conn.keys('uniquejobs:*').size).to eq(3)
         end
 
         10.times { Sidekiq::Client.push(item) }
 
         Sidekiq.redis do |conn|
-          expect(conn.keys('uniquejobs:*').size).to eq(2)
+          expect(conn.keys('uniquejobs:*').size).to eq(3)
         end
       end
 

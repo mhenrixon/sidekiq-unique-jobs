@@ -3,7 +3,8 @@ redis.replicate_commands();
 local exists_key           = KEYS[1]
 local grabbed_key          = KEYS[2]
 local available_key        = KEYS[3]
-local lock_key             = KEYS[4]
+local release_key          = KEYS[4]
+local version_key          = KEYS[5]
 
 local expires_in           = tonumber(ARGV[1])
 local stale_client_timeout = tonumber(ARGV[2])
@@ -38,13 +39,13 @@ redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - started at : " .. cached_c
 local my_lock_expires_at = cached_current_time + expires_in + 1
 redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - my_lock_expires_at: " .. my_lock_expires_at)
 
-if not redis.call('SETNX', lock_key, my_lock_expires_at) then
+if not redis.call('SETNX', release_key, my_lock_expires_at) then
   -- Check if expired
-  local other_lock_expires_at = tonumber(redis.call('GET', lock_key))
+  local other_lock_expires_at = tonumber(redis.call('GET', release_key))
   redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - other_lock_expires_at: " .. other_lock_expires_at)
 
   if other_lock_expires_at < cached_current_time then
-    local old_expires_at = tonumber(redis.call('GETSET', lock_key, my_lock_expires_at))
+    local old_expires_at = tonumber(redis.call('GETSET', release_key, my_lock_expires_at))
     redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - old_expires_at: " .. old_expires_at)
 
     -- Check if another client started cleanup yet. If not,
@@ -81,8 +82,8 @@ end
 -- Make sure not to delete the lock in case someone else already expired
 -- our lock, with one second in between to account for some lag.
 if my_lock_expires_at > (current_time() - 1) then
-  redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - DEL " .. lock_key)
-  redis.call('DEL', lock_key)
+  redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - DEL " .. release_key)
+  redis.call('DEL', release_key)
 end
 
 redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - comleted at : " .. current_time())

@@ -6,7 +6,7 @@ RSpec.describe UntilExecutedJob do
     'queue'           => :working,
     'retry'           => 1,
     'lock_timeout'    => 0,
-    'lock_expiration' => nil,
+    'lock_expiration' => 5000,
     'unique'          => :until_executed,
   }
 
