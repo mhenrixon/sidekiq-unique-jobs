@@ -89,14 +89,11 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
 
       after { SidekiqUniqueJobs::Util.del('*', 1000, false) }
 
-      let(:expected) do
-        <<~HEADER
-          Found 3 keys matching '*':
-          uniquejobs:abcdefab:EXISTS   uniquejobs:abcdefab:GRABBED  uniquejobs:abcdefab:VERSION
-        HEADER
-      end
       specify do
-        expect(output).to eq(expected)
+        expect(output).to include("Found 3 keys matching '*':")
+        expect(output).to include('uniquejobs:abcdefab:EXISTS')
+        expect(output).to include('uniquejobs:abcdefab:GRABBED')
+        expect(output).to include('uniquejobs:abcdefab:GRABBED')
       end
     end
   end
