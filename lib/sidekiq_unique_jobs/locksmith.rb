@@ -31,15 +31,11 @@ module SidekiqUniqueJobs
     end
 
     def exists?(conn = nil)
-      return exists_in_redis?(conn) if conn
+      return conn.exists(exists_key) if conn
 
       SidekiqUniqueJobs.connection(@redis_pool) do |my_conn|
-        exists?(my_conn)
+        my_conn.exists(exists_key)
       end
-    end
-
-    def exists_in_redis?(conn)
-      conn.exists(exists_key)
     end
 
     def available_count
@@ -64,8 +60,7 @@ module SidekiqUniqueJobs
       create!
       release!
 
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        current_token = get_token(conn)
+      get_token(timeout) do |current_token, conn|
         return false if current_token.nil?
 
         @tokens.push(current_token)
@@ -85,15 +80,17 @@ module SidekiqUniqueJobs
     end
     alias wait lock
 
-    def get_token(conn, timeout = nil)
-      if timeout.nil? || timeout.positive?
-        # passing timeout 0 to blpop causes it to block
-        _key, current_token = conn.blpop(available_key, timeout || 0)
-      else
-        current_token = conn.lpop(available_key)
-      end
+    def get_token(timeout = nil)
+      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+        if timeout.nil? || timeout.positive?
+          # passing timeout 0 to blpop causes it to block
+          _key, current_token = conn.blpop(available_key, timeout || 0)
+        else
+          current_token = conn.lpop(available_key)
+        end
 
-      current_token
+        yield current_token, conn
+      end
     end
 
     def unlock
@@ -103,16 +100,15 @@ module SidekiqUniqueJobs
     end
 
     def locked?(token = nil)
-      if token
-        SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+        if token
           conn.hexists(grabbed_key, token)
+        else
+          @tokens.each do |my_token|
+            return true if conn.hexists(grabbed_key, my_token)
+          end
+          false
         end
-      else
-        @tokens.each do |my_token|
-          return true if locked?(my_token)
-        end
-
-        false
       end
     end
 
@@ -197,17 +193,16 @@ module SidekiqUniqueJobs
     end
 
     def simple_expiring_mutex(conn) # rubocop:disable Metrics/MethodLength
-      key_name = namespaced_key(key_name)
       cached_current_time = current_time.to_f
       my_lock_expires_at = cached_current_time + EXPIRES_IN + 1
 
-      got_lock = conn.setnx(key_name, my_lock_expires_at)
+      got_lock = conn.setnx(release_key, my_lock_expires_at)
 
       unless got_lock
-        other_lock_expires_at = conn.get(key_name).to_f
+        other_lock_expires_at = conn.get(release_key).to_f
 
         if other_lock_expires_at < cached_current_time
-          old_expires_at = conn.getset(key_name, my_lock_expires_at).to_f
+          old_expires_at = conn.getset(release_key, my_lock_expires_at).to_f
           got_lock = (old_expires_at == other_lock_expires_at)
         end
       end
@@ -217,7 +212,7 @@ module SidekiqUniqueJobs
       begin
         yield
       ensure
-        conn.del(key_name) if my_lock_expires_at > (current_time.to_f - 1)
+        conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
       end
     end
 
