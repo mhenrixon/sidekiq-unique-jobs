@@ -25,13 +25,13 @@ module SidekiqUniqueJobs
       def unlock(scope)
         validate_scope!(actual_scope: scope, expected_scope: :server)
 
-        @lock.unlock
-        @lock.delete!
+        @locksmith.unlock
+        @locksmith.delete!
       end
 
       def lock(scope)
         validate_scope!(actual_scope: scope, expected_scope: :client)
-        @lock.lock(@calculator.lock_timeout)
+        @locksmith.lock(@calculator.lock_timeout)
       end
 
       def after_yield_yield

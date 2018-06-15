@@ -19,18 +19,18 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     subject { described_class.unlock(item_with_digest) }
 
     let(:expected_keys) do
-      %W[#{unique_digest}:EXISTS #{unique_digest}:GRABBED]
+      %W[#{unique_digest}:EXISTS #{unique_digest}:VERSION]
     end
 
     specify do
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
       Sidekiq::Client.push(item_with_digest)
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(2)
+      expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
 
       subject
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(2)
+      expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
       Sidekiq::Client.push(item_with_digest)
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(2)
+      expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
 
       subject
 

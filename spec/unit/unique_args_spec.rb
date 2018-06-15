@@ -216,7 +216,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
     end
 
-    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]['test'] }) do
+    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1].dig('test') }) do
       it 'returns the value of the provided options' do
         expect(subject).to eq('it')
       end

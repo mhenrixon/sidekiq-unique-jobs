@@ -11,7 +11,7 @@ class UntilExecutedJob
                   backtrace: 10,
                   unique: :until_executed,
                   lock_timeout: 0,
-                  lock_expiration: nil
+                  lock_expiration: 5000
 
   def perform(one, two = nil)
     [one, two]

@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
       def lock(scope)
         validate_scope!(actual_scope: scope, expected_scope: :client)
 
-        @lock.lock(0)
+        @locksmith.lock(0)
       end
 
       # Lock item until it expires

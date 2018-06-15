@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
       def lock(scope)
         validate_scope!(actual_scope: scope, expected_scope: :client)
 
-        @lock.lock(0)
+        @locksmith.lock(0)
       end
 
       # Unlocks the current job, then lock for processing
@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
       def unlock(scope)
         validate_scope!(actual_scope: scope, expected_scope: :server)
 
-        @lock.unlock
+        @locksmith.unlock
       end
 
       def runtime_lock

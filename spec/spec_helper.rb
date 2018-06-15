@@ -20,10 +20,8 @@ require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
 require 'timecop'
-require 'sidekiq_unique_jobs/testing'
 require 'sidekiq/simulator'
 
-Sidekiq::Testing.disable!
 Sidekiq.logger = Logger.new('/dev/null')
 SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}")
 

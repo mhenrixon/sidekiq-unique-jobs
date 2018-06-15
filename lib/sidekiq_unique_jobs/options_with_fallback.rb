@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
     }.freeze
 
     def unique_enabled?
-      options[UNIQUE_KEY] || item[UNIQUE_KEY]
+      SidekiqUniqueJobs.config.enabled && item[UNIQUE_KEY]
     end
 
     def unique_disabled?

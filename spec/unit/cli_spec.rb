@@ -84,15 +84,15 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
 
     context 'when a key exists' do
       before do
-        SidekiqUniqueJobs::SimpleLock.new(item).lock
+        SidekiqUniqueJobs::Locksmith.new(item).lock
       end
 
       after { SidekiqUniqueJobs::Util.del('*', 1000, false) }
 
       let(:expected) do
         <<~HEADER
-          Found 1 keys matching '#{pattern}':
-          uniquejobs:abcdefab
+          Found 3 keys matching '*':
+          uniquejobs:abcdefab:EXISTS   uniquejobs:abcdefab:GRABBED  uniquejobs:abcdefab:VERSION
         HEADER
       end
       specify do
@@ -104,12 +104,12 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
   describe '.del' do
     let(:expected) do
       <<~HEADER
-        Deleted 1 keys matching '*'
+        Deleted 3 keys matching '*'
       HEADER
     end
 
     before do
-      SidekiqUniqueJobs::SimpleLock.new(item).lock
+      SidekiqUniqueJobs::Locksmith.new(item).lock
     end
 
     specify do

@@ -35,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     context 'when options["unique"] is present' do
       let(:options) { { 'unique' => 'while_executing' } }
       let(:item) { { 'unique' => 'until_executed' } }
-      its(:unique_enabled?) { is_expected.to eq('while_executing') }
+      its(:unique_enabled?) { is_expected.to eq('until_executed') }
     end
 
     context 'when item["unique"] is present' do

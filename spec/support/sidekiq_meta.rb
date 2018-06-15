@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sidekiq/testing'
+
 RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
   config.before(:each, redis: :mock_redis) do
     require 'mock_redis'
@@ -24,10 +26,6 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
       sidekiq_config.redis = redis_options
     end
 
-    SidekiqUniqueJobs.configure do |unique_config|
-      unique_config.redis_test_mode = :redis
-    end
-
     Sidekiq.redis = redis
     Sidekiq.redis(&:flushdb)
   end
@@ -35,10 +33,6 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
   config.before(:each) do |example|
     Sidekiq::Worker.clear_all
     Sidekiq::Queues.clear_all
-
-    Sidekiq::Testing.server_middleware do |chain|
-      chain.add SidekiqUniqueJobs::Server::Middleware
-    end
 
     enable_delay = defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
     Sidekiq::Extensions.enable_delay! if enable_delay
@@ -50,12 +44,12 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
       VERSION_REGEX.match(sidekiq_ver.to_s) do |match|
-        version  = match[:version]
+        version  = Gem::Version.new(match[:version])
         operator = match[:operator]
 
         raise 'Please specify how to compare the version with >= or < or =' unless operator
 
-        unless Sidekiq::VERSION.send(operator, version)
+        unless Gem::Version.new(Sidekiq::VERSION).send(operator, version)
           skip("Skipped due to version check (requirement was that sidekiq version is " \
                "#{operator} #{version}; was #{Sidekiq::VERSION})")
         end
@@ -63,16 +57,7 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
     end
   end
 
-  config.after(:each, redis: :mock_redis) do
-    SidekiqUniqueJobs.configure do |unique|
-      unique.redis_test_mode = :redis
-    end
-  end
-
   config.after(:each, redis: :redis) do |example|
     Sidekiq.redis(&:flushdb)
-    respond_to_middleware = defined?(Sidekiq::Testing) && Sidekiq::Testing.respond_to?(:server_middleware)
-    Sidekiq::Testing.server_middleware(&:clear) if respond_to_middleware
-    Sidekiq::Testing.disable! unless example.metadata[:sidekiq].nil?
   end
 end
