@@ -2,7 +2,7 @@
 
 module SidekiqUniqueJobs
   class Lock
-    class UntilExecuted < QueueLockBase
+    class UntilExecuted < BaseLock
       OK ||= 'OK'
 
       extend Forwardable
@@ -15,23 +15,11 @@ module SidekiqUniqueJobs
         operative = false
         raise
       ensure
-        if operative && unlock(:server)
+        if operative && unlock
           callback.call
         else
           logger.fatal("the unique_key: #{@item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
         end
-      end
-
-      def unlock(scope)
-        validate_scope!(actual_scope: scope, expected_scope: :server)
-
-        @locksmith.unlock
-        @locksmith.delete!
-      end
-
-      def lock(scope)
-        validate_scope!(actual_scope: scope, expected_scope: :client)
-        @locksmith.lock(@calculator.lock_timeout)
       end
 
       def after_yield_yield

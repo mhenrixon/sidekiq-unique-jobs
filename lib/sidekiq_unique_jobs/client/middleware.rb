@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
       end
 
       def acquire_lock
-        locked = lock.lock(:client)
+        locked = lock.lock
         warn_about_duplicate(item) unless locked
         locked
       end

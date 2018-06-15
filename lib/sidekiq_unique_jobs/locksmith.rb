@@ -260,9 +260,7 @@ module SidekiqUniqueJobs
   end
 end
 
-require 'sidekiq_unique_jobs/lock/prepares_items'
-require 'sidekiq_unique_jobs/lock/queue_lock_base'
-require 'sidekiq_unique_jobs/lock/run_lock_base'
+require 'sidekiq_unique_jobs/lock/base_lock'
 require 'sidekiq_unique_jobs/lock/until_executed'
 require 'sidekiq_unique_jobs/lock/until_executing'
 require 'sidekiq_unique_jobs/lock/while_executing'

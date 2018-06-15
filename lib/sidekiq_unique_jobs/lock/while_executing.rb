@@ -2,32 +2,21 @@
 
 module SidekiqUniqueJobs
   class Lock
-    class WhileExecuting < RunLockBase
-      # Don't lock when client middleware runs
-      #
-      # @param _scope [Symbol] the scope, `:client` or `:server`
-      # @return [Boolean] always returns true
-      def lock(_scope)
+    class WhileExecuting < BaseLock
+      def lock
         true
       end
 
-      # Locks while server middleware executes the job
-      #
-      # @param callback [Proc] callback to call when finished
-      # @return [Boolean] report success
-      # @raise [SidekiqUniqueJobs::LockTimeout] when lock fails within configured timeout
+      # TODO: Make the key for these specific to runlocks
       def execute(callback)
-        @locksmith.lock(@item[LOCK_TIMEOUT_KEY]) do
+        @locksmith.lock(@calculator.lock_timeout) do
           yield
           callback&.call
         end
       end
 
-      # Unlock the current item
-      #
-      def unlock(_scope)
-        @locksmith.unlock
-        @locksmith.delete!
+      def unlock
+        true
       end
     end
   end

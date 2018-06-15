@@ -14,18 +14,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilTimeout, redis: :redis do
 
   describe '#unlock' do
     context 'when provided :server' do
-      subject { lock.unlock(:server) }
+      subject { lock.unlock }
 
       it { is_expected.to eq(true) }
-    end
-
-    context 'when provided with anything else than :server' do
-      subject { lock.unlock(:client) }
-
-      it 'raises a helpful error message' do
-        expect { subject }
-          .to raise_error(ArgumentError, /client middleware can't unlock uniquejobs:*/)
-      end
     end
   end
 end

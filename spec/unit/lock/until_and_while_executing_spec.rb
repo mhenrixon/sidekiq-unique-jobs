@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
 
     before do
       allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
-      lock.lock(:client)
+      lock.lock
     end
 
     it 'unlocks the unique key before yielding' do
