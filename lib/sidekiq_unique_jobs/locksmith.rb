@@ -31,12 +31,10 @@ module SidekiqUniqueJobs
     end
 
     def exists?(conn = nil)
-      if conn
-        exists_in_redis?(conn)
-      else
-        SidekiqUniqueJobs.connection(@redis_pool) do |my_conn|
-          exists?(my_conn)
-        end
+      return exists_in_redis?(conn) if conn
+
+      SidekiqUniqueJobs.connection(@redis_pool) do |my_conn|
+        exists?(my_conn)
       end
     end
 
@@ -45,12 +43,12 @@ module SidekiqUniqueJobs
     end
 
     def available_count
-      if exists?
-        SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+        if exists?(conn)
           conn.llen(available_key) if exists?(conn)
+        else
+          @resource_count
         end
-      else
-        @resource_count
       end
     end
 
@@ -67,13 +65,7 @@ module SidekiqUniqueJobs
       release!
 
       SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        if timeout.nil? || timeout.positive?
-          # passing timeout 0 to blpop causes it to block
-          _key, current_token = conn.blpop(available_key, timeout || 0)
-        else
-          current_token = conn.lpop(available_key)
-        end
-
+        current_token = get_token(conn)
         return false if current_token.nil?
 
         @tokens.push(current_token)
@@ -92,6 +84,17 @@ module SidekiqUniqueJobs
       end
     end
     alias wait lock
+
+    def get_token(conn, timeout = nil)
+      if timeout.nil? || timeout.positive?
+        # passing timeout 0 to blpop causes it to block
+        _key, current_token = conn.blpop(available_key, timeout || 0)
+      else
+        current_token = conn.lpop(available_key)
+      end
+
+      current_token
+    end
 
     def unlock
       return false unless locked?
