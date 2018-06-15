@@ -57,7 +57,7 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
     end
   end
 
-  config.after(:each, redis: :redis) do |example|
+  config.after(:each, redis: :redis) do |_example|
     Sidekiq.redis(&:flushdb)
   end
 end

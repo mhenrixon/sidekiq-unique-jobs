@@ -2,9 +2,7 @@
 
 module SidekiqUniqueJobs
   class Lock
-    class QueueLockBase
-      include SidekiqUniqueJobs::Lock::PreparesItems
-
+    class BaseLock
       def initialize(item, redis_pool = nil)
         @calculator = SidekiqUniqueJobs::Timeout::QueueLock.new(item)
         @item       = prepare_item(item, @calculator)
@@ -12,23 +10,26 @@ module SidekiqUniqueJobs
         @locksmith  = SidekiqUniqueJobs::Locksmith.new(@item, @redis_pool)
       end
 
-      def lock(_scope)
-        raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
+      def lock
+        @locksmith.lock(@calculator.lock_timeout)
       end
 
       def execute(_callback = nil)
         raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
       end
 
-      def unlock(_scope)
-        raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
+      def unlock
+        @locksmith.unlock
+        @locksmith.delete!
       end
 
       private
 
-      def validate_scope!(actual_scope:, expected_scope:)
-        return if actual_scope == expected_scope
-        raise ArgumentError, "`#{actual_scope}` client middleware can't unlock #{@item[UNIQUE_DIGEST_KEY]}"
+      def prepare_item(item, calculator)
+        item[LOCK_TIMEOUT_KEY] = calculator.lock_timeout
+        item[LOCK_EXPIRATION_KEY] = calculator.lock_expiration
+        SidekiqUniqueJobs::UniqueArgs.digest(item)
+        item
       end
     end
   end

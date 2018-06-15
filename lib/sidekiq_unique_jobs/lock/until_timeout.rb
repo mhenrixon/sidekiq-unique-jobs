@@ -2,33 +2,18 @@
 
 module SidekiqUniqueJobs
   class Lock
-    class UntilTimeout < QueueLockBase
-      # Lock item until it expires
-      #
-      # @param scope [Symbol] the scope, `:client` or `:server`
-      # @return [Boolean] truthy for success
-      # @raise [ArgumentError] if scope != :client
-      def lock(scope)
-        validate_scope!(actual_scope: scope, expected_scope: :client)
-
+    class UntilTimeout < BaseLock
+      def lock
         @locksmith.lock(0)
       end
 
-      # Lock item until it expires
-      #
-      # @param scope [Symbol] the scope, `:client` or `:server`
-      # @return [Boolean] returns true
-      # @raise [ArgumentError] if scope != :server
-      def unlock(scope)
-        validate_scope!(actual_scope: scope, expected_scope: :server)
+      def unlock
         true
       end
 
-      # Execute the block
-      #
-      # @param _callback [Proc] callback that will never get called
-      def execute(_callback)
+      def execute(callback)
         yield if block_given?
+        callback.call
       end
     end
   end

@@ -7,7 +7,6 @@ module SidekiqUniqueJobs
         @lock_expiration ||= @item[LOCK_EXPIRATION_KEY]
         @lock_expiration ||= worker_class_lock_expiration
         @lock_expiration ||= worker_class_run_lock_expiration
-        @lock_expiration ||= SidekiqUniqueJobs.config.default_run_lock_expiration
       end
     end
   end
