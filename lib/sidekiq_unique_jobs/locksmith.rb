@@ -30,21 +30,19 @@ module SidekiqUniqueJobs
       )
     end
 
-    def exists?(conn = nil)
-      return conn.exists(exists_key) if conn
-
-      SidekiqUniqueJobs.connection(@redis_pool) do |my_conn|
-        my_conn.exists(exists_key)
+    def exists?
+      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+        conn.exists(exists_key)
       end
     end
 
     def available_count
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        if exists?(conn)
-          conn.llen(available_key) if exists?(conn)
-        else
-          @resource_count
+      if exists?
+        SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+          conn.llen(available_key)
         end
+      else
+        @resource_count
       end
     end
 
