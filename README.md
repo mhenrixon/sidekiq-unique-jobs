@@ -137,8 +137,8 @@ sidekiq_options unique: :until_and_while_executing
 ### Uniqueness Scope
 
 - Queue specific locks
-- Across all queues - [spec/jobs/unique_on_all_queues_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_on_all_queues_job.rb)
-- Across all workers - [spec/jobs/unique_across_workers_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/jobs/unique_across_workers_job.rb)
+- Across all queues - [examples/unique_on_all_queues_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/examples/unique_on_all_queues_job.rb)
+- Across all workers - [examples/unique_across_workers_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/examples/unique_across_workers_job.rb)
 - Timed / Scheduled jobs
 
 ## Usage
@@ -279,23 +279,13 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 ## Testing
 
-To enable the testing for `sidekiq-unique-jobs`, add `require 'sidekiq_unique_jobs/testing'` to your testing helper.
+This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs.
 
-You can if you want use `gem 'mock_redis'` to prevent sidekiq unique jobs using redis.
-
-See https://github.com/mhenrixon/sidekiq-unique-jobs/tree/master/rails_example/spec/controllers/work_controller_spec.rb for an example of how to configure sidekiq and unique jobs without redis.
-
-If you really don't care about testing uniquness and trust we get that stuff right you can (in newer sidekiq versions) remove the client middleware.
+https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
 
 ```ruby
-describe "Some test" do
-  before(:each) do
-    Sidekiq.configure_client do |config|
-      config.client_middleware do |chain|
-        chain.remove SidekiqUniqueJobs::Client::Middleware
-      end
-    end
-  end
+SidekiqUniqueJobs.configure do |config|
+  config.enabled = !Rails.env.test?
 end
 ```
 
