@@ -4,20 +4,10 @@ module SidekiqUniqueJobs
   class Locksmith # rubocop:disable ClassLength
     API_VERSION = '1'
     EXPIRES_IN = 10
-    EXISTS_TOKEN = 1
 
     attr_reader :item, :unique_digest, :use_local_time, :resource_count
     attr_reader :lock_expiration, :lock_timeout, :stale_client_timeout
 
-    # stale_client_timeout is the threshold of time before we assume
-    # that something has gone terribly wrong with a client and we
-    # invalidate it's lock.
-    # Default is nil for which we don't check for stale clients
-    # SidekiqUniqueJobs::Lock::WhileExecuting.new(item, :stale_client_timeout => 30, :redis => myRedis)
-    # SidekiqUniqueJobs::Lock::WhileExecuting.new(item, :redis => myRedis)
-    # SidekiqUniqueJobs::Lock::WhileExecuting.new(item, :resources => 1, :redis => myRedis)
-    # SidekiqUniqueJobs::Lock::WhileExecuting.new(item, :host => "", :port => "")
-    # SidekiqUniqueJobs::Lock::WhileExecuting.new(item, :path => "bla")
     def initialize(item, redis_pool = nil)
       @item                 = item
       @current_jid          = @item[JID_KEY]
@@ -206,7 +196,7 @@ module SidekiqUniqueJobs
     def simple_expiring_mutex(conn) # rubocop:disable Metrics/MethodLength
       key_name = namespaced_key(key_name)
       cached_current_time = current_time.to_f
-      my_lock_expires_at = cached_current_time + 10 + 1
+      my_lock_expires_at = cached_current_time + EXPIRES_IN + 1
 
       got_lock = conn.setnx(key_name, my_lock_expires_at)
 
