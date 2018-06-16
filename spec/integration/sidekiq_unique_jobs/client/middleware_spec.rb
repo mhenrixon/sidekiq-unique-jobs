@@ -5,7 +5,6 @@ require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'rspec/wait'
 
-# -- rubocop:disable RSpec/FilePath
 RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1 do
   describe 'when a job is already scheduled' do
     it 'processes jobs properly' do
@@ -322,4 +321,3 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     end
   end
 end
-# -- rubocop:enable RSpec/FilePath
