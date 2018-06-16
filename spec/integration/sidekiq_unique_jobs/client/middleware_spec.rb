@@ -22,7 +22,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       Sidekiq::Scheduled::Enq.new.enqueue_jobs
 
       Sidekiq::Simulator.process_queue(:notify_worker) do
-        sleep 1
         Sidekiq.redis do |conn|
           wait(10).for { conn.llen('queue:notify_worker') }.to eq(0)
         end
@@ -40,7 +39,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       end
 
       Sidekiq::Simulator.process_queue(:not_default) do
-        sleep(1)
         Sidekiq.redis do |conn|
           expect(conn.llen('queue:default')).to eq(1)
           wait(10).for { conn.llen('queue:not_default') }.to eq(0)
@@ -53,7 +51,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       end
 
       Sidekiq::Simulator.process_queue(:default) do
-        sleep(1)
         Sidekiq.redis do |conn|
           expect(conn.llen('queue:not_default')).to eq(0)
           wait(10).for { conn.llen('queue:default') }.to eq(0)
@@ -66,10 +63,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         MainJob.perform_in(x, x)
       end
 
-      Sidekiq.redis do |conn|
-        count = conn.zcount('schedule', -1, Time.now.to_f + 2 * 60)
-        expect(count).to eq(20)
-      end
+      expect(20).to be_scheduled_at(Time.now.to_f + 2 * 60)
     end
 
     it 'schedules allows jobs to be scheduled ' do
@@ -83,19 +77,16 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         ShitClass.delay_for(x, unique: :while_executing).do_it(1)
       end
 
-      Sidekiq.redis do |conn|
-        count = conn.zcount('schedule', -1, Time.now.to_f + 2 * 60)
-        expect(count).to eq(20)
-      end
+      expect(20).to be_scheduled_at(Time.now.to_f + 2 * 60)
     end
   end
 
   it 'does not push duplicate messages when unique_args are filtered with a proc' do
     10.times { MyUniqueJobWithFilterProc.perform_async(1) }
-    Sidekiq.redis { |conn| expect(conn.llen('queue:customqueue')).to eq(1) }
+    expect(1).to be_enqueued_in('customqueue')
 
     Sidekiq.redis(&:flushdb)
-    Sidekiq.redis { |conn| expect(conn.llen('queue:customqueue')).to eq(0) }
+    expect(0).to be_enqueued_in('customqueue')
 
     10.times do
       Sidekiq::Client.push(
@@ -104,7 +95,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         'args' => [1, type: 'value', some: 'not used'],
       )
     end
-    Sidekiq.redis { |conn| expect(conn.llen('queue:customqueue')).to eq(1) }
+
+    expect(1).to be_enqueued_in('customqueue')
   end
 
   it 'does not push duplicate messages when unique_args are filtered with a method' do
@@ -129,30 +121,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     10.times { PlainClass.delay(unique: :until_executed, queue: 'customqueue').run(1) }
 
     expect(1).to be_enqueued_in('customqueue')
-  end
-
-  it 'does not schedule duplicates when calling perform_in' do
-    10.times { MyUniqueJob.perform_in(60, 1, 2) }
-    Sidekiq.redis do |conn|
-      expect(conn.zcount('schedule', -1, Time.now.to_f + 2 * 60)).to eq(1)
-    end
-  end
-
-  context 'when expiration is configured' do
-    it 'sets that expiration on the key' do
-      item = { 'class' => ExpiringJob, 'queue' => 'customqueue', 'args' => [1, 2] }
-      Sidekiq::Client.push(item)
-
-      Sidekiq.redis do |conn|
-        expect(1).to be_enqueued_in('customqueue')
-
-        conn.keys('uniquejobs:*').each do |key|
-          next if key.end_with?(':GRABBED')
-
-          expect(conn.ttl(key)).to be_within(1).of(ExpiringJob.get_sidekiq_options['lock_expiration'])
-        end
-      end
-    end
   end
 
   context 'when class is not unique' do
@@ -184,16 +152,10 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     end
 
     context 'when filter proc is defined' do
-      it 'pushes no duplicate messages' do
-        expect(CustomQueueJobWithFilterProc.get_sidekiq_options['unique_args']).to be_a(Proc)
+      let(:args) { [1, { random: rand, name: 'foobar' }] }
 
-        100.times do
-          Sidekiq::Client.push(
-            'class' => CustomQueueJobWithFilterProc,
-            'queue' => 'customqueue',
-            'args' => [1, { random: rand, name: 'foobar' }],
-          )
-        end
+      it 'pushes no duplicate messages' do
+        100.times { CustomQueueJobWithFilterProc.perform_async(args) }
 
         expect(1).to be_enqueued_in('customqueue')
       end
@@ -210,7 +172,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       end
     end
 
-    context 'when unique_on_all_queues is set' do
+    context 'when unique_across_workers is set' do
       it 'does not push duplicate messages for other workers' do
         item_one = {
           'queue' => 'customqueue1',
@@ -235,7 +197,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
   end
 
   it 'expires the digest when a scheduled job is scheduled at' do
-    expected_expires_at = Time.at(Time.now.to_i + 15 * 60) - Time.now.utc
+    expected_expires_at = Time.now.to_i + 15 * 60 - Time.now.utc.to_i
 
     MyUniqueJob.perform_in(expected_expires_at, 'mika', 'hel')
 

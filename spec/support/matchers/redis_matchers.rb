@@ -13,6 +13,18 @@ RSpec::Matchers.define :be_enqueued_in do |queue|
   end
 end
 
+RSpec::Matchers.define :be_scheduled_at do |time|
+  SidekiqUniqueJobs.connection do |conn|
+    @actual = conn.zcount('schedule', -1, time)
+
+    match do |count_in_queue|
+      @expected = count_in_queue
+      expect(@actual).to eq(@expected)
+    end
+    diffable
+  end
+end
+
 RSpec::Matchers.define :have_key do |_unique_key|
   Sidekiq.redis do |conn|
     match do |_unique_jobs|
