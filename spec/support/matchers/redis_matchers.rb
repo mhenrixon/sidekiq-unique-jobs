@@ -2,6 +2,17 @@
 
 require 'rspec/expectations'
 
+RSpec::Matchers.define :be_enqueued_in do |queue|
+  SidekiqUniqueJobs.connection do |conn|
+    @actual = conn.llen("queue:#{queue}")
+    match do |count_in_queue|
+      @expected = count_in_queue
+      expect(@actual).to eq(@expected)
+    end
+    diffable
+  end
+end
+
 RSpec::Matchers.define :have_key do |_unique_key|
   Sidekiq.redis do |conn|
     match do |_unique_jobs|

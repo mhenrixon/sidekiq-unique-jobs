@@ -27,7 +27,6 @@ end
 
 RSpec.shared_examples 'sidekiq with options' do
   subject(:sidekiq_options) { described_class.get_sidekiq_options }
-  let(:options) { Hash.new }
 
   it { is_expected.to match(a_hash_including(options)) }
 end

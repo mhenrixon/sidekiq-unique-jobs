@@ -1,11 +1,33 @@
 # frozen_string_literal: true
 
 # :nocov:
+
+require 'sidekiq'
 require 'sidekiq/testing'
 
 module Sidekiq
+  def self.use_config(tmp_config = {})
+    old_config = default_worker_options
+    default_worker_options.clear
+    self.default_worker_options = tmp_config
+
+    yield
+  ensure
+    default_worker_options.clear
+    self.default_worker_options = old_config
+  end
+
   module Worker
     module ClassMethods
+      def use_config(tmp_config = {})
+        old_config = get_sidekiq_options
+        sidekiq_options(tmp_config)
+
+        yield
+      ensure
+        sidekiq_options(old_config)
+      end
+
       def clear
         jobs.each do |job|
           SidekiqUniqueJobs::Unlockable.delete!(job)
