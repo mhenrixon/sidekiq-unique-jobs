@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe UntilExecutingJob do
-  it_behaves_like 'sidekiq with options', options: {
-    'queue'  => :working,
-    'retry'  => true,
-    'unique' => :until_executing,
-  }
+  it_behaves_like 'sidekiq with options' do
+    let(:options) do
+      {
+        'queue'  => :working,
+        'retry'  => true,
+        'unique' => :until_executing,
+      }
+    end
+  end
 
-  it_behaves_like 'a performing worker', args: nil
+  it_behaves_like 'a performing worker' do
+    let(:args) { no_args }
+  end
 end

@@ -41,6 +41,15 @@ module SidekiqUniqueJobs
     config.default_lock
   end
 
+  def use_config(tmp_config)
+    fail ::ArgumentError, "#{self.name}.#{__method__} needs a block" unless block_given?
+
+    old_config = config.to_h
+    configure(tmp_config)
+    yield
+    configure(old_config)
+  end
+
   def configure(options = {})
     if block_given?
       yield config
