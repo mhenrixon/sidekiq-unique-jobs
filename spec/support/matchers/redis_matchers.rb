@@ -2,6 +2,25 @@
 
 require 'rspec/expectations'
 
+RSpec::Matchers.define :eventually do |matcher|
+  supports_block_expectations
+
+  match do |actual|
+    begin
+      Timeout.timeout(15) do
+        sleep 0.01 until matcher.matches?(actual)
+        return true
+      end
+    rescue Timeout::Error
+      return false
+    end
+  end
+
+  failure_message do |_actual|
+    matcher.failure_message
+  end
+end
+
 RSpec::Matchers.define :be_enqueued_in do |queue|
   SidekiqUniqueJobs.connection do |conn|
     @actual = conn.llen("queue:#{queue}")

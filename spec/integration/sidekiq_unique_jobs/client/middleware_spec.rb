@@ -22,9 +22,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       Sidekiq::Scheduled::Enq.new.enqueue_jobs
 
       Sidekiq::Simulator.process_queue(:notify_worker) do
-        Sidekiq.redis do |conn|
-          wait(10).for { conn.llen('queue:notify_worker') }.to eq(0)
-        end
+        expect(0).to eventually be_enqueued_in('notify_worker')
       end
     end
 
@@ -33,28 +31,15 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       expect(SimpleWorker.perform_async(1)).to eq(nil)
       expect(SpawnSimpleWorker.perform_async(1)).not_to eq(nil)
 
-      Sidekiq.redis do |conn|
-        expect(conn.llen('queue:default')).to eq(1)
-        expect(conn.llen('queue:not_default')).to eq(1)
-      end
+      expect(1).to be_enqueued_in('default')
+      expect(1).to be_enqueued_in('not_default')
 
       Sidekiq::Simulator.process_queue(:not_default) do
-        Sidekiq.redis do |conn|
-          expect(conn.llen('queue:default')).to eq(1)
-          wait(10).for { conn.llen('queue:not_default') }.to eq(0)
-          expect(conn.llen('queue:default')).to eq(1)
-        end
-      end
-
-      Sidekiq.redis do |conn|
-        expect(conn.llen('queue:default')).to eq(1)
+        expect(0).to eventually be_enqueued_in('not_default')
       end
 
       Sidekiq::Simulator.process_queue(:default) do
-        Sidekiq.redis do |conn|
-          expect(conn.llen('queue:not_default')).to eq(0)
-          wait(10).for { conn.llen('queue:default') }.to eq(0)
-        end
+        expect(0).to eventually be_enqueued_in('default')
       end
     end
 
