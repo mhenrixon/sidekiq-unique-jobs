@@ -16,12 +16,12 @@ RSpec.describe WhileExecutingJob do
     let(:args) { 'one' }
   end
 
-  context 'when job is already scheduled' do
-    let(:args) { 1 }
-
-    it 'pushes the job immediately' do
-      described_class.perform_in(3600, args)
-      expect(described_class.perform_async(args)).not_to eq(nil)
+  describe 'client middleware' do
+    context 'when job is already scheduled' do
+      it 'pushes the job immediately' do
+        described_class.perform_in(3600, 1)
+        expect(described_class.perform_async(1)).not_to eq(nil)
+      end
     end
   end
 end

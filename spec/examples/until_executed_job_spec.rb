@@ -5,10 +5,10 @@ RSpec.describe UntilExecutedJob do
     let(:options) do
       {
         'backtrace'       => 10,
-        'queue'           => :working,
-        'retry'           => 1,
         'lock_timeout'    => 0,
         'lock_expiration' => 5000,
+        'queue'           => :working,
+        'retry'           => 1,
         'unique'          => :until_executed,
       }
     end
