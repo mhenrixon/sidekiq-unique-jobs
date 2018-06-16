@@ -16,7 +16,6 @@ module SidekiqUniqueJobs
   STALE_CLIENT_TIMEOUT_KEY ||= 'stale_client_timeout'
   TESTING_CONSTANT ||= 'Testing'
   UNIQUE_ACROSS_WORKERS_KEY ||= 'unique_across_workers'
-  UNIQUE_ARGS_ENABLED_KEY ||= 'unique_args_enabled'
   UNIQUE_ARGS_KEY ||= 'unique_args'
   UNIQUE_DIGEST_KEY ||= 'unique_digest'
   UNIQUE_KEY ||= 'unique'
