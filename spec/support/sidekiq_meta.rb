@@ -30,7 +30,7 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
     Sidekiq.redis(&:flushdb)
   end
 
-  config.before(:each) do |example|
+  config.before do |example|
     Sidekiq::Worker.clear_all
     Sidekiq::Queues.clear_all
 

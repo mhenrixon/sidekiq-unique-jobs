@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/EmptyExampleGroup
 module SidekiqUniqueJobs
   module RSpec
     module InstanceMethods
@@ -37,33 +38,37 @@ module SidekiqUniqueJobs
     module ClassMethods
       def with_sidekiq_options_for(worker_class, options = {}, &block)
         context "with sidekiq options #{options}" do
-          around(:each) do |ex|
+          around do |ex|
             with_sidekiq_options_for(worker_class, options, &ex)
           end
+
           class_exec(&block)
         end
       end
 
       def with_global_config(config = {}, &block)
         context "with global configuration #{config}" do
-          around(:each) do |ex|
+          around do |ex|
             with_global_config(config, &ex)
           end
+
           class_exec(&block)
         end
       end
 
       def with_default_worker_options(config = {}, &block)
         context "with default sidekiq options #{config}" do
-          around(:each) do |ex|
+          around do |ex|
             with_default_worker_options(config, &ex)
           end
+
           class_exec(&block)
         end
       end
     end
   end
 end
+# rubocop:enable RSpec/EmptyExampleGroup
 
 RSpec.configure do |config|
   config.include SidekiqUniqueJobs::RSpec::InstanceMethods

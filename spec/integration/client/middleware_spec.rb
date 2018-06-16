@@ -280,8 +280,6 @@ RSpec.shared_examples_for 'unique client middleware' do
     end
   end
 
-  # TODO: If anyone know of a better way to check that the expiration for scheduled
-  # jobs are set around the same time as the scheduled job itself feel free to improve.
   it 'expires the digest when a scheduled job is scheduled at' do
     expected_expires_at = Time.at(Time.now.to_i + 15 * 60) - Time.now.utc
 
@@ -311,7 +309,7 @@ RSpec.shared_examples_for 'unique client middleware' do
   end
 
   it 'does not log duplicate payload when config turned off' do
-    expect(SidekiqUniqueJobs.logger).to_not receive(:warn).with(/^payload is not unique/)
+    expect(SidekiqUniqueJobs.logger).not_to receive(:warn).with(/^payload is not unique/)
 
     UntilExecutedJob.sidekiq_options log_duplicate_payload: false
 
@@ -324,10 +322,8 @@ RSpec.shared_examples_for 'unique client middleware' do
   end
 end
 
-RSpec.describe SidekiqUniqueJobs::Client::Middleware, 'with Redis', redis: :redis, redis_db: 1 do
+# rubocop:disable RSpec/FilePath
+RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1 do
   it_behaves_like 'unique client middleware'
 end
-
-# RSpec.xdescribe SidekiqUniqueJobs::Client::Middleware, 'with MockRedis', redis: :mock_redis do
-#   it_behaves_like 'unique client middleware'
-# end
+# rubocop:enable RSpec/FilePath

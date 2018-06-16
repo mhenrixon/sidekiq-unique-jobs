@@ -2,7 +2,6 @@
 
 RSpec.shared_examples 'a performing worker' do |args:, splat: true|
   let(:worker_instance) { described_class.new }
-
   it do
     allow(described_class).to receive(:new).and_return(worker_instance)
     if args.nil?

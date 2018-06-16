@@ -13,6 +13,7 @@ RSpec.describe UniqueJobWithNilUniqueArgs do
 
   describe '.unique_args' do
     subject { described_class.unique_args(args) }
+
     let(:args) { ['argument one', 'two', 'three'] }
 
     it { is_expected.to eq(nil) }

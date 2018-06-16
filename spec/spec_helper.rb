@@ -39,7 +39,7 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
-  config.example_status_persistence_file_path = 'spec/examples.txt'
+  config.example_status_persistence_file_path = '.rspec_status'
   config.filter_run :focus unless ENV['CI']
   config.run_all_when_everything_filtered = true
   config.disable_monkey_patching!

@@ -6,9 +6,8 @@ module SidekiqUniqueJobs
       def execute(callback)
         unlock
 
-        # TODO: Make the key for these specific to runlocks
         runtime_lock.execute(callback) do
-          yield
+          yield if block_given?
         end
       end
 

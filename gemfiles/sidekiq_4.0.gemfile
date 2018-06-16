@@ -14,6 +14,7 @@ platforms :mri_25 do
   gem "memory_profiler", require: false
   gem "pry-byebug", require: false
   gem "rubocop", require: false
+  gem "rubocop-rspec", require: false
   gem "simplecov-json", require: false
   gem "travis", require: false
 end

@@ -36,6 +36,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
 
   describe '.keys' do
     subject { described_class.keys }
+
     before do
       expect(described_class.keys).to match_array([])
       lock.lock(0)

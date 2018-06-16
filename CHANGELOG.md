@@ -1,3 +1,10 @@
+## v6.0.0
+
+- Complete rewrite of the locking mechanism
+- Improved README
+- Improved reliability
+- 
+
 ## v5.1.0
 
 - Refactoring the runtime locks (WhileExecuting)

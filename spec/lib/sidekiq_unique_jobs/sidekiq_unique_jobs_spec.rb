@@ -13,8 +13,8 @@ RSpec.describe SidekiqUniqueJobs do
 
   describe '.configure_server_middleware' do
     let(:server_config) { class_double(Sidekiq) }
-    let(:server_middleware) { double(Sidekiq::Middleware::Chain) }
-    let(:client_middleware) { double(Sidekiq::Middleware::Chain) }
+    let(:server_middleware) { instance_double(Sidekiq::Middleware::Chain) }
+    let(:client_middleware) { instance_double(Sidekiq::Middleware::Chain) }
 
     it 'adds client and server middleware when required' do
       expect(Sidekiq).to receive(:configure_server).and_yield(server_config)
@@ -30,7 +30,7 @@ RSpec.describe SidekiqUniqueJobs do
 
   describe '.configure_client_middleware' do
     let(:client_config) { class_double(Sidekiq) }
-    let(:client_middleware) { double(Sidekiq::Middleware::Chain) }
+    let(:client_middleware) { instance_double(Sidekiq::Middleware::Chain) }
 
     it 'adds client middleware when required' do
       expect(Sidekiq).to receive(:configure_client).and_yield(client_config)
