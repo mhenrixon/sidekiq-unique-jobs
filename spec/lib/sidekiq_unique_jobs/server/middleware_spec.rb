@@ -12,7 +12,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
   let(:queue) { 'working' }
 
   describe '#call' do
-    subject { middleware.call(*args) {} }
+    subject(:call) { middleware.call(*args) {} }
 
     let(:args) { [WhileExecutingJob, { 'class' => 'WhileExecutingJob' }, 'working', nil] }
 
@@ -23,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
 
       it 'does not use locking' do
         expect(middleware).not_to receive(:lock)
-        subject
+        call
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
 
       it 'executes the lock' do
         expect(lock).to receive(:execute).with(instance_of(Proc)).and_yield
-        subject
+        call
       end
     end
 

@@ -12,11 +12,12 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
 
   describe '.logger' do
     subject { described_class.logger }
+
     it { is_expected.to eq(Sidekiq.logger) }
   end
 
   describe '.call' do
-    subject { described_class.call(script_name, nil, options) }
+    subject(:call) { described_class.call(script_name, nil, options) }
 
     let(:jid)           { 'abcefab' }
     let(:unique_key)    { 'uniquejobs:abcefab' }
@@ -38,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
       specify do
         expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
         expect(described_class).to receive(:internal_call).with(script_name, nil, options).once
-        expect { subject }.to raise_error(
+        expect { call }.to raise_error(
           SidekiqUniqueJobs::ScriptError,
           "Problem compiling #{script_name}. Message: Some interesting error",
         )
@@ -50,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
         specify do
           expect(described_class::SCRIPT_SHAS).to receive(:delete).with(script_name)
           expect(described_class).to receive(:internal_call).with(script_name, nil, options).twice
-          expect { subject }.not_to raise_error
+          expect { call }.not_to raise_error
         end
       end
     end

@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
   let(:unique_digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] }
 
   describe '.unlock' do
-    subject { described_class.unlock(item_with_digest) }
+    subject(:unlock) { described_class.unlock(item_with_digest) }
 
     let(:expected_keys) do
       %W[#{unique_digest}:EXISTS #{unique_digest}:VERSION]
@@ -28,14 +28,14 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
 
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
 
-      subject
+      unlock
 
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
     end
   end
 
   describe '.delete!' do
-    subject { described_class.delete!(item_with_digest) }
+    subject(:delete!) { described_class.delete!(item_with_digest) }
 
     specify do
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
@@ -43,7 +43,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
 
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
 
-      subject
+      delete!
 
       expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
     end

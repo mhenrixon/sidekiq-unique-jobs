@@ -3,9 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
-  let(:calculator)    { described_class.new('class' => worker_class, 'at' => schedule_time) }
-  let(:worker_class)  { 'MyUniqueJob' }
-  let(:schedule_time) { nil }
+  let(:calculator)         { described_class.new('class' => worker_class_name, 'at' => schedule_time) }
+  let(:worker_class_name)  { 'MyUniqueJob' }
+  let(:schedule_time)      { nil }
 
   describe 'public api' do
     subject { described_class.new(nil) }
@@ -19,6 +19,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
 
   describe '#seconds' do
     subject { -> { calculator.seconds } }
+
     it { is_expected.to raise_error(NotImplementedError, "#seconds needs to be implemented in #{described_class}") }
   end
 
@@ -43,36 +44,38 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
 
   describe '#worker_class_run_lock_expiration' do
     subject { calculator.worker_class_run_lock_expiration }
-    let(:worker_class) { 'LongRunningRunLockExpirationJob' }
+
+    let(:worker_class_name) { 'LongRunningRunLockExpirationJob' }
 
     it { is_expected.to eq(3_600) }
   end
 
   describe '#worker_class_lock_expiration' do
     subject { calculator.worker_class_lock_expiration }
-    let(:worker_class) { 'LongRunningJob' }
+
+    let(:worker_class_name) { 'LongRunningJob' }
 
     it { is_expected.to eq(7_200) }
   end
 
   describe '#worker_class' do
-    subject { calculator.worker_class }
+    subject(:worker_class) { calculator.worker_class }
 
-    let(:worker_class) { 'MyUniqueJob' }
+    let(:worker_class_name) { 'MyUniqueJob' }
 
     it { is_expected.to eq(MyUniqueJob) }
 
     context 'when worker class is a constant' do
-      let(:worker_class) { 'MissingWorker' }
+      let(:worker_class_name) { 'MissingWorker' }
 
       it { is_expected.to eq('MissingWorker') }
     end
 
     context 'when worker class is not a constant' do
-      let(:worker_class) { 'missing_worker' }
+      let(:worker_class_name) { 'missing_worker' }
 
       it do
-        expect { subject }.to raise_error(NameError, 'wrong constant name missing_worker')
+        expect { worker_class }.to raise_error(NameError, 'wrong constant name missing_worker')
       end
     end
   end

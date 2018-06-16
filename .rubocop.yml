@@ -1,3 +1,4 @@
+require: rubocop-rspec
 AllCops:
   Include:
     - '**/Rakefile'
@@ -52,6 +53,29 @@ Naming/FileName:
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
     - ex
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExpectInHook:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
+  Enabled: true
+
+RSpec/RepeatedExample:
+  Enabled: false
+
 
 Style/FrozenStringLiteralComment:
   Enabled: true

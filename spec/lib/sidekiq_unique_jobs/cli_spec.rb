@@ -5,6 +5,17 @@ require 'thor/runner'
 require 'irb'
 
 RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
+  let(:item) do
+    {
+      'jid'           => jid,
+      'unique_digest' => unique_key,
+    }
+  end
+  let(:jid)           { 'abcdefab' }
+  let(:unique_key)    { 'uniquejobs:abcdefab' }
+  let(:max_lock_time) { 1 }
+  let(:pattern)       { '*' }
+
   describe '#help' do
     let(:output) { capture(:stdout) { described_class.start(%w[help]) } }
     let(:banner) do
@@ -63,22 +74,12 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
     end
   end
 
-  let(:pattern)       { '*' }
-  let(:max_lock_time) { 1 }
-  let(:unique_key)    { 'uniquejobs:abcdefab' }
-  let(:jid)           { 'abcdefab' }
-  let(:item) do
-    {
-      'jid'           => jid,
-      'unique_digest' => unique_key,
-    }
-  end
-
   describe '.keys' do
     let(:output) { capture(:stdout) { described_class.start(%w[keys * --count 1000]) } }
 
     context 'when no keys exist' do
       let(:expected) { "Found 0 keys matching '#{pattern}':\n" }
+
       specify { expect(output).to eq(expected) }
     end
 

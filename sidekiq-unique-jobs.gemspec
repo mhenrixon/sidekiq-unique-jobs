@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require File.expand_path('../lib/sidekiq_unique_jobs/version', __FILE__)
+lib = File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'sidekiq_unique_jobs/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'sidekiq-unique-jobs'
@@ -15,8 +18,10 @@ Gem::Specification.new do |spec|
 
   spec.bindir        = 'bin'
   spec.executables   = %w[jobs]
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
+  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
+    `git ls-files -z`.split("\x0").reject do |file|
+      file.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
+    end
   end
 
   spec.require_paths = ['lib']
@@ -24,11 +29,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sidekiq', '>= 4.0', '<= 6.0'
   spec.add_dependency 'thor', '~> 0'
 
-  spec.add_development_dependency 'bundler', '~> 1.5'
-  spec.add_development_dependency 'rspec', '~> 3.1'
-  spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'timecop', '~> 0.8'
+  spec.add_development_dependency 'bundler', '~> 1.16'
+  spec.add_development_dependency 'rspec', '~> 3.7'
+  spec.add_development_dependency 'rake', '~> 12.3'
+  spec.add_development_dependency 'timecop', '~> 0.9'
   spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'gem-release', '~> 0.7'
+  spec.add_development_dependency 'gem-release', '~> 1.0'
   spec.add_development_dependency 'awesome_print', '~> 1.8'
 end

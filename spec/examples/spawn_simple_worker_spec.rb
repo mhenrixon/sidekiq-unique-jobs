@@ -18,7 +18,7 @@ RSpec.describe SpawnSimpleWorker do
 
     it 'spawns another job' do
       expect(SimpleWorker).to receive(:perform_async).with(args).and_return(true)
-      subject.perform(args)
+      described_class.new.perform(args)
     end
   end
 end

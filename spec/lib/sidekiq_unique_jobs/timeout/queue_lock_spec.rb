@@ -17,6 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::QueueLock do
 
   describe 'public api' do
     subject { calculator }
+
     it { is_expected.to respond_to(:lock_expiration) }
     it { is_expected.to respond_to(:lock_timeout) }
   end
@@ -73,6 +74,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::QueueLock do
             'lock_timeout' => lock_timeout,
           }
         end
+
         it { is_expected.to eq(40) }
       end
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.configure do |config|
-  config.before(:each) do |example|
+  config.before do |example|
     ruby_ver = example.metadata[:ruby_ver]
     VERSION_REGEX.match(ruby_ver.to_s) do |match|
       version  = Gem::Version.new(match[:version])
