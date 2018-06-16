@@ -16,10 +16,17 @@ module SidekiqUniqueJobs
         raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
       end
 
+      def lock_expiration
+        @lock_expiration ||= worker_class_lock_expiration
+        @lock_expiration = @item[LOCK_EXPIRATION_KEY] if @item.key?(LOCK_EXPIRATION_KEY)
+        @lock_expiration &&= @lock_expiration + time_until_scheduled
+      end
+
       def lock_timeout
         @lock_timeout ||= @item[LOCK_TIMEOUT_KEY]
         @lock_timeout ||= worker_class_lock_timeout
         @lock_timeout ||= SidekiqUniqueJobs.config.default_lock_timeout
+        # @lock_timeout = @item[LOCK_TIMEOUT_KEY] if @item.key?(LOCK_TIMEOUT_KEY)
       end
 
       def worker_class_lock_timeout

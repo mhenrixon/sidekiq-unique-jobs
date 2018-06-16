@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'rspec/wait'
 
-RSpec.shared_context 'a lock setup' do
+RSpec.shared_context 'with a configured locksmith' do
   let(:locksmith)                 { described_class.new(lock_item) }
   let(:lock_expiration)           { nil }
   let(:lock_use_local_time)       { false }
@@ -30,29 +30,29 @@ RSpec.shared_context 'a lock setup' do
 end
 
 RSpec.shared_examples_for 'a lock' do
-  it 'should not exist from the start' do
+  it 'does not exist from the start' do
     expect(locksmith.exists?).to eq(false)
     locksmith.lock
     expect(locksmith.exists?).to eq(true)
   end
 
-  it 'should be unlocked from the start' do
+  it 'is unlocked from the start' do
     expect(locksmith.locked?).to eq(false)
   end
 
-  it 'should lock and unlock' do
+  it 'locks and unlock' do
     locksmith.lock(1)
     expect(locksmith.locked?).to eq(true)
     locksmith.unlock
     expect(locksmith.locked?).to eq(false)
   end
 
-  it 'should not lock twice as a mutex' do
+  it 'does not lock twice as a mutex' do
     expect(locksmith.lock(1)).not_to eq(false)
     expect(locksmith.lock(1)).to eq(false)
   end
 
-  it 'should execute the given code block' do
+  it 'executes the given code block' do
     code_executed = false
     locksmith.lock(1) do
       code_executed = true
@@ -60,7 +60,7 @@ RSpec.shared_examples_for 'a lock' do
     expect(code_executed).to eq(true)
   end
 
-  it 'should pass an exception right through' do
+  it 'passes an exception right through' do
     expect do
       locksmith.lock(1) do
         raise Exception, 'redis lock exception'
@@ -68,7 +68,7 @@ RSpec.shared_examples_for 'a lock' do
     end.to raise_error(Exception, 'redis lock exception')
   end
 
-  it 'should not leave the lock locked after raising an exception' do
+  it 'does not leave the lock locked after raising an exception' do
     expect do
       locksmith.lock(1) do
         raise Exception, 'redis lock exception'
@@ -78,14 +78,14 @@ RSpec.shared_examples_for 'a lock' do
     expect(locksmith.locked?).to eq(false)
   end
 
-  it 'should return the value of the block if block-style locking is used' do
+  it 'returns the value of the block if block-style locking is used' do
     block_value = locksmith.lock(1) do
       42
     end
     expect(block_value).to eq(42)
   end
 
-  it 'should disappear without a trace when calling `delete!`' do
+  it 'disappears without a trace when calling `delete!`' do
     original_key_size = SidekiqUniqueJobs.connection { |conn| conn.keys.count }
 
     locksmith.create!
@@ -94,7 +94,7 @@ RSpec.shared_examples_for 'a lock' do
     expect(SidekiqUniqueJobs.connection { |conn| conn.keys.count }).to eq(original_key_size)
   end
 
-  it 'should not block when the timeout is zero' do
+  it 'does not block when the timeout is zero' do
     did_we_get_in = false
 
     locksmith.lock do
@@ -106,7 +106,7 @@ RSpec.shared_examples_for 'a lock' do
     expect(did_we_get_in).to be false
   end
 
-  it 'should be locked when the timeout is zero' do
+  it 'is locked when the timeout is zero' do
     locksmith.lock(0) do
       expect(locksmith.locked?).to be true
     end
@@ -185,7 +185,7 @@ RSpec.shared_examples 'a real lock' do
 
       it_behaves_like 'a lock'
 
-      it 'should restore resources of stale clients', redis: :redis do
+      it 'restores resources of stale clients', redis: :redis do
         another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
         hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
@@ -202,7 +202,7 @@ RSpec.shared_examples 'a real lock' do
 
       it_behaves_like 'a lock'
 
-      it 'should restore resources of stale clients' do
+      it 'restores resources of stale clients' do
         another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
         hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
@@ -214,14 +214,14 @@ RSpec.shared_examples 'a real lock' do
   end
 end
 
-RSpec.describe SidekiqUniqueJobs::Locksmith, 'with Redis', redis: :redis do
-  include_context 'a lock setup'
+RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
+  include_context 'with a configured locksmith'
   it_behaves_like 'a real lock'
 
   describe 'redis time' do
     let(:lock_stale_client_timeout) { 5 }
 
-    before(:all) do
+    before do
       Timecop.freeze(Time.local(1990))
     end
 
