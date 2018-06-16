@@ -13,6 +13,15 @@ RSpec.describe WhileExecutingJob do
   end
 
   it_behaves_like 'a performing worker' do
-    let(:args) {'one' }
+    let(:args) { 'one' }
+  end
+
+  context 'when job is already scheduled' do
+    let(:args) { 1 }
+
+    it 'pushes the job immediately' do
+      described_class.perform_in(3600, args)
+      expect(described_class.perform_async(args)).not_to eq(nil)
+    end
   end
 end

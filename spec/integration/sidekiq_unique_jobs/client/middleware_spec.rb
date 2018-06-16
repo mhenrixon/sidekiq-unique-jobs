@@ -66,11 +66,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       expect(MyUniqueJob.perform_in(3600, 1, 2)).to eq(nil)
     end
 
-    it 'will run a job in real time with the same arguments' do
-      WhileExecutingJob.perform_in(3600, 1)
-      expect(WhileExecutingJob.perform_async(1)).not_to eq(nil)
-    end
-
     it 'schedules new jobs when arguments differ' do
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
         MainJob.perform_in(x, x)
@@ -161,18 +156,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     10.times { MyUniqueJob.perform_in(60, 1, 2) }
     Sidekiq.redis do |conn|
       expect(conn.zcount('schedule', -1, Time.now.to_f + 2 * 60)).to eq(1)
-    end
-  end
-
-  it 'enqueues previously scheduled job' do
-    jid = WhileExecutingJob.perform_in(60 * 60, 1, 2)
-    item = { 'class' => WhileExecutingJob, 'queue' => 'customqueue', 'args' => [1, 2], 'jid' => jid }
-
-    # time passes and the job is pulled off the schedule:
-    Sidekiq::Client.push(item)
-
-    Sidekiq.redis do |conn|
-      expect(conn.llen('queue:customqueue')).to eq 1
     end
   end
 
