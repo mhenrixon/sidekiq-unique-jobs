@@ -280,8 +280,6 @@ RSpec.shared_examples_for 'unique client middleware' do
     end
   end
 
-  # TODO: If anyone know of a better way to check that the expiration for scheduled
-  # jobs are set around the same time as the scheduled job itself feel free to improve.
   it 'expires the digest when a scheduled job is scheduled at' do
     expected_expires_at = Time.at(Time.now.to_i + 15 * 60) - Time.now.utc
 

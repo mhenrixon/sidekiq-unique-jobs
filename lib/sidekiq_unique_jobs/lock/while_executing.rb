@@ -12,7 +12,6 @@ module SidekiqUniqueJobs
         true
       end
 
-      # TODO: Make the key for these specific to runlocks
       def execute(callback)
         @locksmith.lock(@item[LOCK_TIMEOUT_KEY]) do
           yield if block_given?
