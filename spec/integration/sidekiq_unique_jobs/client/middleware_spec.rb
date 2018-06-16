@@ -5,7 +5,8 @@ require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 require 'rspec/wait'
 
-RSpec.shared_examples_for 'unique client middleware' do
+# -- rubocop:disable RSpec/FilePath
+RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1 do
   describe 'when a job is already scheduled' do
     it 'processes jobs properly' do
       jid = NotifyWorker.perform_in(1, 183, 'xxxx')
@@ -321,9 +322,4 @@ RSpec.shared_examples_for 'unique client middleware' do
     end
   end
 end
-
-# rubocop:disable RSpec/FilePath
-RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1 do
-  it_behaves_like 'unique client middleware'
-end
-# rubocop:enable RSpec/FilePath
+# -- rubocop:enable RSpec/FilePath
