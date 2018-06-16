@@ -4,7 +4,7 @@
 module SidekiqUniqueJobs
   module RSpec
     module InstanceMethods
-       def with_sidekiq_options_for(worker_class, options)
+      def with_sidekiq_options_for(worker_class, options)
         worker_class = SidekiqUniqueJobs.worker_class_constantize(worker_class)
         if worker_class.respond_to?(:sidekiq_options)
           was_options = worker_class.get_sidekiq_options

@@ -12,7 +12,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     {
       'class' => class_name,
       'queue' => queue,
-      'args' => args
+      'args' => args,
     }
   end
 
@@ -133,6 +133,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
   describe '#unique_on_all_queues?' do
     subject(:unique_on_all_queues?) { unique_args.unique_on_all_queues? }
+
     let(:worker_class) { UntilExecutedJob }
 
     it { is_expected.to eq(nil) }
@@ -163,7 +164,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   describe '#filter_by_proc' do
     subject(:filter_by_proc) { unique_args.filter_by_proc(args) }
 
-    let(:args)   { [1, 'test' => 'it'] }
+    let(:args) { [1, 'test' => 'it'] }
 
     context 'when #unique_args_method is a proc' do
       let(:filter) { ->(args) { args[1]['test'] } }
@@ -216,6 +217,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
       context 'when provided nil' do
         let(:args) { [] }
+
         it { is_expected.to eq([]) }
       end
     end

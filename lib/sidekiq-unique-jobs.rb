@@ -42,7 +42,7 @@ module SidekiqUniqueJobs
   end
 
   def use_config(tmp_config)
-    fail ::ArgumentError, "#{self.name}.#{__method__} needs a block" unless block_given?
+    fail ::ArgumentError, "#{name}.#{__method__} needs a block" unless block_given?
 
     old_config = config.to_h
     configure(tmp_config)
