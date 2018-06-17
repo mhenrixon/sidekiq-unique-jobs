@@ -9,7 +9,6 @@ sudo: required
 language: ruby
 cache: bundler
 
-
 before_install:
   - sudo rm -rf /etc/apt/sources.list.d/rwky-redis.list
   - sudo add-apt-repository ppa:chris-lea/redis-server -y
