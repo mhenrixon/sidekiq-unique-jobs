@@ -2,32 +2,53 @@
 
 require 'spec_helper'
 
-RSpec.fdescribe SidekiqUniqueJobs::OptionsWithFallback do
-  include described_class
-  let(:options_with_fallback) { self }
+RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
+  class ClassWithOptions
+    include SidekiqUniqueJobs::OptionsWithFallback
+
+    attr_reader :item, :worker_class
+
+    def initialize(item, options, worker_class = nil)
+      @item         = item
+      @options      = options
+      @worker_class = worker_class
+    end
+  end
+  let(:options_with_fallback) { ClassWithOptions.new(item, options, worker_class) }
+  let(:item)                  { {} }
+  let(:options)               { nil }
+  let(:worker_class)          { nil }
 
   describe '#unique_lock' do
-    subject { options_with_fallback.unique_lock }
+    subject(:unique_lock) { options_with_fallback.unique_lock }
 
-    context 'when options have `unique: true`' do
-      let(:options) { { 'unique' => true } }
+    context 'when options["unique"] is present' do
+      let(:options) { { 'unique' => :while_executing } }
+      let(:item)    { { 'unique' => :until_executed } }
 
-      it 'warns when unique is set to true' do
-        expect(self)
-          .to receive(:warn)
-          .with(
-            'unique: true is no longer valid. Please set it to the type of lock required like: ' \
-            '`unique: :until_executed`',
-          )
+      it { is_expected.to eq(:while_executing) }
 
-        unique_lock
+      context 'when true' do
+        let(:options) { { 'unique' => true } }
+
+        it 'warns when unique is set to true' do
+          expect(options_with_fallback)
+            .to receive(:warn)
+            .with(
+              'unique: true is no longer valid. Please set it to the type of lock required like: ' \
+              '`unique: :until_executed`',
+            )
+
+          unique_lock
+        end
       end
     end
 
-    context 'when options have `unique: :while_executing`' do
-      let(:options) { { 'unique' => :while_executing } }
+    context 'when item["unique"] is present' do
+      let(:options) { {} }
+      let(:item)    { { 'unique' => :until_executed } }
 
-      pending 'needs a test'
+      it { is_expected.to eq(:until_executed) }
     end
   end
 
@@ -40,10 +61,10 @@ RSpec.fdescribe SidekiqUniqueJobs::OptionsWithFallback do
     it { is_expected.to eq(nil) }
 
     context 'when options["unique"] is present' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:options) { { 'unique' => :while_executing } }
+      let(:item)    { { 'unique' => :until_executed } }
 
-      it { is_expected.to eq('until_executed') }
+      it { is_expected.to eq(:until_executed) }
 
       context 'when SidekiqUniqueJobs.config.enabled = false' do
         before { SidekiqUniqueJobs.config.enabled = false }
@@ -54,10 +75,10 @@ RSpec.fdescribe SidekiqUniqueJobs::OptionsWithFallback do
     end
 
     context 'when item["unique"] is present' do
-      let(:options) { {} }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:options) { nil }
+      let(:item)    { { 'unique' => :until_executed } }
 
-      it { is_expected.to eq('until_executed') }
+      it { is_expected.to eq(:until_executed) }
 
       context 'when true' do
         let(:options) { {} }
@@ -140,15 +161,14 @@ RSpec.fdescribe SidekiqUniqueJobs::OptionsWithFallback do
     end
 
     context 'when default_worker_options has been configured' do
-      let(:worker_class) { PlainClass }
+      let(:worker_class)           { PlainClass }
+      let(:default_worker_options) { { 'unique' => :while_executing } }
 
-      before do
-        allow(Sidekiq)
-          .to receive(:default_worker_options)
-          .and_return('unique' => 'while_executing')
+      it do
+        with_default_worker_options(default_worker_options) do
+          is_expected.to include(default_worker_options)
+        end
       end
-
-      it { is_expected.to eq(Sidekiq.default_worker_options) }
     end
   end
 end

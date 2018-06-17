@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+
+  # Shared logic for dealing with options
+  # This class requires 3 methods to be defined in the class including it
+  #   1. item (required)
+  #   2. options (can be nil)
+  #   3. worker_class (can be nil)
   module OptionsWithFallback
     LOCKS = {
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
