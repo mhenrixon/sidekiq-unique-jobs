@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# :nocov:
 
 # This class showcase a job that is considered unique disregarding any queue.
 # Currently it will only be compared to other jobs that are disregarding queue.

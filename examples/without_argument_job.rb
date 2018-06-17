@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# :nocov:
 
 class WithoutArgumentJob
   include Sidekiq::Worker

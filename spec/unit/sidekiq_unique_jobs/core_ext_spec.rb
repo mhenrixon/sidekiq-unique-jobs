@@ -36,6 +36,7 @@ RSpec.describe 'core_ext.rb' do
 
       context 'when last argument is a hash' do
         let(:last_argument) { { test: :me, not: :me } }
+
         it { is_expected.to eq(last_argument) }
       end
 

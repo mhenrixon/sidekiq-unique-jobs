@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# :nocov:
 
 class LongRunningRunLockExpirationJob
   include Sidekiq::Worker
