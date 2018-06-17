@@ -5,7 +5,7 @@ source "https://rubygems.org"
 gem "appraisal", "~> 2.2.0"
 gem "rspec-its", require: false
 gem "rspec-retry", require: false
-gem "sidekiq", "~> 4.2.0"
+gem "sidekiq", "~> 5.1.0"
 
 platforms :mri_25 do
   gem "benchmark-ips", require: false
