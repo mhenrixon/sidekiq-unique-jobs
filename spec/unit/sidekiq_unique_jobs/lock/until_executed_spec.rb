@@ -3,12 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
-  let(:lock) { described_class.new(item) }
+  include_context 'with a stubbed locksmith'
   let(:item) do
     {
       'jid' => 'maaaahjid',
       'class' => 'UntilExecutedJob',
       'unique' => 'until_executed',
+      'args' => ['one', 'two'],
     }
   end
 
@@ -24,7 +25,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
       end
 
       it 'logs a helpful error message' do
-        error_message = 'the unique_key: uniquejobs:a1e5ccafbc77b234e8f8aaedde3f706e needs to be unlocked manually'
+        error_message = 'the unique_key: uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0 needs to be unlocked manually'
         expect(Sidekiq.logger).to receive(:fatal).with(error_message)
 
         expect { execute }.to raise_error(Sidekiq::Shutdown)

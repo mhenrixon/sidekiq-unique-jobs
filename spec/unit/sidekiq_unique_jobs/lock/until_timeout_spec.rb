@@ -2,21 +2,28 @@
 
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::Lock::UntilTimeout, redis: :redis do
-  let(:lock) { described_class.new(item) }
+RSpec.describe SidekiqUniqueJobs::Lock::UntilTimeout do
+  include_context 'with a stubbed locksmith'
 
   let(:item) do
     { 'jid' => 'maaaahjid',
-      'class' => 'UntilExecutedJob',
+      'class' => 'UntilTimeoutJob',
       'unique' => 'until_timeout' }
   end
   let(:empty_callback) { -> {} }
 
   describe '#unlock' do
-    context 'when provided :server' do
-      subject { lock.unlock }
+    subject(:unlock) { lock.unlock }
 
-      it { is_expected.to eq(true) }
+    it { is_expected.to eq(true) }
+  end
+
+  describe '#execute' do
+    subject(:execute) { lock.execute(empty_callback) }
+
+    it 'calls the callback' do
+      expect(empty_callback).to receive(:call)
+      execute
     end
   end
 end

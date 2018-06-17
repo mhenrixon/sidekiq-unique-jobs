@@ -3,14 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
-  let(:lock) { described_class.new(item) }
+  include_context 'with a stubbed locksmith'
   let(:item) do
     {
       'jid' => 'maaaahjid',
-      'queue' => 'dupsallowed',
       'class' => 'UntilAndWhileExecutingJob',
       'unique' => 'until_and_while_executing',
-      'args' => [1],
+      'args' => ['one'],
     }
   end
   let(:callback) { -> {} }
