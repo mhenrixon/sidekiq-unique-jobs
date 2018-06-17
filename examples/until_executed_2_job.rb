@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # :nocov:
 
 # This class will lock until the job is successfully executed

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # :nocov:
 
 # This class showcase a job that is considered unique disregarding any worker classes.

@@ -5,6 +5,7 @@ AllCops:
     - 'lib/**/*.rb'
     - 'bin/**/*.rb'
     - 'spec/**/*.rb'
+    - 'examples/**/*.rb'
   Exclude:
     - 'Gemfile.lock'
     - 'gemfiles/**/*'
