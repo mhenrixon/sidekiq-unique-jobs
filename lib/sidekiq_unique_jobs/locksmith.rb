@@ -189,7 +189,7 @@ module SidekiqUniqueJobs
       end
     end
 
-    def simple_expiring_mutex(conn) # rubocop:disable Metrics/MethodLength
+    def simple_expiring_mutex(conn)
       cached_current_time = current_time.to_f
       my_lock_expires_at  = cached_current_time + EXPIRES_IN + 1
 
