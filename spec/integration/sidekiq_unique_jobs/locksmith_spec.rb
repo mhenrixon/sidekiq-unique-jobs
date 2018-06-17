@@ -45,7 +45,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.locked?).to eq(false)
     end
 
-    it 'does not lock twice as a mutex' do
+    # TODO: Flaky
+    it 'does not lock twice as a mutex', :retry do
       expect(locksmith.lock(1)).not_to eq(false)
       expect(locksmith.lock(1)).to eq(false)
     end
