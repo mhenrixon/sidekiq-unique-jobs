@@ -157,7 +157,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.available_count).to eq(1)
     end
 
-    it 'can have stale locks released by a third process' do
+    it 'can have stale locks released by a third process', :retry do
       watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
       locksmith.lock
 
