@@ -133,8 +133,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         # noop
       end
       keys = current_keys
-      sleep 3.0
-      expect(current_keys).not_to include(keys)
+      expect(current_keys).not_to eventually include(keys)
     end
   end
 
@@ -157,17 +156,18 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.available_count).to eq(1)
     end
 
+    # TODO: This spec is flaky and should be improved to not use sleeps
     it 'can have stale locks released by a third process', :retry do
       watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
       locksmith.lock
 
-      sleep 0.5
+      sleep 0.3
       watchdog.release!
       expect(locksmith.locked?).to eq(true)
 
-      sleep 0.6
-
+      sleep 0.8
       watchdog.release!
+
       expect(locksmith.locked?).to eq(false)
     end
   end
