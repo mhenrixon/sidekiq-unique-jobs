@@ -6,7 +6,7 @@ require 'sidekiq'
 require 'sidekiq/testing'
 
 module Sidekiq
-  def self.use_config(tmp_config = {})
+  def self.use_options(tmp_config = {})
     old_config = default_worker_options
     default_worker_options.clear
     self.default_worker_options = tmp_config
@@ -19,7 +19,7 @@ module Sidekiq
 
   module Worker
     module ClassMethods
-      def use_config(tmp_config = {})
+      def use_options(tmp_config = {})
         old_config = get_sidekiq_options
         sidekiq_options(tmp_config)
 

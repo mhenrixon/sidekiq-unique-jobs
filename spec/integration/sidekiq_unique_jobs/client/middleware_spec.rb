@@ -197,7 +197,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
   it 'logs duplicate payload when config turned on' do
     expect(Sidekiq.logger).to receive(:warn).with(/^payload is not unique/)
 
-    UntilExecutedJob.use_config(log_duplicate_payload: true) do
+    with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: true) do
       2.times do
         Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2])
       end
@@ -209,7 +209,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
   it 'does not log duplicate payload when config turned off' do
     expect(SidekiqUniqueJobs.logger).not_to receive(:warn).with(/^payload is not unique/)
 
-    UntilExecutedJob.use_config(log_duplicate_payload: false) do
+    with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: false) do
       2.times do
         Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2])
       end

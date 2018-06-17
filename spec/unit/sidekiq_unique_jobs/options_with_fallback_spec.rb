@@ -23,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
 
     context 'when options have `unique: :while_executing`' do
-      let(:options) { { 'unique' => 'while_executing' } }
+      let(:options) { { 'unique' => :while_executing } }
 
       pending 'needs a test'
     end
