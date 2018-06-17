@@ -6,12 +6,14 @@ RSpec::Matchers.define :eventually do |matcher|
   supports_block_expectations
 
   match do |actual|
-    Timeout.timeout(15) do
-      sleep 0.01 until matcher.matches?(actual)
-      return true
+    begin # rubocop:disable Style/RedundantBegin
+      Timeout.timeout(15) do
+        sleep 0.01 until matcher.matches?(actual)
+        return true
+      end
+    rescue Timeout::Error
+      return false
     end
-  rescue Timeout::Error
-    return false
   end
 
   failure_message do |_actual|
