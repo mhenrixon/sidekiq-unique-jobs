@@ -183,7 +183,6 @@ module SidekiqUniqueJobs
         simple_expiring_mutex(conn) do
           conn.hgetall(grabbed_key).each do |token, locked_at|
             timed_out_at = locked_at.to_f + stale_client_timeout
-
             signal(token) if timed_out_at < current_time.to_f
           end
         end
@@ -192,22 +191,16 @@ module SidekiqUniqueJobs
 
     def simple_expiring_mutex(conn) # rubocop:disable Metrics/MethodLength
       cached_current_time = current_time.to_f
-      my_lock_expires_at = cached_current_time + EXPIRES_IN + 1
+      my_lock_expires_at  = cached_current_time + EXPIRES_IN + 1
 
-      got_lock = conn.setnx(release_key, my_lock_expires_at)
+      return yield if conn.setnx(release_key, my_lock_expires_at)
 
-      unless got_lock
-        other_lock_expires_at = conn.get(release_key).to_f
+      other_lock_expires_at = conn.get(release_key).to_f
 
-        if other_lock_expires_at < cached_current_time
-          old_expires_at = conn.getset(release_key, my_lock_expires_at).to_f
-          got_lock = (old_expires_at == other_lock_expires_at)
-        end
+      if other_lock_expires_at < cached_current_time
+        old_expires_at = conn.getset(release_key, my_lock_expires_at).to_f
+        yield if old_expires_at == other_lock_expires_at
       end
-
-      return false unless got_lock
-
-      yield
     ensure
       conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
     end
@@ -221,17 +214,17 @@ module SidekiqUniqueJobs
     end
 
     def current_time
-      if @use_local_time
-        Time.now
-      else
-        begin
-          instant = SidekiqUniqueJobs.connection(@redis_pool, &:time)
-          Time.at(instant[0], instant[1])
-        rescue StandardError
-          @use_local_time = true
-          current_time
-        end
-      end
+      return Time.now if @use_local_time
+
+      redis_time
+    end
+
+    def redis_time
+      instant = SidekiqUniqueJobs.connection(@redis_pool, &:time)
+      Time.at(instant[0], instant[1])
+    rescue StandardError
+      @use_local_time = true
+      current_time
     end
 
     def current_jid
