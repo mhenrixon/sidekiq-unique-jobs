@@ -4,6 +4,7 @@ require 'spec_helper'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe SidekiqUniqueJobs::Client::Middleware do
   let(:middleware) { described_class.new }
 
@@ -19,9 +20,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         'args'  => [1] }
     end
 
-    before do
-      @inside_block_value = false
-    end
+    before { @inside_block_value = false }
 
     context 'when locking succeeds' do
       before do
@@ -32,7 +31,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
         expect { call }.to change { @inside_block_value }.to(true)
       end
     end
-
 
     context 'when already locked' do
       before do
@@ -45,3 +43,4 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     end
   end
 end
+# rubocop:enable RSpec/InstanceVariable

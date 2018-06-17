@@ -6,6 +6,7 @@ require 'sidekiq/cli'
 require 'sidekiq/worker'
 require 'sidekiq_unique_jobs/server/middleware'
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe SidekiqUniqueJobs::Server::Middleware do
   let(:middleware) { described_class.new }
 
@@ -51,3 +52,4 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
     end
   end
 end
+# rubocop:enable RSpec/InstanceVariable

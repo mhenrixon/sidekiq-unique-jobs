@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
-  include_context 'lock with a stubbed locksmith'
+  include_context 'with a stubbed locksmith'
   let(:item) { {} }
 
   describe '#lock' do
