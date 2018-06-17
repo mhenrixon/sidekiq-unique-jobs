@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 class InlineWorker
   include Sidekiq::Worker
   sidekiq_options unique: :while_executing, lock_timeout: 5

@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
-RSpec.describe SpawnSimpleWorker do
-  it_behaves_like 'sidekiq with options', options: {
-    'queue'       => :not_default,
-    'retry'       => true,
-  }
+require 'spec_helper'
 
-  it_behaves_like 'a performing worker',
-                  args: [
-                    'one',
-                    { 'type' => 'unique', 'id' => 2 },
-                  ],
-                  splat: false
+RSpec.describe SpawnSimpleWorker do
+  it_behaves_like 'sidekiq with options' do
+    let(:options) do
+      {
+        'queue'       => :not_default,
+        'retry'       => true,
+      }
+    end
+  end
+
+  it_behaves_like 'a performing worker', splat_arguments: false do
+    let(:args) { ['one', 'type' => 'unique', 'id' => 2] }
+  end
 
   describe '#perform' do
     let(:args) { %w[one two] }

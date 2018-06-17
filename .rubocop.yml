@@ -5,6 +5,7 @@ AllCops:
     - 'lib/**/*.rb'
     - 'bin/**/*.rb'
     - 'spec/**/*.rb'
+    - 'examples/**/*.rb'
   Exclude:
     - 'Gemfile.lock'
     - 'gemfiles/**/*'
@@ -60,6 +61,9 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/ExpectActual:
+  Enabled: false
+
 RSpec/ExpectInHook:
   Enabled: false
 
@@ -75,7 +79,6 @@ RSpec/NestedGroups:
 
 RSpec/RepeatedExample:
   Enabled: false
-
 
 Style/FrozenStringLiteralComment:
   Enabled: true

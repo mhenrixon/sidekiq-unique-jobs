@@ -3,10 +3,6 @@
 module SidekiqUniqueJobs
   class Lock
     class UntilTimeout < BaseLock
-      def lock
-        @locksmith.lock(@item[LOCK_TIMEOUT_KEY])
-      end
-
       def unlock
         true
       end

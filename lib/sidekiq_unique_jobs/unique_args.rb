@@ -55,12 +55,10 @@ module SidekiqUniqueJobs
     end
 
     def unique_args(args)
-      if unique_args_enabled?
-        filtered_args(args)
-      else
-        logger.debug { "#{__method__} : unique arguments disabled" }
-        args
-      end
+      return filtered_args(args) if unique_args_enabled?
+
+      logger.debug { "#{__method__} : unique arguments disabled" }
+      args
     rescue NameError => ex
       logger.error "#{__method__}(#{args}) : failed with (#{ex.message})"
       logger.error ex

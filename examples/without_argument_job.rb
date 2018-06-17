@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 class WithoutArgumentJob
   include Sidekiq::Worker
   sidekiq_options unique: :until_executed,

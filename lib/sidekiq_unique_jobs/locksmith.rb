@@ -207,11 +207,9 @@ module SidekiqUniqueJobs
 
       return false unless got_lock
 
-      begin
-        yield
-      ensure
-        conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
-      end
+      yield
+    ensure
+      conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
     end
 
     def check_staleness?

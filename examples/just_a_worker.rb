@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 class JustAWorker
   include Sidekiq::Worker
 

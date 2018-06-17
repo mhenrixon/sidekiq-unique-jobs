@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'rspec/wait'
 
-RSpec.shared_context 'with a configured locksmith' do
+RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith)                 { described_class.new(lock_item) }
   let(:lock_expiration)           { nil }
   let(:lock_use_local_time)       { false }
@@ -27,93 +26,92 @@ RSpec.shared_context 'with a configured locksmith' do
   let(:lock_item_with_different_jid) do
     lock_item.merge('jid' => jid_2)
   end
-end
 
-RSpec.shared_examples_for 'a lock' do
-  it 'does not exist from the start' do
-    expect(locksmith.exists?).to eq(false)
-    locksmith.lock
-    expect(locksmith.exists?).to eq(true)
-  end
-
-  it 'is unlocked from the start' do
-    expect(locksmith.locked?).to eq(false)
-  end
-
-  it 'locks and unlock' do
-    locksmith.lock(1)
-    expect(locksmith.locked?).to eq(true)
-    locksmith.unlock
-    expect(locksmith.locked?).to eq(false)
-  end
-
-  it 'does not lock twice as a mutex' do
-    expect(locksmith.lock(1)).not_to eq(false)
-    expect(locksmith.lock(1)).to eq(false)
-  end
-
-  it 'executes the given code block' do
-    code_executed = false
-    locksmith.lock(1) do
-      code_executed = true
+  shared_examples_for 'a lock' do
+    it 'does not exist from the start' do
+      expect(locksmith.exists?).to eq(false)
+      locksmith.lock
+      expect(locksmith.exists?).to eq(true)
     end
-    expect(code_executed).to eq(true)
-  end
 
-  it 'passes an exception right through' do
-    expect do
-      locksmith.lock(1) do
-        raise Exception, 'redis lock exception'
-      end
-    end.to raise_error(Exception, 'redis lock exception')
-  end
-
-  it 'does not leave the lock locked after raising an exception' do
-    expect do
-      locksmith.lock(1) do
-        raise Exception, 'redis lock exception'
-      end
-    end.to raise_error(Exception, 'redis lock exception')
-
-    expect(locksmith.locked?).to eq(false)
-  end
-
-  it 'returns the value of the block if block-style locking is used' do
-    block_value = locksmith.lock(1) do
-      42
+    it 'is unlocked from the start' do
+      expect(locksmith.locked?).to eq(false)
     end
-    expect(block_value).to eq(42)
-  end
 
-  it 'disappears without a trace when calling `delete!`' do
-    original_key_size = SidekiqUniqueJobs.connection { |conn| conn.keys.count }
+    it 'locks and unlock' do
+      locksmith.lock(1)
+      expect(locksmith.locked?).to eq(true)
+      locksmith.unlock
+      expect(locksmith.locked?).to eq(false)
+    end
 
-    locksmith.create!
-    locksmith.delete!
+    # TODO: Flaky
+    it 'does not lock twice as a mutex', :retry do
+      expect(locksmith.lock(1)).not_to eq(false)
+      expect(locksmith.lock(1)).to eq(false)
+    end
 
-    expect(SidekiqUniqueJobs.connection { |conn| conn.keys.count }).to eq(original_key_size)
-  end
+    it 'executes the given code block' do
+      code_executed = false
+      locksmith.lock(1) do
+        code_executed = true
+      end
+      expect(code_executed).to eq(true)
+    end
 
-  it 'does not block when the timeout is zero' do
-    did_we_get_in = false
+    it 'passes an exception right through' do
+      expect do
+        locksmith.lock(1) do
+          raise Exception, 'redis lock exception'
+        end
+      end.to raise_error(Exception, 'redis lock exception')
+    end
 
-    locksmith.lock do
+    it 'does not leave the lock locked after raising an exception' do
+      expect do
+        locksmith.lock(1) do
+          raise Exception, 'redis lock exception'
+        end
+      end.to raise_error(Exception, 'redis lock exception')
+
+      expect(locksmith.locked?).to eq(false)
+    end
+
+    it 'returns the value of the block if block-style locking is used' do
+      block_value = locksmith.lock(1) do
+        42
+      end
+      expect(block_value).to eq(42)
+    end
+
+    it 'disappears without a trace when calling `delete!`' do
+      original_key_size = SidekiqUniqueJobs.connection { |conn| conn.keys.count }
+
+      locksmith.create!
+      locksmith.delete!
+
+      expect(SidekiqUniqueJobs.connection { |conn| conn.keys.count }).to eq(original_key_size)
+    end
+
+    it 'does not block when the timeout is zero' do
+      did_we_get_in = false
+
+      locksmith.lock do
+        locksmith.lock(0) do
+          did_we_get_in = true
+        end
+      end
+
+      expect(did_we_get_in).to be false
+    end
+
+    it 'is locked when the timeout is zero' do
       locksmith.lock(0) do
-        did_we_get_in = true
+        expect(locksmith.locked?).to be true
       end
     end
-
-    expect(did_we_get_in).to be false
   end
 
-  it 'is locked when the timeout is zero' do
-    locksmith.lock(0) do
-      expect(locksmith.locked?).to be true
-    end
-  end
-end
-
-RSpec.shared_examples 'a real lock' do
   describe 'lock with expiration' do
     let(:lock_expiration) { 1 }
 
@@ -136,8 +134,7 @@ RSpec.shared_examples 'a real lock' do
         # noop
       end
       keys = current_keys
-      sleep 3.0
-      expect(current_keys).not_to include(keys)
+      expect(current_keys).not_to eventually include(keys)
     end
   end
 
@@ -160,17 +157,18 @@ RSpec.shared_examples 'a real lock' do
       expect(locksmith.available_count).to eq(1)
     end
 
-    it 'can have stale locks released by a third process' do
+    # TODO: This spec is flaky and should be improved to not use sleeps
+    it 'can have stale locks released by a third process', :retry do
       watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
       locksmith.lock
 
-      sleep 0.5
+      sleep 0.3
       watchdog.release!
       expect(locksmith.locked?).to eq(true)
 
-      sleep 0.6
-
+      sleep 0.8
       watchdog.release!
+
       expect(locksmith.locked?).to eq(false)
     end
   end
@@ -212,11 +210,6 @@ RSpec.shared_examples 'a real lock' do
       end
     end
   end
-end
-
-RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
-  include_context 'with a configured locksmith'
-  it_behaves_like 'a real lock'
 
   describe 'redis time' do
     let(:lock_stale_client_timeout) { 5 }

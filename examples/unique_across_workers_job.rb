@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 # This class showcase a job that is considered unique disregarding any worker classes.
 # Currently it will only be compared to other jobs that are disregarding worker classes.
 # If one were to compare the unique keys generated against a job that doesn't have the

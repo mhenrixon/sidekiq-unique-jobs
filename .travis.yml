@@ -1,6 +1,6 @@
 env:
   matrix:
-    - STYLE=false
+    - COV=false
   global:
     - CC_TEST_REPORTER_ID=88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
@@ -8,7 +8,6 @@ dist: trusty
 sudo: required
 language: ruby
 cache: bundler
-
 
 before_install:
   - sudo rm -rf /etc/apt/sources.list.d/rwky-redis.list
@@ -21,27 +20,28 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - if [[ "${STYLE}" = "true" ]]; then bundle exec rubocop -P; fi;
+  - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
   - bundle exec rspec spec
-  - if [[ "${STYLE}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
+  - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 
 rvm:
   - 2.5.1
   - 2.4.2
   - 2.3.2
-  - jruby-9.1.8.0
+  - jruby-9.1.15.0
 matrix:
   fast_finish: true
   include:
     - rvm: 2.5.1
       gemfile: gemfiles/sidekiq_develop.gemfile
-      env: STYLE=true
+      env: COV=true
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_4.0.gemfile
   - gemfiles/sidekiq_4.1.gemfile
   - gemfiles/sidekiq_4.2.gemfile
   - gemfiles/sidekiq_5.0.gemfile
+  - gemfiles/sidekiq_5.1.gemfile
 
 notifications:
   email:

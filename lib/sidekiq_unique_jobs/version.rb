@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  VERSION = '5.0.10'
+  VERSION = '6.0.0.beta'
 end

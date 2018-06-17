@@ -1,23 +1,30 @@
 ---
-engines:
+version: '2'
+plugins:
   bundler-audit:
     enabled: false
-  fixme:
-    enabled: true
   duplication:
     enabled: true
     config:
       languages:
         - ruby
+  # editorconfig:
+  #   enabled: true
+  #   channel: beta
+  #   config:
+  #     editorconfig: .editorconfig
+  flog:
+    enabled: true
+  fixme:
+    enabled: true
+  markdownlint:
+      enabled: true
+  reek:
+    enabled: true
   rubocop:
     enabled: true
     channel: rubocop-0-54
-ratings:
-  paths:
-    - lib/**
-    - bin/**
-    - "**.rb"
-exclude_paths:
+exclude_patterns:
   - Gemfile
   - "*.gemspec"
   - Appraisals

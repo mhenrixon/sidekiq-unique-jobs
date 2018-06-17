@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe UntilGlobalTimeoutJob do
-  it_behaves_like 'sidekiq with options', options: {
-    'retry'  => true,
-    'unique' => :until_timeout,
-  }
+require 'spec_helper'
 
-  it_behaves_like 'a performing worker', args: ['one']
+RSpec.describe UntilGlobalTimeoutJob do
+  it_behaves_like 'sidekiq with options' do
+    let(:options) do
+      {
+        'retry'  => true,
+        'unique' => :until_timeout,
+      }
+    end
+  end
+
+  it_behaves_like 'a performing worker' do
+    let(:args) { 'one' }
+  end
 end

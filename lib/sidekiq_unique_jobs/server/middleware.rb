@@ -10,11 +10,10 @@ module SidekiqUniqueJobs
       include OptionsWithFallback
 
       def call(worker, item, queue, redis_pool = nil)
-        SidekiqUniqueJobs::UniqueArgs.digest(item)
         @worker     = worker
-        @redis_pool = redis_pool
-        @queue      = queue
         @item       = item
+        @queue      = queue
+        @redis_pool = redis_pool
         return yield if unique_disabled?
 
         lock.execute(after_unlock_hook) do
@@ -30,10 +29,6 @@ module SidekiqUniqueJobs
 
       def after_unlock_hook
         -> { worker.after_unlock if worker.respond_to?(:after_unlock) }
-      end
-
-      def reschedule
-        Sidekiq::Client.new(redis_pool).raw_push([item])
       end
     end
   end

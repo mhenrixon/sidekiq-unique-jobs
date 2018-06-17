@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 class Hash
   unless {}.respond_to?(:slice)
     def slice(*keys)

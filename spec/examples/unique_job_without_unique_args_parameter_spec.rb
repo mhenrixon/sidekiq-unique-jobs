@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
-RSpec.describe UniqueJobWithoutUniqueArgsParameter do
-  it_behaves_like 'sidekiq with options', options: {
-    'backtrace'   => true,
-    'queue'       => :customqueue,
-    'retry'       => true,
-    'unique'      => :until_executed,
-    'unique_args' => :unique_args,
-  }
+require 'spec_helper'
 
-  it_behaves_like 'a performing worker', args: [true]
+RSpec.describe UniqueJobWithoutUniqueArgsParameter do
+  it_behaves_like 'sidekiq with options' do
+    let(:options) do
+      {
+        'backtrace'   => true,
+        'queue'       => :customqueue,
+        'retry'       => true,
+        'unique'      => :until_executed,
+        'unique_args' => :unique_args,
+      }
+    end
+  end
+
+  it_behaves_like 'a performing worker' do
+    let(:args) { true }
+  end
 end

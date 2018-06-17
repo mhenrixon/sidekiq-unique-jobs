@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options queue: :customqueue, retry: 1, backtrace: 10,

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 # This class will lock until the job is successfully executed
 #
 # It will wait for 0 seconds to acquire a lock and it will expire the unique key after 2 seconds

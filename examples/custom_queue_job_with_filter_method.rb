@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 require_relative 'custom_queue_job'
 
 class CustomQueueJobWithFilterMethod < CustomQueueJob

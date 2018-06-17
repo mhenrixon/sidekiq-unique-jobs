@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'sidekiq/api'
-require 'sidekiq/worker'
-require 'sidekiq_unique_jobs/server/middleware'
-require 'sidekiq_unique_jobs/client/middleware'
-require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
 RSpec.describe 'Sidekiq::Api', redis: :redis do
   let(:item) do

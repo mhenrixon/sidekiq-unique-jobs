@@ -2,7 +2,7 @@
 
 VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.5.1'
-  require 'simplecov'
+  require 'simplecov' unless %w[false 0].include?(ENV['COV'])
 
   begin
     require 'pry'
@@ -21,6 +21,7 @@ require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
 require 'timecop'
 require 'sidekiq/simulator'
+require 'sidekiq_unique_jobs/testing'
 
 Sidekiq.logger = Logger.new('/dev/null')
 SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}")

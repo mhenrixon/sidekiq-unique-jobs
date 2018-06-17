@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov:
+
 class ExpiringJob
   include Sidekiq::Worker
   sidekiq_options unique: :until_executed, lock_expiration: 10 * 60

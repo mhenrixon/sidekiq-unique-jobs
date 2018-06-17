@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
-  let(:lock)       { described_class.new(item, redis_pool) }
-  let(:item)       { {} }
-  let(:redis_pool) { nil }
-  let(:locksmith)  { instance_double(SidekiqUniqueJobs::Locksmith) }
-
-  before do
-    allow(SidekiqUniqueJobs::Locksmith).to receive(:new).with(item, redis_pool).and_return(locksmith)
-  end
+  include_context 'with a stubbed locksmith'
+  let(:item) { {} }
 
   describe '#lock' do
     it 'delegates to locksmith' do

@@ -21,4 +21,7 @@ module SidekiqUniqueJobs
 
   class UnexpectedValue < StandardError
   end
+
+  class UnknownLock < StandardError
+  end
 end
