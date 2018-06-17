@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, redis_db: 3 do
+RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
   let(:lock) { described_class.new(item) }
   let(:item) do
     {
@@ -16,38 +16,20 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
   let(:callback) { -> {} }
 
   describe '#execute' do
-    let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_copy) }
-    let(:item_copy) do
-      copy = lock.instance_variable_get(:@item).dup
-      copy[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] &&= "#{copy[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY]}:RUN"
-      copy
-    end
+    let(:runtime_lock) { instance_spy(SidekiqUniqueJobs::Lock::WhileExecuting) }
 
     before do
       allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
-      lock.lock
-      expect(lock.locked?).to eq(true)
     end
 
-    after { lock.delete! }
-
     it 'unlocks the unique key before yielding' do
-      allow(callback).to receive(:call)
+      allow(lock).to receive(:unlock).and_return(true)
 
-      lock.execute(callback) do
-        expect(lock.locked?).to eq(false)
-        Sidekiq.redis do |conn|
-          expect(conn.keys('uniquejobs:*').size).to eq(3)
-        end
+      inside_block_value = false
+      expect(runtime_lock).to receive(:execute).with(callback).and_yield
 
-        10.times { Sidekiq::Client.push(item) }
-
-        Sidekiq.redis do |conn|
-          expect(conn.keys('uniquejobs:*').size).to eq(3)
-        end
-      end
-
-      expect(callback).to have_received(:call)
+      lock.execute(callback) { inside_block_value = true }
+      expect(inside_block_value).to eq(true)
     end
   end
 end
