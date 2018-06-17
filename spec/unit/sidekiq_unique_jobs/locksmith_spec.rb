@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'rspec/wait'
 
 RSpec.shared_context 'with a configured locksmith' do
   let(:locksmith)                 { described_class.new(lock_item) }

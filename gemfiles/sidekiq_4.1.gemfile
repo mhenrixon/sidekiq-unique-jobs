@@ -4,7 +4,6 @@ source "https://rubygems.org"
 
 gem "appraisal", "~> 2.2.0"
 gem "rspec-its", require: false
-gem "rspec-wait", require: false
 gem "mock_redis"
 gem "sidekiq", "~> 4.1.0"
 
