@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
-  include_context 'with a stubbed locksmith'
+  include_context 'lock with a stubbed locksmith'
 
   let(:item) do
     { 'jid' => 'maaaahjid',

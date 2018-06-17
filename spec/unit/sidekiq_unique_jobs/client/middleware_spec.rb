@@ -4,25 +4,44 @@ require 'spec_helper'
 require 'sidekiq/worker'
 require 'sidekiq-unique-jobs'
 
-RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 2 do
-  describe '#call' do
-    subject { middleware.call(worker_class, item, queue) }
+RSpec.describe SidekiqUniqueJobs::Client::Middleware do
+  let(:middleware) { described_class.new }
 
-    let(:middleware) { described_class.new }
+  describe '#call' do
+    subject(:call) { middleware.call(worker_class, item, queue, &block) }
+
+    let(:block)        { -> { @inside_block_value = true } }
     let(:worker_class) { SimpleWorker }
+    let(:queue)        { 'default' }
     let(:item) do
       { 'class' => SimpleWorker,
         'queue' => queue,
         'args'  => [1] }
     end
-    let(:queue) { 'default' }
 
-    context 'when ordinary_or_locked?' do
+    before do
+      @inside_block_value = false
+    end
+
+    context 'when locking succeeds' do
+      before do
+        allow(middleware).to receive(:successfully_locked?).and_return(true)
+      end
+
+      it 'yields control' do
+        expect { call }.to change { @inside_block_value }.to(true)
+      end
+    end
+
+
+    context 'when already locked' do
       before do
         allow(middleware).to receive(:successfully_locked?).and_return(false)
       end
 
-      it { is_expected.to be_nil }
+      it 'does not yield control' do
+        expect { call }.not_to change { @inside_block_value }.from(false)
+      end
     end
   end
 end
