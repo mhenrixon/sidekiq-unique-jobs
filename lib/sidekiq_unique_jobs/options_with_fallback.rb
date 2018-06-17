@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-
   # Shared logic for dealing with options
   # This class requires 3 methods to be defined in the class including it
   #   1. item (required)
@@ -33,7 +32,11 @@ module SidekiqUniqueJobs
     end
 
     def lock_class
-      @lock_class ||= LOCKS[unique_lock.to_sym]
+      @lock_class ||= begin
+        LOCKS.fetch(unique_lock.to_sym) do
+          fail UnknownLock, "No implementation for `unique: :#{unique_lock}`"
+        end
+      end
     end
 
     def unique_lock
