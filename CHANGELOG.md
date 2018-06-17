@@ -3,7 +3,7 @@
 - Complete rewrite of the locking mechanism
 - Improved README
 - Improved reliability
-- 
+- Improved coverage
 
 ## v5.1.0
 
