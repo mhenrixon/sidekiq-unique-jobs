@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+
 RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
   subject { SidekiqUniqueJobs::Scripts }
 

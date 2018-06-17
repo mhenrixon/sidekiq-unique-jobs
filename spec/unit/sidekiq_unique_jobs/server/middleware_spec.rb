@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'sidekiq/api'
-require 'sidekiq/cli'
-require 'sidekiq/worker'
-require 'sidekiq_unique_jobs/server/middleware'
 
 # rubocop:disable RSpec/InstanceVariable
 RSpec.describe SidekiqUniqueJobs::Server::Middleware do

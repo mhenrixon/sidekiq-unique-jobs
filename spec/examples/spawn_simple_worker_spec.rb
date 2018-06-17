@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
+
 RSpec.describe SpawnSimpleWorker do
   it_behaves_like 'sidekiq with options' do
     let(:options) do

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'sidekiq/cli'
 require 'sidekiq/launcher'
 require 'timeout'
 
