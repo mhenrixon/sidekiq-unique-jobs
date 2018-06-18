@@ -6,9 +6,7 @@ module SidekiqUniqueJobs
       def initialize(item, redis_pool = nil)
         super
 
-        unless @item[UNIQUE_DIGEST_KEY].end_with?(':RUN')
-          @item[UNIQUE_DIGEST_KEY] = "#{@item[UNIQUE_DIGEST_KEY]}:RUN"
-        end
+        @item[UNIQUE_DIGEST_KEY] = "#{@item[UNIQUE_DIGEST_KEY]}:RUN" unless @item[UNIQUE_DIGEST_KEY].end_with?(':RUN')
       end
 
       def lock

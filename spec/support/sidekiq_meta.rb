@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'sidekiq/testing'
 
 require_relative 'version_check'
@@ -45,8 +46,8 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
       check = VersionCheck.new(Sidekiq::VERSION, sidekiq_ver)
-      check.invalid? do |operator_1, version_1, operator_2, version_2|
-        skip("Sidekiq (#{Sidekiq::VERSION}) should be #{operator_1} #{version_1} AND #{operator_2} #{version_2}")
+      check.invalid? do |operator1, version1, operator2, version2|
+        skip("Sidekiq (#{Sidekiq::VERSION}) should be #{operator1} #{version1} AND #{operator2} #{version2}")
       end
     end
   end

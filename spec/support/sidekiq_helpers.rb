@@ -1,11 +1,9 @@
+# frozen_string_literal: true
+
 module SidekiqHelpers
   def redis(&block)
-    pool = if respond_to?(:redis_pool)
-             redis_pool
-           else
-             nil
-           end
-    SidekiqUniqueJobs.connection(nil, &block)
+    pool = (redis_pool if respond_to?(:redis_pool))
+    SidekiqUniqueJobs.connection(pool, &block)
   end
 
   def zcard(queue)
@@ -34,7 +32,7 @@ module SidekiqHelpers
 
   def keys(pattern = nil)
     return redis(&:keys) if pattern.nil?
-    redis { |conn| conn.keys(pattern)  }
+    redis { |conn| conn.keys(pattern) }
   end
 
   def ttl(key)
