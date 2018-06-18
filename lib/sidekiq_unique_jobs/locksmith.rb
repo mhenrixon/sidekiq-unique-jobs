@@ -3,29 +3,27 @@
 module SidekiqUniqueJobs
   class Locksmith # rubocop:disable ClassLength
     API_VERSION = '1'
+    EXISTS_TOKEN = '1'
     EXPIRES_IN = 10
-
-    attr_reader :item, :unique_digest, :use_local_time, :resource_count
-    attr_reader :lock_expiration, :lock_timeout, :stale_client_timeout
 
     def initialize(item, redis_pool = nil)
       @item                 = item
       @current_jid          = @item[JID_KEY]
       @unique_digest        = @item[UNIQUE_DIGEST_KEY]
       @redis_pool           = redis_pool
-      @lock_expiration      = @item[SidekiqUniqueJobs::LOCK_EXPIRATION_KEY]
       @lock_concurrency     = @item[LOCK_CONCURRENCY_KEY] || 1
-      @lock_timeout         = @item[SidekiqUniqueJobs::LOCK_TIMEOUT_KEY]
-      @stale_client_timeout = @item[SidekiqUniqueJobs::STALE_CLIENT_TIMEOUT_KEY]
+      @lock_expiration      = @item[LOCK_EXPIRATION_KEY]
+      @lock_timeout         = @item[LOCK_TIMEOUT_KEY]
+      @stale_client_timeout = @item[STALE_CLIENT_TIMEOUT_KEY]
       @tokens               = []
     end
 
     def create!
-      SidekiqUniqueJobs::Scripts.call(
-        :create_locks,
+      Scripts.call(
+        :create,
         @redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [current_jid, lock_expiration, API_VERSION, resource_count],
+        argv: [EXISTS_TOKEN, @lock_expiration, API_VERSION, @lock_concurrency],
       )
     end
 
@@ -46,8 +44,8 @@ module SidekiqUniqueJobs
     end
 
     def delete!
-      SidekiqUniqueJobs::Scripts.call(
-        :delete_locks,
+      Scripts.call(
+        :delete,
         @redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
       )
@@ -55,7 +53,7 @@ module SidekiqUniqueJobs
 
     def lock(timeout = nil) # rubocop:disable MethodLength
       create!
-      release!
+      release_stale_locks!
 
       get_token(timeout) do |current_token, conn|
         return false if current_token.nil?
@@ -92,8 +90,7 @@ module SidekiqUniqueJobs
 
     def unlock
       return false unless locked?
-      result = signal(@tokens.pop)
-      result && result[1]
+      signal(@tokens.pop)
     end
 
     def locked?(token = nil)
@@ -112,11 +109,11 @@ module SidekiqUniqueJobs
     def signal(token = nil)
       token ||= generate_unique_token
 
-      SidekiqUniqueJobs::Scripts.call(
-        :signal_locks,
+      Scripts.call(
+        :signal,
         @redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [token, lock_expiration],
+        argv: [token, @lock_expiration],
       )
     end
 
@@ -134,9 +131,10 @@ module SidekiqUniqueJobs
       token = Random.rand.to_s
 
       token = Random.rand.to_s while tokens.include? token
+      token
     end
 
-    def release!
+    def release_stale_locks!
       return unless check_staleness?
 
       if Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new('3.2')
@@ -145,6 +143,7 @@ module SidekiqUniqueJobs
         release_stale_locks_ruby!
       end
     end
+    alias release! release_stale_locks!
 
     def available_key
       @available_key ||= namespaced_key('AVAILABLE')
@@ -169,11 +168,11 @@ module SidekiqUniqueJobs
     private
 
     def release_stale_locks_lua!
-      SidekiqUniqueJobs::Scripts.call(
+      Scripts.call(
         :release_stale_locks,
         @redis_pool,
         keys:  [exists_key, grabbed_key, available_key, release_key],
-        argv: [EXPIRES_IN, stale_client_timeout, lock_expiration],
+        argv: [EXPIRES_IN, @stale_client_timeout, @lock_expiration],
       )
     end
 
@@ -181,7 +180,7 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs.connection(@redis_pool) do |conn|
         simple_expiring_mutex(conn) do
           conn.hgetall(grabbed_key).each do |token, locked_at|
-            timed_out_at = locked_at.to_f + stale_client_timeout
+            timed_out_at = locked_at.to_f + @stale_client_timeout
             signal(token) if timed_out_at < current_time.to_f
           end
         end
@@ -226,6 +225,8 @@ end
 require 'sidekiq_unique_jobs/lock/base_lock'
 require 'sidekiq_unique_jobs/lock/until_executed'
 require 'sidekiq_unique_jobs/lock/until_executing'
-require 'sidekiq_unique_jobs/lock/while_executing'
 require 'sidekiq_unique_jobs/lock/until_timeout'
+require 'sidekiq_unique_jobs/lock/while_executing'
+require 'sidekiq_unique_jobs/lock/while_executing_reject'
+require 'sidekiq_unique_jobs/lock/while_executing_requeue'
 require 'sidekiq_unique_jobs/lock/until_and_while_executing'
