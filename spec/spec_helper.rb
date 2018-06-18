@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-VERSION_REGEX = /(?<operator>[<>=]+)?\s?(?<version>(\d+.?)+)/m
 if RUBY_ENGINE == 'ruby' && RUBY_VERSION >= '2.5.1'
   require 'simplecov' unless %w[false 0].include?(ENV['COV'])
 
