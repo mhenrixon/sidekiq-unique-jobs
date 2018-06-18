@@ -2,13 +2,13 @@
 
 module SidekiqUniqueJobs
   class Lock
-    class RescheduleWhileExecuting < BaseLock
+    class WhileExecutingRequeue < WhileExecuting
       def lock
         true
       end
 
       def execute(callback)
-        @locksmith.lock(@item[LOCK_TIMEOUT_KEY]) do
+        @locksmith.lock(@item[LOCK_TIMEOUT_KEY], raise: true) do
           yield
           callback.call
         end
