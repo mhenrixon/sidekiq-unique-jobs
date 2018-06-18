@@ -22,5 +22,4 @@ module SidekiqUniqueJobs
   UNIQUE_LOCK_KEY ||= 'unique_lock'
   UNIQUE_ON_ALL_QUEUES_KEY ||= 'unique_on_all_queues'
   UNIQUE_PREFIX_KEY ||= 'unique_prefix'
-  USE_LOCAL_TIME_KEY ||= 'use_local_time'
 end

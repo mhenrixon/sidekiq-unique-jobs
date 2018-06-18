@@ -17,7 +17,6 @@ module SidekiqUniqueJobs
       @lock_expiration      = @item[SidekiqUniqueJobs::LOCK_EXPIRATION_KEY]
       @lock_timeout         = @item[SidekiqUniqueJobs::LOCK_TIMEOUT_KEY]
       @stale_client_timeout = @item[SidekiqUniqueJobs::STALE_CLIENT_TIMEOUT_KEY]
-      @use_local_time       = @item[SidekiqUniqueJobs::USE_LOCAL_TIME_KEY]
       @tokens               = []
     end
 
@@ -214,25 +213,12 @@ module SidekiqUniqueJobs
     end
 
     def current_time
-      return Time.now if @use_local_time
-
-      redis_time
+      seconds, microseconds_with_frac = redis_time
+      Time.at(seconds, microseconds_with_frac)
     end
 
     def redis_time
-      instant = SidekiqUniqueJobs.connection(@redis_pool, &:time)
-      Time.at(instant[0], instant[1])
-    rescue StandardError
-      @use_local_time = true
-      current_time
-    end
-
-    def current_jid
-      if @item.key?('at')
-        '2'
-      else
-        @current_jid
-      end
+      SidekiqUniqueJobs.connection(@redis_pool, &:time)
     end
   end
 end

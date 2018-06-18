@@ -5,7 +5,6 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith)                 { described_class.new(lock_item) }
   let(:lock_expiration)           { nil }
-  let(:lock_use_local_time)       { false }
   let(:lock_stale_client_timeout) { nil }
   let(:jid)                       { 'maaaahjid' }
   let(:lock_item) do
@@ -17,7 +16,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       'unique_digest' => 'test_mutex_key',
       'args' => [1],
       'lock_expiration' => lock_expiration,
-      'use_local_time' => lock_use_local_time,
       'stale_client_timeout' => lock_stale_client_timeout,
     }
   end
@@ -220,14 +218,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it 'with time support should return a different time than frozen time' do
       expect(locksmith.send(:current_time)).not_to eq(Time.now)
-    end
-
-    context 'when use_local_time is true' do
-      let(:lock_use_local_time) { true }
-
-      it 'with use_local_time should return the same time as frozen time' do
-        expect(locksmith.send(:current_time)).to eq(Time.now)
-      end
     end
   end
 end
