@@ -7,19 +7,19 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     it 'processes jobs properly' do
       jid = NotifyWorker.perform_in(1, 183, 'xxxx')
       expect(jid).not_to eq(nil)
-      Sidekiq.redis do |conn|
-        expect(conn.zcard('schedule')).to eq(1)
-        expected = %w[
-          uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS
-          uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:VERSION
-        ]
 
-        expect(conn.keys).to include(*expected)
-      end
+      expect(zcard('schedule')).to eq(1)
+
+      expected = %w[
+        uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS
+        uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:VERSION
+      ]
+
+      expect(keys).to include(*expected)
       Sidekiq::Scheduled::Enq.new.enqueue_jobs
 
       Sidekiq::Simulator.process_queue(:notify_worker) do
-        expect(0).to eventually be_enqueued_in('notify_worker')
+        expect { queue_count('notify_worker') }.to eventually eq(0)
       end
     end
 
@@ -28,15 +28,15 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       expect(SimpleWorker.perform_async(1)).to eq(nil)
       expect(SpawnSimpleWorker.perform_async(1)).not_to eq(nil)
 
-      expect(1).to be_enqueued_in('default')
-      expect(1).to be_enqueued_in('not_default')
+      expect(queue_count('default')).to eq(1)
+      expect(queue_count('not_default')).to eq(1)
 
       Sidekiq::Simulator.process_queue(:not_default) do
-        expect(0).to eventually be_enqueued_in('not_default')
+        expect { queue_count('not_default') }.to eventually eq(0)
       end
 
       Sidekiq::Simulator.process_queue(:default) do
-        expect(0).to eventually be_enqueued_in('default')
+        expect { queue_count('default') }.to eventually eq(0)
       end
     end
 
@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         MainJob.perform_in(x, x)
       end
 
-      expect(20).to be_scheduled_at(Time.now.to_f + 2 * 60)
+      expect(schedule_count).to eq(20)
     end
 
     it 'schedules allows jobs to be scheduled ' do
@@ -59,16 +59,16 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         ShitClass.delay_for(x, unique: :while_executing).do_it(1)
       end
 
-      expect(20).to be_scheduled_at(Time.now.to_f + 2 * 60)
+      expect(schedule_count).to eq(20)
     end
   end
 
   it 'does not push duplicate messages when unique_args are filtered with a proc' do
     10.times { MyUniqueJobWithFilterProc.perform_async(1) }
-    expect(1).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(1)
 
     Sidekiq.redis(&:flushdb)
-    expect(0).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(0)
 
     10.times do
       Sidekiq::Client.push(
@@ -78,15 +78,15 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       )
     end
 
-    expect(1).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(1)
   end
 
   it 'does not push duplicate messages when unique_args are filtered with a method' do
     10.times { MyUniqueJobWithFilterMethod.perform_async(1) }
 
-    expect(1).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(1)
     Sidekiq.redis(&:flushdb)
-    expect(0).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(0)
 
     10.times do
       Sidekiq::Client.push(
@@ -96,13 +96,13 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       )
     end
 
-    expect(1).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(1)
   end
 
   it 'does not queue duplicates when when calling delay' do
     10.times { PlainClass.delay(unique: :until_executed, queue: 'customqueue').run(1) }
 
-    expect(1).to be_enqueued_in('customqueue')
+    expect(queue_count('customqueue')).to eq(1)
   end
 
   context 'when class is not unique' do
@@ -111,7 +111,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         Sidekiq::Client.push('class' => CustomQueueJob, 'queue' => 'customqueue', 'args' => [1, 2])
       end
 
-      expect(10).to be_enqueued_in('customqueue')
+      expect(queue_count('customqueue')).to eq(10)
     end
   end
 
@@ -129,7 +129,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
           )
         end
 
-        expect(1).to be_enqueued_in('customqueue')
+        expect(queue_count('customqueue')).to eq(1)
       end
     end
 
@@ -139,7 +139,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       it 'pushes no duplicate messages' do
         100.times { CustomQueueJobWithFilterProc.perform_async(args) }
 
-        expect(1).to be_enqueued_in('customqueue')
+        expect(queue_count('customqueue')).to eq(1)
       end
     end
 
@@ -149,8 +149,8 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         Sidekiq::Client.push(item.merge('queue' => 'customqueue'))
         Sidekiq::Client.push(item.merge('queue' => 'customqueue2'))
 
-        expect(1).to be_enqueued_in('customqueue')
-        expect(0).to be_enqueued_in('customqueue2')
+        expect(queue_count('customqueue')).to eq(1)
+        expect(queue_count('customqueue2')).to eq(0)
       end
     end
 
@@ -173,7 +173,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         Sidekiq::Client.push(item_one)
         Sidekiq::Client.push(item_two)
 
-        expect(1).to be_enqueued_in('customqueue1')
+        expect(queue_count('customqueue1')).to eq(1)
       end
     end
   end
@@ -183,11 +183,10 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
     MyUniqueJob.perform_in(expected_expires_at, 'mika', 'hel')
 
-    Sidekiq.redis do |conn|
-      conn.keys('uniquejobs:*').each do |key|
-        next if key.end_with?(':GRABBED')
-        expect(conn.ttl(key)).to be_within(10).of(8_099)
-      end
+
+    keys('uniquejobs:*').each do |key|
+      next if key.end_with?(':GRABBED')
+      expect(ttl(key)).to be_within(10).of(8_099)
     end
   end
 
@@ -199,7 +198,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2])
       end
 
-      expect(1).to be_enqueued_in('customqueue')
+      expect(queue_count('customqueue')).to eq(1)
     end
   end
 
@@ -211,7 +210,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
         Sidekiq::Client.push('class' => UntilExecutedJob, 'queue' => 'customqueue', 'args' => [1, 2])
       end
 
-      expect(1).to be_enqueued_in('customqueue')
+      expect(queue_count('customqueue')).to eq(1)
     end
   end
 end

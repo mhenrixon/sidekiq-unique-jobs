@@ -1,25 +1,7 @@
 # frozen_string_literal: true
 
 require 'rspec/expectations'
-
-RSpec::Matchers.define :eventually do |matcher|
-  supports_block_expectations
-
-  match do |actual|
-    begin # rubocop:disable Style/RedundantBegin
-      Timeout.timeout(20) do
-        sleep 0.01 until matcher.matches?(actual)
-        return true
-      end
-    rescue Timeout::Error
-      return false
-    end
-  end
-
-  failure_message do |_actual|
-    matcher.failure_message
-  end
-end
+require 'rspec/eventually'
 
 RSpec::Matchers.define :be_enqueued_in do |queue|
   SidekiqUniqueJobs.connection do |conn|

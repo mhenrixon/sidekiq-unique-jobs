@@ -132,7 +132,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         # noop
       end
       keys = current_keys
-      expect(current_keys).not_to eventually include(keys)
+      expect { current_keys }.to eventually_not include(keys)
     end
   end
 
