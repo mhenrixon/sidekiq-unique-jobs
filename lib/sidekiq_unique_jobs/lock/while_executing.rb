@@ -5,8 +5,8 @@ module SidekiqUniqueJobs
     class WhileExecuting < BaseLock
       def initialize(item, redis_pool = nil)
         super
-
-        @item[UNIQUE_DIGEST_KEY] = "#{@item[UNIQUE_DIGEST_KEY]}:RUN" unless @item[UNIQUE_DIGEST_KEY].end_with?(':RUN')
+        digest = @item[UNIQUE_DIGEST_KEY]
+        @item[UNIQUE_DIGEST_KEY] = "#{digest}:RUN" unless digest.end_with?(':RUN')
       end
 
       def lock
