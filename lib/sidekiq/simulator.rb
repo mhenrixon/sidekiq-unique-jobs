@@ -2,12 +2,15 @@
 
 require 'sidekiq/cli'
 require 'sidekiq/launcher'
-require 'timeout'
+
+require 'sidekiq_unique_jobs/timeout'
 
 module Sidekiq
   class Simulator
     extend Forwardable
     def_delegator SidekiqUniqueJobs, :logger
+
+    include SidekiqUniqueJobs::Timeout
 
     attr_reader :queues, :launcher
 
@@ -50,12 +53,6 @@ module Sidekiq
 
     def stopped?
       !alive?
-    end
-
-    def using_timeout(value)
-      Timeout.timeout(value) do
-        yield
-      end
     end
 
     def sidekiq_options(queues = [])
