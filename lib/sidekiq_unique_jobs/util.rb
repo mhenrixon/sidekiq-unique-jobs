@@ -21,7 +21,6 @@ module SidekiqUniqueJobs
     # @param count [Integer] the maximum number of keys to delete
     # @param dry_run [Boolean] set to false to perform deletion, `true` or `false`
     # @return [Boolean] report success
-    # @raise [SidekiqUniqueJobs::LockTimeout] when lock fails within configured timeout
     def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
       pattern = "#{pattern}:*" unless pattern.end_with?(':*')
