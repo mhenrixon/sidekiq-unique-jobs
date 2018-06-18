@@ -13,8 +13,8 @@ module SidekiqUniqueJobs
       @current_jid          = @item[JID_KEY]
       @unique_digest        = @item[UNIQUE_DIGEST_KEY]
       @redis_pool           = redis_pool
-      @resource_count       = @item[SidekiqUniqueJobs::LOCK_RESOURCES_KEY] || 1
       @lock_expiration      = @item[SidekiqUniqueJobs::LOCK_EXPIRATION_KEY]
+      @lock_concurrency     = @item[LOCK_CONCURRENCY_KEY] || 1
       @lock_timeout         = @item[SidekiqUniqueJobs::LOCK_TIMEOUT_KEY]
       @stale_client_timeout = @item[SidekiqUniqueJobs::STALE_CLIENT_TIMEOUT_KEY]
       @tokens               = []
@@ -41,7 +41,7 @@ module SidekiqUniqueJobs
           conn.llen(available_key)
         end
       else
-        @resource_count
+        @lock_concurrency
       end
     end
 
