@@ -13,6 +13,7 @@ module SidekiqUniqueJobs
       until_executing:           SidekiqUniqueJobs::Lock::UntilExecuting,
       until_timeout:             SidekiqUniqueJobs::Lock::UntilTimeout,
       while_executing:           SidekiqUniqueJobs::Lock::WhileExecuting,
+      while_executing_reject:    SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze
 
     def unique_enabled?

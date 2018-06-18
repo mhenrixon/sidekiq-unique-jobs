@@ -28,19 +28,13 @@ module SidekiqUniqueJobs
     end
 
     def exists?
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        conn.exists(exists_key)
-      end
+      redis { |conn| conn.exists(exists_key) }
     end
 
     def available_count
-      if exists?
-        SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-          conn.llen(available_key)
-        end
-      else
-        @lock_concurrency
-      end
+      return @lock_concurrency unless exists?
+
+      redis { |conn| conn.llen(available_key) }
     end
 
     def delete!
@@ -76,7 +70,7 @@ module SidekiqUniqueJobs
     alias wait lock
 
     def get_token(timeout = nil)
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+      redis do |conn|
         if timeout.nil? || timeout.positive?
           # passing timeout 0 to blpop causes it to block
           _key, current_token = conn.blpop(available_key, timeout || 0)
@@ -94,15 +88,14 @@ module SidekiqUniqueJobs
     end
 
     def locked?(token = nil)
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
-        if token
-          conn.hexists(grabbed_key, token)
-        else
-          @tokens.each do |my_token|
-            return true if conn.hexists(grabbed_key, my_token)
-          end
-          false
+      if token
+        redis { |conn| conn.hexists(grabbed_key, token) }
+      else
+        @tokens.each do |my_token|
+          return true if locked?(my_token)
         end
+
+        false
       end
     end
 
@@ -118,7 +111,7 @@ module SidekiqUniqueJobs
     end
 
     def all_tokens
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+      redis do |conn|
         conn.multi do
           conn.lrange(available_key, 0, -1)
           conn.hkeys(grabbed_key)
@@ -177,7 +170,7 @@ module SidekiqUniqueJobs
     end
 
     def release_stale_locks_ruby!
-      SidekiqUniqueJobs.connection(@redis_pool) do |conn|
+      redis do |conn|
         simple_expiring_mutex(conn) do
           conn.hgetall(grabbed_key).each do |token, locked_at|
             timed_out_at = locked_at.to_f + @stale_client_timeout
@@ -217,7 +210,11 @@ module SidekiqUniqueJobs
     end
 
     def redis_time
-      SidekiqUniqueJobs.connection(@redis_pool, &:time)
+      redis(&:time)
+    end
+
+    def redis(&block)
+      SidekiqUniqueJobs.connection(@redis_pool, &block)
     end
   end
 end

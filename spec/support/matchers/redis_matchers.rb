@@ -7,7 +7,7 @@ RSpec::Matchers.define :eventually do |matcher|
 
   match do |actual|
     begin # rubocop:disable Style/RedundantBegin
-      Timeout.timeout(15) do
+      Timeout.timeout(20) do
         sleep 0.01 until matcher.matches?(actual)
         return true
       end
