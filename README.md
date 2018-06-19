@@ -62,12 +62,12 @@ This is the timeout (how long to wait) for creating the lock. By default we don'
 sidekiq_options lock_timeout: 5 # 5 seconds
 ```
 
-#### Lock Resources
+#### Lock Concurrency
 
-This allows us to perform multiple locks for a unique key. 
+Allowed number of processes to use the same lock
 
 ```ruby
-sidekiq_options lock_resources: 2 # Use 2 locks
+sidekiq_options lock_concurrency: 2 # Use 2 locks
 ```
 
 #### 

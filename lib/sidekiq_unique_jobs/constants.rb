@@ -5,8 +5,8 @@ module SidekiqUniqueJobs
   AT_KEY ||= 'at'
   CLASS_KEY ||= 'class'
   JID_KEY ||= 'jid'
+  LOCK_CONCURRENCY_KEY ||= 'lock_concurrency'
   LOCK_EXPIRATION_KEY ||= 'lock_expiration'
-  LOCK_RESOURCES_KEY ||= 'lock_resources'
   LOCK_TIMEOUT_KEY ||= 'lock_timeout'
   LOG_DUPLICATE_KEY ||= 'log_duplicate_payload'
   QUEUE_KEY ||= 'queue'
@@ -22,5 +22,4 @@ module SidekiqUniqueJobs
   UNIQUE_LOCK_KEY ||= 'unique_lock'
   UNIQUE_ON_ALL_QUEUES_KEY ||= 'unique_on_all_queues'
   UNIQUE_PREFIX_KEY ||= 'unique_prefix'
-  USE_LOCAL_TIME_KEY ||= 'use_local_time'
 end

@@ -5,7 +5,6 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith)                 { described_class.new(lock_item) }
   let(:lock_expiration)           { nil }
-  let(:lock_use_local_time)       { false }
   let(:lock_stale_client_timeout) { nil }
   let(:jid)                       { 'maaaahjid' }
   let(:lock_item) do
@@ -17,7 +16,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       'unique_digest' => 'test_mutex_key',
       'args' => [1],
       'lock_expiration' => lock_expiration,
-      'use_local_time' => lock_use_local_time,
       'stale_client_timeout' => lock_stale_client_timeout,
     }
   end
@@ -87,7 +85,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     it 'disappears without a trace when calling `delete!`' do
       original_key_size = SidekiqUniqueJobs.connection { |conn| conn.keys.count }
 
-      locksmith.create!
+      locksmith.create
       locksmith.delete!
 
       expect(SidekiqUniqueJobs.connection { |conn| conn.keys.count }).to eq(original_key_size)
@@ -123,7 +121,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it 'expires keys' do
       Sidekiq.redis(&:flushdb)
-      locksmith.create!
+      locksmith.create
       keys = current_keys
       expect(current_keys).not_to include(keys)
     end
@@ -134,7 +132,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         # noop
       end
       keys = current_keys
-      expect(current_keys).not_to eventually include(keys)
+      expect { current_keys }.to eventually_not include(keys)
     end
   end
 
@@ -142,7 +140,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     it_behaves_like 'a lock'
 
     it 'can dynamically add resources' do
-      locksmith.create!
+      locksmith.create
 
       3.times do
         locksmith.signal
@@ -163,11 +161,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith.lock
 
       sleep 0.3
-      watchdog.release!
+      watchdog.release
       expect(locksmith.locked?).to eq(true)
 
       sleep 0.8
-      watchdog.release!
+      watchdog.release
 
       expect(locksmith.locked?).to eq(false)
     end
@@ -220,14 +218,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it 'with time support should return a different time than frozen time' do
       expect(locksmith.send(:current_time)).not_to eq(Time.now)
-    end
-
-    context 'when use_local_time is true' do
-      let(:lock_use_local_time) { true }
-
-      it 'with use_local_time should return the same time as frozen time' do
-        expect(locksmith.send(:current_time)).to eq(Time.now)
-      end
     end
   end
 end

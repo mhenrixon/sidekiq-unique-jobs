@@ -2,6 +2,8 @@
 
 require 'sidekiq/testing'
 
+require_relative 'version_check'
+
 RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
   config.before(:each, redis: :mock_redis) do
     require 'mock_redis'
@@ -43,16 +45,9 @@ RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
     end
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
-      VERSION_REGEX.match(sidekiq_ver.to_s) do |match|
-        version  = Gem::Version.new(match[:version])
-        operator = match[:operator]
-
-        raise 'Please specify how to compare the version with >= or < or =' unless operator
-
-        unless Gem::Version.new(Sidekiq::VERSION).send(operator, version)
-          skip("Skipped due to version check (requirement was that sidekiq version is " \
-               "#{operator} #{version}; was #{Sidekiq::VERSION})")
-        end
+      check = VersionCheck.new(Sidekiq::VERSION, sidekiq_ver)
+      check.invalid? do |operator1, version1, operator2, version2|
+        skip("Sidekiq (#{Sidekiq::VERSION}) should be #{operator1} #{version1} AND #{operator2} #{version2}")
       end
     end
   end

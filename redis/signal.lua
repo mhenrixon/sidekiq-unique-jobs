@@ -7,7 +7,7 @@ local token      = ARGV[1]
 local expiration = tonumber(ARGV[2])
 
 redis.call('HDEL', grabbed_key, token)
-redis.call('LPUSH', available_key, token)
+local available_count = redis.call('LPUSH', available_key, token)
 
 if expiration then
   redis.log(redis.LOG_DEBUG, "signal_locks.lua - expiring stale locks")
@@ -15,3 +15,5 @@ if expiration then
   redis.call('EXPIRE', available_key, expiration)
   redis.call('EXPIRE', version_key, expiration)
 end
+
+return available_count

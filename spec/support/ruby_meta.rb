@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
+require_relative 'version_check'
+
 RSpec.configure do |config|
   config.before do |example|
-    ruby_ver = example.metadata[:ruby_ver]
-    VERSION_REGEX.match(ruby_ver.to_s) do |match|
-      version  = Gem::Version.new(match[:version])
-      operator = match[:operator]
-      next unless ruby_ver
-
-      raise 'Please specify how to compare the version with >= or < or =' unless operator
-
-      unless Gem::Version.new(RUBY_VERSION).send(operator, version)
-        skip("Skipped due to version check (requirement was that ruby version is " \
-             "#{operator} #{version}; was #{RUBY_VERSION})")
+    if (ruby_ver = example.metadata[:ruby_ver])
+      check = VersionCheck.new(RUBY_VERSION, ruby_ver)
+      check.invalid? do |operator1, version1, operator2, version2|
+        skip("Ruby (#{RUBY_VERSION}) should be #{operator1} #{version1} AND #{operator2} #{version2}")
       end
     end
   end

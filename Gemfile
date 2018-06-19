@@ -3,9 +3,10 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'appraisal',   '~> 2.2.0'
-gem 'rspec-its',   require: false
-gem 'rspec-retry', require: false
+gem 'appraisal',        '~> 2.2.0'
+gem 'rspec-its',        require: false
+gem 'rspec-retry',      require: false
+gem 'rspec-eventually', require: false
 
 platforms :mri_25 do
   gem 'benchmark-ips',   require: false
