@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
       @tokens               = []
     end
 
-    def create!
+    def create
       Scripts.call(
         :create,
         @redis_pool,
@@ -46,8 +46,8 @@ module SidekiqUniqueJobs
     end
 
     def lock(timeout = nil) # rubocop:disable MethodLength
-      create!
-      release_stale_locks!
+      create
+      release_stale_locks
 
       get_token(timeout) do |current_token, conn|
         return false if current_token.nil?
@@ -127,16 +127,16 @@ module SidekiqUniqueJobs
       token
     end
 
-    def release_stale_locks!
+    def release_stale_locks
       return unless check_staleness?
 
       if Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new('3.2')
-        release_stale_locks_lua!
+        release_stale_locks_lua
       else
-        release_stale_locks_ruby!
+        release_stale_locks_ruby
       end
     end
-    alias release! release_stale_locks!
+    alias release release_stale_locks
 
     def available_key
       @available_key ||= namespaced_key('AVAILABLE')
@@ -160,7 +160,7 @@ module SidekiqUniqueJobs
 
     private
 
-    def release_stale_locks_lua!
+    def release_stale_locks_lua
       Scripts.call(
         :release_stale_locks,
         @redis_pool,
@@ -169,7 +169,7 @@ module SidekiqUniqueJobs
       )
     end
 
-    def release_stale_locks_ruby!
+    def release_stale_locks_ruby
       redis do |conn|
         simple_expiring_mutex(conn) do
           conn.hgetall(grabbed_key).each do |token, locked_at|

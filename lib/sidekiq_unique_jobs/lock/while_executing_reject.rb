@@ -17,6 +17,8 @@ module SidekiqUniqueJobs
         end
       end
 
+      # Private below here, keeping public due to testing reasons
+
       def reject!
         Sidekiq.logger.debug { "Rejecting job with jid: #{item[JID_KEY]} already running" }
         send_to_deadset
@@ -61,14 +63,17 @@ module SidekiqUniqueJobs
       end
 
       def push_to_deadset
-        now = Time.now.to_f
         Sidekiq.redis do |conn|
           conn.multi do
-            conn.zadd('dead', now, payload)
-            conn.zremrangebyscore('dead', '-inf', now - Sidekiq::DeadSet.timeout)
+            conn.zadd('dead', current_time, payload)
+            conn.zremrangebyscore('dead', '-inf', current_time - Sidekiq::DeadSet.timeout)
             conn.zremrangebyrank('dead', 0, -Sidekiq::DeadSet.max_jobs)
           end
         end
+      end
+
+      def current_time
+        @current_time ||= Time.now.to_f
       end
 
       def payload
