@@ -63,7 +63,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
       let(:pattern) { unique_key }
 
       it { is_expected.to eq(3) }
-      it { expect { del }.to change { described_class.keys }.to([]) }
+      it { expect { del }.to change(described_class, :keys).to([]) }
     end
 
     after { lock.delete! }

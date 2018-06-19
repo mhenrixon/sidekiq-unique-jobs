@@ -13,10 +13,10 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
     it 'deletes uniqueness lock on delete' do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: 'bar')).to be_truthy
       expect(keys('uniquejobs:*')).to match_array(%w[
-        uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
-        uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
-        uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
-      ])
+                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
+                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
+                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
+                                                  ])
 
       Sidekiq::ScheduledSet.new.each(&:delete)
       expect(keys('uniquejobs')).to match_array([])
@@ -27,10 +27,10 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
     it 'deletes uniqueness lock on remove_job' do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: 'bar')).to be_truthy
       expect(keys('uniquejobs:*')).to match_array(%w[
-        uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
-        uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
-        uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
-      ])
+                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
+                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
+                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
+                                                  ])
 
       Sidekiq::ScheduledSet.new.each do |entry|
         entry.send(:remove_job) do |message|
