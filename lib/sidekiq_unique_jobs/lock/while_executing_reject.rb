@@ -51,11 +51,11 @@ module SidekiqUniqueJobs
       end
 
       def kill_job_without_options
-        deadset.kill(payload) if deadset_kill?
+        deadset.kill(payload)
       end
 
       def kill_job_with_options
-        deadset.kill(payload, notify_failure: false) if deadset_kill?
+        deadset.kill(payload, notify_failure: false)
       end
 
       def deadset
