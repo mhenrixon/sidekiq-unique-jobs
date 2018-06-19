@@ -52,7 +52,7 @@ module Sidekiq
       module Testing
         def clear_all_ext
           clear_all_orig
-          SidekiqUniqueJobs::Util.del('*', 1000, false)
+          SidekiqUniqueJobs::Util.del('*', 1000)
         end
       end
     end

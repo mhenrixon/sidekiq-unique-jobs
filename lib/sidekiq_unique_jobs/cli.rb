@@ -24,8 +24,13 @@ module SidekiqUniqueJobs
     option :dry_run, aliases: :d, type: :boolean, desc: 'set to false to perform deletion'
     option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
     def del(pattern)
-      deleted_count = Util.del(pattern, options[:count], options[:dry_run])
-      say "Deleted #{deleted_count} keys matching '#{pattern}'"
+      if options[:dry_run]
+        keys = Util.keys(pattern, options[:count])
+        say "Would delete #{keys.size} keys matching '#{pattern}'"
+      else
+        deleted_count = Util.del(pattern, options[:count])
+        say "Deleted #{deleted_count} keys matching '#{pattern}'"
+      end
     end
 
     desc 'console', 'drop into a console with easy access to helper methods'

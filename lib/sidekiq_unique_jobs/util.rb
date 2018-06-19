@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
     extend self # rubocop:disable Style/ModuleFunction
 
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
+      return connection(&:keys) if pattern.nil?
       connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
@@ -19,26 +20,20 @@ module SidekiqUniqueJobs
     #
     # @param pattern [String] a pattern to scan for in redis
     # @param count [Integer] the maximum number of keys to delete
-    # @param dry_run [Boolean] set to false to perform deletion, `true` or `false`
     # @return [Boolean] report success
-    def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
+    def del(pattern = SCAN_PATTERN, count = 0)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
       pattern = "#{pattern}:*" unless pattern.end_with?(':*')
 
       logger.debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
-      logger.debug { "#{keys.size} matching keys found in #{time} sec." }
-      keys = dry_run(keys)
-      logger.debug { "#{keys.size} matching keys after post-processing" }
-      unless dry_run
-        logger.debug { "deleting #{keys}..." }
-        _, time = timed { batch_delete(keys) }
-        logger.debug { "Deleted in #{time} sec." }
-      end
-      keys.size
-    end
+      key_size   = keys.size
+      logger.debug { "#{key_size} keys found in #{time} sec." }
+      _, time = timed { batch_delete(keys) }
+      logger.debug { "Deleted #{key_size} keys in #{time} sec." }
 
-    private
+      key_size
+    end
 
     def batch_delete(keys)
       connection do |conn|
@@ -50,12 +45,6 @@ module SidekiqUniqueJobs
           end
         end
       end
-    end
-
-    def dry_run(keys, pattern = nil)
-      return keys if pattern.nil?
-      regex = Regexp.new(pattern)
-      keys.select { |k| regex.match k }
     end
 
     def timed(&_block)

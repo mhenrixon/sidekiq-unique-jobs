@@ -31,8 +31,7 @@ module SidekiqHelpers
   end
 
   def keys(pattern = nil)
-    return redis(&:keys) if pattern.nil?
-    redis { |conn| conn.keys(pattern) }
+    SidekiqUniqueJobs::Util.keys(pattern)
   end
 
   def ttl(key)
