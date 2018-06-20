@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs do
     end
 
     context 'when configured explicitly' do
-      let(:another_logger) { Logger.new(STDOUT) }
+      let(:another_logger) { Logger.new('/dev/null') }
 
       around do |exmpl|
         described_class.use_config(logger: another_logger) do
