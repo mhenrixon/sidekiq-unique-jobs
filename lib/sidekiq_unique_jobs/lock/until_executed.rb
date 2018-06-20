@@ -5,22 +5,32 @@ module SidekiqUniqueJobs
     class UntilExecuted < BaseLock
       OK ||= 'OK'
 
-      def execute(callback, &block)
+      def execute(callback)
         operative = true
-        send(:after_yield_yield, &block)
+        yield if block_given?
       rescue Sidekiq::Shutdown
         operative = false
         raise
       ensure
-        if operative && unlock
-          callback.call
+        unlock_and_callback(operative, callback)
+      end
+
+      private
+
+      def unlock_and_callback(operative, callback)
+        return notify_about_manual_unlock unless operative
+
+        unlock
+
+        if locked?
+          notify_about_manual_unlock
         else
-          log_fatal("the unique_key: #{@item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
+          callback.call
         end
       end
 
-      def after_yield_yield
-        yield
+      def notify_about_manual_unlock
+        log_fatal("the unique_key: #{@item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
       end
     end
   end
