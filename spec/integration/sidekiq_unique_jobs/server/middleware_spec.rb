@@ -13,8 +13,6 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
         jid = UntilExecutedJob.perform_async
         item = Sidekiq::Queue.new(queue).find_job(jid).item
 
-        locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-
         exists_key = 'uniquejobs:7f28fc7bce5b2f7ea9895080e9b2d282:EXISTS'
         expect(get_key(exists_key)).to eq('1')
         set_key(exists_key, 'NOT_DELETED')

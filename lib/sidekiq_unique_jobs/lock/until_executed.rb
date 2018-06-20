@@ -6,27 +6,23 @@ module SidekiqUniqueJobs
       OK ||= 'OK'
 
       def execute(callback)
-        operative = true
+        @operative = true
         yield if block_given?
       rescue Sidekiq::Shutdown
-        operative = false
+        @operative = false
         raise
       ensure
-        unlock_and_callback(operative, callback)
+        unlock_and_callback(callback)
       end
 
       private
 
-      def unlock_and_callback(operative, callback)
-        return notify_about_manual_unlock unless operative
-
+      def unlock_and_callback(callback)
+        return notify_about_manual_unlock unless @operative
         unlock
 
-        if locked?
-          notify_about_manual_unlock
-        else
-          callback.call
-        end
+        return notify_about_manual_unlock if locked?
+        callback.call
       end
 
       def notify_about_manual_unlock
