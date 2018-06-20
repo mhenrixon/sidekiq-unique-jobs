@@ -19,8 +19,6 @@ DuplicateMethodCall:
   - SidekiqUniqueJobs::UniqueArgs#digestable_hash
   - SidekiqUniqueJobs::UniqueArgs#filtered_args
   - SidekiqUniqueJobs::UniqueArgs#unique_prefix
-  - SidekiqUniqueJobs::Util#del
-  - SidekiqUniqueJobs::Util#timed
 IrresponsibleModule:
   exclude:
   - Sidekiq::Simulator
@@ -90,16 +88,7 @@ BooleanParameter:
   exclude:
   - SidekiqUniqueJobs::Cli#self.banner
 UtilityFunction:
-  exclude:
-  - SidekiqUniqueJobs::Cli#logger
-  - SidekiqUniqueJobs::Lock::BaseLock#prepare_item
-  - SidekiqUniqueJobs::Lock::WhileExecutingReject#kill_with_options?
-  - SidekiqUniqueJobs::OptionsWithFallback#lock_type_from
-  - SidekiqUniqueJobs::Timeout#using_timeout
-  - SidekiqUniqueJobs::Util#connection
-  - SidekiqUniqueJobs::Util#logger
-  - SidekiqUniqueJobs::Util#timed
-  - SidekiqUniqueJobs::Util#unique_prefix
+  enabled: false
 TooManyConstants:
   exclude:
   - SidekiqUniqueJobs
@@ -119,7 +108,6 @@ PrimaDonnaMethod:
   - Array
   - SidekiqUniqueJobs::Lock::BaseLock
   - SidekiqUniqueJobs::Lock::WhileExecutingReject
-  - SidekiqUniqueJobs::Locksmith
 InstanceVariableAssumption:
   exclude:
   - SidekiqUniqueJobs::Lock::UntilExecuted
@@ -128,16 +116,7 @@ InstanceVariableAssumption:
   - SidekiqUniqueJobs::Lock::WhileExecutingRequeue
   - SidekiqUniqueJobs::Timeout::Calculator
 NilCheck:
-  exclude:
-  - SidekiqUniqueJobs::Lock::WhileExecuting#execute
-  - SidekiqUniqueJobs::Lock::WhileExecutingReject#execute
-  - SidekiqUniqueJobs::Locksmith#check_staleness?
-  - SidekiqUniqueJobs::Locksmith#get_token
-  - SidekiqUniqueJobs::Locksmith#lock
-  - SidekiqUniqueJobs::Scripts#internal_call
-  - SidekiqUniqueJobs::UniqueArgs#filter_by_proc
-  - SidekiqUniqueJobs::Util#keys
-  - SidekiqUniqueJobs::Util#prefix
+  enabled: false
 FeatureEnvy:
   exclude:
   - SidekiqUniqueJobs::Lock::WhileExecutingReject#push_to_deadset

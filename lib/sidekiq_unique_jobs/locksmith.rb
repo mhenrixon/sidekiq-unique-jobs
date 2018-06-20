@@ -39,7 +39,7 @@ module SidekiqUniqueJobs
       redis { |conn| conn.llen(available_key) }
     end
 
-    def delete!
+    def delete
       Scripts.call(
         :delete,
         @redis_pool,

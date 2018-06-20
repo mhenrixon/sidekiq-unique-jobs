@@ -25,12 +25,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     end
   end
 
-  describe '#delete!' do
+  describe '#delete' do
     it 'delegates to locksmith' do
       allow(locksmith).to receive(:unlock)
-      allow(locksmith).to receive(:delete!).and_return('deleted')
+      allow(locksmith).to receive(:delete).and_return('deleted')
 
-      expect(lock.delete!).to eq('deleted')
+      expect(lock.delete).to eq('deleted')
     end
   end
 

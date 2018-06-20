@@ -23,9 +23,8 @@ module SidekiqUniqueJobs
         @locksmith.unlock
       end
 
-      def delete!
-        unlock
-        @locksmith.delete!
+      def delete
+        @locksmith.delete
       end
 
       def locked?

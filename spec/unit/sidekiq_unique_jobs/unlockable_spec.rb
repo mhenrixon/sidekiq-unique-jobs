@@ -34,8 +34,8 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     end
   end
 
-  describe '.delete!' do
-    subject(:delete!) { described_class.delete!(item_with_digest) }
+  describe '.delete' do
+    subject(:delete) { described_class.delete(item_with_digest) }
 
     specify do
       expect(unique_keys.size).to eq(0)
@@ -43,7 +43,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
 
       expect(unique_keys.size).to eq(3)
 
-      delete!
+      delete
 
       expect(unique_keys.size).to eq(0)
     end

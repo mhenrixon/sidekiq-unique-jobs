@@ -29,7 +29,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       expect(lock.locked?).to eq(true)
     end
 
-    after { lock.delete! }
+    after { lock.delete }
 
     it 'unlocks the unique key before yielding' do
       allow(callback).to receive(:call)

@@ -66,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
       it { expect { del }.to change(described_class, :keys).to([]) }
     end
 
-    after { lock.delete! }
+    after { lock.delete }
   end
 
   describe '.prefix' do

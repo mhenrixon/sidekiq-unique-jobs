@@ -6,15 +6,12 @@ module SidekiqUniqueJobs
 
     def unlock(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
-      lock = SidekiqUniqueJobs::Locksmith.new(item)
-      lock.unlock
+      SidekiqUniqueJobs::Locksmith.new(item).unlock
     end
 
-    def delete!(item)
+    def delete(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
-      lock = SidekiqUniqueJobs::Locksmith.new(item)
-      lock.unlock
-      lock.delete!
+      SidekiqUniqueJobs::Locksmith.new(item).delete
     end
 
     def logger
