@@ -30,13 +30,13 @@ module SidekiqUniqueJobs
     end
 
     def exists?
-      redis { |conn| conn.exists(exists_key) }
+      redis(@redis_pool) { |conn| conn.exists(exists_key) }
     end
 
     def available_count
       return @lock_concurrency unless exists?
 
-      redis { |conn| conn.llen(available_key) }
+      redis(@redis_pool) { |conn| conn.llen(available_key) }
     end
 
     def delete
@@ -52,7 +52,7 @@ module SidekiqUniqueJobs
       release_stale_locks
 
       grab_token(timeout) do |token|
-        refresh_grabbed_token(token)
+        touch_grabbed_token(token)
         return_token_or_block_value(token, &block)
       end
     end
@@ -65,7 +65,7 @@ module SidekiqUniqueJobs
 
     def locked?(token = nil)
       if token
-        redis { |conn| conn.hexists(grabbed_key, token) }
+        redis(@redis_pool) { |conn| conn.hexists(grabbed_key, token) }
       else
         @tokens.each do |my_token|
           return true if locked?(my_token)
@@ -104,7 +104,7 @@ module SidekiqUniqueJobs
     end
 
     def grab_token(timeout = nil)
-      redis do |conn|
+      redis(@redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
           # passing timeout 0 to blpop causes it to block
           _key, token = conn.blpop(available_key, timeout || 0)
@@ -116,9 +116,9 @@ module SidekiqUniqueJobs
       end
     end
 
-    def refresh_grabbed_token(token)
+    def touch_grabbed_token(token)
       @tokens.push(token)
-      redis { |conn| conn.hset(grabbed_key, token, current_time.to_f) }
+      redis(@redis_pool) { |conn| conn.hset(grabbed_key, token, current_time.to_f) }
     end
 
     def return_token_or_block_value(token)
@@ -141,27 +141,31 @@ module SidekiqUniqueJobs
     end
 
     def release_stale_locks_ruby
-      redis do |conn|
-        simple_expiring_mutex(conn) do
-          conn.hgetall(grabbed_key).each do |token, locked_at|
-            timed_out_at = locked_at.to_f + @stale_client_timeout
-            signal(token) if timed_out_at < current_time.to_f
-          end
+      redis(@redis_pool) do |conn|
+        create_expiring_mutex(conn) do
+          release_grabbed_tokens(conn)
         end
       end
     end
 
-    def simple_expiring_mutex(conn)
+    def release_grabbed_tokens(conn)
+      conn.hgetall(grabbed_key).each do |token, locked_at|
+        timed_out_at = locked_at.to_f + @stale_client_timeout
+        signal(token) if timed_out_at < current_time.to_f
+      end
+    end
+
+    def create_expiring_mutex(conn)
       cached_current_time = current_time.to_f
       my_lock_expires_at  = cached_current_time + EXPIRES_IN + 1
 
-      return yield if conn.setnx(release_key, my_lock_expires_at)
+      return yield conn if conn.setnx(release_key, my_lock_expires_at)
 
       other_lock_expires_at = conn.get(release_key).to_f
 
       if other_lock_expires_at < cached_current_time
         old_expires_at = conn.getset(release_key, my_lock_expires_at).to_f
-        yield if old_expires_at == other_lock_expires_at
+        yield conn if old_expires_at == other_lock_expires_at
       end
     ensure
       conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
@@ -205,7 +209,7 @@ module SidekiqUniqueJobs
     end
 
     def all_tokens
-      redis do |conn|
+      redis(@redis_pool) do |conn|
         conn.multi do
           conn.lrange(available_key, 0, -1)
           conn.hkeys(grabbed_key)

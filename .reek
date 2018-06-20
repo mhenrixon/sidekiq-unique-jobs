@@ -9,7 +9,7 @@ exclude_paths:
 DuplicateMethodCall:
   exclude:
   - SidekiqUniqueJobs::Locksmith#generate_unique_token
-  - SidekiqUniqueJobs::Locksmith#simple_expiring_mutex
+  - SidekiqUniqueJobs::Locksmith#create_expiring_mutex
   - SidekiqUniqueJobs::OptionsWithFallback#lock_type_from
   - SidekiqUniqueJobs::OptionsWithFallback#unique_lock
   - SidekiqUniqueJobs::Scripts#handle_error
@@ -72,7 +72,7 @@ TooManyStatements:
   - initialize
   - Hash#slice!
   - SidekiqUniqueJobs::Locksmith#lock
-  - SidekiqUniqueJobs::Locksmith#simple_expiring_mutex
+  - SidekiqUniqueJobs::Locksmith#create_expiring_mutex
   - SidekiqUniqueJobs::Middleware#configure_server_middleware
   - SidekiqUniqueJobs::Server::Middleware#call
   - SidekiqUniqueJobs::UniqueArgs#digestable_hash
@@ -93,6 +93,7 @@ TooManyConstants:
   exclude:
   - SidekiqUniqueJobs
 ManualDispatch:
+  enabled: true
   exclude:
   - Hash#slice
   - Hash#slice!
@@ -106,8 +107,6 @@ ManualDispatch:
 PrimaDonnaMethod:
   exclude:
   - Array
-  - SidekiqUniqueJobs::Lock::BaseLock
-  - SidekiqUniqueJobs::Lock::WhileExecutingReject
 InstanceVariableAssumption:
   exclude:
   - SidekiqUniqueJobs::Lock::UntilExecuted
@@ -123,7 +122,6 @@ FeatureEnvy:
   - SidekiqUniqueJobs::Util#batch_delete
 NestedIterators:
   exclude:
-  - SidekiqUniqueJobs::Locksmith#release_stale_locks_ruby
   - SidekiqUniqueJobs::Middleware#configure_client_middleware
   - SidekiqUniqueJobs::Middleware#configure_server_middleware
   - SidekiqUniqueJobs::Util#batch_delete

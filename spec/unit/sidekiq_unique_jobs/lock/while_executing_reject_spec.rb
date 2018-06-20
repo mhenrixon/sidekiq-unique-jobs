@@ -57,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
       let(:token) { nil }
 
       it 'rejects the job' do
-        expect(lock).to receive(:reject!)
+        expect(lock).to receive(:reject)
         execute
       end
     end

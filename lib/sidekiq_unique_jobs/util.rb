@@ -37,6 +37,8 @@ module SidekiqUniqueJobs
       key_size
     end
 
+    private
+
     def batch_delete(keys)
       redis do |conn|
         keys.each_slice(500) do |chunk|

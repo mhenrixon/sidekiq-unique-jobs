@@ -10,13 +10,13 @@ module SidekiqUniqueJobs
           callback&.call
           @locksmith.signal(token)
         else
-          reject!
+          reject
         end
       end
 
       # Private below here, keeping public due to testing reasons
 
-      def reject!
+      def reject
         log_debug { "Rejecting job with jid: #{@item[JID_KEY]} already running" }
         send_to_deadset
       end
