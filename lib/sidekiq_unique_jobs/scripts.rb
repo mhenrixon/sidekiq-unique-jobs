@@ -14,7 +14,7 @@ module SidekiqUniqueJobs
     module_function
 
     extend SingleForwardable
-    def_delegators :SidekiqUniqueJobs, :connection, :logger
+    def_delegators :SidekiqUniqueJobs, :connection
 
     def call(file_name, redis_pool, options = {})
       internal_call(file_name, redis_pool, options)

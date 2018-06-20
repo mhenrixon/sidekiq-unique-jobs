@@ -8,6 +8,7 @@ module SidekiqUniqueJobs
     SCAN_METHOD       = 'SCAN'
     SCAN_PATTERN      = '*'
 
+    include SidekiqUniqueJobs::Logging
     extend self # rubocop:disable Style/ModuleFunction
 
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
@@ -25,12 +26,12 @@ module SidekiqUniqueJobs
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
       pattern = "#{pattern}:*" unless pattern.end_with?(':*')
 
-      logger.debug { "Deleting keys by: #{pattern}" }
+      log_debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
       key_size   = keys.size
-      logger.debug { "#{key_size} keys found in #{time} sec." }
+      log_debug { "#{key_size} keys found in #{time} sec." }
       _, time = timed { batch_delete(keys) }
-      logger.debug { "Deleted #{key_size} keys in #{time} sec." }
+      log_debug { "Deleted #{key_size} keys in #{time} sec." }
 
       key_size
     end
@@ -55,7 +56,7 @@ module SidekiqUniqueJobs
     end
 
     def prefix_keys(keys)
-      keys = Array(keys).flatten.compact
+      keys = Array(keys).compact
       keys.map { |key| prefix(key) }
     end
 
@@ -71,10 +72,6 @@ module SidekiqUniqueJobs
 
     def connection(&block)
       SidekiqUniqueJobs.connection(&block)
-    end
-
-    def logger
-      SidekiqUniqueJobs.logger
     end
   end
 end

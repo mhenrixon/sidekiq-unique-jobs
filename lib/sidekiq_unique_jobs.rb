@@ -7,6 +7,7 @@ require 'ostruct'
 
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/constants'
+require 'sidekiq_unique_jobs/logging'
 require 'sidekiq_unique_jobs/exceptions'
 require 'sidekiq_unique_jobs/util'
 require 'sidekiq_unique_jobs/cli'
@@ -30,6 +31,7 @@ module SidekiqUniqueJobs
     :enabled,
     :raise_unique_args_errors,
     :unique_prefix,
+    :logger,
   )
 
   def config
@@ -40,6 +42,7 @@ module SidekiqUniqueJobs
       true,
       false,
       'uniquejobs',
+      Sidekiq.logger,
     )
   end
 
@@ -48,7 +51,11 @@ module SidekiqUniqueJobs
   end
 
   def logger
-    Sidekiq.logger
+    config.logger
+  end
+
+  def logger=(other)
+    config.logger = other
   end
 
   def use_config(tmp_config)

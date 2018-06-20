@@ -3,6 +3,8 @@
 module SidekiqUniqueJobs
   class Lock
     class BaseLock
+      include SidekiqUniqueJobs::Logging
+
       def initialize(item, redis_pool = nil)
         @item       = prepare_item(item)
         @redis_pool = redis_pool

@@ -122,7 +122,6 @@ module SidekiqUniqueJobs
     def generate_unique_token
       tokens = all_tokens
       token = Random.rand.to_s
-
       token = Random.rand.to_s while tokens.include? token
       token
     end

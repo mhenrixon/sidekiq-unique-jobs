@@ -4,7 +4,6 @@ module SidekiqUniqueJobs
   module Server
     class Middleware
       extend Forwardable
-      def_delegators :Sidekiq, :logger
       def_instance_delegator :@worker, :class, :worker_class
 
       include OptionsWithFallback

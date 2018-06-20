@@ -40,6 +40,26 @@ RSpec.describe SidekiqUniqueJobs do
     end
   end
 
+  describe '.logger' do
+    subject { described_class.logger }
+
+    context 'without further configuration' do
+      it { is_expected.to eq(Sidekiq.logger) }
+    end
+
+    context 'when configured explicitly' do
+      let(:another_logger) { Logger.new(STDOUT) }
+
+      around do |exmpl|
+        described_class.use_config(logger: another_logger) do
+          exmpl.run
+        end
+      end
+
+      it { is_expected.to eq(another_logger) }
+    end
+  end
+
   describe '.worker_class_constantize' do
     subject(:worker_class_constantize) { described_class.worker_class_constantize(worker_class) }
 
