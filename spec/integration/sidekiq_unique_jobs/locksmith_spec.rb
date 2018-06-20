@@ -45,8 +45,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     # TODO: Flaky
     it 'does not lock twice as a mutex', :retry do
-      expect(locksmith.lock(1)).not_to eq(false)
-      expect(locksmith.lock(1)).to eq(false)
+      expect(locksmith.lock(1)).to be_truthy
+      expect(locksmith.lock(1)).to eq(nil)
     end
 
     it 'executes the given code block' do
@@ -181,9 +181,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
         hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
-        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
-        expect(hyper_aggressive_locksmith.lock(1)).to eq(false)
-        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
+        expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
+        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
       end
     end
 
@@ -198,9 +198,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
         hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
-        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
-        expect(hyper_aggressive_locksmith.lock(1)).to eq(false)
-        expect(hyper_aggressive_locksmith.lock(1)).not_to eq(false)
+        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
+        expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
+        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
       end
     end
   end

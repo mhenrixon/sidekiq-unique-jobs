@@ -47,42 +47,16 @@ module SidekiqUniqueJobs
       )
     end
 
-    def lock(timeout = nil) # rubocop:disable MethodLength
+    def lock(timeout = nil, &block)
       create
       release_stale_locks
 
-      get_token(timeout) do |current_token, conn|
-        return false if current_token.nil?
-
-        @tokens.push(current_token)
-        conn.hset(grabbed_key, current_token, current_time.to_f)
-        return_value = current_token
-
-        if block_given?
-          begin
-            return_value = yield current_token
-          ensure
-            signal(current_token)
-          end
-        end
-
-        return_value
+      grab_token(timeout) do |token|
+        refresh_grabbed_token(token)
+        return_token_or_block_value(token, &block)
       end
     end
     alias wait lock
-
-    def get_token(timeout = nil)
-      redis do |conn|
-        if timeout.nil? || timeout.positive?
-          # passing timeout 0 to blpop causes it to block
-          _key, current_token = conn.blpop(available_key, timeout || 0)
-        else
-          current_token = conn.lpop(available_key)
-        end
-
-        yield current_token, conn
-      end
-    end
 
     def unlock
       return false unless locked?
@@ -112,26 +86,10 @@ module SidekiqUniqueJobs
       )
     end
 
-    def all_tokens
-      redis do |conn|
-        conn.multi do
-          conn.lrange(available_key, 0, -1)
-          conn.hkeys(grabbed_key)
-        end.flatten
-      end
-    end
-
-    def generate_unique_token
-      tokens = all_tokens
-      token = Random.rand.to_s
-      token = Random.rand.to_s while tokens.include? token
-      token
-    end
-
     def release_stale_locks
       return unless check_staleness?
 
-      if Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new('3.2')
+      if redis_version_greater_than_or_equal_to?('3.2')
         release_stale_locks_lua
       else
         release_stale_locks_ruby
@@ -139,27 +97,39 @@ module SidekiqUniqueJobs
     end
     alias release release_stale_locks
 
-    def available_key
-      @available_key ||= namespaced_key('AVAILABLE')
-    end
-
-    def exists_key
-      @exists_key ||= namespaced_key('EXISTS')
-    end
-
-    def grabbed_key
-      @grabbed_key ||= namespaced_key('GRABBED')
-    end
-
-    def release_key
-      @release_key ||= namespaced_key('RELEASE')
-    end
-
-    def version_key
-      @version_key ||= namespaced_key('VERSION')
-    end
-
     private
+
+    def redis_version_greater_than_or_equal_to?(allowed_version)
+      Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new(allowed_version)
+    end
+
+    def grab_token(timeout = nil)
+      redis do |conn|
+        if timeout.nil? || timeout.positive?
+          # passing timeout 0 to blpop causes it to block
+          _key, token = conn.blpop(available_key, timeout || 0)
+        else
+          token = conn.lpop(available_key)
+        end
+
+        yield token if token
+      end
+    end
+
+    def refresh_grabbed_token(token)
+      @tokens.push(token)
+      redis { |conn| conn.hset(grabbed_key, token, current_time.to_f) }
+    end
+
+    def return_token_or_block_value(token)
+      return token unless block_given?
+
+      begin
+        yield token
+      ensure
+        signal(token)
+      end
+    end
 
     def release_stale_locks_lua
       Scripts.call(
@@ -201,6 +171,26 @@ module SidekiqUniqueJobs
       !@stale_client_timeout.nil?
     end
 
+    def available_key
+      @available_key ||= namespaced_key('AVAILABLE')
+    end
+
+    def exists_key
+      @exists_key ||= namespaced_key('EXISTS')
+    end
+
+    def grabbed_key
+      @grabbed_key ||= namespaced_key('GRABBED')
+    end
+
+    def release_key
+      @release_key ||= namespaced_key('RELEASE')
+    end
+
+    def version_key
+      @version_key ||= namespaced_key('VERSION')
+    end
+
     def namespaced_key(variable)
       "#{@unique_digest}:#{variable}"
     end
@@ -212,6 +202,22 @@ module SidekiqUniqueJobs
 
     def redis_time
       redis(&:time)
+    end
+
+    def all_tokens
+      redis do |conn|
+        conn.multi do
+          conn.lrange(available_key, 0, -1)
+          conn.hkeys(grabbed_key)
+        end.flatten
+      end
+    end
+
+    def generate_unique_token
+      tokens = all_tokens
+      token = Random.rand.to_s
+      token = Random.rand.to_s while tokens.include? token
+      token
     end
   end
 end
