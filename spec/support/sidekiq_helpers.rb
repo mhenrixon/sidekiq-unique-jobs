@@ -34,6 +34,10 @@ module SidekiqHelpers
     SidekiqUniqueJobs::Util.keys(pattern)
   end
 
+  def unique_keys
+    keys('uniquejobs:*')
+  end
+
   def ttl(key)
     redis { |conn| conn.ttl(key) }
   end

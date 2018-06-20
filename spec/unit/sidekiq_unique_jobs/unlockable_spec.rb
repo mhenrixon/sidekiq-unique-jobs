@@ -23,14 +23,14 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     end
 
     specify do
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
+      expect(unique_keys.size).to eq(0)
       Sidekiq::Client.push(item_with_digest)
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
+      expect(unique_keys.size).to eq(3)
 
       unlock
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
+      expect(unique_keys.size).to eq(3)
     end
   end
 
@@ -38,14 +38,14 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     subject(:delete!) { described_class.delete!(item_with_digest) }
 
     specify do
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
+      expect(unique_keys.size).to eq(0)
       Sidekiq::Client.push(item_with_digest)
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(3)
+      expect(unique_keys.size).to eq(3)
 
       delete!
 
-      expect(SidekiqUniqueJobs::Util.keys.count).to eq(0)
+      expect(unique_keys.size).to eq(0)
     end
   end
 end

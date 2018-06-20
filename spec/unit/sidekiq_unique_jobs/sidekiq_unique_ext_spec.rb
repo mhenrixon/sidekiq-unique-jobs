@@ -12,11 +12,11 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
   describe Sidekiq::SortedEntry::UniqueExtension do
     it 'deletes uniqueness lock on delete' do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: 'bar')).to be_truthy
-      expect(keys('uniquejobs:*')).to match_array(%w[
-                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
-                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
-                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
-                                                  ])
+      expect(unique_keys).to match_array(%w[
+                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
+                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
+                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
+                                         ])
 
       Sidekiq::ScheduledSet.new.each(&:delete)
       expect(keys('uniquejobs')).to match_array([])
@@ -26,11 +26,11 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
 
     it 'deletes uniqueness lock on remove_job' do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: 'bar')).to be_truthy
-      expect(keys('uniquejobs:*')).to match_array(%w[
-                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
-                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
-                                                    uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
-                                                  ])
+      expect(unique_keys).to match_array(%w[
+                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
+                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
+                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:VERSION
+                                         ])
 
       Sidekiq::ScheduledSet.new.each do |entry|
         entry.send(:remove_job) do |message|
@@ -52,7 +52,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
           )
         end
       end
-      expect(keys('uniquejobs:*')).to match_array([])
+      expect(unique_keys).to match_array([])
       expect(JustAWorker.perform_in(60 * 60 * 3, boo: 'far')).to be_truthy
     end
   end
@@ -62,7 +62,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
       jid = JustAWorker.perform_async(roo: 'baf')
       expect(keys).not_to match_array([])
       Sidekiq::Queue.new('testqueue').find_job(jid).delete
-      expect(keys('uniquejobs:*')).to match_array([])
+      expect(unique_keys).to match_array([])
     end
   end
 
@@ -71,7 +71,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
       JustAWorker.perform_async(oob: 'far')
       expect(keys).not_to match_array([])
       Sidekiq::Queue.new('testqueue').clear
-      expect(keys('uniquejobs:*')).to match_array([])
+      expect(unique_keys).to match_array([])
     end
   end
 
@@ -80,7 +80,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
       JustAWorker.perform_in(60 * 60 * 3, roo: 'fab')
       expect(keys).not_to match_array([])
       Sidekiq::JobSet.new('schedule').clear
-      expect(keys('uniquejobs:*')).to match_array([])
+      expect(unique_keys).to match_array([])
     end
   end
 end

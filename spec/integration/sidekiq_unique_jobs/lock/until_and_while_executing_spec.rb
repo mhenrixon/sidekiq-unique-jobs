@@ -36,15 +36,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
 
       lock.execute(callback) do
         expect(lock.locked?).to eq(false)
-        Sidekiq.redis do |conn|
-          expect(conn.keys('uniquejobs:*').size).to eq(3)
-        end
+
+        expect(unique_keys.size).to eq(3)
 
         10.times { Sidekiq::Client.push(item) }
 
-        Sidekiq.redis do |conn|
-          expect(conn.keys('uniquejobs:*').size).to eq(3)
-        end
+        expect(unique_keys.size).to eq(3)
       end
 
       expect(callback).to have_received(:call)
