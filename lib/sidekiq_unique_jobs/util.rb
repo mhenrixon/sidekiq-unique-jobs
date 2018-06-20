@@ -49,11 +49,15 @@ module SidekiqUniqueJobs
       end
     end
 
-    def timed(&_block)
-      start = Time.now
-      result = yield
-      elapsed = (Time.now - start).round(2)
+    def timed
+      start   = current_time
+      result  = yield
+      elapsed = (current_time - start).round(2)
       [result, elapsed]
+    end
+
+    def current_time
+      Time.now
     end
 
     def prefix_keys(keys)

@@ -11,6 +11,14 @@ module SidekiqHelpers
     redis { |conn| conn.zcount(queue, -1, time) }
   end
 
+  def get_key(key)
+    redis { |conn| conn.get(key) }
+  end
+
+  def set_key(key, value)
+    redis { |conn| conn.set(key, value) }
+  end
+
   def dead_count
     zcard('dead')
   end
