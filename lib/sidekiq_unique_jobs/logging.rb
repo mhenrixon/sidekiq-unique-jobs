@@ -2,6 +2,7 @@
 
 module SidekiqUniqueJobs
   module Logging
+    # :reek:UtilityFunction { enabled: false }
     def logger
       SidekiqUniqueJobs.logger
     end

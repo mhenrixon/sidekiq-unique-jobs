@@ -19,7 +19,9 @@ module SidekiqUniqueJobs
     def call(file_name, redis_pool, options = {})
       internal_call(file_name, redis_pool, options)
     rescue Redis::CommandError => ex
-      handle_error(ex, file_name, redis_pool, options)
+      handle_error(ex, file_name) do
+        call(file_name, redis_pool, options)
+      end
     end
 
     def internal_call(file_name, redis_pool, options = {})
@@ -29,10 +31,11 @@ module SidekiqUniqueJobs
       end
     end
 
-    def handle_error(ex, file_name, redis_pool, options = {})
+    # :reek:LongParameterList { max_params: 4 }
+    def handle_error(ex, file_name)
       if ex.message == 'NOSCRIPT No matching script. Please use EVAL.' # rubocop:disable Style/GuardClause
         SCRIPT_SHAS.delete(file_name)
-        call(file_name, redis_pool, options)
+        yield if block_given?
       else
         raise ScriptError, "Problem compiling #{file_name}. Message: #{ex.message}"
       end

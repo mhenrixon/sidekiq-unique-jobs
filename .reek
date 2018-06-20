@@ -1,0 +1,162 @@
+---
+exclude_paths:
+  - rails_example
+  - redis
+  - spec
+  - tmp
+  - gemfiles
+  - examples
+DuplicateMethodCall:
+  exclude:
+  - SidekiqUniqueJobs::Locksmith#generate_unique_token
+  - SidekiqUniqueJobs::Locksmith#simple_expiring_mutex
+  - SidekiqUniqueJobs::OptionsWithFallback#lock_type_from
+  - SidekiqUniqueJobs::OptionsWithFallback#unique_lock
+  - SidekiqUniqueJobs::Scripts#handle_error
+  - SidekiqUniqueJobs::Scripts#internal_call
+  - Sidekiq#self.use_options
+  - SidekiqUniqueJobs::Timeout::Calculator#time_until_scheduled
+  - SidekiqUniqueJobs::UniqueArgs#digestable_hash
+  - SidekiqUniqueJobs::UniqueArgs#filtered_args
+  - SidekiqUniqueJobs::UniqueArgs#unique_prefix
+  - SidekiqUniqueJobs::Util#del
+  - SidekiqUniqueJobs::Util#timed
+IrresponsibleModule:
+  exclude:
+  - Sidekiq::Simulator
+  - SidekiqUniqueJobs::Cli
+  - SidekiqUniqueJobs::Client::Middleware
+  - SidekiqUniqueJobs
+  - Array
+  - Hash
+  - SidekiqUniqueJobs::JidMissing
+  - SidekiqUniqueJobs::LockTimeout
+  - SidekiqUniqueJobs::MaxLockTimeMissing
+  - SidekiqUniqueJobs::RunLockFailed
+  - SidekiqUniqueJobs::ScriptError
+  - SidekiqUniqueJobs::UnexpectedValue
+  - SidekiqUniqueJobs::UniqueKeyMissing
+  - SidekiqUniqueJobs::UnknownLock
+  - SidekiqUniqueJobs::Lock::BaseLock
+  - SidekiqUniqueJobs::Lock::UntilAndWhileExecuting
+  - SidekiqUniqueJobs::Lock::UntilExecuted
+  - SidekiqUniqueJobs::Lock::UntilExecuting
+  - SidekiqUniqueJobs::Lock::UntilTimeout
+  - SidekiqUniqueJobs::Lock::WhileExecuting
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject
+  - SidekiqUniqueJobs::Lock::WhileExecutingRequeue
+  - SidekiqUniqueJobs::Locksmith
+  - SidekiqUniqueJobs::Middleware
+  - SidekiqUniqueJobs::Normalizer
+  - SidekiqUniqueJobs::Scripts
+  - SidekiqUniqueJobs::Server::Middleware
+  - Sidekiq::Job
+  - Sidekiq::Job::UniqueExtension
+  - Sidekiq::JobSet
+  - Sidekiq::JobSet::UniqueExtension
+  - Sidekiq::Queue
+  - Sidekiq::Queue::UniqueExtension
+  - Sidekiq::ScheduledSet
+  - Sidekiq::ScheduledSet::UniqueExtension
+  - Sidekiq::SortedEntry
+  - Sidekiq::SortedEntry::UniqueExtension
+  - Sidekiq
+  - Sidekiq::Worker
+  - Sidekiq::Worker::ClassMethods
+  - Sidekiq::Worker::Overrides
+  - Sidekiq::Worker::Overrides::Testing
+  - SidekiqUniqueJobs::Timeout::Calculator
+  - SidekiqUniqueJobs::Timeout
+  - SidekiqUniqueJobs::Unlockable
+  - SidekiqUniqueJobs::Util
+TooManyStatements:
+  exclude:
+  - initialize
+  - Hash#slice!
+  - SidekiqUniqueJobs::Locksmith#lock
+  - SidekiqUniqueJobs::Locksmith#simple_expiring_mutex
+  - SidekiqUniqueJobs::Middleware#configure_server_middleware
+  - SidekiqUniqueJobs::Server::Middleware#call
+  - SidekiqUniqueJobs::UniqueArgs#digestable_hash
+  - SidekiqUniqueJobs::UniqueArgs#filter_by_proc
+  - SidekiqUniqueJobs::UniqueArgs#filter_by_symbol
+  - SidekiqUniqueJobs::UniqueArgs#filtered_args
+  - SidekiqUniqueJobs::UniqueArgs#unique_args
+  - SidekiqUniqueJobs::Util#del
+UncommunicativeVariableName:
+  exclude:
+  - Hash#slice
+BooleanParameter:
+  exclude:
+  - SidekiqUniqueJobs::Cli#self.banner
+UtilityFunction:
+  exclude:
+  - SidekiqUniqueJobs::Cli#logger
+  - SidekiqUniqueJobs::Lock::BaseLock#prepare_item
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject#kill_with_options?
+  - SidekiqUniqueJobs::OptionsWithFallback#lock_type_from
+  - SidekiqUniqueJobs::Timeout#using_timeout
+  - SidekiqUniqueJobs::Util#connection
+  - SidekiqUniqueJobs::Util#logger
+  - SidekiqUniqueJobs::Util#timed
+  - SidekiqUniqueJobs::Util#unique_prefix
+TooManyConstants:
+  exclude:
+  - SidekiqUniqueJobs
+ManualDispatch:
+  exclude:
+  - Hash#slice
+  - Hash#slice!
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject#deadset_kill?
+  - SidekiqUniqueJobs::OptionsWithFallback#options
+  - SidekiqUniqueJobs::Server::Middleware#after_unlock_hook
+  - SidekiqUniqueJobs::Timeout::Calculator#worker_class_lock_expiration_for
+  - SidekiqUniqueJobs::UniqueArgs#filter_by_symbol
+  - SidekiqUniqueJobs::UniqueArgs#sidekiq_worker_class?
+  - SidekiqUniqueJobs::UniqueArgs#unique_args_method
+PrimaDonnaMethod:
+  exclude:
+  - Array
+  - SidekiqUniqueJobs::Lock::BaseLock
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject
+  - SidekiqUniqueJobs::Locksmith
+InstanceVariableAssumption:
+  exclude:
+  - SidekiqUniqueJobs::Lock::UntilExecuted
+  - SidekiqUniqueJobs::Lock::WhileExecuting
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject
+  - SidekiqUniqueJobs::Lock::WhileExecutingRequeue
+  - SidekiqUniqueJobs::Timeout::Calculator
+NilCheck:
+  exclude:
+  - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject#execute
+  - SidekiqUniqueJobs::Locksmith#check_staleness?
+  - SidekiqUniqueJobs::Locksmith#get_token
+  - SidekiqUniqueJobs::Locksmith#lock
+  - SidekiqUniqueJobs::Scripts#internal_call
+  - SidekiqUniqueJobs::UniqueArgs#filter_by_proc
+  - SidekiqUniqueJobs::Util#keys
+  - SidekiqUniqueJobs::Util#prefix
+FeatureEnvy:
+  exclude:
+  - SidekiqUniqueJobs::Lock::WhileExecutingReject#push_to_deadset
+  - SidekiqUniqueJobs::Util#batch_delete
+NestedIterators:
+  exclude:
+  - SidekiqUniqueJobs::Locksmith#release_stale_locks_ruby
+  - SidekiqUniqueJobs::Middleware#configure_client_middleware
+  - SidekiqUniqueJobs::Middleware#configure_server_middleware
+  - SidekiqUniqueJobs::Util#batch_delete
+TooManyInstanceVariables:
+  exclude:
+  - SidekiqUniqueJobs::Locksmith
+TooManyMethods:
+  exclude:
+  - SidekiqUniqueJobs::Locksmith
+DataClump:
+  exclude:
+  - SidekiqUniqueJobs::Scripts
+RepeatedConditional:
+  exclude:
+  - SidekiqUniqueJobs::UniqueArgs

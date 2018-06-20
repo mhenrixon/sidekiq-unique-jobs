@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::Logging
       include OptionsWithFallback
 
+      # :reek:LongParameterList { max_params: 4 }
       def call(worker_class, item, queue, redis_pool = nil)
         @worker_class = worker_class_constantize(worker_class)
         @item         = item
