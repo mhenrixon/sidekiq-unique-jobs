@@ -6,6 +6,8 @@ module SidekiqUniqueJobs
     EXISTS_TOKEN = '1'
     EXPIRES_IN = 10
 
+    include SidekiqUniqueJobs::Connection
+
     def initialize(item, redis_pool = nil)
       @item                 = item
       @current_jid          = @item[JID_KEY]
@@ -210,10 +212,6 @@ module SidekiqUniqueJobs
 
     def redis_time
       redis(&:time)
-    end
-
-    def redis(&block)
-      SidekiqUniqueJobs.connection(@redis_pool, &block)
     end
   end
 end

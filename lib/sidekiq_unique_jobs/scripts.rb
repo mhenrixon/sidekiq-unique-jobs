@@ -7,14 +7,11 @@ require 'concurrent/map'
 module SidekiqUniqueJobs
   module Scripts
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
-    SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
-    DEFINED_METHODS ||= [].freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
 
-    module_function
+    include SidekiqUniqueJobs::Connection
 
-    extend SingleForwardable
-    def_delegators :SidekiqUniqueJobs, :connection
+    module_function
 
     def call(file_name, redis_pool, options = {})
       internal_call(file_name, redis_pool, options)
@@ -25,20 +22,19 @@ module SidekiqUniqueJobs
     end
 
     def internal_call(file_name, redis_pool, options = {})
-      connection(redis_pool) do |conn|
-        SCRIPT_SHAS[file_name] = conn.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
+      redis(redis_pool) do |conn|
+        SCRIPT_SHAS[file_name] ||= conn.script(:load, script_source(file_name))
         conn.evalsha(SCRIPT_SHAS[file_name], options)
       end
     end
 
-    # :reek:LongParameterList { max_params: 4 }
     def handle_error(ex, file_name)
-      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.' # rubocop:disable Style/GuardClause
+      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
         SCRIPT_SHAS.delete(file_name)
-        yield if block_given?
-      else
-        raise ScriptError, "Problem compiling #{file_name}. Message: #{ex.message}"
+        return yield if block_given?
       end
+
+      raise ScriptError, "Problem compiling #{file_name}. Message: #{ex.message}"
     end
 
     def script_source(file_name)

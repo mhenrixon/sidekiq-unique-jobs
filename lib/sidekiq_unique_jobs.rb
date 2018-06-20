@@ -8,6 +8,7 @@ require 'ostruct'
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/constants'
 require 'sidekiq_unique_jobs/logging'
+require 'sidekiq_unique_jobs/connection'
 require 'sidekiq_unique_jobs/exceptions'
 require 'sidekiq_unique_jobs/util'
 require 'sidekiq_unique_jobs/cli'
@@ -22,6 +23,8 @@ require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
 module SidekiqUniqueJobs
+  include SidekiqUniqueJobs::Connection
+
   module_function
 
   Concurrent::MutableStruct.new(
@@ -94,14 +97,6 @@ module SidekiqUniqueJobs
   end
 
   def redis_version
-    @redis_version ||= connection { |conn| conn.info('server')['redis_version'] }
-  end
-
-  def connection(redis_pool = nil)
-    if redis_pool
-      redis_pool.with { |conn| yield conn }
-    else
-      Sidekiq.redis { |conn| yield conn }
-    end
+    @redis_version ||= redis { |conn| conn.info('server')['redis_version'] }
   end
 end

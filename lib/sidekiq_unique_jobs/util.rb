@@ -9,11 +9,12 @@ module SidekiqUniqueJobs
     SCAN_PATTERN      = '*'
 
     include SidekiqUniqueJobs::Logging
+    include SidekiqUniqueJobs::Connection
     extend self # rubocop:disable Style/ModuleFunction
 
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
-      return connection(&:keys) if pattern.nil?
-      connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
+      return redis(&:keys) if pattern.nil?
+      redis { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
     # Deletes unique keys from redis
@@ -37,7 +38,7 @@ module SidekiqUniqueJobs
     end
 
     def batch_delete(keys)
-      connection do |conn|
+      redis do |conn|
         keys.each_slice(500) do |chunk|
           conn.pipelined do
             chunk.each do |key|
@@ -68,10 +69,6 @@ module SidekiqUniqueJobs
 
     def unique_prefix
       SidekiqUniqueJobs.config.unique_prefix
-    end
-
-    def connection(&block)
-      SidekiqUniqueJobs.connection(&block)
     end
   end
 end

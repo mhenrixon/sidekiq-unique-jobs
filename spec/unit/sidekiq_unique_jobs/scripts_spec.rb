@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
   subject { SidekiqUniqueJobs::Scripts }
 
   it { is_expected.to respond_to(:call).with(3).arguments }
-  it { is_expected.to respond_to(:connection).with(1).arguments }
+  it { is_expected.to respond_to(:redis).with(1).arguments }
   it { is_expected.to respond_to(:script_source).with(1).arguments }
   it { is_expected.to respond_to(:script_path).with(1).arguments }
 

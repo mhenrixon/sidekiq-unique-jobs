@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   module Client
     class Middleware
       extend Forwardable
-      def_delegators :SidekiqUniqueJobs, :connection, :config, :worker_class_constantize
+      def_delegators :SidekiqUniqueJobs, :config, :worker_class_constantize
 
       include SidekiqUniqueJobs::Logging
       include OptionsWithFallback

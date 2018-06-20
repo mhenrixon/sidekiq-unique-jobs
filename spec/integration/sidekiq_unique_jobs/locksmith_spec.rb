@@ -83,12 +83,12 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     end
 
     it 'disappears without a trace when calling `delete!`' do
-      original_key_size = SidekiqUniqueJobs.connection { |conn| conn.keys.count }
+      original_key_size = keys.size
 
       locksmith.create
       locksmith.delete!
 
-      expect(SidekiqUniqueJobs.connection { |conn| conn.keys.count }).to eq(original_key_size)
+      expect(keys.size).to eq(original_key_size)
     end
 
     it 'does not block when the timeout is zero' do
@@ -115,15 +115,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it_behaves_like 'a lock'
 
-    def current_keys
-      SidekiqUniqueJobs.connection(&:keys)
-    end
-
     it 'expires keys' do
       Sidekiq.redis(&:flushdb)
       locksmith.create
-      keys = current_keys
-      expect(current_keys).not_to include(keys)
+      keys = unique_keys
+      expect(unique_keys).not_to include(keys)
     end
 
     it 'expires keys after unlocking' do
@@ -131,8 +127,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith.lock do
         # noop
       end
-      keys = current_keys
-      expect { current_keys }.to eventually_not include(keys)
+      keys = unique_keys
+      expect { unique_keys }.to eventually_not include(keys)
     end
   end
 

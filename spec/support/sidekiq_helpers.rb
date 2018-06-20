@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqHelpers
-  def redis(&block)
-    pool = (redis_pool if respond_to?(:redis_pool))
-    SidekiqUniqueJobs.connection(pool, &block)
-  end
+  include SidekiqUniqueJobs::Connection
 
   def zcard(queue)
     redis { |conn| conn.zcard(queue) }
