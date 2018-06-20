@@ -6,6 +6,7 @@ module SidekiqUniqueJobs
       base.send(:extend, self)
     end
 
+    # :reek:UtilityFunction { enabled: false }
     def redis(redis_pool = nil)
       if redis_pool
         redis_pool.with { |conn| yield conn }
