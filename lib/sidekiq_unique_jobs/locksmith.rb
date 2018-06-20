@@ -9,15 +9,12 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
 
     def initialize(item, redis_pool = nil)
-      @item                 = item
-      @current_jid          = @item[JID_KEY]
-      @unique_digest        = @item[UNIQUE_DIGEST_KEY]
       @redis_pool           = redis_pool
-      @lock_concurrency     = @item[LOCK_CONCURRENCY_KEY] || 1
-      @lock_expiration      = @item[LOCK_EXPIRATION_KEY]
-      @lock_timeout         = @item[LOCK_TIMEOUT_KEY]
-      @stale_client_timeout = @item[STALE_CLIENT_TIMEOUT_KEY]
       @tokens               = []
+      @stale_client_timeout = item[STALE_CLIENT_TIMEOUT_KEY]
+      @concurrency          = item[LOCK_CONCURRENCY_KEY] || 1
+      @digest               = item[UNIQUE_DIGEST_KEY]
+      @expiration           = item[LOCK_EXPIRATION_KEY]
     end
 
     def create
@@ -25,7 +22,7 @@ module SidekiqUniqueJobs
         :create,
         @redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [EXISTS_TOKEN, @lock_expiration, API_VERSION, @lock_concurrency],
+        argv: [EXISTS_TOKEN, @expiration, API_VERSION, @concurrency],
       )
     end
 
@@ -34,7 +31,7 @@ module SidekiqUniqueJobs
     end
 
     def available_count
-      return @lock_concurrency unless exists?
+      return @concurrency unless exists?
 
       redis(@redis_pool) { |conn| conn.llen(available_key) }
     end
@@ -82,7 +79,7 @@ module SidekiqUniqueJobs
         :signal,
         @redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [token, @lock_expiration],
+        argv: [token, @expiration],
       )
     end
 
@@ -136,7 +133,7 @@ module SidekiqUniqueJobs
         :release_stale_locks,
         @redis_pool,
         keys:  [exists_key, grabbed_key, available_key, release_key],
-        argv: [EXPIRES_IN, @stale_client_timeout, @lock_expiration],
+        argv: [EXPIRES_IN, @stale_client_timeout, @expiration],
       )
     end
 
@@ -145,13 +142,6 @@ module SidekiqUniqueJobs
         create_expiring_mutex(conn) do
           release_grabbed_tokens(conn)
         end
-      end
-    end
-
-    def release_grabbed_tokens(conn)
-      conn.hgetall(grabbed_key).each do |token, locked_at|
-        timed_out_at = locked_at.to_f + @stale_client_timeout
-        signal(token) if timed_out_at < current_time.to_f
       end
     end
 
@@ -169,6 +159,13 @@ module SidekiqUniqueJobs
       end
     ensure
       conn.del(release_key) if my_lock_expires_at > (current_time.to_f - 1)
+    end
+
+    def release_grabbed_tokens(conn)
+      conn.hgetall(grabbed_key).each do |token, locked_at|
+        timed_out_at = locked_at.to_f + @stale_client_timeout
+        signal(token) if timed_out_at < current_time.to_f
+      end
     end
 
     def check_staleness?
@@ -196,7 +193,7 @@ module SidekiqUniqueJobs
     end
 
     def namespaced_key(variable)
-      "#{@unique_digest}:#{variable}"
+      "#{@digest}:#{variable}"
     end
 
     def current_time
