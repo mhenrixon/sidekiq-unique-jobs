@@ -20,7 +20,10 @@ module SidekiqUniqueJobs
     def initialize(item)
       Sidekiq::Logging.with_context(CLASS_NAME) do
         @item = item
-        @worker_class            ||= worker_class_constantize(@item[CLASS_KEY])
+        worker_class  = @item[CLASS_KEY]
+        @worker_class = worker_class_constantize(worker_class)
+        fail ArgumentError, "Don't know the worker class: #{worker_class}" unless @worker_class
+
         @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
         @item[UNIQUE_ARGS_KEY]     = unique_args(@item[ARGS_KEY])
         @item[UNIQUE_DIGEST_KEY]   = unique_digest
@@ -28,16 +31,17 @@ module SidekiqUniqueJobs
     end
 
     def unique_digest
-      @unique_digest ||= begin
-        digest = Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
-        digest = "#{unique_prefix}:#{digest}"
-        log_debug { "#{__method__} : #{digestable_hash} into #{digest}" }
-        digest
-      end
+      @unique_digest ||= create_digest
+    end
+
+    def create_digest
+      digest = Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
+      digest = "#{unique_prefix}:#{digest}"
+      log_debug { "#{__method__} : #{digestable_hash} into #{digest}" }
+      digest
     end
 
     def unique_prefix
-      return config.unique_prefix unless sidekiq_worker_class?
       @worker_class.get_sidekiq_options[UNIQUE_PREFIX_KEY] || config.unique_prefix
     end
 
@@ -59,27 +63,17 @@ module SidekiqUniqueJobs
 
       log_debug { "#{__method__} : unique arguments disabled" }
       args
-    rescue NameError => ex
-      log_error "#{__method__}(#{args}) : failed with (#{ex.message})"
-      log_error ex
-
-      raise if config.raise_unique_args_errors
-
-      args
     end
 
     def unique_on_all_queues?
-      return unless sidekiq_worker_class?
       @item[UNIQUE_ON_ALL_QUEUES_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ON_ALL_QUEUES_KEY]
     end
 
     def unique_across_workers?
-      return unless sidekiq_worker_class?
       @item[UNIQUE_ACROSS_WORKERS_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ACROSS_WORKERS_KEY]
     end
 
     def unique_args_enabled?
-      return unless sidekiq_worker_class?
       unique_args_method # && !unique_args_method.is_a?(Boolean)
     end
 
@@ -139,7 +133,7 @@ module SidekiqUniqueJobs
     end
 
     def unique_args_method
-      @unique_args_method ||= @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY] if sidekiq_worker_class?
+      @unique_args_method ||= @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY]
       @unique_args_method ||= :unique_args if @worker_class.respond_to?(:unique_args)
       @unique_args_method ||= Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS_KEY]
     end

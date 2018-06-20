@@ -32,7 +32,6 @@ module SidekiqUniqueJobs
     :default_lock_timeout,
     :default_lock,
     :enabled,
-    :raise_unique_args_errors,
     :unique_prefix,
     :logger,
   )
@@ -43,7 +42,6 @@ module SidekiqUniqueJobs
       0,
       :while_executing,
       true,
-      false,
       'uniquejobs',
       Sidekiq.logger,
     )

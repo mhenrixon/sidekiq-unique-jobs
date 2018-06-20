@@ -2,7 +2,15 @@
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   include_context 'with a stubbed locksmith'
-  let(:item) { {} }
+  let(:item) do
+    {
+      'jid' => 'maaaahjid',
+      'queue' => 'default',
+      'class' => 'UntilExecutedJob',
+      'unique' => :until_executed,
+      'args' => [1],
+    }
+  end
 
   describe '#lock' do
     it 'delegates to locksmith' do

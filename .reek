@@ -131,9 +131,3 @@ TooManyInstanceVariables:
 TooManyMethods:
   exclude:
   - SidekiqUniqueJobs::Locksmith
-DataClump:
-  exclude:
-  - SidekiqUniqueJobs::Scripts
-RepeatedConditional:
-  exclude:
-  - SidekiqUniqueJobs::UniqueArgs

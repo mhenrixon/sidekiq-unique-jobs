@@ -98,18 +98,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
 
       with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
-        it { is_expected.to be_a(Proc) }
-
-        context 'when raise_unique_args_errors is true' do
-          specify do
-            SidekiqUniqueJobs.use_config(raise_unique_args_errors: true) do
-              expect { unique_args_enabled? }.to raise_error(NoMethodError, "undefined method `[]' for nil:NilClass")
-            end
-          end
-        end
-
-        context 'when raise_unique_args_errors is false' do
-          it { is_expected.to be_a(Proc) }
+        specify do
+          expect { unique_args_enabled? }.to raise_error(NoMethodError, "undefined method `[]' for nil:NilClass")
         end
       end
     end

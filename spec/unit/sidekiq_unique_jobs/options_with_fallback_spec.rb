@@ -15,9 +15,23 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
   end
   let(:options_with_fallback) { ClassWithOptions.new(item, options, worker_class) }
-  let(:item)                  { {} }
   let(:options)               { nil }
-  let(:worker_class)          { nil }
+  let(:worker_class)          { 'UntilExecutedJob' }
+  let(:queue)                 { 'default' }
+  let(:jid)                   { 'maaaahjid' }
+  let(:unique)                { :until_executed }
+  let(:args)                  { [1] }
+  let(:log_duplicate_payload) { false }
+  let(:item) do
+    {
+      'jid' => jid,
+      'queue' => queue,
+      'class' => worker_class,
+      'unique' => unique,
+      'args' => args,
+      'log_duplicate_payload' => log_duplicate_payload,
+    }
+  end
 
   describe '#log_duplicate_payload?' do
     subject(:log_duplicate_payload?) { options_with_fallback.log_duplicate_payload? }
@@ -29,7 +43,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
 
     context 'when item["log_duplicate_payload"] is true' do
-      let(:item) { { 'log_duplicate_payload' => true } }
+      let(:log_duplicate_payload) { true }
 
       it { is_expected.to eq(true) }
     end
@@ -39,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     subject(:lock) { options_with_fallback.lock }
 
     context 'when item["unique"] is present' do
-      let(:item) { { 'unique' => :until_executed } }
+      let(:unique) { :until_executed }
 
       it { is_expected.to be_a(SidekiqUniqueJobs::Lock::UntilExecuted) }
 

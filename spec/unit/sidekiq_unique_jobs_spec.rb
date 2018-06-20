@@ -10,7 +10,6 @@ RSpec.describe SidekiqUniqueJobs do
     its(:default_lock_timeout)     { is_expected.to eq(0) }
     its(:default_lock)             { is_expected.to eq(:while_executing) }
     its(:enabled)                  { is_expected.to eq(true) }
-    its(:raise_unique_args_errors) { is_expected.to eq(false) }
     its(:unique_prefix)            { is_expected.to eq('uniquejobs') }
   end
 
