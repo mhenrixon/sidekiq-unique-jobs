@@ -28,7 +28,7 @@ module SidekiqUniqueJobs
 
       def append_unique_key_suffix
         digest = item[UNIQUE_DIGEST_KEY]
-        return if digest.end_with?(RUN_SUFFIX)
+        return digest if digest.end_with?(RUN_SUFFIX)
         [digest, RUN_SUFFIX].join('')
       end
     end
