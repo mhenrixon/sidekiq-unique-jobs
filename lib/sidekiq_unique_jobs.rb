@@ -7,6 +7,9 @@ require 'ostruct'
 
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/constants'
+require 'sidekiq_unique_jobs/logging'
+require 'sidekiq_unique_jobs/sidekiq_worker_methods'
+require 'sidekiq_unique_jobs/connection'
 require 'sidekiq_unique_jobs/exceptions'
 require 'sidekiq_unique_jobs/util'
 require 'sidekiq_unique_jobs/cli'
@@ -21,34 +24,34 @@ require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 
 module SidekiqUniqueJobs
+  include SidekiqUniqueJobs::Connection
+
   module_function
 
   Concurrent::MutableStruct.new(
     'Config',
     :default_lock_timeout,
-    :default_lock,
     :enabled,
-    :raise_unique_args_errors,
     :unique_prefix,
+    :logger,
   )
 
   def config
     # Arguments here need to match the definition of the new class (see above)
     @config ||= Concurrent::MutableStruct::Config.new(
       0,
-      :while_executing,
       true,
-      false,
       'uniquejobs',
+      Sidekiq.logger,
     )
   end
 
-  def default_lock
-    config.default_lock
+  def logger
+    config.logger
   end
 
-  def logger
-    Sidekiq.logger
+  def logger=(other)
+    config.logger = other
   end
 
   def use_config(tmp_config)
@@ -70,31 +73,7 @@ module SidekiqUniqueJobs
     end
   end
 
-  # Attempt to constantize a string worker_class argument, always
-  # failing back to the original argument when the constant can't be found
-  #
-  # raises an error for other errors
-  def worker_class_constantize(worker_class)
-    return worker_class unless worker_class.is_a?(String)
-    Object.const_get(worker_class)
-  rescue NameError => ex
-    case ex.message
-    when /uninitialized constant/
-      worker_class
-    else
-      raise
-    end
-  end
-
   def redis_version
-    @redis_version ||= connection { |conn| conn.info('server')['redis_version'] }
-  end
-
-  def connection(redis_pool = nil)
-    if redis_pool
-      redis_pool.with { |conn| yield conn }
-    else
-      Sidekiq.redis { |conn| yield conn }
-    end
+    @redis_version ||= redis { |conn| conn.info('server')['redis_version'] }
   end
 end

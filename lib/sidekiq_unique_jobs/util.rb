@@ -8,10 +8,13 @@ module SidekiqUniqueJobs
     SCAN_METHOD       = 'SCAN'
     SCAN_PATTERN      = '*'
 
+    include SidekiqUniqueJobs::Logging
+    include SidekiqUniqueJobs::Connection
     extend self # rubocop:disable Style/ModuleFunction
 
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
-      connection { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
+      return redis(&:keys) if pattern.nil?
+      redis { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
     # Deletes unique keys from redis
@@ -19,29 +22,25 @@ module SidekiqUniqueJobs
     #
     # @param pattern [String] a pattern to scan for in redis
     # @param count [Integer] the maximum number of keys to delete
-    # @param dry_run [Boolean] set to false to perform deletion, `true` or `false`
     # @return [Boolean] report success
-    def del(pattern = SCAN_PATTERN, count = 0, dry_run = true)
+    def del(pattern = SCAN_PATTERN, count = 0)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
       pattern = "#{pattern}:*" unless pattern.end_with?(':*')
 
-      logger.debug { "Deleting keys by: #{pattern}" }
+      log_debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
-      logger.debug { "#{keys.size} matching keys found in #{time} sec." }
-      keys = dry_run(keys)
-      logger.debug { "#{keys.size} matching keys after post-processing" }
-      unless dry_run
-        logger.debug { "deleting #{keys}..." }
-        _, time = timed { batch_delete(keys) }
-        logger.debug { "Deleted in #{time} sec." }
-      end
-      keys.size
+      key_size   = keys.size
+      log_debug { "#{key_size} keys found in #{time} sec." }
+      _, time = timed { batch_delete(keys) }
+      log_debug { "Deleted #{key_size} keys in #{time} sec." }
+
+      key_size
     end
 
     private
 
     def batch_delete(keys)
-      connection do |conn|
+      redis do |conn|
         keys.each_slice(500) do |chunk|
           conn.pipelined do
             chunk.each do |key|
@@ -52,21 +51,19 @@ module SidekiqUniqueJobs
       end
     end
 
-    def dry_run(keys, pattern = nil)
-      return keys if pattern.nil?
-      regex = Regexp.new(pattern)
-      keys.select { |k| regex.match k }
-    end
-
-    def timed(&_block)
-      start = Time.now
-      result = yield
-      elapsed = (Time.now - start).round(2)
+    def timed
+      start   = current_time
+      result  = yield
+      elapsed = (current_time - start).round(2)
       [result, elapsed]
     end
 
+    def current_time
+      Time.now
+    end
+
     def prefix_keys(keys)
-      keys = Array(keys).flatten.compact
+      keys = Array(keys).compact
       keys.map { |key| prefix(key) }
     end
 
@@ -78,14 +75,6 @@ module SidekiqUniqueJobs
 
     def unique_prefix
       SidekiqUniqueJobs.config.unique_prefix
-    end
-
-    def connection(&block)
-      SidekiqUniqueJobs.connection(&block)
-    end
-
-    def logger
-      SidekiqUniqueJobs.logger
     end
   end
 end

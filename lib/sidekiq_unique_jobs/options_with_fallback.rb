@@ -2,10 +2,10 @@
 
 module SidekiqUniqueJobs
   # Shared logic for dealing with options
-  # This class requires 3 methods to be defined in the class including it
+  # This class requires 3 things to be defined in the class including it
   #   1. item (required)
   #   2. options (can be nil)
-  #   3. worker_class (can be nil)
+  #   3. worker_class (required, can be anything)
   module OptionsWithFallback
     LOCKS = {
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
@@ -16,8 +16,12 @@ module SidekiqUniqueJobs
       while_executing_reject:    SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze
 
+    def self.included(base)
+      base.send(:include, SidekiqUniqueJobs::SidekiqWorkerMethods)
+    end
+
     def unique_enabled?
-      SidekiqUniqueJobs.config.enabled && item[UNIQUE_KEY]
+      SidekiqUniqueJobs.config.enabled && lock_type
     end
 
     def unique_disabled?
@@ -29,42 +33,27 @@ module SidekiqUniqueJobs
     end
 
     def lock
-      @lock = lock_class.new(item)
+      @lock ||= lock_class.new(item, @redis_pool)
     end
 
     def lock_class
       @lock_class ||= begin
-        LOCKS.fetch(unique_lock.to_sym) do
-          fail UnknownLock, "No implementation for `unique: :#{unique_lock}`"
+        LOCKS.fetch(lock_type.to_sym) do
+          fail UnknownLock, "No implementation for `unique: :#{lock_type}`"
         end
       end
     end
 
-    def unique_lock
-      @unique_lock ||=
-        if options.key?(UNIQUE_KEY) && options[UNIQUE_KEY].to_s == 'true'
-          warn('unique: true is no longer valid. Please set it to the type of lock required like: ' \
-               '`unique: :until_executed`')
-          options[UNIQUE_LOCK_KEY] || SidekiqUniqueJobs.default_lock
-        else
-          lock_type || SidekiqUniqueJobs.default_lock
-        end
-    end
-
     def lock_type
-      lock_type_from(options) || lock_type_from(item)
-    end
-
-    def lock_type_from(hash, key = UNIQUE_KEY)
-      return nil if hash[key].is_a?(TrueClass)
-      hash[key]
+      @lock_type ||= options[UNIQUE_KEY] || item[UNIQUE_KEY]
     end
 
     def options
-      @options ||= worker_class.get_sidekiq_options if worker_class.respond_to?(:get_sidekiq_options)
-      @options ||= Sidekiq.default_worker_options
-      @options ||= {}
-      @options &&= @options.stringify_keys
+      @options ||= begin
+        opts = default_worker_options.dup
+        opts.merge!(worker_options) if sidekiq_worker_class?
+        (opts || {}).stringify_keys
+      end
     end
   end
 end

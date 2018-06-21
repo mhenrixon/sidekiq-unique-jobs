@@ -98,18 +98,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       end
 
       with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
-        it { is_expected.to be_a(Proc) }
-
-        context 'when raise_unique_args_errors is true' do
-          specify do
-            SidekiqUniqueJobs.use_config(raise_unique_args_errors: true) do
-              expect { unique_args_enabled? }.to raise_error(NoMethodError, "undefined method `[]' for nil:NilClass")
-            end
-          end
-        end
-
-        context 'when raise_unique_args_errors is false' do
-          it { is_expected.to be_a(Proc) }
+        specify do
+          expect { unique_args_enabled? }.to raise_error(NoMethodError, "undefined method `[]' for nil:NilClass")
         end
       end
     end
@@ -169,22 +159,15 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     context 'when #unique_args_method is a proc' do
       let(:filter) { ->(args) { args[1]['test'] } }
 
-      it do
-        allow(unique_args).to receive(:unique_args_method).and_return(filter)
-        is_expected.to eq('it')
-      end
+      before { allow(unique_args).to receive(:unique_args_method).and_return(filter) }
+
+      it { is_expected.to eq('it') }
     end
 
     context 'when #unique_args_method is nil' do
-      it 'returns the arguments unfiltered' do
-        allow(unique_args).to receive(:unique_args_method).and_return(nil)
+      before { allow(unique_args).to receive(:unique_args_method).and_return(nil) }
 
-        expect(SidekiqUniqueJobs.logger).to receive(:warn) do |&block|
-          expect(block.call).to eq('filter_by_proc : unique_args_method is nil. Returning ([1, {"test"=>"it"}])')
-        end
-
-        is_expected.to eq(args)
-      end
+      it { is_expected.to eq(args) }
     end
 
     with_default_worker_options(unique_args: ->(args) { args.first }) do
@@ -200,13 +183,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       let(:args)          { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
       let(:filtered_args) { %w[name test] }
 
-      it 'returns the value of the provided class method' do
-        expect(unique_args.logger).to receive(:debug) do |&block|
-          expect(block.call).to eq("filter_by_symbol : filtered_args(#{args}) => #{filtered_args}")
-        end
-
-        expect(filter_by_symbol).to eq(filtered_args)
-      end
+      it { is_expected.to eq(filtered_args) }
     end
 
     context 'when worker takes conditional parameters' do
@@ -226,13 +203,6 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
       let(:args)         { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
 
-      before do
-        expect(unique_args.logger)
-          .to receive(:fatal)
-          .with('filter_by_symbol : UniqueJobWithoutUniqueArgsParameter\'s unique_args needs at least one argument')
-        expect(unique_args.logger).to receive(:fatal).with a_kind_of(ArgumentError)
-      end
-
       it { is_expected.to eq(args) }
     end
 
@@ -240,28 +210,12 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       let(:worker_class) { UniqueJobWithNoUniqueArgsMethod }
       let(:args)         { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
 
-      before do
-        expect(unique_args.logger).to receive(:warn) do |&block|
-          expect(block.call)
-            .to eq(
-              "filter_by_symbol : UniqueJobWithNoUniqueArgsMethod does not respond to filtered_args). " \
-              "Returning (#{args})",
-            )
-        end
-      end
-
       it { is_expected.to eq(args) }
     end
 
     context 'when workers unique_args method returns nil' do
       let(:worker_class) { UniqueJobWithNilUniqueArgs }
       let(:args) { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
-
-      before do
-        expect(unique_args.logger).to receive(:debug) do |&block|
-          expect(block.call).to eq("filter_by_symbol : unique_args(#{args}) => ")
-        end
-      end
 
       it { is_expected.to eq(nil) }
     end

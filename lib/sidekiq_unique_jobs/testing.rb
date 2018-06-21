@@ -30,7 +30,7 @@ module Sidekiq
 
       def clear
         jobs.each do |job|
-          SidekiqUniqueJobs::Unlockable.delete!(job)
+          SidekiqUniqueJobs::Unlockable.delete(job)
         end
 
         Sidekiq::Queues[queue].clear
@@ -52,7 +52,7 @@ module Sidekiq
       module Testing
         def clear_all_ext
           clear_all_orig
-          SidekiqUniqueJobs::Util.del('*', 1000, false)
+          SidekiqUniqueJobs::Util.del('*', 1000)
         end
       end
     end

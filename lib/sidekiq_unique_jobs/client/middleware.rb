@@ -5,37 +5,36 @@ require 'sidekiq_unique_jobs/server/middleware'
 module SidekiqUniqueJobs
   module Client
     class Middleware
-      extend Forwardable
-      def_delegators :SidekiqUniqueJobs, :connection, :config, :worker_class_constantize
-      def_delegators :Sidekiq, :logger
-
+      include SidekiqUniqueJobs::Logging
       include OptionsWithFallback
 
+      # :reek:LongParameterList { max_params: 4 }
       def call(worker_class, item, queue, redis_pool = nil)
-        @worker_class = worker_class_constantize(worker_class)
-        @item = item
-        @queue = queue
-        @redis_pool = redis_pool
+        @worker_class = worker_class
+        @item         = item
+        @queue        = queue
+        @redis_pool   = redis_pool
 
-        yield if successfully_locked?
+        yield if success?
       end
 
       private
 
-      attr_reader :item, :worker_class, :redis_pool, :queue
+      attr_reader :item
 
-      def successfully_locked?
-        unique_disabled? || acquire_lock
+      def success?
+        unique_disabled? || locked?
       end
 
-      def acquire_lock
+      def locked?
         locked = lock.lock
-        warn_about_duplicate(item) unless locked
+        warn_about_duplicate unless locked
         locked
       end
 
-      def warn_about_duplicate(item)
-        logger.warn "payload is not unique #{item}" if log_duplicate_payload?
+      def warn_about_duplicate
+        return unless log_duplicate_payload?
+        log_warn "payload is not unique #{item}"
       end
     end
   end

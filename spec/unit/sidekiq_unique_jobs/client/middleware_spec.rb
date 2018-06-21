@@ -25,7 +25,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     context 'when locking succeeds' do
       before do
-        allow(middleware).to receive(:successfully_locked?).and_return(true)
+        allow(middleware).to receive(:locked?).and_return(true)
       end
 
       it 'yields control' do
@@ -35,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     context 'when already locked' do
       before do
-        allow(middleware).to receive(:successfully_locked?).and_return(false)
+        allow(middleware).to receive(:locked?).and_return(false)
       end
 
       it 'does not yield control' do

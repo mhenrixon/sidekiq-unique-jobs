@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
       end
 
       def runtime_lock
-        @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(@item, @redis_pool)
+        @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, redis_pool)
       end
     end
   end

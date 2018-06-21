@@ -8,9 +8,7 @@ RSpec.describe SidekiqUniqueJobs do
 
     it { is_expected.to be_a(Concurrent::MutableStruct::Config) }
     its(:default_lock_timeout)     { is_expected.to eq(0) }
-    its(:default_lock)             { is_expected.to eq(:while_executing) }
     its(:enabled)                  { is_expected.to eq(true) }
-    its(:raise_unique_args_errors) { is_expected.to eq(false) }
     its(:unique_prefix)            { is_expected.to eq('uniquejobs') }
   end
 
@@ -40,46 +38,23 @@ RSpec.describe SidekiqUniqueJobs do
     end
   end
 
-  describe '.worker_class_constantize' do
-    subject(:worker_class_constantize) { described_class.worker_class_constantize(worker_class) }
+  describe '.logger' do
+    subject { described_class.logger }
 
-    context 'when worker_class is nil' do
-      let(:worker_class) { nil }
-
-      it { is_expected.to eq(nil) }
+    context 'without further configuration' do
+      it { is_expected.to eq(Sidekiq.logger) }
     end
 
-    context 'when worker_class is MyUniqueJob' do
-      let(:worker_class) { MyUniqueJob }
+    context 'when configured explicitly' do
+      let(:another_logger) { Logger.new('/dev/null') }
 
-      it { is_expected.to eq(MyUniqueJob) }
-    end
-
-    context 'when worker_class is MyUniqueJob' do
-      let(:worker_class) { 'UntilExecutedJob' }
-
-      it { is_expected.to eq(UntilExecutedJob) }
-    end
-
-    context 'when NameError is caught' do
-      let(:worker_class)  { 'UnknownConstant' }
-      let(:error_message) { 'this class does not exist' }
-
-      before do
-        allow(Object).to receive(:const_get)
-          .with(worker_class)
-          .and_raise(NameError, error_message)
+      around do |exmpl|
+        described_class.use_config(logger: another_logger) do
+          exmpl.run
+        end
       end
 
-      it 'raises NameError' do
-        expect { worker_class_constantize }.to raise_error(NameError, error_message)
-      end
-
-      context 'when exception.message contains `uninitialized constant`' do
-        let(:error_message) { 'uninitialized constant' }
-
-        it { is_expected.to eq('UnknownConstant') }
-      end
+      it { is_expected.to eq(another_logger) }
     end
   end
 

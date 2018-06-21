@@ -2,7 +2,15 @@
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   include_context 'with a stubbed locksmith'
-  let(:item) { {} }
+  let(:item) do
+    {
+      'jid' => 'maaaahjid',
+      'queue' => 'default',
+      'class' => 'UntilExecutedJob',
+      'unique' => :until_executed,
+      'args' => [1],
+    }
+  end
 
   describe '#lock' do
     it 'delegates to locksmith' do
@@ -25,12 +33,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     end
   end
 
-  describe '#delete!' do
+  describe '#delete' do
     it 'delegates to locksmith' do
       allow(locksmith).to receive(:unlock)
-      allow(locksmith).to receive(:delete!).and_return('deleted')
+      allow(locksmith).to receive(:delete).and_return('deleted')
 
-      expect(lock.delete!).to eq('deleted')
+      expect(lock.delete).to eq('deleted')
     end
   end
 

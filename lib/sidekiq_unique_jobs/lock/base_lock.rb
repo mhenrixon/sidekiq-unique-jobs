@@ -3,6 +3,8 @@
 module SidekiqUniqueJobs
   class Lock
     class BaseLock
+      include SidekiqUniqueJobs::Logging
+
       def initialize(item, redis_pool = nil)
         @item       = prepare_item(item)
         @redis_pool = redis_pool
@@ -10,7 +12,7 @@ module SidekiqUniqueJobs
       end
 
       def lock
-        @locksmith.lock(@item[LOCK_TIMEOUT_KEY])
+        locksmith.lock(item[LOCK_TIMEOUT_KEY])
       end
 
       def execute(_callback = nil)
@@ -18,19 +20,20 @@ module SidekiqUniqueJobs
       end
 
       def unlock
-        @locksmith.unlock
+        locksmith.unlock
       end
 
-      def delete!
-        unlock
-        @locksmith.delete!
+      def delete
+        locksmith.delete
       end
 
       def locked?
-        @locksmith.locked?
+        locksmith.locked?
       end
 
       private
+
+      attr_reader :item, :locksmith, :redis_pool
 
       def prepare_item(item)
         calculator = SidekiqUniqueJobs::Timeout::Calculator.new(item)

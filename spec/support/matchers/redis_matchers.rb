@@ -4,7 +4,7 @@ require 'rspec/expectations'
 require 'rspec/eventually'
 
 RSpec::Matchers.define :be_enqueued_in do |queue|
-  SidekiqUniqueJobs.connection do |conn|
+  SidekiqUniqueJobs.redis do |conn|
     @actual = conn.llen("queue:#{queue}")
     match do |count_in_queue|
       @expected = count_in_queue
@@ -15,7 +15,7 @@ RSpec::Matchers.define :be_enqueued_in do |queue|
 end
 
 RSpec::Matchers.define :be_scheduled_at do |time|
-  SidekiqUniqueJobs.connection do |conn|
+  SidekiqUniqueJobs.redis do |conn|
     @actual = conn.zcount('schedule', -1, time)
 
     match do |count_in_queue|
@@ -27,7 +27,7 @@ RSpec::Matchers.define :be_scheduled_at do |time|
 end
 
 RSpec::Matchers.define :have_key do |_unique_key|
-  Sidekiq.redis do |conn|
+  SidekiqUniqueJobs.redis do |conn|
     match do |_unique_jobs|
       @value       = conn.get(@unique_key)
       @ttl         = conn.ttl(@unique_key)

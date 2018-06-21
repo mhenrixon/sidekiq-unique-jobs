@@ -4,10 +4,6 @@ require 'thor'
 
 module SidekiqUniqueJobs
   class Cli < Thor
-    # def initialize(argv, stdin = STDIN, stdout = STDOUT, stderr = STDERR, kernel = Kernel)
-    #   @argv, @stdin, @stdout, @stderr, @kernel = argv, stdin, stdout, stderr, kernel
-    # end
-
     def self.banner(command, _namespace = nil, _subcommand = false)
       "jobs #{@package_name} #{command.usage}"
     end
@@ -24,8 +20,14 @@ module SidekiqUniqueJobs
     option :dry_run, aliases: :d, type: :boolean, desc: 'set to false to perform deletion'
     option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
     def del(pattern)
-      deleted_count = Util.del(pattern, options[:count], options[:dry_run])
-      say "Deleted #{deleted_count} keys matching '#{pattern}'"
+      max_count = options[:count]
+      if options[:dry_run]
+        keys = Util.keys(pattern, max_count)
+        say "Would delete #{keys.size} keys matching '#{pattern}'"
+      else
+        deleted_count = Util.del(pattern, max_count)
+        say "Deleted #{deleted_count} keys matching '#{pattern}'"
+      end
     end
 
     desc 'console', 'drop into a console with easy access to helper methods'

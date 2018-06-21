@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqHelpers
-  def redis(&block)
-    pool = (redis_pool if respond_to?(:redis_pool))
-    SidekiqUniqueJobs.connection(pool, &block)
-  end
+  include SidekiqUniqueJobs::Connection
 
   def zcard(queue)
     redis { |conn| conn.zcard(queue) }
@@ -12,6 +9,14 @@ module SidekiqHelpers
 
   def zcount(queue, time)
     redis { |conn| conn.zcount(queue, -1, time) }
+  end
+
+  def get_key(key)
+    redis { |conn| conn.get(key) }
+  end
+
+  def set_key(key, value)
+    redis { |conn| conn.set(key, value) }
   end
 
   def dead_count
@@ -31,8 +36,11 @@ module SidekiqHelpers
   end
 
   def keys(pattern = nil)
-    return redis(&:keys) if pattern.nil?
-    redis { |conn| conn.keys(pattern) }
+    SidekiqUniqueJobs::Util.keys(pattern)
+  end
+
+  def unique_keys
+    keys('uniquejobs:*')
   end
 
   def ttl(key)

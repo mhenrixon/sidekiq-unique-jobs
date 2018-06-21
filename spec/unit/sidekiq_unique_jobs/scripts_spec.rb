@@ -6,16 +6,9 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
   subject { SidekiqUniqueJobs::Scripts }
 
   it { is_expected.to respond_to(:call).with(3).arguments }
-  it { is_expected.to respond_to(:logger) }
-  it { is_expected.to respond_to(:connection).with(1).arguments }
+  it { is_expected.to respond_to(:redis).with(1).arguments }
   it { is_expected.to respond_to(:script_source).with(1).arguments }
   it { is_expected.to respond_to(:script_path).with(1).arguments }
-
-  describe '.logger' do
-    subject { described_class.logger }
-
-    it { is_expected.to eq(Sidekiq.logger) }
-  end
 
   describe '.call' do
     subject(:call) { described_class.call(script_name, nil, options) }
@@ -31,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
     context 'when conn.evalsha raises Redis::CommandError' do
       before do
         call_count = 0
-        allow(described_class).to receive(:internal_call).with(script_name, nil, options) do
+        allow(described_class).to receive(:execute_script).with(script_name, nil, options) do
           call_count += 1
           (call_count == 1) ? raise(Redis::CommandError, error_message) : 1
         end
@@ -39,7 +32,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
 
       specify do
         expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
-        expect(described_class).to receive(:internal_call).with(script_name, nil, options).once
+        expect(described_class).to receive(:execute_script).with(script_name, nil, options).once
         expect { call }.to raise_error(
           SidekiqUniqueJobs::ScriptError,
           "Problem compiling #{script_name}. Message: Some interesting error",
@@ -51,7 +44,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
 
         specify do
           expect(described_class::SCRIPT_SHAS).to receive(:delete).with(script_name)
-          expect(described_class).to receive(:internal_call).with(script_name, nil, options).twice
+          expect(described_class).to receive(:execute_script).with(script_name, nil, options).twice
           expect { call }.not_to raise_error
         end
       end

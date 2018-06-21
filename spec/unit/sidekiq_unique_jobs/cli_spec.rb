@@ -89,7 +89,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
         SidekiqUniqueJobs::Locksmith.new(item).lock
       end
 
-      after { SidekiqUniqueJobs::Util.del('*', 1000, false) }
+      after { SidekiqUniqueJobs::Util.del('*', 1000) }
 
       specify do
         expect(output).to include("Found 3 keys matching '*':")

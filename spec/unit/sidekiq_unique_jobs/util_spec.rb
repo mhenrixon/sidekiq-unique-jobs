@@ -38,7 +38,6 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     subject { described_class.keys }
 
     before do
-      expect(described_class.keys).to match_array([])
       lock.lock(0)
     end
 
@@ -46,12 +45,13 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   end
 
   describe '.del' do
-    subject { described_class.del(pattern, 100, false) }
+    subject(:del) { described_class.del(pattern, 100) }
 
     before do
       lock.lock(0)
-      expect(described_class.keys).to match_array(expected_keys)
     end
+
+    it { expect(described_class.keys).to match_array(expected_keys) }
 
     context 'when pattern is a wildcard' do
       let(:pattern) { described_class::SCAN_PATTERN }
@@ -63,12 +63,10 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
       let(:pattern) { unique_key }
 
       it { is_expected.to eq(3) }
+      it { expect { del }.to change(described_class, :keys).to([]) }
     end
 
-    after do
-      expect(described_class.keys).to match_array([])
-      lock.delete!
-    end
+    after { lock.delete }
   end
 
   describe '.prefix' do

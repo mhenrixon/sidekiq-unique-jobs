@@ -7,9 +7,7 @@ require 'sidekiq_unique_jobs/timeout'
 
 module Sidekiq
   class Simulator
-    extend Forwardable
-    def_delegator SidekiqUniqueJobs, :logger
-
+    include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Timeout
 
     attr_reader :queues, :launcher
@@ -19,12 +17,13 @@ module Sidekiq
     end
 
     def initialize(queue)
-      @queues = [queue].flatten.uniq
+      @queues = Array(queue).uniq
       @launcher = Sidekiq::Launcher.new(sidekiq_options(queues))
     end
 
     def process_queue
-      run_launcher { yield }
+      run_launcher
+      yield
     ensure
       terminate_launcher
     end
@@ -32,15 +31,17 @@ module Sidekiq
     private
 
     def run_launcher
+      run_launcher!
+    rescue Timeout::Error => exception
+      log_warn('Timeout while starting Sidekiq')
+      log_warn(exception)
+    end
+
+    def run_launcher!
       using_timeout(15) do
         launcher.run
         sleep 0.001 until alive?
       end
-    rescue Timeout::Error => e
-      logger.warn { "Timeout while running #{__method__}" }
-      logger.warn { e }
-    ensure
-      yield
     end
 
     def terminate_launcher

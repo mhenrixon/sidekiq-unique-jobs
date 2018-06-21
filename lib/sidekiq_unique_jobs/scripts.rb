@@ -7,35 +7,44 @@ require 'concurrent/map'
 module SidekiqUniqueJobs
   module Scripts
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
-    SOURCE_FILES ||= Dir[LUA_PATHNAME.join('**/*.lua')].compact.freeze
-    DEFINED_METHODS ||= [].freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
+
+    include SidekiqUniqueJobs::Connection
 
     module_function
 
-    extend SingleForwardable
-    def_delegators :SidekiqUniqueJobs, :connection, :logger
-
     def call(file_name, redis_pool, options = {})
-      internal_call(file_name, redis_pool, options)
+      execute_script(file_name, redis_pool, options)
     rescue Redis::CommandError => ex
-      handle_error(ex, file_name, redis_pool, options)
-    end
-
-    def internal_call(file_name, redis_pool, options = {})
-      connection(redis_pool) do |conn|
-        SCRIPT_SHAS[file_name] = conn.script(:load, script_source(file_name)) if SCRIPT_SHAS[file_name].nil?
-        conn.evalsha(SCRIPT_SHAS[file_name], options)
-      end
-    end
-
-    def handle_error(ex, file_name, redis_pool, options = {})
-      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.' # rubocop:disable Style/GuardClause
-        SCRIPT_SHAS.delete(file_name)
+      handle_error(ex, file_name) do
         call(file_name, redis_pool, options)
-      else
-        raise ScriptError, "Problem compiling #{file_name}. Message: #{ex.message}"
       end
+    end
+
+    def execute_script(file_name, redis_pool, options = {})
+      redis(redis_pool) do |conn|
+        sha = script_sha(conn, file_name)
+        conn.evalsha(sha, options)
+      end
+    end
+
+    def script_sha(conn, file_name)
+      if (sha = SCRIPT_SHAS.get(file_name))
+        return sha
+      end
+
+      sha = conn.script(:load, script_source(file_name))
+      SCRIPT_SHAS.put(file_name, sha)
+      sha
+    end
+
+    def handle_error(ex, file_name)
+      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
+        SCRIPT_SHAS.delete(file_name)
+        return yield if block_given?
+      end
+
+      raise ScriptError, file_name: file_name, source_exception: ex
     end
 
     def script_source(file_name)

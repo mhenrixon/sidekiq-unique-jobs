@@ -7,7 +7,9 @@ class VersionCheck
     PATTERN.match(constraint.to_s) do |match|
       @version1  = Gem::Version.new(match[:version1])
       @operator1 = match[:operator1]
-      @version2  = Gem::Version.new(match[:version2]) if match[:version2]
+      if (version2 = match[:version2])
+        @version2  = Gem::Version.new(version2)
+      end
       @operator2 = match[:operator2]
     end
 

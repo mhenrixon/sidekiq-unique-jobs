@@ -43,11 +43,9 @@ RSpec.describe ExpiringJob do
 
       it 'sets keys to expire as per configuration' do
         lock_expiration = described_class.get_sidekiq_options['lock_expiration']
-        Sidekiq.redis do |conn|
-          conn.keys('uniquejobs:*').each do |key|
-            next if key.end_with?(':GRABBED')
-            expect(conn.ttl(key)).to be_within(1).of(lock_expiration + 60)
-          end
+        unique_keys.each do |key|
+          next if key.end_with?(':GRABBED')
+          expect(ttl(key)).to be_within(1).of(lock_expiration + 60)
         end
       end
     end
@@ -79,11 +77,9 @@ RSpec.describe ExpiringJob do
 
       it 'sets keys to expire as per configuration' do
         lock_expiration = described_class.get_sidekiq_options['lock_expiration']
-        Sidekiq.redis do |conn|
-          conn.keys('uniquejobs:*').each do |key|
-            next if key.end_with?(':GRABBED')
-            expect(conn.ttl(key)).to be_within(1).of(lock_expiration)
-          end
+        unique_keys.each do |key|
+          next if key.end_with?(':GRABBED')
+          expect(ttl(key)).to be_within(1).of(lock_expiration)
         end
       end
     end

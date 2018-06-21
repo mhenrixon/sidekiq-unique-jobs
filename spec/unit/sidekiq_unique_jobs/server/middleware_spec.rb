@@ -29,7 +29,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
     context 'when unique is disabled' do
       before do
-        allow(middleware).to receive(:unique_disabled?).and_return(true)
+        allow(middleware).to receive(:unique_enabled?).and_return(false)
       end
 
       it 'yields control' do
@@ -39,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
     context 'when unique is enabled' do
       before do
-        allow(middleware).to receive(:unique_disabled?).and_return(false)
+        allow(middleware).to receive(:unique_enabled?).and_return(true)
       end
 
       it 'yields control' do
