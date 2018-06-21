@@ -14,18 +14,28 @@ module SidekiqUniqueJobs
     module_function
 
     def call(file_name, redis_pool, options = {})
-      internal_call(file_name, redis_pool, options)
+      execute_script(file_name, redis_pool, options)
     rescue Redis::CommandError => ex
       handle_error(ex, file_name) do
         call(file_name, redis_pool, options)
       end
     end
 
-    def internal_call(file_name, redis_pool, options = {})
+    def execute_script(file_name, redis_pool, options = {})
       redis(redis_pool) do |conn|
-        SCRIPT_SHAS[file_name] ||= conn.script(:load, script_source(file_name))
-        conn.evalsha(SCRIPT_SHAS[file_name], options)
+        sha = script_sha(conn, file_name)
+        conn.evalsha(sha, options)
       end
+    end
+
+    def script_sha(conn, file_name)
+      if (sha = SCRIPT_SHAS.get(file_name))
+        return sha
+      end
+
+      sha = conn.script(:load, script_source(file_name))
+      SCRIPT_SHAS.put(file_name, sha)
+      sha
     end
 
     def handle_error(ex, file_name)
@@ -34,7 +44,7 @@ module SidekiqUniqueJobs
         return yield if block_given?
       end
 
-      raise ScriptError, "Problem compiling #{file_name}. Message: #{ex.message}"
+      raise ScriptError, file_name: file_name, source_exception: ex
     end
 
     def script_source(file_name)

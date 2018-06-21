@@ -5,29 +5,29 @@ require 'sidekiq_unique_jobs/normalizer'
 
 module SidekiqUniqueJobs
   # This class exists to be testable and the entire api should be considered private
-  # rubocop:disable ClassLength
   class UniqueArgs
     CLASS_NAME = 'SidekiqUniqueJobs::UniqueArgs'
 
     include SidekiqUniqueJobs::Logging
-    extend Forwardable
-    def_delegators :SidekiqUniqueJobs, :config, :worker_class_constantize
+    include SidekiqUniqueJobs::SidekiqWorkerMethods
 
     def self.digest(item)
       new(item).unique_digest
     end
 
-    def initialize(item)
-      Sidekiq::Logging.with_context(CLASS_NAME) do
-        @item = item
-        worker_class  = @item[CLASS_KEY]
-        @worker_class = worker_class_constantize(worker_class)
-        fail ArgumentError, "Don't know the worker class: #{worker_class}" unless @worker_class
+    attr_reader :item
 
-        @item[UNIQUE_PREFIX_KEY] ||= unique_prefix
-        @item[UNIQUE_ARGS_KEY]     = unique_args(@item[ARGS_KEY])
-        @item[UNIQUE_DIGEST_KEY]   = unique_digest
-      end
+    def initialize(item)
+      @item         = item
+      @worker_class = item[CLASS_KEY]
+
+      add_uniqueness_to_item
+    end
+
+    def add_uniqueness_to_item
+      item[UNIQUE_PREFIX_KEY] ||= unique_prefix
+      item[UNIQUE_ARGS_KEY]     = unique_args(item[ARGS_KEY])
+      item[UNIQUE_DIGEST_KEY]   = unique_digest
     end
 
     def unique_digest
@@ -36,54 +36,35 @@ module SidekiqUniqueJobs
 
     def create_digest
       digest = Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
-      digest = "#{unique_prefix}:#{digest}"
-      log_debug { "#{__method__} : #{digestable_hash} into #{digest}" }
-      digest
+      "#{unique_prefix}:#{digest}"
     end
 
     def unique_prefix
-      @worker_class.get_sidekiq_options[UNIQUE_PREFIX_KEY] || config.unique_prefix
+      worker_options[UNIQUE_PREFIX_KEY] || SidekiqUniqueJobs.config.unique_prefix
     end
 
     def digestable_hash
       @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY).tap do |hash|
-        if unique_on_all_queues?
-          log_debug { "#{__method__} deleting queue: #{@item[QUEUE_KEY]}" }
-          hash.delete(QUEUE_KEY)
-        end
-        if unique_across_workers?
-          log_debug { "#{__method__} deleting class: #{@item[CLASS_KEY]}" }
-          hash.delete(CLASS_KEY)
-        end
+        hash.delete(QUEUE_KEY) if unique_on_all_queues?
+        hash.delete(CLASS_KEY) if unique_across_workers?
       end
     end
 
     def unique_args(args)
       return filtered_args(args) if unique_args_enabled?
-
-      log_debug { "#{__method__} : unique arguments disabled" }
       args
     end
 
     def unique_on_all_queues?
-      @item[UNIQUE_ON_ALL_QUEUES_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ON_ALL_QUEUES_KEY]
+      item[UNIQUE_ON_ALL_QUEUES_KEY] || worker_options[UNIQUE_ON_ALL_QUEUES_KEY]
     end
 
     def unique_across_workers?
-      @item[UNIQUE_ACROSS_WORKERS_KEY] || @worker_class.get_sidekiq_options[UNIQUE_ACROSS_WORKERS_KEY]
+      item[UNIQUE_ACROSS_WORKERS_KEY] || worker_options[UNIQUE_ACROSS_WORKERS_KEY]
     end
 
     def unique_args_enabled?
       unique_args_method # && !unique_args_method.is_a?(Boolean)
-    end
-
-    def sidekiq_worker_class?
-      if @worker_class.respond_to?(:get_sidekiq_options)
-        true
-      else
-        log_debug { "#{__method__} #{@worker_class} does not respond to :get_sidekiq_options" }
-        nil
-      end
     end
 
     # Filters unique arguments by proc or symbol
@@ -91,7 +72,6 @@ module SidekiqUniqueJobs
     def filtered_args(args)
       return args if args.empty?
       json_args = Normalizer.jsonify(args)
-      log_debug { "#filtered_args #{args} => #{json_args}" }
 
       case unique_args_method
       when Proc
@@ -105,38 +85,24 @@ module SidekiqUniqueJobs
     end
 
     def filter_by_proc(args)
-      if unique_args_method.nil?
-        log_warn { "#{__method__} : unique_args_method is nil. Returning (#{args})" }
-        return args
-      end
+      return args if unique_args_method.nil?
 
-      filter_args = unique_args_method.call(args)
-      log_debug { "#{__method__} : #{args} -> #{filter_args}" }
-      filter_args
+      unique_args_method.call(args)
     end
 
     def filter_by_symbol(args)
-      unless @worker_class.respond_to?(unique_args_method)
-        log_warn do
-          "#{__method__} : #{@worker_class} does not respond to #{unique_args_method}). Returning (#{args})"
-        end
-        return args
-      end
+      return args unless worker_method_defined?(unique_args_method)
 
-      filter_args = @worker_class.send(unique_args_method, args)
-      log_debug { "#{__method__} : #{unique_args_method}(#{args}) => #{filter_args}" }
-      filter_args
+      worker_class.send(unique_args_method, args)
     rescue ArgumentError => ex
-      log_fatal "#{__method__} : #{@worker_class}'s #{unique_args_method} needs at least one argument"
       log_fatal ex
       args
     end
 
     def unique_args_method
-      @unique_args_method ||= @worker_class.get_sidekiq_options[UNIQUE_ARGS_KEY]
-      @unique_args_method ||= :unique_args if @worker_class.respond_to?(:unique_args)
+      @unique_args_method ||= worker_options[UNIQUE_ARGS_KEY]
+      @unique_args_method ||= :unique_args if worker_method_defined?(:unique_args)
       @unique_args_method ||= Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS_KEY]
     end
   end
-  # rubocop:enable ClassLength
 end

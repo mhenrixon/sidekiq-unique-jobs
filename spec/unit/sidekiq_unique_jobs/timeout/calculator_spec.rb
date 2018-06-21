@@ -8,13 +8,15 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
   let(:schedule_time)      { nil }
 
   describe 'public api' do
-    subject { described_class.new(nil) }
+    subject { calculator }
 
     it { is_expected.to respond_to(:time_until_scheduled) }
-    it { is_expected.to respond_to(:worker_class_queue_lock_expiration) }
-    it { is_expected.to respond_to(:worker_class_run_lock_expiration) }
     it { is_expected.to respond_to(:worker_class) }
     it { is_expected.to respond_to(:seconds) }
+    it { is_expected.to respond_to(:lock_expiration) }
+    it { is_expected.to respond_to(:lock_timeout) }
+    it { is_expected.to respond_to(:worker_options) }
+    it { is_expected.to respond_to(:default_worker_options) }
   end
 
   describe '#seconds' do
@@ -42,41 +44,11 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
     end
   end
 
-  describe '#worker_class_run_lock_expiration' do
-    subject { calculator.worker_class_run_lock_expiration }
-
-    let(:worker_class_name) { 'LongRunningRunLockExpirationJob' }
-
-    it { is_expected.to eq(3_600) }
-  end
-
-  describe '#worker_class_lock_expiration' do
-    subject { calculator.worker_class_lock_expiration }
-
-    let(:worker_class_name) { 'LongRunningJob' }
-
-    it { is_expected.to eq(7_200) }
-  end
-
   describe '#worker_class' do
     subject(:worker_class) { calculator.worker_class }
 
     let(:worker_class_name) { 'MyUniqueJob' }
 
     it { is_expected.to eq(MyUniqueJob) }
-
-    context 'when worker class is a constant' do
-      let(:worker_class_name) { 'MissingWorker' }
-
-      it { is_expected.to eq('MissingWorker') }
-    end
-
-    context 'when worker class is not a constant' do
-      let(:worker_class_name) { 'missing_worker' }
-
-      it do
-        expect { worker_class }.to raise_error(NameError, 'wrong constant name missing_worker')
-      end
-    end
   end
 end

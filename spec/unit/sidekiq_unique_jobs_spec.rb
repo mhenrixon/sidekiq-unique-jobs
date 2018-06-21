@@ -8,7 +8,6 @@ RSpec.describe SidekiqUniqueJobs do
 
     it { is_expected.to be_a(Concurrent::MutableStruct::Config) }
     its(:default_lock_timeout)     { is_expected.to eq(0) }
-    its(:default_lock)             { is_expected.to eq(:while_executing) }
     its(:enabled)                  { is_expected.to eq(true) }
     its(:unique_prefix)            { is_expected.to eq('uniquejobs') }
   end
@@ -56,49 +55,6 @@ RSpec.describe SidekiqUniqueJobs do
       end
 
       it { is_expected.to eq(another_logger) }
-    end
-  end
-
-  describe '.worker_class_constantize' do
-    subject(:worker_class_constantize) { described_class.worker_class_constantize(worker_class) }
-
-    context 'when worker_class is nil' do
-      let(:worker_class) { nil }
-
-      it { is_expected.to eq(nil) }
-    end
-
-    context 'when worker_class is MyUniqueJob' do
-      let(:worker_class) { MyUniqueJob }
-
-      it { is_expected.to eq(MyUniqueJob) }
-    end
-
-    context 'when worker_class is MyUniqueJob' do
-      let(:worker_class) { 'UntilExecutedJob' }
-
-      it { is_expected.to eq(UntilExecutedJob) }
-    end
-
-    context 'when NameError is caught' do
-      let(:worker_class)  { 'UnknownConstant' }
-      let(:error_message) { 'this class does not exist' }
-
-      before do
-        allow(Object).to receive(:const_get)
-          .with(worker_class)
-          .and_raise(NameError, error_message)
-      end
-
-      it 'raises NameError' do
-        expect { worker_class_constantize }.to raise_error(NameError, error_message)
-      end
-
-      context 'when exception.message contains `uninitialized constant`' do
-        let(:error_message) { 'uninitialized constant' }
-
-        it { is_expected.to eq('UnknownConstant') }
-      end
     end
   end
 

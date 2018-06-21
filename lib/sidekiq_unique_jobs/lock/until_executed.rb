@@ -17,8 +17,10 @@ module SidekiqUniqueJobs
 
       private
 
+      attr_reader :operative
+
       def unlock_and_callback(callback)
-        return notify_about_manual_unlock unless @operative
+        return notify_about_manual_unlock unless operative
         unlock
 
         return notify_about_manual_unlock if locked?
@@ -26,7 +28,7 @@ module SidekiqUniqueJobs
       end
 
       def notify_about_manual_unlock
-        log_fatal("the unique_key: #{@item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
+        log_fatal("the unique_key: #{item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
       end
     end
   end

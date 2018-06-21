@@ -3,13 +3,21 @@
 module SidekiqUniqueJobs
   module Timeout
     class Calculator
+      include SidekiqUniqueJobs::SidekiqWorkerMethods
+      attr_reader :item
+
       def initialize(item)
-        @item = item
+        @item         = item
+        @worker_class = item[CLASS_KEY]
       end
 
       def time_until_scheduled
-        return 0 unless @item[AT_KEY]
-        @item[AT_KEY].to_i - Time.now.utc.to_i
+        return 0 unless scheduled_at
+        scheduled_at.to_i - Time.now.utc.to_i
+      end
+
+      def scheduled_at
+        @scheduled_at ||= item[AT_KEY]
       end
 
       def seconds
@@ -17,41 +25,24 @@ module SidekiqUniqueJobs
       end
 
       def lock_expiration
-        @lock_expiration ||= worker_class_lock_expiration
-        @lock_expiration = @item[LOCK_EXPIRATION_KEY] if @item.key?(LOCK_EXPIRATION_KEY)
-        @lock_expiration &&= @lock_expiration + time_until_scheduled
+        @lock_expiration ||= begin
+          expiration = item[LOCK_EXPIRATION_KEY]
+          expiration ||= worker_options[LOCK_EXPIRATION_KEY]
+          expiration && expiration + time_until_scheduled
+        end
       end
 
       def lock_timeout
-        @lock_timeout ||= @item[LOCK_TIMEOUT_KEY]
-        @lock_timeout ||= worker_class_lock_timeout
-        @lock_timeout ||= SidekiqUniqueJobs.config.default_lock_timeout
-        # @lock_timeout = @item[LOCK_TIMEOUT_KEY] if @item.key?(LOCK_TIMEOUT_KEY)
+        @lock_timeout = begin
+          timeout = default_worker_options[LOCK_TIMEOUT_KEY]
+          timeout = default_lock_timeout if default_lock_timeout
+          timeout = worker_options[LOCK_TIMEOUT_KEY] if worker_options.key?(LOCK_TIMEOUT_KEY)
+          timeout
+        end
       end
 
-      def worker_class_lock_timeout
-        worker_class_lock_expiration_for(LOCK_TIMEOUT_KEY)
-      end
-
-      def worker_class_queue_lock_expiration
-        worker_class_lock_expiration_for(QUEUE_LOCK_EXPIRATION_KEY)
-      end
-
-      def worker_class_run_lock_expiration
-        worker_class_lock_expiration_for(RUN_LOCK_EXPIRATION_KEY)
-      end
-
-      def worker_class_lock_expiration
-        worker_class_lock_expiration_for(LOCK_EXPIRATION_KEY)
-      end
-
-      def worker_class
-        @worker_class ||= SidekiqUniqueJobs.worker_class_constantize(@item[CLASS_KEY])
-      end
-
-      def worker_class_lock_expiration_for(key)
-        return unless worker_class.respond_to?(:get_sidekiq_options)
-        worker_class.get_sidekiq_options[key]
+      def default_lock_timeout
+        SidekiqUniqueJobs.config.default_lock_timeout
       end
     end
   end

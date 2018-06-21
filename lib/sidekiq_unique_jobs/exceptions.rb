@@ -8,6 +8,9 @@ module SidekiqUniqueJobs
   end
 
   class ScriptError < StandardError
+    def initialize(file_name:, source_exception:)
+      super("Problem compiling #{file_name}. Message: #{source_exception.message}")
+    end
   end
 
   class UniqueKeyMissing < ArgumentError

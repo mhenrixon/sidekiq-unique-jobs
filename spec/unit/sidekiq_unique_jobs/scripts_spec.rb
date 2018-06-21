@@ -24,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
     context 'when conn.evalsha raises Redis::CommandError' do
       before do
         call_count = 0
-        allow(described_class).to receive(:internal_call).with(script_name, nil, options) do
+        allow(described_class).to receive(:execute_script).with(script_name, nil, options) do
           call_count += 1
           (call_count == 1) ? raise(Redis::CommandError, error_message) : 1
         end
@@ -32,7 +32,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
 
       specify do
         expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
-        expect(described_class).to receive(:internal_call).with(script_name, nil, options).once
+        expect(described_class).to receive(:execute_script).with(script_name, nil, options).once
         expect { call }.to raise_error(
           SidekiqUniqueJobs::ScriptError,
           "Problem compiling #{script_name}. Message: Some interesting error",
@@ -44,7 +44,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
 
         specify do
           expect(described_class::SCRIPT_SHAS).to receive(:delete).with(script_name)
-          expect(described_class).to receive(:internal_call).with(script_name, nil, options).twice
+          expect(described_class).to receive(:execute_script).with(script_name, nil, options).twice
           expect { call }.not_to raise_error
         end
       end

@@ -3,15 +3,12 @@
 module SidekiqUniqueJobs
   module Server
     class Middleware
-      extend Forwardable
-      def_instance_delegator :@worker, :class, :worker_class
-
       include OptionsWithFallback
 
-      def call(worker, item, queue)
-        @worker     = worker
-        @item       = item
-        @queue      = queue
+      def call(worker_class, item, queue)
+        @worker_class = worker_class
+        @item         = item
+        @queue        = queue
         return yield if unique_disabled?
 
         lock.execute(after_unlock_hook) do
@@ -19,14 +16,12 @@ module SidekiqUniqueJobs
         end
       end
 
-      private
-
-      attr_reader :worker, :item
-
       protected
 
+      attr_reader :item
+
       def after_unlock_hook
-        -> { worker.after_unlock if worker.respond_to?(:after_unlock) }
+        -> { worker_class.after_unlock if worker_method_defined?(:after_unlock) }
       end
     end
   end

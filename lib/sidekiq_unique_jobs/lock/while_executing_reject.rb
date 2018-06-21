@@ -4,11 +4,11 @@ module SidekiqUniqueJobs
   class Lock
     class WhileExecutingReject < WhileExecuting
       def execute(callback)
-        token = @locksmith.wait(@item[LOCK_TIMEOUT_KEY])
+        token = locksmith.wait(item[LOCK_TIMEOUT_KEY])
         if token
           yield if block_given?
           callback&.call
-          @locksmith.signal(token)
+          locksmith.signal(token)
         else
           reject
         end
@@ -17,12 +17,12 @@ module SidekiqUniqueJobs
       # Private below here, keeping public due to testing reasons
 
       def reject
-        log_debug { "Rejecting job with jid: #{@item[JID_KEY]} already running" }
+        log_debug { "Rejecting job with jid: #{item[JID_KEY]} already running" }
         send_to_deadset
       end
 
       def send_to_deadset
-        log_info { "Adding dead #{@item[CLASS_KEY]} job #{@item[JID_KEY]}" }
+        log_info { "Adding dead #{item[CLASS_KEY]} job #{item[JID_KEY]}" }
 
         if deadset_kill?
           deadset_kill
@@ -74,7 +74,7 @@ module SidekiqUniqueJobs
       end
 
       def payload
-        @payload ||= Sidekiq.dump_json(@item)
+        @payload ||= Sidekiq.dump_json(item)
       end
     end
   end

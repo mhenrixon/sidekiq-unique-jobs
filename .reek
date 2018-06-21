@@ -10,15 +10,7 @@ DuplicateMethodCall:
   exclude:
   - SidekiqUniqueJobs::Locksmith#generate_unique_token
   - SidekiqUniqueJobs::Locksmith#create_expiring_mutex
-  - SidekiqUniqueJobs::OptionsWithFallback#lock_type_from
-  - SidekiqUniqueJobs::OptionsWithFallback#unique_lock
-  - SidekiqUniqueJobs::Scripts#handle_error
-  - SidekiqUniqueJobs::Scripts#internal_call
   - Sidekiq#self.use_options
-  - SidekiqUniqueJobs::Timeout::Calculator#time_until_scheduled
-  - SidekiqUniqueJobs::UniqueArgs#digestable_hash
-  - SidekiqUniqueJobs::UniqueArgs#filtered_args
-  - SidekiqUniqueJobs::UniqueArgs#unique_prefix
 IrresponsibleModule:
   exclude:
   - Sidekiq::Simulator
@@ -71,15 +63,10 @@ TooManyStatements:
   exclude:
   - initialize
   - Hash#slice!
-  - SidekiqUniqueJobs::Locksmith#lock
   - SidekiqUniqueJobs::Locksmith#create_expiring_mutex
   - SidekiqUniqueJobs::Middleware#configure_server_middleware
   - SidekiqUniqueJobs::Server::Middleware#call
-  - SidekiqUniqueJobs::UniqueArgs#digestable_hash
-  - SidekiqUniqueJobs::UniqueArgs#filter_by_proc
-  - SidekiqUniqueJobs::UniqueArgs#filter_by_symbol
   - SidekiqUniqueJobs::UniqueArgs#filtered_args
-  - SidekiqUniqueJobs::UniqueArgs#unique_args
   - SidekiqUniqueJobs::Util#del
 UncommunicativeVariableName:
   exclude:
@@ -98,22 +85,10 @@ ManualDispatch:
   - Hash#slice
   - Hash#slice!
   - SidekiqUniqueJobs::Lock::WhileExecutingReject#deadset_kill?
-  - SidekiqUniqueJobs::OptionsWithFallback#options
-  - SidekiqUniqueJobs::Server::Middleware#after_unlock_hook
-  - SidekiqUniqueJobs::Timeout::Calculator#worker_class_lock_expiration_for
-  - SidekiqUniqueJobs::UniqueArgs#filter_by_symbol
-  - SidekiqUniqueJobs::UniqueArgs#sidekiq_worker_class?
-  - SidekiqUniqueJobs::UniqueArgs#unique_args_method
+  - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
 PrimaDonnaMethod:
   exclude:
   - Array
-InstanceVariableAssumption:
-  exclude:
-  - SidekiqUniqueJobs::Lock::UntilExecuted
-  - SidekiqUniqueJobs::Lock::WhileExecuting
-  - SidekiqUniqueJobs::Lock::WhileExecutingReject
-  - SidekiqUniqueJobs::Lock::WhileExecutingRequeue
-  - SidekiqUniqueJobs::Timeout::Calculator
 NilCheck:
   enabled: false
 FeatureEnvy:

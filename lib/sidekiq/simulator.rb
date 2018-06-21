@@ -7,7 +7,6 @@ require 'sidekiq_unique_jobs/timeout'
 
 module Sidekiq
   class Simulator
-    extend Forwardable
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Timeout
 

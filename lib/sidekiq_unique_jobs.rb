@@ -8,6 +8,7 @@ require 'ostruct'
 require 'sidekiq_unique_jobs/version'
 require 'sidekiq_unique_jobs/constants'
 require 'sidekiq_unique_jobs/logging'
+require 'sidekiq_unique_jobs/sidekiq_worker_methods'
 require 'sidekiq_unique_jobs/connection'
 require 'sidekiq_unique_jobs/exceptions'
 require 'sidekiq_unique_jobs/util'
@@ -30,7 +31,6 @@ module SidekiqUniqueJobs
   Concurrent::MutableStruct.new(
     'Config',
     :default_lock_timeout,
-    :default_lock,
     :enabled,
     :unique_prefix,
     :logger,
@@ -40,15 +40,10 @@ module SidekiqUniqueJobs
     # Arguments here need to match the definition of the new class (see above)
     @config ||= Concurrent::MutableStruct::Config.new(
       0,
-      :while_executing,
       true,
       'uniquejobs',
       Sidekiq.logger,
     )
-  end
-
-  def default_lock
-    config.default_lock
   end
 
   def logger
@@ -75,22 +70,6 @@ module SidekiqUniqueJobs
       options.each do |key, val|
         config.send("#{key}=", val)
       end
-    end
-  end
-
-  # Attempt to constantize a string worker_class argument, always
-  # failing back to the original argument when the constant can't be found
-  #
-  # raises an error for other errors
-  def worker_class_constantize(worker_class)
-    return worker_class unless worker_class.is_a?(String)
-    Object.const_get(worker_class)
-  rescue NameError => ex
-    case ex.message
-    when /uninitialized constant/
-      worker_class
-    else
-      raise
     end
   end
 

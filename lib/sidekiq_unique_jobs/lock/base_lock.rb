@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
       end
 
       def lock
-        @locksmith.lock(@item[LOCK_TIMEOUT_KEY])
+        locksmith.lock(item[LOCK_TIMEOUT_KEY])
       end
 
       def execute(_callback = nil)
@@ -20,18 +20,20 @@ module SidekiqUniqueJobs
       end
 
       def unlock
-        @locksmith.unlock
+        locksmith.unlock
       end
 
       def delete
-        @locksmith.delete
+        locksmith.delete
       end
 
       def locked?
-        @locksmith.locked?
+        locksmith.locked?
       end
 
       private
+
+      attr_reader :item, :locksmith, :redis_pool
 
       def prepare_item(item)
         calculator = SidekiqUniqueJobs::Timeout::Calculator.new(item)

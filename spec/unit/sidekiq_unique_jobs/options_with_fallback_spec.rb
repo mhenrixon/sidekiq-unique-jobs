@@ -33,6 +33,67 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     }
   end
 
+  describe '#unique_enabled?' do
+    subject { options_with_fallback.unique_enabled? }
+
+    let(:options) { {} }
+    let(:item)    { {} }
+
+    it { is_expected.to eq(nil) }
+
+    context 'when options["unique"] is present' do
+      let(:options) { { 'unique' => 'while_executing' } }
+      let(:item)    { { 'unique' => 'until_executed' } }
+
+      it { is_expected.to eq('while_executing') }
+
+      context 'when SidekiqUniqueJobs.config.enabled = false' do
+        before { SidekiqUniqueJobs.config.enabled = false }
+
+        after  { SidekiqUniqueJobs.config.enabled = true }
+
+        it { is_expected.to eq(false) }
+      end
+    end
+
+    context 'when item["unique"] is present' do
+      let(:item) { { 'unique' => 'until_executed' } }
+
+      it { is_expected.to eq('until_executed') }
+
+      context 'when SidekiqUniqueJobs.config.enabled = false' do
+        before { SidekiqUniqueJobs.config.enabled = false }
+
+        after  { SidekiqUniqueJobs.config.enabled = true }
+
+        it { is_expected.to eq(false) }
+      end
+    end
+  end
+
+  describe '#unique_disabled?' do
+    subject { options_with_fallback.unique_disabled? }
+
+    let(:options) { {} }
+    let(:item)    { {} }
+
+    it { is_expected.to be_truthy }
+
+    context 'when options["unique"] is present' do
+      let(:options) { { 'unique' => 'while_executing' } }
+      let(:item)    { { 'unique' => 'until_executed' } }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context 'when item["unique"] is present' do
+      let(:options) { {} }
+      let(:item)    { { 'unique' => 'until_executed' } }
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
   describe '#log_duplicate_payload?' do
     subject(:log_duplicate_payload?) { options_with_fallback.log_duplicate_payload? }
 
@@ -91,105 +152,6 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
   end
 
-  describe '#unique_lock' do
-    subject(:unique_lock) { options_with_fallback.unique_lock }
-
-    context 'when options["unique"] is present' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to eq('while_executing') }
-
-      context 'when true' do
-        let(:options) { { 'unique' => true } }
-
-        it 'warns when unique is set to true' do
-          expect(options_with_fallback)
-            .to receive(:warn)
-            .with(
-              'unique: true is no longer valid. Please set it to the type of lock required like: ' \
-              '`unique: :until_executed`',
-            )
-
-          unique_lock
-        end
-      end
-    end
-
-    context 'when item["unique"] is present' do
-      let(:item) { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to eq('until_executed') }
-    end
-  end
-
-  describe '#unique_enabled?' do
-    subject { options_with_fallback.unique_enabled? }
-
-    let(:options) { {} }
-    let(:item)    { {} }
-
-    it { is_expected.to eq(nil) }
-
-    context 'when options["unique"] is present' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to eq('until_executed') }
-
-      context 'when SidekiqUniqueJobs.config.enabled = false' do
-        before { SidekiqUniqueJobs.config.enabled = false }
-
-        after  { SidekiqUniqueJobs.config.enabled = true }
-
-        it { is_expected.to eq(false) }
-      end
-    end
-
-    context 'when item["unique"] is present' do
-      let(:item) { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to eq('until_executed') }
-
-      context 'when true' do
-        let(:item) { { 'unique' => true } }
-
-        it { is_expected.to eq(true) }
-      end
-
-      context 'when SidekiqUniqueJobs.config.enabled = false' do
-        before { SidekiqUniqueJobs.config.enabled = false }
-
-        after  { SidekiqUniqueJobs.config.enabled = true }
-
-        it { is_expected.to eq(false) }
-      end
-    end
-  end
-
-  describe '#unique_disabled?' do
-    subject { options_with_fallback.unique_disabled? }
-
-    let(:options) { {} }
-    let(:item)    { {} }
-
-    it { is_expected.to be_truthy }
-
-    context 'when options["unique"] is present' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to be_falsey }
-    end
-
-    context 'when item["unique"] is present' do
-      let(:options) { {} }
-      let(:item)    { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to be_falsey }
-    end
-  end
-
   describe '#lock_type' do
     subject { options_with_fallback.lock_type }
 
@@ -200,25 +162,11 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       it { is_expected.to eq('while_executing') }
     end
 
-    context 'when options["unique"] is true' do
-      let(:options) { { 'unique' => true } }
-      let(:item)    { { 'unique' => 'until_executed' } }
-
-      it { is_expected.to eq('until_executed') }
-    end
-
     context 'when item["unique"] is until_executed' do
       let(:options) { {} }
       let(:item)    { { 'unique' => 'until_executed' } }
 
       it { is_expected.to eq('until_executed') }
-    end
-
-    context 'when item["unique"] is true' do
-      let(:options) { { 'unique' => true } }
-      let(:item)    { { 'unique' => true } }
-
-      it { is_expected.to eq(nil) }
     end
   end
 
