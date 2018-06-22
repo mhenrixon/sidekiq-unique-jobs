@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::Lock::UntilTimeout do
+RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   include_context 'with a stubbed locksmith'
 
   let(:item) do
     { 'jid' => 'maaaahjid',
-      'class' => 'UntilTimeoutJob',
+      'class' => 'UntilExpiredJob',
       'unique' => 'until_timeout' }
   end
   let(:empty_callback) { -> {} }

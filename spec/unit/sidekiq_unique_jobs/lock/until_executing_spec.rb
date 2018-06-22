@@ -7,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
 
   let(:item) do
     { 'jid' => 'maaaahjid',
-      'class' => 'UntilTimeoutJob',
+      'class' => 'UntilExpiredJob',
       'unique' => 'until_timeout' }
   end
   let(:empty_callback) { -> {} }

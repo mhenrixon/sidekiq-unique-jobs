@@ -31,7 +31,7 @@ IrresponsibleModule:
   - SidekiqUniqueJobs::Lock::UntilAndWhileExecuting
   - SidekiqUniqueJobs::Lock::UntilExecuted
   - SidekiqUniqueJobs::Lock::UntilExecuting
-  - SidekiqUniqueJobs::Lock::UntilTimeout
+  - SidekiqUniqueJobs::Lock::UntilExpired
   - SidekiqUniqueJobs::Lock::WhileExecuting
   - SidekiqUniqueJobs::Lock::WhileExecutingReject
   - SidekiqUniqueJobs::Lock::WhileExecutingRequeue

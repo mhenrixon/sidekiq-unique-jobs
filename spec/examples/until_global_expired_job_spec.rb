@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-RSpec.describe UntilGlobalTimeoutJob do
+RSpec.describe UntilGlobalExpiredJob do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
         'retry'  => true,
-        'unique' => :until_timeout,
+        'unique' => :until_expired,
       }
     end
   end
