@@ -46,58 +46,37 @@ Sidekiq consists of a client and a server. The client is responsible for pushing
 
 #### Lock Expiration
 
-This is the a number in seconds that the lock should be considered unique for. By default the lock doesn't expire at all. 
+This is probably not the configuration option you want... 
 
-If you want to experiment with various expirations please provide the following argument: 
+Since the client and the server are disconnected and not running inside the same process, setting a lock expiration is probably not what you want. Any keys that are used by this gem WILL be removed at the time of the expiration. For jobs that are scheduled in the future the key will expire when that job is scheduled + whatever expiration you have set.
+
+In previous versions there was a default expiration of 30 minutes which didn't work for a lot of long running jobs. Since version 6 there will be no expiration of any jobs from the default configuration. Please don't use `lock_expiration` unless you really know what you are doing.
 
 ```ruby
-sidekiq_options lock_expiration: (2 * 60) # 2 minutes
+sidekiq_options lock_expiration: nil # default - don't expire keys
+sidekiq_options lock_expiration: 20.days # expire this lock in 20 days
 ```
 
 #### Lock Timeout
 
-This is the timeout (how long to wait) for creating the lock. By default we don't use a timeout so we won't wait for the lock to be created. If you want it is possible to set this like below.
+This is the timeout (how long to wait) when creating the lock. By default we don't use a timeout so we won't wait for the lock to be created. If you want it is possible to set this like below.
 
 ```ruby
-sidekiq_options lock_timeout: 5 # 5 seconds
+sidekiq_options lock_timeout: 0 # default - don't wait at all
+sidekiq_options lock_timeout: 5 # wait 5 seconds
+sidekiq_options lock_timeout: nil # lock indefinitely, this process won't continue until it gets a lock. VERY DANGEROUS!!
 ```
 
 #### Lock Concurrency
 
-Allowed number of processes to use the same lock
+Allowed number of processes to use the same lock. If more than 1 process is allowed to execute a lock it will. Careful with this one.
 
 ```ruby
-sidekiq_options lock_concurrency: 2 # Use 2 locks
+sidekiq_options lock_concurrency: 1 # default -
+sidekiq_options lock_concurrency: 5 # Allow 5 processes to use the same lock
 ```
 
 #### 
-
-### While Executing
-
-With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It *looks* like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
-
-```ruby
-sidekiq_options unique: :while_executing
-```
-
-There is an example of this to try it out in the `rails_example` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
-
-In the console you should see something like:
-
-```
-0:32:24 worker.1 | 2017-04-23T08:32:24.955Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 INFO: start
-10:32:24 worker.1 | 2017-04-23T08:32:24.956Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 INFO: start
-10:32:24 worker.1 | 2017-04-23T08:32:24.957Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 INFO: start
-10:32:24 worker.1 | 2017-04-23T08:32:24.959Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: start
-10:32:24 worker.1 | 2017-04-23T08:32:24.959Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 WhileExecutingWorker INFO: perform(1, 2)
-10:32:34 worker.1 | 2017-04-23T08:32:34.964Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 INFO: done: 10.009 sec
-10:32:34 worker.1 | 2017-04-23T08:32:34.965Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 WhileExecutingWorker INFO: perform(1, 2)
-10:32:44 worker.1 | 2017-04-23T08:32:44.965Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 WhileExecutingWorker INFO: perform(1, 2)
-10:32:44 worker.1 | 2017-04-23T08:32:44.965Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 INFO: done: 20.009 sec
-10:32:54 worker.1 | 2017-04-23T08:32:54.970Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f WhileExecutingWorker INFO: perform(1, 2)
-10:32:54 worker.1 | 2017-04-23T08:32:54.969Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 INFO: done: 30.012 sec
-10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
-```
 
 ### Until Executing
 
@@ -123,16 +102,48 @@ sidekiq_options unique: :until_executed
 Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached. 
 
 ```ruby
-sidekiq_options unique: :until_timeout
+sidekiq_options unique: :until_expired
 ```
 
 ### Unique Until And While Executing
 
-Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. 
+Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. As soon as the server starts processing a job, the client can push the same job to the queue.
 
 ```ruby
 sidekiq_options unique: :until_and_while_executing
 ```
+
+### While Executing
+
+With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It *looks* like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
+
+#### NOTE:
+
+Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
+
+```ruby
+sidekiq_options unique: :while_executing, lock_timeout: nil
+```
+
+There is an example of this to try it out in the `rails_example` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
+
+In the console you should see something like:
+
+```
+0:32:24 worker.1 | 2017-04-23T08:32:24.955Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 INFO: start
+10:32:24 worker.1 | 2017-04-23T08:32:24.956Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 INFO: start
+10:32:24 worker.1 | 2017-04-23T08:32:24.957Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 INFO: start
+10:32:24 worker.1 | 2017-04-23T08:32:24.959Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: start
+10:32:24 worker.1 | 2017-04-23T08:32:24.959Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 WhileExecutingWorker INFO: perform(1, 2)
+10:32:34 worker.1 | 2017-04-23T08:32:34.964Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 INFO: done: 10.009 sec
+10:32:34 worker.1 | 2017-04-23T08:32:34.965Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 WhileExecutingWorker INFO: perform(1, 2)
+10:32:44 worker.1 | 2017-04-23T08:32:44.965Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 WhileExecutingWorker INFO: perform(1, 2)
+10:32:44 worker.1 | 2017-04-23T08:32:44.965Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 INFO: done: 20.009 sec
+10:32:54 worker.1 | 2017-04-23T08:32:54.970Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f WhileExecutingWorker INFO: perform(1, 2)
+10:32:54 worker.1 | 2017-04-23T08:32:54.969Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 INFO: done: 30.012 sec
+10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
+```
+
 
 ### Uniqueness Scope
 
@@ -154,12 +165,12 @@ should be unique. The job will be unique for the number of seconds configured (d
 or until the job has been completed. Thus, the job will be unique for the shorter of the two.  Note that Sidekiq versions before 3.0 will remove job keys after an hour, which means jobs can remain unique for at most an hour.
 
 If you want the unique job to stick around even after it has been successfully
-processed then just set `unique: :until_timeout`.
+processed then just set `unique: :until_expired`.
 
 You can also control the `lock_expiration` of the uniqueness check. If you want to enforce uniqueness over a longer period than the default of 30 minutes then you can pass the number of seconds you want to use to the sidekiq options:
 
 ```ruby
-sidekiq_options unique: :until_timeout, lock_expiration: 120 * 60 # 2 hours
+sidekiq_options unique: :until_expired, lock_expiration: 120 * 60 # 2 hours
 ```
 
 For locking modes (`:while_executing` and `:until_and_while_executing`) you can control the expiration length of the runtime uniqueness. If you want to enforce uniqueness over a longer period than the default of 60 seconds, then you can pass the number of seconds you want to use to the sidekiq options:

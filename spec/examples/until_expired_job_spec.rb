@@ -2,14 +2,13 @@
 
 require 'spec_helper'
 
-RSpec.describe UntilTimeoutJob do
+RSpec.describe UntilExpiredJob do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
         'lock_expiration' => 600,
-        'lock_timeout'    => 10,
         'retry'           => true,
-        'unique'          => :until_timeout,
+        'unique'          => :until_expired,
       }
     end
   end

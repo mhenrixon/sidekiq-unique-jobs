@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
       until_executed:            SidekiqUniqueJobs::Lock::UntilExecuted,
       until_executing:           SidekiqUniqueJobs::Lock::UntilExecuting,
-      until_timeout:             SidekiqUniqueJobs::Lock::UntilTimeout,
+      until_expired:             SidekiqUniqueJobs::Lock::UntilExpired,
       while_executing:           SidekiqUniqueJobs::Lock::WhileExecuting,
       while_executing_reject:    SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze

@@ -2,7 +2,7 @@
 
 module SidekiqUniqueJobs
   class Lock
-    class UntilTimeout < BaseLock
+    class UntilExpired < BaseLock
       def unlock
         true
       end

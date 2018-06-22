@@ -2,9 +2,9 @@
 
 # :nocov:
 
-class UntilTimeoutJob
+class UntilExpiredJob
   include Sidekiq::Worker
-  sidekiq_options unique: :until_timeout, lock_expiration: 10 * 60, lock_timeout: 10
+  sidekiq_options unique: :until_expired, lock_expiration: 10 * 60
 
   def perform(one)
     TestClass.run(one)
