@@ -45,10 +45,13 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
 
       before do
         allow(lock).to receive(:locked?).and_return(locked?)
+        allow(lock).to receive(:unlock).and_return(true)
+        allow(lock).to receive(:delete).and_return(true)
       end
 
       it 'raises "HELL"' do
         expect(lock).to receive(:unlock).and_return(true)
+        expect(lock).to receive(:delete).and_return(true)
 
         expect { execute }.to raise_error('HELL')
       end

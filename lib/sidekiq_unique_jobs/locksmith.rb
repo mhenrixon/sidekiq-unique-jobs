@@ -20,26 +20,31 @@ module SidekiqUniqueJobs
     def create
       Scripts.call(
         :create,
-        @redis_pool,
+        redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [EXISTS_TOKEN, @expiration, API_VERSION, @concurrency],
+        argv: [EXISTS_TOKEN, expiration, API_VERSION, concurrency],
       )
     end
 
     def exists?
-      redis(@redis_pool) { |conn| conn.exists(exists_key) }
+      redis(redis_pool) { |conn| conn.exists(exists_key) }
     end
 
     def available_count
-      return @concurrency unless exists?
+      return concurrency unless exists?
 
-      redis(@redis_pool) { |conn| conn.llen(available_key) }
+      redis(redis_pool) { |conn| conn.llen(available_key) }
     end
 
     def delete
+      return unless expiration.nil?
+      delete!
+    end
+
+    def delete!
       Scripts.call(
         :delete,
-        @redis_pool,
+        redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
       )
     end
@@ -57,14 +62,14 @@ module SidekiqUniqueJobs
 
     def unlock
       return false unless locked?
-      signal(@tokens.pop)
+      signal(tokens.pop)
     end
 
     def locked?(token = nil)
       if token
-        redis(@redis_pool) { |conn| conn.hexists(grabbed_key, token) }
+        redis(redis_pool) { |conn| conn.hexists(grabbed_key, token) }
       else
-        @tokens.each do |my_token|
+        tokens.each do |my_token|
           return true if locked?(my_token)
         end
 
@@ -77,9 +82,9 @@ module SidekiqUniqueJobs
 
       Scripts.call(
         :signal,
-        @redis_pool,
+        redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [token, @expiration],
+        argv: [token, expiration],
       )
     end
 
@@ -96,12 +101,14 @@ module SidekiqUniqueJobs
 
     private
 
+    attr_reader :redis_pool, :tokens, :stale_client_timeout, :concurrency, :digest, :expiration
+
     def redis_version_greater_than_or_equal_to?(allowed_version)
       Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new(allowed_version)
     end
 
     def grab_token(timeout = nil)
-      redis(@redis_pool) do |conn|
+      redis(redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
           # passing timeout 0 to blpop causes it to block
           _key, token = conn.blpop(available_key, timeout || 0)
@@ -114,8 +121,8 @@ module SidekiqUniqueJobs
     end
 
     def touch_grabbed_token(token)
-      @tokens.push(token)
-      redis(@redis_pool) { |conn| conn.hset(grabbed_key, token, current_time.to_f) }
+      tokens.push(token)
+      redis(redis_pool) { |conn| conn.hset(grabbed_key, token, current_time.to_f) }
     end
 
     def return_token_or_block_value(token)
@@ -131,14 +138,14 @@ module SidekiqUniqueJobs
     def release_stale_locks_lua
       Scripts.call(
         :release_stale_locks,
-        @redis_pool,
+        redis_pool,
         keys:  [exists_key, grabbed_key, available_key, release_key],
-        argv: [EXPIRES_IN, @stale_client_timeout, @expiration],
+        argv: [EXPIRES_IN, @stale_client_timeout, expiration],
       )
     end
 
     def release_stale_locks_ruby
-      redis(@redis_pool) do |conn|
+      redis(redis_pool) do |conn|
         create_expiring_mutex(conn) do
           release_grabbed_tokens(conn)
         end
@@ -193,7 +200,7 @@ module SidekiqUniqueJobs
     end
 
     def namespaced_key(variable)
-      "#{@digest}:#{variable}"
+      "#{digest}:#{variable}"
     end
 
     def current_time
@@ -206,7 +213,7 @@ module SidekiqUniqueJobs
     end
 
     def all_tokens
-      redis(@redis_pool) do |conn|
+      redis(redis_pool) do |conn|
         conn.multi do
           conn.lrange(available_key, 0, -1)
           conn.hkeys(grabbed_key)

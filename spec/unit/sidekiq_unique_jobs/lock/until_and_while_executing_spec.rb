@@ -22,7 +22,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
     end
 
     it 'unlocks the unique key before yielding' do
-      allow(lock).to receive(:unlock).and_return(true)
+      allow(lock).to receive(:delete).and_return(true)
 
       inside_block_value = false
       expect(runtime_lock).to receive(:execute).with(callback).and_yield

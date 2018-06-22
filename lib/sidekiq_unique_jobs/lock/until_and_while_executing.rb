@@ -4,8 +4,7 @@ module SidekiqUniqueJobs
   class Lock
     class UntilAndWhileExecuting < BaseLock
       def execute(callback)
-        unlock
-
+        delete
         runtime_lock.execute(callback) do
           yield if block_given?
         end

@@ -8,6 +8,7 @@ module SidekiqUniqueJobs
   LOCK_CONCURRENCY_KEY ||= 'lock_concurrency'
   LOCK_EXPIRATION_KEY ||= 'lock_expiration'
   LOCK_TIMEOUT_KEY ||= 'lock_timeout'
+  LOCK_TOKEN_KEY ||= 'lock_token'
   LOG_DUPLICATE_KEY ||= 'log_duplicate_payload'
   QUEUE_KEY ||= 'queue'
   RESCHEDULE_KEY ||= 'reschedule'

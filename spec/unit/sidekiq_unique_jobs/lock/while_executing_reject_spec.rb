@@ -29,27 +29,19 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
   describe '#execute' do
     subject(:execute) { lock.execute(empty_callback) }
 
+    let(:token) { nil }
+
     before do
-      allow(locksmith).to receive(:wait).with(0).and_return(token)
-      allow(locksmith).to receive(:signal).with(token)
+      allow(locksmith).to receive(:lock).with(0).and_return(token)
+      allow(lock).to receive(:using_protection).with(empty_callback).and_yield
     end
 
-    context 'when lock is successful' do
-      let(:token) { 'a' }
+    context 'when lock succeeds' do
+      let(:token) { 'a token' }
 
-      it 'yields control to the caller' do
-        allow(locksmith).to receive(:wait).with(0).and_return(token)
-        expect { |block| lock.execute(empty_callback, &block) }.to yield_control
-      end
-
-      it 'unlocks properly' do
-        expect(locksmith).to receive(:signal).with(token)
+      it 'processes the job' do
         execute
-      end
-
-      it 'calls the callback' do
-        expect(empty_callback).to receive(:call)
-        execute
+        expect(lock).to have_received(:using_protection)
       end
     end
 
@@ -59,6 +51,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
       it 'rejects the job' do
         expect(lock).to receive(:reject)
         execute
+
+        expect(lock).not_to have_received(:using_protection)
       end
     end
   end

@@ -82,11 +82,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(block_value).to eq(42)
     end
 
-    it 'disappears without a trace when calling `delete`' do
+    it 'disappears without a trace when calling `delete!`' do
       original_key_size = keys.size
 
       locksmith.create
-      locksmith.delete
+      locksmith.delete!
 
       expect(keys.size).to eq(original_key_size)
     end

@@ -18,9 +18,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
   describe '#execute' do
     let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_copy) }
     let(:item_copy) do
-      copy = lock.instance_variable_get(:@item).dup
-      copy[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] &&= "#{copy[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY]}:RUN"
-      copy
+      lock.instance_variable_get(:@item).dup
     end
 
     before do
@@ -35,15 +33,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       allow(callback).to receive(:call)
 
       lock.execute(callback) do
-        expect(lock.locked?).to eq(false)
-
-        expect(unique_keys.size).to eq(3)
-
         10.times { Sidekiq::Client.push(item) }
 
         expect(unique_keys.size).to eq(3)
       end
 
+      expect(lock.locked?).to eq(false)
+      expect(unique_keys.size).to eq(0)
+      expect(runtime_lock.locked?).to eq(false)
       expect(callback).to have_received(:call)
     end
   end

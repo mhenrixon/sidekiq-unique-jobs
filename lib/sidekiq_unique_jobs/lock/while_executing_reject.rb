@@ -4,13 +4,10 @@ module SidekiqUniqueJobs
   class Lock
     class WhileExecutingReject < WhileExecuting
       def execute(callback)
-        token = locksmith.wait(item[LOCK_TIMEOUT_KEY])
-        if token
+        return reject unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
+
+        using_protection(callback) do
           yield if block_given?
-          callback&.call
-          locksmith.signal(token)
-        else
-          reject
         end
       end
 
