@@ -152,19 +152,32 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.available_count).to eq(1)
     end
 
-    # TODO: This spec is flaky and should be improved to not use sleeps
-    it 'can have stale locks released by a third process', :retry do
-      watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
-      locksmith.lock
+    shared_examples 'can release stale clients' do
+      # TODO: This spec is flaky and should be improved to not use sleeps
+      it 'can have stale locks released by a third process', :retry do
+        watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 0.5))
+        locksmith.lock
 
-      sleep 0.3
-      watchdog.release
-      expect(locksmith.locked?).to eq(true)
+        watchdog.release_stale_locks
+        expect(locksmith.locked?).to eq(true)
 
-      sleep 0.8
-      watchdog.release
+        sleep 0.6
+        watchdog.release_stale_locks
 
-      expect(locksmith.locked?).to eq(false)
+        expect(locksmith.locked?).to eq(false)
+      end
+    end
+
+    context 'when redis version < 3.2', redis_ver: '<= 3.2' do
+      before { allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.1') }
+
+      it_behaves_like 'can release stale clients'
+    end
+
+    context 'when redis version >= 3.2' do
+      before { allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2') }
+
+      it_behaves_like 'can release stale clients'
     end
   end
 
