@@ -1,15 +1,5 @@
 # frozen_string_literal: true
 
-RSpec.shared_context 'with a stubbed locksmith' do
-  let(:lock)       { described_class.new(item) }
-  let(:locksmith)  { instance_double(SidekiqUniqueJobs::Locksmith) }
-  let(:redis_pool) { nil }
-
-  before do
-    allow(SidekiqUniqueJobs::Locksmith).to receive(:new).with(item, redis_pool).and_return(locksmith)
-  end
-end
-
 RSpec.shared_examples 'a performing worker' do |splat_arguments: true|
   let(:worker_instance) { instance_spy(described_class) }
 
@@ -33,10 +23,4 @@ RSpec.shared_examples 'a performing worker' do |splat_arguments: true|
       end
     end
   end
-end
-
-RSpec.shared_examples 'sidekiq with options' do
-  subject(:sidekiq_options) { described_class.get_sidekiq_options }
-
-  it { is_expected.to match(a_hash_including(options)) }
 end
