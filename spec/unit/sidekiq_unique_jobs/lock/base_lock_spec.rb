@@ -4,6 +4,7 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   include_context 'with a stubbed locksmith'
+
   let(:item) do
     {
       'jid' => 'maaaahjid',
@@ -15,9 +16,30 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   end
 
   describe '#lock' do
-    it do
-      expect(locksmith).to receive(:lock).with(kind_of(Integer)).and_return('token')
-      expect(lock.lock).to eq('token')
+    subject(:lock_lock) { lock.lock }
+
+    before do
+      allow(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(token)
+    end
+
+    context 'when a token is retrieved' do
+      let(:token) { 'token' }
+
+      it { is_expected.to eq('token') }
+
+      it do
+        expect { lock_lock }.to change { item['lock_token'] }.to('token')
+      end
+    end
+
+    context 'when token is not retrieved' do
+      let(:token) { nil }
+
+      it { is_expected.to eq(nil) }
+      it do
+        item['lock_token'] = 'unchangeable'
+        expect { lock_lock }.not_to change { item['lock_token'] }.from('unchangeable')
+      end
     end
   end
 
@@ -32,8 +54,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     let(:token) { 'another-token' }
 
     before do
-      allow(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(token)
-      lock.lock
+      item['lock_token'] = token
     end
 
     it do

@@ -4,7 +4,7 @@ require 'sidekiq/testing'
 
 require_relative 'version_check'
 
-RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
+RSpec.configure do |config|
   config.before(:each, redis: :mock_redis) do
     require 'mock_redis'
     mock_redis = MockRedis.new

@@ -64,24 +64,14 @@ module SidekiqUniqueJobs
         callback_safely(callback)
       end
 
-      def callback_and_unlock(callback)
-        return notify_about_manual_unlock unless operative
-        callback_safely(callback)
-
-        unlock
-        delete
-        notify_about_manual_unlock if locked?
-      end
-
       def notify_about_manual_unlock
         log_fatal("the unique_key: #{item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
       end
 
       def callback_safely(callback)
         callback.call
-      rescue StandardError => exception
+      rescue StandardError
         log_warn("the callback for unique_key: #{item[UNIQUE_DIGEST_KEY]} failed!")
-        log_error(exception)
         raise
       end
     end
