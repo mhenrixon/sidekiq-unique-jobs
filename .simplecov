@@ -1,7 +1,7 @@
 require 'simplecov-json'
 
 SimpleCov.command_name 'RSpec'
-SimpleCov.refuse_coverage_drop
+# SimpleCov.refuse_coverage_drop
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
   SimpleCov::Formatter::JSONFormatter,
