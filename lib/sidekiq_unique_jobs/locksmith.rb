@@ -8,7 +8,7 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
 
     def initialize(item, redis_pool = nil)
-      @concurrency          = 1
+      @concurrency          = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @digest               = item[UNIQUE_DIGEST_KEY]
       @expiration           = item[LOCK_EXPIRATION_KEY]
       @jid                  = item[JID_KEY]

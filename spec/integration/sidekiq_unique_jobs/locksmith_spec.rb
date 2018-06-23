@@ -43,8 +43,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.locked?).to eq(false)
     end
 
-    # TODO: Flaky
-    it 'does not lock twice as a mutex', :retry do
+    it 'does not lock twice as a mutex' do
       expect(locksmith.lock(1)).to be_truthy
       expect(locksmith.lock(1)).to eq(nil)
     end
@@ -152,6 +151,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.available_count).to eq(1)
     end
 
+    # stale clients and concurrency removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
     # shared_examples 'can release stale clients' do
     #   # TODO: This spec is flaky and should be improved to not use sleeps
     #   it 'can have stale locks released by a third process', :retry do
