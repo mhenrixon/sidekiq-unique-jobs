@@ -29,7 +29,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
       context 'when lock is not locked?' do
         let(:block)   { -> { raise 'HELL' } }
         let(:locked?) { nil }
-        let(:locked?) { false }
 
         it 'calls back' do
           expect { execute }.to raise_error('HELL')
