@@ -19,12 +19,12 @@ else
   redis.call('DEL', grabbed_key)
   redis.call('DEL', available_key)
 
-  if concurrency then
+  if concurrency and concurrency > 1 then
     for index = 1, concurrency do
       redis.call('RPUSH', available_key, index)
     end
   else
-    redis.call('RPUSH', available_key, 1)
+    redis.call('RPUSH', available_key, exists_token)
   end
   redis.call('GETSET', version_key, api_version)
   redis.call('PERSIST', exists_key)

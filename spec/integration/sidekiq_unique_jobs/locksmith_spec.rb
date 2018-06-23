@@ -107,6 +107,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith.lock(0) do
         expect(locksmith.locked?).to be true
       end
+      expect(locksmith.locked?).to eq false
     end
   end
 

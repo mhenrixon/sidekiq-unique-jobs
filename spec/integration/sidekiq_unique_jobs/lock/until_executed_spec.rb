@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
   include SidekiqHelpers
 
   let(:client_lock_one) { described_class.new(item_one) }
@@ -34,23 +34,31 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
   end
 
   describe '#execute' do
-    context 'when job is executing' do
-      it 'moves subsequent jobs to dead queue' do
-        expect(client_lock_one.lock).to eq(true)
-        expect(client_lock_one.locked?).to eq(false)
+    it 'locks until execute is completed' do
+      expect(client_lock_one.lock).to eq(jid_one)
+      expect(client_lock_one.locked?).to eq(true)
+      expect(server_lock_one.locked?).to eq(true)
 
-        server_lock_one.execute(callback) do
-          expect(server_lock_one.locked?).to eq(true)
-          expect(client_lock_one.locked?).to eq(true) # same jid as server_lock_one
+      server_lock_one.execute(callback) do
+        expect(server_lock_one.locked?).to eq(true)
+        expect(client_lock_one.locked?).to eq(true) # same jid as server_lock_one
 
-          expect(server_lock_two.locked?).to eq(false)
-          expect(dead_count).to eq(0)
-          expect { server_lock_two.execute(callback) {} }
-            .to change { dead_count }.from(0).to(1)
+        expect(server_lock_two.locked?).to eq(false)
+        expect(client_lock_two.locked?).to eq(false)
 
-          expect(client_lock_one.lock).to eq(true)
+        expect(client_lock_two.lock).to eq(nil)
+        expect(server_lock_two.lock).to eq(nil)
+
+        unset = true
+        server_lock_two.execute(callback) do
+          unset = false
         end
+
+        expect(unset).to eq(true)
       end
+
+      expect(client_lock_one.locked?).to eq(false)
+      expect(server_lock_one.locked?).to eq(false)
     end
   end
 end

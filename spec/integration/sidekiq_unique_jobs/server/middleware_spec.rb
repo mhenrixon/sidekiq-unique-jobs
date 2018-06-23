@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
         item = Sidekiq::Queue.new(queue).find_job(jid).item
 
         exists_key = 'uniquejobs:7f28fc7bce5b2f7ea9895080e9b2d282:EXISTS'
-        expect(get_key(exists_key)).to eq('1')
+        expect(get_key(exists_key)).to eq(jid)
         set_key(exists_key, 'NOT_DELETED')
 
         middleware.call(UntilExecutedJob.new, item, queue) do

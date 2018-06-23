@@ -23,23 +23,15 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     end
 
     context 'when a token is retrieved' do
-      let(:token) { 'token' }
+      let(:token) { 'another jid' }
 
-      it { is_expected.to eq('token') }
-
-      it do
-        expect { lock_lock }.to change { item['lock_token'] }.to('token')
-      end
+      it { is_expected.to eq('another jid') }
     end
 
     context 'when token is not retrieved' do
       let(:token) { nil }
 
       it { is_expected.to eq(nil) }
-      it do
-        item['lock_token'] = 'unchangeable'
-        expect { lock_lock }.not_to change { item['lock_token'] }.from('unchangeable')
-      end
     end
   end
 
@@ -51,14 +43,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   end
 
   describe '#unlock' do
-    let(:token) { 'another-token' }
-
-    before do
-      item['lock_token'] = token
-    end
-
     it do
-      allow(locksmith).to receive(:signal).with(token).and_return('unlocked')
+      allow(locksmith).to receive(:signal).with(item['jid']).and_return('unlocked')
 
       expect(lock.unlock).to eq('unlocked')
     end

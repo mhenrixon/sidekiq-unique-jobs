@@ -9,12 +9,13 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
 
     def initialize(item, redis_pool = nil)
-      @redis_pool           = redis_pool
-      @tokens               = []
-      @stale_client_timeout = item[STALE_CLIENT_TIMEOUT_KEY]
       @concurrency          = item[LOCK_CONCURRENCY_KEY] || 1
       @digest               = item[UNIQUE_DIGEST_KEY]
       @expiration           = item[LOCK_EXPIRATION_KEY]
+      @jid                  = item[JID_KEY]
+      @redis_pool           = redis_pool
+      @stale_client_timeout = item[STALE_CLIENT_TIMEOUT_KEY]
+      @tokens               = []
     end
 
     def create
@@ -22,7 +23,7 @@ module SidekiqUniqueJobs
         :create,
         redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key],
-        argv: [EXISTS_TOKEN, expiration, API_VERSION, concurrency],
+        argv: [jid, expiration, API_VERSION, concurrency],
       )
     end
 
@@ -77,7 +78,7 @@ module SidekiqUniqueJobs
       end
     end
 
-    def signal(token = nil)
+    def signal(token = jid)
       token ||= generate_unique_token
 
       Scripts.call(
@@ -101,7 +102,7 @@ module SidekiqUniqueJobs
 
     private
 
-    attr_reader :redis_pool, :tokens, :stale_client_timeout, :concurrency, :digest, :expiration
+    attr_reader :concurrency, :digest, :expiration, :jid, :redis_pool, :stale_client_timeout, :tokens
 
     def redis_version_greater_than_or_equal_to?(allowed_version)
       Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new(allowed_version)
@@ -116,7 +117,7 @@ module SidekiqUniqueJobs
           token = conn.lpop(available_key)
         end
 
-        yield token if token
+        yield token if token == jid
       end
     end
 

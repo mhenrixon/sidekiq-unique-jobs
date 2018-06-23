@@ -4,14 +4,16 @@ module SidekiqUniqueJobs
   class Lock
     class UntilAndWhileExecuting < BaseLock
       def execute(callback)
-        delete
-        runtime_lock.execute(callback) do
+        return unless locked?
+
+        delete!
+        server_lock.execute(callback) do
           yield if block_given?
         end
       end
 
-      def runtime_lock
-        @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, redis_pool)
+      def server_lock
+        @server_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, redis_pool)
       end
     end
   end

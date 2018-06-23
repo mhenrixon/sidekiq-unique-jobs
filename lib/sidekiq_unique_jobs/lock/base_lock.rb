@@ -13,8 +13,7 @@ module SidekiqUniqueJobs
 
       def lock
         # Write the token to the job hash so that we can later release this specific token
-        token = locksmith.lock(item[LOCK_TIMEOUT_KEY])
-        item[LOCK_TOKEN_KEY] = token if token
+        locksmith.lock(item[LOCK_TIMEOUT_KEY])
       end
 
       def execute(_callback = nil)
@@ -22,15 +21,19 @@ module SidekiqUniqueJobs
       end
 
       def unlock
-        locksmith.signal(item[LOCK_TOKEN_KEY]) # Only signal to release the lock
+        locksmith.signal(item[JID_KEY]) # Only signal to release the lock
       end
 
       def delete
         locksmith.delete # Soft delete (don't forcefully remove when expiration is set)
       end
 
+      def delete!
+        locksmith.delete! # Force delete the lock
+      end
+
       def locked?
-        locksmith.locked?
+        locksmith.locked?(item[JID_KEY])
       end
 
       private

@@ -6,6 +6,7 @@ module SidekiqUniqueJobs
       OK ||= 'OK'
 
       def execute(callback)
+        return unless locked?
         using_protection(callback) do
           yield if block_given?
         end

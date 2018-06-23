@@ -14,6 +14,40 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
   end
 
   describe '#execute' do
-    it_behaves_like 'an executing lock with error handling'
+    it_behaves_like 'an executing lock with error handling' do
+      context 'when not initially locked?' do
+        let(:initially_locked?) { false }
+
+        it 'returns without yielding' do
+          execute
+
+          expect(empty_callback).not_to have_received(:call)
+          expect(block).not_to have_received(:call)
+        end
+      end
+
+      context 'when lock is not locked?' do
+        let(:block)   { -> { raise 'HELL' } }
+        let(:locked?) { nil }
+        let(:locked?) { false }
+
+        it 'calls back' do
+          expect { execute }.to raise_error('HELL')
+
+          expect(empty_callback).to have_received(:call)
+        end
+      end
+
+      context 'when callback raises error' do
+        let(:empty_callback) { -> { raise 'CallbackError' } }
+        let(:locked?)        { false }
+
+        it 'logs a warning' do
+          expect { execute }.to raise_error('CallbackError')
+
+          expect(lock).to have_received(:log_warn).with("the callback for unique_key: #{item['unique_digest']} failed!")
+        end
+      end
+    end
   end
 end

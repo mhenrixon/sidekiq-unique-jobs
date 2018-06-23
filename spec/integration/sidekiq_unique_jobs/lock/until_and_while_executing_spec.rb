@@ -3,45 +3,54 @@
 require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, redis_db: 3 do
-  let(:lock) { described_class.new(item) }
-  let(:item) do
-    {
-      'jid' => 'maaaahjid',
-      'queue' => 'dupsallowed',
-      'class' => 'UntilAndWhileExecutingJob',
-      'unique' => 'until_and_while_executing',
-      'args' => [1],
-    }
+  include SidekiqHelpers
+
+  let!(:client_lock_one) { described_class.new(item_one) }
+  let!(:server_lock_one) { described_class.new(item_one.dup) }
+
+  let!(:client_lock_two) { described_class.new(item_two.dup) }
+  let!(:server_lock_two) { described_class.new(item_two.dup) }
+
+  let(:jid_one)      { 'jid one' }
+  let(:jid_two)      { 'jid two' }
+  let(:worker_class) { UntilAndWhileExecutingJob }
+  let(:unique)       { :until_and_while_executing }
+  let(:queue)        { :working }
+  let(:args)         { %w[array of arguments] }
+  let(:callback)     { -> {} }
+  let(:item_one) do
+    { 'jid' => jid_one,
+      'class' => worker_class.to_s,
+      'queue' => queue,
+      'unique' => unique,
+      'args' => args }
   end
-  let(:callback) { -> {} }
+  let(:item_two) do
+    { 'jid' => jid_two,
+      'class' => worker_class.to_s,
+      'queue' => queue,
+      'unique' => unique,
+      'args' => args }
+  end
 
   describe '#execute' do
-    let(:runtime_lock) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_copy) }
-    let(:item_copy) do
-      lock.instance_variable_get(:@item).dup
-    end
+    context 'when job is being processed' do
+      it 'moves subsequent jobs to dead queue' do
+        expect(client_lock_one.lock).to eq(jid_one)
+        expect(client_lock_one.locked?).to eq(true)
+        expect(client_lock_one.unlock).to eq(1)
+        expect(server_lock_one.locked?).to eq(false)
 
-    before do
-      allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
-      lock.lock
-      expect(lock.locked?).to eq(true)
-    end
+        server_lock_one.execute(callback) do
+          expect(client_lock_one.locked?).to eq(false)
+          expect(server_lock_one.locked?).to eq(true)
+          expect(server_lock_two.locked?).to eq(false)
+          # expect { server_lock_two.execute(callback) {} }
+          #   .to change { dead_count }.from(0).to(1)
 
-    after { lock.delete }
-
-    it 'unlocks the unique key before yielding' do
-      allow(callback).to receive(:call)
-
-      lock.execute(callback) do
-        10.times { Sidekiq::Client.push(item) }
-
-        expect(unique_keys.size).to eq(3)
+          expect(client_lock_two.lock).to eq(nil)
+        end
       end
-
-      expect(lock.locked?).to eq(false)
-      expect(unique_keys.size).to eq(0)
-      expect(runtime_lock.locked?).to eq(false)
-      expect(callback).to have_received(:call)
     end
   end
 end
