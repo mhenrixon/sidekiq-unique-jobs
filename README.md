@@ -67,15 +67,6 @@ sidekiq_options lock_timeout: 5 # wait 5 seconds
 sidekiq_options lock_timeout: nil # lock indefinitely, this process won't continue until it gets a lock. VERY DANGEROUS!!
 ```
 
-#### Lock Concurrency
-
-Allowed number of processes to use the same lock. If more than 1 process is allowed to execute a lock it will. Careful with this one.
-
-```ruby
-sidekiq_options lock_concurrency: 1 # default -
-sidekiq_options lock_concurrency: 5 # Allow 5 processes to use the same lock
-```
-
 #### 
 
 ### Until Executing
