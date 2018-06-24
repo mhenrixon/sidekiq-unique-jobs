@@ -15,13 +15,13 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
   let(:callback) { -> {} }
 
   describe '#execute' do
-    let(:server_lock) { instance_spy(SidekiqUniqueJobs::Lock::WhileExecuting) }
+    let(:runtime_lock) { instance_spy(SidekiqUniqueJobs::Lock::WhileExecuting) }
 
     before do
       allow(lock).to receive(:locked?).and_return(locked?)
       allow(lock).to receive(:delete!).and_return(true)
-      allow(lock).to receive(:server_lock).and_return(server_lock)
-      allow(server_lock).to receive(:execute).with(callback).and_yield
+      allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
+      allow(runtime_lock).to receive(:execute).with(callback).and_yield
     end
 
     context 'when locked?' do
@@ -35,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
 
         expect(lock).to have_received(:locked?)
         expect(lock).to have_received(:delete!)
-        expect(server_lock).to have_received(:execute).with(callback)
+        expect(runtime_lock).to have_received(:execute).with(callback)
       end
     end
 
@@ -49,7 +49,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
 
         expect(lock).to have_received(:locked?)
         expect(lock).not_to have_received(:delete!)
-        expect(server_lock).not_to have_received(:execute).with(callback)
+        expect(runtime_lock).not_to have_received(:execute).with(callback)
       end
     end
   end

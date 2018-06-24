@@ -5,17 +5,17 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, redis_db: 3 do
   include SidekiqHelpers
 
-  let!(:client_lock_one) { described_class.new(item_one) }
-  let!(:server_lock_one) { described_class.new(item_one.dup) }
+  let(:process_one) { described_class.new(item_one) }
+  let(:runtime_one) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_one.dup) }
 
-  let!(:client_lock_two) { described_class.new(item_two.dup) }
-  let!(:server_lock_two) { described_class.new(item_two.dup) }
+  let(:process_two) { described_class.new(item_two) }
+  let(:runtime_two) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_two.dup) }
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
   let(:worker_class) { UntilAndWhileExecutingJob }
   let(:unique)       { :until_and_while_executing }
-  let(:queue)        { :working }
+  let(:queue)        { :another_queue }
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }
   let(:item_one) do
@@ -33,22 +33,55 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       'args' => args }
   end
 
+  before do
+    allow(process_one).to receive(:runtime_lock).and_return(runtime_one)
+    allow(process_two).to receive(:runtime_lock).and_return(runtime_two)
+  end
+
   describe '#execute' do
-    context 'when job is being processed' do
-      it 'moves subsequent jobs to dead queue' do
-        expect(client_lock_one.lock).to eq(jid_one)
-        expect(client_lock_one.locked?).to eq(true)
-        expect(client_lock_one.unlock).to eq(1)
-        expect(server_lock_one.locked?).to eq(false)
+    context 'when process one has locked the job' do
+      before do
+        expect(process_one.lock).to eq(jid_one)
+        expect(process_one.locked?).to eq(true)
 
-        server_lock_one.execute(callback) do
-          expect(client_lock_one.locked?).to eq(false)
-          expect(server_lock_one.locked?).to eq(true)
-          expect(server_lock_two.locked?).to eq(false)
-          # expect { server_lock_two.execute(callback) {} }
-          #   .to change { dead_count }.from(0).to(1)
+        expect(runtime_one.locked?).to eq(false)
+        expect(runtime_two.locked?).to eq(false)
+      end
 
-          expect(client_lock_two.lock).to eq(nil)
+      it 'process two cannot lock the job' do
+        expect(process_two.lock).to eq(nil)
+        expect(process_two.execute(callback)).to eq(nil)
+        expect(process_two.locked?).to eq(false)
+      end
+
+      context 'when process_one executes the job' do
+        it 'process two can lock the job' do
+          process_one.execute(callback) do
+            expect(process_one.locked?).to eq(false)
+            expect(runtime_one.locked?).to eq(true)
+            expect(process_two.lock).to eq(jid_two)
+            process_two.delete!
+          end
+        end
+
+        it 'process two cannot execute the job' do
+          process_one.execute(callback) do
+            unset = true
+            expect(process_two.lock).to eq(jid_two)
+            process_two.execute(callback) do
+              unset = false
+            end
+
+            expect(unset).to eq(true)
+            process_two.delete!
+          end
+        end
+
+        after do
+          expect(process_one.locked?).to eq(false)
+          expect(process_two.locked?).to eq(false)
+          expect(runtime_one.locked?).to eq(false)
+          expect(runtime_two.locked?).to eq(false)
         end
       end
     end
