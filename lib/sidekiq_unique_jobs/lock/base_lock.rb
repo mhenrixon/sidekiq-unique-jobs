@@ -8,11 +8,9 @@ module SidekiqUniqueJobs
       def initialize(item, redis_pool = nil)
         @item       = prepare_item(item)
         @redis_pool = redis_pool
-        @locksmith  = SidekiqUniqueJobs::Locksmith.new(@item, @redis_pool)
       end
 
       def lock
-        # Write the token to the job hash so that we can later release this specific token
         locksmith.lock(item[LOCK_TIMEOUT_KEY])
       end
 
@@ -38,7 +36,11 @@ module SidekiqUniqueJobs
 
       private
 
-      attr_reader :item, :locksmith, :redis_pool, :operative
+      attr_reader :item, :redis_pool, :operative
+
+      def locksmith
+        @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
+      end
 
       def using_protection(callback)
         @operative = true

@@ -6,8 +6,8 @@ module SidekiqUniqueJobs
       RUN_SUFFIX ||= ':RUN'
 
       def initialize(item, redis_pool = nil)
-        super
-        item[UNIQUE_DIGEST_KEY] = append_unique_key_suffix
+        super(item, redis_pool)
+        append_unique_key_suffix
       end
 
       # Returning true makes sure the client
@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
       # This is safe as the base_lock always creates a new digest
       #   The append there for needs to be done every time
       def append_unique_key_suffix
-        [item[UNIQUE_DIGEST_KEY], RUN_SUFFIX].join('')
+        item[UNIQUE_DIGEST_KEY] = item[UNIQUE_DIGEST_KEY] + RUN_SUFFIX
       end
     end
   end
