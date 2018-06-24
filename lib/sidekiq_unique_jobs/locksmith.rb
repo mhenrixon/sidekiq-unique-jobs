@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
 
     def initialize(item, redis_pool = nil)
       @concurrency          = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @digest               = item[UNIQUE_DIGEST_KEY]
+      @unique_digest        = item[UNIQUE_DIGEST_KEY]
       @expiration           = item[LOCK_EXPIRATION_KEY]
       @jid                  = item[JID_KEY]
       @redis_pool           = redis_pool
@@ -80,7 +80,7 @@ module SidekiqUniqueJobs
 
     private
 
-    attr_reader :concurrency, :digest, :expiration, :jid, :redis_pool
+    attr_reader :concurrency, :unique_digest, :expiration, :jid, :redis_pool
 
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
@@ -126,7 +126,7 @@ module SidekiqUniqueJobs
     end
 
     def namespaced_key(variable)
-      "#{digest}:#{variable}"
+      "#{unique_digest}:#{variable}"
     end
 
     def current_time
