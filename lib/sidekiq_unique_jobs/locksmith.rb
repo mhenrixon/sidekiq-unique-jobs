@@ -82,10 +82,6 @@ module SidekiqUniqueJobs
 
     attr_reader :concurrency, :digest, :expiration, :jid, :redis_pool
 
-    def redis_version_greater_than_or_equal_to?(allowed_version)
-      Gem::Version.new(SidekiqUniqueJobs.redis_version) >= Gem::Version.new(allowed_version)
-    end
-
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
