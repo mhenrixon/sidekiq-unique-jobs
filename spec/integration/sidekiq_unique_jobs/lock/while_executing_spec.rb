@@ -10,9 +10,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
-  let(:worker_class) { WhileExecutingRejectJob }
-  let(:unique)       { :while_executing_reject }
-  let(:queue)        { :rejecting }
+  let(:worker_class) { WhileExecutingJob }
+  let(:unique)       { :while_executing }
+  let(:queue)        { :while_executing }
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }
   let(:item_one) do
