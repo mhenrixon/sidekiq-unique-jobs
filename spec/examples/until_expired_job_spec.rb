@@ -6,7 +6,8 @@ RSpec.describe UntilExpiredJob do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'lock_expiration' => 600,
+        'lock_expiration' => 1,
+        'lock_timeout' => 0,
         'retry'           => true,
         'unique'          => :until_expired,
       }
