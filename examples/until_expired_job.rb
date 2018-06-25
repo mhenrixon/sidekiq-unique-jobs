@@ -4,7 +4,7 @@
 
 class UntilExpiredJob
   include Sidekiq::Worker
-  sidekiq_options unique: :until_expired, lock_expiration: 10 * 60
+  sidekiq_options unique: :until_expired, lock_expiration: 1, lock_timeout: 0
 
   def perform(one)
     TestClass.run(one)
