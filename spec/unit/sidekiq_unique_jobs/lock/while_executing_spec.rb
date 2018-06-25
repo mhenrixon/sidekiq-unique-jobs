@@ -27,20 +27,26 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
     it { is_expected.to eq(true) }
   end
 
-  describe '#unlock' do
-    subject { lock.unlock }
-
-    it { is_expected.to eq(true) }
-  end
-
   describe '#execute' do
     subject(:execute) { lock.execute(empty_callback) }
 
-    it 'calls the callback' do
-      expect(empty_callback).to receive(:call)
-      expect(locksmith).to receive(:lock).with(0).and_yield
+    before do
+      allow(locksmith).to receive(:lock).with(0).and_return(token)
+    end
 
-      execute
+    context 'when lock is successful' do
+      let(:token) { 'locked' }
+
+      it_behaves_like 'an executing lock with error handling'
+    end
+
+    context 'when lock fails' do
+      let(:token) { nil }
+
+      it do
+        expect { |block| lock.execute(empty_callback, &block) }
+          .not_to yield_control
+      end
     end
   end
 end

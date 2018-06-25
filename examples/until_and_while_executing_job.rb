@@ -5,7 +5,7 @@
 class UntilAndWhileExecutingJob
   include Sidekiq::Worker
 
-  sidekiq_options queue: :working, unique: :until_and_while_executing, lock_timeout: 0
+  sidekiq_options queue: :working, unique: :until_and_while_executing, lock_timeout: 1
 
   def perform(one)
     [one]

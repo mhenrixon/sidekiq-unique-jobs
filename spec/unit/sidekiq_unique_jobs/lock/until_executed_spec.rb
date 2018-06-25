@@ -14,61 +14,37 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
   end
 
   describe '#execute' do
-    let(:empty_callback) { -> {} }
-    let(:error_message) { 'the unique_key: uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0 needs to be unlocked manually' }
+    it_behaves_like 'an executing lock with error handling' do
+      context 'when not initially locked?' do
+        let(:initially_locked?) { false }
 
-    before do
-      allow(lock).to receive(:unlock).and_return(true)
-    end
+        it 'returns without yielding' do
+          execute
 
-    context 'when yield fails with Sidekiq::Shutdown' do
-      subject(:execute) { lock.execute(empty_callback) { fail Sidekiq::Shutdown, 'testing' } }
-
-      it 'logs a helpful error message' do
-        expect(Sidekiq.logger).to receive(:fatal).with(error_message)
-
-        expect { execute }.to raise_error(Sidekiq::Shutdown)
-      end
-
-      it 'raises Sidekiq::Shutdown' do
-        expect(lock).not_to receive(:unlock)
-        expect(empty_callback).not_to receive(:call)
-
-        expect { execute }.to raise_error(Sidekiq::Shutdown, 'testing')
-      end
-    end
-
-    context 'when yield fails with other errors' do
-      subject(:execute) { lock.execute(empty_callback) { raise 'HELL' } }
-
-      let(:locked?) { nil }
-
-      before do
-        allow(lock).to receive(:locked?).and_return(locked?)
-      end
-
-      it 'raises "HELL"' do
-        expect(lock).to receive(:unlock).and_return(true)
-
-        expect { execute }.to raise_error('HELL')
-      end
-
-      context 'when lock is locked?' do
-        let(:locked?) { true }
-
-        it 'logs a helpful error message' do
-          expect(Sidekiq.logger).to receive(:fatal).with(error_message)
-          expect { execute }.to raise_error('HELL')
+          expect(empty_callback).not_to have_received(:call)
+          expect(block).not_to have_received(:call)
         end
       end
 
       context 'when lock is not locked?' do
-        let(:locked?) { false }
+        let(:block)   { -> { raise 'HELL' } }
+        let(:locked?) { nil }
 
         it 'calls back' do
-          expect(empty_callback).to receive(:call)
-
           expect { execute }.to raise_error('HELL')
+
+          expect(empty_callback).to have_received(:call)
+        end
+      end
+
+      context 'when callback raises error' do
+        let(:empty_callback) { -> { raise 'CallbackError' } }
+        let(:locked?)        { false }
+
+        it 'logs a warning' do
+          expect { execute }.to raise_error('CallbackError')
+
+          expect(lock).to have_received(:log_warn).with("the callback for unique_key: #{item['unique_digest']} failed!")
         end
       end
     end

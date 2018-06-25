@@ -32,7 +32,7 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Enabled: true
   Exclude:
-    - '**/spec/**/*_spec.rb'
+    - '**/spec/**/*.rb'
 
 Metrics/PerceivedComplexity:
   Max: 8

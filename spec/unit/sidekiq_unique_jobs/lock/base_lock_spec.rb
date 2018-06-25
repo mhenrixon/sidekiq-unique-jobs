@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
+
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   include_context 'with a stubbed locksmith'
+
   let(:item) do
     {
       'jid' => 'maaaahjid',
@@ -13,28 +16,42 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   end
 
   describe '#lock' do
-    it 'delegates to locksmith' do
-      expect(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(true)
-      expect(lock.lock).to eq(true)
+    subject(:lock_lock) { lock.lock }
+
+    before do
+      allow(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(token)
+    end
+
+    context 'when a token is retrieved' do
+      let(:token) { 'another jid' }
+
+      it { is_expected.to eq('another jid') }
+    end
+
+    context 'when token is not retrieved' do
+      let(:token) { nil }
+
+      it { is_expected.to eq(nil) }
     end
   end
 
   describe '#execute' do
-    it 'delegates to locksmith' do
+    it do
       expect { lock.execute(nil) }
         .to raise_error(NotImplementedError, "#execute needs to be implemented in #{described_class}")
     end
   end
 
   describe '#unlock' do
-    it 'delegates to locksmith' do
-      expect(locksmith).to receive(:unlock).with(no_args).and_return('unlocked')
+    it do
+      allow(locksmith).to receive(:signal).with(item['jid']).and_return('unlocked')
+
       expect(lock.unlock).to eq('unlocked')
     end
   end
 
   describe '#delete' do
-    it 'delegates to locksmith' do
+    it do
       allow(locksmith).to receive(:unlock)
       allow(locksmith).to receive(:delete).and_return('deleted')
 
@@ -43,8 +60,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   end
 
   describe '#locked?' do
-    it 'delegates to locksmith' do
+    it do
       allow(locksmith).to receive(:locked?).and_return(true)
+
       expect(lock.locked?).to eq(true)
     end
   end

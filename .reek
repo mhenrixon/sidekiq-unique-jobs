@@ -8,8 +8,6 @@ exclude_paths:
   - examples
 DuplicateMethodCall:
   exclude:
-  - SidekiqUniqueJobs::Locksmith#generate_unique_token
-  - SidekiqUniqueJobs::Locksmith#create_expiring_mutex
   - Sidekiq#self.use_options
 IrresponsibleModule:
   exclude:
@@ -63,7 +61,6 @@ TooManyStatements:
   exclude:
   - initialize
   - Hash#slice!
-  - SidekiqUniqueJobs::Locksmith#create_expiring_mutex
   - SidekiqUniqueJobs::Middleware#configure_server_middleware
   - SidekiqUniqueJobs::Server::Middleware#call
   - SidekiqUniqueJobs::UniqueArgs#filtered_args

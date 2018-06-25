@@ -43,8 +43,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.locked?).to eq(false)
     end
 
-    # TODO: Flaky
-    it 'does not lock twice as a mutex', :retry do
+    it 'does not lock twice as a mutex' do
       expect(locksmith.lock(1)).to be_truthy
       expect(locksmith.lock(1)).to eq(nil)
     end
@@ -82,11 +81,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(block_value).to eq(42)
     end
 
-    it 'disappears without a trace when calling `delete`' do
+    it 'disappears without a trace when calling `delete!`' do
       original_key_size = keys.size
 
       locksmith.create
-      locksmith.delete
+      locksmith.delete!
 
       expect(keys.size).to eq(original_key_size)
     end
@@ -107,6 +106,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith.lock(0) do
         expect(locksmith.locked?).to be true
       end
+      expect(locksmith.locked?).to eq false
     end
   end
 
@@ -151,59 +151,73 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith.available_count).to eq(1)
     end
 
-    # TODO: This spec is flaky and should be improved to not use sleeps
-    it 'can have stale locks released by a third process', :retry do
-      watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 1))
-      locksmith.lock
+    # stale clients and concurrency removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+    # shared_examples 'can release stale clients' do
+    #   # TODO: This spec is flaky and should be improved to not use sleeps
+    #   it 'can have stale locks released by a third process', :retry do
+    #     watchdog = described_class.new(lock_item.merge('stale_client_timeout' => 0.5))
+    #     locksmith.lock
 
-      sleep 0.3
-      watchdog.release
-      expect(locksmith.locked?).to eq(true)
+    #     watchdog.release_stale_locks
+    #     expect(locksmith.locked?).to eq(true)
 
-      sleep 0.8
-      watchdog.release
+    #     sleep 0.6
+    #     watchdog.release_stale_locks
 
-      expect(locksmith.locked?).to eq(false)
-    end
+    #     expect(locksmith.locked?).to eq(false)
+    #   end
+    # end
+
+    # context 'when redis version < 3.2', redis_ver: '<= 3.2' do
+    #   before { allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.1') }
+
+    #   it_behaves_like 'can release stale clients'
+    # end
+
+    # context 'when redis version >= 3.2' do
+    #   before { allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2') }
+
+    #   it_behaves_like 'can release stale clients'
+    # end
   end
 
-  describe 'lock with staleness checking' do
-    let(:lock_stale_client_timeout) { 5 }
+  # describe 'lock with staleness checking' do
+  #   let(:lock_stale_client_timeout) { 5 }
 
-    context 'when redis_version is old' do
-      before do
-        allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.0')
-      end
+  #   context 'when redis_version is old' do
+  #     before do
+  #       allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.0')
+  #     end
 
-      it_behaves_like 'a lock'
+  #     it_behaves_like 'a lock'
 
-      it 'restores resources of stale clients', redis: :redis do
-        another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
-        hyper_aggressive_locksmith = described_class.new(another_lock_item)
+  #     it 'restores resources of stale clients', redis: :redis do
+  #       another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
+  #       hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
-        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-        expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
-        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-      end
-    end
+  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
+  #       expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
+  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
+  #     end
+  #   end
 
-    context 'when redis_version is new', redis: :redis do
-      before do
-        allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2')
-      end
+  #   context 'when redis_version is new', redis: :redis do
+  #     before do
+  #       allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2')
+  #     end
 
-      it_behaves_like 'a lock'
+  #     it_behaves_like 'a lock'
 
-      it 'restores resources of stale clients' do
-        another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
-        hyper_aggressive_locksmith = described_class.new(another_lock_item)
+  #     it 'restores resources of stale clients' do
+  #       another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
+  #       hyper_aggressive_locksmith = described_class.new(another_lock_item)
 
-        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-        expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
-        expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-      end
-    end
-  end
+  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
+  #       expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
+  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
+  #     end
+  #   end
+  # end
 
   describe 'redis time' do
     let(:lock_stale_client_timeout) { 5 }
