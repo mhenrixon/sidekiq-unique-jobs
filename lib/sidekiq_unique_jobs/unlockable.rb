@@ -13,9 +13,5 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs::UniqueArgs.digest(item)
       SidekiqUniqueJobs::Locksmith.new(item).delete!
     end
-
-    def logger
-      SidekiqUniqueJobs.logger
-    end
   end
 end

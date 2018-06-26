@@ -81,9 +81,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
         expect(callback).to have_received(:call)
       end
 
-      it 'prevents ' do
-      end
-
       it 'callbacks are only called once (for the locked process)' do
         process_one.execute(callback) do
           process_two.execute(callback) {}
