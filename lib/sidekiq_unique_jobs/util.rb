@@ -62,11 +62,6 @@ module SidekiqUniqueJobs
       Time.now
     end
 
-    def prefix_keys(keys)
-      keys = Array(keys).compact
-      keys.map { |key| prefix(key) }
-    end
-
     def prefix(key)
       return key if unique_prefix.nil?
       return key if key.start_with?("#{unique_prefix}:")

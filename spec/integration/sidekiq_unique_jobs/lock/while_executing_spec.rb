@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   include SidekiqHelpers
 
   let(:process_one) { described_class.new(item_one) }
@@ -10,9 +10,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
-  let(:worker_class) { WhileExecutingRejectJob }
-  let(:unique)       { :while_executing_reject }
-  let(:queue)        { :rejecting }
+  let(:worker_class) { WhileExecutingJob }
+  let(:unique)       { :while_executing }
+  let(:queue)        { :while_executing }
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }
   let(:item_one) do
@@ -28,6 +28,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
       'queue' => queue,
       'unique' => unique,
       'args' => args }
+  end
+
+  before do
+    allow(callback).to receive(:call).and_call_original
   end
 
   describe '#execute' do
@@ -46,26 +50,25 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
         end
       end
 
-      shared_examples 'rejects job to deadset' do
-        it 'moves subsequent jobs to dead queue' do
-          process_one.execute(callback) do
-            expect(dead_count).to eq(0)
-            expect { process_two.execute(callback) {} }
-              .to change { dead_count }.from(0).to(1)
+      it 'calls back' do
+        process_one.execute(callback) do
+          # NO OP
+        end
+        expect(callback).to have_received(:call)
+      end
+
+      it 'prevents other processes from executing' do
+        process_one.execute(callback) do
+          expect(process_two.lock).to eq(true)
+          expect(process_two.locked?).to eq(false)
+          unset = true
+          process_two.execute(callback) do
+            unset = false
           end
-        end
-      end
-
-      context 'when Sidekiq::DeadSet respond to kill' do
-        it_behaves_like 'rejects job to deadset'
-      end
-
-      context 'when Sidekiq::DeadSet does not respond to kill' do
-        before do
-          allow(process_two).to receive(:deadset_kill?).and_return(false)
+          expect(unset).to eq(true)
         end
 
-        it_behaves_like 'rejects job to deadset'
+        expect(callback).to have_received(:call).once
       end
     end
   end

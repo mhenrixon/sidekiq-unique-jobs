@@ -151,6 +151,31 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
   end
 
+  describe '#filtered_args' do
+    subject(:filtered_args) { unique_args.filtered_args(args) }
+
+    let(:args) { [1, 'test' => 'it'] }
+
+    before do
+      allow(unique_args).to receive(:unique_args_method).and_return(unique_args_method)
+    end
+
+    context 'when #unique_args_method is nil' do
+      let(:unique_args_method) { nil }
+
+      it 'logs a debug message' do
+        allow(unique_args).to receive(:log_debug)
+        filtered_args
+
+        expect(unique_args)
+          .to have_received(:log_debug)
+          .with('filtered_args arguments not filtered (using all arguments for uniqueness)')
+      end
+
+      it { is_expected.to eq(args) }
+    end
+  end
+
   describe '#filter_by_proc' do
     subject(:filter_by_proc) { unique_args.filter_by_proc(args) }
 
@@ -162,12 +187,6 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       before { allow(unique_args).to receive(:unique_args_method).and_return(filter) }
 
       it { is_expected.to eq('it') }
-    end
-
-    context 'when #unique_args_method is nil' do
-      before { allow(unique_args).to receive(:unique_args_method).and_return(nil) }
-
-      it { is_expected.to eq(args) }
     end
 
     with_default_worker_options(unique_args: ->(args) { args.first }) do

@@ -8,6 +8,7 @@ module SidekiqUniqueJobs
       end
 
       def execute(callback)
+        return unless locked?
         yield if block_given?
         callback.call
       end

@@ -58,6 +58,20 @@ RSpec.describe SidekiqUniqueJobs do
     end
   end
 
+  describe '.logger=' do
+    let(:original_logger) { Sidekiq.logger }
+    let(:another_logger) { Logger.new('/dev/null') }
+
+    it 'changes the SidekiqUniqueJobs.logger' do
+      expect { described_class.logger = another_logger }
+        .to change(described_class, :logger)
+        .from(original_logger)
+        .to(another_logger)
+
+      described_class.logger = original_logger
+    end
+  end
+
   describe '.redis_version' do
     subject(:redis_version) { described_class.redis_version }
 

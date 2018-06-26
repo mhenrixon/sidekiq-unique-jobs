@@ -53,4 +53,19 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       end
     end
   end
+
+  describe '#runtime_lock' do
+    subject(:runtime_lock) { lock.runtime_lock }
+
+    it { is_expected.to be_a(SidekiqUniqueJobs::Lock::WhileExecuting) }
+
+    it 'initializes with the right arguments' do
+      allow(SidekiqUniqueJobs::Lock::WhileExecuting).to receive(:new)
+      runtime_lock
+
+      expect(SidekiqUniqueJobs::Lock::WhileExecuting)
+        .to have_received(:new)
+        .with(item, redis_pool)
+    end
+  end
 end

@@ -18,12 +18,35 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
     it { is_expected.to eq(true) }
   end
 
+  before do
+    allow(empty_callback).to receive(:call)
+  end
+
   describe '#execute' do
     subject(:execute) { lock.execute(empty_callback) }
 
-    it 'calls the callback' do
-      expect(empty_callback).to receive(:call)
-      execute
+    let(:locked?) { false }
+
+    before do
+      allow(lock).to receive(:locked?).and_return(locked?)
+    end
+
+    context 'when locked?' do
+      let(:locked?) { true }
+
+      it 'calls back' do
+        execute
+
+        expect(empty_callback).to have_received(:call)
+      end
+    end
+
+    context 'when not locked?' do
+      it 'does not call back' do
+        execute
+
+        expect(empty_callback).not_to have_received(:call)
+      end
     end
   end
 end
