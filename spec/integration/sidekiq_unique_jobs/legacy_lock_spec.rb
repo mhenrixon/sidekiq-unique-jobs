@@ -28,6 +28,25 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith_two) { described_class.new(lock_item_two) }
   let(:lock_item_two) { lock_item.merge('jid' => jid_two) }
 
+  context 'with a legacy uniquejobs hash' do
+    before do
+      SidekiqUniqueJobs.redis do |conn|
+        conn.multi do
+          conn.hset('uniquejobs', 'bogus', 'value')
+          conn.hset('uniquejobs', 'bogus', 'value 2')
+        end
+      end
+    end
+
+    it 'deletes the uniquejobs hash' do
+      expect(keys).to include('uniquejobs')
+      expect(hexists('uniquejobs', 'bogus')).to eq(true)
+      locksmith_one.delete
+      expect(keys).not_to include('uniquejobs')
+      expect(hexists('uniquejobs', 'bogus')).to eq(false)
+    end
+  end
+
   context 'with a legacy lock' do
     before do
       result = SidekiqUniqueJobs::Scripts.call(
