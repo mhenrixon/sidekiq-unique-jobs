@@ -8,11 +8,11 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
 
     def initialize(item, redis_pool = nil)
-      @concurrency          = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @unique_digest        = item[UNIQUE_DIGEST_KEY]
-      @expiration           = item[LOCK_EXPIRATION_KEY]
-      @jid                  = item[JID_KEY]
-      @redis_pool           = redis_pool
+      @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+      @expiration    = item[LOCK_EXPIRATION_KEY]
+      @jid           = item[JID_KEY]
+      @unique_digest = item[UNIQUE_DIGEST_KEY]
+      @redis_pool    = redis_pool
     end
 
     def create
@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :delete,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key],
+        keys: [exists_key, grabbed_key, available_key, version_key, unique_digest],
       )
     end
 
@@ -73,7 +73,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :signal,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key],
+        keys: [exists_key, grabbed_key, available_key, version_key, unique_digest],
         argv: [token, expiration],
       )
     end
@@ -90,8 +90,9 @@ module SidekiqUniqueJobs
         else
           token = conn.lpop(available_key)
         end
+        token ||= conn.get(unique_digest) # TODO: legacy support (remove for 6.1)
 
-        yield token if token == jid
+        yield token if [jid, '2'].include?(token) # TODO: legacy support (simplify for 6.1)
       end
     end
 
