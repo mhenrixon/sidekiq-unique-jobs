@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :create,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key],
+        keys: [exists_key, grabbed_key, available_key, version_key, unique_digest],
         argv: [jid, expiration, API_VERSION, concurrency],
       )
     end
@@ -90,9 +90,7 @@ module SidekiqUniqueJobs
         else
           token = conn.lpop(available_key)
         end
-        token ||= conn.get(unique_digest) # TODO: legacy support (remove for 6.1)
-
-        yield token if [jid, '2'].include?(token) # TODO: legacy support (simplify for 6.1)
+        yield token if token == jid
       end
     end
 

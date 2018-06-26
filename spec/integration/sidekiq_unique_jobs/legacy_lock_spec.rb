@@ -23,11 +23,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       'unique_digest' => unique_digest,
     }
   end
-  let(:lock_with_different_jid) { described_class.new(lock_item_with_different_jid) }
-  let(:jid_2)                   { 'jidmayhem' }
-  let(:lock_item_with_different_jid) do
-    lock_item.merge('jid' => jid_2)
-  end
 
   context 'with a legacy lock' do
     before do
@@ -35,11 +30,13 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         :acquire_lock,
         redis_pool,
         keys: [unique_digest],
-        argv: [jid, lock_expiration],
+        argv: [lock_value, lock_expiration],
       )
     end
 
     context 'when lock_expiration is unset' do
+      let(:lock_value) { jid }
+
       it 'can signal to expire the lock after 10' do
         locksmith.signal(jid)
 
@@ -58,6 +55,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     end
 
     context 'when lock_expiration is set' do
+      let(:lock_value)      { jid }
       let(:lock_expiration) { 10 }
 
       it 'can signal to expire the lock after 10' do
@@ -77,8 +75,20 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       end
     end
 
-    it 'returns the stored jid' do
-      expect(locksmith.lock).to eq(jid)
+    context 'when the value of unique_digest is 2' do
+      let(:lock_value) { '2' }
+
+      it 'returns the stored jid' do
+        expect(locksmith.lock(0)).to eq(jid)
+      end
+    end
+
+    context 'when the value of unique_digest is jid' do
+      let(:lock_value) { jid }
+
+      it 'returns the stored jid' do
+        expect(locksmith.lock(0)).to eq(jid)
+      end
     end
   end
 end
