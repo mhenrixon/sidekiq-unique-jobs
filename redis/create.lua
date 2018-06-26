@@ -13,16 +13,24 @@ local concurrency   = tonumber(ARGV[4])
 
 local stored_token  = redis.call('GETSET', exists_key, job_id)
 
+redis.log(redis.LOG_DEBUG, "create.lua - starting...")
+
 if stored_token then
+  redis.log(redis.LOG_DEBUG, "create.lua - stored_token: " .. stored_token)
   return stored_token
 end
 
 ----------------------------------------------------------------
 -- TODO: Legacy support (Remove in v6.1)
-stored_token  = redis.call('GET', unique_digest)
-if stored_token then
-  if not stored_token == job_id and not stored_token == '2' then
-    return stored_token
+local old_token  = redis.call('GET', unique_digest)
+if old_token then
+  -- redis.log(redis.LOG_DEBUG, "create.lua - " .. unique_digest .. " with "  .. old_token)
+  if old_token == job_id or old_token == '2' then
+    -- redis.log(redis.LOG_DEBUG, "create.lua - " .. unique_digest .. " with "  .. old_token .. " MATCH with " .. job_id)
+    redis.call('DEL', unique_digest)
+  else
+    -- redis.log(redis.LOG_DEBUG, "create.lua - " .. unique_digest .. " with "  .. old_token .. " MISMATCH with " .. job_id)
+    return old_token
   end
 end
 ----------------------------------------------------------------
