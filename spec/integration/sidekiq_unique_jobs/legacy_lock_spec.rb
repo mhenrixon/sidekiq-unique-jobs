@@ -4,7 +4,7 @@ require 'spec_helper'
 
 # rubocop:disable RSpec/FilePath
 RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
-  let(:locksmith_one)       { described_class.new(lock_item) }
+  let(:locksmith_one) { described_class.new(lock_item) }
   let(:lock_expiration) { nil }
   let(:redis_pool)      { nil }
   let(:jid_one)         { 'maaaahjid' }
