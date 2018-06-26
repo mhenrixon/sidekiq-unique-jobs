@@ -90,4 +90,17 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
       end
     end
   end
+
+  describe '#unlock' do
+    context 'when lock is locked' do
+      before { process_one.lock }
+
+      it 'keeps the lock even when unlocking' do
+        expect(process_one.unlock).to eq(true)
+        expect(process_one.locked?).to eq(true)
+      end
+    end
+
+    it { expect(process_one.unlock).to eq(true) }
+  end
 end

@@ -46,12 +46,26 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
         end
       end
 
-      it 'moves subsequent jobs to dead queue' do
-        process_one.execute(callback) do
-          expect(dead_count).to eq(0)
-          expect { process_two.execute(callback) {} }
-            .to change { dead_count }.from(0).to(1)
+      shared_examples 'rejects job to deadset' do
+        it 'moves subsequent jobs to dead queue' do
+          process_one.execute(callback) do
+            expect(dead_count).to eq(0)
+            expect { process_two.execute(callback) {} }
+              .to change { dead_count }.from(0).to(1)
+          end
         end
+      end
+
+      context 'when Sidekiq::DeadSet respond to kill' do
+        it_behaves_like 'rejects job to deadset'
+      end
+
+      context 'when Sidekiq::DeadSet does not respond to kill' do
+        before do
+          allow(process_two).to receive(:deadset_kill?).and_return(false)
+        end
+
+        it_behaves_like 'rejects job to deadset'
       end
     end
   end

@@ -40,10 +40,6 @@ module SidekiqUniqueJobs
     end
 
     no_commands do
-      def logger
-        SidekiqUniqueJobs.logger
-      end
-
       def console_class
         require 'pry'
         Pry

@@ -79,14 +79,12 @@ module SidekiqUniqueJobs
       when Symbol
         filter_by_symbol(json_args)
       else
-        log_debug { "#{__method__} arguments not filtered (using all arguments for uniqueness)" }
+        log_debug("#{__method__} arguments not filtered (using all arguments for uniqueness)")
         json_args
       end
     end
 
     def filter_by_proc(args)
-      return args if unique_args_method.nil?
-
       unique_args_method.call(args)
     end
 
@@ -95,7 +93,7 @@ module SidekiqUniqueJobs
 
       worker_class.send(unique_args_method, args)
     rescue ArgumentError => ex
-      log_fatal ex
+      log_fatal(ex)
       args
     end
 
