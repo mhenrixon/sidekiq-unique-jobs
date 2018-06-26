@@ -11,6 +11,14 @@ module SidekiqHelpers
     redis { |conn| conn.zcount(queue, -1, time) }
   end
 
+  def hexists(hash, key)
+    redis { |conn| conn.hexists(hash, key) }
+  end
+
+  def hlen(hash, key)
+    redis { |conn| conn.hlen(hash, key) }
+  end
+
   def get_key(key)
     redis { |conn| conn.get(key) }
   end
