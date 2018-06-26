@@ -181,45 +181,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     # end
   end
 
-  # describe 'lock with staleness checking' do
-  #   let(:lock_stale_client_timeout) { 5 }
-
-  #   context 'when redis_version is old' do
-  #     before do
-  #       allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.0')
-  #     end
-
-  #     it_behaves_like 'a lock'
-
-  #     it 'restores resources of stale clients', redis: :redis do
-  #       another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
-  #       hyper_aggressive_locksmith = described_class.new(another_lock_item)
-
-  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-  #       expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
-  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-  #     end
-  #   end
-
-  #   context 'when redis_version is new', redis: :redis do
-  #     before do
-  #       allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2')
-  #     end
-
-  #     it_behaves_like 'a lock'
-
-  #     it 'restores resources of stale clients' do
-  #       another_lock_item = lock_item.merge('jid' => 'abcdefab', 'stale_client_timeout' => 1)
-  #       hyper_aggressive_locksmith = described_class.new(another_lock_item)
-
-  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-  #       expect(hyper_aggressive_locksmith.lock(1)).to eq(nil)
-  #       expect(hyper_aggressive_locksmith.lock(1)).to be_truthy
-  #     end
-  #   end
-  # end
-
-  describe 'redis time' do
+  describe 'current_time' do
     let(:lock_stale_client_timeout) { 5 }
 
     before do
