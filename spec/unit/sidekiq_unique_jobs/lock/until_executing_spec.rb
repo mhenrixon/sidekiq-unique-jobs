@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
 
   describe '#execute' do
     it 'calls the callback' do
-      expect(lock).to receive(:delete).ordered
+      expect(lock).to receive(:unlock).ordered
       expect(empty_callback).to receive(:call)
       expect { |block| lock.execute(empty_callback, &block) }.to yield_control
     end

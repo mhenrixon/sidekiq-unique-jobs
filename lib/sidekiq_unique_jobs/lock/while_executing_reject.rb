@@ -9,6 +9,8 @@ module SidekiqUniqueJobs
         using_protection(callback) do
           yield if block_given?
         end
+
+        unlock
       end
 
       # Private below here, keeping public due to testing reasons

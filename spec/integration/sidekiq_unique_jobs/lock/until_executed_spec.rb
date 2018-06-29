@@ -10,9 +10,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
-  let(:worker_class) { WhileExecutingRejectJob }
-  let(:unique)       { :while_executing_reject }
-  let(:queue)        { :rejecting }
+  let(:worker_class) { UntilExecutedJob }
+  let(:unique)       { :until_executed }
+  let(:queue)        { :executed }
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }
   let(:item_one) do
@@ -57,11 +57,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
 
             expect(unset).to eq(true)
           end
-        end
-
-        after do
-          expect(process_one.locked?).to eq(false)
-          expect(process_two.locked?).to eq(false)
         end
       end
     end

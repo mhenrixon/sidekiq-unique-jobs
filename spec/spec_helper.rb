@@ -19,7 +19,6 @@ require 'sidekiq'
 require 'sidekiq/util'
 require 'sidekiq-unique-jobs'
 require 'timecop'
-require 'sidekiq/simulator'
 require 'sidekiq_unique_jobs/testing'
 
 Sidekiq.logger = Logger.new('/dev/null')
