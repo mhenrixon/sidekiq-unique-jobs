@@ -102,6 +102,12 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       end
       expect(locksmith_one.locked?).to eq false
     end
+
+    it 'does something' do
+      expect(locksmith_one.available_count).to eq(1)
+      locksmith_one.lock(0)
+      expect(locksmith_one.available_count).to eq(0)
+    end
   end
 
   describe 'lock with expiration' do
