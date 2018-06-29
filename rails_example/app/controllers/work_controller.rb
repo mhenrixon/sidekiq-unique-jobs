@@ -36,7 +36,7 @@ class WorkController < ApplicationController
   end
 
   def duplicate_while_executing
-    4.times { WhileExecutingWorker.perform_async(1, 2) }
+    params[:attempts].to_i.times { WhileExecutingWorker.perform_async(params[:sleepy_time]) }
 
     redirect_to '/sidekiq'
   end
