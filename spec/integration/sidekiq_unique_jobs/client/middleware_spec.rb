@@ -17,10 +17,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expect(keys).to include(*expected)
       Sidekiq::Scheduled::Enq.new.enqueue_jobs
-
-      Sidekiq::Simulator.process_queue(:notify_worker) do
-        expect { queue_count('notify_worker') }.to eventually eq(0)
-      end
     end
 
     it 'rejects nested subsequent jobs with the same arguments' do
@@ -30,14 +26,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expect(queue_count('default')).to eq(1)
       expect(queue_count('not_default')).to eq(1)
-
-      Sidekiq::Simulator.process_queue(:not_default) do
-        expect { queue_count('not_default') }.to eventually eq(0)
-      end
-
-      Sidekiq::Simulator.process_queue(:default) do
-        expect { queue_count('default') }.to eventually eq(0)
-      end
     end
 
     it 'schedules new jobs when arguments differ' do
