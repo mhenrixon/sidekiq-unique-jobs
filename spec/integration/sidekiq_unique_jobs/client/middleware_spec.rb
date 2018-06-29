@@ -16,7 +16,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       ]
 
       expect(keys).to include(*expected)
-      Sidekiq::Scheduled::Enq.new.enqueue_jobs
     end
 
     it 'rejects nested subsequent jobs with the same arguments' do
