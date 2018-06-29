@@ -19,7 +19,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
 
     before do
       allow(lock).to receive(:locked?).and_return(locked?)
-      allow(lock).to receive(:delete!).and_return(true)
+      allow(lock).to receive(:unlock).and_return(true)
       allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
       allow(runtime_lock).to receive(:execute).with(callback).and_yield
     end
@@ -34,7 +34,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
         expect(inside_block_value).to eq(true)
 
         expect(lock).to have_received(:locked?)
-        expect(lock).to have_received(:delete!)
+        expect(lock).to have_received(:unlock)
         expect(runtime_lock).to have_received(:execute).with(callback)
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
         expect(inside_block_value).to eq(false)
 
         expect(lock).to have_received(:locked?)
-        expect(lock).not_to have_received(:delete!)
+        expect(lock).not_to have_received(:unlock)
         expect(runtime_lock).not_to have_received(:execute).with(callback)
       end
     end

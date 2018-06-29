@@ -48,6 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
 
         unique_keys.each do |key|
           next if key.end_with?(':GRABBED')
+          next if key.end_with?(':EXISTS')
           expect(ttl(key)).to eq(5000)
         end
       end

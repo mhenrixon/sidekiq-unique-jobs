@@ -3,6 +3,10 @@
 module SidekiqHelpers
   include SidekiqUniqueJobs::Connection
 
+  def push_item(item = {})
+    Sidekiq::Client.push(item)
+  end
+
   def zcard(queue)
     redis { |conn| conn.zcard(queue) }
   end

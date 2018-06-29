@@ -44,7 +44,6 @@ RSpec.shared_examples 'an executing lock with error handling' do
       expect { execute }.to raise_error('HELL')
 
       expect(lock).to have_received(:unlock)
-      expect(lock).to have_received(:delete)
     end
 
     context 'when lock is locked?' do

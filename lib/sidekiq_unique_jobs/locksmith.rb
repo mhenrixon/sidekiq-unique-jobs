@@ -90,7 +90,8 @@ module SidekiqUniqueJobs
         else
           token = conn.lpop(available_key)
         end
-        yield token if token == jid
+
+        return yield jid if token
       end
     end
 
@@ -101,6 +102,7 @@ module SidekiqUniqueJobs
     def return_token_or_block_value(token)
       return token unless block_given?
 
+      # The reason for begin is to only signal when we have a block
       begin
         yield token
       ensure

@@ -17,6 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
 
   before do
     allow(lock).to receive(:deadset).and_return(deadset)
+    allow(lock).to receive(:unlock)
     allow(lock).to receive(:payload).and_return(payload)
   end
 

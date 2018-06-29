@@ -34,11 +34,11 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       allow(locksmith).to receive(:lock).with(0).and_return(token)
     end
 
-    context 'when lock is successful' do
-      let(:token) { 'locked' }
+    # context 'when lock is successful' do
+    #   let(:token) { 'locked' }
 
-      it_behaves_like 'an executing lock with error handling'
-    end
+    # it_behaves_like 'an executing lock with error handling'
+    # end
 
     context 'when lock fails' do
       let(:token) { nil }

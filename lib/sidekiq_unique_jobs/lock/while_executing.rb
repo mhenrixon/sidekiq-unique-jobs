@@ -18,10 +18,10 @@ module SidekiqUniqueJobs
 
       # Locks the job with the RUN_SUFFIX appended
       def execute(callback)
-        return unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
-
-        using_protection(callback) do
-          yield if block_given?
+        locksmith.lock(item[LOCK_TIMEOUT_KEY]) do
+          using_protection(callback) do
+            yield if block_given?
+          end
         end
       end
 
