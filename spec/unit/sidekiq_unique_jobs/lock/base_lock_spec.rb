@@ -72,7 +72,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
 
   describe '#delete' do
     subject { lock.delete }
+
     before { allow(locksmith).to receive(:delete).and_return('deleted') }
+
     it { is_expected.to eq('deleted') }
   end
 
