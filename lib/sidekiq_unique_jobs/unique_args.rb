@@ -54,7 +54,8 @@ module SidekiqUniqueJobs
     end
 
     def unique_on_all_queues?
-      item[UNIQUE_ON_ALL_QUEUES_KEY] || worker_options[UNIQUE_ON_ALL_QUEUES_KEY]
+      item[UNIQUE_ACROSS_QUEUES_KEY] || worker_options[UNIQUE_ACROSS_QUEUES_KEY] ||
+        item[UNIQUE_ON_ALL_QUEUES_KEY] || worker_options[UNIQUE_ON_ALL_QUEUES_KEY] # TODO: Remove in v 6.1
     end
 
     def unique_across_workers?

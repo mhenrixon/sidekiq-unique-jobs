@@ -9,6 +9,7 @@ module SidekiqUniqueJobs
   LOCK_TIMEOUT_KEY          ||= 'lock_timeout'
   LOG_DUPLICATE_KEY         ||= 'log_duplicate_payload'
   QUEUE_KEY                 ||= 'queue'
+  UNIQUE_ACROSS_QUEUES_KEY  ||= 'unique_across_queues'
   UNIQUE_ACROSS_WORKERS_KEY ||= 'unique_across_workers'
   UNIQUE_ARGS_KEY           ||= 'unique_args'
   UNIQUE_DIGEST_KEY         ||= 'unique_digest'
