@@ -275,7 +275,7 @@ There are two ways to display and remove keys regarding uniqueness. The console 
 
 ### Console
 
-Start the console with the following command `bundle exec jobs console`.
+Start the console with the following command `bundle exec uniquejobs console`.
 
 #### List Unique Keys
 
@@ -287,7 +287,7 @@ Start the console with the following command `bundle exec jobs console`.
 
 ### Command Line
 
-`bundle exec jobs` displays help on how to use the unique jobs command line.
+`bundle exec uniquejobs` displays help on how to use the unique jobs command line.
 
 ## Communication
 

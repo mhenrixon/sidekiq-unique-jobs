@@ -17,7 +17,8 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.bindir        = 'bin'
-  spec.executables   = %w[jobs]
+  spec.executables   = %w[uniquejobs]
+
   spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
     `git ls-files -z`.split("\x0").reject do |file|
       file.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
