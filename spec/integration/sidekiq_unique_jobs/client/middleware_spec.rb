@@ -21,6 +21,10 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     it 'rejects nested subsequent jobs with the same arguments' do
       expect(SimpleWorker.perform_async(1)).not_to eq(nil)
       expect(SimpleWorker.perform_async(1)).to eq(nil)
+      expect(SimpleWorker.perform_in(60, 1)).to eq(nil)
+      expect(SimpleWorker.perform_in(60, 1)).to eq(nil)
+      expect(SimpleWorker.perform_in(60, 1)).to eq(nil)
+      expect(zcard('schedule')).to eq(0)
       expect(SpawnSimpleWorker.perform_async(1)).not_to eq(nil)
 
       expect(queue_count('default')).to eq(1)

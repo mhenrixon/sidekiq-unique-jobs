@@ -30,7 +30,7 @@ RSpec.describe MyUniqueJob do
         described_class.perform_in(3600, 1, 2)
         expect(1).to be_enqueued_in('customqueue')
         expect(1).to be_enqueued_in('schedule')
-        expect(zcount('schedule')).to eq(1)
+        expect(zcard('schedule')).to eq(1)
         expect(1).to be_scheduled_at(Time.now.to_f + 2 * 3600)
       end
 
