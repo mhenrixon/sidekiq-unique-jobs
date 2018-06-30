@@ -7,10 +7,10 @@ module SidekiqUniqueJobs
         true
       end
 
-      def execute(callback)
+      def execute
         return unless locked?
         yield if block_given?
-        callback.call
+        # this lock does not handle after_unlock since we don't know when that would
       end
     end
   end

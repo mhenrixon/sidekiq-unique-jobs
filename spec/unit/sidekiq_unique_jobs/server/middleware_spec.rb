@@ -24,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
     before do
       @inside_block_value = false
       allow(middleware).to receive(:lock).and_return(lock)
-      allow(lock).to receive(:execute).with(instance_of(Proc)).and_yield
+      allow(lock).to receive(:execute).and_yield
     end
 
     context 'when unique is disabled' do

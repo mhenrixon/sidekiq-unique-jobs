@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_context 'with a stubbed locksmith' do
-  let(:lock)       { described_class.new(item) }
   let(:locksmith)  { instance_double(SidekiqUniqueJobs::Locksmith) }
   let(:redis_pool) { nil }
 

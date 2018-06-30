@@ -4,6 +4,8 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   include_context 'with a stubbed locksmith'
+  let(:lock)     { described_class.new(item, callback) }
+  let(:callback) { -> {} }
 
   let(:item) do
     { 'jid' => 'maaaahjid',
@@ -11,11 +13,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       'unique' => 'while_executing',
       'args' => [%w[array of arguments]] }
   end
-  let(:empty_callback) { -> {} }
 
   describe '.new' do
     specify do
-      expect { described_class.new(item) }
+      expect { described_class.new(item, callback) }
         .to change { item['unique_digest'] }
         .to a_string_ending_with(':RUN')
     end
@@ -28,7 +29,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   end
 
   describe '#execute' do
-    subject(:execute) { lock.execute(empty_callback) }
+    subject(:execute) { lock.execute }
 
     before do
       allow(locksmith).to receive(:lock).with(0).and_return(token)
@@ -44,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       let(:token) { nil }
 
       it do
-        expect { |block| lock.execute(empty_callback, &block) }
+        expect { |block| lock.execute(&block) }
           .not_to yield_control
       end
     end

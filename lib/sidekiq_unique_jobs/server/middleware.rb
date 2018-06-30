@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
         @queue        = queue
         return yield if unique_disabled?
 
-        lock.execute(after_unlock_hook) do
+        lock.execute do
           yield
         end
       end
@@ -19,10 +19,6 @@ module SidekiqUniqueJobs
       protected
 
       attr_reader :item
-
-      def after_unlock_hook
-        -> { worker_class.after_unlock if worker_method_defined?(:after_unlock) }
-      end
     end
   end
 end

@@ -19,6 +19,10 @@ module SidekiqUniqueJobs
       @_worker_class ||= worker_class_constantize # rubocop:disable Naming/MemoizedInstanceVariableName
     end
 
+    def after_unlock_hook
+      -> { worker_class.after_unlock if worker_method_defined?(:after_unlock) }
+    end
+
     # Attempt to constantize a string worker_class argument, always
     # failing back to the original argument when the constant can't be found
     #

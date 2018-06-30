@@ -5,11 +5,9 @@ module SidekiqUniqueJobs
     class UntilExecuted < BaseLock
       OK ||= 'OK'
 
-      def execute(callback)
+      def execute
         return unless locked?
-        using_protection(callback) do
-          yield if block_given?
-        end
+        with_cleanup { yield if block_given? }
       end
     end
   end

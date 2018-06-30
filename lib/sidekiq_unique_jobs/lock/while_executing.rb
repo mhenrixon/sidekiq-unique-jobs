@@ -5,8 +5,8 @@ module SidekiqUniqueJobs
     class WhileExecuting < BaseLock
       RUN_SUFFIX ||= ':RUN'
 
-      def initialize(item, redis_pool = nil)
-        super(item, redis_pool)
+      def initialize(item, callback, redis_pool = nil)
+        super(item, callback, redis_pool)
         append_unique_key_suffix
       end
 
@@ -17,12 +17,9 @@ module SidekiqUniqueJobs
       end
 
       # Locks the job with the RUN_SUFFIX appended
-      def execute(callback)
-        locksmith.lock(item[LOCK_TIMEOUT_KEY]) do
-          using_protection(callback) do
-            yield if block_given?
-          end
-        end
+      def execute
+        return unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
+        with_cleanup { yield if block_given? }
       end
 
       private

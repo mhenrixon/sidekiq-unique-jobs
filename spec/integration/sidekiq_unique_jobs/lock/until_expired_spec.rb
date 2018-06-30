@@ -5,8 +5,8 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
   include SidekiqHelpers
 
-  let(:process_one) { described_class.new(item_one) }
-  let(:process_two) { described_class.new(item_two) }
+  let(:process_one) { described_class.new(item_one, callback) }
+  let(:process_two) { described_class.new(item_two, callback) }
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
@@ -51,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
 
       it 'process two cannot execute the lock' do
         unset = true
-        process_two.execute(callback) do
+        process_two.execute do
           unset = false
         end
 
@@ -60,7 +60,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
 
       it 'process one can execute the job' do
         set = false
-        process_one.execute(callback) do
+        process_one.execute do
           set = true
         end
 
@@ -68,25 +68,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
       end
 
       it 'the job is still locked after executing' do
-        process_one.execute(callback) {}
+        process_one.execute {}
 
         expect(process_one.locked?).to eq(true)
-      end
-
-      it 'calls back' do
-        process_one.execute(callback) do
-          # NO OP
-        end
-
-        expect(callback).to have_received(:call)
-      end
-
-      it 'callbacks are only called once (for the locked process)' do
-        process_one.execute(callback) do
-          process_two.execute(callback) {}
-        end
-
-        expect(callback).to have_received(:call).once
       end
     end
   end

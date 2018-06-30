@@ -4,6 +4,8 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
   include_context 'with a stubbed locksmith'
+  let(:lock)     { described_class.new(item, callback) }
+  let(:callback) { -> {} }
   let(:item) do
     {
       'jid' => 'maaaahjid',
@@ -21,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
         it 'returns without yielding' do
           execute
 
-          expect(empty_callback).not_to have_received(:call)
+          expect(callback).not_to have_received(:call)
           expect(block).not_to have_received(:call)
         end
       end
@@ -33,18 +35,18 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
         it 'calls back' do
           expect { execute }.to raise_error('HELL')
 
-          expect(empty_callback).to have_received(:call)
+          expect(callback).to have_received(:call)
         end
       end
 
       context 'when callback raises error' do
-        let(:empty_callback) { -> { raise 'CallbackError' } }
-        let(:locked?)        { false }
+        let(:callback) { -> { raise 'CallbackError' } }
+        let(:locked?)  { false }
 
         it 'logs a warning' do
           expect { execute }.to raise_error('CallbackError')
 
-          expect(lock).to have_received(:log_warn).with("the callback for unique_key: #{item['unique_digest']} failed!")
+          expect(lock).to have_received(:log_warn).with('The lock for uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0 has been released but the #after_unlock callback failed!')
         end
       end
     end
