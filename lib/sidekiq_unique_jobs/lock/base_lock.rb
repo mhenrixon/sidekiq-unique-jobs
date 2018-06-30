@@ -21,17 +21,14 @@ module SidekiqUniqueJobs
       end
 
       def unlock
-        return notify_about_manual_unlock unless operative
         locksmith.signal(item[JID_KEY]) # Only signal to release the lock
       end
 
       def delete
-        return notify_about_manual_unlock unless operative
         locksmith.delete # Soft delete (don't forcefully remove when expiration is set)
       end
 
       def delete!
-        return notify_about_manual_unlock unless operative
         locksmith.delete! # Force delete the lock
       end
 
@@ -70,11 +67,11 @@ module SidekiqUniqueJobs
       end
 
       def unlock_with_callback
-        token = unlock
-        return notify_about_manual_unlock unless token
-        callback_safely
+        return notify_about_manual_unlock unless operative
+        return notify_about_manual_unlock unless unlock
 
-        token
+        callback_safely
+        item[JID_KEY]
       end
 
       def callback_safely

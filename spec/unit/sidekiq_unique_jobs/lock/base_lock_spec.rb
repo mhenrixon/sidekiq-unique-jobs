@@ -47,27 +47,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     subject(:unlock) { lock.unlock }
 
     before do
-      allow(lock).to receive(:operative).and_return(operative)
       allow(locksmith).to receive(:signal).with(item['jid']).and_return('unlocked')
-      allow(lock).to receive(:notify_about_manual_unlock)
     end
 
-    context 'when operative' do
-      let(:operative) { true }
-
-      it { is_expected.to eq('unlocked') }
-    end
-
-    context 'when inoperative' do
-      let(:operative) { false }
-
-      it { is_expected.to eq(nil) }
-
-      it 'notifies about manual unlock' do
-        unlock
-        expect(lock).to have_received(:notify_about_manual_unlock)
-      end
-    end
+    it { is_expected.to eq('unlocked') }
   end
 
   describe '#delete' do
