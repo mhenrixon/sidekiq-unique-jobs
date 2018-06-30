@@ -23,12 +23,12 @@ script:
   - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
   - bundle exec rspec spec
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
-
 rvm:
   - 2.5.1
   - 2.4.2
   - 2.3.2
-  - jruby-9.1.15.0
+  - jruby-9.1.17.0
+  - jruby-9.2.0.0
 matrix:
   fast_finish: true
   include:
