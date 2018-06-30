@@ -19,14 +19,18 @@ RSpec.describe MyUniqueJob do
     let(:args) { %w[one two] }
   end
 
-  describe 'client middleware' do
+  describe 'client middleware', redis: :redis do
     context 'when job is delayed' do
       before { described_class.perform_in(3600, 1, 2) }
 
       it 'rejects new scheduled jobs' do
         expect(1).to be_enqueued_in('customqueue')
         described_class.perform_in(3600, 1, 2)
+        described_class.perform_in(3600, 1, 2)
+        described_class.perform_in(3600, 1, 2)
         expect(1).to be_enqueued_in('customqueue')
+        expect(1).to be_enqueued_in('schedule')
+        expect(zcount('schedule')).to eq(1)
         expect(1).to be_scheduled_at(Time.now.to_f + 2 * 3600)
       end
 
