@@ -2,27 +2,20 @@
 
 The missing unique jobs for sidekiq
 
-# Documentation
+## Documentation
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10. 
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
 
 Below are links to the latest major versions (4 & 5):
+
 - [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
 - [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
 
 ## Requirements
 
-See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <=  2.1 is dropped. ActiveJob is not supported 
+See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <= 2.1 is dropped. ActiveJob is not supported
 
-Version 5 requires redis >= 3
-
-### ActiveJob
-
-Due to the simplicity of ActiveJob and the complexity of this game there is no officially supported way of doing ActiveJob. If you want to use uniqueness you should be using sidekiq directly. I know some projects started by using ActiveJob out of ignorance and someone has to do a whole lot of work to migrate the workers to use sidekiq directly... 
-
-If you are in this position and you can't figure it out; I have done such migrations for really big clients before. I am a consultant with a ton of experience on such jobs. My rate is fair and I am easy to get along with.
-
-If that is not an option I apologize. This gem won't support ActiveJob moving forward. It would require monkey patching too much.
+Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why.
 
 ## Installation
 
@@ -38,15 +31,17 @@ Or install it yourself as:
 
     $ gem install sidekiq-unique-jobs
 
-## Locking
+## General Information
 
-Sidekiq consists of a client and a server. The client is responsible for pushing jobs to the queue and the server is responsible for actually processing the jobs. When the client puts the job to the queue the middleware checks for uniqueness and creates a lock. When the server then processes the job that lock is released.
+See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/How-this-gem-interacts-with-Sidekiq) on how the gem interacts with Sidekiq.
+
+See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
 
 ### Options
 
 #### Lock Expiration
 
-This is probably not the configuration option you want... 
+This is probably not the configuration option you want...
 
 Since the client and the server are disconnected and not running inside the same process, setting a lock expiration is probably not what you want. Any keys that are used by this gem WILL be removed at the time of the expiration. For jobs that are scheduled in the future the key will expire when that job is scheduled + whatever expiration you have set.
 
@@ -67,7 +62,54 @@ sidekiq_options lock_timeout: 5 # wait 5 seconds
 sidekiq_options lock_timeout: nil # lock indefinitely, this process won't continue until it gets a lock. VERY DANGEROUS!!
 ```
 
-#### 
+#### Unique Across Queues
+
+This configuration option is slightly misleading. It doesn't disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.
+
+```ruby
+class Worker
+  include Sidekiq::Worker
+  
+  sidekiq_options: unique_across_queues: true, queue: 'default'
+
+  def perform(args); end
+end
+```
+
+Now if you push override the queue with `Worker.set(queue: 'another').perform_async(1)` it will still be considered unique when compared to `Worker.perform_async(1)` (that was actually pushed to the queue `default`).
+
+#### Unique Across Workers
+
+This configuration option is slightly misleading. It doesn't disregard the worker class on other jobs. Just on itself, this means that a worker that the worker class won't be used for generating the unique digest. The only way this option really makes sense is when you want to have uniqueness between two different worker classes.
+
+```ruby
+class WorkerOne
+  include Sidekiq::Worker
+  
+  sidekiq_options: unique_across_workers: true, queue: 'default'
+
+  def perform(args); end
+end
+
+class WorkerTwo
+  include Sidekiq::Worker
+  
+  sidekiq_options: unique_across_workers: true, queue: 'default'
+
+  def perform(args); end
+end
+
+
+WorkerOne.perform_async(1) 
+# => 'the jobs unique id'
+
+WorkerTwo.perform_async(1) 
+# => nil because WorkerOne just stole the lock
+```
+
+### Locks
+
+####
 
 ### Until Executing
 
@@ -83,14 +125,13 @@ sidekiq_options unique: :until_executing
 
 Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.
 
-
 ```ruby
 sidekiq_options unique: :until_executed
 ```
 
 ### Until Timeout
 
-Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached. 
+Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.
 
 ```ruby
 sidekiq_options unique: :until_expired
@@ -106,11 +147,9 @@ sidekiq_options unique: :until_and_while_executing
 
 ### While Executing
 
-With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It *looks* like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
+With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It _looks_ like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
 
-#### NOTE:
-
-Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
+**NOTE** Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
 
 ```ruby
 sidekiq_options unique: :while_executing, lock_timeout: nil
@@ -135,17 +174,9 @@ In the console you should see something like:
 10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
 ```
 
-
-### Uniqueness Scope
-
-- Queue specific locks
-- Across all queues - [examples/unique_on_all_queues_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/examples/unique_on_all_queues_job.rb)
-- Across all workers - [examples/unique_across_workers_job.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/examples/unique_across_workers_job.rb)
-- Timed / Scheduled jobs
-
 ## Usage
 
-All that is required is that you specifically set the sidekiq option for *unique* to a valid value like below:
+All that is required is that you specifically set the sidekiq option for _unique_ to a valid value like below:
 
 ```ruby
 sidekiq_options unique: :while_executing
@@ -165,7 +196,7 @@ The method or the proc can return a modified version of args without the transie
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options unique: :until_and_while_executing,
-                  unique_args: :unique_args
+                  unique_args: :unique_args # this is default and will be used if such a method is defined
 
   def self.unique_args(args)
     [ args[0], args[2][:type] ]
@@ -184,9 +215,6 @@ class UniqueJobWithFilterProc
 
 end
 ```
-
-The previous problems with unique args being string in server and symbol in client is no longer a problem because the `UniqueArgs` class accounts for this and converts everything to json now. If you find an edge case please provide and example so that we can add coverage and fix it.
-
 
 It is also quite possible to ensure different types of unique args based on context. I can't vouch for the below example but see [#203](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203) for the discussion.
 
@@ -207,7 +235,6 @@ class UniqueJobWithFilterMethod
 end
 ```
 
-
 ### After Unlock Callback
 
 If you are using :after_yield as your unlock ordering, Unique Job offers a callback to perform some work after the block is yielded.
@@ -222,12 +249,11 @@ class UniqueJobWithFilterMethod
   end
   ...
 end.
-
 ```
 
 ### Logging
 
-To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options.  The default value is false
+To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false
 
 ```ruby
 class UniqueJobWithFilterMethod
@@ -241,15 +267,19 @@ end
 ```
 
 ## Debugging
+
 There are two ways to display and remove keys regarding uniqueness. The console way and the command line way.
 
 ### Console
+
 Start the console with the following command `bundle exec jobs console`.
 
 #### List Unique Keys
+
 `keys '*', 100`
 
 #### Remove Unique Keys
+
 `del '*', 100, false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
 
 ### Command Line
