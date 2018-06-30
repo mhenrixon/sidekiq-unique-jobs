@@ -237,7 +237,10 @@ end
 
 ### After Unlock Callback
 
-If you are using :after_yield as your unlock ordering, Unique Job offers a callback to perform some work after the block is yielded.
+If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that. 
+
+**Exception 1:** UntilExecuting unlocks and calls back before yielding.
+**Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
 
 ```ruby
 class UniqueJobWithFilterMethod
