@@ -4,6 +4,8 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
   include_context 'with a stubbed locksmith'
+  let(:lock)     { described_class.new(item, callback) }
+  let(:callback) { -> {} }
   let(:item) do
     {
       'jid' => 'maaaahjid',
@@ -12,7 +14,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       'args' => ['one'],
     }
   end
-  let(:callback) { -> {} }
 
   describe '#execute' do
     let(:runtime_lock) { instance_spy(SidekiqUniqueJobs::Lock::WhileExecuting) }
@@ -21,7 +22,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       allow(lock).to receive(:locked?).and_return(locked?)
       allow(lock).to receive(:unlock).and_return(true)
       allow(lock).to receive(:runtime_lock).and_return(runtime_lock)
-      allow(runtime_lock).to receive(:execute).with(callback).and_yield
+      allow(runtime_lock).to receive(:execute).and_yield
     end
 
     context 'when locked?' do
@@ -30,12 +31,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       it 'unlocks the unique key before yielding' do
         inside_block_value = false
 
-        lock.execute(callback) { inside_block_value = true }
+        lock.execute { inside_block_value = true }
         expect(inside_block_value).to eq(true)
 
         expect(lock).to have_received(:locked?)
         expect(lock).to have_received(:unlock)
-        expect(runtime_lock).to have_received(:execute).with(callback)
+        expect(runtime_lock).to have_received(:execute)
       end
     end
 
@@ -44,12 +45,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
 
       it 'unlocks the unique key before yielding' do
         inside_block_value = false
-        lock.execute(callback) { inside_block_value = true }
+        lock.execute { inside_block_value = true }
         expect(inside_block_value).to eq(false)
 
         expect(lock).to have_received(:locked?)
         expect(lock).not_to have_received(:unlock)
-        expect(runtime_lock).not_to have_received(:execute).with(callback)
+        expect(runtime_lock).not_to have_received(:execute)
       end
     end
   end
@@ -65,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
 
       expect(SidekiqUniqueJobs::Lock::WhileExecuting)
         .to have_received(:new)
-        .with(item, redis_pool)
+        .with(item, callback, redis_pool)
     end
   end
 end

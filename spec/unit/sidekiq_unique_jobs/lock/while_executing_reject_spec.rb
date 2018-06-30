@@ -4,16 +4,16 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
   include_context 'with a stubbed locksmith'
-
+  let(:lock)     { described_class.new(item, callback) }
+  let(:callback) { -> {} }
+  let(:deadset)  { instance_spy(Sidekiq::DeadSet) }
+  let(:payload)  { instance_spy('payload') }
   let(:item) do
     { 'jid' => 'maaaahjid',
       'class' => 'WhileExecutingRejectJob',
       'unique' => 'while_executing_reject',
       'args' => [%w[array of arguments]] }
   end
-  let(:empty_callback) { -> {} }
-  let(:deadset)        { instance_spy(Sidekiq::DeadSet) }
-  let(:payload)        { instance_spy('payload') }
 
   before do
     allow(lock).to receive(:deadset).and_return(deadset)
@@ -28,13 +28,13 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
   end
 
   describe '#execute' do
-    subject(:execute) { lock.execute(empty_callback) }
+    subject(:execute) { lock.execute }
 
     let(:token) { nil }
 
     before do
       allow(locksmith).to receive(:lock).with(0).and_return(token)
-      allow(lock).to receive(:using_protection).with(empty_callback).and_yield
+      allow(lock).to receive(:with_cleanup).and_yield
     end
 
     context 'when lock succeeds' do
@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
 
       it 'processes the job' do
         execute
-        expect(lock).to have_received(:using_protection)
+        expect(lock).to have_received(:with_cleanup)
       end
     end
 
@@ -53,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
         expect(lock).to receive(:reject)
         execute
 
-        expect(lock).not_to have_received(:using_protection)
+        expect(lock).not_to have_received(:with_cleanup)
       end
     end
   end

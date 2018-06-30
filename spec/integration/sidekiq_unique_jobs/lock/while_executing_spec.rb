@@ -5,8 +5,8 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   include SidekiqHelpers
 
-  let(:process_one) { described_class.new(item_one) }
-  let(:process_two) { described_class.new(item_two) }
+  let(:process_one) { described_class.new(item_one, callback) }
+  let(:process_two) { described_class.new(item_two, callback) }
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
@@ -45,24 +45,24 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
 
     context 'when job is executing' do
       it 'locks the process' do
-        process_one.execute(callback) do
+        process_one.execute do
           expect(process_one.locked?).to eq(true)
         end
       end
 
       it 'calls back' do
-        process_one.execute(callback) do
+        process_one.execute do
           # NO OP
         end
         expect(callback).to have_received(:call)
       end
 
       it 'prevents other processes from executing' do
-        process_one.execute(callback) do
+        process_one.execute do
           expect(process_two.lock).to eq(true)
           expect(process_two.locked?).to eq(false)
           unset = true
-          process_two.execute(callback) do
+          process_two.execute do
             unset = false
           end
           expect(unset).to eq(true)

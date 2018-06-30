@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
     end
 
     def lock
-      @lock ||= lock_class.new(item, @redis_pool)
+      @lock ||= lock_class.new(item, after_unlock_hook, @redis_pool)
     end
 
     def lock_class

@@ -5,16 +5,18 @@ module SidekiqUniqueJobs
     class BaseLock
       include SidekiqUniqueJobs::Logging
 
-      def initialize(item, redis_pool = nil)
+      def initialize(item, callback, redis_pool = nil)
         @item       = prepare_item(item)
+        @callback   = callback
         @redis_pool = redis_pool
+        @operative  = true
       end
 
       def lock
         locksmith.lock(item[LOCK_TIMEOUT_KEY])
       end
 
-      def execute(_callback = nil)
+      def execute
         raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
       end
 
@@ -36,20 +38,19 @@ module SidekiqUniqueJobs
 
       private
 
-      attr_reader :item, :redis_pool, :operative
+      attr_reader :item, :redis_pool, :operative, :callback
 
       def locksmith
         @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
       end
 
-      def using_protection(callback)
-        @operative = true
+      def with_cleanup
         yield
       rescue Sidekiq::Shutdown
         @operative = false
         raise
       ensure
-        unlock_and_callback(callback)
+        unlock_with_callback
       end
 
       def prepare_item(item)
@@ -60,22 +61,23 @@ module SidekiqUniqueJobs
         item
       end
 
-      def unlock_and_callback(callback)
-        return notify_about_manual_unlock unless operative
-        unlock
-
-        return notify_about_manual_unlock if locked?
-        callback_safely(callback)
-      end
-
       def notify_about_manual_unlock
         log_fatal("the unique_key: #{item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
+        false
       end
 
-      def callback_safely(callback)
-        callback.call
+      def unlock_with_callback
+        return notify_about_manual_unlock unless operative
+        return notify_about_manual_unlock unless unlock
+
+        callback_safely
+        item[JID_KEY]
+      end
+
+      def callback_safely
+        callback&.call
       rescue StandardError
-        log_warn("the callback for unique_key: #{item[UNIQUE_DIGEST_KEY]} failed!")
+        log_warn("The lock for #{item[UNIQUE_DIGEST_KEY]} has been released but the #after_unlock callback failed!")
         raise
       end
     end

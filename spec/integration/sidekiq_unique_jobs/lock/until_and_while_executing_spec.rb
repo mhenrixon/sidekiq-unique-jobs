@@ -5,11 +5,11 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, redis_db: 3 do
   include SidekiqHelpers
 
-  let(:process_one) { described_class.new(item_one) }
-  let(:runtime_one) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_one.dup) }
+  let(:process_one) { described_class.new(item_one, callback) }
+  let(:runtime_one) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_one.dup, callback) }
 
-  let(:process_two) { described_class.new(item_two) }
-  let(:runtime_two) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_two.dup) }
+  let(:process_two) { described_class.new(item_two, callback) }
+  let(:runtime_two) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_two.dup, callback) }
 
   let(:jid_one)      { 'jid one' }
   let(:jid_two)      { 'jid two' }
@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
 
     it 'process two cannot lock the job' do
       expect(process_two.lock).to eq(nil)
-      expect(process_two.execute(callback)).to eq(nil)
+      expect(process_two.execute).to eq(nil)
       expect(process_two.locked?).to eq(false)
     end
 
@@ -58,7 +58,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       context 'when process_one executes the job in 0 seconds' do
         context 'when process_one executes the job' do # rubocop:disable RSpec/NestedGroups
           it 'process two can lock the job' do
-            process_one.execute(callback) do
+            process_one.execute do
               expect(process_one.locked?).to eq(false)
               expect(runtime_one.locked?).to eq(true)
               expect(process_two.lock).to eq(jid_two)
@@ -67,10 +67,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
           end
 
           it 'process two cannot execute the job' do
-            process_one.execute(callback) do
+            process_one.execute do
               unset = true
               expect(process_two.lock).to eq(jid_two)
-              process_two.execute(callback) do
+              process_two.execute do
                 unset = false
               end
 
@@ -85,7 +85,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
         let(:sleepy_time) { 1 }
 
         it 'process two can lock the job' do
-          process_one.execute(callback) do
+          process_one.execute do
             expect(process_one.locked?).to eq(false)
             expect(runtime_one.locked?).to eq(true)
             expect(process_two.lock).to eq(jid_two)
@@ -94,10 +94,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
         end
 
         it 'process two cannot execute the job' do
-          process_one.execute(callback) do
+          process_one.execute do
             unset = true
             expect(process_two.lock).to eq(jid_two)
-            process_two.execute(callback) do
+            process_two.execute do
               unset = false
             end
 
@@ -113,7 +113,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
 
       context 'when process_one executes the job' do
         it 'process two can lock the job' do
-          process_one.execute(callback) do
+          process_one.execute do
             expect(process_one.locked?).to eq(false)
             expect(runtime_one.locked?).to eq(true)
             expect(process_two.lock).to eq(jid_two)
@@ -122,10 +122,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
         end
 
         it 'process two cannot execute the job' do
-          process_one.execute(callback) do
+          process_one.execute do
             unset = true
             expect(process_two.lock).to eq(jid_two)
-            process_two.execute(callback) do
+            process_two.execute do
               unset = false
             end
 
@@ -140,7 +140,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       let(:sleepy_time) { 1 }
 
       it 'process two can lock the job' do
-        process_one.execute(callback) do
+        process_one.execute do
           expect(process_one.locked?).to eq(false)
           expect(runtime_one.locked?).to eq(true)
           expect(process_two.lock).to eq(jid_two)
@@ -149,10 +149,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       end
 
       it 'process two cannot execute the job' do
-        process_one.execute(callback) do
+        process_one.execute do
           unset = true
           expect(process_two.lock).to eq(jid_two)
-          process_two.execute(callback) do
+          process_two.execute do
             unset = false
           end
 

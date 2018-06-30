@@ -20,3 +20,7 @@ rails_example/spec/examples.txt
 .rspec_status
 
 /gemfiles/.bundle/
+
+/.byebug_history
+
+/.yardoc/

@@ -7,11 +7,12 @@ module SidekiqUniqueJobs
         true
       end
 
-      def execute(callback)
+      def execute
         locksmith.lock(item[LOCK_TIMEOUT_KEY], raise: true) do
-          yield
-          callback.call
+          yield if block_given?
         end
+
+        unlock
 
         Sidekiq::Client.push(item) unless locksmith.locked?
       end

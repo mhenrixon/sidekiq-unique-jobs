@@ -4,7 +4,8 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   include_context 'with a stubbed locksmith'
-
+  let(:lock)     { described_class.new(item, callback) }
+  let(:callback) { -> {} }
   let(:item) do
     {
       'jid' => 'maaaahjid',
@@ -37,26 +38,27 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
 
   describe '#execute' do
     it do
-      expect { lock.execute(nil) }
+      expect { lock.execute }
         .to raise_error(NotImplementedError, "#execute needs to be implemented in #{described_class}")
     end
   end
 
   describe '#unlock' do
-    it do
-      allow(locksmith).to receive(:signal).with(item['jid']).and_return('unlocked')
+    subject(:unlock) { lock.unlock }
 
-      expect(lock.unlock).to eq('unlocked')
+    before do
+      allow(locksmith).to receive(:signal).with(item['jid']).and_return('unlocked')
     end
+
+    it { is_expected.to eq('unlocked') }
   end
 
   describe '#delete' do
-    it do
-      allow(locksmith).to receive(:unlock)
-      allow(locksmith).to receive(:delete).and_return('deleted')
+    subject { lock.delete }
 
-      expect(lock.delete).to eq('deleted')
-    end
+    before { allow(locksmith).to receive(:delete).and_return('deleted') }
+
+    it { is_expected.to eq('deleted') }
   end
 
   describe '#locked?' do

@@ -4,19 +4,20 @@ require 'spec_helper'
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
   include_context 'with a stubbed locksmith'
-
+  let(:lock)     { described_class.new(item, callback) }
+  let(:callback) { -> {} }
   let(:item) do
     { 'jid' => 'maaaahjid',
       'class' => 'UntilExpiredJob',
       'unique' => 'until_timeout' }
   end
-  let(:empty_callback) { -> {} }
 
   describe '#execute' do
     it 'calls the callback' do
-      expect(lock).to receive(:unlock).ordered
-      expect(empty_callback).to receive(:call)
-      expect { |block| lock.execute(empty_callback, &block) }.to yield_control
+      allow(lock).to receive(:unlock_with_callback)
+
+      expect { |block| lock.execute(&block) }.to yield_control
+      expect(lock).to have_received(:unlock_with_callback)
     end
   end
 end
