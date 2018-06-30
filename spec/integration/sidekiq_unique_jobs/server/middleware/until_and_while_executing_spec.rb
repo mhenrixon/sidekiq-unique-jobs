@@ -60,6 +60,8 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, 'unique: :until_and_while_
                                                version_key,
                                                available_run_key,
                                                available_key,
+                                               exists_run_key,
+                                               version_run_key,
                                              ])
         end
       end

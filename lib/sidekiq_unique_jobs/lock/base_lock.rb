@@ -63,7 +63,6 @@ module SidekiqUniqueJobs
       def unlock_and_callback(callback)
         return notify_about_manual_unlock unless operative
         unlock
-        delete
 
         return notify_about_manual_unlock if locked?
         callback_safely(callback)

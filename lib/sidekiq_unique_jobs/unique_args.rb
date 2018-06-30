@@ -6,8 +6,6 @@ require 'sidekiq_unique_jobs/normalizer'
 module SidekiqUniqueJobs
   # This class exists to be testable and the entire api should be considered private
   class UniqueArgs
-    CLASS_NAME = 'SidekiqUniqueJobs::UniqueArgs'
-
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::SidekiqWorkerMethods
 

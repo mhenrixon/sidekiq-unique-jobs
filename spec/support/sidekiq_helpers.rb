@@ -11,8 +11,8 @@ module SidekiqHelpers
     redis { |conn| conn.zcard(queue) }
   end
 
-  def zcount(queue, time)
-    redis { |conn| conn.zcount(queue, -1, time) }
+  def zcount(queue, min = '-inf', max = '+inf')
+    redis { |conn| conn.zcount(queue, min, max) }
   end
 
   def hexists(hash, key)
@@ -39,8 +39,8 @@ module SidekiqHelpers
     zcard('schedule')
   end
 
-  def schedule_count_at(time = Time.now.to_f + 2 * 60)
-    zcount('schedule', time)
+  def schedule_count_at(max = Time.now.to_f + 2 * 60)
+    zcount('schedule', '-inf', max)
   end
 
   def queue_count(queue)
