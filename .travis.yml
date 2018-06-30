@@ -15,13 +15,14 @@ before_install:
   - sudo apt-get update -qy
   - sudo apt-get install redis-server
   - sudo service redis-server start
-before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
+before_script:
   - ./cc-test-reporter before-build
 script:
   - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
-  - bundle exec rspec spec
+  - bundle exec rspec
+after_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 rvm:
   - 2.5.1
