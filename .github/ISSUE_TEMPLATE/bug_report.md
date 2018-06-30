@@ -14,6 +14,7 @@ A clear and concise description of what you expected to happen.
 What happens instead of the expected behavior?
 
 **Worker class**
+
 ```ruby
 class MyWorker
   include Sidekiq::Worker
