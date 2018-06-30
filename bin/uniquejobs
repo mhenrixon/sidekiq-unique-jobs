@@ -2,6 +2,6 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'sidekiq-unique-jobs'
+require 'sidekiq_unique_jobs'
 
 SidekiqUniqueJobs::Cli.start(ARGV)
