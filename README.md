@@ -313,16 +313,7 @@ end
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-## Contributors
 
-In no particular order:
+## Contributors 
 
-- https://github.com/salrepe
-- https://github.com/rickenharp
-- https://github.com/sax
-- https://github.com/eduardosasso
-- https://github.com/KensoDev
-- https://github.com/adstage-david
-- https://github.com/jprincipe
-- https://github.com/crberube
-- https://github.com/simonoff
+You can find a list of contributors over on https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
