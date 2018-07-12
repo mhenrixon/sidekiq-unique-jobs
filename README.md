@@ -1,6 +1,40 @@
 # SidekiqUniqueJobs [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg)](https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.png?branch=master)](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs) [![Code Climate](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.png)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs) [![Test Coverage](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage)
 
-The missing unique jobs for sidekiq
+## Table of contents
+
+* [Introduction](#introduction)
+* [Documentation](#documentation)
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [General Information](#general-information)
+* [Options](#options)
+   * [Lock Expiration](#lock-expiration)
+   * [Lock Timeout](#lock-timeout)
+   * [Unique Across Queues](#unique-across-queues)
+   * [Unique Across Workers](#unique-across-workers)
+* [Locks](#locks)
+   * [Until Executing](#until-executing)
+   * [Until Executed](#until-executed)
+   * [Until Timeout](#until-timeout)
+   * [Unique Until And While Executing](#unique-until-and-while-executing)
+   * [While Executing](#while-executing)
+* [Usage](#usage)
+   * [Finer Control over Uniqueness](#finer-control-over-uniqueness)
+   * [After Unlock Callback](#after-unlock-callback)
+   * [Logging](#logging)
+* [Debugging](#debugging)
+   * [Console](#console)
+      * [List Unique Keys](#list-unique-keys)
+      * [Remove Unique Keys](#remove-unique-keys)
+   * [Command Line](#command-line)
+* [Communication](#communication)
+* [Testing](#testing)
+* [Contributing](#contributing)
+* [Contributors](#contributors)
+
+## Introduction
+
+The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.
 
 ## Documentation
 
@@ -37,9 +71,9 @@ See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wi
 
 See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
 
-### Options
+## Options
 
-#### Lock Expiration
+### Lock Expiration
 
 This is probably not the configuration option you want...
 
@@ -52,7 +86,7 @@ sidekiq_options lock_expiration: nil # default - don't expire keys
 sidekiq_options lock_expiration: 20.days # expire this lock in 20 days
 ```
 
-#### Lock Timeout
+### Lock Timeout
 
 This is the timeout (how long to wait) when creating the lock. By default we don't use a timeout so we won't wait for the lock to be created. If you want it is possible to set this like below.
 
@@ -62,7 +96,7 @@ sidekiq_options lock_timeout: 5 # wait 5 seconds
 sidekiq_options lock_timeout: nil # lock indefinitely, this process won't continue until it gets a lock. VERY DANGEROUS!!
 ```
 
-#### Unique Across Queues
+### Unique Across Queues
 
 This configuration option is slightly misleading. It doesn't disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.
 
@@ -78,7 +112,7 @@ end
 
 Now if you push override the queue with `Worker.set(queue: 'another').perform_async(1)` it will still be considered unique when compared to `Worker.perform_async(1)` (that was actually pushed to the queue `default`).
 
-#### Unique Across Workers
+### Unique Across Workers
 
 This configuration option is slightly misleading. It doesn't disregard the worker class on other jobs. Just on itself, this means that a worker that the worker class won't be used for generating the unique digest. The only way this option really makes sense is when you want to have uniqueness between two different worker classes.
 
@@ -107,9 +141,7 @@ WorkerTwo.perform_async(1)
 # => nil because WorkerOne just stole the lock
 ```
 
-### Locks
-
-####
+## Locks
 
 ### Until Executing
 
@@ -313,16 +345,7 @@ end
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-## Contributors
 
-In no particular order:
+## Contributors 
 
-- https://github.com/salrepe
-- https://github.com/rickenharp
-- https://github.com/sax
-- https://github.com/eduardosasso
-- https://github.com/KensoDev
-- https://github.com/adstage-david
-- https://github.com/jprincipe
-- https://github.com/crberube
-- https://github.com/simonoff
+You can find a list of contributors over on https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors

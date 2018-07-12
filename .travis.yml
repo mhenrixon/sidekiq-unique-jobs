@@ -28,12 +28,8 @@ rvm:
   - 2.5.1
   - 2.4.2
   - 2.3.2
-  - jruby-9.1.17.0
   - jruby-9.2.0.0
 matrix:
-  allow_failures:
-    - rvm: jruby-9.1.17.0
-    - rvm: jruby-9.2.0.0
   fast_finish: true
   include:
     - rvm: 2.5.1
