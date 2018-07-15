@@ -35,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
         it 'calls back' do
           expect { execute }.to raise_error('HELL')
 
-          expect(callback).to have_received(:call)
+          expect(callback).not_to have_received(:call)
         end
       end
 

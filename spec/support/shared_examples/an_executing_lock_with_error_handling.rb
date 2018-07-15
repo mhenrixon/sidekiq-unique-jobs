@@ -25,7 +25,7 @@ RSpec.shared_examples 'an executing lock with error handling' do
     it 'raises "HELL"' do
       expect { execute }.to raise_error('HELL')
 
-      expect(lock).to have_received(:unlock)
+      expect(lock).not_to have_received(:unlock)
     end
   end
 end
