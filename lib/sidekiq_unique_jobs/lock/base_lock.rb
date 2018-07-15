@@ -9,7 +9,6 @@ module SidekiqUniqueJobs
         @item       = prepare_item(item)
         @callback   = callback
         @redis_pool = redis_pool
-        @operative  = true
       end
 
       def lock
@@ -38,7 +37,7 @@ module SidekiqUniqueJobs
 
       private
 
-      attr_reader :item, :redis_pool, :operative, :callback
+      attr_reader :item, :redis_pool, :callback
 
       def locksmith
         @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
@@ -47,9 +46,9 @@ module SidekiqUniqueJobs
       def with_cleanup
         yield
       rescue Sidekiq::Shutdown
-        @operative = false
+        notify_about_manual_unlock
         raise
-      ensure
+      else
         unlock_with_callback
       end
 
@@ -67,7 +66,6 @@ module SidekiqUniqueJobs
       end
 
       def unlock_with_callback
-        return notify_about_manual_unlock unless operative
         return notify_about_manual_unlock unless unlock
 
         callback_safely

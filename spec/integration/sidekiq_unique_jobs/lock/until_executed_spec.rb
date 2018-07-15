@@ -43,6 +43,15 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
         expect(process_two.locked?).to eq(false)
       end
 
+      context 'when worker raises an error' do
+        it 'keeps the lock' do
+          expect { process_one.execute { raise 'Hell' } }
+            .to raise_error('Hell')
+
+          expect(process_one.locked?).to eq(true)
+        end
+      end
+
       context 'when process_one executes the job' do
         it 'the first client process should be unlocked' do
           process_one.execute do
