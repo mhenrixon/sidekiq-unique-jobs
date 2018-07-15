@@ -73,7 +73,8 @@ module SidekiqUniqueJobs
       end
 
       def callback_safely
-        callback&.call
+        return if callback.nil?
+        callback.call
       rescue StandardError
         log_warn("The lock for #{item[UNIQUE_DIGEST_KEY]} has been released but the #after_unlock callback failed!")
         raise
