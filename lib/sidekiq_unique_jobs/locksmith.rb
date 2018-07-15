@@ -84,7 +84,7 @@ module SidekiqUniqueJobs
 
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
-        if timeout.nil? || timeout.positive?
+        if timeout.nil? || timeout > 0
           # passing timeout 0 to blpop causes it to block
           _key, token = conn.blpop(available_key, timeout || 0)
         else
