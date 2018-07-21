@@ -2,15 +2,25 @@
 
 module SidekiqUniqueJobs
   class Lock
+    # Abstract base class for locks
+    #
+    # @abstract
+    # @author Mikael Henriksson <mikael@zoolutions.se>
     class BaseLock
       include SidekiqUniqueJobs::Logging
 
+      # @param [Hash] item the Sidekiq job hash
+      # @param [Proc] callback the callback to use after unlock
+      # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
       def initialize(item, callback, redis_pool = nil)
         @item       = prepare_item(item)
         @callback   = callback
         @redis_pool = redis_pool
       end
 
+      # Handles locking of sidekiq jobs.
+      #   Will call a conflict strategy if lock can't be achieved.
+      # @return [String] the sidekiq job id
       def lock
         if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
           token
@@ -19,30 +29,53 @@ module SidekiqUniqueJobs
         end
       end
 
+      # Execute the job in the Sidekiq server processor
+      # @raise [NotImplementedError] needs to be implemented in child class
       def execute
         raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
       end
 
+      # Unlocks the job from redis
+      # @return [String] sidekiq job id when successful
+      # @return [false] when unsuccessful
       def unlock
         locksmith.signal(item[JID_KEY]) # Only signal to release the lock
       end
 
+      # Deletes the job from redis if it is locked.
       def delete
         locksmith.delete # Soft delete (don't forcefully remove when expiration is set)
       end
 
+      # Forcefully deletes the job from redis.
+      #   This is good for jobs when a previous lock was not unlocked
       def delete!
         locksmith.delete! # Force delete the lock
       end
 
+      # Checks if the item has achieved a lock
+      # @return [true] when this jid has locked the job
+      # @return [false] when this jid has not locked the job
       def locked?
         locksmith.locked?(item[JID_KEY])
       end
 
       private
 
-      attr_reader :item, :redis_pool, :callback
+      # The sidekiq job hash
+      # @return [Hash] the Sidekiq job hash
+      attr_reader :item
 
+      # The sidekiq redis pool
+      # @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
+      attr_reader :redis_pool
+
+      # The sidekiq job hash
+      # @return [Proc] the callback to use after unlock
+      attr_reader :callback
+
+      # The interface to the locking mechanism
+      # @return [SidekiqUniqueJobs::Locksmith]
       def locksmith
         @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
       end
@@ -84,7 +117,7 @@ module SidekiqUniqueJobs
       end
 
       def strategy
-        OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item)
+        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item)
       end
     end
   end

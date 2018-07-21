@@ -5,6 +5,9 @@ require 'digest/sha1'
 require 'concurrent/map'
 
 module SidekiqUniqueJobs
+  # Interface to dealing with .lua files
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
   module Scripts
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
@@ -13,6 +16,14 @@ module SidekiqUniqueJobs
 
     module_function
 
+    # Call a lua script with the provided file_name
+    # @param [Symbol] file_name the name of the lua script
+    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+    # @param [Hash] options arguments to pass to the script file
+    # @option options [Array] :keys the array of keys to pass to the script
+    # @option options [Array] :argv the array of arguments to pass to the script
+    # @note this method is recursive if we need to load a lua script
+    #   that wasn't previously loaded.
     def call(file_name, redis_pool, options = {})
       execute_script(file_name, redis_pool, options)
     rescue Redis::CommandError => ex
@@ -21,6 +32,12 @@ module SidekiqUniqueJobs
       end
     end
 
+    # Execute the script file
+    # @param [Symbol] file_name the name of the lua script
+    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+    # @param [Hash] options arguments to pass to the script file
+    # @option options [Array] :keys the array of keys to pass to the script
+    # @option options [Array] :argv the array of arguments to pass to the script
     def execute_script(file_name, redis_pool, options = {})
       redis(redis_pool) do |conn|
         sha = script_sha(conn, file_name)
@@ -28,6 +45,10 @@ module SidekiqUniqueJobs
       end
     end
 
+    # Return sha of already loaded lua script or load it and return the sha
+    # @param [Sidekiq::RedisConnection] conn the redis connection
+    # @param [Symbol] file_name the name of the lua script
+    # @return [String] sha of the script file
     def script_sha(conn, file_name)
       if (sha = SCRIPT_SHAS.get(file_name))
         return sha
@@ -38,6 +59,10 @@ module SidekiqUniqueJobs
       sha
     end
 
+    # Return sha of already loaded lua script or load it and return the sha
+    # @param [Redis::CommandError] ex exception to handle
+    # @param [Symbol] file_name the name of the lua script
+    # @raise [ScriptError] when the error isn't handled
     def handle_error(ex, file_name)
       if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
         SCRIPT_SHAS.delete(file_name)
@@ -47,10 +72,16 @@ module SidekiqUniqueJobs
       raise ScriptError, file_name: file_name, source_exception: ex
     end
 
+    # Reads the lua file from disk
+    # @param [Symbol] file_name the name of the lua script
+    # @return [String] the content of the lua file
     def script_source(file_name)
       script_path(file_name).read
     end
 
+    # Construct a Pathname to a lua script
+    # @param [Symbol] file_name the name of the lua script
+    # @return [Pathname] the full path to the gems lua script
     def script_path(file_name)
       LUA_PATHNAME.join("#{file_name}.lua")
     end

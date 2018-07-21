@@ -1,12 +1,20 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+  # Lock manager class that handles all the various locks
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
   class Locksmith # rubocop:disable ClassLength
     API_VERSION = '1'
     EXPIRES_IN = 10
 
     include SidekiqUniqueJobs::Connection
 
+    # @param [Hash] item a Sidekiq job hash
+    # @option item [Integer] :lock_expiration the configured expiration
+    # @option item [String] :jid the sidekiq job id
+    # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
+    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     def initialize(item, redis_pool = nil)
       @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @expiration    = item[LOCK_EXPIRATION_KEY]
@@ -15,6 +23,8 @@ module SidekiqUniqueJobs
       @redis_pool    = redis_pool
     end
 
+    # Creates the necessary keys in redis to attempt a lock
+    # @return [String] the Sidekiq job_id
     def create
       Scripts.call(
         :create,
@@ -24,21 +34,27 @@ module SidekiqUniqueJobs
       )
     end
 
+    # Checks if the exists key is created in redis
+    # @return [true, false]
     def exists?
       redis(redis_pool) { |conn| conn.exists(exists_key) }
     end
 
+    # The number of available resourced for this lock
+    # @return [Integer] the number of available resources
     def available_count
       return concurrency unless exists?
 
       redis(redis_pool) { |conn| conn.llen(available_key) }
     end
 
+    # Deletes the lock unless it has an expiration set
     def delete
       return if expiration
       delete!
     end
 
+    # Deletes the lock regardless of if it has an expiration set
     def delete!
       Scripts.call(
         :delete,
@@ -47,6 +63,11 @@ module SidekiqUniqueJobs
       )
     end
 
+    # Create a lock for the item
+    # @param [Integer] timeout the number of seconds to wait for a lock.
+    #   nil means wait indefinitely
+    # @yield the block to execute if a lock is successful
+    # @return the Sidekiq job_id (jid)
     def lock(timeout = nil, &block)
       create
 
@@ -57,16 +78,27 @@ module SidekiqUniqueJobs
     end
     alias wait lock
 
+    # Removes the lock keys from Redis
+    # @return [false] unless locked?
+    # @return [String] Sidekiq job_id (jid) if successful
     def unlock
       return false unless locked?
       signal(jid)
     end
 
+    # Removes the lock keys from Redis
+    # @param [String] token the unique token to check for a lock.
+    #   nil will default to the jid provided in the initializer
+    # @return [true, false]
     def locked?(token = nil)
       token ||= jid
       redis(redis_pool) { |conn| conn.hexists(grabbed_key, token) }
     end
 
+    # Signal that the token should be released
+    # @param [String] token the unique token to check for a lockk.
+    #   nil will default to the jid provided in the initializer.
+    # @return [Integer] the number of available lock resources
     def signal(token = nil)
       token ||= jid
 

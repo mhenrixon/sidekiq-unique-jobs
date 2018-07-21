@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+  # Utility module to help manage unique keys in redis.
+  # Useful for deleting keys that for whatever reason wasn't deleted
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
   module Util
     COUNT             = 'COUNT'
     DEFAULT_COUNT     = 1_000
@@ -12,6 +16,11 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
     extend self # rubocop:disable Style/ModuleFunction
 
+    # Find unique keys in redis
+    #
+    # @param [String] pattern a pattern to scan for in redis
+    # @param [Integer] count the maximum number of keys to delete
+    # @return [Array] an array with active unique keys
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
       return redis(&:keys) if pattern.nil?
       redis { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
@@ -19,10 +28,9 @@ module SidekiqUniqueJobs
 
     # Deletes unique keys from redis
     #
-    #
-    # @param pattern [String] a pattern to scan for in redis
-    # @param count [Integer] the maximum number of keys to delete
-    # @return [Boolean] report success
+    # @param [String] pattern a pattern to scan for in redis
+    # @param [Integer] count the maximum number of keys to delete
+    # @return [Integer] the number of keys deleted
     def del(pattern = SCAN_PATTERN, count = 0)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
       pattern = "#{pattern}:*" unless pattern.end_with?(':*')
