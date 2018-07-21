@@ -10,7 +10,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   let(:item) do
     { 'jid' => 'maaaahjid',
       'class' => 'WhileExecutingJob',
-      'unique' => 'while_executing',
+      'lock' => 'while_executing',
       'args' => [%w[array of arguments]] }
   end
 

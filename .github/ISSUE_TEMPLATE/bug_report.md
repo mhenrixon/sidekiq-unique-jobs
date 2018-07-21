@@ -18,7 +18,7 @@ What happens instead of the expected behavior?
 ```ruby
 class MyWorker
   include Sidekiq::Worker
-  sidekiq_options unique: :until_executed, queue: :undefault
+  sidekiq_options lock: :until_executed, queue: :undefault
   def perform(args); end
 
   def self.unique_args(args)

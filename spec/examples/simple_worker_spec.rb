@@ -8,7 +8,7 @@ RSpec.describe SimpleWorker do
       {
         'queue'       => :default,
         'retry'       => true,
-        'unique'      => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

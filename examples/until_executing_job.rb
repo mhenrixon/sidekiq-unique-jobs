@@ -5,7 +5,7 @@
 class UntilExecutingJob
   include Sidekiq::Worker
 
-  sidekiq_options queue: :working, unique: :until_executing
+  sidekiq_options lock: :until_executing, queue: :working
 
   def perform; end
 end

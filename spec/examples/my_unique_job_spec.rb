@@ -6,11 +6,10 @@ RSpec.describe MyUniqueJob do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'           => :customqueue,
-        'retry'           => true,
-        'retry_count'     => 10,
+        'lock' => :until_executed,
         'lock_expiration' => 7_200,
-        'unique'          => :until_executed,
+        'queue'           => :customqueue,
+        'retry'           => 10,
       }
     end
   end

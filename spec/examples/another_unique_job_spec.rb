@@ -9,7 +9,7 @@ RSpec.describe AnotherUniqueJob, redis: :redis do
         'queue'     => :working2,
         'retry'     => 1,
         'backtrace' => 10,
-        'unique'    => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

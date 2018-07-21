@@ -11,7 +11,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
       'jid' => 'maaaahjid',
       'queue' => 'default',
       'class' => 'UntilExecutedJob',
-      'unique' => :until_executed,
+      'lock' => :until_executed,
       'args' => [1],
     }
   end
@@ -57,6 +57,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     subject { lock.delete }
 
     before { allow(locksmith).to receive(:delete).and_return('deleted') }
+
+    it { is_expected.to eq('deleted') }
+  end
+
+  describe '#delete!' do
+    subject { lock.delete! }
+
+    before { allow(locksmith).to receive(:delete!).and_return('deleted') }
 
     it { is_expected.to eq('deleted') }
   end

@@ -27,7 +27,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       'jid' => jid,
       'queue' => queue,
       'class' => worker_class,
-      'unique' => unique,
+      'lock' => unique,
       'args' => args,
       'log_duplicate_payload' => log_duplicate_payload,
     }
@@ -42,8 +42,8 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     it { is_expected.to eq(nil) }
 
     context 'when options["unique"] is present' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:options) { { 'lock' => 'while_executing' } }
+      let(:item)    { { 'lock' => 'until_executed' } }
 
       it { is_expected.to eq('while_executing') }
 
@@ -57,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
 
     context 'when item["unique"] is present' do
-      let(:item) { { 'unique' => 'until_executed' } }
+      let(:item) { { 'lock' => 'until_executed' } }
 
       it { is_expected.to eq('until_executed') }
 
@@ -80,15 +80,15 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     it { is_expected.to be_truthy }
 
     context 'when options["unique"] is present' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:options) { { 'lock' => 'while_executing' } }
+      let(:item)    { { 'lock' => 'until_executed' } }
 
       it { is_expected.to be_falsey }
     end
 
     context 'when item["unique"] is present' do
       let(:options) { {} }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:item)    { { 'lock' => 'until_executed' } }
 
       it { is_expected.to be_falsey }
     end
@@ -119,7 +119,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       it { is_expected.to be_a(SidekiqUniqueJobs::Lock::UntilExecuted) }
 
       context 'when options["unique"] is present' do
-        let(:options) { { 'unique' => :while_executing } }
+        let(:options) { { 'lock' => :while_executing } }
 
         it { is_expected.to be_a(SidekiqUniqueJobs::Lock::WhileExecuting) }
       end
@@ -130,24 +130,24 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     subject(:lock_class) { options_with_fallback.lock_class }
 
     context 'when item["unique"] is present' do
-      let(:item) { { 'unique' => :until_executed } }
+      let(:item) { { 'lock' => :until_executed } }
 
       it { is_expected.to eq(SidekiqUniqueJobs::Lock::UntilExecuted) }
 
       context 'when options["unique"] is present' do
-        let(:options) { { 'unique' => :while_executing } }
+        let(:options) { { 'lock' => :while_executing } }
 
         it { is_expected.to eq(SidekiqUniqueJobs::Lock::WhileExecuting) }
       end
     end
 
     context 'without matching class in LOCKS' do
-      let(:item) { { 'unique' => :until_unknown } }
+      let(:item) { { 'lock' => :until_unknown } }
 
       it do
         expect { lock_class }
           .to raise_error(SidekiqUniqueJobs::UnknownLock,
-                          'No implementation for `unique: :until_unknown`')
+                          'No implementation for `lock: :until_unknown`')
       end
     end
   end
@@ -156,15 +156,15 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     subject { options_with_fallback.lock_type }
 
     context 'when options["unique"] is while_executing' do
-      let(:options) { { 'unique' => 'while_executing' } }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:options) { { 'lock' => 'while_executing' } }
+      let(:item)    { { 'lock' => 'until_executed' } }
 
       it { is_expected.to eq('while_executing') }
     end
 
     context 'when item["unique"] is until_executed' do
       let(:options) { {} }
-      let(:item)    { { 'unique' => 'until_executed' } }
+      let(:item)    { { 'lock' => 'until_executed' } }
 
       it { is_expected.to eq('until_executed') }
     end
@@ -181,7 +181,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
     context 'when default_worker_options has been configured' do
       let(:worker_class)           { PlainClass }
-      let(:default_worker_options) { { 'unique' => :while_executing } }
+      let(:default_worker_options) { { 'lock' => :while_executing } }
 
       it do
         with_default_worker_options(default_worker_options) do

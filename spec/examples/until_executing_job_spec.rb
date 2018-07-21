@@ -8,7 +8,7 @@ RSpec.describe UntilExecutingJob do
       {
         'queue'  => :working,
         'retry'  => true,
-        'unique' => :until_executing,
+        'lock' => :until_executing,
       }
     end
   end

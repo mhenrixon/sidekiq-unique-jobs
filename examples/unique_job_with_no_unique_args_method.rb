@@ -4,10 +4,10 @@
 
 class UniqueJobWithNoUniqueArgsMethod
   include Sidekiq::Worker
-  sidekiq_options queue: :customqueue,
+  sidekiq_options backtrace: true,
+                  lock: :until_executed,
+                  queue: :customqueue,
                   retry: true,
-                  backtrace: true,
-                  unique: :until_executed,
                   unique_args: :filtered_args
 
   def perform(one, two)

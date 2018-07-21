@@ -9,7 +9,7 @@ RSpec.describe WhileExecutingJob do
         'backtrace' => 10,
         'queue'     => :working,
         'retry'     => 1,
-        'unique'    => :while_executing,
+        'lock' => :while_executing,
       }
     end
   end

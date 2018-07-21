@@ -2,12 +2,11 @@
 
 # :nocov:
 
-class MyUniqueJob
+class UniqueJobOnConflictReschedule
   include Sidekiq::Worker
-  sidekiq_options lock: :until_executed,
-                  lock_expiration: 7_200,
+  sidekiq_options lock: :while_executing,
                   queue: :customqueue,
-                  retry: 10
+                  on_conflict: :reschedule
 
   def perform(one, two)
     [one, two]

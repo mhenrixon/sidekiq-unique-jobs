@@ -2,20 +2,19 @@
 
 require 'spec_helper'
 
-RSpec.describe UniqueJobWithNoUniqueArgsMethod do
+RSpec.describe UniqueJobOnConflictReschedule do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'backtrace'   => true,
+        'lock'        => :while_executing,
+        'on_conflict' => :reschedule,
         'queue'       => :customqueue,
         'retry'       => true,
-        'lock' => :until_executed,
-        'unique_args' => :filtered_args,
       }
     end
   end
 
   it_behaves_like 'a performing worker' do
-    let(:args) { %w[one two] }
+    let(:args) { ['hundred', 'type' => 'extremely unique', 'id' => 44] }
   end
 end

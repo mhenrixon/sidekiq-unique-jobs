@@ -16,62 +16,35 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }
   let(:item_one) do
-    { 'jid' => jid_one,
+    { 'jid'   => jid_one,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
-      'args' => args }
+      'lock'  => unique,
+      'args'  => args }
   end
   let(:item_two) do
-    { 'jid' => jid_two,
+    { 'jid'   => jid_two,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
-      'args' => args }
+      'lock'  => unique,
+      'args'  => args }
   end
 
   before do
     allow(callback).to receive(:call).and_call_original
   end
 
+  describe '#lock' do
+    it_behaves_like 'a lock implementation'
+  end
+
   describe '#execute' do
-    it 'process one can be locked' do
-      expect(process_one.lock).to eq(jid_one)
+    it_behaves_like 'an executing lock implementation'
+
+    it 'keeps lock after executing' do
+      process_one.lock
+      process_one.execute {}
       expect(process_one.locked?).to eq(true)
-    end
-
-    context 'when process one has locked the job' do
-      before do
-        process_one.lock
-      end
-
-      it 'process two cannot achieve a lock' do
-        expect(process_two.lock).to eq(nil)
-      end
-
-      it 'process two cannot execute the lock' do
-        unset = true
-        process_two.execute do
-          unset = false
-        end
-
-        expect(unset).to eq(true)
-      end
-
-      it 'process one can execute the job' do
-        set = false
-        process_one.execute do
-          set = true
-        end
-
-        expect(set).to eq(true)
-      end
-
-      it 'the job is still locked after executing' do
-        process_one.execute {}
-
-        expect(process_one.locked?).to eq(true)
-      end
     end
   end
 

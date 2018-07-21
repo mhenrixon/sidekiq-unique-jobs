@@ -20,10 +20,6 @@ module SidekiqUniqueJobs
         @scheduled_at ||= item[AT_KEY]
       end
 
-      def seconds
-        raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
-      end
-
       def lock_expiration
         @lock_expiration ||= begin
           expiration = item[LOCK_EXPIRATION_KEY]

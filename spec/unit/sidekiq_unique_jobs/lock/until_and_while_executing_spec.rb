@@ -10,7 +10,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
     {
       'jid' => 'maaaahjid',
       'class' => 'UntilAndWhileExecutingJob',
-      'unique' => 'until_and_while_executing',
+      'lock' => 'until_and_while_executing',
       'args' => ['one'],
     }
   end

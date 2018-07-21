@@ -6,8 +6,8 @@ RSpec.describe UniqueOnAllQueuesJob do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'retry'                => true,
-        'unique'               => :until_executed,
+        'retry' => true,
+        'lock' => :until_executed,
         'unique_on_all_queues' => true,
       }
     end

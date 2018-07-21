@@ -4,8 +4,8 @@
 
 class WhileExecutingRejectJob
   include Sidekiq::Worker
-  sidekiq_options queue: :rejecting,
-                  unique: :while_executing_reject
+  sidekiq_options lock: :while_executing_reject,
+                  queue: :rejecting
 
   def perform(args)
     sleep 5

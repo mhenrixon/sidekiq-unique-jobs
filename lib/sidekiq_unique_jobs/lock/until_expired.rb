@@ -9,8 +9,8 @@ module SidekiqUniqueJobs
 
       def execute
         return unless locked?
-        yield if block_given?
-        # this lock does not handle after_unlock since we don't know when that would
+        yield
+        # this lock does not handle after_unlock since we don't know when that would happen
       end
     end
   end

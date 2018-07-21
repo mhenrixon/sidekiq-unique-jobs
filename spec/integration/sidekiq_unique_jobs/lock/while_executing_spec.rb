@@ -19,14 +19,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
     { 'jid' => jid_one,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
+      'lock' => unique,
       'args' => args }
   end
   let(:item_two) do
     { 'jid' => jid_two,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
+      'lock' => unique,
       'args' => args }
   end
 
@@ -34,7 +34,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
     allow(callback).to receive(:call).and_call_original
   end
 
-  describe '#execute' do
+  describe '#lock' do
     it 'does not lock jobs' do
       expect(process_one.lock).to eq(true)
       expect(process_one.locked?).to eq(false)
@@ -42,8 +42,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
       expect(process_two.lock).to eq(true)
       expect(process_two.locked?).to eq(false)
     end
+  end
 
-    context 'when job is executing' do
+  describe '#execute' do
+    context 'when executing' do
       it 'locks the process' do
         process_one.execute do
           expect(process_one.locked?).to eq(true)
@@ -51,20 +53,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
       end
 
       it 'calls back' do
-        process_one.execute do
-          # NO OP
-        end
+        process_one.execute {}
         expect(callback).to have_received(:call)
       end
 
       it 'prevents other processes from executing' do
         process_one.execute do
-          expect(process_two.lock).to eq(true)
-          expect(process_two.locked?).to eq(false)
           unset = true
-          process_two.execute do
-            unset = false
-          end
+          process_two.execute { unset = false }
           expect(unset).to eq(true)
         end
 

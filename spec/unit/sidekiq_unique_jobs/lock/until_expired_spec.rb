@@ -9,7 +9,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   let(:item) do
     { 'jid' => 'maaaahjid',
       'class' => 'UntilExpiredJob',
-      'unique' => 'until_timeout' }
+      'lock' => 'until_timeout' }
   end
 
   describe '#unlock' do

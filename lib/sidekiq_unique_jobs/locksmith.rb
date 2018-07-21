@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
     end
 
     def delete
-      return unless expiration.nil?
+      return if expiration
       delete!
     end
 
@@ -140,12 +140,3 @@ module SidekiqUniqueJobs
     end
   end
 end
-
-require 'sidekiq_unique_jobs/lock/base_lock'
-require 'sidekiq_unique_jobs/lock/until_executed'
-require 'sidekiq_unique_jobs/lock/until_executing'
-require 'sidekiq_unique_jobs/lock/until_expired'
-require 'sidekiq_unique_jobs/lock/while_executing'
-require 'sidekiq_unique_jobs/lock/while_executing_reject'
-require 'sidekiq_unique_jobs/lock/while_executing_requeue'
-require 'sidekiq_unique_jobs/lock/until_and_while_executing'

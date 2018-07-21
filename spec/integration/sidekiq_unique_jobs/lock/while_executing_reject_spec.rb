@@ -19,14 +19,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
     { 'jid' => jid_one,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
+      'lock' => unique,
       'args' => args }
   end
   let(:item_two) do
     { 'jid' => jid_two,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
+      'lock' => unique,
       'args' => args }
   end
 
@@ -55,14 +55,18 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
           end
         end
       end
+      it_behaves_like 'rejects job to deadset'
 
       context 'when Sidekiq::DeadSet respond to kill' do
         it_behaves_like 'rejects job to deadset'
       end
 
       context 'when Sidekiq::DeadSet does not respond to kill' do
+        let(:strategy) { SidekiqUniqueJobs::OnConflict::Reject.new(item_two) }
+
         before do
-          allow(process_two).to receive(:deadset_kill?).and_return(false)
+          allow(strategy).to receive(:deadset_kill?).and_return(false)
+          allow(process_two).to receive(:strategy).and_return(strategy)
         end
 
         it_behaves_like 'rejects job to deadset'

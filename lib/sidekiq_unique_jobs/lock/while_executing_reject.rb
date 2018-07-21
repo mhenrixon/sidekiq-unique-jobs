@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
       def execute
         return reject unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
 
-        with_cleanup { yield if block_given? }
+        with_cleanup { yield }
       end
 
       # Private below here, keeping public due to testing reasons

@@ -12,7 +12,7 @@
 #   - https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/lib/sidekiq_unique_jobs/unique_args_spec.rb
 class UniqueAcrossWorkersJob
   include Sidekiq::Worker
-  sidekiq_options unique: :until_executed, unique_across_workers: true
+  sidekiq_options lock: :until_executed, unique_across_workers: true
 
   def perform(one, two)
     [one, two]

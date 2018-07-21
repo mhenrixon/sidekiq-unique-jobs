@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       'jid' => jid_one,
       'lock_expiration' => lock_expiration,
       'queue' => queue,
-      'unique' => unique,
+      'lock' => unique,
       'unique_digest' => unique_digest,
     }
   end

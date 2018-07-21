@@ -9,7 +9,7 @@ RSpec.describe MainJob do
         'log_duplicate_payload' => true,
         'queue'               => :customqueue,
         'retry'               => true,
-        'unique'              => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

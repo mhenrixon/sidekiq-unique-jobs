@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
 
     def digestable_hash
       @item.slice(CLASS_KEY, QUEUE_KEY, UNIQUE_ARGS_KEY).tap do |hash|
-        hash.delete(QUEUE_KEY) if unique_on_all_queues?
+        hash.delete(QUEUE_KEY) if unique_across_queues?
         hash.delete(CLASS_KEY) if unique_across_workers?
       end
     end
@@ -53,7 +53,7 @@ module SidekiqUniqueJobs
       args
     end
 
-    def unique_on_all_queues?
+    def unique_across_queues?
       item[UNIQUE_ACROSS_QUEUES_KEY] || worker_options[UNIQUE_ACROSS_QUEUES_KEY] ||
         item[UNIQUE_ON_ALL_QUEUES_KEY] || worker_options[UNIQUE_ON_ALL_QUEUES_KEY] # TODO: Remove in v 6.1
     end
@@ -99,7 +99,11 @@ module SidekiqUniqueJobs
     def unique_args_method
       @unique_args_method ||= worker_options[UNIQUE_ARGS_KEY]
       @unique_args_method ||= :unique_args if worker_method_defined?(:unique_args)
-      @unique_args_method ||= Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS_KEY]
+      @unique_args_method ||= default_unique_args_method
+    end
+
+    def default_unique_args_method
+      Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS_KEY]
     end
   end
 end

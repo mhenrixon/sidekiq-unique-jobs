@@ -5,7 +5,7 @@
 class JustAWorker
   include Sidekiq::Worker
 
-  sidekiq_options unique: :until_executed, queue: :testqueue
+  sidekiq_options lock: :until_executed, queue: :testqueue
 
   def perform(options = {})
     options

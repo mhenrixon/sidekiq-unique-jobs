@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
       # Locks the job with the RUN_SUFFIX appended
       def execute
         return unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
-        with_cleanup { yield if block_given? }
+        with_cleanup { yield }
       end
 
       private

@@ -14,6 +14,8 @@ module SidekiqUniqueJobs
   UNIQUE_ARGS_KEY           ||= 'unique_args'
   UNIQUE_DIGEST_KEY         ||= 'unique_digest'
   UNIQUE_KEY                ||= 'unique'
+  LOCK_KEY                  ||= 'lock'
+  ON_CONFLICT_KEY           ||= 'on_conflict'
   UNIQUE_ON_ALL_QUEUES_KEY  ||= 'unique_on_all_queues' # TODO: Remove in v6.1
   UNIQUE_PREFIX_KEY         ||= 'unique_prefix'
 end

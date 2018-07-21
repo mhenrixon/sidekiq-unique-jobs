@@ -121,8 +121,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
   end
 
-  describe '#unique_on_all_queues?' do
-    subject(:unique_on_all_queues?) { unique_args.unique_on_all_queues? }
+  describe '#unique_across_queues?' do
+    subject(:unique_across_queues?) { unique_args.unique_across_queues? }
 
     let(:worker_class) { UntilExecutedJob }
 

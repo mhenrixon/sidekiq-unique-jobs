@@ -8,7 +8,7 @@ RSpec.describe WithoutArgumentJob do
       {
         'log_duplicate_payload' => true,
         'retry'                 => true,
-        'unique'                => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

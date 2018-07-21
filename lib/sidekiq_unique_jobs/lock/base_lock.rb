@@ -75,7 +75,7 @@ module SidekiqUniqueJobs
       def callback_safely
         callback&.call
       rescue StandardError
-        log_warn("The lock for #{item[UNIQUE_DIGEST_KEY]} has been released but the #after_unlock callback failed!")
+        log_warn("The unique_key: #{item[UNIQUE_DIGEST_KEY]} has been unlocked but the #after_unlock callback failed!")
         raise
       end
     end

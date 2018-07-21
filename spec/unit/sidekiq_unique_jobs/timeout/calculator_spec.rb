@@ -12,17 +12,10 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
 
     it { is_expected.to respond_to(:time_until_scheduled) }
     it { is_expected.to respond_to(:worker_class) }
-    it { is_expected.to respond_to(:seconds) }
     it { is_expected.to respond_to(:lock_expiration) }
     it { is_expected.to respond_to(:lock_timeout) }
     it { is_expected.to respond_to(:worker_options) }
     it { is_expected.to respond_to(:default_worker_options) }
-  end
-
-  describe '#seconds' do
-    subject { -> { calculator.seconds } }
-
-    it { is_expected.to raise_error(NotImplementedError, "#seconds needs to be implemented in #{described_class}") }
   end
 
   describe '#time_until_scheduled' do

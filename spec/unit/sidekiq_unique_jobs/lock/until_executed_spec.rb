@@ -10,7 +10,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
     {
       'jid' => 'maaaahjid',
       'class' => 'UntilExecutedJob',
-      'unique' => 'until_executed',
+      'lock' => 'until_executed',
       'args' => %w[one two],
     }
   end
@@ -48,8 +48,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
 
           expect(lock).to have_received(:log_warn)
             .with(
-              'The lock for uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0' \
-              ' has been released but the #after_unlock callback failed!',
+              'The unique_key: uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0' \
+              ' has been unlocked but the #after_unlock callback failed!',
             )
         end
       end

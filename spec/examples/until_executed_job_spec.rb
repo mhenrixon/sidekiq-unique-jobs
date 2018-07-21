@@ -11,7 +11,7 @@ RSpec.describe UntilExecutedJob do
         'lock_expiration' => 5000,
         'queue'           => :working,
         'retry'           => 1,
-        'unique'          => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

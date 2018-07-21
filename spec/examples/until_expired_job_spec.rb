@@ -8,8 +8,8 @@ RSpec.describe UntilExpiredJob do
       {
         'lock_expiration' => 1,
         'lock_timeout' => 0,
-        'retry'           => true,
-        'unique'          => :until_expired,
+        'retry' => true,
+        'lock' => :until_expired,
       }
     end
   end

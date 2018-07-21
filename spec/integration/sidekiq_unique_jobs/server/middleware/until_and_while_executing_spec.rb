@@ -19,7 +19,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, 'unique: :until_and_while_
     { 'jid' => jid_one,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'unique' => unique,
+      'lock' => unique,
       'args' => args,
       'lock_timeout' => lock_timeout }
   end
