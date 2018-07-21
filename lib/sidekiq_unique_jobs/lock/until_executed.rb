@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
 
       def execute
         return unless locked?
-        with_cleanup { yield if block_given? }
+        with_cleanup { yield }
       end
     end
   end

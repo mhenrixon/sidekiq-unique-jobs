@@ -8,7 +8,7 @@ RSpec.describe ExpiringJob do
       {
         'lock_expiration' => 600,
         'retry'           => true,
-        'unique'          => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

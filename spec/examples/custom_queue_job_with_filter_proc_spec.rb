@@ -8,7 +8,7 @@ RSpec.describe CustomQueueJobWithFilterProc do
       {
         'queue'       => :customqueue,
         'retry'       => true,
-        'unique'      => :until_expired,
+        'lock' => :until_expired,
         'unique_args' => a_kind_of(Proc),
       }
     end

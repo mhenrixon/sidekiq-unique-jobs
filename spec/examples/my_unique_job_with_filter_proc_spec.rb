@@ -9,7 +9,7 @@ RSpec.describe MyUniqueJobWithFilterProc do
         'backtrace'   => true,
         'queue'       => :customqueue,
         'retry'       => true,
-        'unique'      => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

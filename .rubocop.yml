@@ -64,6 +64,9 @@ RSpec/ExampleLength:
 RSpec/ExpectActual:
   Enabled: false
 
+RSpec/ExpectChange:
+  Enabled: false
+
 RSpec/ExpectInHook:
   Enabled: false
 

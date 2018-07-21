@@ -8,7 +8,7 @@ RSpec.describe InlineWorker do
       {
         'lock_timeout' => 5,
         'retry'        => true,
-        'unique'       => :while_executing,
+        'lock' => :while_executing,
       }
     end
   end

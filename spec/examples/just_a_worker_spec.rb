@@ -8,7 +8,7 @@ RSpec.describe JustAWorker do
       {
         'queue'  => :testqueue,
         'retry'  => true,
-        'unique' => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

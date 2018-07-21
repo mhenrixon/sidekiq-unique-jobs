@@ -8,12 +8,12 @@
 #
 class UntilExecutedJob
   include Sidekiq::Worker
-  sidekiq_options queue: :working,
-                  retry: 1,
-                  backtrace: 10,
-                  unique: :until_executed,
+  sidekiq_options backtrace: 10,
+                  lock: :until_executed,
+                  lock_expiration: 5_000,
                   lock_timeout: 0,
-                  lock_expiration: 5000
+                  queue: :working,
+                  retry: 1
 
   def perform(one, two = nil)
     [one, two]

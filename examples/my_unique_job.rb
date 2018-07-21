@@ -4,11 +4,10 @@
 
 class MyUniqueJob
   include Sidekiq::Worker
-  sidekiq_options queue: :customqueue,
-                  retry: true,
-                  retry_count: 10,
-                  unique: :until_executed,
-                  lock_expiration: 7_200
+  sidekiq_options lock: :until_executed,
+                  lock_expiration: 7_200,
+                  queue: :customqueue,
+                  retry: 10
 
   def perform(one, two)
     [one, two]

@@ -7,9 +7,7 @@ module SidekiqUniqueJobs
         return unless locked?
         unlock
 
-        runtime_lock.execute do
-          yield if block_given?
-        end
+        runtime_lock.execute { yield }
       end
 
       def runtime_lock

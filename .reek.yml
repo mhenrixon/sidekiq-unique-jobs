@@ -11,53 +11,15 @@ detectors:
     exclude:
     - Sidekiq#self.use_options
   IrresponsibleModule:
+    enabled: false
+  LongParameterList:
+    enabled: true
     exclude:
-    - Sidekiq::Simulator
-    - SidekiqUniqueJobs::Cli
-    - SidekiqUniqueJobs::Client::Middleware
-    - SidekiqUniqueJobs
-    - Array
-    - Hash
-    - SidekiqUniqueJobs::JidMissing
-    - SidekiqUniqueJobs::LockTimeout
-    - SidekiqUniqueJobs::MaxLockTimeMissing
-    - SidekiqUniqueJobs::RunLockFailed
-    - SidekiqUniqueJobs::ScriptError
-    - SidekiqUniqueJobs::UnexpectedValue
-    - SidekiqUniqueJobs::UniqueKeyMissing
-    - SidekiqUniqueJobs::UnknownLock
-    - SidekiqUniqueJobs::Lock::BaseLock
-    - SidekiqUniqueJobs::Lock::UntilAndWhileExecuting
-    - SidekiqUniqueJobs::Lock::UntilExecuted
-    - SidekiqUniqueJobs::Lock::UntilExecuting
-    - SidekiqUniqueJobs::Lock::UntilExpired
-    - SidekiqUniqueJobs::Lock::WhileExecuting
-    - SidekiqUniqueJobs::Lock::WhileExecutingReject
-    - SidekiqUniqueJobs::Lock::WhileExecutingRequeue
-    - SidekiqUniqueJobs::Locksmith
-    - SidekiqUniqueJobs::Middleware
-    - SidekiqUniqueJobs::Normalizer
-    - SidekiqUniqueJobs::Scripts
-    - SidekiqUniqueJobs::Server::Middleware
-    - Sidekiq::Job
-    - Sidekiq::Job::UniqueExtension
-    - Sidekiq::JobSet
-    - Sidekiq::JobSet::UniqueExtension
-    - Sidekiq::Queue
-    - Sidekiq::Queue::UniqueExtension
-    - Sidekiq::ScheduledSet
-    - Sidekiq::ScheduledSet::UniqueExtension
-    - Sidekiq::SortedEntry
-    - Sidekiq::SortedEntry::UniqueExtension
-    - Sidekiq
-    - Sidekiq::Worker
-    - Sidekiq::Worker::ClassMethods
-    - Sidekiq::Worker::Overrides
-    - Sidekiq::Worker::Overrides::Testing
-    - SidekiqUniqueJobs::Timeout::Calculator
-    - SidekiqUniqueJobs::Timeout
-    - SidekiqUniqueJobs::Unlockable
-    - SidekiqUniqueJobs::Util
+    - initialize
+    - Hash#slice
+    - SidekiqUniqueJobs::Locksmith#create_lock
+    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
+    - SidekiqUniqueJobs::Client::Middleware#call
   TooManyStatements:
     exclude:
     - initialize
@@ -84,7 +46,7 @@ detectors:
     exclude:
     - Hash#slice
     - Hash#slice!
-    - SidekiqUniqueJobs::Lock::WhileExecutingReject#deadset_kill?
+    - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
     - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
   MissingSafeMethod:
     exclude:
@@ -93,7 +55,7 @@ detectors:
     enabled: false
   FeatureEnvy:
     exclude:
-    - SidekiqUniqueJobs::Lock::WhileExecutingReject#push_to_deadset
+    - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
     - SidekiqUniqueJobs::Logging#debug_item
     - SidekiqUniqueJobs::Util#batch_delete
   NestedIterators:

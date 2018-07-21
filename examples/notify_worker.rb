@@ -5,8 +5,8 @@
 class NotifyWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :notify_worker,
-                  unique: :until_executed
+  sidekiq_options lock: :until_executed,
+                  queue: :notify_worker
 
   def perform(pid, blob)
     [pid, blob]

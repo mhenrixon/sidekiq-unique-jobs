@@ -44,7 +44,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
               'lock_timeout' => 0,
               'queue' => 'testqueue',
               'retry' => true,
-              'unique' => 'until_executed',
+              'lock' => 'until_executed',
               'unique_args' => [{ 'foo' => 'bar' }],
               'unique_digest' => 'uniquejobs:863b7cb639bd71c828459b97788b2ada',
               'unique_prefix' => 'uniquejobs',

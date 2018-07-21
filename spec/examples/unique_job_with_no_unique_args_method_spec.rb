@@ -9,7 +9,7 @@ RSpec.describe UniqueJobWithNoUniqueArgsMethod do
         'backtrace'   => true,
         'queue'       => :customqueue,
         'retry'       => true,
-        'unique'      => :until_executed,
+        'lock' => :until_executed,
         'unique_args' => :filtered_args,
       }
     end

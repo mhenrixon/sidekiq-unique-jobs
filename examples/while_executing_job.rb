@@ -5,9 +5,9 @@
 class WhileExecutingJob
   include Sidekiq::Worker
   sidekiq_options backtrace: 10,
+                  lock: :while_executing,
                   queue: :working,
-                  retry: 1,
-                  unique: :while_executing
+                  retry: 1
 
   def perform(args)
     [args]

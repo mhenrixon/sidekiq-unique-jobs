@@ -7,10 +7,9 @@ RSpec.describe LongRunningJob do
     let(:options) do
       {
         'queue'           => :customqueue,
-        'retry'           => true,
-        'unique'          => :until_and_while_executing,
+        'retry'           => 10,
+        'lock' => :until_and_while_executing,
         'lock_expiration' => 7_200,
-        'retry_count'     => 10,
       }
     end
   end

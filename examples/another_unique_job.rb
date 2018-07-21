@@ -4,8 +4,10 @@
 
 class AnotherUniqueJob
   include Sidekiq::Worker
-  sidekiq_options queue: :working2, retry: 1, backtrace: 10,
-                  unique: :until_executed
+  sidekiq_options backtrace: 10,
+                  lock: :until_executed,
+                  queue: :working2,
+                  retry: 1
 
   def perform(args)
     args

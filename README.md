@@ -6,6 +6,7 @@
 * [Documentation](#documentation)
 * [Requirements](#requirements)
 * [Installation](#installation)
+* [Support Me](#support-me)
 * [General Information](#general-information)
 * [Options](#options)
    * [Lock Expiration](#lock-expiration)
@@ -18,6 +19,7 @@
    * [Until Timeout](#until-timeout)
    * [Unique Until And While Executing](#unique-until-and-while-executing)
    * [While Executing](#while-executing)
+* [Conflict Strategy](#conflict-strategy)
 * [Usage](#usage)
    * [Finer Control over Uniqueness](#finer-control-over-uniqueness)
    * [After Unlock Callback](#after-unlock-callback)
@@ -64,6 +66,11 @@ And then execute:
 Or install it yourself as:
 
     $ gem install sidekiq-unique-jobs
+
+
+## Support Me
+
+Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link https://paypal.me/mhenrixon. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
 
 ## General Information
 
@@ -150,7 +157,7 @@ Locks from when the client pushes the job to the queue. Will be unlocked before 
 **NOTE** this is probably not so good for jobs that shouldn't be running simultaneously (aka slow jobs).
 
 ```ruby
-sidekiq_options unique: :until_executing
+sidekiq_options lock: :until_executing
 ```
 
 ### Until Executed
@@ -158,7 +165,7 @@ sidekiq_options unique: :until_executing
 Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.
 
 ```ruby
-sidekiq_options unique: :until_executed
+sidekiq_options lock: :until_executed
 ```
 
 ### Until Timeout
@@ -166,7 +173,7 @@ sidekiq_options unique: :until_executed
 Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.
 
 ```ruby
-sidekiq_options unique: :until_expired
+sidekiq_options lock: :until_expired
 ```
 
 ### Unique Until And While Executing
@@ -174,7 +181,7 @@ sidekiq_options unique: :until_expired
 Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. As soon as the server starts processing a job, the client can push the same job to the queue.
 
 ```ruby
-sidekiq_options unique: :until_and_while_executing
+sidekiq_options lock: :until_and_while_executing
 ```
 
 ### While Executing
@@ -184,7 +191,7 @@ With this lock type it is possible to put any number of these jobs on the queue,
 **NOTE** Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
 
 ```ruby
-sidekiq_options unique: :while_executing, lock_timeout: nil
+sidekiq_options lock: :while_executing, lock_timeout: nil
 ```
 
 There is an example of this to try it out in the `rails_example` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
@@ -206,12 +213,42 @@ In the console you should see something like:
 10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
 ```
 
+## Conflict Strategy
+
+Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process. 
+
+The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
+
+### Raise
+
+This strategy is intended to be used with `WhileExecuting`. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.
+
+`sidekiq_options lock: :while_executing, on_conflict: :raise, retry: 10`
+
+### Reject
+
+This strategy is intended to be used with `WhileExecuting` and will push the job to the dead queue on conflict.
+
+`sidekiq_options lock: :while_executing, on_conflict: :reject`
+
+### Reschedule
+
+This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
+
+`sidekiq_options lock: :while_executing, on_conflict: :reschedule`
+
+### Log
+
+This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
+
+`sidekiq_options lock: :until_executed, on_conflict: :log`
+
 ## Usage
 
 All that is required is that you specifically set the sidekiq option for _unique_ to a valid value like below:
 
 ```ruby
-sidekiq_options unique: :while_executing
+sidekiq_options lock: :while_executing
 ```
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
@@ -227,7 +264,7 @@ The method or the proc can return a modified version of args without the transie
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: :until_and_while_executing,
+  sidekiq_options lock: :until_and_while_executing,
                   unique_args: :unique_args # this is default and will be used if such a method is defined
 
   def self.unique_args(args)
@@ -240,7 +277,7 @@ end
 
 class UniqueJobWithFilterProc
   include Sidekiq::Worker
-  sidekiq_options unique: :until_executed,
+  sidekiq_options lock: :until_executed,
                   unique_args: ->(args) { [ args.first ] }
 
   ...
@@ -253,7 +290,7 @@ It is also quite possible to ensure different types of unique args based on cont
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: :until_and_while_executing, unique_args: :unique_args
+  sidekiq_options lock: :until_and_while_executing, unique_args: :unique_args
 
   def self.unique_args(args)
     if Sidekiq::ProcessSet.new.size > 1
@@ -277,7 +314,7 @@ If you need to perform any additional work after the lock has been released you 
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: :while_executing,
+  sidekiq_options lock: :while_executing,
 
   def after_unlock
    # block has yielded and lock is released
@@ -293,7 +330,7 @@ To see logging in sidekiq when duplicate payload has been filtered out you can e
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options unique: :while_executing,
+  sidekiq_options lock: :while_executing,
                   log_duplicate_payload: true
 
   ...

@@ -6,11 +6,11 @@ RSpec.describe UntilExecuted2Job do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'backtrace'    => 10,
+        'backtrace' => 10,
+        'lock' => :until_executed,
+        'lock_timeout' => 0,
         'queue'        => :working,
         'retry'        => 1,
-        'lock_timeout' => 0,
-        'unique'       => :until_executed,
       }
     end
   end

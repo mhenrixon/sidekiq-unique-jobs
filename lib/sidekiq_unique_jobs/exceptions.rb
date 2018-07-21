@@ -1,28 +1,16 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  class LockTimeout < StandardError
-  end
-
-  class RunLockFailed < StandardError
+  class Conflict < StandardError
+    def initialize(item)
+      super("Item with the key: #{item[UNIQUE_DIGEST_KEY]} is already scheduled or processing")
+    end
   end
 
   class ScriptError < StandardError
     def initialize(file_name:, source_exception:)
       super("Problem compiling #{file_name}. Message: #{source_exception.message}")
     end
-  end
-
-  class UniqueKeyMissing < ArgumentError
-  end
-
-  class JidMissing < ArgumentError
-  end
-
-  class MaxLockTimeMissing < ArgumentError
-  end
-
-  class UnexpectedValue < StandardError
   end
 
   class UnknownLock < StandardError

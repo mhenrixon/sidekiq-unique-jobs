@@ -8,7 +8,7 @@ RSpec.describe NotifyWorker do
       {
         'queue'           => :notify_worker,
         'retry'           => true,
-        'unique'          => :until_executed,
+        'lock' => :until_executed,
       }
     end
   end

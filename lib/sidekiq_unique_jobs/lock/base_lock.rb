@@ -12,7 +12,11 @@ module SidekiqUniqueJobs
       end
 
       def lock
-        locksmith.lock(item[LOCK_TIMEOUT_KEY])
+        if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
+          token
+        else
+          strategy.call
+        end
       end
 
       def execute
@@ -75,8 +79,12 @@ module SidekiqUniqueJobs
       def callback_safely
         callback&.call
       rescue StandardError
-        log_warn("The lock for #{item[UNIQUE_DIGEST_KEY]} has been released but the #after_unlock callback failed!")
+        log_warn("The unique_key: #{item[UNIQUE_DIGEST_KEY]} has been unlocked but the #after_unlock callback failed!")
         raise
+      end
+
+      def strategy
+        OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item)
       end
     end
   end
