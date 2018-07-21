@@ -13,11 +13,11 @@ module SidekiqUniqueJobs
   # Error raised from {OnConflict::Raise}
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class Conflict < StandardError
-    # @param [Hash] item the Sidekiq job hash
-    # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
-    def initialize(item)
-      super("Item with the key: #{item[UNIQUE_DIGEST_KEY]} is already scheduled or processing")
+  class ScriptError < StandardError
+    # @param [Symbol] file_name the name of the lua script
+    # @param [Redis::CommandError] ex exception to handle
+    def initialize(file_name:, source_exception:)
+      super("Problem compiling #{file_name}. Message: #{source_exception.message}")
     end
   end
 
