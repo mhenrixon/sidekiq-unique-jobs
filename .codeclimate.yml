@@ -8,22 +8,21 @@ plugins:
     config:
       languages:
         - ruby
-  # editorconfig:
-  #   enabled: true
-  #   channel: beta
-  #   config:
-  #     editorconfig: .editorconfig
   flog:
     enabled: true
   fixme:
     enabled: true
   markdownlint:
-      enabled: true
+    enabled: true
   reek:
     enabled: true
+    config:
+      file: .reek.yml
   rubocop:
     enabled: true
-    channel: rubocop-0-54
+    channel: rubocop-0-57
+    config:
+      file: .rubocop.yml
 exclude_patterns:
   - Gemfile
   - "*.gemspec"
