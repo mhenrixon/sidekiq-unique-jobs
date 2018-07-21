@@ -2,7 +2,7 @@
 
 class SimpleWorker
   include Sidekiq::Worker
-  sidekiq_options unique: :until_executed,
+  sidekiq_options lock: :until_executed,
                   queue: :default,
                   unique_args: (lambda do |args|
                     [args.first]
