@@ -12,7 +12,11 @@ module SidekiqUniqueJobs
       end
 
       def lock
-        locksmith.lock(item[LOCK_TIMEOUT_KEY])
+        if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
+          token
+        else
+          strategy.call
+        end
       end
 
       def execute

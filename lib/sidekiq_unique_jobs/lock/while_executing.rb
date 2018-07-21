@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
 
       # Locks the job with the RUN_SUFFIX appended
       def execute
-        return unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
+        return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
         with_cleanup { yield }
       end
 
