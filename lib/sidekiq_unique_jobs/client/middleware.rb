@@ -4,11 +4,20 @@ require 'sidekiq_unique_jobs/server/middleware'
 
 module SidekiqUniqueJobs
   module Client
+    # The unique sidekiq middleware for the client push
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
     class Middleware
       include SidekiqUniqueJobs::Logging
       include OptionsWithFallback
 
-      # :reek:LongParameterList { max_params: 4 }
+      # Calls this client middleware
+      #   Used from Sidekiq.process_single
+      # @param [String] worker_class name of the sidekiq worker class
+      # @param [Hash] item a sidekiq job hash
+      # @param [String] queue name of the queue
+      # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+      # @yield when uniqueness is disable or lock successful
       def call(worker_class, item, queue, redis_pool = nil)
         @worker_class = worker_class
         @item         = item
@@ -20,6 +29,8 @@ module SidekiqUniqueJobs
 
       private
 
+      # The sidekiq job hash
+      # @return [Hash] the Sidekiq job hash
       attr_reader :item
 
       def success?

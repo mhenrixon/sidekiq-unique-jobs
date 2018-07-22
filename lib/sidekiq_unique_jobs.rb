@@ -31,6 +31,11 @@ require 'sidekiq_unique_jobs/middleware'
 require 'sidekiq_unique_jobs/sidekiq_unique_ext'
 require 'sidekiq_unique_jobs/on_conflict'
 
+# Namespace for this gem
+#
+# Contains configuration and utility methods that belongs top level
+#
+# @author Mikael Henriksson <mikael@zoolutions.se>
 module SidekiqUniqueJobs
   include SidekiqUniqueJobs::Connection
 
@@ -44,6 +49,7 @@ module SidekiqUniqueJobs
     :logger,
   )
 
+  # The current configuration (See: {.configure} on how to configure)
   def config
     # Arguments here need to match the definition of the new class (see above)
     @config ||= Concurrent::MutableStruct::Config.new(
@@ -54,14 +60,20 @@ module SidekiqUniqueJobs
     )
   end
 
+  # The current logger
+  # @return [Logger] the configured logger
   def logger
     config.logger
   end
 
+  # Set a new logger
+  # @param [Logger] other a new logger
   def logger=(other)
     config.logger = other
   end
 
+  # Change global configuration while yielding
+  # @yield control to the caller
   def use_config(tmp_config)
     fail ::ArgumentError, "#{name}.#{__method__} needs a block" unless block_given?
 
@@ -71,6 +83,15 @@ module SidekiqUniqueJobs
     configure(old_config)
   end
 
+  # Configure the gem
+  #
+  # This is usually called once at startup of an application
+  # @param [Hash] options global gem options
+  # @option options [Integer] :default_lock_timeout (default is 0)
+  # @option options [true,false] :enabled (default is true)
+  # @option options [String] :unique_prefix (default is 'uniquejobs')
+  # @option options [Logger] :logger (default is Sidekiq.logger)
+  # @yield control to the caller when given block
   def configure(options = {})
     if block_given?
       yield config
