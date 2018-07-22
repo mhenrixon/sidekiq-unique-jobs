@@ -2,12 +2,14 @@ local exists_key    = KEYS[1]
 local grabbed_key   = KEYS[2]
 local available_key = KEYS[3]
 local version_key   = KEYS[4]
-local unique_digest = KEYS[5] -- TODO: Legacy support (Remove in v6.1)
+local unique_keys   = KEYS[5]
+local unique_digest = KEYS[6] -- TODO: Legacy support (Remove in v6.1)
 
 local token      = ARGV[1]
 local expiration = tonumber(ARGV[2])
 
 redis.call('HDEL', grabbed_key, token)
+redis.call('SREM', unique_keys, token)
 local available_count = redis.call('LPUSH', available_key, token)
 
 if expiration then

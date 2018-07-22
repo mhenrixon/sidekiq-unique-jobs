@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :create,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, unique_digest],
+        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
         argv: [jid, expiration, API_VERSION, concurrency],
       )
     end
@@ -59,7 +59,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :delete,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, unique_digest],
+        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
       )
     end
 
@@ -105,7 +105,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :signal,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, unique_digest],
+        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
         argv: [token, expiration],
       )
     end

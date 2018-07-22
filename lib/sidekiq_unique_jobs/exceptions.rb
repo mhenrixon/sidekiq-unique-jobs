@@ -15,7 +15,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class ScriptError < StandardError
     # @param [Symbol] file_name the name of the lua script
-    # @param [Redis::CommandError] ex exception to handle
+    # @param [Redis::CommandError] source_exception exception to handle
     def initialize(file_name:, source_exception:)
       super("Problem compiling #{file_name}. Message: #{source_exception.message}")
     end

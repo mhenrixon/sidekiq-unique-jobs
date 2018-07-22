@@ -17,6 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
       'created_at'  => 1_492_341_790.358217,
     }
   end
+
   let!(:item) do
     my_item = item_hash.dup
     SidekiqUniqueJobs::UniqueArgs.new(my_item).unique_digest
@@ -35,7 +36,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   end
 
   describe '.keys' do
-    subject { described_class.keys }
+    subject(:keys) { described_class.keys }
 
     before do
       lock.lock(0)
@@ -70,7 +71,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   end
 
   describe '.prefix' do
-    subject { described_class.send(:prefix, key) }
+    subject(:prefix) { described_class.send(:prefix, key) }
 
     let(:key) { 'key' }
 
