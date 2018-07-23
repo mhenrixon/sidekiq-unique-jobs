@@ -379,6 +379,44 @@ SidekiqUniqueJobs.configure do |config|
 end
 ```
 
+If you truly wanted to test the sidekiq client push you could do something like below. Note that it will only work for the jobs that lock when the client pushes the job to redis (UntilExecuted, UntilAndWhileExecuting and UntilExpired).
+
+```ruby
+RSpec.describe Workers::CoolOne do
+  before do
+    SidekiqUniqueJobs.config.enabled = false
+  end
+
+  # ... your tests that don't test uniqueness
+
+  context 'when Sidekiq::Testing.disabled?' do
+    before do
+      Sidekiq::Testing.disable!
+      Sidekiq.redis(&:flushdb)
+    end
+
+    after do
+      Sidekiq.redis(&:flushdb)
+    end
+
+    it 'prevents duplicate jobs from being scheduled' do
+      SidekiqUniqueJobs.use_config(enabled: true) do
+        expect(described_class.perform_async(1)).not_to eq(nil)
+        expect(described_class.perform_async(1)).to eq(nil)
+      end
+    end
+  end
+end
+```
+
+I would strongly suggest you let this gem test uniqueness. If you care about how the gem is integration tested have a look at the following specs:
+
+- [spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb)
+- [spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb)
+- [spec/integration/sidekiq_unique_jobs/lock/until_expired_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_expired_spec.rb)
+- [spec/integration/sidekiq_unique_jobs/lock/while_executing_reject_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/while_executing_reject_spec.rb)
+- [spec/integration/sidekiq_unique_jobs/lock/while_executing_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/while_executing_spec.rb)
+
 ## Contributing
 
 1. Fork it
