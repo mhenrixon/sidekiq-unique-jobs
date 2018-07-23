@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'sidekiq/web'
 require 'sidekiq_unique_jobs/web'
 require 'rack/test'
 

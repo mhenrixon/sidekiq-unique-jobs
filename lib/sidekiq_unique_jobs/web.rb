@@ -30,14 +30,14 @@ module SidekiqUniqueJobs
       end
 
       app.get '/unique_digests/:digest' do
-        @digest = route_params[:digest]
+        @digest = params[:digest]
         @unique_keys = Util.keys("#{@digest}*", 1000)
 
         erb(unique_template(:unique_digest))
       end
 
       app.get '/unique_digests/:digest/delete' do
-        Digests.del(digest: route_params[:digest])
+        Digests.del(digest: params[:digest])
         redirect_to :unique_digests
       end
     end
