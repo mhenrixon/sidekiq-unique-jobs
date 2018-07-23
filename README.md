@@ -25,6 +25,7 @@
    * [After Unlock Callback](#after-unlock-callback)
    * [Logging](#logging)
 * [Debugging](#debugging)
+   * [Sidekiq Web](#sidekiq-web)
    * [Console](#console)
       * [List Unique Keys](#list-unique-keys)
       * [Remove Unique Keys](#remove-unique-keys)
@@ -342,21 +343,25 @@ end
 
 There are two ways to display and remove keys regarding uniqueness. The console way and the command line way.
 
-### Console
+### Sidekiq Web
 
-Start the console with the following command `bundle exec uniquejobs console`.
+To use the web extension you need to require it in your routes.
 
-#### List Unique Keys
+```ruby
+# app/config/routes.rb
+require 'sidekiq-unique-jobs/web'
+mount Sidekiq::Web, at: '/sidekiq'
+```
 
-`keys '*', 100`
+There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` already does this.
 
-#### Remove Unique Keys
 
-`del '*', 100, false` the dry_run and count parameters are both required. This is to have some type of protection against clearing out all uniqueness.
+#### Show Unique Digests
+![Unique Digests](assets/unique_digests_1.png)
 
-### Command Line
-
-`bundle exec uniquejobs` displays help on how to use the unique jobs command line.
+#### Show keys for digest
+![Unique Digests](assets/unique_digests_2
+.png)
 
 ## Communication
 
