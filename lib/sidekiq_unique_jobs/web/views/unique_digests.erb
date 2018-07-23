@@ -2,6 +2,11 @@
   <div class="col-sm-5">
     <h3><%= t('Unique Digests') %></h3>
   </div>
+  <form action="<%= root_path %>unique_digests" method="get">
+    <%= csrf_tag %>
+    <input name="filter" type="text" value="<%= @filter %>" />
+    <input class="btn btn-default" type="submit" name="submit" value="<%= t('Filter') %>" />
+  </form>
   <% if @unique_digests.size > 0 && @total_size > @count.to_i %>
     <div class="col-sm-4">
       <%= erb :_paging, locals: { url: "#{root_path}unique_digests" } %>

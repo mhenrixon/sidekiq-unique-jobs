@@ -23,8 +23,10 @@ module SidekiqUniqueJobs
 
       app.get '/unique_digests' do
         @total_size     = Digests.count
+        @filter         = params[:filter] || '*'
+        @filter         = '*' if @filter == ''
         @count          = (params[:count] || 100).to_i
-        @unique_digests = Digests.all(pattern: '*', count: @count)
+        @unique_digests = Digests.all(pattern: @filter, count: @count)
 
         erb(unique_template(:unique_digests))
       end

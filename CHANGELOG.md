@@ -11,6 +11,7 @@
 - Removed concurrency for now (a0cff5bc42edbe7190d6ede7e7f845074d2d7af6)
 - Improved integration testing for locks
 - Totally delete the hash that was growing out of proportion
+- Adds a sidekiq web extension for viewing and deleting unique digests
 
 ## v5.1.0
 
