@@ -352,6 +352,8 @@ mount Sidekiq::Web, at: '/sidekiq'
 There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` 
 already does this.
 
+To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
+
 
 #### Show Unique Digests
 
