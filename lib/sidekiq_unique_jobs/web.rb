@@ -15,8 +15,6 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Web
     def self.registered(app) # rubocop:disable Metrics/MethodLength
-      view_path = File.join(File.expand_path(__dir__), 'views')
-
       app.helpers do
         include Web::Helpers
       end

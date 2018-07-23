@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   module Web
     module Helpers
-      VIEW_PATH = File.expand_path('../../web/views', __FILE__)
+      VIEW_PATH = File.expand_path('../web/views', __dir__)
 
       def filtering(pattern, count)
         SidekiqUniqueJobs::Util.keys(pattern, count)

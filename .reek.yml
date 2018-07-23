@@ -52,6 +52,7 @@ detectors:
     - Hash#slice!
     - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
     - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
+    - SidekiqUniqueJobs::Web::Helpers#redirect_to
   MissingSafeMethod:
     exclude:
     - Array
