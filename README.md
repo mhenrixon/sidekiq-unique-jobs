@@ -26,10 +26,6 @@
    * [Logging](#logging)
 * [Debugging](#debugging)
    * [Sidekiq Web](#sidekiq-web)
-   * [Console](#console)
-      * [List Unique Keys](#list-unique-keys)
-      * [Remove Unique Keys](#remove-unique-keys)
-   * [Command Line](#command-line)
 * [Communication](#communication)
 * [Testing](#testing)
 * [Contributing](#contributing)
@@ -363,8 +359,7 @@ already does this.
 
 #### Show keys for digest
 
-![Unique Digests](assets/unique_digests_2
-.png)
+![Unique Digests](assets/unique_digests_2.png)
 
 ## Communication
 
