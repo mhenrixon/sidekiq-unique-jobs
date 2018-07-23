@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'sidekiq_unique_jobs/web'
 require 'rack/test'
 
-RSpec.describe SidekiqUniqueJobs::Web do
+RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
   include Rack::Test::Methods
 
   def app
@@ -15,161 +15,46 @@ RSpec.describe SidekiqUniqueJobs::Web do
     Sidekiq.redis(&:flushdb)
   end
 
-  let(:digest) { SidekiqUniqueJobs::Digests.all(count: 1).first }
+  let(:digest)           { 'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84' }
+  let(:another_digest)   { 'uniquejobs:24c5b03e2d49d765e5dfb2d7c51c5929' }
+  let(:expected_digests) { [digest, another_digest] }
 
-  it 'can display keys' do
+  it 'can display digests' do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
+    expect(MyUniqueJob.perform_async(2, 3)).not_to eq(nil)
 
     get '/unique_digests'
     expect(last_response.status).to eq(200)
-    expect(last_response.body).to match('/unique_digests/uniquejobs:9e9b5ce5d423d3ea470977004b50ff84')
+    expect(last_response.body).to match("/unique_digests/#{digest}")
+    expect(last_response.body).to match("/unique_digests/#{another_digest}")
   end
 
-  xit 'can display key' do
+  it 'can display digest' do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
 
     get "/unique_digests/#{digest}"
     expect(last_response.status).to eq(200)
-    expect(last_response.body).to match('/unique_digests/uniquejobs:9e9b5ce5d423d3ea470977004b50ff84')
+    expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84')
+    expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:EXISTS')
+    expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:VERSION')
+    expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:GRABBED')
   end
 
-  xit 'can delete a queue' do
-    Sidekiq.redis do |conn|
-      conn.rpush('queue:foo', '{\"args\":[]}')
-      conn.sadd('queues', 'foo')
-    end
+  it 'can delete a digest' do
+    expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
+    expect(MyUniqueJob.perform_async(2, 3)).not_to eq(nil)
 
-    get '/queues/foo'
-    assert_equal 200, last_response.status
+    expect(SidekiqUniqueJobs::Digests.all).to match_array(expected_digests)
 
-    post '/queues/foo'
-    assert_equal 302, last_response.status
+    get "/unique_digests/#{digest}/delete"
+    expect(last_response.status).to eq(302)
 
-    Sidekiq.redis do |conn|
-      refute conn.smembers('queues').include?('foo')
-      refute conn.exists('queue:foo')
-    end
-  end
+    follow_redirect!
 
-  xit 'can delete a job' do
-    Sidekiq.redis do |conn|
-      conn.rpush('queue:foo', '{"args":[]}')
-      conn.rpush('queue:foo', '{"foo":"bar","args":[]}')
-      conn.rpush('queue:foo', '{"foo2":"bar2","args":[]}')
-    end
+    expect(last_request.url).to end_with('/unique_digests')
+    expect(last_response.body).not_to match("/unique_digests/#{digest}")
+    expect(last_response.body).to match("/unique_digests/#{another_digest}")
 
-    get '/queues/foo'
-    assert_equal 200, last_response.status
-
-    post '/queues/foo/delete', key_val: '{"foo":"bar"}'
-    assert_equal 302, last_response.status
-
-    Sidekiq.redis do |conn|
-      refute conn.lrange('queue:foo', 0, -1).include?('{"foo":"bar"}')
-    end
-  end
-
-  xdescribe 'custom locales' do
-    before do
-      Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), 'fixtures')
-      Sidekiq::Web.tabs['Custom Tab'] = '/custom'
-      Sidekiq::WebApplication.get('/custom') do
-        clear_caches # ugly hack since I can't figure out how to access WebHelpers outside of this context
-        t('translated_text')
-      end
-    end
-
-    after do
-      Sidekiq::Web.tabs.delete 'Custom Tab'
-      Sidekiq::Web.settings.locales.pop
-    end
-
-    it 'can show user defined tab with custom locales' do
-      get '/custom'
-
-      assert_match(/Changed text/, last_response.body)
-    end
-  end
-
-  def add_scheduled
-    score = Time.now.to_f
-    msg = { 'class' => 'HardWorker',
-            'args' => ['bob', 1, Time.now.to_f],
-            'jid' => SecureRandom.hex(12) }
-    Sidekiq.redis do |conn|
-      conn.zadd('schedule', score, Sidekiq.dump_json(msg))
-    end
-    [msg, score]
-  end
-
-  def add_retry
-    msg = { 'class' => 'HardWorker',
-            'args' => ['bob', 1, Time.now.to_f],
-            'queue' => 'default',
-            'error_message' => 'Some fake message',
-            'error_class' => 'RuntimeError',
-            'retry_count' => 0,
-            'failed_at' => Time.now.to_f,
-            'jid' => SecureRandom.hex(12) }
-    score = Time.now.to_f
-    Sidekiq.redis do |conn|
-      conn.zadd('retry', score, Sidekiq.dump_json(msg))
-    end
-
-    [msg, score]
-  end
-
-  def add_dead
-    msg = { 'class' => 'HardWorker',
-            'args' => ['bob', 1, Time.now.to_f],
-            'queue' => 'foo',
-            'error_message' => 'Some fake message',
-            'error_class' => 'RuntimeError',
-            'retry_count' => 0,
-            'failed_at' => Time.now.utc,
-            'jid' => SecureRandom.hex(12) }
-    score = Time.now.to_f
-    Sidekiq.redis do |conn|
-      conn.zadd('dead', score, Sidekiq.dump_json(msg))
-    end
-    [msg, score]
-  end
-
-  def kill_bad
-    job = '{ something bad }'
-    score = Time.now.to_f
-    Sidekiq.redis do |conn|
-      conn.zadd('dead', score, job)
-    end
-    [job, score]
-  end
-
-  def add_xss_retry(_job_id = SecureRandom.hex(12))
-    msg = { 'class' => 'FailWorker',
-            'args' => ['<a>hello</a>'],
-            'queue' => 'foo',
-            'error_message' => 'fail message: <a>hello</a>',
-            'error_class' => 'RuntimeError',
-            'retry_count' => 0,
-            'failed_at' => Time.now.to_f,
-            'jid' => SecureRandom.hex(12) }
-    score = Time.now.to_f
-    Sidekiq.redis do |conn|
-      conn.zadd('retry', score, Sidekiq.dump_json(msg))
-    end
-
-    [msg, score]
-  end
-
-  def add_worker
-    key = "#{hostname}:#{$PROCESS_ID}"
-    msg = '{"queue":"default","payload":{"retry":true,"queue":"default","timeout":20,"backtrace":5,"class":"HardWorker","args":["bob",10,5],"jid":"2b5ad2b016f5e063a1c62872"},"run_at":1361208995}'
-    Sidekiq.redis do |conn|
-      conn.multi do
-        conn.sadd('processes', key)
-        conn.hmset(key, 'info', Sidekiq.dump_json('hostname' => 'foo', 'started_at' => Time.now.to_f, 'queues' => []), 'at', Time.now.to_f, 'busy', 4)
-        conn.hmset("#{key}:workers", Time.now.to_f, msg)
-      end
-    end
+    expect(SidekiqUniqueJobs::Digests.all).to match_array([another_digest])
   end
 end

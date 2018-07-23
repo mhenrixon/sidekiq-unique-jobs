@@ -10,6 +10,7 @@ detectors:
   DuplicateMethodCall:
     exclude:
     - Sidekiq#self.use_options
+    - SidekiqUniqueJobs::Web#self.registered
   IrresponsibleModule:
     enabled: false
   LongParameterList:
@@ -30,6 +31,9 @@ detectors:
     - SidekiqUniqueJobs::Server::Middleware#call
     - SidekiqUniqueJobs::UniqueArgs#filtered_args
     - SidekiqUniqueJobs::Util#del
+    - SidekiqUniqueJobs::Digests#batch_delete
+    - SidekiqUniqueJobs::Digests#delete_by_pattern
+    - SidekiqUniqueJobs::Web#self.registered
   UncommunicativeVariableName:
     exclude:
     - Hash#slice
@@ -58,12 +62,14 @@ detectors:
     - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
     - SidekiqUniqueJobs::Logging#debug_item
     - SidekiqUniqueJobs::Util#batch_delete
+    - SidekiqUniqueJobs::Digests#batch_delete
   NestedIterators:
     exclude:
     - SidekiqUniqueJobs::Locksmith#create_lock
     - SidekiqUniqueJobs::Middleware#configure_client_middleware
     - SidekiqUniqueJobs::Middleware#configure_server_middleware
     - SidekiqUniqueJobs::Util#batch_delete
+    - SidekiqUniqueJobs::Digests#batch_delete
   TooManyInstanceVariables:
     exclude:
     - SidekiqUniqueJobs::Locksmith

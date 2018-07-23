@@ -52,10 +52,9 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
       it 'logs performance info' do
         del
         expect(described_class)
-          .to have_received(:log_info)
-          .with(
+          .to have_received(:log_info).with(
             a_string_starting_with('delete_by_pattern(*, count: 1000)')
-            .and matching(/completed in (\d\.\d)ms/)
+            .and(matching(/completed in (\d\.\d)ms/)),
           )
       end
     end
@@ -70,11 +69,10 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
 
       it 'logs performance info' do
         del
-        expect(described_class)
-          .to have_received(:log_info)
+        expect(described_class).to have_received(:log_info)
           .with(
             a_string_starting_with("delete_by_digest(#{digest})")
-            .and matching(/completed in (\d\.\d)ms/)
+            .and(matching(/completed in (\d\.\d)ms/)),
           )
       end
     end
