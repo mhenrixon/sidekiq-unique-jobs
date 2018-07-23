@@ -108,7 +108,7 @@ This configuration option is slightly misleading. It doesn't disregard the queue
 class Worker
   include Sidekiq::Worker
   
-  sidekiq_options: unique_across_queues: true, queue: 'default'
+  sidekiq_options unique_across_queues: true, queue: 'default'
 
   def perform(args); end
 end
@@ -124,7 +124,7 @@ This configuration option is slightly misleading. It doesn't disregard the worke
 class WorkerOne
   include Sidekiq::Worker
   
-  sidekiq_options: unique_across_workers: true, queue: 'default'
+  sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
 end
@@ -132,7 +132,7 @@ end
 class WorkerTwo
   include Sidekiq::Worker
   
-  sidekiq_options: unique_across_workers: true, queue: 'default'
+  sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
 end
