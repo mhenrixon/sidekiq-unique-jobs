@@ -1,0 +1,7 @@
+  --no-private
+  --exclude lib/sidekiq_unique_jobs/testing.rb
+  --exclude lib/sidekiq_unique_jobs/sidekiq_unique_ext.rb
+  --exclude lib/sidekiq_unique_jobs/middleware.rb
+  --exclude lib/sidekiq_unique_jobs/core_ext.rb
+  --exclude lib/sidekiq_unique_jobs/cli.rb
+

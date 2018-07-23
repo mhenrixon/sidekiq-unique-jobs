@@ -1,0 +1,28 @@
+<header class="row">
+  <div class="col-sm-5">
+    <h3><%= t('Unique Digest') %> - <a class="btn btn-default btn-xs" href="<%= root_path %>unique_digests"><%= t('GoBack') %></a></h3>
+  </div>
+</header>
+
+<% if @unique_keys.size.positive? %>
+  <div class="table_container">
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>
+            <%= t('Keys') %>
+            <span class="small text-muted">for (<%= @digest %>)</span>
+          </th>
+        </tr>
+      </thead>
+        <% @unique_keys.each do |key| %>
+          <tr><td colspan="2"><%= key %></td></tr>
+        <% end %>
+    </table>
+  </div>
+  <form action="<%= root_path %>unique_digests/<%= @digest %>/delete" method="get">
+    <%= csrf_tag %>
+    <a class="btn btn-default btn-xs" href="<%= root_path %>unique_digests"><%= t('GoBack') %></a>
+    <input class="btn btn-danger btn-xs flip" type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('AreYouSure') %>" />
+  </form>
+<% end %>

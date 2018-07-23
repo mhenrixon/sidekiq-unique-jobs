@@ -37,4 +37,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'gem-release', '~> 1.0'
   spec.add_development_dependency 'awesome_print', '~> 1.8'
+  spec.add_development_dependency 'rack-test'
+  spec.add_development_dependency 'sinatra'
 end

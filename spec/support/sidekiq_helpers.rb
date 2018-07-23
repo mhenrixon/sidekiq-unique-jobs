@@ -7,6 +7,10 @@ module SidekiqHelpers
     Sidekiq::Client.push(item)
   end
 
+  def scard(queue)
+    redis { |conn| conn.scard(queue) }
+  end
+
   def zcard(queue)
     redis { |conn| conn.zcard(queue) }
   end

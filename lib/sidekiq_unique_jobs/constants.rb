@@ -14,6 +14,7 @@ module SidekiqUniqueJobs
   UNIQUE_ARGS_KEY           ||= 'unique_args'
   UNIQUE_DIGEST_KEY         ||= 'unique_digest'
   UNIQUE_KEY                ||= 'unique'
+  UNIQUE_SET                ||= 'unique:keys'
   LOCK_KEY                  ||= 'lock'
   ON_CONFLICT_KEY           ||= 'on_conflict'
   UNIQUE_ON_ALL_QUEUES_KEY  ||= 'unique_on_all_queues' # TODO: Remove in v6.1

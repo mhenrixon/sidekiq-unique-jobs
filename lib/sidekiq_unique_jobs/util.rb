@@ -6,10 +6,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Util
-    COUNT             = 'COUNT'
     DEFAULT_COUNT     = 1_000
-    EXPIRE_BATCH_SIZE = 100
-    SCAN_METHOD       = 'SCAN'
     SCAN_PATTERN      = '*'
 
     include SidekiqUniqueJobs::Logging
@@ -20,7 +17,7 @@ module SidekiqUniqueJobs
     #
     # @param [String] pattern a pattern to scan for in redis
     # @param [Integer] count the maximum number of keys to delete
-    # @return [Array] an array with active unique keys
+    # @return [Array<String>] an array with active unique keys
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
       return redis(&:keys) if pattern.nil?
       redis { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
