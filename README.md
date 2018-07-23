@@ -353,13 +353,16 @@ require 'sidekiq-unique-jobs/web'
 mount Sidekiq::Web, at: '/sidekiq'
 ```
 
-There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` already does this.
+There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` 
+already does this.
 
 
 #### Show Unique Digests
+
 ![Unique Digests](assets/unique_digests_1.png)
 
 #### Show keys for digest
+
 ![Unique Digests](assets/unique_digests_2
 .png)
 
