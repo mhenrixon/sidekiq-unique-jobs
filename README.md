@@ -20,12 +20,19 @@
    * [Unique Until And While Executing](#unique-until-and-while-executing)
    * [While Executing](#while-executing)
 * [Conflict Strategy](#conflict-strategy)
+   * [Log](#log)
+   * [Raise](#raise)
+   * [Reject](#reject)
+   * [Replace](#replace)
+   * [Reschedule](#reschedule)
 * [Usage](#usage)
    * [Finer Control over Uniqueness](#finer-control-over-uniqueness)
    * [After Unlock Callback](#after-unlock-callback)
    * [Logging](#logging)
 * [Debugging](#debugging)
    * [Sidekiq Web](#sidekiq-web)
+      * [Show Unique Digests](#show-unique-digests)
+      * [Show keys for digest](#show-keys-for-digest)
 * [Communication](#communication)
 * [Testing](#testing)
 * [Contributing](#contributing)
@@ -216,6 +223,12 @@ Decides how we handle conflict. We can either reject the job to the dead queue o
 
 The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
 
+### Log
+
+This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
+
+`sidekiq_options lock: :until_executed, on_conflict: :log`
+
 ### Raise
 
 This strategy is intended to be used with `WhileExecuting`. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.
@@ -228,17 +241,17 @@ This strategy is intended to be used with `WhileExecuting` and will push the job
 
 `sidekiq_options lock: :while_executing, on_conflict: :reject`
 
+### Replace
+
+This strategy is intended to be used with client locks like `UntilExecuted`. It will delete any existing job for these arguments from retry, schedule and queue. And retry the lock again. This is slightly dangerous and should probably only be used for jobs that are always scheduled in the future.
+
+`sidekiq_options lock: :until_executed, on_conflict: :replace`
+
 ### Reschedule
 
 This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
 
 `sidekiq_options lock: :while_executing, on_conflict: :reschedule`
-
-### Log
-
-This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
-
-`sidekiq_options lock: :until_executed, on_conflict: :log`
 
 ## Usage
 
