@@ -25,7 +25,7 @@ module SidekiqUniqueJobs
         if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
           token
         else
-          strategy.call
+          strategy.call { lock if strategy.replace? }
         end
       end
 

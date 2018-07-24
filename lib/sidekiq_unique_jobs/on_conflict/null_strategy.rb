@@ -8,7 +8,7 @@ module SidekiqUniqueJobs
     class NullStrategy < OnConflict::Strategy
       # Do nothing on conflict
       # @return [nil]
-      def call
+      def call(&block)
         # NOOP
       end
     end
