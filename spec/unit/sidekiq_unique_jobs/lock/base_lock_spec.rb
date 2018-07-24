@@ -59,11 +59,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
           .to raise_error(Sidekiq::Shutdown, 'boohoo')
 
         expect(lock).not_to have_received(:unlock_with_callback)
-        expect(lock).to have_received(:log_fatal).with("the unique_key: uniquejobs:f5dc601c1dd12f78de3013c7a2a930c0 needs to be unlocked manually")
+        expect(lock).to have_received(:log_fatal)
+          .with('the unique_key: uniquejobs:f5dc601c1dd12f78de3013c7a2a930c0 needs to be unlocked manually')
       end
-
     end
-
   end
 
   describe '#unlock' do

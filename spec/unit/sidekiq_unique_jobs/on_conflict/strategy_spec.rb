@@ -11,6 +11,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Strategy, redis: :redis do
 
   describe '#replace?' do
     subject { strategy.replace? }
+
     it { is_expected.to eq(false) }
   end
 
@@ -24,6 +25,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Strategy, redis: :redis do
 
   describe '#replace?' do
     subject { strategy.replace? }
+
     it { is_expected.to eq(false) }
   end
 end

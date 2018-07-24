@@ -21,6 +21,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
 
   describe '#replace?' do
     subject { strategy.replace? }
+
     it { is_expected.to eq(false) }
   end
 end
