@@ -5,6 +5,7 @@ require_relative 'on_conflict/null_strategy'
 require_relative 'on_conflict/log'
 require_relative 'on_conflict/raise'
 require_relative 'on_conflict/reject'
+require_relative 'on_conflict/replace'
 require_relative 'on_conflict/reschedule'
 
 module SidekiqUniqueJobs

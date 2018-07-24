@@ -22,10 +22,12 @@ module SidekiqUniqueJobs
       #   Will call a conflict strategy if lock can't be achieved.
       # @return [String] the sidekiq job id
       def lock
+        @attempt = 0
+
         if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
           token
         else
-          strategy.call
+          call_strategy
         end
       end
 
@@ -62,6 +64,15 @@ module SidekiqUniqueJobs
 
       private
 
+      def call_strategy
+        @attempt += 1
+        strategy.call { lock if replace? }
+      end
+
+      def replace?
+        strategy.replace? && attempt < 2
+      end
+
       # The sidekiq job hash
       # @return [Hash] the Sidekiq job hash
       attr_reader :item
@@ -73,6 +84,10 @@ module SidekiqUniqueJobs
       # The sidekiq job hash
       # @return [Proc] the callback to use after unlock
       attr_reader :callback
+
+      # The current attempt to lock the job
+      # @return [Integer] the numerical value of the attempt
+      attr_reader :attempt
 
       # The interface to the locking mechanism
       # @return [SidekiqUniqueJobs::Locksmith]

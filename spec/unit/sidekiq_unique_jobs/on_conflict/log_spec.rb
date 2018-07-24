@@ -19,4 +19,10 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Log do
       )
     end
   end
+
+  describe '#replace?' do
+    subject { strategy.replace? }
+
+    it { is_expected.to eq(false) }
+  end
 end

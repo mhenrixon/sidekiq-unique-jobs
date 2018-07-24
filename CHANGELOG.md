@@ -13,6 +13,7 @@
 - Totally delete the hash that was growing out of proportion
 - Adds a sidekiq web extension for viewing and deleting unique digests
 - Renamed the configuration `unique:` to `lock:` (still backwards compatible)
+- Added some very simplistic conflict strategies.
 
 ## v5.1.0
 

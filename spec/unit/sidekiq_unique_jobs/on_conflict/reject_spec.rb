@@ -19,6 +19,12 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
     allow(strategy).to receive(:payload).and_return(payload)
   end
 
+  describe '#replace?' do
+    subject { strategy.replace? }
+
+    it { is_expected.to eq(false) }
+  end
+
   describe '#send_to_deadset' do
     subject(:send_to_deadset) { strategy.send_to_deadset }
 

@@ -23,6 +23,10 @@ module SidekiqUniqueJobs
       def call
         fail NotImplementedError, 'needs to be implemented in child class'
       end
+
+      def replace?
+        is_a?(Replace)
+      end
     end
   end
 end

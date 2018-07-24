@@ -3,20 +3,12 @@
 module SidekiqHelpers
   include SidekiqUniqueJobs::Connection
 
-  def push_item(item = {})
-    Sidekiq::Client.push(item)
+  def dead_count
+    zcard('dead')
   end
 
-  def scard(queue)
-    redis { |conn| conn.scard(queue) }
-  end
-
-  def zcard(queue)
-    redis { |conn| conn.zcard(queue) }
-  end
-
-  def zcount(queue, min = '-inf', max = '+inf')
-    redis { |conn| conn.zcount(queue, min, max) }
+  def get_key(key)
+    redis { |conn| conn.get(key) }
   end
 
   def hexists(hash, key)
@@ -27,16 +19,24 @@ module SidekiqHelpers
     redis { |conn| conn.hlen(hash, key) }
   end
 
-  def get_key(key)
-    redis { |conn| conn.get(key) }
+  def keys(pattern = nil)
+    SidekiqUniqueJobs::Util.keys(pattern)
   end
 
-  def set_key(key, value)
-    redis { |conn| conn.set(key, value) }
+  def push_item(item = {})
+    Sidekiq::Client.push(item)
   end
 
-  def dead_count
-    zcard('dead')
+  def queue_count(queue)
+    redis { |conn| conn.llen("queue:#{queue}") }
+  end
+
+  def retry_count
+    zcard('retry')
+  end
+
+  def scard(queue)
+    redis { |conn| conn.scard(queue) }
   end
 
   def schedule_count
@@ -47,20 +47,24 @@ module SidekiqHelpers
     zcount('schedule', '-inf', max)
   end
 
-  def queue_count(queue)
-    redis { |conn| conn.llen("queue:#{queue}") }
+  def set_key(key, value)
+    redis { |conn| conn.set(key, value) }
   end
 
-  def keys(pattern = nil)
-    SidekiqUniqueJobs::Util.keys(pattern)
+  def ttl(key)
+    redis { |conn| conn.ttl(key) }
   end
 
   def unique_keys
     keys('uniquejobs:*')
   end
 
-  def ttl(key)
-    redis { |conn| conn.ttl(key) }
+  def zcard(queue)
+    redis { |conn| conn.zcard(queue) }
+  end
+
+  def zcount(queue, min = '-inf', max = '+inf')
+    redis { |conn| conn.zcount(queue, min, max) }
   end
 end
 

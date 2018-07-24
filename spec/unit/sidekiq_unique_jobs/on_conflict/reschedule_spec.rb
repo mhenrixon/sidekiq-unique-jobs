@@ -18,4 +18,10 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
       expect { call }.to change { schedule_count }.by(1)
     end
   end
+
+  describe '#replace?' do
+    subject { strategy.replace? }
+
+    it { is_expected.to eq(false) }
+  end
 end

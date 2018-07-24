@@ -77,3 +77,4 @@ detectors:
   TooManyMethods:
     exclude:
     - SidekiqUniqueJobs::Locksmith
+    - SidekiqUniqueJobs::Lock::BaseLock
