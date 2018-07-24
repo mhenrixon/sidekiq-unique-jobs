@@ -12,14 +12,14 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace, redis: :redis do
     { 'unique_digest' => unique_digest, 'queue' => :customqueue }
   end
 
-  before do
-    jid
-    digest
-    allow(block).to receive(:call)
-  end
-
   describe '#call' do
-    let(:call) { strategy.call(&block) }
+    subject(:call) { strategy.call(&block) }
+
+    before do
+      jid
+      digest
+      allow(block).to receive(:call)
+    end
 
     context 'when job is retried' do
       let(:jid)  { 'abcdefab' }
@@ -65,5 +65,10 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace, redis: :redis do
         expect(block).to have_received(:call)
       end
     end
+  end
+
+  describe '#replace?' do
+    subject { strategy.replace? }
+    it { is_expected.to eq(true) }
   end
 end

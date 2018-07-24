@@ -16,18 +16,21 @@ module SidekiqUniqueJobs
       end
 
       # Replace the old job in the queue
-      # @raise [SidekiqUniqueJobs::Conflict]
+      # @yield to retry the lock after deleting the old one
       def call(&block)
         return unless delete_job_by_digest
+        delete_lock
         block&.call
       end
 
+      # Delete the job from either schedule, retry or the queue
       def delete_job_by_digest
-        Scripts.call(
-          :delete_job_by_digest, nil,
-          keys: [queue, unique_digest],
-          argv: []
-        )
+        Scripts.call(:delete_job_by_digest, nil,keys: [queue, unique_digest])
+      end
+
+      # Delete the keys belonging to the job
+      def delete_lock
+        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, unique_digest])
       end
     end
   end
