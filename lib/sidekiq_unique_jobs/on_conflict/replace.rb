@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
       def call(&block)
         return unless delete_job_by_digest
         delete_lock
-        block&.call
+        block.call
       end
 
       # Delete the job from either schedule, retry or the queue
