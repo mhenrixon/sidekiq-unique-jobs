@@ -243,7 +243,11 @@ This strategy is intended to be used with `WhileExecuting` and will push the job
 
 ### Replace
 
-This strategy is intended to be used with client locks like `UntilExecuted`. It will delete any existing job for these arguments from retry, schedule and queue. And retry the lock again. This is slightly dangerous and should probably only be used for jobs that are always scheduled in the future.
+This strategy is intended to be used with client locks like `UntilExecuted`.
+It will delete any existing job for these arguments from retry, schedule and
+queue and retry the lock again. This is slightly dangerous and should probably only be used for jobs that are always scheduled in the future. 
+
+*Possible infinite recursion*
 
 `sidekiq_options lock: :until_executed, on_conflict: :replace`
 
