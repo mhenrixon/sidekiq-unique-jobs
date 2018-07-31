@@ -45,10 +45,4 @@ end
 redis.call('GETSET', version_key, api_version)
 redis.call('PERSIST', exists_key)
 
-if expiration then
-  redis.call('EXPIRE', available_key, expiration)
-  redis.call('EXPIRE', exists_key, expiration)
-  redis.call('EXPIRE', version_key, expiration)
-end
-
 return job_id
