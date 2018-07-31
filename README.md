@@ -29,6 +29,7 @@
   * [Finer Control over Uniqueness](#finer-control-over-uniqueness)
   * [After Unlock Callback](#after-unlock-callback)
   * [Logging](#logging)
+  * [Cleanup Dead Locks](#cleanup-dead-locks)
 * [Debugging](#debugging)
   * [Sidekiq Web](#sidekiq-web)
     * [Show Unique Digests](#show-unique-digests)
@@ -350,6 +351,29 @@ class UniqueJobWithFilterMethod
 
   ...
 
+end
+```
+
+### Cleanup Dead Jobs
+
+For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required per worker class.
+
+```ruby
+class MyWorker
+  sidekiq_retries_exhausted do |msg, _ex|
+    SidekiqUniqueJobs::Digests.delete_by(digest: msg['unique_digest']) if msg['unique_digest']
+  end
+end
+```
+
+Starting in v5.1, Sidekiq can also fire a global callback when a job dies:
+
+```ruby
+# this goes in your initializer
+Sidekiq.configure_server do |config|
+  config.death_handlers << ->(job, _ex) do
+    SidekiqUniqueJobs::Digests.delete_by(digest: job['unique_digest']) if job['unique_digest']
+  end
 end
 ```
 
