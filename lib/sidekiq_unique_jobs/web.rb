@@ -25,7 +25,8 @@ module SidekiqUniqueJobs
         @count          = (params[:count] || 100).to_i
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
-        @total_size, @next_cursor, @unique_digests = Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
+        @total_size, @next_cursor, @unique_digests =
+          Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
 
         erb(unique_template(:unique_digests))
       end
