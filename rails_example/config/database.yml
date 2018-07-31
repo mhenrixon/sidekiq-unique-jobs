@@ -3,7 +3,7 @@ defaults: &defaults
   adapter: postgresql
   host: <%= ENV.fetch('DB_HOST') { 'localhost' } %>
   port: <%= ENV.fetch('DB_PORT') { 5432 } %>
-  username: <%= ENV.fetch('DB_USERNAME') { 'mhenrixon' } %>
+  username: <%= ENV.fetch('DB_USERNAME') { `whoami` } %>
   password: <%= ENV.fetch('DB_PASSWORD') { nil } %>
   pool: <%= ENV.fetch('DB_POOL') { 25 } %>
   timeout: <%= ENV.fetch('DB_TIMEOUT') { 5000 } %>
@@ -16,4 +16,8 @@ development:
 test:
   <<: *defaults
   database: rails_example_test
+
+production:
+  <<: *defaults
+  database: rails_example_prod
 

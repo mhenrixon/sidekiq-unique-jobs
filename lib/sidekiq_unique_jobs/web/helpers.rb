@@ -5,10 +5,6 @@ module SidekiqUniqueJobs
     module Helpers
       VIEW_PATH = File.expand_path('../web/views', __dir__)
 
-      def filtering(pattern, count)
-        SidekiqUniqueJobs::Util.keys(pattern, count)
-      end
-
       def unique_template(name)
         File.open(File.join(VIEW_PATH, "#{name}.erb")).read
       end
