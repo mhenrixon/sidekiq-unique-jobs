@@ -9,7 +9,7 @@ local token      = ARGV[1]
 local expiration = tonumber(ARGV[2])
 
 redis.call('HDEL', grabbed_key, token)
-redis.call('SREM', unique_keys, token)
+redis.call('SREM', unique_keys, unique_digest)
 local available_count = redis.call('LPUSH', available_key, token)
 
 if expiration then
