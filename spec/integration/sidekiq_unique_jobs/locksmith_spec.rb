@@ -9,7 +9,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:jid_one)         { 'maaaahjid' }
   let(:jid_two)           { 'jidmayhem' }
   let(:lock_expiration) { nil }
-  let(:unique_digest)   { 'test_mutex_key' }
+  let(:unique_digest)   { 'uniquejobs:randomvalue' }
   let(:item_one) do
     {
       'jid' => jid_one,
@@ -114,6 +114,44 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     let(:lock_expiration) { 1 }
 
     it_behaves_like 'a lock'
+
+    it 'creates the expected keys' do
+      locksmith_one.lock
+      expect(unique_digests).to match_array(['uniquejobs:randomvalue'])
+      expect(unique_keys).to match_array(%w[
+                                           uniquejobs:randomvalue:EXISTS
+                                           uniquejobs:randomvalue:GRABBED
+                                           uniquejobs:randomvalue:VERSION
+                                         ])
+    end
+
+    it 'expires the expected keys' do
+      locksmith_one.lock
+      expect(unique_digests).to match_array(['uniquejobs:randomvalue'])
+      expect(unique_keys).to match_array(%w[
+                                           uniquejobs:randomvalue:EXISTS
+                                           uniquejobs:randomvalue:GRABBED
+                                           uniquejobs:randomvalue:VERSION
+                                         ])
+      locksmith_one.signal
+
+      expect(unique_digests).to match_array([])
+      expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(1)
+      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(1)
+    end
+
+    it 'deletes the expected keys' do
+      locksmith_one.lock
+      expect(unique_digests).to match_array(['uniquejobs:randomvalue'])
+      expect(unique_keys).to match_array(%w[
+                                           uniquejobs:randomvalue:EXISTS
+                                           uniquejobs:randomvalue:GRABBED
+                                           uniquejobs:randomvalue:VERSION
+                                         ])
+      locksmith_one.delete!
+      expect(unique_digests).to match_array([])
+      expect(unique_keys).to match_array(%w[])
+    end
 
     it 'expires keys' do
       Sidekiq.redis(&:flushdb)

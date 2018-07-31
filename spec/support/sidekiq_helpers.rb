@@ -55,6 +55,14 @@ module SidekiqHelpers
     redis { |conn| conn.ttl(key) }
   end
 
+  def unique_digests
+    smembers('unique:keys')
+  end
+
+  def smembers(key)
+    redis { |conn| conn.smembers(key) }
+  end
+
   def unique_keys
     keys('uniquejobs:*')
   end
