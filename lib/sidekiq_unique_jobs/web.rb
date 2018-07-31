@@ -24,6 +24,7 @@ module SidekiqUniqueJobs
         @filter         = params[:filter] || '*'
         @filter         = '*' if @filter == ''
         @count          = (params[:count] || 100).to_i
+        @current_page   = (params[:page] || 1).to_i
         @unique_digests = Digests.all(pattern: @filter, count: @count)
 
         erb(unique_template(:unique_digests))

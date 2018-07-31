@@ -30,6 +30,15 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
     expect(last_response.body).to match("/unique_digests/#{another_digest}")
   end
 
+  it 'can paginate digests' do
+    110.times do |idx|
+      expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
+    end
+
+    get '/unique_digests'
+    expect(last_response.status).to eq(200)
+  end
+
   it 'can display digest' do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
 
