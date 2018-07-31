@@ -363,7 +363,7 @@ To use the web extension you need to require it in your routes.
 
 ```ruby
 # app/config/routes.rb
-require 'sidekiq-unique-jobs/web'
+require 'sidekiq_unique_jobs/web'
 mount Sidekiq::Web, at: '/sidekiq'
 ```
 
