@@ -354,7 +354,7 @@ class UniqueJobWithFilterMethod
 end
 ```
 
-### Cleanup Dead Jobs
+### Cleanup Dead Locks
 
 For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required per worker class.
 
