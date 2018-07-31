@@ -22,6 +22,23 @@ module SidekiqUniqueJobs
       redis { |conn| conn.sscan_each(UNIQUE_SET, match: pattern, count: count).to_a }
     end
 
+    # Paginate unique digests
+    #
+    # @param [String] pattern a pattern to match with
+    # @param [Integer] page the current cursor position
+    # @param [Integer] count the maximum number to match
+    # @return [Array<String>] with unique digests
+    def page(pattern: SCAN_PATTERN, cursor: 0, page_size: 100)
+      redis do |conn|
+        total_size, digests = conn.multi do
+          conn.scard(UNIQUE_SET)
+          conn.sscan(UNIQUE_SET, cursor, match: pattern, count: page_size)
+        end
+
+        [total_size, digests[0], digests[1]]
+      end
+    end
+
     # Get a total count of unique digests
     #
     # @return [Integer] number of digests
