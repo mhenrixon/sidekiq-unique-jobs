@@ -379,7 +379,7 @@ end
 
 ## Debugging
 
-There are two ways to display and remove keys regarding uniqueness. The console way and the command line way.
+There are several ways of removing keys that are stuck. The prefered way is by using the unique extension to `Sidekiq::Web`. The old console and command line versions still work but might be deprecated in the future. It is better to search for the digest itself and delete the keys matching that digest.
 
 ### Sidekiq Web
 
