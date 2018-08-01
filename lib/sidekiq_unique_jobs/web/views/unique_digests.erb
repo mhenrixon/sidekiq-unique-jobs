@@ -9,7 +9,7 @@
   </form>
   <% if @unique_digests.size > 0 && @total_size > @count.to_i %>
     <div class="col-sm-4">
-      <%= erb :_paging, locals: { url: "#{root_path}unique_digests" } %>
+      <%= erb unique_template(:_paging), locals: { url: "#{root_path}unique_digests" } %>
     </div>
   <% end %>
 </header>

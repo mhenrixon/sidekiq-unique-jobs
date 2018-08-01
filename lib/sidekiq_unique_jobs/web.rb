@@ -20,11 +20,13 @@ module SidekiqUniqueJobs
       end
 
       app.get '/unique_digests' do
-        @total_size     = Digests.count
         @filter         = params[:filter] || '*'
         @filter         = '*' if @filter == ''
         @count          = (params[:count] || 100).to_i
-        @unique_digests = Digests.all(pattern: @filter, count: @count)
+        @current_cursor = params[:cursor]
+        @prev_cursor    = params[:prev_cursor]
+        @total_size, @next_cursor, @unique_digests =
+          Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
 
         erb(unique_template(:unique_digests))
       end

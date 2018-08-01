@@ -32,6 +32,16 @@ module SidekiqUniqueJobs
         keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
         argv: [jid, expiration, API_VERSION, concurrency],
       )
+      expire
+    end
+
+    def expire
+      Scripts.call(
+        :expire,
+        redis_pool,
+        keys: [exists_key, available_key, version_key],
+        argv: [expiration],
+      )
     end
 
     # Checks if the exists key is created in redis
@@ -86,7 +96,7 @@ module SidekiqUniqueJobs
       signal(jid)
     end
 
-    # Removes the lock keys from Redis
+    # Checks if this instance is considered locked
     # @param [String] token the unique token to check for a lock.
     #   nil will default to the jid provided in the initializer
     # @return [true, false]
