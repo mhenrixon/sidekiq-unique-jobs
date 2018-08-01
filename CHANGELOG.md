@@ -1,3 +1,12 @@
+## v6.0.2
+
+- Fixes sidekiq web pagination of unique digests
+- Fixes lock_expiration usage (Lua doesn't support expire after persisting a key)
+
+## v6.0.1
+
+- Remove unused method that causes conflict with sidekiq/web
+
 ## v6.0.0
 
 - Complete rewrite of the locking mechanism
