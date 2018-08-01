@@ -21,9 +21,6 @@ RSpec.describe SidekiqUniqueJobs::Middleware do
       it 'adds client and server middleware when required' do
         expect(Sidekiq).to receive(:configure_server).and_yield(server_config)
 
-        expect(server_config).to receive(:client_middleware).and_yield(client_middleware)
-        expect(client_middleware).to receive(:add).with(SidekiqUniqueJobs::Client::Middleware)
-
         expect(server_config).to receive(:server_middleware).and_yield(server_middleware)
         expect(server_middleware).to receive(:add).with(SidekiqUniqueJobs::Server::Middleware)
         described_class.configure_server_middleware
