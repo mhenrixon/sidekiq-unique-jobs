@@ -106,7 +106,7 @@ module SidekiqUniqueJobs
     end
 
     # Signal that the token should be released
-    # @param [String] token the unique token to check for a lockk.
+    # @param [String] token the unique token to check for a lock.
     #   nil will default to the jid provided in the initializer.
     # @return [Integer] the number of available lock resources
     def signal(token = nil)
