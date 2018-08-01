@@ -115,7 +115,7 @@ This configuration option is slightly misleading. It doesn't disregard the queue
 ```ruby
 class Worker
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_queues: true, queue: 'default'
 
   def perform(args); end
@@ -131,7 +131,7 @@ This configuration option is slightly misleading. It doesn't disregard the worke
 ```ruby
 class WorkerOne
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
@@ -139,17 +139,17 @@ end
 
 class WorkerTwo
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
 end
 
 
-WorkerOne.perform_async(1) 
+WorkerOne.perform_async(1)
 # => 'the jobs unique id'
 
-WorkerTwo.perform_async(1) 
+WorkerTwo.perform_async(1)
 # => nil because WorkerOne just stole the lock
 ```
 
@@ -220,7 +220,7 @@ In the console you should see something like:
 
 ## Conflict Strategy
 
-Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process. 
+Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
 The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
 
@@ -246,9 +246,9 @@ This strategy is intended to be used with `WhileExecuting` and will push the job
 
 This strategy is intended to be used with client locks like `UntilExecuted`.
 It will delete any existing job for these arguments from retry, schedule and
-queue and retry the lock again. 
+queue and retry the lock again.
 
-This is slightly dangerous and should probably only be used for jobs that are 
+This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.
 
 `sidekiq_options lock: :until_executed, on_conflict: :replace`
@@ -322,7 +322,7 @@ end
 
 ### After Unlock Callback
 
-If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that. 
+If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that.
 
 **Exception 1:** UntilExecuting unlocks and calls back before yielding.
 **Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
@@ -391,7 +391,7 @@ require 'sidekiq_unique_jobs/web'
 mount Sidekiq::Web, at: '/sidekiq'
 ```
 
-There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` 
+There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web`
 already does this.
 
 To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
@@ -468,6 +468,6 @@ I would strongly suggest you let this gem test uniqueness. If you care about how
 5. Create new Pull Request
 
 
-## Contributors 
+## Contributors
 
 You can find a list of contributors over on https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
