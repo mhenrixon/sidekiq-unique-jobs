@@ -23,6 +23,20 @@ module SidekiqUniqueJobs
       redis { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
+    # Find unique keys with ttl
+    # @param [String] pattern a pattern to scan for in redis
+    # @param [Integer] count the maximum number of keys to delete
+    # @return [Hash<String, Integer>] a hash with active unique keys and corresponding ttl
+    def keys_with_ttl(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
+      hash = {}
+      redis do |conn|
+        conn.scan_each(match: prefix(pattern), count: count).each do |key|
+          hash[key] = conn.ttl(key)
+        end
+      end
+      hash
+    end
+
     # Deletes unique keys from redis
     #
     # @param [String] pattern a pattern to scan for in redis
