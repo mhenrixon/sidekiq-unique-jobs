@@ -32,7 +32,6 @@ module SidekiqUniqueJobs
         keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
         argv: [jid, expiration, API_VERSION, concurrency],
       )
-      expire
     end
 
     def expire
@@ -40,7 +39,7 @@ module SidekiqUniqueJobs
         :expire,
         redis_pool,
         keys: [exists_key, available_key, version_key],
-        argv: [expiration],
+        argv: [expiration, jid],
       )
     end
 
@@ -82,6 +81,7 @@ module SidekiqUniqueJobs
       create
 
       grab_token(timeout) do |token|
+        expire
         touch_grabbed_token(token)
         return_token_or_block_value(token, &block)
       end
