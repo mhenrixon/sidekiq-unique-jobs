@@ -2,7 +2,7 @@
 
 module SidekiqUniqueJobs
   module OnConflict
-    # Strategy to raise an error on conflict
+    # Strategy to replace the job on conflict
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Replace < OnConflict::Strategy

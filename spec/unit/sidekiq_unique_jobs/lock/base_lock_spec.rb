@@ -26,20 +26,31 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   describe '#lock' do
     subject(:lock_lock) { lock.lock }
 
-    before do
-      allow(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(token)
+    context 'when already locked?' do
+      before do
+        allow(lock).to receive(:locked?).and_return(true)
+      end
+
+      it { is_expected.to eq('maaaahjid') }
     end
 
-    context 'when a token is retrieved' do
-      let(:token) { 'another jid' }
+    context 'when not locked?' do
+      before do
+        allow(lock).to receive(:locked?).and_return(false)
+        allow(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(token)
+      end
 
-      it { is_expected.to eq('another jid') }
-    end
+      context 'when a token is retrieved' do
+        let(:token) { 'another jid' }
 
-    context 'when token is not retrieved' do
-      let(:token) { nil }
+        it { is_expected.to eq('another jid') }
+      end
 
-      it { is_expected.to eq(nil) }
+      context 'when token is not retrieved' do
+        let(:token) { nil }
+
+        it { is_expected.to eq(nil) }
+      end
     end
   end
 
