@@ -23,6 +23,7 @@ module SidekiqUniqueJobs
       # @return [String] the sidekiq job id
       def lock
         @attempt = 0
+        return item[JID_KEY] if locked?
 
         if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
           token
