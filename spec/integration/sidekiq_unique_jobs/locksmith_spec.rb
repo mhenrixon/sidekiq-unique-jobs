@@ -39,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it 'does not lock twice as a mutex' do
       expect(locksmith_one.lock(0)).to be_truthy
-      expect(locksmith_one.lock(0)).to eq(nil)
+      expect(locksmith_two.lock(0)).to eq(nil)
     end
 
     it 'executes the given code block' do
@@ -88,7 +88,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       did_we_get_in = false
 
       locksmith_one.lock do
-        locksmith_one.lock(0) do
+        locksmith_two.lock(0) do
           did_we_get_in = true
         end
       end
@@ -111,12 +111,28 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   end
 
   describe 'lock with expiration' do
-    let(:lock_expiration) { 1 }
+    let(:lock_expiration) { 3 }
 
     it_behaves_like 'a lock'
 
     it 'creates the expected keys' do
       locksmith_one.lock
+
+      expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(3)
+      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(3)
+
+      # PLEASE keep this spec. It verifies that the next lock
+      #   doesn't persist the exist_key of another lock
+      sleep 1
+
+      expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(2)
+      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(2)
+
+      expect(locksmith_two.lock(0)).to eq(nil)
+
+      expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(2)
+      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(2)
+
       expect(unique_digests).to match_array(['uniquejobs:randomvalue'])
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
@@ -136,8 +152,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith_one.signal
 
       expect(unique_digests).to match_array([])
-      expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(1)
-      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(1)
+      expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(3)
+      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(3)
     end
 
     it 'deletes the expected keys' do

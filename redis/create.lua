@@ -12,10 +12,15 @@ local expiration    = tonumber(ARGV[2])
 local api_version   = ARGV[3]
 local concurrency   = tonumber(ARGV[4])
 
-local stored_token  = redis.call('GETSET', exists_key, job_id)
-if stored_token then
+-- redis.log(redis.LOG_DEBUG, "create.lua - investigate possibility of locking jid: " .. job_id)
+
+local stored_token  = redis.call('GET', exists_key)
+if stored_token and stored_token ~= job_id then
+  -- redis.log(redis.LOG_DEBUG, "create.lua - jid: " .. job_id .. " - returning existing jid: " .. stored_token)
   return stored_token
 end
+
+redis.call('SET', exists_key, job_id)
 
 ----------------------------------------------------------------
 -- TODO: Legacy support (Remove in v6.1)
@@ -30,6 +35,7 @@ if old_token then
 end
 ----------------------------------------------------------------
 
+-- redis.log(redis.LOG_DEBUG, "create.lua - creating locks for jid: " .. job_id)
 redis.call('SADD', unique_keys, unique_digest)
 redis.call('EXPIRE', exists_key, 5)
 redis.call('DEL', grabbed_key)
@@ -42,7 +48,11 @@ if concurrency and concurrency > 1 then
 else
   redis.call('RPUSH', available_key, job_id)
 end
-redis.call('GETSET', version_key, api_version)
+
+-- redis.log(redis.LOG_DEBUG, "create.lua - persisting locks for jid: " .. job_id)
 redis.call('PERSIST', exists_key)
+
+redis.call('GETSET', version_key, api_version)
+
 
 return job_id
