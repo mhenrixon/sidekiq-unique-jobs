@@ -58,19 +58,26 @@ detectors:
     - Array
   NilCheck:
     enabled: false
+  DataClump:
+    enabled: true
+    exclude:
+      - SidekiqUniqueJobs::Util
   FeatureEnvy:
     exclude:
-    - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
-    - SidekiqUniqueJobs::Logging#debug_item
-    - SidekiqUniqueJobs::Util#batch_delete
     - SidekiqUniqueJobs::Digests#batch_delete
+    - SidekiqUniqueJobs::Digests#page
+    - SidekiqUniqueJobs::Logging#debug_item
+    - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
+    - SidekiqUniqueJobs::Util#batch_delete
+    - SidekiqUniqueJobs::Web::Helpers#cparams
   NestedIterators:
     exclude:
+    - SidekiqUniqueJobs::Digests#batch_delete
     - SidekiqUniqueJobs::Locksmith#create_lock
     - SidekiqUniqueJobs::Middleware#configure_client_middleware
     - SidekiqUniqueJobs::Middleware#configure_server_middleware
     - SidekiqUniqueJobs::Util#batch_delete
-    - SidekiqUniqueJobs::Digests#batch_delete
+    - SidekiqUniqueJobs::Util#keys_with_ttl
   TooManyInstanceVariables:
     exclude:
     - SidekiqUniqueJobs::Locksmith
