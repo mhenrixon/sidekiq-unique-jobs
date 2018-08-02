@@ -1,3 +1,11 @@
+## v6.0.4
+
+- Prevent locks from stealing each other (#316)
+
+## v6.0.3
+
+- Fixes a few hickups (#315)
+
 ## v6.0.2
 
 - Fixes sidekiq web pagination of unique digests
