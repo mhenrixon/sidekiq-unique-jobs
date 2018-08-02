@@ -26,7 +26,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   describe '#lock' do
     subject(:lock_lock) { lock.lock }
 
-
     context 'when already locked?' do
       before do
         allow(lock).to receive(:locked?).and_return(true)
