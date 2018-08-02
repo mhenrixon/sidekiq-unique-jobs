@@ -14,6 +14,7 @@ module SidekiqUniqueJobs
       log: OnConflict::Log,
       raise: OnConflict::Raise,
       reject: OnConflict::Reject,
+      replace: OnConflict::Replace,
       reschedule: OnConflict::Reschedule,
     }.freeze
 
