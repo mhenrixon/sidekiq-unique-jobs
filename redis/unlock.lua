@@ -25,7 +25,7 @@ else
   redis.call('DEL', grabbed_key)
   redis.call('DEL', available_key)
   redis.call('DEL', version_key)
-  redis.call('DEL', 'uniquejobs')   -- TODO: Old job hash, just drop the darn thing
+  redis.call('DEL', 'uniquejobs')   -- TODO: Old job hash, just drop the darn thing  (Remove in v6.1)
   redis.call('DEL', unique_digest)  -- TODO: Legacy support (Remove in v6.1)
 end
 

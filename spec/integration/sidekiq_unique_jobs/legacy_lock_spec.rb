@@ -63,13 +63,13 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     context 'when lock_expiration is unset' do
       let(:lock_value) { jid_one }
 
-      it 'can signal to expire the lock after 10' do
-        locksmith_one.signal(jid_one)
+      it 'unlocks immediately' do
+        locksmith_one.unlock!(jid_one)
 
         expect(ttl(unique_digest)).to eq(-2) # key does not exist anymore
       end
 
-      it 'can soft delete the lock' do
+      it 'can soft deletes the lock' do
         expect(locksmith_one.delete).to eq(nil)
         expect(unique_keys).not_to include(unique_digest)
       end
@@ -85,7 +85,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       let(:lock_expiration) { 10 }
 
       it 'can signal to expire the lock after 10' do
-        locksmith_one.signal(jid_one)
+        locksmith_one.unlock(jid_one)
 
         expect(ttl(unique_digest)).to be_within(1).of(10)
       end

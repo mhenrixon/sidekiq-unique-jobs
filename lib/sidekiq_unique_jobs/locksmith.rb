@@ -34,15 +34,6 @@ module SidekiqUniqueJobs
       )
     end
 
-    def expire
-      Scripts.call(
-        :expire,
-        redis_pool,
-        keys: [exists_key, available_key, version_key],
-        argv: [expiration, jid],
-      )
-    end
-
     # Checks if the exists key is created in redis
     # @return [true, false]
     def exists?
@@ -81,7 +72,6 @@ module SidekiqUniqueJobs
       create
 
       grab_token(timeout) do |token|
-        expire
         touch_grabbed_token(token)
         return_token_or_block_value(token, &block)
       end
@@ -92,9 +82,22 @@ module SidekiqUniqueJobs
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     def unlock(token = nil)
+      token ||= jid
       return false unless locked?(token)
-      signal(token)
+      unlock!(token)
     end
+
+    def unlock!(token = nil)
+      token ||= jid
+
+      Scripts.call(
+        :unlock,
+        redis_pool,
+        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
+        argv: [token, expiration],
+      )
+    end
+
 
     # Checks if this instance is considered locked
     # @param [String] token the unique token to check for a lock.
@@ -103,21 +106,6 @@ module SidekiqUniqueJobs
     def locked?(token = nil)
       token ||= jid
       redis(redis_pool) { |conn| conn.hexists(grabbed_key, token) }
-    end
-
-    # Signal that the token should be released
-    # @param [String] token the unique token to check for a lock.
-    #   nil will default to the jid provided in the initializer.
-    # @return [Integer] the number of available lock resources
-    def signal(token = nil)
-      token ||= jid
-
-      Scripts.call(
-        :signal,
-        redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
-        argv: [token, expiration],
-      )
     end
 
     private
@@ -148,7 +136,7 @@ module SidekiqUniqueJobs
       begin
         yield token
       ensure
-        signal(token)
+        unlock(token)
       end
     end
 

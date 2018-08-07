@@ -149,7 +149,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
                                            uniquejobs:randomvalue:GRABBED
                                            uniquejobs:randomvalue:VERSION
                                          ])
-      locksmith_one.signal
+      locksmith_one.unlock
 
       expect(unique_digests).to match_array([])
       expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(3)
@@ -193,7 +193,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   #     locksmith_one.create
 
   #     3.times do
-  #       locksmith_one.signal
+  #       locksmith_one.unlock
   #     end
 
   #     expect(locksmith_one.available_count).to eq(4)

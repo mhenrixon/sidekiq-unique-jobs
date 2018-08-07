@@ -37,7 +37,6 @@ end
 
 -- redis.log(redis.LOG_DEBUG, "create.lua - creating locks for jid: " .. job_id)
 redis.call('SADD', unique_keys, unique_digest)
-redis.call('EXPIRE', exists_key, 5)
 redis.call('DEL', grabbed_key)
 redis.call('DEL', available_key)
 
@@ -48,11 +47,13 @@ if concurrency and concurrency > 1 then
 else
   redis.call('RPUSH', available_key, job_id)
 end
+redis.call('SET', version_key, api_version)
 
--- redis.log(redis.LOG_DEBUG, "create.lua - persisting locks for jid: " .. job_id)
-redis.call('PERSIST', exists_key)
-
-redis.call('GETSET', version_key, api_version)
-
+if expiration then
+  redis.call('EXPIRE', available_key, expiration)
+  redis.call('EXPIRE', exists_key, expiration)
+  redis.call('EXPIRE', grabbed_key, expiration)
+  redis.call('EXPIRE', version_key, expiration)
+end
 
 return job_id
