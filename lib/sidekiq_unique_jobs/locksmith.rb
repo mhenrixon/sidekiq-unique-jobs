@@ -91,9 +91,9 @@ module SidekiqUniqueJobs
     # Removes the lock keys from Redis
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
-    def unlock
-      return false unless locked?
-      signal(jid)
+    def unlock(token = nil)
+      return false unless locked?(token)
+      signal(token)
     end
 
     # Checks if this instance is considered locked
