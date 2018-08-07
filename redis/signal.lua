@@ -14,6 +14,7 @@ local available_count = redis.call('LPUSH', available_key, token)
 
 if expiration then
   redis.log(redis.LOG_DEBUG, "signal_locks.lua - expiring stale locks")
+  redis.call('SREM', unique_keys, unique_digest)
   redis.call('EXPIRE', exists_key, expiration)
   redis.call('EXPIRE', available_key, expiration)
   redis.call('EXPIRE', version_key, expiration)
