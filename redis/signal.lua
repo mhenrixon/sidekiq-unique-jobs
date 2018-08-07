@@ -18,6 +18,14 @@ if expiration then
   redis.call('EXPIRE', available_key, expiration)
   redis.call('EXPIRE', version_key, expiration)
   redis.call('EXPIRE', unique_digest, expiration) -- TODO: Legacy support (Remove in v6.1)
+else
+  redis.call('DEL', exists_key)
+  redis.call('SREM', unique_keys, unique_digest)
+  redis.call('DEL', grabbed_key)
+  redis.call('DEL', available_key)
+  redis.call('DEL', version_key)
+  redis.call('DEL', 'uniquejobs')   -- TODO: Old job hash, just drop the darn thing
+  redis.call('DEL', unique_digest)  -- TODO: Legacy support (Remove in v6.1)
 end
 
 return available_count

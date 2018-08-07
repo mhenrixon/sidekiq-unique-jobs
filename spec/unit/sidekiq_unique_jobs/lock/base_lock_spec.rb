@@ -80,7 +80,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     subject(:unlock) { lock.unlock }
 
     before do
-      allow(locksmith).to receive(:signal).with(item['jid']).and_return('unlocked')
+      allow(locksmith).to receive(:unlock).with(item['jid']).and_return('unlocked')
     end
 
     it { is_expected.to eq('unlocked') }

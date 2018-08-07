@@ -66,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       it 'can signal to expire the lock after 10' do
         locksmith_one.signal(jid_one)
 
-        expect(ttl(unique_digest)).to eq(-1) # key exists but has been expired
+        expect(ttl(unique_digest)).to eq(-2) # key does not exist anymore
       end
 
       it 'can soft delete the lock' do
