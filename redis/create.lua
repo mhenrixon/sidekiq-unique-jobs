@@ -3,14 +3,11 @@
 local exists_key    = KEYS[1]
 local grabbed_key   = KEYS[2]
 local available_key = KEYS[3]
-local version_key   = KEYS[4]
-local unique_keys   = KEYS[5]
-local unique_digest = KEYS[6]
+local unique_keys   = KEYS[4]
+local unique_digest = KEYS[5]
 
 local job_id        = ARGV[1]
 local expiration    = tonumber(ARGV[2])
-local api_version   = ARGV[3]
-local concurrency   = tonumber(ARGV[4])
 
 -- redis.log(redis.LOG_DEBUG, "create.lua - investigate possibility of locking jid: " .. job_id)
 
@@ -35,25 +32,15 @@ if old_token then
 end
 ----------------------------------------------------------------
 
--- redis.log(redis.LOG_DEBUG, "create.lua - creating locks for jid: " .. job_id)
 redis.call('SADD', unique_keys, unique_digest)
 redis.call('DEL', grabbed_key)
 redis.call('DEL', available_key)
-
-if concurrency and concurrency > 1 then
-  for index = 1, concurrency do
-    redis.call('RPUSH', available_key, index)
-  end
-else
-  redis.call('RPUSH', available_key, job_id)
-end
-redis.call('SET', version_key, api_version)
+redis.call('RPUSH', available_key, job_id)
 
 if expiration then
   redis.call('EXPIRE', available_key, expiration)
   redis.call('EXPIRE', exists_key, expiration)
   redis.call('EXPIRE', grabbed_key, expiration)
-  redis.call('EXPIRE', version_key, expiration)
 end
 
 return job_id

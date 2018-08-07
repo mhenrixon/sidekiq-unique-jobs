@@ -119,25 +119,19 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith_one.lock
 
       expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(3)
-      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(3)
 
       # PLEASE keep this spec. It verifies that the next lock
       #   doesn't persist the exist_key of another lock
       sleep 1
 
       expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(2)
-      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(2)
-
       expect(locksmith_two.lock(0)).to eq(nil)
-
       expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(2)
-      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(2)
 
       expect(unique_digests).to match_array(['uniquejobs:randomvalue'])
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
                                            uniquejobs:randomvalue:GRABBED
-                                           uniquejobs:randomvalue:VERSION
                                          ])
     end
 
@@ -147,13 +141,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
                                            uniquejobs:randomvalue:GRABBED
-                                           uniquejobs:randomvalue:VERSION
                                          ])
       locksmith_one.unlock
 
       expect(unique_digests).to match_array([])
       expect(ttl('uniquejobs:randomvalue:EXISTS')).to eq(3)
-      expect(ttl('uniquejobs:randomvalue:VERSION')).to eq(3)
     end
 
     it 'deletes the expected keys' do
@@ -162,7 +154,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
                                            uniquejobs:randomvalue:GRABBED
-                                           uniquejobs:randomvalue:VERSION
                                          ])
       locksmith_one.delete!
       expect(unique_digests).to match_array([])

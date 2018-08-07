@@ -12,7 +12,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expected = %w[
         uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS
-        uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:VERSION
       ]
 
       expect(keys).to include(*expected)

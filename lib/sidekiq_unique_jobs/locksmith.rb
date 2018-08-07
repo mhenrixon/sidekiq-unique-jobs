@@ -5,9 +5,6 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Locksmith # rubocop:disable ClassLength
-    API_VERSION = '1'
-    EXPIRES_IN = 10
-
     include SidekiqUniqueJobs::Connection
 
     # @param [Hash] item a Sidekiq job hash
@@ -29,8 +26,8 @@ module SidekiqUniqueJobs
       Scripts.call(
         :create,
         redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
-        argv: [jid, expiration, API_VERSION, concurrency],
+        keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
+        argv: [jid, expiration],
       )
     end
 
@@ -78,7 +75,7 @@ module SidekiqUniqueJobs
     end
     alias wait lock
 
-    # Removes the lock keys from Redis
+    # Removes the lock keys from Redis if locked by the provided jid/token
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     def unlock(token = nil)
@@ -87,6 +84,9 @@ module SidekiqUniqueJobs
       unlock!(token)
     end
 
+    # Removes the lock keys from Redis
+    # @return [false] unless locked?
+    # @return [String] Sidekiq job_id (jid) if successful
     def unlock!(token = nil)
       token ||= jid
 
@@ -97,7 +97,6 @@ module SidekiqUniqueJobs
         argv: [token, expiration],
       )
     end
-
 
     # Checks if this instance is considered locked
     # @param [String] token the unique token to check for a lock.
