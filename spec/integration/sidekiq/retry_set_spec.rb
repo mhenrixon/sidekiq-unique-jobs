@@ -16,10 +16,13 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
     {
       'args' => args,
       'class' => worker_class,
+      'failed_at' => Time.now.to_f,
       'jid' => jid,
       'lock' => lock,
       'lock_expiration' => lock_expiration,
       'queue' => queue,
+      'retry_at' => retry_at,
+      'retry_count' => 1,
       'unique_digest' => unique_digest,
     }
   end
