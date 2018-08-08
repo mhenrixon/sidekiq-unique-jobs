@@ -26,11 +26,11 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       expect(unique_keys.size).to eq(0)
       Sidekiq::Client.push(item_with_digest)
 
-      expect(unique_keys.size).to eq(3)
+      expect(unique_keys.size).to eq(2)
 
       unlock
 
-      expect(unique_keys.size).to eq(3)
+      expect(unique_keys.size).to eq(2)
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       expect(unique_keys.size).to eq(0)
       Sidekiq::Client.push(item_with_digest)
 
-      expect(unique_keys.size).to eq(3)
+      expect(unique_keys.size).to eq(2)
 
       delete
 

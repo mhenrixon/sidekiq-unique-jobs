@@ -80,10 +80,9 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
 
       after { SidekiqUniqueJobs::Util.del('*', 1000) }
 
-      it { is_expected.to include("Found 3 keys matching '*':") }
+      it { is_expected.to include("Found 2 keys matching '*':") }
       it { is_expected.to include('uniquejobs:abcdefab:EXISTS') }
       it { is_expected.to include('uniquejobs:abcdefab:GRABBED') }
-      it { is_expected.to include('uniquejobs:abcdefab:VERSION') }
     end
   end
 
@@ -100,7 +99,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
       let(:options) { '--dry-run' }
 
       specify do
-        expect(del).to eq("Would delete 3 keys matching '*'\n")
+        expect(del).to eq("Would delete 2 keys matching '*'\n")
         expect(SidekiqUniqueJobs::Util.keys).not_to eq([])
       end
     end
@@ -109,7 +108,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
       let(:options) { '--no-dry-run' }
 
       specify do
-        expect(del).to eq("Deleted 3 keys matching '*'\n")
+        expect(del).to eq("Deleted 2 keys matching '*'\n")
         expect(SidekiqUniqueJobs::Util.keys).to eq([])
       end
     end

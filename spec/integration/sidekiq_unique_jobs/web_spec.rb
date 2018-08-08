@@ -46,7 +46,6 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
     expect(last_response.status).to eq(200)
     expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84')
     expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:EXISTS')
-    expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:VERSION')
     expect(last_response.body).to match('uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:GRABBED')
   end
 

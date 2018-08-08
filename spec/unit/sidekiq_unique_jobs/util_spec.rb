@@ -31,7 +31,6 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     %W[
       #{unique_key}:EXISTS
       #{unique_key}:GRABBED
-      #{unique_key}:VERSION
     ]
   end
 
@@ -57,13 +56,13 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     context 'when pattern is a wildcard' do
       let(:pattern) { described_class::SCAN_PATTERN }
 
-      it { is_expected.to eq(3) }
+      it { is_expected.to eq(2) }
     end
 
     context 'when pattern is a specific key' do
       let(:pattern) { unique_key }
 
-      it { is_expected.to eq(3) }
+      it { is_expected.to eq(2) }
       it { expect { del }.to change(described_class, :keys).to([]) }
     end
 
