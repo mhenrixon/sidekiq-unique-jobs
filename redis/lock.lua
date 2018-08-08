@@ -9,6 +9,15 @@ local unique_digest = KEYS[5]
 local job_id        = ARGV[1]
 local expiration    = tonumber(ARGV[2])
 
+local function current_time()
+  local time = redis.call('time')
+  local s = time[1]
+  local ms = time[2]
+  local number = tonumber((s .. '.' .. ms))
+
+  return number
+end
+
 -- redis.log(redis.LOG_DEBUG, "create.lua - investigate possibility of locking jid: " .. job_id)
 
 local stored_token  = redis.call('GET', exists_key)
@@ -34,6 +43,9 @@ end
 
 redis.call('SADD', unique_keys, unique_digest)
 redis.call('DEL', grabbed_key)
+-- TODO: Move this to LUA when redis 3.2 is the least supported
+-- redis.call('HSET', grabbed_key, job_id, current_time())
+---------------------------------------------------------------
 redis.call('DEL', available_key)
 redis.call('RPUSH', available_key, job_id)
 

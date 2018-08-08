@@ -67,6 +67,10 @@ module SidekiqHelpers
     keys('uniquejobs:*')
   end
 
+  def zadd(queue, timestamp, item)
+    redis { |conn| conn.zadd(queue, timestamp, item) }
+  end
+
   def zcard(queue)
     redis { |conn| conn.zcard(queue) }
   end

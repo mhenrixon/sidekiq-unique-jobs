@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class Locksmith # rubocop:disable ClassLength
+  class Locksmith
     include SidekiqUniqueJobs::Connection
 
     # @param [Hash] item a Sidekiq job hash
@@ -18,17 +18,6 @@ module SidekiqUniqueJobs
       @jid           = item[JID_KEY]
       @unique_digest = item[UNIQUE_DIGEST_KEY]
       @redis_pool    = redis_pool
-    end
-
-    # Creates the necessary keys in redis to attempt a lock
-    # @return [String] the Sidekiq job_id
-    def create
-      Scripts.call(
-        :create,
-        redis_pool,
-        keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
-        argv: [jid, expiration],
-      )
     end
 
     # Checks if the exists key is created in redis
@@ -66,7 +55,9 @@ module SidekiqUniqueJobs
     # @yield the block to execute if a lock is successful
     # @return the Sidekiq job_id (jid)
     def lock(timeout = nil, &block)
-      create
+      Scripts.call(:lock, redis_pool,
+                   keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
+                   argv: [jid, expiration])
 
       grab_token(timeout) do |token|
         touch_grabbed_token(token)
