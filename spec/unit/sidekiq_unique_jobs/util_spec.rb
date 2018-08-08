@@ -5,16 +5,16 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:item_hash) do
     {
-      'class'       => 'MyUniqueJob',
-      'args'        => [[1, 2]],
-      'at'          => 1_492_341_850.358196,
-      'retry'       => true,
-      'queue'       => 'customqueue',
-      'unique'      => :until_executed,
-      'expiration'  => 7200,
-      'retry_count' => 10,
-      'jid'         => jid,
-      'created_at'  => 1_492_341_790.358217,
+      'class'           => 'MyUniqueJob',
+      'args'            => [[1, 2]],
+      'at'              => 1_492_341_850.358196,
+      'retry'           => true,
+      'queue'           => 'customqueue',
+      'lock'            => :until_executed,
+      'lock_expiration' => 7200,
+      'retry_count'     => 10,
+      'jid'             => jid,
+      'created_at'      => 1_492_341_790.358217,
     }
   end
 
@@ -24,49 +24,92 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     my_item
   end
 
-  let(:unique_key) { item['unique_digest'] }
-  let(:jid)        { 'e3049b05b0bd9c809182bbe0' }
-  let(:lock)       { SidekiqUniqueJobs::Locksmith.new(item) }
+  let(:unique_digest) { item['unique_digest'] }
+  let(:jid)           { 'e3049b05b0bd9c809182bbe0' }
+  let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
   let(:expected_keys) do
     %W[
-      #{unique_key}:EXISTS
-      #{unique_key}:GRABBED
+      #{unique_digest}:EXISTS
+      #{unique_digest}:GRABBED
     ]
+  end
+
+  shared_context 'with an old lock' do
+    before do
+      result = SidekiqUniqueJobs::Scripts.call(
+        :acquire_lock,
+        nil,
+        keys: [unique_digest],
+        argv: [jid, 7200],
+      )
+      expect(result).to eq(1)
+      expect(described_class.keys).to include(unique_digest)
+    end
   end
 
   describe '.keys' do
     subject(:keys) { described_class.keys }
 
-    before do
-      lock.lock(0)
+    context 'when old lock exists' do
+      include_context 'with an old lock'
+
+      it { is_expected.to match_array([unique_digest]) }
     end
 
-    it { is_expected.to match_array(expected_keys) }
+    context 'when new lock exists' do
+      before do
+        lock.lock(0)
+      end
+
+      it { is_expected.to match_array(expected_keys) }
+    end
   end
 
   describe '.del' do
     subject(:del) { described_class.del(pattern, 100) }
 
-    before do
-      lock.lock(0)
+    context 'when an old lock exists' do
+      include_context 'with an old lock'
+
+      it { expect(described_class.keys).to match_array([unique_digest]) }
+
+      context 'when pattern is a wildcard' do
+        let(:pattern) { described_class::SCAN_PATTERN }
+
+        it { is_expected.to eq(1) }
+        it { expect { del }.to change(described_class, :keys).to([]) }
+      end
+
+      context 'when pattern is a specific key' do
+        let(:pattern) { unique_digest }
+
+        it { is_expected.to eq(1) }
+        it { expect { del }.to change(described_class, :keys).to([]) }
+      end
     end
 
-    it { expect(described_class.keys).to match_array(expected_keys) }
+    context 'when a new lock exists' do
+      before do
+        lock.lock(0)
+      end
 
-    context 'when pattern is a wildcard' do
-      let(:pattern) { described_class::SCAN_PATTERN }
+      it { expect(described_class.keys).to match_array(expected_keys) }
 
-      it { is_expected.to eq(2) }
+      context 'when pattern is a wildcard' do
+        let(:pattern) { described_class::SCAN_PATTERN }
+
+        it { is_expected.to eq(2) }
+        it { expect { del }.to change(described_class, :keys).to([]) }
+      end
+
+      context 'when pattern is a specific key' do
+        let(:pattern) { unique_digest }
+
+        it { is_expected.to eq(2) }
+        it { expect { del }.to change(described_class, :keys).to([]) }
+      end
+      after { lock.delete }
     end
-
-    context 'when pattern is a specific key' do
-      let(:pattern) { unique_key }
-
-      it { is_expected.to eq(2) }
-      it { expect { del }.to change(described_class, :keys).to([]) }
-    end
-
-    after { lock.delete }
   end
 
   describe '.prefix' do

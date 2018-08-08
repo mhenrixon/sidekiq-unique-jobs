@@ -44,7 +44,7 @@ module SidekiqUniqueJobs
     # @return [Integer] the number of keys deleted
     def del(pattern = SCAN_PATTERN, count = 0)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
-      pattern = "#{pattern}:*" unless pattern.end_with?(':*')
+      pattern = suffix(pattern)
 
       log_debug { "Deleting keys by: #{pattern}" }
       keys, time = timed { keys(pattern, count) }
@@ -85,6 +85,11 @@ module SidekiqUniqueJobs
       return key if unique_prefix.nil?
       return key if key.start_with?("#{unique_prefix}:")
       "#{unique_prefix}:#{key}"
+    end
+
+    def suffix(key)
+      return "#{key}*" unless key.end_with?(':*')
+      key
     end
 
     def unique_prefix
