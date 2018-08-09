@@ -108,6 +108,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
         it { is_expected.to eq(2) }
         it { expect { del }.to change(described_class, :keys).to([]) }
       end
+
       after { lock.delete }
     end
   end
