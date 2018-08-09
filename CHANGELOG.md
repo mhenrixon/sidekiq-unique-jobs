@@ -1,3 +1,14 @@
+## v6.0.6
+
+- Fixes a bug with the command line utility ([#321](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/321))
+- Internal refactoring to improve performance ([#318](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/318))
+- Adds coverage for retrying jobs
+
+## v6.0.5
+
+- Fixes a bug with keys not being deleted ([#317](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/317
+- ))
+
 ## v6.0.4
 
 - Prevent locks from stealing each other (#316)
