@@ -78,7 +78,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     it 'disappears without a trace when calling `delete!`' do
       original_key_size = keys.size
 
-      locksmith_one.create
+      locksmith_one.lock
       locksmith_one.delete!
 
       expect(keys.size).to eq(original_key_size)
@@ -162,7 +162,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it 'expires keys' do
       Sidekiq.redis(&:flushdb)
-      locksmith_one.create
+      locksmith_one.lock
       keys = unique_keys
       expect(unique_keys).not_to include(keys)
     end
@@ -181,7 +181,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   #   it_behaves_like 'a lock'
 
   #   it 'can dynamically add resources' do
-  #     locksmith_one.create
+  #     locksmith_one.lock
 
   #     3.times do
   #       locksmith_one.unlock
