@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module OptionsWithFallback
     LOCKS = {
+      until_and_while_executing_reschedule: SidekiqUniqueJobs::Lock::UntilAndWhileExecutingReschedule,
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
       until_executed:            SidekiqUniqueJobs::Lock::UntilExecuted,
       until_executing:           SidekiqUniqueJobs::Lock::UntilExecuting,
@@ -17,6 +18,7 @@ module SidekiqUniqueJobs
       until_timeout:             SidekiqUniqueJobs::Lock::UntilExpired,
       while_executing:           SidekiqUniqueJobs::Lock::WhileExecuting,
       while_executing_reject:    SidekiqUniqueJobs::Lock::WhileExecutingReject,
+      while_executing_reschedule:    SidekiqUniqueJobs::Lock::WhileExecutingReschedule,
     }.freeze
 
     def self.included(base)
