@@ -44,6 +44,18 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
     expect(runtime_one).not_to be_locked
   end
 
+  context 'when process_one raises Sidekiq::Shutdown' do
+    it 'releases the server lock' do
+      process_one.lock
+      allow(process_one).to receive(:locked?).and_raise(Sidekiq::Shutdown)
+      allow(process_one).to receive(:locked?).and_call_original
+      expect { process_one.execute { } }
+        .to raise_error(Sidekiq::Shutdown)
+
+      expect(process_one).to be_locked
+    end
+  end
+
   context 'when process_one executes the job' do
     it 'releases the lock for process_one' do
       process_one.execute do
