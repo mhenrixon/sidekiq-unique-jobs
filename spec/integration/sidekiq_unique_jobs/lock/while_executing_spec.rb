@@ -37,10 +37,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   describe '#lock' do
     it 'does not lock jobs' do
       expect(process_one.lock).to eq(true)
-      expect(process_one.locked?).to eq(false)
+      expect(process_one).not_to be_locked
 
       expect(process_two.lock).to eq(true)
-      expect(process_two.locked?).to eq(false)
+      expect(process_two).not_to be_locked
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
     context 'when executing' do
       it 'locks the process' do
         process_one.execute do
-          expect(process_one.locked?).to eq(true)
+          expect(process_one).to be_locked
         end
       end
 

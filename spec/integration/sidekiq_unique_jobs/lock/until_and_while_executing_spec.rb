@@ -41,19 +41,19 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
 
   it 'has not locked runtime_one' do
     process_one.lock
-    expect(runtime_one.locked?).to eq(false)
+    expect(runtime_one).not_to be_locked
   end
 
   context 'when process_one executes the job' do
     it 'releases the lock for process_one' do
       process_one.execute do
-        expect(process_one.locked?).to eq(false)
+        expect(process_one).not_to be_locked
       end
     end
 
     it 'is locked by runtime_one' do
       process_one.execute do
-        expect(runtime_one.locked?).to eq(true)
+        expect(runtime_one).to be_locked
       end
     end
 

@@ -9,7 +9,7 @@ RSpec.shared_examples 'a lock implementation' do
     before { process_one.lock }
 
     it 'has locked process_one' do
-      expect(process_one.locked?).to eq(true)
+      expect(process_one).to be_locked
     end
 
     it 'prevents process_two from locking' do
@@ -36,7 +36,7 @@ RSpec.shared_examples 'an executing lock implementation' do
 
     it 'keeps being locked while executing' do
       process_one.execute do
-        expect(process_one.locked?).to eq(true)
+        expect(process_one).to be_locked
       end
     end
 
@@ -44,13 +44,13 @@ RSpec.shared_examples 'an executing lock implementation' do
       expect { process_one.execute { raise 'Hell' } }
         .to raise_error('Hell')
 
-      expect(process_one.locked?).to eq(true)
+      expect(process_one).to be_locked
     end
 
     it 'prevents process_two from locking' do
       process_one.execute do
         expect(process_two.lock).to eq(nil)
-        expect(process_two.locked?).to eq(false)
+        expect(process_two).not_to be_locked
       end
     end
 
