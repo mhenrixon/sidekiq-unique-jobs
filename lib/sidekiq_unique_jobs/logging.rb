@@ -49,5 +49,10 @@ module SidekiqUniqueJobs
     def log_fatal(message_or_exception = nil, &block)
       logger.fatal(message_or_exception, &block)
     end
+
+    def logging_context(middleware_class, job_hash)
+      digest = job_hash['unique_digest']
+      "#{middleware_class} #{"DIG-#{digest}" if digest}"
+    end
   end
 end

@@ -6,6 +6,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Middleware
+      include Logging
       include OptionsWithFallback
 
       # Runs the server middleware
@@ -21,13 +22,18 @@ module SidekiqUniqueJobs
         @queue        = queue
         return yield if unique_disabled?
 
-        lock.execute do
-          yield
+        SidekiqUniqueJobs::Job.add_uniqueness(item)
+        Sidekiq::Logging.with_context(logging_context(self.class, item)) do
+          lock.execute do
+            yield
+          end
         end
       end
 
-      protected
+      private
 
+      # The sidekiq job hash
+      # @return [Hash] the Sidekiq job hash
       attr_reader :item
     end
   end

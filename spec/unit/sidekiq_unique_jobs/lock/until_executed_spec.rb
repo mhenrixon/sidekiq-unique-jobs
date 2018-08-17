@@ -47,10 +47,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
           expect { execute }.to raise_error('CallbackError')
 
           expect(lock).to have_received(:log_warn)
-            .with(
-              'The unique_key: uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0' \
-              ' has been unlocked but the #after_unlock callback failed!',
-            )
+            .with('unlocked successfully but the #after_unlock callback failed!')
         end
       end
     end
