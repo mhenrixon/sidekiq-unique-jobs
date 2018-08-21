@@ -13,9 +13,10 @@ module SidekiqUniqueJobs
       # @param [Proc] callback the callback to use after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
       def initialize(item, callback, redis_pool = nil)
-        @item       = prepare_item(item)
+        @item       = item
         @callback   = callback
         @redis_pool = redis_pool
+        add_uniqueness_when_missing # Used to ease testing
       end
 
       # Handles locking of sidekiq jobs.
@@ -65,6 +66,13 @@ module SidekiqUniqueJobs
 
       private
 
+      def add_uniqueness_when_missing
+        return if item.key?(UNIQUE_DIGEST_KEY)
+        # The below should only be done to ease testing
+        # in production this will be done by the middleware
+        SidekiqUniqueJobs::Job.add_uniqueness(item)
+      end
+
       def call_strategy
         @attempt += 1
         strategy.call { lock if replace? }
@@ -99,27 +107,14 @@ module SidekiqUniqueJobs
       def with_cleanup
         yield
       rescue Sidekiq::Shutdown
-        notify_about_manual_unlock
+        log_info('Sidekiq is shutting down, the job `should` be put back on the queue. Keeping the lock!')
         raise
       else
         unlock_with_callback
       end
 
-      def prepare_item(item)
-        calculator = SidekiqUniqueJobs::Timeout::Calculator.new(item)
-        item[LOCK_TIMEOUT_KEY]    = calculator.lock_timeout
-        item[LOCK_EXPIRATION_KEY] = calculator.lock_expiration
-        SidekiqUniqueJobs::UniqueArgs.digest(item)
-        item
-      end
-
-      def notify_about_manual_unlock
-        log_fatal("the unique_key: #{item[UNIQUE_DIGEST_KEY]} needs to be unlocked manually")
-        false
-      end
-
       def unlock_with_callback
-        return notify_about_manual_unlock unless unlock
+        return log_warn('might need to be unlocked manually') unless unlock
 
         callback_safely
         item[JID_KEY]
@@ -128,7 +123,7 @@ module SidekiqUniqueJobs
       def callback_safely
         callback&.call
       rescue StandardError
-        log_warn("The unique_key: #{item[UNIQUE_DIGEST_KEY]} has been unlocked but the #after_unlock callback failed!")
+        log_warn('unlocked successfully but the #after_unlock callback failed!')
         raise
       end
 

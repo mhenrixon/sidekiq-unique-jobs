@@ -44,7 +44,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
     it 'keeps lock after executing' do
       process_one.lock
       process_one.execute {}
-      expect(process_one.locked?).to eq(true)
+      expect(process_one).to be_locked
       expect(ttl('uniquejobs:da6005926a8457526e998f0033901dfc:EXISTS')).to eq(1)
     end
   end
@@ -55,7 +55,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
 
       it 'keeps the lock even when unlocking' do
         expect(process_one.unlock).to eq(true)
-        expect(process_one.locked?).to eq(true)
+        expect(process_one).to be_locked
       end
     end
 

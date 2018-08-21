@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting, redis: :redis do
     it 'unlocks before executing' do
       process_one.lock
       process_one.execute do
-        expect(process_one.locked?).to eq(false)
+        expect(process_one).not_to be_locked
       end
     end
   end
