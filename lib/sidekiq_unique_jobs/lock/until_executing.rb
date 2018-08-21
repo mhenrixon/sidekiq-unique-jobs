@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   class Lock
     # Locks jobs until {#execute} starts
     # - Locks on perform_in or perform_async
-    # - Unlocks after yielding to the worker's perform method
+    # - Unlocks before yielding to the worker's perform method
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class UntilExecuting < BaseLock
