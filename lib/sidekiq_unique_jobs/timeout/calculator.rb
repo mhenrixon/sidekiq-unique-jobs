@@ -39,7 +39,7 @@ module SidekiqUniqueJobs
         @lock_expiration ||= begin
           expiration = item[LOCK_EXPIRATION_KEY]
           expiration ||= worker_options[LOCK_EXPIRATION_KEY]
-          expiration && expiration + time_until_scheduled
+          expiration && expiration.to_i + time_until_scheduled
         end
       end
 
