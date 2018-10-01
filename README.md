@@ -443,7 +443,7 @@ RSpec.describe Workers::CoolOne do
 
     it 'prevents duplicate jobs from being scheduled' do
       SidekiqUniqueJobs.use_config(enabled: true) do
-        expect(described_class.perform_async(1)).not_to eq(nil)
+        expect(described_class.perform_in(3600, 1)).not_to eq(nil)
         expect(described_class.perform_async(1)).to eq(nil)
       end
     end
