@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs do
   describe '.config' do
     subject(:config) { described_class.config }
 
-    it { is_expected.to be_a(SidekiqUniqueJobs::Config) }
+    it { is_expected.to be_a(Concurrent::MutableStruct::Config) }
     its(:default_lock_timeout)     { is_expected.to eq(0) }
     its(:enabled)                  { is_expected.to eq(true) }
     its(:unique_prefix)            { is_expected.to eq('uniquejobs') }
