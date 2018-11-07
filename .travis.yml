@@ -8,13 +8,10 @@ dist: trusty
 sudo: required
 language: ruby
 cache: bundler
+services:
+  - redis-server
 
 before_install:
-  - sudo rm -rf /etc/apt/sources.list.d/rwky-redis.list
-  - sudo add-apt-repository ppa:chris-lea/redis-server -y
-  - sudo apt-get update -qy
-  - sudo apt-get install redis-server
-  - sudo service redis-server start
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
 before_script:
