@@ -6,8 +6,7 @@
 
 ## v6.0.5
 
-- Fixes a bug with keys not being deleted ([#317](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/317
-- ))
+- Fixes a bug with keys not being deleted ([#317](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/317))
 
 ## v6.0.4
 
