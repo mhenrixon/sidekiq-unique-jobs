@@ -1,13 +1,13 @@
 AllCops:
   Include:
     - '**/Rakefile'
-    - '**/lib'
-    - '**/bin'
-    - '**/spec'
+    - 'lib/**/*.rb'
+    - 'bin/**/*.rb'
+    - 'spec/**/*.rb'
   Exclude:
     - 'Gemfile.lock'
     - 'gemfiles/**/*'
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
 
 Lint/HandleExceptions:
   Enabled: true
@@ -35,25 +35,25 @@ Metrics/BlockLength:
 Metrics/PerceivedComplexity:
   Max: 8
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: true
 
-Style/ConstantName:
+Naming/ConstantName:
   Enabled: true
 
-Style/FrozenStringLiteralComment:
-  Enabled: true
-
-Style/Documentation:
-  Enabled: false
-
-Style/FileName:
+Naming/FileName:
   Enabled: true
   Exclude:
     - 'lib/sidekiq-unique-jobs.rb'
     - '**/Gemfile'
     - '**/Appraisals'
     - '**/*.gemspec'
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
 
 Style/GlobalVars:
   Enabled: true
@@ -80,6 +80,10 @@ Style/TrailingCommaInArguments:
   Enabled: true
   EnforcedStyleForMultiline: comma
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: comma

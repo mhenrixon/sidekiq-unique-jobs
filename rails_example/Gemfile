@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '2.4.1'
+ruby '2.5.1'
 
 gem 'bigdecimal'
 gem 'json'
@@ -33,7 +33,7 @@ end
 
 group :development, :test do
   gem 'dockerspec'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'mock_redis'
   gem 'rspec-rails'

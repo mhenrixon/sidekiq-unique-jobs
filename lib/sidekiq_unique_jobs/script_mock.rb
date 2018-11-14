@@ -56,14 +56,11 @@ module SidekiqUniqueJobs
 
         stored_time = conn.get(unique_key)
         if stored_time && stored_time < time
-          if conn.set(unique_key, time + expires, xx: true, ex: expires)
-            return 1
-          end
+          return 1 if conn.set(unique_key, time + expires, xx: true, ex: expires)
         end
 
         return 0
       end
     end
   end
-  # rubocop:enable MethodLength
 end

@@ -57,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
     end.map(&:join)
 
     expect(start_times.size).to be 10
-    expect(start_times.sort.last - start_times.sort.first).to be < sleep_time * 10
+    expect(start_times.max - start_times.min).to be < sleep_time * 10
   end
 
   it 'handles auto cleanup correctly' do

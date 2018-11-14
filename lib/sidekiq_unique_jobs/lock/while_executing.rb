@@ -43,8 +43,8 @@ module SidekiqUniqueJobs
       end
 
       def create_digest
-        @unique_digest ||= @item[UNIQUE_DIGEST_KEY]
-        @unique_digest ||= SidekiqUniqueJobs::UniqueArgs.digest(@item)
+        @create_digest ||= @item[UNIQUE_DIGEST_KEY]
+        @create_digest ||= SidekiqUniqueJobs::UniqueArgs.digest(@item)
       end
     end
   end
