@@ -20,3 +20,5 @@ rails_example/spec/examples.txt
 /spec/examples.txt
 
 /gemfiles/.bundle/
+
+/.rspec_status

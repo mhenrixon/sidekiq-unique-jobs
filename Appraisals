@@ -17,5 +17,13 @@ appraise 'sidekiq-4.2' do
 end
 
 appraise 'sidekiq-5.0' do
-  gem 'sidekiq', '>= 5.0.0.beta', '< 6'
+  gem 'sidekiq', '>= 5.0.0', '< 5.1'
+end
+
+appraise 'sidekiq-5.1' do
+  gem 'sidekiq', '>= 5.1.0', '< 5.2'
+end
+
+appraise 'sidekiq-5.2' do
+  gem 'sidekiq', '>= 5.2.0', '< 6'
 end
