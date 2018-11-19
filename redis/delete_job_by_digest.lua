@@ -1,5 +1,7 @@
-local queue         = "queue:" .. KEYS[1]
-local unique_digest = KEYS[2]
+local queue         = KEYS[1]
+local schedule_set  = KEYS[2]
+local retry_set     = KEYS[3]
+local unique_digest = ARGV[1]
 
 local function delete_from_sorted_set(name, digest)
   local per   = 50
@@ -49,10 +51,10 @@ if result then
   return result
 end
 
-result = delete_from_sorted_set('schedule', unique_digest)
+result = delete_from_sorted_set(schedule_set, unique_digest)
 if result then
   return result
 end
 
-result = delete_from_sorted_set('retry', unique_digest)
+result = delete_from_sorted_set(retry_set, unique_digest)
 return result

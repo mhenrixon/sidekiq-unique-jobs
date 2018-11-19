@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       jid = NotifyWorker.perform_in(1, 183, 'xxxx')
       expect(jid).not_to eq(nil)
 
-      expect(zcard('schedule')).to eq(1)
+      expect(schedule_count).to eq(1)
 
       expected = %w[
         uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS
@@ -23,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       expect(SimpleWorker.perform_in(60, 1)).to eq(nil)
       expect(SimpleWorker.perform_in(60, 1)).to eq(nil)
       expect(SimpleWorker.perform_in(60, 1)).to eq(nil)
-      expect(zcard('schedule')).to eq(0)
+      expect(schedule_count).to eq(0)
       expect(SpawnSimpleWorker.perform_async(1)).not_to eq(nil)
 
       expect(queue_count('default')).to eq(1)
