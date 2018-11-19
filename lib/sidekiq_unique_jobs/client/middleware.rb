@@ -48,6 +48,7 @@ module SidekiqUniqueJobs
 
       def warn_about_duplicate
         return unless log_duplicate_payload?
+
         log_warn "payload is not unique #{item}"
       end
     end

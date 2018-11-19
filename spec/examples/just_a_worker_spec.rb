@@ -6,8 +6,8 @@ RSpec.describe JustAWorker do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'  => :testqueue,
-        'retry'  => true,
+        'queue' => :testqueue,
+        'retry' => true,
         'lock' => :until_executed,
       }
     end

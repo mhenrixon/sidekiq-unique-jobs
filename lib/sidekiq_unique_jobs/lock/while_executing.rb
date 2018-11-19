@@ -33,6 +33,7 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
+
         with_cleanup { yield }
       end
 

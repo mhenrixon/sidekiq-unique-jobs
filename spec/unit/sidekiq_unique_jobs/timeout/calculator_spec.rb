@@ -19,7 +19,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
   end
 
   describe '#time_until_scheduled' do
-    subject { calculator.time_until_scheduled }
+    subject(:time_until_scheduled) { calculator.time_until_scheduled }
 
     context 'when not scheduled' do
       it { is_expected.to eq(0) }
@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
 
       it do
         Timecop.travel(Time.at(now_in_utc)) do
-          is_expected.to be_within(1).of(schedule_time - now_in_utc)
+          expect(time_until_scheduled).to be_within(1).of(schedule_time - now_in_utc)
         end
       end
     end

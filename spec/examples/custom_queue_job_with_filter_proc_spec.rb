@@ -6,8 +6,8 @@ RSpec.describe CustomQueueJobWithFilterProc do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'       => :customqueue,
-        'retry'       => true,
+        'queue' => :customqueue,
+        'retry' => true,
         'lock' => :until_expired,
         'unique_args' => a_kind_of(Proc),
       }

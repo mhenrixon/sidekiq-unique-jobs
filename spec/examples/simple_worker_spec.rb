@@ -6,8 +6,8 @@ RSpec.describe SimpleWorker do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'       => :default,
-        'retry'       => true,
+        'queue' => :default,
+        'retry' => true,
         'lock' => :until_executed,
       }
     end

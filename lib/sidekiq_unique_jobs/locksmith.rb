@@ -37,6 +37,7 @@ module SidekiqUniqueJobs
     # Deletes the lock unless it has an expiration set
     def delete
       return if expiration
+
       delete!
     end
 
@@ -72,6 +73,7 @@ module SidekiqUniqueJobs
     def unlock(token = nil)
       token ||= jid
       return false unless locked?(token)
+
       unlock!(token)
     end
 

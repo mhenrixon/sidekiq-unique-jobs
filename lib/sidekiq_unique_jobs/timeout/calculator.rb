@@ -25,6 +25,7 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of seconds until job is scheduled
       def time_until_scheduled
         return 0 unless scheduled_at
+
         scheduled_at.to_i - Time.now.utc.to_i
       end
 

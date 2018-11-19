@@ -7,8 +7,8 @@ RSpec.describe MainJob do
     let(:options) do
       {
         'log_duplicate_payload' => true,
-        'queue'               => :customqueue,
-        'retry'               => true,
+        'queue' => :customqueue,
+        'retry' => true,
         'lock' => :until_executed,
       }
     end

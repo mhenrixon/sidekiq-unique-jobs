@@ -7,7 +7,7 @@ RSpec.describe ExpiringJob do
     let(:options) do
       {
         'lock_expiration' => 600,
-        'retry'           => true,
+        'retry' => true,
         'lock' => :until_executed,
       }
     end
@@ -45,6 +45,7 @@ RSpec.describe ExpiringJob do
         lock_expiration = described_class.get_sidekiq_options['lock_expiration']
         unique_keys.each do |key|
           next if key.end_with?(':GRABBED')
+
           expect(ttl(key)).to be_within(1).of(lock_expiration + 60)
         end
       end
@@ -79,6 +80,7 @@ RSpec.describe ExpiringJob do
         lock_expiration = described_class.get_sidekiq_options['lock_expiration']
         unique_keys.each do |key|
           next if key.end_with?(':GRABBED')
+
           expect(ttl(key)).to be_within(1).of(lock_expiration)
         end
       end

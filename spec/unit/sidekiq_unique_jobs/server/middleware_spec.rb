@@ -17,7 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
     let(:item) do
       { 'class' => worker_class,
         'queue' => queue,
-        'args'  => args }
+        'args' => args }
     end
     let(:lock) { instance_spy(SidekiqUniqueJobs::Lock::WhileExecuting) }
 

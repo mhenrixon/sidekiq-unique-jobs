@@ -6,8 +6,8 @@ RSpec.describe UntilAndWhileExecutingJob do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'  => :working,
-        'retry'  => true,
+        'queue' => :working,
+        'retry' => true,
         'lock' => :until_and_while_executing,
       }
     end

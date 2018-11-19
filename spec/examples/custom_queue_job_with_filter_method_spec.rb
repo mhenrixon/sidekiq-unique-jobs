@@ -6,8 +6,8 @@ RSpec.describe CustomQueueJobWithFilterMethod do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'       => :customqueue,
-        'retry'       => true,
+        'queue' => :customqueue,
+        'retry' => true,
         'lock' => :until_executed,
         'unique_args' => :args_filter,
       }

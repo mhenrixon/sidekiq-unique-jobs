@@ -6,8 +6,8 @@ RSpec.describe NotifyWorker do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'           => :notify_worker,
-        'retry'           => true,
+        'queue' => :notify_worker,
+        'retry' => true,
         'lock' => :until_executed,
       }
     end

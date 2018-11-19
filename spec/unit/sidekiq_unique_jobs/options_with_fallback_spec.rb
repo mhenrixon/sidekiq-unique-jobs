@@ -171,7 +171,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   end
 
   describe '#options' do
-    subject { options_with_fallback.options }
+    subject(:class_options) { options_with_fallback.options }
 
     context 'when worker_class respond_to get_sidekiq_options' do
       let(:worker_class) { SimpleWorker }
@@ -185,7 +185,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
       it do
         with_default_worker_options(default_worker_options) do
-          is_expected.to include(default_worker_options)
+          expect(class_options).to include(default_worker_options)
         end
       end
     end

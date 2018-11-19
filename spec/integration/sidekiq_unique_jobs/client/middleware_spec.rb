@@ -175,6 +175,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
     unique_keys.each do |key|
       next if key.end_with?(':GRABBED')
+
       expect(ttl(key)).to be_within(10).of(8_099)
     end
   end

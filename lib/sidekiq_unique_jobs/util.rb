@@ -20,6 +20,7 @@ module SidekiqUniqueJobs
     # @return [Array<String>] an array with active unique keys
     def keys(pattern = SCAN_PATTERN, count = DEFAULT_COUNT)
       return redis(&:keys) if pattern.nil?
+
       redis { |conn| conn.scan_each(match: prefix(pattern), count: count).to_a }
     end
 
@@ -44,6 +45,7 @@ module SidekiqUniqueJobs
     # @return [Integer] the number of keys deleted
     def del(pattern = SCAN_PATTERN, count = 0)
       raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
+
       pattern = suffix(pattern)
 
       log_debug { "Deleting keys by: #{pattern}" }
@@ -84,11 +86,13 @@ module SidekiqUniqueJobs
     def prefix(key)
       return key if unique_prefix.nil?
       return key if key.start_with?("#{unique_prefix}:")
+
       "#{unique_prefix}:#{key}"
     end
 
     def suffix(key)
       return "#{key}*" unless key.end_with?(':*')
+
       key
     end
 

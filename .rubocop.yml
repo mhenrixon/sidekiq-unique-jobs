@@ -9,7 +9,7 @@ AllCops:
   Exclude:
     - 'Gemfile.lock'
     - 'gemfiles/**/*'
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.3
 
 Lint/HandleExceptions:
   Enabled: true

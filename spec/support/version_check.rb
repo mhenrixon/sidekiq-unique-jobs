@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VersionCheck
-  PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m
+  PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m.freeze # rubocop:disable LineLength
   def initialize(version, constraint)
     @version = Gem::Version.new(version)
     PATTERN.match(constraint.to_s) do |match|
@@ -31,6 +31,7 @@ class VersionCheck
 
   def version2_satisfied?
     return true if @operator2.nil? || @version2.nil?
+
     @version.send(@operator2.to_sym, @version2)
   end
 end

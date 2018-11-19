@@ -6,8 +6,8 @@ RSpec.describe AnotherUniqueJob, redis: :redis do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'     => :working2,
-        'retry'     => 1,
+        'queue' => :working2,
+        'retry' => 1,
         'backtrace' => 10,
         'lock' => :until_executed,
       }

@@ -12,14 +12,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
       'lock' => 'until_timeout' }
   end
 
+  before do
+    allow(callback).to receive(:call)
+  end
+
   describe '#unlock' do
     subject(:unlock) { lock.unlock }
 
     it { is_expected.to eq(true) }
-  end
-
-  before do
-    allow(callback).to receive(:call)
   end
 
   describe '#execute' do

@@ -7,8 +7,8 @@ RSpec.describe MyJob do
     let(:options) do
       {
         'backtrace' => 10,
-        'queue'     => :working,
-        'retry'     => 1,
+        'queue' => :working,
+        'retry' => 1,
       }
     end
   end

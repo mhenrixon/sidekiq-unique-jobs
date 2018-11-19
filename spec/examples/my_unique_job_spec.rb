@@ -8,8 +8,8 @@ RSpec.describe MyUniqueJob do
       {
         'lock' => :until_executed,
         'lock_expiration' => 7_200,
-        'queue'           => :customqueue,
-        'retry'           => 10,
+        'queue' => :customqueue,
+        'retry' => 10,
       }
     end
   end

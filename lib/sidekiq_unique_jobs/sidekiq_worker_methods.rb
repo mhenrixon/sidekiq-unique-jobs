@@ -15,6 +15,7 @@ module SidekiqUniqueJobs
     # @return [Hash] of the worker class sidekiq options
     def worker_options
       return {} unless sidekiq_worker_class?
+
       worker_class.get_sidekiq_options.stringify_keys
     end
 
@@ -43,6 +44,7 @@ module SidekiqUniqueJobs
     # @return [Sidekiq::Worker]
     def worker_class_constantize(klazz = @worker_class)
       return klazz unless klazz.is_a?(String)
+
       Object.const_get(klazz)
     rescue NameError => ex
       case ex.message

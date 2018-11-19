@@ -7,7 +7,7 @@ RSpec.describe InlineWorker do
     let(:options) do
       {
         'lock_timeout' => 5,
-        'retry'        => true,
+        'retry' => true,
         'lock' => :while_executing,
       }
     end

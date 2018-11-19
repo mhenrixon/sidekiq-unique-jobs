@@ -68,6 +68,7 @@ module SidekiqUniqueJobs
 
       def add_uniqueness_when_missing
         return if item.key?(UNIQUE_DIGEST_KEY)
+
         # The below should only be done to ease testing
         # in production this will be done by the middleware
         SidekiqUniqueJobs::Job.add_uniqueness(item)

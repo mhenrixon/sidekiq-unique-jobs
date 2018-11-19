@@ -7,8 +7,8 @@ RSpec.describe WhileExecutingJob do
     let(:options) do
       {
         'backtrace' => 10,
-        'queue'     => :working,
-        'retry'     => 1,
+        'queue' => :working,
+        'retry' => 1,
         'lock' => :while_executing,
       }
     end

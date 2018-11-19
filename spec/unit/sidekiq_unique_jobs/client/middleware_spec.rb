@@ -18,7 +18,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
     let(:item) do
       { 'class' => SimpleWorker,
         'queue' => queue,
-        'args'  => [1] }
+        'args' => [1] }
     end
 
     before { @inside_block_value = false }

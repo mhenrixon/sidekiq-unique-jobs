@@ -6,7 +6,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
   let(:item) do
     { 'class' => 'JustAWorker',
       'queue' => 'testqueue',
-      'args'  => [foo: 'bar'] }
+      'args' => [foo: 'bar'] }
   end
 
   describe Sidekiq::SortedEntry::UniqueExtension do

@@ -6,8 +6,8 @@ RSpec.describe SpawnSimpleWorker do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'queue'       => :not_default,
-        'retry'       => true,
+        'queue' => :not_default,
+        'retry' => true,
       }
     end
   end

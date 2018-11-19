@@ -19,6 +19,7 @@ module SidekiqUniqueJobs
       # @yield to retry the lock after deleting the old one
       def call(&block)
         return unless delete_job_by_digest
+
         delete_lock
         block&.call
       end
@@ -28,7 +29,7 @@ module SidekiqUniqueJobs
         Scripts.call(
           :delete_job_by_digest,
           nil,
-          keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET], argv: [unique_digest]
+          keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET], argv: [unique_digest],
         )
       end
 

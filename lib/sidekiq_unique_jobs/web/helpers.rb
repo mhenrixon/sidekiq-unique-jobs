@@ -19,6 +19,7 @@ module SidekiqUniqueJobs
 
         params.merge(options).map do |key, value|
           next unless SAFE_CPARAMS.include?(key)
+
           "#{key}=#{CGI.escape(value.to_s)}"
         end.compact.join('&')
       end

@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
   let(:strategy)      { described_class.new(item) }
   let(:unique_digest) { 'uniquejobs:random-digest-value' }
   let(:item) do
-    { 'class'         => UniqueJobOnConflictReschedule,
+    { 'class' => UniqueJobOnConflictReschedule,
       'unique_digest' => unique_digest,
       'args' => [1, 2] }
   end

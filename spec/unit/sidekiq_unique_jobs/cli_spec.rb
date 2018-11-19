@@ -8,7 +8,7 @@ require 'irb'
 RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
   let(:item) do
     {
-      'jid'           => jid,
+      'jid' => jid,
       'unique_digest' => unique_key,
     }
   end

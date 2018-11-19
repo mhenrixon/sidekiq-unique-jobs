@@ -6,10 +6,10 @@ RSpec.describe UniqueJobOnConflictReschedule do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'lock'        => :while_executing,
+        'lock' => :while_executing,
         'on_conflict' => :reschedule,
-        'queue'       => :customqueue,
-        'retry'       => true,
+        'queue' => :customqueue,
+        'retry' => true,
       }
     end
   end

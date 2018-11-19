@@ -70,6 +70,7 @@ module SidekiqUniqueJobs
     # @return [Array] the arguments filters by the {#filtered_args} method if {#unique_args_enabled?}
     def unique_args(args)
       return filtered_args(args) if unique_args_enabled?
+
       args
     end
 
@@ -99,6 +100,7 @@ module SidekiqUniqueJobs
     # @return [Array] args unfiltered when neither of the above
     def filtered_args(args)
       return args if args.empty?
+
       json_args = Normalizer.jsonify(args)
 
       case unique_args_method

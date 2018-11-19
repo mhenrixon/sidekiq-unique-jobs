@@ -6,9 +6,9 @@ RSpec.describe MyUniqueJobWithFilterMethod do
   it_behaves_like 'sidekiq with options' do
     let(:options) do
       {
-        'backtrace'   => true,
-        'queue'       => :customqueue,
-        'retry'       => true,
+        'backtrace' => true,
+        'queue' => :customqueue,
+        'retry' => true,
         'lock' => :until_executed,
         'unique_args' => :filtered_args,
       }

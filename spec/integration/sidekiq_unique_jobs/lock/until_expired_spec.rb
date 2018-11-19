@@ -16,18 +16,18 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }
   let(:item_one) do
-    { 'jid'   => jid_one,
+    { 'jid' => jid_one,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'lock'  => unique,
-      'args'  => args }
+      'lock' => unique,
+      'args' => args }
   end
   let(:item_two) do
-    { 'jid'   => jid_two,
+    { 'jid' => jid_two,
       'class' => worker_class.to_s,
       'queue' => queue,
-      'lock'  => unique,
-      'args'  => args }
+      'lock' => unique,
+      'args' => args }
   end
 
   before do

@@ -14,6 +14,7 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         return unless locked?
+
         with_cleanup { yield }
       end
     end

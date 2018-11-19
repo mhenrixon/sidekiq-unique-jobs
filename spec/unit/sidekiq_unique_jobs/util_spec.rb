@@ -5,16 +5,16 @@ require 'spec_helper'
 RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:item_hash) do
     {
-      'class'           => 'MyUniqueJob',
-      'args'            => [[1, 2]],
-      'at'              => 1_492_341_850.358196,
-      'retry'           => true,
-      'queue'           => 'customqueue',
-      'lock'            => :until_executed,
+      'class' => 'MyUniqueJob',
+      'args' => [[1, 2]],
+      'at' => 1_492_341_850.358196,
+      'retry' => true,
+      'queue' => 'customqueue',
+      'lock' => :until_executed,
       'lock_expiration' => 7200,
-      'retry_count'     => 10,
-      'jid'             => jid,
-      'created_at'      => 1_492_341_790.358217,
+      'retry_count' => 10,
+      'jid' => jid,
+      'created_at' => 1_492_341_790.358217,
     }
   end
 
@@ -93,6 +93,8 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
         lock.lock(0)
       end
 
+      after { lock.delete }
+
       it { expect(described_class.keys).to match_array(expected_keys) }
 
       context 'when pattern is a wildcard' do
@@ -108,8 +110,6 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
         it { is_expected.to eq(2) }
         it { expect { del }.to change(described_class, :keys).to([]) }
       end
-
-      after { lock.delete }
     end
   end
 
