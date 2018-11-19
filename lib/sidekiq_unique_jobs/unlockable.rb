@@ -10,12 +10,9 @@ module SidekiqUniqueJobs
     end
 
     def unlock_by_key(unique_key, jid, redis_pool = nil)
-      return false unless Scripts::ReleaseLock.execute(redis_pool, unique_key, jid)
-      after_unlock(jid)
-    end
-
-    def after_unlock(jid)
+      lock_released = Scripts::ReleaseLock.execute(redis_pool, unique_key, jid)
       ensure_job_id_removed(jid)
+      lock_released
     end
 
     def ensure_job_id_removed(jid)
