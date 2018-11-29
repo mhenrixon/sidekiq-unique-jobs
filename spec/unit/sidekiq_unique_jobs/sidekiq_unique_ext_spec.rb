@@ -50,7 +50,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
           )
         end
       end
-      expect(unique_keys).to match_array([])
+      expect(unique_keys).to match_array(['uniquejobs:863b7cb639bd71c828459b97788b2ada:AVAILABLE'])
       expect(JustAWorker.perform_in(60 * 60 * 3, boo: 'far')).to be_truthy
     end
   end
@@ -60,7 +60,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
       jid = JustAWorker.perform_async(roo: 'baf')
       expect(keys).not_to match_array([])
       Sidekiq::Queue.new('testqueue').find_job(jid).delete
-      expect(unique_keys).to match_array([])
+      expect(unique_keys).to match_array(['uniquejobs:c2253601bbfe4f3ad300103026ed02f2:AVAILABLE'])
     end
   end
 
@@ -69,7 +69,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
       JustAWorker.perform_async(oob: 'far')
       expect(keys).not_to match_array([])
       Sidekiq::Queue.new('testqueue').clear
-      expect(unique_keys).to match_array([])
+      expect(unique_keys).to match_array(['uniquejobs:ebd23329089b53ea1e93066a3365541f:AVAILABLE'])
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe 'Sidekiq::Api', redis: :redis do
       JustAWorker.perform_in(60 * 60 * 3, roo: 'fab')
       expect(keys).not_to match_array([])
       Sidekiq::JobSet.new('schedule').clear
-      expect(unique_keys).to match_array([])
+      expect(unique_keys).to match_array(['uniquejobs:a88de37817cb5da99cf76408c7251a1d:AVAILABLE'])
     end
   end
 end
