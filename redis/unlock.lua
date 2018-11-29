@@ -10,7 +10,6 @@ local expiration = tonumber(ARGV[2])
 
 redis.call('HDEL', grabbed_key, token)
 redis.call('SREM', unique_keys, unique_digest)
-local available_count = redis.call('LPUSH', available_key, token)
 
 if expiration then
   redis.log(redis.LOG_DEBUG, "signal_locks.lua - expiring stale locks")
@@ -29,5 +28,5 @@ else
   redis.call('DEL', unique_digest)  -- TODO: Legacy support (Remove in v6.1)
 end
 
-return available_count
+return redis.call('LPUSH', available_key, token)
 
