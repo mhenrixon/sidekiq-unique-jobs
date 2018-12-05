@@ -1,3 +1,7 @@
+## v6.0.7
+
+-  Fix a bug leaving jobs locked ([#352](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/352))
+
 ## v6.0.6
 
 - Fixes a bug with the command line utility ([#321](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/321))
