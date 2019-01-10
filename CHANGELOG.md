@@ -1,3 +1,7 @@
+## v6.0.8
+
+-  Expire available keys after unlocking ([caused by #352](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/352))
+
 ## v6.0.7
 
 -  Fix a bug leaving jobs locked ([#352](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/352))
@@ -182,7 +186,7 @@
 
 ## v4.0.0
 
-- Improved uniqueness handling (complete refactoring, upgrade with causion)
+- Improved uniqueness handling (complete refactoring, upgrade with caution)
 - 100% breaking changes
 
 ## v3.0.15

@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
 
         middleware.call(worker, item, queue) do
           unique_keys.each do |key|
-            expect(ttl(key)).to eq(-1) # key exists without expiration
+            expect(ttl(key)).to eq(5) # key exists without expiration
           end
         end
       end
@@ -50,7 +50,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9
           next if key.end_with?(':GRABBED')
           next if key.end_with?(':EXISTS')
 
-          expect(ttl(key)).to eq(-1)
+          expect(ttl(key)).to eq(5)
         end
       end
     end
