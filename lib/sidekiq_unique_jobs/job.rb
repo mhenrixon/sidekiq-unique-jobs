@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Job
-    extend self # rubocop:disable Style/ModuleFunction
+    extend self
 
     # Adds timeout, expiration, unique_args, unique_prefix and unique_digest to the sidekiq job hash
     # @return [void] nothing returned here matters

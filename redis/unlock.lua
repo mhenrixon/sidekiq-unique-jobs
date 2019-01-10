@@ -28,5 +28,7 @@ else
   redis.call('DEL', unique_digest)  -- TODO: Legacy support (Remove in v6.1)
 end
 
-return redis.call('LPUSH', available_key, token)
+local count = redis.call('LPUSH', available_key, token)
+redis.call('EXPIRE', available_key, 5)
+return count
 

@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
 
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection
-    extend self # rubocop:disable Style/ModuleFunction
+    extend self
 
     # Return unique digests matching pattern
     #
