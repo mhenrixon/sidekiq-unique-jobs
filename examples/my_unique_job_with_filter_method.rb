@@ -16,6 +16,6 @@ class MyUniqueJobWithFilterMethod
 
   def self.filtered_args(args)
     options = args.extract_options!
-    [args.first, options['type']]
+    [args.first, options["type"]]
   end
 end

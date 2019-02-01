@@ -24,5 +24,3 @@ rails_example/spec/examples.txt
 /.byebug_history
 
 /.yardoc/
-
-/spec/examples.txt

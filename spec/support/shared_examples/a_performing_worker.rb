@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'a performing worker' do |splat_arguments: true|
+RSpec.shared_examples "a performing worker" do |splat_arguments: true|
   let(:worker_instance) { instance_spy(described_class) }
 
   before do
     allow(described_class).to receive(:new).and_return(worker_instance)
   end
 
-  it 'receives the expected arguments' do
+  it "receives the expected arguments" do
     SidekiqUniqueJobs.use_config(enabled: false) do
       Sidekiq::Testing.inline! do
         if args == no_args

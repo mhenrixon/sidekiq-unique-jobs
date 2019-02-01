@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
-  include_context 'with a stubbed locksmith'
+  include_context "with a stubbed locksmith"
   let(:lock)     { described_class.new(item, callback) }
   let(:callback) { -> {} }
   let(:item) do
     {
-      'jid' => 'maaaahjid',
-      'class' => 'UntilAndWhileExecutingJob',
-      'lock' => 'until_and_while_executing',
-      'args' => ['one'],
+      "jid" => "maaaahjid",
+      "class" => "UntilAndWhileExecutingJob",
+      "lock" => "until_and_while_executing",
+      "args" => ["one"],
     }
   end
 
-  describe '#execute' do
+  describe "#execute" do
     let(:runtime_lock) { instance_spy(SidekiqUniqueJobs::Lock::WhileExecuting) }
 
     before do
@@ -25,10 +25,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       allow(runtime_lock).to receive(:execute).and_yield
     end
 
-    context 'when locked?' do
+    context "when locked?" do
       let(:locked?) { true }
 
-      it 'unlocks the unique key before yielding' do
+      it "unlocks the unique key before yielding" do
         inside_block_value = false
 
         lock.execute { inside_block_value = true }
@@ -40,10 +40,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       end
     end
 
-    context 'when not locked?' do
+    context "when not locked?" do
       let(:locked?) { false }
 
-      it 'unlocks the unique key before yielding' do
+      it "unlocks the unique key before yielding" do
         inside_block_value = false
         lock.execute { inside_block_value = true }
         expect(inside_block_value).to eq(false)
@@ -55,12 +55,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
     end
   end
 
-  describe '#runtime_lock' do
+  describe "#runtime_lock" do
     subject(:runtime_lock) { lock.runtime_lock }
 
     it { is_expected.to be_a(SidekiqUniqueJobs::Lock::WhileExecuting) }
 
-    it 'initializes with the right arguments' do
+    it "initializes with the right arguments" do
       allow(SidekiqUniqueJobs::Lock::WhileExecuting).to receive(:new)
       runtime_lock
 

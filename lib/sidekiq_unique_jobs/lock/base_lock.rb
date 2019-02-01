@@ -108,14 +108,14 @@ module SidekiqUniqueJobs
       def with_cleanup
         yield
       rescue Sidekiq::Shutdown
-        log_info('Sidekiq is shutting down, the job `should` be put back on the queue. Keeping the lock!')
+        log_info("Sidekiq is shutting down, the job `should` be put back on the queue. Keeping the lock!")
         raise
       else
         unlock_with_callback
       end
 
       def unlock_with_callback
-        return log_warn('might need to be unlocked manually') unless unlock
+        return log_warn("might need to be unlocked manually") unless unlock
 
         callback_safely
         item[JID_KEY]
@@ -124,7 +124,7 @@ module SidekiqUniqueJobs
       def callback_safely
         callback&.call
       rescue StandardError
-        log_warn('unlocked successfully but the #after_unlock callback failed!')
+        log_warn("unlocked successfully but the #after_unlock callback failed!")
         raise
       end
 

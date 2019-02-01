@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Digests
     DEFAULT_COUNT = 1_000
-    SCAN_PATTERN  = '*'
+    SCAN_PATTERN  = "*"
     CHUNK_SIZE    = 100
 
     include SidekiqUniqueJobs::Logging
@@ -57,7 +57,7 @@ module SidekiqUniqueJobs
       return delete_by_pattern(pattern, count: count) if pattern
       return delete_by_digest(digest) if digest
 
-      raise ArgumentError, 'either digest or pattern need to be provided'
+      raise ArgumentError, "either digest or pattern need to be provided"
     end
 
     private

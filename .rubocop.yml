@@ -1,15 +1,24 @@
-require: rubocop-rspec
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-rspec
+
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
-  Include:
-    - '**/Rakefile'
-    - 'lib/**/*.rb'
-    - 'bin/**/*.rb'
-    - 'spec/**/*.rb'
-    - 'examples/**/*.rb'
-  Exclude:
-    - 'Gemfile.lock'
-    - 'gemfiles/**/*'
   TargetRubyVersion: 2.3
+  Include:
+    - "**/Rakefile"
+    - "lib/**/*.rb"
+    - "bin/**/*.rb"
+    - "spec/**/*.rb"
+    - "examples/**/*.rb"
+  Exclude:
+    - "Gemfile.lock"
+    - "**/*.erb"
+    - "rails_example/**/*"
 
 Lint/HandleExceptions:
   Enabled: true
@@ -32,7 +41,8 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Enabled: true
   Exclude:
-    - '**/spec/**/*.rb'
+    - "**/spec/**/*.rb"
+    - "**/*.rake"
 
 Metrics/PerceivedComplexity:
   Max: 8
@@ -46,64 +56,53 @@ Naming/ConstantName:
 Naming/FileName:
   Enabled: true
   Exclude:
-    - 'lib/sidekiq-unique-jobs.rb'
-    - '**/Gemfile'
-    - '**/Appraisals'
-    - '**/*.gemspec'
+    - "**/Gemfile"
 
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
     - ex
 
-RSpec/DescribeClass:
-  Enabled: false
+RSpec/AlignLeftLetBrace:
+  Enabled: true
 
-RSpec/ExampleLength:
-  Enabled: false
-
-RSpec/ExpectActual:
-  Enabled: false
-
-RSpec/ExpectChange:
-  Enabled: false
-
-RSpec/ExpectInHook:
-  Enabled: false
-
-RSpec/MessageSpies:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Enabled: false
+RSpec/FilePath:
+  Enabled: true
+  Exclude:
+    - "spec/stub_requests/webmock_builder_spec.rb"
 
 RSpec/NestedGroups:
   Max: 4
   Enabled: true
 
-RSpec/RepeatedExample:
-  Enabled: false
-
 Style/FrozenStringLiteralComment:
   Enabled: true
 
 Style/Documentation:
-  Enabled: false
-
-Style/SignalException:
-  EnforcedStyle: only_fail
-  Enabled: false
+  Enabled: true
+  Exclude:
+    - "examples/**/*.rb"
+    - "rails_example/**/*.rb"
+    - "bin/**/*.rb"
+    - "lib/sidekiq_unique_jobs/testing.rb"
+    - "lib/sidekiq_unique_jobs/core_ext.rb"
+    - "lib/sidekiq_unique_jobs/sidekiq_unique_ext.rb"
+    - "lib/sidekiq_unique_jobs/web/**/*"
+    - "lib/sidekiq_unique_jobs/on_conflict.rb"
+    - "lib/sidekiq_unique_jobs/timeout.rb"
 
 Style/GlobalVars:
   Enabled: true
 
+Style/ModuleFunction:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
-  EnforcedStyle: single_quotes
+  EnforcedStyle: double_quotes
   ConsistentQuotesInMultiline: true
 
 Style/StringLiteralsInInterpolation:
   Enabled: true
-  EnforcedStyle: single_quotes
 
 Style/SymbolArray:
   Enabled: true

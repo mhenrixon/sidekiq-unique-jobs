@@ -5,4 +5,4 @@ module SidekiqUniqueJobs
   end
 end
 
-require 'sidekiq_unique_jobs/timeout/calculator'
+require "sidekiq_unique_jobs/timeout/calculator"

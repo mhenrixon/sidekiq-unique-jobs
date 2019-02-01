@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe CustomQueueJob do
-  it_behaves_like 'sidekiq with options' do
+  it_behaves_like "sidekiq with options" do
     let(:options) do
       {
-        'queue' => :customqueue,
-        'retry' => true,
+        "queue" => :customqueue,
+        "retry" => true,
       }
     end
   end
 
-  it_behaves_like 'a performing worker' do
+  it_behaves_like "a performing worker" do
     let(:args) { %w[one two] }
   end
 end

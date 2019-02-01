@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rspec/expectations'
-require 'rspec/eventually'
+require "rspec/expectations"
+require "rspec/eventually"
 
 RSpec::Matchers.define :be_enqueued_in do |queue|
   SidekiqUniqueJobs.redis do |conn|
@@ -16,7 +16,7 @@ end
 
 RSpec::Matchers.define :be_scheduled_at do |time|
   SidekiqUniqueJobs.redis do |conn|
-    @actual = conn.zcount('schedule', -1, time)
+    @actual = conn.zcount("schedule", -1, time)
 
     match do |count_in_queue|
       @expected = count_in_queue

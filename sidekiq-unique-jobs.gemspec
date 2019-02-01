@@ -11,10 +11,19 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Mikael Henriksson']
   spec.email         = ['mikael@zoolutions.se']
 
-  spec.summary       = 'Uniqueness for Sidekiq Jobs'
-  spec.description   = 'Handles various types of unique jobs for Sidekiq'
-  spec.homepage      = 'https://github.com/mhenrixon/sidekiq-unique-jobs'
+  spec.summary       = 'Prevent duplicate jobs in Sidekiq'
+  spec.description   = 'An attempt to prevent simultaneous Sidekiq jobs with the same unique arguments to run'
+  spec.homepage      = 'https://mhenrixon.github.com/sidekiq-unique-jobs'
   spec.license       = 'MIT'
+
+  if spec.respond_to?(:metadata)
+    spec.metadata["homepage_uri"] = spec.homepage
+    spec.metadata["source_code_uri"] = "https://github.com/mhenrixon/stub_requests"
+    spec.metadata["changelog_uri"] = "https://github.com/mhenrixon/stub_requests/CHANGELOG.md"
+  else
+    raise "RubyGems 2.0 or newer is required to protect against " \
+      "public gem pushes."
+  end
 
   spec.bindir        = 'bin'
   spec.executables   = %w[uniquejobs]
@@ -30,13 +39,22 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sidekiq', '>= 4.0', '< 6.0'
   spec.add_dependency 'thor', '~> 0'
 
-  spec.add_development_dependency 'bundler', '>= 1.16'
-  spec.add_development_dependency 'rspec', '~> 3.7'
-  spec.add_development_dependency 'rake', '~> 12.3'
+  spec.add_development_dependency 'bundler', '>= 2.0'
+  spec.add_development_dependency 'rspec',   '~> 3.7'
+  spec.add_development_dependency 'rake',    '~> 12.3'
   spec.add_development_dependency 'timecop', '~> 0.9'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'gem-release', '~> 1.0'
-  spec.add_development_dependency 'awesome_print', '~> 1.8'
   spec.add_development_dependency 'rack-test'
   spec.add_development_dependency 'sinatra'
+
+  # ===== Utilities =====
+  spec.add_development_dependency "travis", ">= 1.8.9"
+
+  # ===== Documentation =====
+  spec.add_development_dependency "yard",          "~> 0.9.18"
+  spec.add_development_dependency "redcarpet",     "~> 3.4"
+  spec.add_development_dependency "github-markup", "~> 3.0"
+  spec.add_development_dependency "github_changelog_generator", "~> 1.14"
+
+  # ===== Release Management =====
+  spec.add_development_dependency "gem-release", ">= 2.0"
 end

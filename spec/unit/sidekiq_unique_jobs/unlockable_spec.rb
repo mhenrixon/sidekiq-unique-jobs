@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
   def item_with_digest
@@ -8,14 +8,14 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     item
   end
   let(:item) do
-    { 'class' => MyUniqueJob,
-      'queue' => 'customqueue',
-      'args' => [1, 2] }
+    { "class" => MyUniqueJob,
+      "queue" => "customqueue",
+      "args" => [1, 2] }
   end
 
   let(:unique_digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] }
 
-  describe '.unlock' do
+  describe ".unlock" do
     subject(:unlock) { described_class.unlock(item_with_digest) }
 
     let(:expected_keys) do
@@ -34,7 +34,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     end
   end
 
-  describe '.delete' do
+  describe ".delete" do
     subject(:delete) { described_class.delete(item_with_digest) }
 
     specify do

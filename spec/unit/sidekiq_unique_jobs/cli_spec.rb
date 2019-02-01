@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-require 'thor/runner'
-require 'irb'
+require "thor/runner"
+require "irb"
 
-RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
+RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:item) do
     {
-      'jid' => jid,
-      'unique_digest' => unique_key,
+      "jid" => jid,
+      "unique_digest" => unique_key,
     }
   end
-  let(:jid)           { 'abcdefab' }
-  let(:unique_key)    { 'uniquejobs:abcdefab' }
+  let(:jid)           { "abcdefab" }
+  let(:unique_key)    { "uniquejobs:abcdefab" }
   let(:max_lock_time) { 1 }
-  let(:pattern)       { '*' }
+  let(:pattern)       { "*" }
 
-  describe '#help' do
+  describe "#help" do
     subject(:help) { capture(:stdout) { described_class.start(%w[help]) } }
 
-    it 'displays help' do
+    it "displays help" do
       expect(help).to include <<~HEADER
         Commands:
           jobs  console         # drop into a console with easy access to helper methods
@@ -30,10 +30,10 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
       HEADER
     end
 
-    describe '#help del' do
+    describe "#help del" do
       subject(:help) { capture(:stdout) { described_class.start(%w[help del]) } }
 
-      it 'displays help about the `del` command' do
+      it "displays help about the `del` command" do
         expect(help).to eq <<~HEADER
           Usage:
             jobs  del PATTERN
@@ -48,10 +48,10 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
       end
     end
 
-    describe '#help keys' do
+    describe "#help keys" do
       subject(:help) { capture(:stdout) { described_class.start(%w[help keys]) } }
 
-      it 'displays help about the `key` command' do
+      it "displays help about the `key` command" do
         expect(help).to eq <<~HEADER
           Usage:
             jobs  keys PATTERN
@@ -66,27 +66,27 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
     end
   end
 
-  describe '.keys' do
+  describe ".keys" do
     subject(:keys) { capture(:stdout) { described_class.start(%w[keys * --count 1000]) } }
 
-    context 'when no keys exist' do
+    context "when no keys exist" do
       it { is_expected.to eq("Found 0 keys matching '#{pattern}':\n") }
     end
 
-    context 'when a key exists' do
+    context "when a key exists" do
       before do
         SidekiqUniqueJobs::Locksmith.new(item).lock
       end
 
-      after { SidekiqUniqueJobs::Util.del('*', 1000) }
+      after { SidekiqUniqueJobs::Util.del("*", 1000) }
 
       it { is_expected.to include("Found 2 keys matching '*':") }
-      it { is_expected.to include('uniquejobs:abcdefab:EXISTS') }
-      it { is_expected.to include('uniquejobs:abcdefab:GRABBED') }
+      it { is_expected.to include("uniquejobs:abcdefab:EXISTS") }
+      it { is_expected.to include("uniquejobs:abcdefab:GRABBED") }
     end
   end
 
-  describe '.del' do
+  describe ".del" do
     subject(:del) { capture(:stdout) { described_class.start(args) } }
 
     let(:args) { %W[del * #{options} --count 1000] }
@@ -95,8 +95,8 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
       SidekiqUniqueJobs::Locksmith.new(item).lock
     end
 
-    context 'with argument --dry-run' do
-      let(:options) { '--dry-run' }
+    context "with argument --dry-run" do
+      let(:options) { "--dry-run" }
 
       specify do
         expect(del).to eq("Would delete 2 keys matching '*'\n")
@@ -104,8 +104,8 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
       end
     end
 
-    context 'with argument --no-dry-run' do
-      let(:options) { '--no-dry-run' }
+    context "with argument --no-dry-run" do
+      let(:options) { "--no-dry-run" }
 
       specify do
         expect(del).to eq("Deleted 2 keys matching '*'\n")
@@ -114,7 +114,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: '>= 2.4' do
     end
   end
 
-  describe '.console', ruby_ver: '>= 2.5.1' do
+  describe ".console", ruby_ver: ">= 2.5.1" do
     subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
 
     specify do
