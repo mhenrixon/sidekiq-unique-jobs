@@ -8,7 +8,7 @@ task :changelog do
     -u
     mhenrixon
     -p
-    stub_requests
+    sidekiq-unique-jobs
     --no-verbose
     --token
   ]
