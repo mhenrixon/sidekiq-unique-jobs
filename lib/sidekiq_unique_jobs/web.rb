@@ -42,6 +42,11 @@ module SidekiqUniqueJobs
         Digests.del(digest: params[:digest])
         redirect_to :unique_digests
       end
+
+      app.get '/unique_digests/delete_all' do
+        Digests.del(pattern: "*", count: Digests.count)
+        redirect_to :unique_digests
+      end
     end
   end
 end

@@ -38,5 +38,9 @@
         </tr>
       <% end %>
     </table>
+
+    <form action="<%= root_path %>unique_digests/delete_all" method="get">
+      <input class="btn btn-danger btn-xs" type="submit" name="delete_all" value="<%= t('DeleteAll') %>" data-confirm="<%= t('AreYouSure') %>" />
+    </form>
   </div>
 <% end %>
