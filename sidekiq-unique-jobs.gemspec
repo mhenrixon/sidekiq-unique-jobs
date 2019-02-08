@@ -45,16 +45,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.7"
   spec.add_development_dependency "sinatra"
   spec.add_development_dependency "timecop", "~> 0.9"
-
-  # ===== Utilities =====
-  spec.add_development_dependency "travis", ">= 1.8.9"
-
-  # ===== Documentation =====
-  spec.add_development_dependency "github-markup", "~> 3.0"
-  spec.add_development_dependency "github_changelog_generator", "~> 1.14"
-  spec.add_development_dependency "redcarpet", "~> 3.4"
-  spec.add_development_dependency "yard", "~> 0.9.18"
-
-  # ===== Release Management =====
-  spec.add_development_dependency "gem-release", ">= 2.0"
 end
