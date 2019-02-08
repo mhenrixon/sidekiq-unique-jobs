@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Util
     DEFAULT_COUNT     = 1_000
-    SCAN_PATTERN      = '*'
+    SCAN_PATTERN      = "*"
 
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection
@@ -44,7 +44,7 @@ module SidekiqUniqueJobs
     # @param [Integer] count the maximum number of keys to delete
     # @return [Integer] the number of keys deleted
     def del(pattern = SCAN_PATTERN, count = 0)
-      raise ArgumentError, 'Please provide a number of keys to delete greater than zero' if count.zero?
+      raise ArgumentError, "Please provide a number of keys to delete greater than zero" if count.zero?
 
       pattern = suffix(pattern)
 
@@ -91,7 +91,7 @@ module SidekiqUniqueJobs
     end
 
     def suffix(key)
-      return "#{key}*" unless key.end_with?(':*')
+      return "#{key}*" unless key.end_with?(":*")
 
       key
     end

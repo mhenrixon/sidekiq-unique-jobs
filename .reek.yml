@@ -6,6 +6,7 @@ exclude_paths:
   - tmp
   - gemfiles
   - examples
+  - vendor/bundle
 detectors:
   DuplicateMethodCall:
     exclude:

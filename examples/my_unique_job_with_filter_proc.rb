@@ -10,7 +10,7 @@ class MyUniqueJobWithFilterProc
                   retry: true,
                   unique_args: (lambda do |args|
                     options = args.extract_options!
-                    [args.first, options['type']]
+                    [args.first, options["type"]]
                   end)
 
   def perform(*)

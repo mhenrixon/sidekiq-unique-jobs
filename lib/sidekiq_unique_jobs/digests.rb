@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Digests
     DEFAULT_COUNT = 1_000
-    SCAN_PATTERN  = '*'
+    SCAN_PATTERN  = "*"
     CHUNK_SIZE    = 100
 
     include SidekiqUniqueJobs::Logging
@@ -25,8 +25,9 @@ module SidekiqUniqueJobs
     # Paginate unique digests
     #
     # @param [String] pattern a pattern to match with
-    # @param [Integer] page the current cursor position
-    # @param [Integer] count the maximum number to match
+    # @param [Integer] cursor the maximum number to match
+    # @param [Integer] page_size the current cursor position
+    #
     # @return [Array<String>] with unique digests
     def page(pattern: SCAN_PATTERN, cursor: 0, page_size: 100)
       redis do |conn|
@@ -57,7 +58,7 @@ module SidekiqUniqueJobs
       return delete_by_pattern(pattern, count: count) if pattern
       return delete_by_digest(digest) if digest
 
-      raise ArgumentError, 'either digest or pattern need to be provided'
+      raise ArgumentError, "either digest or pattern need to be provided"
     end
 
     private

@@ -13,8 +13,8 @@ class VersionCheck
       @operator2 = match[:operator2]
     end
 
-    fail ArgumentError, 'A version (5.0) is required to compare against' unless @version
-    fail ArgumentError, 'At least one operator and version is required (<>= 5.1)' unless @operator1
+    raise ArgumentError, "A version (5.0) is required to compare against" unless @version
+    raise ArgumentError, "At least one operator and version is required (<>= 5.1)" unless @operator1
   end
 
   def invalid?

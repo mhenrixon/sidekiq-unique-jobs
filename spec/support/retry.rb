@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rspec/retry'
+require "rspec/retry"
 
 RSpec.configure do |config|
   # show retry status in spec process

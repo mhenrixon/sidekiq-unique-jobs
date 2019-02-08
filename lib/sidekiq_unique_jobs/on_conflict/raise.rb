@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
       #   This will cause Sidekiq to retry the job
       # @raise [SidekiqUniqueJobs::Conflict]
       def call
-        fail SidekiqUniqueJobs::Conflict, item
+        raise SidekiqUniqueJobs::Conflict, item
       end
     end
   end

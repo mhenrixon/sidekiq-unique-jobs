@@ -133,19 +133,19 @@ module SidekiqUniqueJobs
     end
 
     def available_key
-      @available_key ||= namespaced_key('AVAILABLE')
+      @available_key ||= namespaced_key("AVAILABLE")
     end
 
     def exists_key
-      @exists_key ||= namespaced_key('EXISTS')
+      @exists_key ||= namespaced_key("EXISTS")
     end
 
     def grabbed_key
-      @grabbed_key ||= namespaced_key('GRABBED')
+      @grabbed_key ||= namespaced_key("GRABBED")
     end
 
     def version_key
-      @version_key ||= namespaced_key('VERSION')
+      @version_key ||= namespaced_key("VERSION")
     end
 
     def namespaced_key(variable)

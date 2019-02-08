@@ -4,7 +4,7 @@ module SidekiqHelpers
   include SidekiqUniqueJobs::Connection
 
   def dead_count
-    zcard('dead')
+    zcard("dead")
   end
 
   def get_key(key)
@@ -32,7 +32,7 @@ module SidekiqHelpers
   end
 
   def retry_count
-    zcard('retry')
+    zcard("retry")
   end
 
   def scard(queue)
@@ -40,11 +40,11 @@ module SidekiqHelpers
   end
 
   def schedule_count
-    zcard('schedule')
+    zcard("schedule")
   end
 
   def schedule_count_at(max = Time.now.to_f + 2 * 60)
-    zcount('schedule', '-inf', max)
+    zcount("schedule", "-inf", max)
   end
 
   def set_key(key, value)
@@ -56,7 +56,7 @@ module SidekiqHelpers
   end
 
   def unique_digests
-    smembers('unique:keys')
+    smembers("unique:keys")
   end
 
   def smembers(key)
@@ -64,7 +64,7 @@ module SidekiqHelpers
   end
 
   def unique_keys
-    keys('uniquejobs:*')
+    keys("uniquejobs:*")
   end
 
   def zadd(queue, timestamp, item)
@@ -75,7 +75,7 @@ module SidekiqHelpers
     redis { |conn| conn.zcard(queue) }
   end
 
-  def zcount(queue, min = '-inf', max = '+inf')
+  def zcount(queue, min = "-inf", max = "+inf")
     redis { |conn| conn.zcount(queue, min, max) }
   end
 end

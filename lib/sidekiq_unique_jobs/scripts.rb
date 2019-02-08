@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'pathname'
-require 'digest/sha1'
-require 'concurrent/map'
+require "pathname"
+require "digest/sha1"
+require "concurrent/map"
 
 module SidekiqUniqueJobs
   # Interface to dealing with .lua files
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Scripts
-    LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join('../../redis').freeze
+    LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join("../../redis").freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
 
     include SidekiqUniqueJobs::Connection
@@ -64,7 +64,7 @@ module SidekiqUniqueJobs
     # @param [Symbol] file_name the name of the lua script
     # @raise [ScriptError] when the error isn't handled
     def handle_error(ex, file_name)
-      if ex.message == 'NOSCRIPT No matching script. Please use EVAL.'
+      if ex.message == "NOSCRIPT No matching script. Please use EVAL."
         SCRIPT_SHAS.delete(file_name)
         return yield if block_given?
       end

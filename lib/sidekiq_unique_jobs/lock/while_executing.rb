@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class WhileExecuting < BaseLock
-      RUN_SUFFIX ||= ':RUN'
+      RUN_SUFFIX ||= ":RUN"
 
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock

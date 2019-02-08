@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'sidekiq/testing'
+require "sidekiq/testing"
 
-require_relative 'version_check'
+require_relative "version_check"
 
 RSpec.configure do |config|
   config.before(:each, redis: :redis) do |example|

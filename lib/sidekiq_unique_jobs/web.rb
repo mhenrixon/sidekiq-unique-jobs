@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 begin
-  require 'sidekiq/web'
+  require "sidekiq/web"
 rescue LoadError # rubocop:disable Lint/HandleExceptions
   # client-only usage
 end
 
-require_relative 'web/helpers'
+require_relative "web/helpers"
 
 module SidekiqUniqueJobs
   # Utility module to help manage unique keys in redis.
@@ -19,9 +19,9 @@ module SidekiqUniqueJobs
         include Web::Helpers
       end
 
-      app.get '/unique_digests' do
-        @filter         = params[:filter] || '*'
-        @filter         = '*' if @filter == ''
+      app.get "/unique_digests" do
+        @filter         = params[:filter] || "*"
+        @filter         = "*" if @filter == ""
         @count          = (params[:count] || 100).to_i
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
@@ -31,19 +31,19 @@ module SidekiqUniqueJobs
         erb(unique_template(:unique_digests))
       end
 
-      app.get '/unique_digests/delete_all' do
-        Digests.del(pattern: '*', count: Digests.count)
+      app.get "/unique_digests/delete_all" do
+        Digests.del(pattern: "*", count: Digests.count)
         redirect_to :unique_digests
       end
-
-      app.get '/unique_digests/:digest' do
+      
+      app.get "/unique_digests/:digest" do
         @digest = params[:digest]
         @unique_keys = Util.keys("#{@digest}*", 1000)
 
         erb(unique_template(:unique_digest))
       end
 
-      app.get '/unique_digests/:digest/delete' do
+      app.get "/unique_digests/:digest/delete" do
         Digests.del(digest: params[:digest])
         redirect_to :unique_digests
       end
@@ -53,6 +53,6 @@ end
 
 if defined?(Sidekiq::Web)
   Sidekiq::Web.register SidekiqUniqueJobs::Web
-  Sidekiq::Web.tabs['Unique Digests'] = 'unique_digests'
+  Sidekiq::Web.tabs["Unique Digests"] = "unique_digests"
   # Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), 'locales')
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'an executing lock with error handling' do
+RSpec.shared_examples "an executing lock with error handling" do
   subject(:execute) { lock.execute(&block) }
 
   let(:block)             { -> {} }
@@ -18,12 +18,12 @@ RSpec.shared_examples 'an executing lock with error handling' do
     allow(lock).to receive(:log_fatal)
   end
 
-  context 'when yield fails with other errors' do
-    let(:block)   { -> { raise 'HELL' } }
+  context "when yield fails with other errors" do
+    let(:block)   { -> { raise "HELL" } }
     let(:locked?) { nil }
 
     it 'raises "HELL"' do
-      expect { execute }.to raise_error('HELL')
+      expect { execute }.to raise_error("HELL")
 
       expect(lock).not_to have_received(:unlock)
     end

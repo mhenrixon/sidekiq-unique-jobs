@@ -1,98 +1,105 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:unique_args)  { described_class.new(item) }
   let(:worker_class) { UntilExecutedJob }
   let(:class_name)   { worker_class.to_s }
-  let(:queue)        { 'myqueue' }
+  let(:queue)        { "myqueue" }
   let(:args)         { [[1, 2]] }
   let(:item) do
     {
-      'class' => class_name,
-      'queue' => queue,
-      'args' => args,
+      "class" => class_name,
+      "queue" => queue,
+      "args" => args,
     }
   end
 
-  describe '#unique_digest' do
+  describe "#unique_digest" do
     subject(:unique_digest) { unique_args.unique_digest }
 
-    context 'when args are empty' do
+    context "when args are empty" do
       let(:another_unique_args) { described_class.new(item) }
       let(:worker_class)        { WithoutArgumentJob }
       let(:args)                { [] }
 
-      context 'with the same unique args' do
-        it 'equals to unique_digest for that item' do
+      context "with the same unique args" do
+        it "equals to unique_digest for that item" do
           expect(unique_digest).to eq(another_unique_args.unique_digest)
         end
       end
     end
 
-    shared_examples 'unique digest' do
-      context 'with another item' do
+    shared_examples "unique digest" do
+      context "with another item" do
         let(:another_unique_args) { described_class.new(another_item) }
 
-        context 'with the same unique args' do
-          let(:another_item) { item.merge('args' => [1, 2, 'type' => 'it']) }
+        context "with the same unique args" do
+          let(:another_item) { item.merge("args" => [1, 2, "type" => "it"]) }
 
-          it 'equals to unique_digest for that item' do
+          it "equals to unique_digest for that item" do
             expect(unique_digest).to eq(another_unique_args.unique_digest)
           end
         end
 
-        context 'with different unique args' do
-          let(:another_item) { item.merge('args' => [1, 3, 'type' => 'that']) }
+        context "with different unique args" do
+          let(:another_item) { item.merge("args" => [1, 3, "type" => "that"]) }
 
-          it 'differs from unique_digest for that item' do
+          it "differs from unique_digest for that item" do
             expect(unique_digest).not_to eq(another_unique_args.unique_digest)
           end
         end
       end
     end
 
-    context 'when unique_args is a proc' do
+    context "when unique_args is a proc" do
       let(:worker_class) { MyUniqueJobWithFilterProc }
-      let(:args)         { [1, 2, 'type' => 'it'] }
+      let(:args)         { [1, 2, "type" => "it"] }
 
-      it_behaves_like 'unique digest'
+      it_behaves_like "unique digest"
     end
 
-    context 'when unique_args is a symbol' do
+    context "when unique_args is a symbol" do
       let(:worker_class) { MyUniqueJobWithFilterMethod }
-      let(:args)         { [1, 2, 'type' => 'it'] }
+      let(:args)         { [1, 2, "type" => "it"] }
 
-      it_behaves_like 'unique digest'
+      it_behaves_like "unique digest"
     end
   end
 
-  describe '#digestable_hash' do
+  describe "#digestable_hash" do
     subject(:digestable_hash) { unique_args.digestable_hash }
 
     let(:expected_hash) do
-      { 'class' => 'UntilExecutedJob', 'queue' => 'myqueue', 'unique_args' => [[1, 2]] }
+      { "class" => "UntilExecutedJob", "queue" => "myqueue", "unique_args" => [[1, 2]] }
     end
 
-    it { is_expected.to eq(expected_hash) }
+    shared_examples "a digestable hash" do
+      it { is_expected.to eq(expected_hash) }
+    end
+
+    it_behaves_like "a digestable hash"
 
     with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: true) do
-      let(:expected_hash) { { 'class' => 'UntilExecutedJob', 'unique_args' => [[1, 2]] } }
-      it { is_expected.to eq(expected_hash) }
+      let(:expected_hash) { { "class" => "UntilExecutedJob", "unique_args" => [[1, 2]] } }
+
+      it_behaves_like "a digestable hash"
     end
 
     with_sidekiq_options_for(UntilExecutedJob, unique_across_workers: true) do
-      let(:expected_hash) { { 'queue' => 'myqueue', 'unique_args' => [[1, 2]] } }
+      let(:expected_hash) { { "queue" => "myqueue", "unique_args" => [[1, 2]] } }
 
-      it { is_expected.to eq(expected_hash) }
+      it_behaves_like "a digestable hash"
     end
   end
 
-  describe '#unique_args_enabled?' do
+  describe "#unique_args_enabled?" do
     subject(:unique_args_enabled?) { unique_args.unique_args_enabled? }
 
-    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]['test'] }) do
+    shared_examples "" do
+    end
+
+    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]["test"] }) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
         it { is_expected.to eq(:unique_args) }
       end
@@ -113,7 +120,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
         it { is_expected.to be_falsy }
       end
 
-      with_sidekiq_options_for('MissingWorker', unique_args: true) do
+      with_sidekiq_options_for("MissingWorker", unique_args: true) do
         it { is_expected.to be_falsy }
       end
 
@@ -121,7 +128,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
   end
 
-  describe '#unique_across_queues?' do
+  describe "#unique_across_queues?" do
     subject(:unique_across_queues?) { unique_args.unique_across_queues? }
 
     let(:worker_class) { UntilExecutedJob }
@@ -137,7 +144,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
   end
 
-  describe '#unique_across_workers?' do
+  describe "#unique_across_workers?" do
     subject(:unique_across_workers?) { unique_args.unique_across_workers? }
 
     it { is_expected.to eq(nil) }
@@ -151,42 +158,42 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
   end
 
-  describe '#filtered_args' do
+  describe "#filtered_args" do
     subject(:filtered_args) { unique_args.filtered_args(args) }
 
-    let(:args) { [1, 'test' => 'it'] }
+    let(:args) { [1, "test" => "it"] }
 
     before do
       allow(unique_args).to receive(:unique_args_method).and_return(unique_args_method)
     end
 
-    context 'when #unique_args_method is nil' do
+    context "when #unique_args_method is nil" do
       let(:unique_args_method) { nil }
 
-      it 'logs a debug message' do
+      it "logs a debug message" do
         allow(unique_args).to receive(:log_debug)
         filtered_args
 
         expect(unique_args)
           .to have_received(:log_debug)
-          .with('filtered_args arguments not filtered (using all arguments for uniqueness)')
+          .with("filtered_args arguments not filtered (using all arguments for uniqueness)")
       end
 
       it { is_expected.to eq(args) }
     end
   end
 
-  describe '#filter_by_proc' do
+  describe "#filter_by_proc" do
     subject(:filter_by_proc) { unique_args.filter_by_proc(args) }
 
-    let(:args) { [1, 'test' => 'it'] }
+    let(:args) { [1, "test" => "it"] }
 
-    context 'when #unique_args_method is a proc' do
-      let(:filter) { ->(args) { args[1]['test'] } }
+    context "when #unique_args_method is a proc" do
+      let(:filter) { ->(args) { args[1]["test"] } }
 
       before { allow(unique_args).to receive(:unique_args_method).and_return(filter) }
 
-      it { is_expected.to eq('it') }
+      it { is_expected.to eq("it") }
     end
 
     with_default_worker_options(unique_args: ->(args) { args.first }) do
@@ -194,24 +201,24 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
   end
 
-  describe '#filter_by_symbol' do
+  describe "#filter_by_symbol" do
     subject(:filter_by_symbol) { unique_args.filter_by_symbol(args) }
 
-    context 'when filter is a working symbol' do
+    context "when filter is a working symbol" do
       let(:worker_class)  { UniqueJobWithFilterMethod }
-      let(:args)          { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      let(:args)          { ["name", 2, "whatever" => nil, "type" => "test"] }
       let(:filtered_args) { %w[name test] }
 
       it { is_expected.to eq(filtered_args) }
     end
 
-    context 'when worker takes conditional parameters' do
+    context "when worker takes conditional parameters" do
       let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
       let(:args)         { [1] }
 
       it { is_expected.to eq([1]) }
 
-      context 'when provided nil' do
+      context "when provided nil" do
         let(:args) { [] }
 
         it { is_expected.to eq([]) }
@@ -220,21 +227,21 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     context "when workers unique_args method doesn't take parameters" do
       let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
-      let(:args)         { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      let(:args)         { ["name", 2, "whatever" => nil, "type" => "test"] }
 
       it { is_expected.to eq(args) }
     end
 
-    context 'when @worker_class does not respond_to unique_args_method' do
+    context "when @worker_class does not respond_to unique_args_method" do
       let(:worker_class) { UniqueJobWithNoUniqueArgsMethod }
-      let(:args)         { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      let(:args)         { ["name", 2, "whatever" => nil, "type" => "test"] }
 
       it { is_expected.to eq(args) }
     end
 
-    context 'when workers unique_args method returns nil' do
+    context "when workers unique_args method returns nil" do
       let(:worker_class) { UniqueJobWithNilUniqueArgs }
-      let(:args) { ['name', 2, 'whatever' => nil, 'type' => 'test'] }
+      let(:args) { ["name", 2, "whatever" => nil, "type" => "test"] }
 
       it { is_expected.to eq(nil) }
     end
