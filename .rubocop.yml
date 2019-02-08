@@ -18,6 +18,7 @@ AllCops:
   Exclude:
     - "Gemfile.lock"
     - "**/*.erb"
+    - "gemfiles/**/*"
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
