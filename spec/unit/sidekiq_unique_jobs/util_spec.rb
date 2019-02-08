@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:item_hash) do
     {

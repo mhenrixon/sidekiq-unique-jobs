@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject, redis: :redis do
   include SidekiqHelpers
 

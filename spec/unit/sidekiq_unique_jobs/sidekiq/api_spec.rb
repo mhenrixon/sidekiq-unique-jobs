@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe "Sidekiq::Api", redis: :redis do
   let(:item) do
     { "class" => "JustAWorker",

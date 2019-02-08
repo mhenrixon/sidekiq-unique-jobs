@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   class ClassWithOptions
     include SidekiqUniqueJobs::OptionsWithFallback

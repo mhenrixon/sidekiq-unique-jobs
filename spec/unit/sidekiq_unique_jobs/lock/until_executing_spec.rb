@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
   include_context "with a stubbed locksmith"
   let(:lock)     { described_class.new(item, callback) }

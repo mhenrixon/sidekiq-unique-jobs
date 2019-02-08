@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
   def item_with_digest
     SidekiqUniqueJobs::UniqueArgs.digest(item)

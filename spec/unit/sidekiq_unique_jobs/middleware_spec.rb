@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Middleware do
   describe SidekiqUniqueJobs do
     let(:client_config)     { class_double(Sidekiq) }
