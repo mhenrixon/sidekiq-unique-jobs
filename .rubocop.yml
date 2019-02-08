@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 require:
   - rubocop-rspec
 
@@ -11,6 +9,8 @@ AllCops:
   TargetRubyVersion: 2.3
   Include:
     - "**/Rakefile"
+    - "**/Gemfile"
+    - "*.gemspec"
     - "lib/**/*.rb"
     - "bin/**/*.rb"
     - "spec/**/*.rb"
@@ -18,7 +18,6 @@ AllCops:
   Exclude:
     - "Gemfile.lock"
     - "**/*.erb"
-    - "rails_example/**/*"
 
 Lint/HandleExceptions:
   Enabled: true
@@ -43,6 +42,7 @@ Metrics/BlockLength:
   Exclude:
     - "**/spec/**/*.rb"
     - "**/*.rake"
+    - "Rakefile"
 
 Metrics/PerceivedComplexity:
   Max: 8
@@ -55,8 +55,6 @@ Naming/ConstantName:
 
 Naming/FileName:
   Enabled: true
-  Exclude:
-    - "**/Gemfile"
 
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
@@ -65,10 +63,17 @@ Naming/UncommunicativeMethodParamName:
 RSpec/AlignLeftLetBrace:
   Enabled: true
 
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExpectActual:
+  Enabled: false
+
 RSpec/FilePath:
   Enabled: true
-  Exclude:
-    - "spec/stub_requests/webmock_builder_spec.rb"
+
+RSpec/MultipleExpectations:
+  Enabled: false
 
 RSpec/NestedGroups:
   Max: 4
