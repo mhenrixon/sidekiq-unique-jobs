@@ -14,7 +14,6 @@ end
 
 require "rspec"
 require "rspec/its"
-require "awesome_print"
 
 require "sidekiq"
 require "sidekiq/api"

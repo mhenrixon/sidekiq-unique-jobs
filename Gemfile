@@ -4,7 +4,6 @@ source "https://rubygems.org"
 gemspec
 
 gem "appraisal", "~> 2.2.0"
-gem "awesome_print"
 gem "rspec-eventually", require: false
 gem "rspec-its",        require: false
 gem "rspec-retry",      require: false
