@@ -21,7 +21,7 @@ before_script:
 
 script:
   - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
-  - bundle exec rspec
+  - bundle exec rspec --require spec_helper
 
 after_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
