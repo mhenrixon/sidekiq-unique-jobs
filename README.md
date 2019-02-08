@@ -41,61 +41,57 @@
 
 <!-- /MarkdownTOC -->
 
-
-<a id="introduction"></a>
 ## Introduction
 
 The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.
 
-<a id="documentation"></a>
 ## Documentation
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: [v5.0.10][]
 
 Below are links to the latest major versions (4 & 5):
 
-- [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
-- [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
+- [v5.0.10][]
+- [v4.0.18][]
 
-<a id="requirements"></a>
 ## Requirements
 
-See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <= 2.1 is dropped. ActiveJob is not supported
+See [Sidekiq requirements][] for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <= 2.1 is dropped. ActiveJob is not supported
 
 Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why.
 
-<a id="installation"></a>
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'sidekiq-unique-jobs'
+```
+gem 'sidekiq-unique-jobs'
+```
 
 And then execute:
 
-    $ bundle
+```
+bundle
+```
 
 Or install it yourself as:
 
-    $ gem install sidekiq-unique-jobs
+```
+gem install sidekiq-unique-jobs
+```
 
-
-<a id="support-me"></a>
 ## Support Me
 
-Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link https://paypal.me/mhenrixon. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
+Want to show me some ❤️ for the hard work I do on this gem? You can use the following [PayPal link][]. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
 
-<a id="general-information"></a>
 ## General Information
 
 See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/How-this-gem-interacts-with-Sidekiq) on how the gem interacts with Sidekiq.
 
 See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
 
-<a id="options"></a>
 ## Options
 
-<a id="lock-expiration"></a>
 ### Lock Expiration
 
 This is probably not the configuration option you want...
@@ -109,7 +105,6 @@ sidekiq_options lock_expiration: nil # default - don't expire keys
 sidekiq_options lock_expiration: 20.days # expire this lock in 20 days
 ```
 
-<a id="lock-timeout"></a>
 ### Lock Timeout
 
 This is the timeout (how long to wait) when creating the lock. By default we don't use a timeout so we won't wait for the lock to be created. If you want it is possible to set this like below.
@@ -120,7 +115,6 @@ sidekiq_options lock_timeout: 5 # wait 5 seconds
 sidekiq_options lock_timeout: nil # lock indefinitely, this process won't continue until it gets a lock. VERY DANGEROUS!!
 ```
 
-<a id="unique-across-queues"></a>
 ### Unique Across Queues
 
 This configuration option is slightly misleading. It doesn't disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.
@@ -128,7 +122,7 @@ This configuration option is slightly misleading. It doesn't disregard the queue
 ```ruby
 class Worker
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_queues: true, queue: 'default'
 
   def perform(args); end
@@ -137,7 +131,6 @@ end
 
 Now if you push override the queue with `Worker.set(queue: 'another').perform_async(1)` it will still be considered unique when compared to `Worker.perform_async(1)` (that was actually pushed to the queue `default`).
 
-<a id="unique-across-workers"></a>
 ### Unique Across Workers
 
 This configuration option is slightly misleading. It doesn't disregard the worker class on other jobs. Just on itself, this means that a worker that the worker class won't be used for generating the unique digest. The only way this option really makes sense is when you want to have uniqueness between two different worker classes.
@@ -145,7 +138,7 @@ This configuration option is slightly misleading. It doesn't disregard the worke
 ```ruby
 class WorkerOne
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
@@ -153,24 +146,22 @@ end
 
 class WorkerTwo
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
 end
 
 
-WorkerOne.perform_async(1) 
+WorkerOne.perform_async(1)
 # => 'the jobs unique id'
 
-WorkerTwo.perform_async(1) 
+WorkerTwo.perform_async(1)
 # => nil because WorkerOne just stole the lock
 ```
 
-<a id="locks"></a>
 ## Locks
 
-<a id="until-executing"></a>
 ### Until Executing
 
 Locks from when the client pushes the job to the queue. Will be unlocked before the server starts processing the job.
@@ -181,7 +172,6 @@ Locks from when the client pushes the job to the queue. Will be unlocked before 
 sidekiq_options lock: :until_executing
 ```
 
-<a id="until-executed"></a>
 ### Until Executed
 
 Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.
@@ -190,7 +180,6 @@ Locks from when the client pushes the job to the queue. Will be unlocked when th
 sidekiq_options lock: :until_executed
 ```
 
-<a id="until-timeout"></a>
 ### Until Timeout
 
 Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.
@@ -199,7 +188,6 @@ Locks from when the client pushes the job to the queue. Will be unlocked when th
 sidekiq_options lock: :until_expired
 ```
 
-<a id="unique-until-and-while-executing"></a>
 ### Unique Until And While Executing
 
 Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. As soon as the server starts processing a job, the client can push the same job to the queue.
@@ -208,7 +196,6 @@ Locks when the client pushes the job to the queue. The queue will be unlocked wh
 sidekiq_options lock: :until_and_while_executing
 ```
 
-<a id="while-executing"></a>
 ### While Executing
 
 With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It _looks_ like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
@@ -238,54 +225,47 @@ In the console you should see something like:
 10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
 ```
 
-<a id="conflict-strategy"></a>
 ## Conflict Strategy
 
-Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process. 
+Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
 The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
 
-<a id="log"></a>
 ### Log
 
 This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
 
 `sidekiq_options lock: :until_executed, on_conflict: :log`
 
-<a id="raise"></a>
 ### Raise
 
 This strategy is intended to be used with `WhileExecuting`. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.
 
 `sidekiq_options lock: :while_executing, on_conflict: :raise, retry: 10`
 
-<a id="reject"></a>
 ### Reject
 
 This strategy is intended to be used with `WhileExecuting` and will push the job to the dead queue on conflict.
 
 `sidekiq_options lock: :while_executing, on_conflict: :reject`
 
-<a id="replace"></a>
 ### Replace
 
 This strategy is intended to be used with client locks like `UntilExecuted`.
 It will delete any existing job for these arguments from retry, schedule and
-queue and retry the lock again. 
+queue and retry the lock again.
 
-This is slightly dangerous and should probably only be used for jobs that are 
+This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.
 
 `sidekiq_options lock: :until_executed, on_conflict: :replace`
 
-<a id="reschedule"></a>
 ### Reschedule
 
 This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
 
 `sidekiq_options lock: :while_executing, on_conflict: :reschedule`
 
-<a id="usage"></a>
 ## Usage
 
 All that is required is that you specifically set the sidekiq option for _unique_ to a valid value like below:
@@ -296,7 +276,6 @@ sidekiq_options lock: :while_executing
 
 Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
-<a id="finer-control-over-uniqueness"></a>
 ### Finer Control over Uniqueness
 
 Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to define either a `unique_args` method, or a ruby proc.
@@ -348,10 +327,9 @@ class UniqueJobWithFilterMethod
 end
 ```
 
-<a id="after-unlock-callback"></a>
 ### After Unlock Callback
 
-If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that. 
+If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that.
 
 **Exception 1:** UntilExecuting unlocks and calls back before yielding.
 **Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
@@ -368,7 +346,6 @@ class UniqueJobWithFilterMethod
 end.
 ```
 
-<a id="logging"></a>
 ### Logging
 
 To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false
@@ -384,7 +361,6 @@ class UniqueJobWithFilterMethod
 end
 ```
 
-<a id="cleanup-dead-locks"></a>
 ### Cleanup Dead Locks
 
 For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required per worker class.
@@ -408,12 +384,10 @@ Sidekiq.configure_server do |config|
 end
 ```
 
-<a id="debugging"></a>
 ## Debugging
 
 There are several ways of removing keys that are stuck. The prefered way is by using the unique extension to `Sidekiq::Web`. The old console and command line versions still work but might be deprecated in the future. It is better to search for the digest itself and delete the keys matching that digest.
 
-<a id="sidekiq-web"></a>
 ### Sidekiq Web
 
 To use the web extension you need to require it in your routes.
@@ -424,33 +398,28 @@ require 'sidekiq_unique_jobs/web'
 mount Sidekiq::Web, at: '/sidekiq'
 ```
 
-There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` 
+There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web`
 already does this.
 
 To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
 
-
-<a id="show-unique-digests"></a>
 #### Show Unique Digests
 
 ![Unique Digests](assets/unique_digests_1.png)
 
-<a id="show-keys-for-digest"></a>
 #### Show keys for digest
 
 ![Unique Digests](assets/unique_digests_2.png)
 
-<a id="communication"></a>
 ## Communication
 
 There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg)](https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) for praise or scorn. This would be a good place to have lengthy discuss or brilliant suggestions or simply just nudge me if I forget about anything.
 
-<a id="testing"></a>
 ## Testing
 
 This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs.
 
-https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
+[Enterprise unique jobs][]
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
@@ -496,17 +465,21 @@ I would strongly suggest you let this gem test uniqueness. If you care about how
 - [spec/integration/sidekiq_unique_jobs/lock/while_executing_reject_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/while_executing_reject_spec.rb)
 - [spec/integration/sidekiq_unique_jobs/lock/while_executing_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/while_executing_spec.rb)
 
-<a id="contributing"></a>
 ## Contributing
 
 1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1. Create your feature branch (`git checkout -b my-new-feature`)
+1. Commit your changes (`git commit -am 'Add some feature'`)
+1. Push to the branch (`git push origin my-new-feature`)
+1. Create new Pull Request
 
+## Contributors
 
-<a id="contributors"></a>
-## Contributors 
+You can find a list of contributors over on [Contributors][]
 
-You can find a list of contributors over on https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
+[v5.0.10]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
+[v4.0.18]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18
+[Sidekiq requirements]: https://github.com/mperham/sidekiq#requirements
+[Enterprise unique jobs]: https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
+[Contributors]: https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
+[Paypal link https://paypal.me/mhenrixon]: https://paypal.me/mhenrixon
