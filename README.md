@@ -1,43 +1,45 @@
 # SidekiqUniqueJobs [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg)](https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.png?branch=master)](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs) [![Code Climate](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.png)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs) [![Test Coverage](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage)
 
-## Table of contents
+<!-- MarkdownTOC -->
 
-* [Introduction](#introduction)
-* [Documentation](#documentation)
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Support Me](#support-me)
-* [General Information](#general-information)
-* [Options](#options)
-  * [Lock Expiration](#lock-expiration)
-  * [Lock Timeout](#lock-timeout)
-  * [Unique Across Queues](#unique-across-queues)
-  * [Unique Across Workers](#unique-across-workers)
-* [Locks](#locks)
-  * [Until Executing](#until-executing)
-  * [Until Executed](#until-executed)
-  * [Until Timeout](#until-timeout)
-  * [Unique Until And While Executing](#unique-until-and-while-executing)
-  * [While Executing](#while-executing)
-* [Conflict Strategy](#conflict-strategy)
-  * [Log](#log)
-  * [Raise](#raise)
-  * [Reject](#reject)
-  * [Replace](#replace)
-  * [Reschedule](#reschedule)
-* [Usage](#usage)
-  * [Finer Control over Uniqueness](#finer-control-over-uniqueness)
-  * [After Unlock Callback](#after-unlock-callback)
-  * [Logging](#logging)
-  * [Cleanup Dead Locks](#cleanup-dead-locks)
-* [Debugging](#debugging)
-  * [Sidekiq Web](#sidekiq-web)
-    * [Show Unique Digests](#show-unique-digests)
-    * [Show keys for digest](#show-keys-for-digest)
-* [Communication](#communication)
-* [Testing](#testing)
-* [Contributing](#contributing)
-* [Contributors](#contributors)
+- [Introduction](#introduction)
+- [Documentation](#documentation)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Support Me](#support-me)
+- [General Information](#general-information)
+- [Options](#options)
+  - [Lock Expiration](#lock-expiration)
+  - [Lock Timeout](#lock-timeout)
+  - [Unique Across Queues](#unique-across-queues)
+  - [Unique Across Workers](#unique-across-workers)
+- [Locks](#locks)
+  - [Until Executing](#until-executing)
+  - [Until Executed](#until-executed)
+  - [Until Timeout](#until-timeout)
+  - [Unique Until And While Executing](#unique-until-and-while-executing)
+  - [While Executing](#while-executing)
+- [Conflict Strategy](#conflict-strategy)
+  - [Log](#log)
+  - [Raise](#raise)
+  - [Reject](#reject)
+  - [Replace](#replace)
+  - [Reschedule](#reschedule)
+- [Usage](#usage)
+  - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
+  - [After Unlock Callback](#after-unlock-callback)
+  - [Logging](#logging)
+  - [Cleanup Dead Locks](#cleanup-dead-locks)
+- [Debugging](#debugging)
+  - [Sidekiq Web](#sidekiq-web)
+    - [Show Unique Digests](#show-unique-digests)
+    - [Show keys for digest](#show-keys-for-digest)
+- [Communication](#communication)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
+
+<!-- /MarkdownTOC -->
 
 ## Introduction
 
@@ -45,16 +47,16 @@ The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by cr
 
 ## Documentation
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: [v5.0.10][]
 
 Below are links to the latest major versions (4 & 5):
 
-- [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
-- [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
+- [v5.0.10][]
+- [v4.0.18][]
 
 ## Requirements
 
-See https://github.com/mperham/sidekiq#requirements for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <= 2.1 is dropped. ActiveJob is not supported
+See [Sidekiq requirements][] for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <= 2.1 is dropped. ActiveJob is not supported
 
 Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why.
 
@@ -62,20 +64,25 @@ Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. 
 
 Add this line to your application's Gemfile:
 
-    gem 'sidekiq-unique-jobs'
+```
+gem 'sidekiq-unique-jobs'
+```
 
 And then execute:
 
-    $ bundle
+```
+bundle
+```
 
 Or install it yourself as:
 
-    $ gem install sidekiq-unique-jobs
-
+```
+gem install sidekiq-unique-jobs
+```
 
 ## Support Me
 
-Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link https://paypal.me/mhenrixon. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
+Want to show me some ❤️ for the hard work I do on this gem? You can use the following [PayPal link][]. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
 
 ## General Information
 
@@ -115,7 +122,7 @@ This configuration option is slightly misleading. It doesn't disregard the queue
 ```ruby
 class Worker
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_queues: true, queue: 'default'
 
   def perform(args); end
@@ -131,7 +138,7 @@ This configuration option is slightly misleading. It doesn't disregard the worke
 ```ruby
 class WorkerOne
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
@@ -139,17 +146,17 @@ end
 
 class WorkerTwo
   include Sidekiq::Worker
-  
+
   sidekiq_options unique_across_workers: true, queue: 'default'
 
   def perform(args); end
 end
 
 
-WorkerOne.perform_async(1) 
+WorkerOne.perform_async(1)
 # => 'the jobs unique id'
 
-WorkerTwo.perform_async(1) 
+WorkerTwo.perform_async(1)
 # => nil because WorkerOne just stole the lock
 ```
 
@@ -220,7 +227,7 @@ In the console you should see something like:
 
 ## Conflict Strategy
 
-Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process. 
+Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
 The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
 
@@ -246,9 +253,9 @@ This strategy is intended to be used with `WhileExecuting` and will push the job
 
 This strategy is intended to be used with client locks like `UntilExecuted`.
 It will delete any existing job for these arguments from retry, schedule and
-queue and retry the lock again. 
+queue and retry the lock again.
 
-This is slightly dangerous and should probably only be used for jobs that are 
+This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.
 
 `sidekiq_options lock: :until_executed, on_conflict: :replace`
@@ -322,7 +329,7 @@ end
 
 ### After Unlock Callback
 
-If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that. 
+If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that.
 
 **Exception 1:** UntilExecuting unlocks and calls back before yielding.
 **Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
@@ -391,11 +398,10 @@ require 'sidekiq_unique_jobs/web'
 mount Sidekiq::Web, at: '/sidekiq'
 ```
 
-There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web` 
+There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web`
 already does this.
 
 To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
-
 
 #### Show Unique Digests
 
@@ -413,7 +419,7 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs.
 
-https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
+[Enterprise unique jobs][]
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
@@ -462,12 +468,18 @@ I would strongly suggest you let this gem test uniqueness. If you care about how
 ## Contributing
 
 1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1. Create your feature branch (`git checkout -b my-new-feature`)
+1. Commit your changes (`git commit -am 'Add some feature'`)
+1. Push to the branch (`git push origin my-new-feature`)
+1. Create new Pull Request
 
+## Contributors
 
-## Contributors 
+You can find a list of contributors over on [Contributors][]
 
-You can find a list of contributors over on https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
+[v5.0.10]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
+[v4.0.18]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18
+[Sidekiq requirements]: https://github.com/mperham/sidekiq#requirements
+[Enterprise unique jobs]: https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
+[Contributors]: https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
+[Paypal link https://paypal.me/mhenrixon]: https://paypal.me/mhenrixon

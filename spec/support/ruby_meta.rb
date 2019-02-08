@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'version_check'
+require_relative "version_check"
 
 RSpec.configure do |config|
   config.before do |example|

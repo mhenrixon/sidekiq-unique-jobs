@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
       # Use strategy on conflict
       # @raise [NotImplementedError] needs to be implemented in child class
       def call
-        fail NotImplementedError, 'needs to be implemented in child class'
+        raise NotImplementedError, "needs to be implemented in child class"
       end
 
       def replace?

@@ -2,7 +2,7 @@
 
 # :nocov:
 
-require_relative 'custom_queue_job'
+require_relative "custom_queue_job"
 
 class CustomQueueJobWithFilterMethod < CustomQueueJob
   sidekiq_options lock: :until_executed, unique_args: :args_filter

@@ -3,24 +3,32 @@
 source "https://rubygems.org"
 
 gem "appraisal", "~> 2.2.0"
+gem "rspec-eventually", require: false
 gem "rspec-its", require: false
 gem "rspec-retry", require: false
-gem "rspec-eventually", require: false
 gem "sidekiq", "~> 5.1.0"
 
 platforms :mri_25 do
-  gem "benchmark-ips", require: false
-  gem "fasterer", require: false
-  gem "guard", require: false
-  gem "guard-reek", require: false
-  gem "guard-rspec", require: false
-  gem "guard-rubocop", require: false
-  gem "memory_profiler", require: false
-  gem "pry-byebug", require: false
-  gem "rubocop", require: false
-  gem "rubocop-rspec", require: false
-  gem "simplecov-json", require: false
-  gem "travis", require: false
+  gem "benchmark-ips"
+  gem "fasterer"
+  gem "fuubar"
+  gem "gem-release"
+  gem "github-markup"
+  gem "github_changelog_generator"
+  gem "guard"
+  gem "guard-reek"
+  gem "guard-rspec"
+  gem "guard-rubocop"
+  gem "memory_profiler"
+  gem "pry"
+  gem "rb-readline"
+  gem "redcarpet"
+  gem "reek", ">= 5.3"
+  gem "rubocop"
+  gem "rubocop-rspec"
+  gem "simplecov-json"
+  gem "travis"
+  gem "yard"
 end
 
 gemspec path: "../"

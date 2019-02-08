@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
   let(:strategy)      { described_class.new(item) }
-  let(:unique_digest) { 'uniquejobs:random-digest-value' }
+  let(:unique_digest) { "uniquejobs:random-digest-value" }
   let(:item) do
-    { 'class' => UniqueJobOnConflictReschedule,
-      'unique_digest' => unique_digest,
-      'args' => [1, 2] }
+    { "class" => UniqueJobOnConflictReschedule,
+      "unique_digest" => unique_digest,
+      "args" => [1, 2] }
   end
 
-  describe '#call' do
+  describe "#call" do
     let(:call) { strategy.call }
 
     it do
@@ -19,7 +18,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
     end
   end
 
-  describe '#replace?' do
+  describe "#replace?" do
     subject { strategy.replace? }
 
     it { is_expected.to eq(false) }

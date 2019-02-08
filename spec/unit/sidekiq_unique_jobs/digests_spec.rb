@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
   before do
     (1..10).each do |arg|
@@ -24,13 +23,13 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
     ]
   end
 
-  describe '.all' do
-    subject(:all) { described_class.all(pattern: '*', count: 1000) }
+  describe ".all" do
+    subject(:all) { described_class.all(pattern: "*", count: 1000) }
 
     it { is_expected.to match_array(expected_keys) }
   end
 
-  describe '.del' do
+  describe ".del" do
     subject(:del) { described_class.del(digest: digest, pattern: pattern, count: count) }
 
     let(:digest)  { nil }
@@ -41,33 +40,33 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
       allow(described_class).to receive(:log_info)
     end
 
-    context 'when given a pattern' do
-      let(:pattern) { '*' }
+    context "when given a pattern" do
+      let(:pattern) { "*" }
 
-      it 'deletes all matching digests' do
+      it "deletes all matching digests" do
         expect(del).to eq(10)
         expect(described_class.all).to match_array([])
       end
 
-      it 'logs performance info' do
+      it "logs performance info" do
         del
         expect(described_class)
           .to have_received(:log_info).with(
-            a_string_starting_with('delete_by_pattern(*, count: 1000)')
+            a_string_starting_with("delete_by_pattern(*, count: 1000)")
             .and(matching(/completed in (\d\.\d+)ms/)),
           )
       end
     end
 
-    context 'when given a digest' do
+    context "when given a digest" do
       let(:digest) { expected_keys.last }
 
-      it 'deletes just the specific digest' do
+      it "deletes just the specific digest" do
         expect(del).to eq(9)
         expect(described_class.all).to match_array(expected_keys - [digest])
       end
 
-      it 'logs performance info' do
+      it "logs performance info" do
         del
         expect(described_class).to have_received(:log_info)
           .with(

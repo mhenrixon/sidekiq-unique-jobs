@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sidekiq/api'
+require "sidekiq/api"
 
 module Sidekiq
   class SortedEntry

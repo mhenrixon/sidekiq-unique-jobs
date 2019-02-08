@@ -1,34 +1,33 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
+require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
-  include_context 'with a stubbed locksmith'
+  include_context "with a stubbed locksmith"
   let(:lock)     { described_class.new(item, callback) }
   let(:callback) { -> {} }
 
   let(:item) do
-    { 'jid' => 'maaaahjid',
-      'class' => 'WhileExecutingJob',
-      'lock' => 'while_executing',
-      'args' => [%w[array of arguments]] }
+    { "jid" => "maaaahjid",
+      "class" => "WhileExecutingJob",
+      "lock" => "while_executing",
+      "args" => [%w[array of arguments]] }
   end
 
-  describe '.new' do
+  describe ".new" do
     specify do
       expect { described_class.new(item, callback) }
-        .to change { item['unique_digest'] }
-        .to a_string_ending_with(':RUN')
+        .to change { item["unique_digest"] }
+        .to a_string_ending_with(":RUN")
     end
   end
 
-  describe '#lock' do
+  describe "#lock" do
     subject { lock.lock }
 
     it { is_expected.to eq(true) }
   end
 
-  describe '#execute' do
+  describe "#execute" do
     subject(:execute) { lock.execute }
 
     before do
@@ -41,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
     # it_behaves_like 'an executing lock with error handling'
     # end
 
-    context 'when lock fails' do
+    context "when lock fails" do
       let(:token) { nil }
 
       it do

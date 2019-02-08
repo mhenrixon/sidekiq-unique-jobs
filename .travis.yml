@@ -12,26 +12,33 @@ services:
   - redis-server
 
 before_install:
+  - gem install bundler -v 2.0.1
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
+
 before_script:
-  - ./cc-test-reporter before-build
+  - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter before-build; fi;
+
 script:
   - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
-  - bundle exec rspec
+  - bundle exec rspec --require spec_helper
+
 after_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
+
 rvm:
-  - 2.5.1
-  - 2.4.2
-  - 2.3.2
-  - jruby-9.2.0.0
+  - 2.6.1
+  - 2.4.5
+  - 2.3.8
+  - jruby-9.2.5.0
+
 matrix:
   fast_finish: true
   include:
-    - rvm: 2.5.1
+    - rvm: 2.5.3
       gemfile: gemfiles/sidekiq_develop.gemfile
       env: COV=true
+
 gemfile:
   - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_4.0.gemfile

@@ -2,8 +2,8 @@
 
 # :nocov:
 
-require 'sidekiq'
-require 'sidekiq/testing'
+require "sidekiq"
+require "sidekiq/testing"
 
 module Sidekiq
   def self.use_options(tmp_config = {})
@@ -52,7 +52,7 @@ module Sidekiq
       module Testing
         def clear_all_ext
           clear_all_orig
-          SidekiqUniqueJobs::Util.del('*', 1000)
+          SidekiqUniqueJobs::Util.del("*", 1000)
         end
       end
     end

@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
-require 'sidekiq'
+require "sidekiq"
 
 module SidekiqUniqueJobs
+  #
+  # Provides the sidekiq middleware that makes the gem work
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   module Middleware
     def self.extended(base)
       base.class_eval do
@@ -18,12 +23,12 @@ module SidekiqUniqueJobs
     def configure_server_middleware
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
-          require 'sidekiq_unique_jobs/client/middleware'
+          require "sidekiq_unique_jobs/client/middleware"
           chain.add SidekiqUniqueJobs::Client::Middleware
         end
 
         config.server_middleware do |chain|
-          require 'sidekiq_unique_jobs/server/middleware'
+          require "sidekiq_unique_jobs/server/middleware"
           chain.add SidekiqUniqueJobs::Server::Middleware
         end
       end
@@ -32,7 +37,7 @@ module SidekiqUniqueJobs
     def configure_client_middleware
       Sidekiq.configure_client do |config|
         config.client_middleware do |chain|
-          require 'sidekiq_unique_jobs/client/middleware'
+          require "sidekiq_unique_jobs/client/middleware"
           chain.add SidekiqUniqueJobs::Client::Middleware
         end
       end

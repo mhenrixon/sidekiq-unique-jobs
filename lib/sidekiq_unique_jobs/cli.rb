@@ -1,24 +1,29 @@
 # frozen_string_literal: true
 
-require 'thor'
+require "thor"
 
 module SidekiqUniqueJobs
+  #
+  # Command line interface for unique jobs
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   class Cli < Thor
     def self.banner(command, _namespace = nil, _subcommand = false)
       "jobs #{@package_name} #{command.usage}"
     end
 
-    desc 'keys PATTERN', 'list all unique keys and their expiry time'
-    option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
-    def keys(pattern = '*')
+    desc "keys PATTERN", "list all unique keys and their expiry time"
+    option :count, aliases: :c, type: :numeric, default: 1000, desc: "The max number of keys to return"
+    def keys(pattern = "*")
       keys = Util.keys(pattern, options[:count])
       say "Found #{keys.size} keys matching '#{pattern}':"
       print_in_columns(keys.sort) if keys.any?
     end
 
-    desc 'del PATTERN', 'deletes unique keys from redis by pattern'
-    option :dry_run, aliases: :d, type: :boolean, desc: 'set to false to perform deletion'
-    option :count, aliases: :c, type: :numeric, default: 1000, desc: 'The max number of keys to return'
+    desc "del PATTERN", "deletes unique keys from redis by pattern"
+    option :dry_run, aliases: :d, type: :boolean, desc: "set to false to perform deletion"
+    option :count, aliases: :c, type: :numeric, default: 1000, desc: "The max number of keys to return"
     def del(pattern)
       max_count = options[:count]
       if options[:dry_run]
@@ -30,7 +35,7 @@ module SidekiqUniqueJobs
       end
     end
 
-    desc 'console', 'drop into a console with easy access to helper methods'
+    desc "console", "drop into a console with easy access to helper methods"
     def console
       say "Use `keys '*', 1000 to display the first 1000 unique keys matching '*'"
       say "Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'"
@@ -41,10 +46,10 @@ module SidekiqUniqueJobs
 
     no_commands do
       def console_class
-        require 'pry'
+        require "pry"
         Pry
       rescue LoadError
-        require 'irb'
+        require "irb"
         IRB
       end
     end

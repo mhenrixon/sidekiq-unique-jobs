@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sidekiq_unique_jobs/server/middleware'
+require "sidekiq_unique_jobs/server/middleware"
 
 module SidekiqUniqueJobs
   module Client

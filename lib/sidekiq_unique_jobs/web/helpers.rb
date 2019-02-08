@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   module Web
     module Helpers
-      VIEW_PATH = File.expand_path('../web/views', __dir__)
+      VIEW_PATH = File.expand_path("../web/views", __dir__)
 
       def unique_template(name)
         File.open(File.join(VIEW_PATH, "#{name}.erb")).read
@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
           next unless SAFE_CPARAMS.include?(key)
 
           "#{key}=#{CGI.escape(value.to_s)}"
-        end.compact.join('&')
+        end.compact.join("&")
       end
 
       def redirect_to(subpath)
