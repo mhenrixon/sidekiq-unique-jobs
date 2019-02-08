@@ -3,7 +3,7 @@
 desc "Generate a Changelog"
 task :changelog do
   # rubocop:disable Style/MutableConstant
-  CHANGELOG_COMMAND ||= %w[
+  CHANGELOG_CMD ||= %w[
     github_changelog_generator
     -u
     mhenrixon
@@ -12,7 +12,12 @@ task :changelog do
     --no-verbose
     --token
   ]
+  ADD_CHANGELOG_CMD      ||= "git add --all"
+  COMMIT_CHANGELOG_CMD   ||= "git commit -a -m 'Update changelog'"
   # rubocop:enable Style/MutableConstant
 
-  sh(*CHANGELOG_COMMAND.push(ENV["CHANGELOG_GITHUB_TOKEN"]))
+  sh("git checkout master")
+  sh(*CHANGELOG_CMD.push(ENV["CHANGELOG_GITHUB_TOKEN"]))
+  sh(ADD_CHANGELOG_CMD)
+  sh(COMMIT_CHANGELOG_CMD)
 end
