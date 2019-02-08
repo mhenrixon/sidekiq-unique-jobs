@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:unique_args)  { described_class.new(item) }
   let(:worker_class) { UntilExecutedJob }
@@ -96,6 +94,9 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
   describe "#unique_args_enabled?" do
     subject(:unique_args_enabled?) { unique_args.unique_args_enabled? }
+
+    shared_examples "" do
+    end
 
     with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]["test"] }) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do

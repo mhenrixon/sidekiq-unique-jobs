@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 # rubocop:disable RSpec/FilePath, RSpec/DescribeMethod
 RSpec.describe SidekiqUniqueJobs::Server::Middleware, "unique: :until_and_while_executing", redis: :redis do
   let(:server) { described_class.new }
@@ -38,9 +36,13 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, "unique: :until_and_while_
   let(:version_run_key)   { "uniquejobs:f07093737839f88af8593c945143574d:RUN:VERSION" }
 
   context "when item_one is locked" do
+    let(:pushed_jid) { push_item(item_one) }
+
     before do
-      expect(push_item(item_one)).to eq(jid_one)
+      pushed_jid
     end
+
+    specify { expect(pushed_jid).to eq(jid_one) }
 
     context "with a lock_timeout of 0" do
       let(:lock_timeout) { 0 }

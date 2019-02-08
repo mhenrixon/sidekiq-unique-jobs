@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::OnConflict do
   describe "::STRAGEGIES" do
     subject { described_class::STRATEGIES }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:item_hash) do
     {
@@ -35,16 +33,17 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   end
 
   shared_context "with an old lock" do
-    before do
-      result = SidekiqUniqueJobs::Scripts.call(
+    let!(:old_lock) do
+      SidekiqUniqueJobs::Scripts.call(
         :acquire_lock,
         nil,
         keys: [unique_digest],
         argv: [jid, 7200],
       )
-      expect(result).to eq(1)
-      expect(described_class.keys).to include(unique_digest)
     end
+
+    specify { expect(old_lock).to eq(1) }
+    specify { expect(described_class.keys).to include(unique_digest) }
   end
 
   describe ".keys" do

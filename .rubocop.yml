@@ -19,6 +19,10 @@ AllCops:
     - "Gemfile.lock"
     - "**/*.erb"
 
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*"
+
 Lint/HandleExceptions:
   Enabled: true
 
@@ -43,6 +47,7 @@ Metrics/BlockLength:
     - "**/spec/**/*.rb"
     - "**/*.rake"
     - "Rakefile"
+    - "*.gemspec"
 
 Metrics/PerceivedComplexity:
   Max: 8
@@ -55,6 +60,8 @@ Naming/ConstantName:
 
 Naming/FileName:
   Enabled: true
+  Exclude:
+    - lib/sidekiq-unique-jobs.rb
 
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
@@ -63,14 +70,26 @@ Naming/UncommunicativeMethodParamName:
 RSpec/AlignLeftLetBrace:
   Enabled: true
 
+RSpec/DescribeClass:
+  Exclude:
+    - spec/unit/sidekiq_unique_jobs/sidekiq/api_spec.rb
+    - spec/unit/sidekiq_unique_jobs/core_ext_spec.rb
+
 RSpec/ExampleLength:
   Enabled: false
 
 RSpec/ExpectActual:
   Enabled: false
 
+RSpec/ExpectChange:
+  Exclude:
+    - spec/integration/sidekiq_unique_jobs/lock/**/*_spec.rb
+
 RSpec/FilePath:
   Enabled: true
+RSpec/MessageSpies:
+  Exclude:
+    - spec/unit/sidekiq_unique_jobs/scripts_spec.rb
 
 RSpec/MultipleExpectations:
   Enabled: false
@@ -79,8 +98,9 @@ RSpec/NestedGroups:
   Max: 4
   Enabled: true
 
-Style/FrozenStringLiteralComment:
-  Enabled: true
+RSpec/RepeatedExample:
+  Exclude:
+    - spec/unit/sidekiq_unique_jobs/unique_args_spec.rb
 
 Style/Documentation:
   Enabled: true
@@ -94,6 +114,9 @@ Style/Documentation:
     - "lib/sidekiq_unique_jobs/web/**/*"
     - "lib/sidekiq_unique_jobs/on_conflict.rb"
     - "lib/sidekiq_unique_jobs/timeout.rb"
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
 
 Style/GlobalVars:
   Enabled: true

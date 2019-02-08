@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe Sidekiq::RetrySet, redis: :redis do
   let(:locksmith)       { SidekiqUniqueJobs::Locksmith.new(item) }
   let(:args)            { [1, 2] }
@@ -29,19 +27,27 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
 
   before do
     zadd("retry", retry_at.to_s, Sidekiq.dump_json(item))
-    expect(retry_count).to eq(1)
   end
 
+  specify { expect(retry_count).to eq(1) }
+
   context "when a job is locked" do
+    let(:locked_jid) { locksmith.lock }
+
     before do
-      expect(locksmith.lock).to eq(jid)
+      locked_jid
+    end
+
+    specify { expect(locked_jid).to eq(jid) }
+    specify do
       expect(unique_keys).to match_array(%W[
                                            #{unique_digest}:EXISTS
                                            #{unique_digest}:GRABBED
                                          ])
-      expect(ttl("#{unique_digest}:EXISTS")).to eq(lock_expiration)
-      expect(ttl("#{unique_digest}:GRABBED")).to eq(-1)
     end
+
+    specify { expect(ttl("#{unique_digest}:EXISTS")).to eq(lock_expiration) }
+    specify { expect(ttl("#{unique_digest}:GRABBED")).to eq(-1) }
 
     it "can be put back on queue" do
       expect { described_class.new.retry_all }

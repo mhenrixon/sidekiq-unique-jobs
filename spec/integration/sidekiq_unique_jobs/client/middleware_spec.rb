@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1 do
   describe "when a job is already scheduled" do
     it "processes jobs properly" do
@@ -181,7 +179,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
   end
 
   it "logs duplicate payload when config turned on" do
-    expect(Sidekiq.logger).to receive(:warn).with(/^payload is not unique/)
+    allow(Sidekiq.logger).to receive(:warn)
 
     with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: true) do
       2.times do
@@ -190,11 +188,11 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expect(queue_count("customqueue")).to eq(1)
     end
+    expect(Sidekiq.logger).to have_received(:warn).with(/^payload is not unique/)
   end
 
   it "does not log duplicate payload when config turned off" do
-    expect(SidekiqUniqueJobs.logger).not_to receive(:warn).with(/^payload is not unique/)
-
+    allow(SidekiqUniqueJobs.logger).to receive(:warn)
     with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: false) do
       2.times do
         Sidekiq::Client.push("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
@@ -202,5 +200,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expect(queue_count("customqueue")).to eq(1)
     end
+    expect(SidekiqUniqueJobs.logger).not_to have_received(:warn).with(/^payload is not unique/)
   end
 end

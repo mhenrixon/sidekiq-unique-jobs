@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 # rubocop:disable RSpec/FilePath
 RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith_one)   { described_class.new(lock_item) }
@@ -48,21 +46,21 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   end
 
   context "with a legacy lock" do
-    before do
-      result = SidekiqUniqueJobs::Scripts.call(
+    let(:lock_value) { jid_one }
+
+    let!(:old_lock) do
+      SidekiqUniqueJobs::Scripts.call(
         :acquire_lock,
         redis_pool,
         keys: [unique_digest],
         argv: [lock_value, lock_expiration],
       )
-
-      expect(result).to eq(1)
-      expect(unique_keys).to include(unique_digest)
     end
 
-    context "when lock_expiration is unset" do
-      let(:lock_value) { jid_one }
+    specify { expect(old_lock).to eq(1) }
+    specify { expect(unique_keys).to include(unique_digest) }
 
+    context "when lock_expiration is unset" do
       it "unlocks immediately" do
         locksmith_one.unlock!(jid_one)
 
@@ -81,7 +79,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     end
 
     context "when lock_expiration is set" do
-      let(:lock_value)      { jid_one }
       let(:lock_expiration) { 10 }
 
       it "can signal to expire the lock after 10" do

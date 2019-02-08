@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 require "thor/runner"
 require "irb"
 
@@ -114,17 +112,21 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
   end
 
-  describe ".console", ruby_ver: ">= 2.5.1" do
+  describe ".console" do
     subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
 
+    let(:console_class) { defined?(Pry) ? Pry : IRB }
+
     specify do
-      expect(Object).to receive(:include).with(SidekiqUniqueJobs::Util).and_return(true)
-      allow(Pry).to receive(:start).and_return(true)
+      allow(Object).to receive(:include)
+      allow(console_class).to receive(:start).and_return(true)
       expect(console).to eq <<~HEADER
         Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
         Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
         Use `del '*', 1000, false to delete the first 1000 keys matching '*'
       HEADER
+
+      expect(Object).to have_received(:include).with(SidekiqUniqueJobs::Util)
     end
   end
 end

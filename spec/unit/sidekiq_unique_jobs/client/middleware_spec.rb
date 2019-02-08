@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 require "sidekiq/worker"
 require "sidekiq-unique-jobs"
 

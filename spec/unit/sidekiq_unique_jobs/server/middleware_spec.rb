@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 # rubocop:disable RSpec/InstanceVariable
 RSpec.describe SidekiqUniqueJobs::Server::Middleware do
   let(:middleware) { described_class.new }

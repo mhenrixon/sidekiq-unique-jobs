@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SpawnSimpleWorker do
   it_behaves_like "sidekiq with options" do
     let(:options) do
@@ -19,9 +17,13 @@ RSpec.describe SpawnSimpleWorker do
   describe "#perform" do
     let(:args) { %w[one two] }
 
+    before do
+      allow(SimpleWorker).to receive(:perform_async).with(args).and_return(true)
+    end
+
     it "spawns another job" do
-      expect(SimpleWorker).to receive(:perform_async).with(args).and_return(true)
       described_class.new.perform(args)
+      expect(SimpleWorker).to have_received(:perform_async).with(args)
     end
   end
 end

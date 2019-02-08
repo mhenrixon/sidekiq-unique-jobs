@@ -2,7 +2,7 @@
 
 require "bundler/setup"
 
-if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.5.1"
+if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.5" && RUBY_VERSION < "2.6"
   require "simplecov" unless %w[false 0].include?(ENV["COV"])
 
   begin
@@ -17,6 +17,7 @@ require "rspec/its"
 require "awesome_print"
 
 require "sidekiq"
+require "sidekiq/api"
 require "sidekiq/util"
 require "sidekiq-unique-jobs"
 require "timecop"
