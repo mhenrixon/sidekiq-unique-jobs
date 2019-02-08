@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:unique_args)  { described_class.new(item) }

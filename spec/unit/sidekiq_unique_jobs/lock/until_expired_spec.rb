@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   include_context "with a stubbed locksmith"

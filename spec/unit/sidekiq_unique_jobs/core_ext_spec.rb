@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 RSpec.describe "core_ext.rb" do
   describe Hash do
