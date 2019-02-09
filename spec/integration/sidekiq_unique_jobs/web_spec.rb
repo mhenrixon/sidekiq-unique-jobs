@@ -66,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
     expect(SidekiqUniqueJobs::Digests.all).to match_array([another_digest])
   end
 
-  it 'can delete all digests' do
+  it "can delete all digests" do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
     expect(MyUniqueJob.perform_async(2, 3)).not_to eq(nil)
 
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
 
     follow_redirect!
 
-    expect(last_request.url).to end_with('/unique_digests')
+    expect(last_request.url).to end_with("/unique_digests")
     expect(last_response.body).not_to match("/unique_digests/#{digest}")
     expect(last_response.body).not_to match("/unique_digests/#{another_digest}")
 
