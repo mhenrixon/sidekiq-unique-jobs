@@ -1,1 +1,1 @@
---no-private --output-dir docs lib/**/*.rb --markup-provider=redcarpet --markup=markdown - README.md
+--no-private --markup-provider=redcarpet --markup=markdown lib/**/*.rb - README.md
