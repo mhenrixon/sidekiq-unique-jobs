@@ -1,5 +1,17 @@
 # Change Log
 
+## [v6.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.9) (2019-02-11)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v...v6.0.9)
+
+## [v](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v) (2019-02-11)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.8...v)
+
+**Implemented enhancements:**
+
+- Delete all locks button [\#357](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/357)
+- John denisov add delete all button to web [\#370](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/370) ([mhenrixon](https://github.com/mhenrixon))
+- Various upgrades [\#366](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/366) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v6.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.8) (2019-01-10)
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.7...v6.0.8)
 
