@@ -1,10 +1,7 @@
 # Change Log
 
 ## [v6.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.9) (2019-02-11)
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v...v6.0.9)
-
-## [v](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v) (2019-02-11)
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.8...v)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.8...v6.0.9)
 
 **Implemented enhancements:**
 
