@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "yaml" if RUBY_VERSION.include?("2.0.0")
 require "forwardable"
 require "concurrent/mutable_struct"
-require "ostruct"
 
 require "sidekiq_unique_jobs/version"
 require "sidekiq_unique_jobs/constants"
