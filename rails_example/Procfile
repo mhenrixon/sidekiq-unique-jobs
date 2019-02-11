@@ -1,2 +1,0 @@
-web:    env RAILS_ENV=development bundle exec puma -C config/puma.rb
-worker: env RAILS_ENV=development bundle exec sidekiq -C config/sidekiq.yml
