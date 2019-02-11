@@ -25,5 +25,5 @@ task :release do
   sh("./update_docs.sh")
   sh("gem release --tag --push")
   Rake::Task["changelog"].invoke
-  sh("gem bump")
+  sh("gem bump --file lib/sidekiq_unique_jobs/version.rb")
 end
