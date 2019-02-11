@@ -15,6 +15,10 @@ rake yard
 
 git checkout gh-pages
 
+if [[ "$(git branch | grep \* | cut -d ' ' -f2)" != "gh-pages" ]]; then
+  git checkout -b gh-pages
+fi;
+
 echo "Cleaning up current documentation"
 find . ! -path '*/.git*' ! -path '*/doc*' ! -path '*/update_docs.sh*' ! -path '*/_config.yml*' ! -path '*/_index.html*' ! -path '.' | xargs rm -rf
 
