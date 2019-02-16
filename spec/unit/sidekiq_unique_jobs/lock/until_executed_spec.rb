@@ -18,12 +18,24 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
     it_behaves_like "an executing lock with error handling" do
       context "when not initially locked?" do
         let(:initially_locked?) { false }
+        let(:unique_digest) { "uniquejobs:1b9f2f0624489ccf4e07ac88beae6ce0" }
 
         it "returns without yielding" do
           execute
 
           expect(callback).not_to have_received(:call)
           expect(block).not_to have_received(:call)
+        end
+
+        it "logs the digest key locking the job" do
+          execute
+
+          expect(lock).to have_received(:log_warn)
+            .with("the unique_key: #{unique_digest} is not locked, allowing job to silently complete")
+        end
+
+        it "returns nil" do
+          expect(execute).to be nil
         end
       end
 
