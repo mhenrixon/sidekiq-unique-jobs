@@ -13,12 +13,12 @@ Gem::Specification.new do |spec|
   spec.homepage    = "https://mhenrixon.github.io/sidekiq-unique-jobs"
   spec.license     = "MIT"
   spec.summary     = <<~SUMMARY
-                       Sidekiq middleware that prevents duplicates jobs
-                     SUMMARY
+    Sidekiq middleware that prevents duplicates jobs
+  SUMMARY
   spec.description = <<~DESCRIPTION
-                       Prevents simultaneous Sidekiq jobs with the same unique arguments to run.
-                       Highly configurable to suite your specific needs.
-                     DESCRIPTION
+    Prevents simultaneous Sidekiq jobs with the same unique arguments to run.
+    Highly configurable to suite your specific needs.
+  DESCRIPTION
 
   if spec.respond_to?(:metadata)
     spec.metadata["homepage_uri"]      = spec.homepage
@@ -53,10 +53,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "timecop", "~> 0.9"
 
   # ===== Documentation =====
-  spec.add_development_dependency "yard",          "~> 0.9.18"
-  spec.add_development_dependency "redcarpet",     "~> 3.4"
   spec.add_development_dependency "github-markup", "~> 3.0"
   spec.add_development_dependency "github_changelog_generator", "~> 1.14"
+  spec.add_development_dependency "redcarpet", "~> 3.4"
+  spec.add_development_dependency "yard", "~> 0.9.18"
 
   # ===== Release Management =====
   spec.add_development_dependency "gem-release", ">= 2.0"
