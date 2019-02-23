@@ -363,7 +363,7 @@ end
 
 ### Cleanup Dead Locks
 
-For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required per worker class.
+For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required per worker class. This is deprecated in Sidekiq 6.0
 
 ```ruby
 class MyWorker

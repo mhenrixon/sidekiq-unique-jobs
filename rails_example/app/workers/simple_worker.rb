@@ -9,7 +9,7 @@ class SimpleWorker
                   end)
 
   def perform(some_args)
-    Sidekiq::Logging.with_context(self.class.name) do
+    SidekiqUniqueJobs.with_context(self.class.name) do
       SidekiqUniqueJobs.logger.debug { "#{__method__}(#{some_args})" }
     end
     sleep 1

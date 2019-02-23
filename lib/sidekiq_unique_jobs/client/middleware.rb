@@ -39,7 +39,7 @@ module SidekiqUniqueJobs
 
       def locked?
         SidekiqUniqueJobs::Job.add_uniqueness(item)
-        Sidekiq::Logging.with_context(logging_context(self.class, item)) do
+        SidekiqUniqueJobs.with_context(logging_context(self.class, item)) do
           locked = lock.lock
           warn_about_duplicate unless locked
           locked

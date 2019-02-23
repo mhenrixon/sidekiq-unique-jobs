@@ -23,7 +23,7 @@ module SidekiqUniqueJobs
         return yield if unique_disabled?
 
         SidekiqUniqueJobs::Job.add_uniqueness(item)
-        Sidekiq::Logging.with_context(logging_context(self.class, item)) do
+        SidekiqUniqueJobs.with_context(logging_context(self.class, item)) do
           lock.execute do
             yield
           end
