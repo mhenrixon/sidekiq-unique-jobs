@@ -252,15 +252,21 @@
 16
 17
 18
-19</pre>
+19
+20
+21
+22</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_executed.rb', line 15</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locked?'>locked?</span>
-
-  <span class='id identifier rubyid_with_cleanup'>with_cleanup</span> <span class='lbrace'>{</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_locked?'>locked?</span>
+    <span class='id identifier rubyid_with_cleanup'>with_cleanup</span> <span class='lbrace'>{</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_log_warn'>log_warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>the unique_key: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST_KEY</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not locked, allowing job to silently complete</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>nil</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -272,7 +278,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Feb 11 11:38:39 2019 by
+  Generated on Sat Feb 23 23:05:02 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.18 (ruby-2.4.4).
 </div>
