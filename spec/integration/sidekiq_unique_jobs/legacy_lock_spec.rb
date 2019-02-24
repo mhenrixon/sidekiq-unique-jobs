@@ -57,6 +57,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       )
     end
 
+    it "creates grabbed keys when needed" do
+      expect { locksmith_one.locked? }.to change { unique_keys }
+        .to include("uniquejobs:test_mutex_key:GRABBED")
+    end
+
     specify { expect(old_lock).to eq(1) }
     specify { expect(unique_keys).to include(unique_digest) }
 
@@ -80,12 +85,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     context "when lock_expiration is set" do
       let(:lock_expiration) { 10 }
-
-      it "can signal to expire the lock after 10" do
-        locksmith_one.unlock(jid_one)
-
-        expect(ttl(unique_digest)).to be_within(1).of(10)
-      end
 
       it "cannot soft delete the lock" do
         expect(locksmith_one.delete).to eq(nil)

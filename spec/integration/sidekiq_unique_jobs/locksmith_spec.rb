@@ -21,12 +21,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
   shared_examples_for "a lock" do
-    it "does not exist from the start" do
-      expect(locksmith_one.exists?).to eq(false)
-      locksmith_one.lock
-      expect(locksmith_one.exists?).to eq(true)
-    end
-
     it "is unlocked from the start" do
       expect(locksmith_one.locked?).to eq(false)
     end
@@ -102,12 +96,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         expect(locksmith_one.locked?).to be true
       end
       expect(locksmith_one.locked?).to eq false
-    end
-
-    it "does something" do
-      expect(locksmith_one.available_count).to eq(1)
-      locksmith_one.lock(0)
-      expect(locksmith_one.available_count).to eq(0)
     end
   end
 

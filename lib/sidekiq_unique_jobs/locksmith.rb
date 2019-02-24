@@ -14,27 +14,13 @@ module SidekiqUniqueJobs
     # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     def initialize(item, redis_pool = nil)
-      @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+      # @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @ttl           = item[LOCK_EXPIRATION_KEY]
       @jid           = item[JID_KEY]
       @unique_digest = item[UNIQUE_DIGEST_KEY]
       @lock_type     = item[LOCK_KEY]
       @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
-    end
-
-    # Checks if the exists key is created in redis
-    # @return [true, false]
-    def exists?
-      redis(redis_pool) { |conn| conn.exists(exists_key) }
-    end
-
-    # The number of available resourced for this lock
-    # @return [Integer] the number of available resources
-    def available_count
-      return concurrency unless exists?
-
-      redis(redis_pool) { |conn| conn.llen(available_key) }
     end
 
     # Deletes the lock unless it has a ttl set
@@ -100,12 +86,19 @@ module SidekiqUniqueJobs
     # @return [true, false]
     def locked?(token = nil)
       token ||= jid
+      Scripts.call(
+        :convert_legacy_lock,
+        redis_pool,
+        keys: [grabbed_key, unique_digest],
+        argv: [token],
+      )
+
       redis(redis_pool) { |conn| conn.hexists(grabbed_key, token) }
     end
 
     private
 
-    attr_reader :concurrency, :unique_digest, :ttl, :jid, :redis_pool, :lock_type
+    attr_reader :unique_digest, :ttl, :jid, :redis_pool, :lock_type
 
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
