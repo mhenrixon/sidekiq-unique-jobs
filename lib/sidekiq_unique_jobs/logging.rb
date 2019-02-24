@@ -51,11 +51,11 @@ module SidekiqUniqueJobs
     end
 
     def logging_context(middleware_class, job_hash)
+      digest = job_hash["unique_digest"]
       if defined?(Sidekiq::Logging)
-        digest = job_hash["unique_digest"]
         "#{middleware_class} #{"DIG-#{digest}" if digest}"
       else
-        { middleware: middleware_class, unique_digest: job_hash["unique_digest"] }
+        { middleware: middleware_class, unique_digest: digest }
       end
     end
   end

@@ -39,15 +39,6 @@ RSpec.describe ExpiringJob do
           expect(1).to be_enqueued_in("customqueue2")
         end
       end
-
-      it "sets keys to expire as per configuration" do
-        lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
-        unique_keys.each do |key|
-          next if key.end_with?(":GRABBED")
-
-          expect(ttl(key)).to be_within(1).of(lock_expiration + 60)
-        end
-      end
     end
 
     context "when job is pushed" do
@@ -72,15 +63,6 @@ RSpec.describe ExpiringJob do
         with_sidekiq_options_for(described_class, queue: "customqueue2") do
           described_class.perform_async(1, 2)
           expect(1).to be_enqueued_in("customqueue2")
-        end
-      end
-
-      it "sets keys to expire as per configuration" do
-        lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
-        unique_keys.each do |key|
-          next if key.end_with?(":GRABBED")
-
-          expect(ttl(key)).to be_within(1).of(lock_expiration)
         end
       end
     end

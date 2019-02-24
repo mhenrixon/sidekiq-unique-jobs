@@ -5,19 +5,19 @@ local version_key   = KEYS[4]
 local unique_keys   = KEYS[5]
 local unique_digest = KEYS[6] -- TODO: Legacy support (Remove in v6.1)
 
-local token      = ARGV[1]
-local expiration = tonumber(ARGV[2])
+local token = ARGV[1]
+local ttl   = tonumber(ARGV[2])
+local lock  = ARGV[3]
 
-redis.call('HDEL', grabbed_key, token)
 redis.call('SREM', unique_keys, unique_digest)
 
-if expiration then
-  redis.log(redis.LOG_DEBUG, "signal_locks.lua - expiring stale locks")
+if ttl then
   redis.call('SREM', unique_keys, unique_digest)
-  redis.call('EXPIRE', exists_key, expiration)
-  redis.call('EXPIRE', available_key, expiration)
-  redis.call('EXPIRE', version_key, expiration)   -- TODO: Legacy support (Remove in v6.1)
-  redis.call('EXPIRE', unique_digest, expiration) -- TODO: Legacy support (Remove in v6.1)
+  redis.call('EXPIRE', exists_key, ttl)
+  redis.call('EXPIRE', grabbed_key, ttl)
+  redis.call('EXPIRE', available_key, ttl)
+  redis.call('EXPIRE', version_key, ttl)   -- TODO: Legacy support (Remove in v6.1)
+  redis.call('EXPIRE', unique_digest, ttl) -- TODO: Legacy support (Remove in v6.1)
 else
   redis.call('DEL', exists_key)
   redis.call('SREM', unique_keys, unique_digest)
@@ -28,6 +28,7 @@ else
   redis.call('DEL', unique_digest)  -- TODO: Legacy support (Remove in v6.1)
 end
 
+redis.call('HDEL', grabbed_key, token)
 local count = redis.call('LPUSH', available_key, token)
 redis.call('EXPIRE', available_key, 5)
 return count

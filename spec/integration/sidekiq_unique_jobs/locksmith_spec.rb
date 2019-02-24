@@ -8,12 +8,14 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:jid_one)         { "maaaahjid" }
   let(:jid_two)         { "jidmayhem" }
   let(:lock_expiration) { nil }
+  let(:lock_type)       { "until_executed" }
   let(:unique_digest)   { "uniquejobs:randomvalue" }
   let(:item_one) do
     {
       "jid" => jid_one,
       "unique_digest" => unique_digest,
       "lock_expiration" => lock_expiration,
+      "lock" => lock_type,
     }
   end
   let(:item_two) { item_one.merge("jid" => jid_two) }
@@ -111,40 +113,64 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
   describe "lock with expiration" do
     let(:lock_expiration) { 3 }
+    let(:lock_type)       { :while_executing }
 
     it_behaves_like "a lock"
 
-    it "creates the expected keys" do
-      locksmith_one.lock
+    context "when lock_type is until_expired" do
+      let(:lock_type) { :until_expired }
 
-      expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
+      it "prevents other processes from locking" do
+        locksmith_one.lock
 
-      # PLEASE keep this spec. It verifies that the next lock
-      #   doesn't persist the exist_key of another lock
-      sleep 1
+        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
 
-      expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
-      expect(locksmith_two.lock(0)).to eq(nil)
-      expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
+        # PLEASE keep this spec. It verifies that the next lock
+        #   doesn't persist the exist_key of another lock
+        sleep 1
 
-      expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
-      expect(unique_keys).to match_array(%w[
-                                           uniquejobs:randomvalue:EXISTS
-                                           uniquejobs:randomvalue:GRABBED
-                                         ])
+        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
+        expect(locksmith_two.lock(0)).to eq(nil)
+        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
+
+        expect(unique_digests).to match_array([])
+        expect(unique_keys).to match_array(%w[
+                                             uniquejobs:randomvalue:EXISTS
+                                             uniquejobs:randomvalue:GRABBED
+                                           ])
+      end
+
+      it "expires the expected keys" do
+        locksmith_one.lock
+        expect(unique_digests).to match_array([])
+        expect(unique_keys).to match_array(%w[
+                                             uniquejobs:randomvalue:EXISTS
+                                             uniquejobs:randomvalue:GRABBED
+                                           ])
+
+        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
+        expect(ttl("uniquejobs:randomvalue:GRABBED")).to eq(3)
+      end
     end
 
-    it "expires the expected keys" do
-      locksmith_one.lock
-      expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
-      expect(unique_keys).to match_array(%w[
-                                           uniquejobs:randomvalue:EXISTS
-                                           uniquejobs:randomvalue:GRABBED
-                                         ])
-      locksmith_one.unlock
+    context "when lock_type is anything else than until_expired" do
+      let(:lock_type) { :until_executed }
 
-      expect(unique_digests).to match_array([])
-      expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
+      it "expires the expected keys" do
+        locksmith_one.lock
+        expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
+        expect(unique_keys).to match_array(%w[
+                                             uniquejobs:randomvalue:EXISTS
+                                             uniquejobs:randomvalue:GRABBED
+                                           ])
+        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(-1)
+        expect(ttl("uniquejobs:randomvalue:GRABBED")).to eq(-1)
+
+        locksmith_one.unlock
+
+        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
+        expect(ttl("uniquejobs:randomvalue:GRABBED")).to eq(-2)
+      end
     end
 
     it "deletes the expected keys" do
