@@ -45,6 +45,7 @@ RSpec.describe UntilExpiredJob do
         lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
         unique_keys.each do |key|
           next if key.include?(":GRABBED")
+
           expect(ttl(key)).to be_within(1).of(lock_expiration + 60)
         end
       end
@@ -79,6 +80,7 @@ RSpec.describe UntilExpiredJob do
         lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
         unique_keys.each do |key|
           next if key.include?(":GRABBED")
+
           expect(ttl(key)).to be_within(1).of(lock_expiration)
         end
       end

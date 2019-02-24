@@ -14,10 +14,11 @@ module SidekiqUniqueJobs
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     def initialize(item, redis_pool = nil)
       @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @expiration    = item[LOCK_EXPIRATION_KEY]
+      @ttl           = item[LOCK_EXPIRATION_KEY]
       @jid           = item[JID_KEY]
       @unique_digest = item[UNIQUE_DIGEST_KEY]
       @lock_type     = item[LOCK_KEY]
+      @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
     end
 
@@ -35,14 +36,14 @@ module SidekiqUniqueJobs
       redis(redis_pool) { |conn| conn.llen(available_key) }
     end
 
-    # Deletes the lock unless it has an expiration set
+    # Deletes the lock unless it has a ttl set
     def delete
-      return if expiration
+      return if ttl
 
       delete!
     end
 
-    # Deletes the lock regardless of if it has an expiration set
+    # Deletes the lock regardless of if it has a ttl set
     def delete!
       Scripts.call(
         :delete,
@@ -59,7 +60,7 @@ module SidekiqUniqueJobs
     def lock(timeout = nil, &block)
       Scripts.call(:lock, redis_pool,
                    keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
-                   argv: [jid, expiration, lock_type])
+                   argv: [jid, ttl, lock_type])
 
       grab_token(timeout) do |token|
         touch_grabbed_token(token)
@@ -88,7 +89,7 @@ module SidekiqUniqueJobs
         :unlock,
         redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
-        argv: [token, expiration, lock_type],
+        argv: [token, ttl, lock_type],
       )
     end
 
@@ -103,7 +104,7 @@ module SidekiqUniqueJobs
 
     private
 
-    attr_reader :concurrency, :unique_digest, :expiration, :jid, :redis_pool, :lock_type
+    attr_reader :concurrency, :unique_digest, :ttl, :jid, :redis_pool, :lock_type
 
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
@@ -119,7 +120,10 @@ module SidekiqUniqueJobs
     end
 
     def touch_grabbed_token(token)
-      redis(redis_pool) { |conn| conn.hset(grabbed_key, token, current_time.to_f) }
+      redis(redis_pool) do |conn|
+        conn.hset(grabbed_key, token, current_time.to_f)
+        conn.expire(grabbed_key, ttl) if ttl && lock_type == :until_expired
+      end
     end
 
     def return_token_or_block_value(token)
