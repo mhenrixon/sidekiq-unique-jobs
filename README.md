@@ -94,15 +94,13 @@ See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/
 
 ### Lock Expiration
 
-This is probably not the configuration option you want...
+Lock expiration is used for two things. For the `UntilExpired` job releases the lock upon expiry. This is done from the client.
 
-Since the client and the server are disconnected and not running inside the same process, setting a lock expiration is probably not what you want. Any keys that are used by this gem WILL be removed at the time of the expiration. For jobs that are scheduled in the future the key will expire when that job is scheduled + whatever expiration you have set.
-
-In previous versions there was a default expiration of 30 minutes which didn't work for a lot of long running jobs. Since version 6 there will be no expiration of any jobs from the default configuration. Please don't use `lock_expiration` unless you really know what you are doing.
+Since v6.0.11 the other locks will expire after the server is done processing.
 
 ```ruby
 sidekiq_options lock_expiration: nil # default - don't expire keys
-sidekiq_options lock_expiration: 20.days # expire this lock in 20 days
+sidekiq_options lock_expiration: 20.days.to_i # expire this lock in 20 days
 ```
 
 ### Lock Timeout
