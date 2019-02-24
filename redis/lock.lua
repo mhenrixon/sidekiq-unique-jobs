@@ -19,11 +19,8 @@ local function current_time()
   return number
 end
 
--- redis.log(redis.LOG_DEBUG, "create.lua - investigate possibility of locking jid: " .. job_id)
-
-local stored_token  = redis.call('GET', exists_key)
+local stored_token = redis.call('GET', exists_key)
 if stored_token and stored_token ~= job_id then
-  -- redis.log(redis.LOG_DEBUG, "create.lua - jid: " .. job_id .. " - returning existing jid: " .. stored_token)
   return stored_token
 end
 
