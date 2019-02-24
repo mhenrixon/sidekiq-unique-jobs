@@ -22,7 +22,7 @@ require "sidekiq-unique-jobs"
 require "timecop"
 require "sidekiq_unique_jobs/testing"
 
-Sidekiq.logger = Logger.new("/dev/null")
+Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}")
 
 require "sidekiq/redis_connection"

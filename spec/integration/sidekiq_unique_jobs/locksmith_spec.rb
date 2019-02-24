@@ -6,9 +6,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith_two)   { described_class.new(item_two) }
 
   let(:jid_one)         { "maaaahjid" }
-  let(:jid_two)           { "jidmayhem" }
-  let(:lock_expiration)   { nil }
-  let(:unique_digest)     { "uniquejobs:randomvalue" }
+  let(:jid_two)         { "jidmayhem" }
+  let(:lock_expiration) { nil }
+  let(:unique_digest)   { "uniquejobs:randomvalue" }
   let(:item_one) do
     {
       "jid" => jid_one,

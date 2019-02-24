@@ -33,6 +33,14 @@ module SidekiqUniqueJobs
     config.logger
   end
 
+  def with_context(context, &block)
+    if logger.respond_to?(:with_context)
+      logger.with_context(context, &block)
+    elsif defined?(Sidekiq::Logging)
+      Sidekiq::Logging.with_context(context, &block)
+    end
+  end
+
   # Set a new logger
   # @param [Logger] other a new logger
   def logger=(other)

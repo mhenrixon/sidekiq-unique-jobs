@@ -1,5 +1,16 @@
 # Change Log
 
+## [v6.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.10) (2019-02-23)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.9...v6.0.10)
+
+**Closed issues:**
+
+- Unsure of sane defaults [\#372](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/372)
+
+**Merged pull requests:**
+
+- Log job silently complete [\#371](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/371) ([tadejm](https://github.com/tadejm))
+
 ## [v6.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.9) (2019-02-11)
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.8...v6.0.9)
 
