@@ -117,7 +117,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it_behaves_like "a lock"
 
-
     context "when lock_type is until_expired" do
       let(:lock_type) { :until_expired }
 
