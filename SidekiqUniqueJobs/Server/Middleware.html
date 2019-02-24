@@ -329,7 +329,7 @@
   <span class='kw'>return</span> <span class='kw'>yield</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_disabled?'>unique_disabled?</span>
 
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_uniqueness'><span class='object_link'><a href="../Job.html#add_uniqueness-instance_method" title="SidekiqUniqueJobs::Job#add_uniqueness (method)">add_uniqueness</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>Logging</span><span class='period'>.</span><span class='id identifier rubyid_with_context'>with_context</span><span class='lparen'>(</span><span class='id identifier rubyid_logging_context'>logging_context</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>do</span>
+  <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_with_context'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#with_context-class_method" title="SidekiqUniqueJobs.with_context (method)">with_context</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_logging_context'>logging_context</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_lock'>lock</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='kw'>do</span>
       <span class='kw'>yield</span>
     <span class='kw'>end</span>
@@ -345,9 +345,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb 23 23:05:02 2019 by
+  Generated on Mon Feb 25 00:15:18 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.18 (ruby-2.5.3).
 </div>
 
     </div>

@@ -169,14 +169,12 @@
 
 <h3>Lock Expiration</h3>
 
-<p>This is probably not the configuration option you want...</p>
+<p>Lock expiration is used for two things. For the <code>UntilExpired</code> job releases the lock upon expiry. This is done from the client.</p>
 
-<p>Since the client and the server are disconnected and not running inside the same process, setting a lock expiration is probably not what you want. Any keys that are used by this gem WILL be removed at the time of the expiration. For jobs that are scheduled in the future the key will expire when that job is scheduled + whatever expiration you have set.</p>
-
-<p>In previous versions there was a default expiration of 30 minutes which didn&#39;t work for a lot of long running jobs. Since version 6 there will be no expiration of any jobs from the default configuration. Please don&#39;t use <code>lock_expiration</code> unless you really know what you are doing.</p>
+<p>Since v6.0.11 the other locks will expire after the server is done processing.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_expiration:</span> <span class='kw'>nil</span> <span class='comment'># default - don&#39;t expire keys
-</span><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_expiration:</span> <span class='int'>20</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span> <span class='comment'># expire this lock in 20 days
+</span><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_expiration:</span> <span class='int'>20</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='comment'># expire this lock in 20 days
 </span></code></pre>
 
 <h3>Lock Timeout</h3>
@@ -423,7 +421,7 @@ end
 
 <h3>Cleanup Dead Locks</h3>
 
-<p>For sidekiq versions before 5.1 a <code>sidekiq_retries_exhausted</code> block is required per worker class.</p>
+<p>For sidekiq versions before 5.1 a <code>sidekiq_retries_exhausted</code> block is required per worker class. This is deprecated in Sidekiq 6.0</p>
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>MyWorker</span>
   <span class='id identifier rubyid_sidekiq_retries_exhausted'>sidekiq_retries_exhausted</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_msg'>msg</span><span class='comma'>,</span> <span class='id identifier rubyid__ex'>_ex</span><span class='op'>|</span>
@@ -538,9 +536,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Sat Feb 23 23:05:01 2019 by
+  Generated on Mon Feb 25 00:15:17 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.18 (ruby-2.5.3).
 </div>
 
     </div>
