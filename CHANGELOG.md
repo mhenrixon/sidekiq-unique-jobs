@@ -1,15 +1,43 @@
 # Change Log
 
+## [v6.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.11) (2019-02-24)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.10...v6.0.11)
+
+**Implemented enhancements:**
+
+- Reduce leftover keys [\#374](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/374) ([mhenrixon](https://github.com/mhenrixon))
+- Prepare for sidekiq 6 [\#373](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/373) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Prevent memory leaks \(many locks stay in memory\) [\#368](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/368)
+- :until\_and\_while\_executing not processing queued jobs after executing [\#355](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/355)
+- Version 6: lets you schedule job with missing arguments [\#351](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/351)
+- Version 6 Ignores Jobs Enqueued in Version 5 [\#345](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/345)
+- Job will not enqueue even with no existing match [\#342](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/342)
+- Convert v5 locks when needed [\#375](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/375) ([mhenrixon](https://github.com/mhenrixon))
+- Reduce leftover keys [\#374](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/374) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Infinite lock using until\_and\_while\_executing after sidekiq restart [\#361](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/361)
+- getting a crash using lock\_expiration on v6.0.6 [\#350](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/350)
+- Problem when job failed and is retrying [\#332](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/332)
+
+**Merged pull requests:**
+
+- Clarify lock expiration in readme [\#376](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/376) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v6.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.10) (2019-02-23)
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.9...v6.0.10)
+
+**Implemented enhancements:**
+
+- Log job silently complete [\#371](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/371) ([tadejm](https://github.com/tadejm))
 
 **Closed issues:**
 
 - Unsure of sane defaults [\#372](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/372)
-
-**Merged pull requests:**
-
-- Log job silently complete [\#371](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/371) ([tadejm](https://github.com/tadejm))
 
 ## [v6.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.9) (2019-02-11)
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.8...v6.0.9)
