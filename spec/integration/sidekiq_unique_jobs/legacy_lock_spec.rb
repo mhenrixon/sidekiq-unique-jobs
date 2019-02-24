@@ -62,6 +62,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         .to include("uniquejobs:test_mutex_key:GRABBED")
     end
 
+    specify { expect(locksmith_one.locked?).to eq(true) }
     specify { expect(old_lock).to eq(1) }
     specify { expect(unique_keys).to include(unique_digest) }
 
