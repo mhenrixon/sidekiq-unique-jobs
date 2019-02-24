@@ -8,12 +8,14 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:jid_one)         { "maaaahjid" }
   let(:jid_two)         { "jidmayhem" }
   let(:lock_expiration) { nil }
+  let(:lock_type)       { "until_executed" }
   let(:unique_digest)   { "uniquejobs:randomvalue" }
   let(:item_one) do
     {
       "jid" => jid_one,
       "unique_digest" => unique_digest,
       "lock_expiration" => lock_expiration,
+      "lock" => lock_type,
     }
   end
   let(:item_two) { item_one.merge("jid" => jid_two) }
@@ -111,6 +113,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
   describe "lock with expiration" do
     let(:lock_expiration) { 3 }
+    let(:lock_type)       { "until_expired" }
 
     it_behaves_like "a lock"
 
@@ -127,7 +130,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       expect(locksmith_two.lock(0)).to eq(nil)
       expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
 
-      expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
+      expect(unique_digests).to match_array([])
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
                                            uniquejobs:randomvalue:GRABBED
@@ -136,7 +139,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it "expires the expected keys" do
       locksmith_one.lock
-      expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
+      expect(unique_digests).to match_array([])
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
                                            uniquejobs:randomvalue:GRABBED
@@ -149,7 +152,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     it "deletes the expected keys" do
       locksmith_one.lock
-      expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
+      expect(unique_digests).to match_array([])
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:randomvalue:EXISTS
                                            uniquejobs:randomvalue:GRABBED

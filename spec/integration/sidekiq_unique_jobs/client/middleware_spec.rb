@@ -173,9 +173,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     MyUniqueJob.perform_in(expected_expires_at, "mika", "hel")
 
     unique_keys.each do |key|
-      next if key.end_with?(":GRABBED")
-
-      expect(ttl(key)).to be_within(10).of(8_099)
+      expect(ttl(key)).to eq(-1)
     end
   end
 

@@ -17,6 +17,7 @@ module SidekiqUniqueJobs
       @expiration    = item[LOCK_EXPIRATION_KEY]
       @jid           = item[JID_KEY]
       @unique_digest = item[UNIQUE_DIGEST_KEY]
+      @lock_type     = item[LOCK_KEY]
       @redis_pool    = redis_pool
     end
 
@@ -58,7 +59,7 @@ module SidekiqUniqueJobs
     def lock(timeout = nil, &block)
       Scripts.call(:lock, redis_pool,
                    keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
-                   argv: [jid, expiration])
+                   argv: [jid, expiration, lock_type])
 
       grab_token(timeout) do |token|
         touch_grabbed_token(token)
@@ -87,7 +88,7 @@ module SidekiqUniqueJobs
         :unlock,
         redis_pool,
         keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
-        argv: [token, expiration],
+        argv: [token, expiration, lock_type],
       )
     end
 
@@ -102,7 +103,7 @@ module SidekiqUniqueJobs
 
     private
 
-    attr_reader :concurrency, :unique_digest, :expiration, :jid, :redis_pool
+    attr_reader :concurrency, :unique_digest, :expiration, :jid, :redis_pool, :lock_type
 
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|

@@ -8,6 +8,7 @@ local unique_digest = KEYS[5]
 
 local job_id        = ARGV[1]
 local expiration    = tonumber(ARGV[2])
+local lock          = ARGV[3]
 
 local function current_time()
   local time = redis.call('time')
@@ -49,10 +50,15 @@ redis.call('DEL', grabbed_key)
 redis.call('DEL', available_key)
 redis.call('RPUSH', available_key, job_id)
 
-if expiration then
+-- The client should only set expiration for until_expired
+-- The server should set expiration for all other jobs
+if lock == "until_expired" and expiration then
+  -- We can't keep the key here because it will otherwise never be deleted
+  redis.call('SREM', unique_keys, unique_digest)
+
   redis.call('EXPIRE', available_key, expiration)
   redis.call('EXPIRE', exists_key, expiration)
-  redis.call('EXPIRE', grabbed_key, expiration)
+  redis.call('EXPIRE', unique_digest, expiration)
 end
 
 return job_id
