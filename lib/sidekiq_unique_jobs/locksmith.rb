@@ -86,19 +86,23 @@ module SidekiqUniqueJobs
     # @return [true, false]
     def locked?(token = nil)
       token ||= jid
-      Scripts.call(
-        :convert_legacy_lock,
-        redis_pool,
-        keys: [grabbed_key, unique_digest],
-        argv: [token],
-      )
 
+      convert_legacy_lock(token)
       redis(redis_pool) { |conn| conn.hexists(grabbed_key, token) }
     end
 
     private
 
     attr_reader :unique_digest, :ttl, :jid, :redis_pool, :lock_type
+
+    def convert_legacy_lock(token)
+      Scripts.call(
+        :convert_legacy_lock,
+        redis_pool,
+        keys: [grabbed_key, unique_digest],
+        argv: [token, current_time.to_f],
+      )
+    end
 
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
