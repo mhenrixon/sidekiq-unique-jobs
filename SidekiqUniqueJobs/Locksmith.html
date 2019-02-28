@@ -741,25 +741,15 @@ nil will default to the jid provided in the initializer</p>
 89
 90
 91
-92
-93
-94
-95
-96
-97</pre>
+92</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_locked?'>locked?</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_token'>token</span> <span class='op'>||=</span> <span class='id identifier rubyid_jid'>jid</span>
-  <span class='const'><span class='object_link'><a href="Scripts.html" title="SidekiqUniqueJobs::Scripts (module)">Scripts</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="Scripts.html#call-class_method" title="SidekiqUniqueJobs::Scripts.call (method)">call</a></span></span><span class='lparen'>(</span>
-    <span class='symbol'>:convert_legacy_lock</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='comma'>,</span>
-    <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_grabbed_key'>grabbed_key</span><span class='comma'>,</span> <span class='id identifier rubyid_unique_digest'>unique_digest</span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='label'>argv:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_token'>token</span><span class='rbracket'>]</span><span class='comma'>,</span>
-  <span class='rparen'>)</span>
 
+  <span class='id identifier rubyid_convert_legacy_lock'>convert_legacy_lock</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span><span class='lparen'>(</span><span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_hexists'>hexists</span><span class='lparen'>(</span><span class='id identifier rubyid_grabbed_key'>grabbed_key</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -932,9 +922,9 @@ nil will default to the jid provided in the initializer</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Feb 25 00:15:18 2019 by
+  Generated on Thu Feb 28 21:57:51 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.5.3).
+  0.9.18 (ruby-2.4.4).
 </div>
 
     </div>
