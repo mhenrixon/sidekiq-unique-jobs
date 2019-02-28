@@ -1,5 +1,13 @@
 # Change Log
 
+## [v6.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.12) (2019-02-28)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.11...v6.0.12)
+
+**Fixed bugs:**
+
+- we are receiving SidekiqUniqueJobs::ScriptError "Problem compiling convert\_legacy\_lock" after upgrading from 5.0.10 -\> 6.0.11 [\#377](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/377)
+- Fix converting legacy locks [\#378](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/378) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v6.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.11) (2019-02-24)
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.10...v6.0.11)
 
