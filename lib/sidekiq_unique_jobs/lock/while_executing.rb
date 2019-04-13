@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+      #
       def initialize(item, callback, redis_pool = nil)
         super(item, callback, redis_pool)
         append_unique_key_suffix
