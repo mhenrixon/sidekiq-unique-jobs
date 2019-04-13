@@ -10,11 +10,22 @@ require "benchmark/ips"
 require "sidekiq-unique-jobs"
 
 ITERATIONS ||= 10_000
+LOCK_TYPES = %w[
+  until_executed
+  until_expired
+  until_and_while_executing
+  until_executing
+  while_executing
+]
 
 Benchmark.ips do |x|
-  x.config(time: 5, warmup: 2)
-  x.report("new_shit") do |_times|
-    SidekiqUniqueJobs::Scripts::AcquireLock.execute(nil, SecureRandom.hex, SecureRandom.hex)
+  x.config(time: 180, warmup: 2)
+  x.report("locksmith lock and unlock") do |_times|
+    item = { "ttl" => rand(10), "jid" => SecureRandom.hex, "unique_digest" => SecureRandom.hex, lock: LOCK_TYPES.sample }
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
   end
+
   x.compare!
 end
