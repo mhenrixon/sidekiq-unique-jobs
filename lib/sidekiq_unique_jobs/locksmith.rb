@@ -23,7 +23,10 @@ module SidekiqUniqueJobs
       @redis_pool    = redis_pool
     end
 
+    #
     # Deletes the lock unless it has a ttl set
+    #
+    #
     def delete
       return if ttl
 
@@ -39,11 +42,14 @@ module SidekiqUniqueJobs
       )
     end
 
+    #
     # Create a lock for the item
+    #
     # @param [Integer] timeout the number of seconds to wait for a lock.
-    #   nil means wait indefinitely
-    # @yield the block to execute if a lock is successful
-    # @return the Sidekiq job_id (jid)
+    #
+    # @return [String] the Sidekiq job_id (jid)
+    #
+    #
     def lock(timeout = nil, &block)
       Scripts.call(:lock, redis_pool,
                    keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
@@ -56,9 +62,12 @@ module SidekiqUniqueJobs
     end
     alias wait lock
 
+    #
     # Removes the lock keys from Redis if locked by the provided jid/token
+    #
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
+    #
     def unlock(token = nil)
       token ||= jid
       return false unless locked?(token)
@@ -66,9 +75,14 @@ module SidekiqUniqueJobs
       unlock!(token)
     end
 
+    #
     # Removes the lock keys from Redis
+    #
+    # @param [String] token the token to unlock (defaults to jid)
+    #
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
+    #
     def unlock!(token = nil)
       token ||= jid
 
@@ -80,10 +94,17 @@ module SidekiqUniqueJobs
       )
     end
 
-    # Checks if this instance is considered locked
+    #
     # @param [String] token the unique token to check for a lock.
     #   nil will default to the jid provided in the initializer
     # @return [true, false]
+    #
+    # Checks if this instance is considered locked
+    #
+    # @param [<type>] token <description>
+    #
+    # @return [<type>] <description>
+    #
     def locked?(token = nil)
       token ||= jid
 
