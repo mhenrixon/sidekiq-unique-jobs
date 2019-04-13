@@ -2,6 +2,7 @@
 
 class SlowUntilExecutingWorker
   include Sidekiq::Worker
+  include Sidekiq::Status::Worker
   sidekiq_options lock: :until_executing,
                   queue: :default,
                   unique_args: (lambda do |args|

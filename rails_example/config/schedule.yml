@@ -1,0 +1,6 @@
+#config/schedule.yml
+
+my_first_job:
+  cron: "*/2 * * * *"
+  class: "HardWorker"
+  queue: default

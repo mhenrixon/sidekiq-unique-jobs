@@ -2,6 +2,7 @@
 
 class SpawnSimpleWorker
   include Sidekiq::Worker
+  include Sidekiq::Status::Worker
 
   def perform(spawn_arg)
     SidekiqUniqueJobs.with_context(self.class.name) do

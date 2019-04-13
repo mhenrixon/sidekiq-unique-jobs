@@ -1,5 +1,6 @@
 class SequenceActionWorker
   include Sidekiq::Worker
+  include Sidekiq::Status::Worker
 
   sidekiq_options lock: :until_and_while_executing
 
