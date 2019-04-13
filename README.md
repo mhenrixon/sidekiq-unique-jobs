@@ -5,6 +5,8 @@
 - [Introduction](#introduction)
 - [Documentation](#documentation)
 - [Requirements](#requirements)
+  - [ActiveJob](#activejob)
+  - [redis-namespace](#redis-namespace)
 - [Installation](#installation)
 - [Support Me](#support-me)
 - [General Information](#general-information)
@@ -56,9 +58,17 @@ Below are links to the latest major versions (4 & 5):
 
 ## Requirements
 
-See [Sidekiq requirements][] for what is required. Starting from 5.0.0 only sidekiq >= 4 is supported and support for MRI <= 2.1 is dropped. ActiveJob is not supported
+See [Sidekiq requirements][] for what is required. Starting from 5.0.0 only sidekiq >= 4 and MRI >= 2.2. ActiveJob is not supported
 
-Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why.
+### ActiveJob
+
+Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why. It simply is too complex and generates more issues than I can handle given how little timer I have to spend on this project.
+
+### redis-namespace
+
+Will not be officially supported anymore. Since Mike [won't support redis-namespace](https://github.com/mperham/sidekiq/issues/3366#issuecomment-284270120) neither will I.
+
+[Read this](http://www.mikeperham.com/2017/04/10/migrating-from-redis-namespace/) for how to migrate away from namespacing.
 
 ## Installation
 
