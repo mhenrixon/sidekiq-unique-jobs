@@ -1,6 +1,6 @@
 require:
-  - rubocop-rspec
   - rubocop-performance
+  - rubocop-rspec
 
 inherit_mode:
   merge:

@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.5.3"
+ruby "2.5.5"
 
 gem "bigdecimal"
 gem "json"
@@ -24,4 +24,7 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-eventually"
   gem "rspec-rails"
+  gem "rubocop"
+  gem "rubocop-performance"
+  gem "rubocop-rspec"
 end

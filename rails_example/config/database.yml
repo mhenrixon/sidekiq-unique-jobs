@@ -5,9 +5,6 @@ defaults: &defaults
   port: <%= ENV.fetch('DB_PORT') { 5432 } %>
   username: <%= ENV.fetch('DB_USERNAME') { `whoami` } %>
   password: <%= ENV.fetch('DB_PASSWORD') { nil } %>
-  pool: <%= ENV.fetch('DB_POOL') { 25 } %>
-  timeout: <%= ENV.fetch('DB_TIMEOUT') { 5000 } %>
-  reaping_frequency: <%= ENV.fetch('DB_REAPING_FREQUENCY') { 5000 } %>
 
 development:
   <<: *defaults
