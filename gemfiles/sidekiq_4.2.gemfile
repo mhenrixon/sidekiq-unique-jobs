@@ -20,6 +20,7 @@ platforms :mri_25 do
   gem "pry"
   gem "reek", ">= 5.3"
   gem "rubocop"
+  gem "rubocop-performance"
   gem "rubocop-rspec"
   gem "simplecov-json"
   gem "travis"
