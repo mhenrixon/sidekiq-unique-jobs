@@ -20,6 +20,7 @@ platforms :mri_25 do
   gem "memory_profiler"
   gem "pry"
   gem "reek", ">= 5.3"
+  gem "redcarpet", "~> 3.4"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rspec"
