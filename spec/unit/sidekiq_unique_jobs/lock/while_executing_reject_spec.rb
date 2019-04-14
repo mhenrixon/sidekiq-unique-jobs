@@ -29,7 +29,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
 
     before do
       allow(locksmith).to receive(:lock).with(0).and_return(token)
-      allow(lock).to receive(:with_cleanup).and_yield
+      allow(lock).to receive(:unlock_with_callback)
     end
 
     context "when lock succeeds" do
@@ -37,7 +37,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
 
       it "processes the job" do
         execute
-        expect(lock).to have_received(:with_cleanup)
+        expect(lock).to have_received(:unlock_with_callback)
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
       it "rejects the job" do
         execute
 
-        expect(lock).not_to have_received(:with_cleanup)
+        expect(lock).not_to have_received(:unlock_with_callback)
       end
     end
   end

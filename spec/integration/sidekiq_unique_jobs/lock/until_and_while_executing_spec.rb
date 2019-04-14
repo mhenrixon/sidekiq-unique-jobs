@@ -70,5 +70,16 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
         expect(unset).to eq(true)
       end
     end
+
+    context "when worker raises error in runtime lock" do
+      it "always unlocks" do
+        process_one.lock
+
+        expect { process_one.execute { raise "Hell" } }
+          .to raise_error(RuntimeError, "Hell")
+
+        expect(runtime_one.locked?).to eq(false)
+      end
+    end
   end
 end

@@ -6,6 +6,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
     SidekiqUniqueJobs::UniqueArgs.digest(item)
     item
   end
+
   let(:item) do
     { "class" => MyUniqueJob,
       "queue" => "customqueue",

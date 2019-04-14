@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+      #
       def initialize(item, callback, redis_pool = nil)
         super(item, callback, redis_pool)
         append_unique_key_suffix
@@ -34,7 +35,12 @@ module SidekiqUniqueJobs
       def execute
         return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
 
-        with_cleanup { yield }
+        yield
+      rescue Exception # rubocop:disable Lint/RescueException
+        delete!
+        raise
+      else
+        unlock_with_callback
       end
 
       private

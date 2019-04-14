@@ -11,14 +11,6 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class WhileExecutingReject < WhileExecuting
-      # Executes in the Sidekiq server process
-      # @yield to the worker class perform method
-      def execute
-        return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
-
-        with_cleanup { yield }
-      end
-
       # Overridden with a forced {OnConflict::Reject} strategy
       # @return [OnConflict::Reject] a reject strategy
       def strategy

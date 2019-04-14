@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
-class WithoutArgumentWorker
+class HardWorker
   include Sidekiq::Worker
   include Sidekiq::Status::Worker
-
-  sidekiq_options unique: :until_executed,
-                  log_duplicate_payload: true
+  sidekiq_options lock: :until_executed,
+                  queue: :default
 
   def perform
     SidekiqUniqueJobs.with_context(self.class.name) do
-      logger.debug { __method__.to_s }
+      SidekiqUniqueJobs.logger.debug { "#{__method__}" }
     end
-    sleep 20
+    sleep 1
   end
 end

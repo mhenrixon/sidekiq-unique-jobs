@@ -2,6 +2,8 @@
 
 class WithoutArgsWorker
   include Sidekiq::Worker
+  include Sidekiq::Status::Worker
+
   sidekiq_options queue: :default,
                   retry: true,
                   backtrace: true,

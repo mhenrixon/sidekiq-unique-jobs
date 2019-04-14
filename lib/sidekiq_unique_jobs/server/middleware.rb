@@ -9,13 +9,19 @@ module SidekiqUniqueJobs
       include Logging
       include OptionsWithFallback
 
-      # Runs the server middleware
-      #   Used from Sidekiq::Processor#process
+      #
+      #
+      # Runs the server middleware (used from Sidekiq::Processor#process)
+      #
       # @param [Sidekiq::Worker] worker_class
       # @param [Hash] item a sidekiq job hash
       # @param [String] queue name of the queue
+      #
+      # @see https://github.com/mperham/sidekiq/wiki/Job-Format
+      # @see https://github.com/mperham/sidekiq/wiki/Middleware
+      #
       # @yield when uniqueness is disabled
-      # @yield when the lock class executes successfully
+      # @yield when the lock is acquired
       def call(worker_class, item, queue)
         @worker_class = worker_class
         @item         = item

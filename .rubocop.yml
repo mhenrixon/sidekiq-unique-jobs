@@ -1,4 +1,5 @@
 require:
+  - rubocop-performance
   - rubocop-rspec
 
 inherit_mode:
@@ -63,6 +64,9 @@ Naming/FileName:
   Enabled: true
   Exclude:
     - lib/sidekiq-unique-jobs.rb
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: ex
 
 Naming/UncommunicativeMethodParamName:
   AllowedNames:

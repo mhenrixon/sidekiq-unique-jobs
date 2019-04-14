@@ -2,6 +2,7 @@
 
 class WhileExecutingWorker
   include Sidekiq::Worker
+  include Sidekiq::Status::Worker
 
   sidekiq_options unique: :while_executing, lock_timeout: 15
 
