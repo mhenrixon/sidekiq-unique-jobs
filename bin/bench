@@ -16,7 +16,7 @@ LOCK_TYPES = %w[
   until_and_while_executing
   until_executing
   while_executing
-]
+].freeze
 
 Benchmark.ips do |x|
   x.config(time: 180, warmup: 2)
