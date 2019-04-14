@@ -35,7 +35,12 @@ module SidekiqUniqueJobs
       def execute
         return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
 
-        with_cleanup { yield }
+        yield
+      rescue Exception
+        delete!
+        raise
+      else
+        unlock_with_callback
       end
 
       private

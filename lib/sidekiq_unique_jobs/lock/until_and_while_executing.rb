@@ -19,7 +19,6 @@ module SidekiqUniqueJobs
         return unless locked?
 
         unlock
-
         runtime_lock.execute { yield }
       end
 

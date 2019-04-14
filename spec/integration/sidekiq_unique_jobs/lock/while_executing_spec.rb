@@ -44,26 +44,33 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   end
 
   describe "#execute" do
-    context "when executing" do
-      it "locks the process" do
-        process_one.execute do
-          expect(process_one).to be_locked
-        end
+    it "locks the process" do
+      process_one.execute do
+        expect(process_one).to be_locked
+      end
+    end
+
+    it "calls back" do
+      process_one.execute {}
+      expect(callback).to have_received(:call)
+    end
+
+    it "prevents other processes from executing" do
+      process_one.execute do
+        unset = true
+        process_two.execute { unset = false }
+        expect(unset).to eq(true)
       end
 
-      it "calls back" do
-        process_one.execute {}
-        expect(callback).to have_received(:call)
-      end
+      expect(callback).to have_received(:call).once
+    end
 
-      it "prevents other processes from executing" do
-        process_one.execute do
-          unset = true
-          process_two.execute { unset = false }
-          expect(unset).to eq(true)
-        end
+    context "when worker raises error" do
+      it "always unlocks" do
+        expect { process_one.execute { raise "Hell" } }
+          .to raise_error(RuntimeError, "Hell")
 
-        expect(callback).to have_received(:call).once
+        expect(process_one.locked?).to eq(false)
       end
     end
   end
