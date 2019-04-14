@@ -36,7 +36,7 @@ module SidekiqUniqueJobs
         return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
 
         yield
-      rescue Exception
+      rescue Exception # rubocop:disable Lint/RescueException
         delete!
         raise
       else
