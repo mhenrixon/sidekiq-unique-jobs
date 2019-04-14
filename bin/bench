@@ -21,7 +21,12 @@ LOCK_TYPES = %w[
 Benchmark.ips do |x|
   x.config(time: 180, warmup: 2)
   x.report("locksmith lock and unlock") do |_times|
-    item = { "ttl" => rand(10), "jid" => SecureRandom.hex, "unique_digest" => SecureRandom.hex, lock: LOCK_TYPES.sample }
+    item = {
+      "ttl" => rand(10),
+      "jid" => SecureRandom.hex,
+      "unique_digest" => SecureRandom.hex,
+      "lock" => LOCK_TYPES.sample,
+    }
     locksmith = SidekiqUniqueJobs::Locksmith.new(item)
     locksmith.lock
     locksmith.unlock

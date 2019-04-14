@@ -28,6 +28,7 @@ module SimulateLock
 
   def runtime_lock(digest, jid, ttl = nil)
     item = get_item(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl)
+    lock(item)
     item = get_item(digest: "#{digest}:RUN", jid: "randomjid", lock_type: :while_executing, ttl: ttl)
     lock(item)
   end
