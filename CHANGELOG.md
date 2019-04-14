@@ -1,5 +1,22 @@
 # Change Log
 
+## [v6.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13) (2019-04-14)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.12...v6.0.13)
+
+**Implemented enhancements:**
+
+- Delete runtime locks on exception [\#382](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/382) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Delete runtime locks on exception [\#382](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/382) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Unique args in combination with sidekiq cron contains `\_aj\_symbol\_keys` [\#363](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/363)
+- Low quality peace of shit [\#360](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/360)
+- Passthrough has been deprecated and will be removed in redis-namespace 2.0 [\#338](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/338)
+
 ## [v6.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.12) (2019-02-28)
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.11...v6.0.12)
 
