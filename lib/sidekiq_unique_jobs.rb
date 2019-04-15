@@ -31,4 +31,6 @@ require "sidekiq_unique_jobs/middleware"
 require "sidekiq_unique_jobs/sidekiq_unique_ext"
 require "sidekiq_unique_jobs/on_conflict"
 
+require "sidekiq_unique_jobs/configuration"
+
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
