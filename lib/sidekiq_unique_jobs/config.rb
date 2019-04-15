@@ -30,20 +30,19 @@ module SidekiqUniqueJobs
       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
     }.freeze
 
-    class << self
-      # Returns a default configuration
-      # @return [Concurrent::MutableStruct] a representation of the configuration object
-      def default
-        new(
-          0,
-          true,
-          "uniquejobs",
-          Sidekiq.logger,
-          DEFAULT_LOCKS,
-          DEFAULT_STRATEGIES,
-        )
-      end
+    # Returns a default configuration
+    # @return [Concurrent::MutableStruct] a representation of the configuration object
+    def self.default
+      new(
+        0,
+        true,
+        "uniquejobs",
+        Sidekiq.logger,
+        DEFAULT_LOCKS,
+        DEFAULT_STRATEGIES,
+      )
     end
+
     # Adds a lock type to the configuration. It will raise if the lock exists already
     #
     # @param [String] name the name of the lock
