@@ -9,22 +9,22 @@ module SidekiqUniqueJobs
 
   module_function
 
-  Config = Concurrent::MutableStruct.new(
-    :default_lock_timeout,
-    :enabled,
-    :unique_prefix,
-    :logger,
-  )
-
   # The current configuration (See: {.configure} on how to configure)
   def config
     # Arguments here need to match the definition of the new class (see above)
-    @config ||= Config.new(
-      0,
-      true,
-      "uniquejobs",
-      Sidekiq.logger,
-    )
+    @config ||= SidekiqUniqueJobs::Config.default
+  end
+
+  # The current strategies
+  # @return [Hash] the configured strategies
+  def strategies
+    config.strategies
+  end
+
+  # The current locks
+  # @return [Hash] the configured locks
+  def locks
+    config.locks
   end
 
   # The current logger
