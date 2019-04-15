@@ -9,18 +9,13 @@ module SidekiqUniqueJobs
   #   3. worker_class (required, can be anything)
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module OptionsWithFallback
-    LOCKS = {
-      until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
-      until_executed: SidekiqUniqueJobs::Lock::UntilExecuted,
-      until_executing: SidekiqUniqueJobs::Lock::UntilExecuting,
-      until_expired: SidekiqUniqueJobs::Lock::UntilExpired,
-      until_timeout: SidekiqUniqueJobs::Lock::UntilExpired,
-      while_executing: SidekiqUniqueJobs::Lock::WhileExecuting,
-      while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject,
-    }.freeze
-
     def self.included(base)
       base.send(:include, SidekiqUniqueJobs::SidekiqWorkerMethods)
+    end
+
+    # A convenience method for using the configured locks
+    def locks
+      SidekiqUniqueJobs.locks
     end
 
     # Check if unique has been enabled
@@ -49,7 +44,7 @@ module SidekiqUniqueJobs
     # @return [SidekiqUniqueJobs::Lock::BaseLock] an instance of a child class
     def lock_class
       @lock_class ||= begin
-        LOCKS.fetch(lock_type.to_sym) do
+        locks.fetch(lock_type.to_sym) do
           raise UnknownLock, "No implementation for `lock: :#{lock_type}`"
         end
       end

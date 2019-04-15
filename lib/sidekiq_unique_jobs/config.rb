@@ -4,7 +4,13 @@ module SidekiqUniqueJobs
   # Shared class for dealing with gem configuration
   #
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
-  class Configuration
+  class Config < Concurrent::MutableStruct.new(
+    :default_lock_timeout,
+    :enabled,
+    :unique_prefix,
+    :logger,
+    :locks,
+  )
     DEFAULT_LOCKS = {
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
       until_executed: SidekiqUniqueJobs::Lock::UntilExecuted,
@@ -15,14 +21,23 @@ module SidekiqUniqueJobs
       while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze
 
+    class << self
+      def default
+        new(
+          0,
+          true,
+          "uniquejobs",
+          Sidekiq.logger,
+          DEFAULT_LOCKS,
+        )
+      end
+    end
+
     def add_lock(name, klass)
       raise ArgumentError, "Lock #{name} already defined, please use another name" if locks.key?(name.to_sym)
 
-      @locks = locks.dup.tap { |h| h[name.to_sym] = klass }.freeze
-    end
-
-    def locks
-      @locks ||= DEFAULT_LOCKS
+      new_locks = locks.dup.merge(name.to_sym => klass).freeze
+      self.locks = new_locks
     end
   end
 end
