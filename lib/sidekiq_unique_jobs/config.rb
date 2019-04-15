@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
     :unique_prefix,
     :logger,
     :locks,
+    :strategies,
   )
     DEFAULT_LOCKS = {
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
@@ -21,6 +22,14 @@ module SidekiqUniqueJobs
       while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze
 
+    DEFAULT_STRATEGIES = {
+      log: SidekiqUniqueJobs::OnConflict::Log,
+      raise: SidekiqUniqueJobs::OnConflict::Raise,
+      reject: SidekiqUniqueJobs::OnConflict::Reject,
+      replace: SidekiqUniqueJobs::OnConflict::Replace,
+      reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
+    }.freeze
+
     class << self
       def default
         new(
@@ -29,6 +38,7 @@ module SidekiqUniqueJobs
           "uniquejobs",
           Sidekiq.logger,
           DEFAULT_LOCKS,
+          DEFAULT_STRATEGIES,
         )
       end
     end
@@ -38,6 +48,13 @@ module SidekiqUniqueJobs
 
       new_locks = locks.dup.merge(name.to_sym => klass).freeze
       self.locks = new_locks
+    end
+
+    def add_strategy(name, klass)
+      raise ArgumentError, "strategy #{name} already defined, please use another name" if strategies.key?(name.to_sym)
+
+      new_strategies = strategies.dup.merge(name.to_sym => klass).freeze
+      self.strategies = new_strategies
     end
   end
 end

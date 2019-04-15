@@ -2,8 +2,8 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OnConflict do
-  describe "::STRAGEGIES" do
-    subject { described_class::STRATEGIES }
+  describe "#strategies" do
+    subject { described_class.strategies }
 
     let(:expected) do
       {

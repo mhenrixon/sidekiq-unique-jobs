@@ -15,17 +15,14 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   module OnConflict
-    STRATEGIES = {
-      log: OnConflict::Log,
-      raise: OnConflict::Raise,
-      reject: OnConflict::Reject,
-      replace: OnConflict::Replace,
-      reschedule: OnConflict::Reschedule,
-    }.freeze
+    # A convenience method for using the configured strategies
+    def self.strategies
+      SidekiqUniqueJobs.strategies
+    end
 
     # returns OnConflict::NullStrategy when no other could be found
     def self.find_strategy(strategy)
-      STRATEGIES.fetch(strategy.to_s.to_sym) { OnConflict::NullStrategy }
+      strategies.fetch(strategy.to_s.to_sym) { OnConflict::NullStrategy }
     end
   end
 end

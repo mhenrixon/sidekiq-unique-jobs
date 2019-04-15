@@ -15,6 +15,12 @@ module SidekiqUniqueJobs
     @config ||= SidekiqUniqueJobs::Config.default
   end
 
+  # The current strategies
+  # @return [Hash] the configured strategies
+  def strategies
+    config.strategies
+  end
+
   # The current locks
   # @return [Hash] the configured locks
   def locks
