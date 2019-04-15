@@ -8,11 +8,15 @@ module SidekiqUniqueJobs
   class Locksmith
     include SidekiqUniqueJobs::Connection
 
+    #
+    # Initialize a new Locksmith instance
+    #
     # @param [Hash] item a Sidekiq job hash
     # @option item [Integer] :lock_expiration the configured expiration
     # @option item [String] :jid the sidekiq job id
     # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+    #
     def initialize(item, redis_pool = nil)
       # @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @ttl           = item[LOCK_EXPIRATION_KEY]
@@ -33,7 +37,9 @@ module SidekiqUniqueJobs
       delete!
     end
 
+    #
     # Deletes the lock regardless of if it has a ttl set
+    #
     def delete!
       Scripts.call(
         :delete,
@@ -48,7 +54,6 @@ module SidekiqUniqueJobs
     # @param [Integer] timeout the number of seconds to wait for a lock.
     #
     # @return [String] the Sidekiq job_id (jid)
-    #
     #
     def lock(timeout = nil, &block)
       Scripts.call(:lock, redis_pool,

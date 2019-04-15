@@ -9,11 +9,16 @@ module SidekiqUniqueJobs
     class Strategy
       include SidekiqUniqueJobs::Logging
 
-      # The sidekiq job hash
-      # @return [Hash] the Sidekiq job hash
+      # @!attribute [r] item
+      #   @return [Hash] sidekiq job hash
       attr_reader :item
 
       # @param [Hash] item the Sidekiq job hash
+      #
+      # Initialize a new Strategy
+      #
+      # @param [Hash] item sidekiq job hash
+      #
       def initialize(item)
         @item = item
       end
