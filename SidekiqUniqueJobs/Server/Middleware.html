@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Server::Middleware
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -132,12 +132,6 @@
 </div>
 
 
-  <h2>Constant Summary</h2>
-  
-  <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="../OptionsWithFallback.html" title="SidekiqUniqueJobs::OptionsWithFallback (module)">OptionsWithFallback</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../OptionsWithFallback.html#LOCKS-constant" title="SidekiqUniqueJobs::OptionsWithFallback::LOCKS (constant)">OptionsWithFallback::LOCKS</a></span></p>
-
 
 
 
@@ -167,7 +161,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Runs the server middleware   Used from Sidekiq::Processor#process.</p>
+    <span class="summary_desc"><div class='inline'><p>Runs the server middleware (used from Sidekiq::Processor#process).</p>
 </div></span>
   
 </li>
@@ -186,7 +180,7 @@
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="../OptionsWithFallback.html" title="SidekiqUniqueJobs::OptionsWithFallback (module)">OptionsWithFallback</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../OptionsWithFallback.html#lock-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock (method)">#lock</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#lock_class-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_class (method)">#lock_class</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#log_duplicate_payload%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#log_duplicate_payload? (method)">#log_duplicate_payload?</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#options-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#options (method)">#options</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#unique_disabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_disabled? (method)">#unique_disabled?</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#unique_enabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_enabled? (method)">#unique_enabled?</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#unique_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_type (method)">#unique_type</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../OptionsWithFallback.html#lock-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock (method)">#lock</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#lock_class-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_class (method)">#lock_class</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#locks-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#locks (method)">#locks</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#log_duplicate_payload%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#log_duplicate_payload? (method)">#log_duplicate_payload?</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#options-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#options (method)">#options</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#unique_disabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_disabled? (method)">#unique_disabled?</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#unique_enabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_enabled? (method)">#unique_enabled?</a></span>, <span class='object_link'><a href="../OptionsWithFallback.html#unique_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_type (method)">#unique_type</a></span></p>
 
   
   
@@ -215,8 +209,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Runs the server middleware
-  Used from Sidekiq::Processor#process</p>
+    <p>Runs the server middleware (used from Sidekiq::Processor#process)</p>
 
 
   </div>
@@ -292,12 +285,21 @@
       
       
         
-        <div class='inline'><p>when the lock class executes successfully</p>
+        <div class='inline'><p>when the lock is acquired</p>
 </div>
       
     </li>
   
 </ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="https://github.com/mperham/sidekiq/wiki/Job-Format" target="_parent" title="https://github.com/mperham/sidekiq/wiki/Job-Format">https://github.com/mperham/sidekiq/wiki/Job-Format</a></li>
+    
+      <li><a href="https://github.com/mperham/sidekiq/wiki/Middleware" target="_parent" title="https://github.com/mperham/sidekiq/wiki/Middleware">https://github.com/mperham/sidekiq/wiki/Middleware</a></li>
+    
+  </ul>
 
 </div><table class="source_code">
   <tr>
@@ -305,22 +307,22 @@
       <pre class="lines">
 
 
-19
-20
-21
-22
-23
-24
 25
 26
 27
 28
 29
 30
-31</pre>
+31
+32
+33
+34
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/server/middleware.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/server/middleware.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_worker_class'>worker_class</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_queue'>queue</span><span class='rparen'>)</span>
   <span class='ivar'>@worker_class</span> <span class='op'>=</span> <span class='id identifier rubyid_worker_class'>worker_class</span>
@@ -345,9 +347,9 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Feb 28 21:57:51 2019 by
+  Generated on Mon Apr 15 17:04:06 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.19 (ruby-2.5.5).
 </div>
 
     </div>

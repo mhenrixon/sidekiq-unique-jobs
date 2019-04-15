@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -64,7 +64,12 @@
 <ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#documentation">Documentation</a></li>
-<li><a href="#requirements">Requirements</a></li>
+<li><a href="#requirements">Requirements</a>
+
+<ul>
+<li><a href="#activejob">ActiveJob</a></li>
+<li><a href="#redis-namespace">redis-namespace</a></li>
+</ul></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#support-me">Support Me</a></li>
 <li><a href="#general-information">General Information</a></li>
@@ -84,6 +89,7 @@
 <li><a href="#until-timeout">Until Timeout</a></li>
 <li><a href="#unique-until-and-while-executing">Unique Until And While Executing</a></li>
 <li><a href="#while-executing">While Executing</a></li>
+<li><a href="#custom-locks">Custom Locks</a></li>
 </ul></li>
 <li><a href="#conflict-strategy">Conflict Strategy</a>
 
@@ -93,6 +99,7 @@
 <li><a href="#reject">Reject</a></li>
 <li><a href="#replace">Replace</a></li>
 <li><a href="#reschedule">Reschedule</a></li>
+<li><a href="#custom-strategies">Custom Strategies</a></li>
 </ul></li>
 <li><a href="#usage">Usage</a>
 
@@ -134,9 +141,17 @@
 
 <h2>Requirements</h2>
 
-<p>See <a href="https://github.com/mperham/sidekiq#requirements">Sidekiq requirements</a> for what is required. Starting from 5.0.0 only sidekiq &gt;= 4 is supported and support for MRI &lt;= 2.1 is dropped. ActiveJob is not supported</p>
+<p>See <a href="https://github.com/mperham/sidekiq#requirements">Sidekiq requirements</a> for what is required. Starting from 5.0.0 only sidekiq &gt;= 4 and MRI &gt;= 2.2. ActiveJob is not supported</p>
 
-<p>Version 6 requires Redis &gt;= 3 and pure Sidekiq, no ActiveJob supported anymore. See <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob">About ActiveJob</a> for why.</p>
+<h3>ActiveJob</h3>
+
+<p>Version 6 requires Redis &gt;= 3 and pure Sidekiq, no ActiveJob supported anymore. See <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob">About ActiveJob</a> for why. It simply is too complex and generates more issues than I can handle given how little timer I have to spend on this project.</p>
+
+<h3>redis-namespace</h3>
+
+<p>Will not be officially supported anymore. Since Mike <a href="https://github.com/mperham/sidekiq/issues/3366#issuecomment-284270120">won&#39;t support redis-namespace</a> neither will I.</p>
+
+<p><a href="http://www.mikeperham.com/2017/04/10/migrating-from-redis-namespace/">Read this</a> for how to migrate away from namespacing.</p>
 
 <h2>Installation</h2>
 
@@ -288,6 +303,39 @@
 10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
 </code></pre>
 
+<h3>Custom Locks</h3>
+
+<p>You may need to define some custom lock. You can define it in one project folder:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># lib/locks/my_custom_lock.rb
+</span><span class='kw'>module</span> <span class='const'>Locks</span>
+  <span class='kw'>class</span> <span class='const'>MyCustomLock</span> <span class='op'>&lt;</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">BaseLock</a></span></span>
+    <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
+      <span class='comment'># Do something ...
+</span>    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>You can refer on all the locks defined in <code>lib/sidekiq_unique_jobs/lock</code>.</p>
+
+<p>In order to make it available, you should call in your project startup:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># For rails application
+</span><span class='comment'># config/initializers/sidekiq_unique_jobs.rb
+</span><span class='comment'># For other projects, whenever you prefer
+</span>
+<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_add_lock'>add_lock</span> <span class='symbol'>:my_custom_lock</span><span class='comma'>,</span> <span class='const'>Locks</span><span class='op'>::</span><span class='const'>MyCustomLock</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>And then you can use it in the jobs definition:</p>
+
+<p><code>sidekiq_options lock: :my_custom_lock, on_conflict: :log</code></p>
+
+<p>Please not that if you try to override a default lock, an <code>ArgumentError</code> will be raised.</p>
+
 <h2>Conflict Strategy</h2>
 
 <p>Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock <code>WhileExecuting</code> that is used only by the sidekiq server process.</p>
@@ -328,6 +376,39 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 <p>This strategy is intended to be used with <code>WhileExecuting</code> and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.</p>
 
 <p><code>sidekiq_options lock: :while_executing, on_conflict: :reschedule</code></p>
+
+<h3>Custom Strategies</h3>
+
+<p>You may need to define some custom strategy. You can define it in one project folder:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># lib/strategies/my_custom_strategy.rb
+</span><span class='kw'>module</span> <span class='const'>Strategies</span>
+  <span class='kw'>class</span> <span class='const'>MyCustomStrategy</span> <span class='op'>&lt;</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'>Strategy</span>
+    <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
+      <span class='comment'># Do something ...
+</span>    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>You can refer on all the startegies defined in <code>lib/sidekiq_unique_jobs/on_conflict</code>.</p>
+
+<p>In order to make it available, you should call in your project startup:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># For rails application
+</span><span class='comment'># config/initializers/sidekiq_unique_jobs.rb
+</span><span class='comment'># For other projects, whenever you prefer
+</span>
+<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_add_strategy'>add_strategy</span> <span class='symbol'>:my_custom_strategy</span><span class='comma'>,</span> <span class='const'>Strategies</span><span class='op'>::</span><span class='const'>MyCustomStrategy</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>And then you can use it in the jobs definition:</p>
+
+<p><code>sidekiq_options lock: :while_executing, on_conflict: :my_custom_strategy</code></p>
+
+<p>Please not that if you try to override a default lock, an <code>ArgumentError</code> will be raised.</p>
 
 <h2>Usage</h2>
 
@@ -536,9 +617,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Thu Feb 28 21:57:50 2019 by
+  Generated on Mon Apr 15 17:04:05 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.19 (ruby-2.5.5).
 </div>
 
     </div>

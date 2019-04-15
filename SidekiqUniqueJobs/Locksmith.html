@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Locksmith
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -220,7 +220,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong>(timeout = nil) { ... } &#x21d2; Object </a>
+      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong>(timeout = nil, &amp;block)  &#x21d2; String </a>
     
 
     
@@ -245,7 +245,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#locked%3F-instance_method" title="#locked? (instance method)">#<strong>locked?</strong>(token = nil)  &#x21d2; true, false </a>
+      <a href="#locked%3F-instance_method" title="#locked? (instance method)">#<strong>locked?</strong>(token = nil)  &#x21d2; true, ... </a>
     
 
     
@@ -495,14 +495,14 @@
       <pre class="lines">
 
 
-27
-28
-29
 30
-31</pre>
+31
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 30</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_ttl'>ttl</span>
@@ -539,16 +539,16 @@
       <pre class="lines">
 
 
-34
-35
-36
 37
 38
 39
-40</pre>
+40
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete!'>delete!</span>
   <span class='const'><span class='object_link'><a href="Scripts.html" title="SidekiqUniqueJobs::Scripts (module)">Scripts</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="Scripts.html#call-class_method" title="SidekiqUniqueJobs::Scripts.call (method)">call</a></span></span><span class='lparen'>(</span>
@@ -565,7 +565,7 @@
       <div class="method_details ">
   <h3 class="signature " id="lock-instance_method">
   
-    #<strong>lock</strong>(timeout = nil) { ... } &#x21d2; <tt>Object</tt> 
+    #<strong>lock</strong>(timeout = nil, &amp;block)  &#x21d2; <tt>String</tt> 
   
 
   
@@ -598,42 +598,24 @@
       
       
         &mdash;
-        <div class='inline'><p>the number of seconds to wait for a lock.
-nil means wait indefinitely</p>
+        <div class='inline'><p>the number of seconds to wait for a lock.</p>
 </div>
       
     </li>
   
 </ul>
 
-<p class="tag_title">Yields:</p>
-<ul class="yield">
-  
-    <li>
-      
-      
-        <span class='type'></span>
-      
-      
-      
-        
-        <div class='inline'><p>the block to execute if a lock is successful</p>
-</div>
-      
-    </li>
-  
-</ul>
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
     <li>
       
       
-        <span class='type'></span>
+        <span class='type'>(<tt>String</tt>)</span>
       
       
       
-        
+        &mdash;
         <div class='inline'><p>the Sidekiq job_id (jid)</p>
 </div>
       
@@ -647,19 +629,19 @@ nil means wait indefinitely</p>
       <pre class="lines">
 
 
-47
-48
-49
-50
-51
-52
 53
 54
 55
-56</pre>
+56
+57
+58
+59
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="Scripts.html" title="SidekiqUniqueJobs::Scripts (module)">Scripts</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="Scripts.html#call-class_method" title="SidekiqUniqueJobs::Scripts.call (method)">call</a></span></span><span class='lparen'>(</span><span class='symbol'>:lock</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='comma'>,</span>
@@ -679,7 +661,7 @@ nil means wait indefinitely</p>
       <div class="method_details ">
   <h3 class="signature " id="locked?-instance_method">
   
-    #<strong>locked?</strong>(token = nil)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+    #<strong>locked?</strong>(token = nil)  &#x21d2; <tt>true</tt>, ... 
   
 
   
@@ -714,6 +696,23 @@ nil will default to the jid provided in the initializer</p>
       
     </li>
   
+    <li>
+      
+        <span class='name'>token</span>
+      
+      
+        <span class='type'>(<tt>&lt;type&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p><description></p>
+</div>
+      
+    </li>
+  
 </ul>
 
 <p class="tag_title">Returns:</p>
@@ -728,6 +727,19 @@ nil will default to the jid provided in the initializer</p>
       
     </li>
   
+    <li>
+      
+      
+        <span class='type'>(<tt>&lt;type&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p><description></p>
+</div>
+      
+    </li>
+  
 </ul>
 
 </div><table class="source_code">
@@ -736,15 +748,15 @@ nil will default to the jid provided in the initializer</p>
       <pre class="lines">
 
 
-87
-88
-89
-90
-91
-92</pre>
+108
+109
+110
+111
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_locked?'>locked?</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_token'>token</span> <span class='op'>||=</span> <span class='id identifier rubyid_jid'>jid</span>
@@ -812,15 +824,15 @@ nil will default to the jid provided in the initializer</p>
       <pre class="lines">
 
 
-62
-63
-64
-65
-66
-67</pre>
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unlock'>unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_token'>token</span> <span class='op'>||=</span> <span class='id identifier rubyid_jid'>jid</span>
@@ -850,7 +862,28 @@ nil will default to the jid provided in the initializer</p>
   </div>
 </div>
 <div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
   
+    <li>
+      
+        <span class='name'>token</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the token to unlock (defaults to jid)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -888,19 +921,19 @@ nil will default to the jid provided in the initializer</p>
       <pre class="lines">
 
 
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81</pre>
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unlock!'>unlock!</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_token'>token</span> <span class='op'>||=</span> <span class='id identifier rubyid_jid'>jid</span>
@@ -922,9 +955,9 @@ nil will default to the jid provided in the initializer</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Feb 28 21:57:51 2019 by
+  Generated on Mon Apr 15 17:04:06 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.19 (ruby-2.5.5).
 </div>
 
     </div>

@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -280,8 +280,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 20
 21
 22
-23
-24</pre>
+23</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb', line 18</span>
@@ -290,7 +289,6 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locked?'>locked?</span>
 
   <span class='id identifier rubyid_unlock'>unlock</span>
-
   <span class='id identifier rubyid_runtime_lock'>runtime_lock</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='lbrace'>{</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -313,12 +311,12 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <pre class="lines">
 
 
+25
 26
-27
-28</pre>
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_runtime_lock'>runtime_lock</span>
   <span class='ivar'>@runtime_lock</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="WhileExecuting.html" title="SidekiqUniqueJobs::Lock::WhileExecuting (class)">WhileExecuting</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="WhileExecuting.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_callback'>callback</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span>
@@ -333,9 +331,9 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Thu Feb 28 21:57:51 2019 by
+  Generated on Mon Apr 15 17:04:07 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.19 (ruby-2.5.5).
 </div>
 
     </div>

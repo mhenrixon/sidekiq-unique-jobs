@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::OnConflict
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -121,28 +121,6 @@
   
 </p>
 
-  
-    <h2>
-      Constant Summary
-      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
-    </h2>
-
-    <dl class="constants">
-      
-        <dt id="STRATEGIES-constant" class="">STRATEGIES =
-          
-        </dt>
-        <dd><pre class="code"><span class='lbrace'>{</span>
-  <span class='label'>log:</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/Log.html" title="SidekiqUniqueJobs::OnConflict::Log (class)">Log</a></span></span><span class='comma'>,</span>
-  <span class='label'>raise:</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/Raise.html" title="SidekiqUniqueJobs::OnConflict::Raise (class)">Raise</a></span></span><span class='comma'>,</span>
-  <span class='label'>reject:</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/Reject.html" title="SidekiqUniqueJobs::OnConflict::Reject (class)">Reject</a></span></span><span class='comma'>,</span>
-  <span class='label'>replace:</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/Replace.html" title="SidekiqUniqueJobs::OnConflict::Replace (class)">Replace</a></span></span><span class='comma'>,</span>
-  <span class='label'>reschedule:</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/Reschedule.html" title="SidekiqUniqueJobs::OnConflict::Reschedule (class)">Reschedule</a></span></span><span class='comma'>,</span>
-<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
-      
-    </dl>
-  
-
 
 
 
@@ -175,6 +153,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>returns OnConflict::NullStrategy when no other could be found.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#strategies-class_method" title="strategies (class method)">.<strong>strategies</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A convenience method for using the configured strategies.</p>
 </div></span>
   
 </li>
@@ -214,15 +215,55 @@
       <pre class="lines">
 
 
-27
-28
-29</pre>
+24
+25
+26</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_find_strategy'>find_strategy</span><span class='lparen'>(</span><span class='id identifier rubyid_strategy'>strategy</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="#STRATEGIES-constant" title="SidekiqUniqueJobs::OnConflict::STRATEGIES (constant)">STRATEGIES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='id identifier rubyid_strategy'>strategy</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::OnConflict (module)">OnConflict</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/NullStrategy.html" title="SidekiqUniqueJobs::OnConflict::NullStrategy (class)">NullStrategy</a></span></span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_strategies'>strategies</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='id identifier rubyid_strategy'>strategy</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::OnConflict (module)">OnConflict</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OnConflict/NullStrategy.html" title="SidekiqUniqueJobs::OnConflict::NullStrategy (class)">NullStrategy</a></span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="strategies-class_method">
+  
+    .<strong>strategies</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A convenience method for using the configured strategies</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_strategies'>strategies</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_strategies'><span class='object_link'><a href="../SidekiqUniqueJobs.html#strategies-class_method" title="SidekiqUniqueJobs.strategies (method)">strategies</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -234,9 +275,9 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Feb 28 21:57:51 2019 by
+  Generated on Mon Apr 15 17:04:06 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.19 (ruby-2.5.5).
 </div>
 
     </div>

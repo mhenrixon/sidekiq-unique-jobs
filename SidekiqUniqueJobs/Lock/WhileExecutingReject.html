@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::WhileExecutingReject
   
-    &mdash; Documentation by YARD 0.9.18
+    &mdash; Documentation by YARD 0.9.19
   
 </title>
 
@@ -110,7 +110,7 @@
   Unlocks after the server is done processing</p>
 
 <p>See <span class='object_link'><a href="WhileExecuting.html#lock-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#lock (method)">SidekiqUniqueJobs::Lock::WhileExecuting#lock</a></span> for more information about the client.
-See <span class='object_link'><a href="#execute-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecutingReject#execute (method)">#execute</a></span> for more information about the server</p>
+See <span class='object_link'><a href="WhileExecuting.html#execute-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#execute (method)">SidekiqUniqueJobs::Lock::WhileExecuting#execute</a></span> for more information about the server</p>
 
 
   </div>
@@ -151,29 +151,6 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#execute-instance_method" title="#execute (instance method)">#<strong>execute</strong> { ... } &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Executes in the Sidekiq server process.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#strategy-instance_method" title="#strategy (instance method)">#<strong>strategy</strong>  &#x21d2; OnConflict::Reject </a>
     
 
@@ -207,7 +184,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
   
   
   <h3 class="inherited">Methods inherited from <span class='object_link'><a href="WhileExecuting.html" title="SidekiqUniqueJobs::Lock::WhileExecuting (class)">WhileExecuting</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="WhileExecuting.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#initialize (method)">#initialize</a></span>, <span class='object_link'><a href="WhileExecuting.html#lock-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#lock (method)">#lock</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="WhileExecuting.html#execute-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#execute (method)">#execute</a></span>, <span class='object_link'><a href="WhileExecuting.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#initialize (method)">#initialize</a></span>, <span class='object_link'><a href="WhileExecuting.html#lock-instance_method" title="SidekiqUniqueJobs::Lock::WhileExecuting#lock (method)">#lock</a></span></p>
 
   
   
@@ -218,7 +195,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
   
   
   <h3 class="inherited">Methods inherited from <span class='object_link'><a href="BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">BaseLock</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="BaseLock.html#delete-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#delete (method)">#delete</a></span>, <span class='object_link'><a href="BaseLock.html#delete!-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#delete! (method)">#delete!</a></span>, <span class='object_link'><a href="BaseLock.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#initialize (method)">#initialize</a></span>, <span class='object_link'><a href="BaseLock.html#lock-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#lock (method)">#lock</a></span>, <span class='object_link'><a href="BaseLock.html#locked%3F-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#locked? (method)">#locked?</a></span>, <span class='object_link'><a href="BaseLock.html#unlock-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#unlock (method)">#unlock</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="BaseLock.html#delete-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#delete (method)">#delete</a></span>, <span class='object_link'><a href="BaseLock.html#delete!-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#delete! (method)">#delete!</a></span>, <span class='object_link'><a href="BaseLock.html#execute-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#execute (method)">#execute</a></span>, <span class='object_link'><a href="BaseLock.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#initialize (method)">#initialize</a></span>, <span class='object_link'><a href="BaseLock.html#lock-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#lock (method)">#lock</a></span>, <span class='object_link'><a href="BaseLock.html#locked%3F-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#locked? (method)">#locked?</a></span>, <span class='object_link'><a href="BaseLock.html#unlock-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#unlock (method)">#unlock</a></span></p>
 
   
   
@@ -243,68 +220,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="execute-instance_method">
-  
-    #<strong>execute</strong> { ... } &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Executes in the Sidekiq server process</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Yields:</p>
-<ul class="yield">
-  
-    <li>
-      
-      
-        <span class='type'></span>
-      
-      
-      
-        
-        <div class='inline'><p>to the worker class perform method</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-16
-17
-18
-19
-20</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing_reject.rb', line 16</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_strategy'>strategy</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_TIMEOUT_KEY</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-
-  <span class='id identifier rubyid_with_cleanup'>with_cleanup</span> <span class='lbrace'>{</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="strategy-instance_method">
+  <h3 class="signature first" id="strategy-instance_method">
   
     #<strong>strategy</strong>  &#x21d2; <tt><span class='object_link'><a href="../OnConflict/Reject.html" title="SidekiqUniqueJobs::OnConflict::Reject (class)">OnConflict::Reject</a></span></tt> 
   
@@ -345,12 +261,12 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <pre class="lines">
 
 
-24
-25
-26</pre>
+16
+17
+18</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing_reject.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing_reject.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_strategy'>strategy</span>
   <span class='ivar'>@strategy</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../OnConflict.html" title="SidekiqUniqueJobs::OnConflict (module)">OnConflict</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_strategy'><span class='object_link'><a href="../OnConflict.html#find_strategy-class_method" title="SidekiqUniqueJobs::OnConflict.find_strategy (method)">find_strategy</a></span></span><span class='lparen'>(</span><span class='symbol'>:reject</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -365,9 +281,9 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Thu Feb 28 21:57:51 2019 by
+  Generated on Mon Apr 15 17:04:07 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.18 (ruby-2.4.4).
+  0.9.19 (ruby-2.5.5).
 </div>
 
     </div>
