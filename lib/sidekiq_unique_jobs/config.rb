@@ -31,6 +31,8 @@ module SidekiqUniqueJobs
     }.freeze
 
     class << self
+      # Returns a default configuration
+      # @return [Concurrent::MutableStruct] a representation of the configuration object
       def default
         new(
           0,
@@ -42,7 +44,10 @@ module SidekiqUniqueJobs
         )
       end
     end
-
+    # Adds a lock type to the configuration. It will raise if the lock exists already
+    #
+    # @param [String] name the name of the lock
+    # @param [Class] klass the class describing the lock
     def add_lock(name, klass)
       raise ArgumentError, "Lock #{name} already defined, please use another name" if locks.key?(name.to_sym)
 
@@ -50,6 +55,11 @@ module SidekiqUniqueJobs
       self.locks = new_locks
     end
 
+    # Adds an on_conflict strategy to the configuration.
+    # It will raise if the strategy exists already
+    #
+    # @param [String] name the name of the custom strategy
+    # @param [Class] klass the class describing the strategy
     def add_strategy(name, klass)
       raise ArgumentError, "strategy #{name} already defined, please use another name" if strategies.key?(name.to_sym)
 

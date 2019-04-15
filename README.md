@@ -21,12 +21,14 @@
   - [Until Timeout](#until-timeout)
   - [Unique Until And While Executing](#unique-until-and-while-executing)
   - [While Executing](#while-executing)
+  - [Custom Locks](#custom-locks)
 - [Conflict Strategy](#conflict-strategy)
   - [Log](#log)
   - [Raise](#raise)
   - [Reject](#reject)
   - [Replace](#replace)
   - [Reschedule](#reschedule)
+  - [Custom Strategies](#custom-strategies)
 - [Usage](#usage)
   - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
   - [After Unlock Callback](#after-unlock-callback)
@@ -233,6 +235,41 @@ In the console you should see something like:
 10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
 ```
 
+### Custom Locks
+
+You may need to define some custom lock. You can define it in one project folder:
+
+```ruby
+# lib/locks/my_custom_lock.rb
+module Locks
+  class MyCustomLock < SidekiqUniqueJobs::Lock::BaseLock
+    def execute
+      # Do something ...
+    end
+  end
+end
+```
+
+You can refer on all the locks defined in `lib/sidekiq_unique_jobs/lock`.
+
+In order to make it available, you should call in your project startup:
+
+```ruby
+# For rails application
+# config/initializers/sidekiq_unique_jobs.rb
+# For other projects, whenever you prefer
+
+SidekiqUniqueJobs.configure do |config|
+  config.add_lock :my_custom_lock, Locks::MyCustomLock
+end
+```
+
+And then you can use it in the jobs definition:
+
+`sidekiq_options lock: :my_custom_lock, on_conflict: :log`
+
+Please not that if you try to override a default lock, an `ArgumentError` will be raised.
+
 ## Conflict Strategy
 
 Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
@@ -273,6 +310,41 @@ always scheduled in the future. Currently only attempting to retry one time.
 This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
 
 `sidekiq_options lock: :while_executing, on_conflict: :reschedule`
+
+### Custom Strategies
+
+You may need to define some custom strategy. You can define it in one project folder:
+
+```ruby
+# lib/strategies/my_custom_strategy.rb
+module Strategies
+  class MyCustomStrategy < OnConflict::Strategy
+    def call
+      # Do something ...
+    end
+  end
+end
+```
+
+You can refer on all the startegies defined in `lib/sidekiq_unique_jobs/on_conflict`.
+
+In order to make it available, you should call in your project startup:
+
+```ruby
+# For rails application
+# config/initializers/sidekiq_unique_jobs.rb
+# For other projects, whenever you prefer
+
+SidekiqUniqueJobs.configure do |config|
+  config.add_strategy :my_custom_strategy, Strategies::MyCustomStrategy
+end
+```
+
+And then you can use it in the jobs definition:
+
+`sidekiq_options lock: :while_executing, on_conflict: :my_custom_strategy`
+
+Please not that if you try to override a default lock, an `ArgumentError` will be raised.
 
 ## Usage
 
