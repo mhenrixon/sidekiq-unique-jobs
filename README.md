@@ -216,7 +216,7 @@ With this lock type it is possible to put any number of these jobs on the queue,
 sidekiq_options lock: :while_executing, lock_timeout: nil
 ```
 
-There is an example of this to try it out in the `rails_example` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
+There is an example of this to try it out in the `my_app` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
 
 In the console you should see something like:
 

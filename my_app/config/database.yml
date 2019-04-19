@@ -8,13 +8,13 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  database: rails_example_dev
+  database: my_app_dev
 
 test:
   <<: *defaults
-  database: rails_example_test
+  database: my_app_test
 
 production:
   <<: *defaults
-  database: rails_example_prod
+  database: my_app_prod
 
