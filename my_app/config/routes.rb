@@ -5,5 +5,5 @@ Rails.application.routes.draw do
   require 'sidekiq-status/web'
   mount Sidekiq::Web, at: '/sidekiq'
 
-  get 'issue/384'                                    => 'issue#384'
+  get 'issues/:id' => 'issues#show'
 end
