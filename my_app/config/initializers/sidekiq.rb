@@ -33,4 +33,6 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
-SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL') { 'debug' }.upcase}")
+SidekiqUniqueJobs.logger.level = Logger::DEBUG
+
+Dir[Rails.root.join("app", "workers", "**", "*.rb")].each { |worker| require worker }

@@ -1,4 +1,4 @@
-class Issue384
+class Issue384Worker
   include Sidekiq::Worker
 
   sidekiq_options lock: :while_executing,

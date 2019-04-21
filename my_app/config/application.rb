@@ -13,8 +13,7 @@ Bundler.require(*Rails.groups)
 module MyApp
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
-    # Application
-     configuration should go into files in config/initializers
+    # Applicationconfiguration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
@@ -26,5 +25,6 @@ module MyApp
     # config.i18n.default_locale = :de
 
     # config.active_record.schema_format = :sql
+    config.autoload_paths += %w[app/workers]
   end
 end

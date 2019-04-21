@@ -3,7 +3,7 @@ defaults: &defaults
   adapter: postgresql
   host: <%= ENV.fetch('DB_HOST') { 'localhost' } %>
   port: <%= ENV.fetch('DB_PORT') { 5432 } %>
-  username: <%= ENV.fetch('DB_USERNAME') { `whoami` } %>
+  username: <%= ENV.fetch('DB_USERNAME') { system("whoami") } %>
   password: <%= ENV.fetch('DB_PASSWORD') { nil } %>
 
 development:
