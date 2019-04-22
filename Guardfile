@@ -6,7 +6,7 @@ guard :rspec, cmd: "env COV=false bundle exec rspec" do
   rspec = dsl.rspec
   watch(%r{^lib/(.+)\.rb$}) { |m| "spec/unit/#{m[1]}_spec.rb" }
   watch(%r{^lib/(.+)\.rb$}) { |m| "spec/integration/#{m[1]}_spec.rb" }
-  watch(%r{^examples/(.+)\.rb$}) { |m| "spec/examples/#{m[1]}_spec.rb" }
+  watch(%r{^spec/support/workers/(.+)\.rb$}) { |m| "spec/workers/#{m[1]}_spec.rb" }
   watch(rspec.spec_helper)  { rspec.spec_dir }
   watch(rspec.spec_support) { rspec.spec_dir }
   watch(rspec.spec_files)
