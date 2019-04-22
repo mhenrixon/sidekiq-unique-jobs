@@ -11,7 +11,6 @@ SimpleCov.start do
   add_filter '/spec/'
   add_filter '/bin/'
   add_filter '/gemfiles/'
-  add_filter '/examples/'
 
   add_group 'Client', 'lib/sidekiq_unique_jobs/client'
   add_group 'Locks', 'lib/sidekiq_unique_jobs/lock'
