@@ -111,7 +111,7 @@ Style/Documentation:
   Enabled: true
   Exclude:
     - "examples/**/*.rb"
-    - "rails_example/**/*.rb"
+    - "my_app/**/*.rb"
     - "bin/**/*.rb"
     - "lib/sidekiq_unique_jobs/testing.rb"
     - "lib/sidekiq_unique_jobs/core_ext.rb"

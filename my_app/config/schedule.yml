@@ -2,5 +2,5 @@
 
 my_first_job:
   cron: "*/2 * * * *"
-  class: "HardWorker"
+  class: "Issue384Worker"
   queue: default

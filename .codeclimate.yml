@@ -27,6 +27,6 @@ exclude_patterns:
   - "*.gemspec"
   - "Appraisals"
   - "gemfiles/"
-  - "rails_example/"
+  - "my_app/"
   - "redis/"
   - "tmp/"

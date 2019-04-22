@@ -1,6 +1,6 @@
 ---
 exclude_paths:
-  - rails_example
+  - my_app
   - redis
   - spec
   - tmp
