@@ -6,6 +6,19 @@ module SimulateLock
   extend self
   @items = Concurrent::Array.new
 
+  def lock_jid(key, jid)
+    raise ArgumentError, ":key needs to be a Key" unless key.is_a?(SidekiqUniqueJobs::Key)
+    SidekiqUniqueJobs.redis do |conn|
+      conn.multi do
+        conn.sadd(SidekiqUniqueJobs::UNIQUE_SET, key.digest)
+        conn.set(key.exists, jid)
+        conn.set(key.version, "1")
+        conn.hset(key.grabbed, jid, Time.now.to_f)
+        conn.rpush(key.available, jid)
+      end
+    end
+  end
+
   def lock_until_executed(digest, jid, ttl = nil)
     item = get_item(digest: digest, jid: jid, lock_type: :until_executed, ttl: ttl)
     lock(item)
@@ -22,6 +35,7 @@ module SimulateLock
   end
 
   def lock_while_executing(digest, jid, ttl = nil)
+    digest = digest.dup + ":RUN"
     item = get_item(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl)
     lock(item)
   end
@@ -51,4 +65,8 @@ module SimulateLock
     @items << item
     item
   end
+end
+
+RSpec.configure do |config|
+  config.include SimulateLock
 end

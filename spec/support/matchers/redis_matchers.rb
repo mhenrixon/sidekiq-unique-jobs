@@ -25,31 +25,3 @@ RSpec::Matchers.define :be_scheduled_at do |time|
     diffable
   end
 end
-
-RSpec::Matchers.define :have_key do |_unique_key|
-  SidekiqUniqueJobs.redis do |conn|
-    match do |_unique_jobs|
-      @value       = conn.get(@unique_key)
-      @ttl         = conn.ttl(@unique_key)
-
-      @value && with_value && for_seconds
-    end
-
-    chain :with_value do |value = nil|
-      @expected_value = value
-      @expected_value && @value == @expected_value
-    end
-
-    chain :for_seconds do |ttl = nil|
-      @expected_ttl = ttl
-      @expected_ttl && @ttl == @expected_ttl
-    end
-
-    failure_message do |_actual|
-      msg = "expected Redis to have key #{@unique_key}"
-      msg += " with value #{@expected_value} was (#{@value})" if @expected_value
-      msg += " with value #{@expected_ttl} was (#{@ttl})" if @expected_ttl
-      msg
-    end
-  end
-end

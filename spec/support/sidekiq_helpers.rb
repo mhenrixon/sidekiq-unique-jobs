@@ -63,6 +63,14 @@ module SidekiqHelpers
     redis { |conn| conn.smembers(key) }
   end
 
+  def lrange(key, start_pos, end_pos)
+    redis { |conn| conn.lrange(key, start_pos, end_pos) }
+  end
+
+  def hget(key, value)
+    redis { |conn| conn.hget(key, value) }
+  end
+
   def unique_keys
     keys("uniquejobs:*")
   end
@@ -77,6 +85,10 @@ module SidekiqHelpers
 
   def zcount(queue, min = "-inf", max = "+inf")
     redis { |conn| conn.zcount(queue, min, max) }
+  end
+
+  def call_script(file_name, keys: [], argv: [])
+    SidekiqUniqueJobs::Scripts.call(file_name, nil, keys: keys, argv: argv)
   end
 end
 
