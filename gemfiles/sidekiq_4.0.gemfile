@@ -5,7 +5,6 @@ source "https://rubygems.org"
 gem "appraisal", "~> 2.2.0"
 gem "rspec-eventually", require: false
 gem "rspec-its", require: false
-gem "rspec-retry", require: false
 gem "sidekiq", "~> 4.0.0"
 
 platforms :mri_25 do
@@ -18,8 +17,8 @@ platforms :mri_25 do
   gem "guard-rubocop"
   gem "memory_profiler"
   gem "pry"
-  gem "reek", ">= 5.3"
   gem "redcarpet", "~> 3.4"
+  gem "reek", ">= 5.3"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rspec"
