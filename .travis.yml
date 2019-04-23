@@ -43,7 +43,6 @@ matrix:
       gemfile: gemfiles/sidekiq_6.0.gemfile
 
 gemfile:
-  - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_4.0.gemfile
   - gemfiles/sidekiq_4.1.gemfile
   - gemfiles/sidekiq_4.2.gemfile
