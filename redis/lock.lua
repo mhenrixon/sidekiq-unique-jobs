@@ -19,22 +19,22 @@ local function current_time()
   return number
 end
 
-local stored_token = redis.call('GET', exists_key)
-if stored_token and stored_token ~= job_id then
-  return stored_token
+local stored_jid = redis.call('GET', exists_key)
+if stored_jid and stored_jid ~= job_id then
+  return stored_jid
 end
 
 redis.call('SET', exists_key, job_id)
 
 ----------------------------------------------------------------
 -- TODO: Legacy support (Remove in v6.1)
-local old_token  = redis.call('GET', unique_digest)
-if old_token then
-  if old_token == job_id or old_token == '2' then
+local old_jid  = redis.call('GET', unique_digest)
+if old_jid then
+  if old_jid == job_id or old_jid == '2' then
     -- No need to return, we just delete the old key
     redis.call('DEL', unique_digest)
   else
-    return old_token
+    return old_jid
   end
 end
 ----------------------------------------------------------------
