@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9 do
-  let(:middleware) { SidekiqUniqueJobs::Server::Middleware.new }
+RSpec.describe SidekiqUniqueJobs::ServerMiddleware, redis: :redis, redis_db: 9 do
+  let(:middleware) { described_class.new }
 
   let(:queue) { "working" }
 

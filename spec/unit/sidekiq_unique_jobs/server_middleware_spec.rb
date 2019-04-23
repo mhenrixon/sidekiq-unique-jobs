@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable RSpec/InstanceVariable
-RSpec.describe SidekiqUniqueJobs::Server::Middleware do
+RSpec.describe SidekiqUniqueJobs::ServerMiddleware do
   let(:middleware) { described_class.new }
 
   describe "#call" do
@@ -21,7 +21,7 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware do
 
     before do
       @inside_block_value = false
-      allow(middleware).to receive(:lock).and_return(lock)
+      allow(middleware).to receive(:lock_instance).and_return(lock)
       allow(lock).to receive(:execute).and_yield
     end
 

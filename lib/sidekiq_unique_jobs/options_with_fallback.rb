@@ -36,12 +36,10 @@ module SidekiqUniqueJobs
 
     # Check if we should log duplicate payloads
     # @return [SidekiqUniqueJobs::Lock::BaseLock] an instance of a child class
-    def lock
-      @lock ||= lock_class.new(item, after_unlock_hook, @redis_pool)
+    def lock_instance
+      @lock_instance ||= lock_class.new(item, after_unlock_hook, @redis_pool)
     end
 
-    # Check if we should log duplicate payloads
-    # @return [SidekiqUniqueJobs::Lock::BaseLock] an instance of a child class
     def lock_class
       @lock_class ||= begin
         locks.fetch(lock_type.to_sym) do

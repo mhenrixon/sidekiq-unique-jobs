@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1 do
+RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 do
   describe "when a job is already scheduled" do
     it "processes jobs properly" do
       jid = NotifyWorker.perform_in(1, 183, "xxxx")
@@ -187,7 +187,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expect(queue_count("customqueue")).to eq(1)
     end
-    expect(Sidekiq.logger).to have_received(:warn).with(/^payload is not unique/)
+    expect(Sidekiq.logger).to have_received(:warn).with(/^Already locked with another job_id/)
   end
 
   it "does not log duplicate payload when config turned off" do
@@ -199,6 +199,6 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
 
       expect(queue_count("customqueue")).to eq(1)
     end
-    expect(SidekiqUniqueJobs.logger).not_to have_received(:warn).with(/^payload is not unique/)
+    expect(SidekiqUniqueJobs.logger).not_to have_received(:warn) # .with(/^already locked by another job_id/)
   end
 end

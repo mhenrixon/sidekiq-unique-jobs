@@ -17,7 +17,7 @@ RSpec.describe SidekiqUniqueJobs do
     end
 
     subject(:middleware_call) do
-      SidekiqUniqueJobs::Client::Middleware.new.call(worker_class, item, queue) do
+      SidekiqUniqueJobs::ClientMiddleware.new.call(worker_class, item, queue) do
         true
       end
     end

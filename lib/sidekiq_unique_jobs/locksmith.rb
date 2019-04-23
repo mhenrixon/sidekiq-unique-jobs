@@ -4,7 +4,6 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  # rubocop:disable ClassLength
   class Locksmith
     include SidekiqUniqueJobs::Connection
 

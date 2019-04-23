@@ -4,7 +4,7 @@ require "sidekiq/worker"
 require "sidekiq-unique-jobs"
 
 # rubocop:disable RSpec/InstanceVariable
-RSpec.describe SidekiqUniqueJobs::Client::Middleware do
+RSpec.describe SidekiqUniqueJobs::ClientMiddleware do
   let(:middleware) { described_class.new }
 
   describe "#call" do
@@ -23,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     context "when locking succeeds" do
       before do
-        allow(middleware).to receive(:locked?).and_return(true)
+        allow(middleware).to receive(:lock).and_yield
       end
 
       it "yields control" do
@@ -33,7 +33,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware do
 
     context "when already locked" do
       before do
-        allow(middleware).to receive(:locked?).and_return(false)
+        allow(middleware).to receive(:lock)
       end
 
       it "does not yield control" do

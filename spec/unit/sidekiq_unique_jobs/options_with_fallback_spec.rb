@@ -109,8 +109,8 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
   end
 
-  describe "#lock" do
-    subject(:lock) { options_with_fallback.lock }
+  describe "#lock_instance" do
+    subject(:lock) { options_with_fallback.lock_instance }
 
     context 'when item["unique"] is present' do
       let(:unique) { :until_executed }

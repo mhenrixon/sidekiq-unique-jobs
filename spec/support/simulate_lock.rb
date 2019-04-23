@@ -8,6 +8,7 @@ module SimulateLock
 
   def lock_jid(key, jid)
     raise ArgumentError, ":key needs to be a Key" unless key.is_a?(SidekiqUniqueJobs::Key)
+
     SidekiqUniqueJobs.redis do |conn|
       conn.multi do
         conn.sadd(SidekiqUniqueJobs::UNIQUE_SET, key.digest)

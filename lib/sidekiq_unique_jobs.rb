@@ -31,6 +31,8 @@ require "sidekiq_unique_jobs/options_with_fallback"
 require "sidekiq_unique_jobs/middleware"
 require "sidekiq_unique_jobs/sidekiq_unique_ext"
 require "sidekiq_unique_jobs/on_conflict"
+require "sidekiq_unique_jobs/client_middleware"
+require "sidekiq_unique_jobs/server_middleware"
 
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
