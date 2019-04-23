@@ -11,6 +11,7 @@ detectors:
   DuplicateMethodCall:
     exclude:
     - Sidekiq#self.use_options
+    - SidekiqUniqueJobs::Lock::WhileExecuting#execute
     - SidekiqUniqueJobs::Locksmith#grab_token
     - SidekiqUniqueJobs::Locksmith#touch_grabbed_token
     - SidekiqUniqueJobs::Web#self.registered

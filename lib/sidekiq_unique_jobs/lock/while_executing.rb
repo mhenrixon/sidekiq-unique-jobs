@@ -38,7 +38,7 @@ module SidekiqUniqueJobs
 
         yield
         callback_safely
-      rescue Exception => ex
+      rescue Exception => ex # rubocop:disable Lint/RescueException
         log_debug("Error #{self.class}#{__method__} (#{Sidekiq.dump_json(item)})")
         log_error(ex)
         raise
