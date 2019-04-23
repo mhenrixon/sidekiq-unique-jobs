@@ -3,9 +3,9 @@
 require "time"
 
 RSpec::Matchers.define :resemble_date do |expected|
-  DATE_REGEX = /\A\d{4}-\d{2}-\d{2}\Z/.freeze
-  ISO8601_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\Z/.freeze
-  UNIX_REGEX = /\A\d{10}.\d{7}\Z/.freeze
+  DATE_REGEX ||= /\A\d{4}-\d{2}-\d{2}\Z/.freeze
+  ISO8601_REGEX ||= /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\Z/.freeze
+  UNIX_REGEX ||= /\A\d{7,10}.\d{1,7}\Z/.freeze
 
   match do |date_or_str|
     @actual = date_or_str

@@ -87,7 +87,7 @@ module SidekiqUniqueJobs
     # @return [Hash] the context to use for each log line
     #
     def logging_context
-      middleware = self.is_a?(ClientMiddleware) ? :client : :server
+      middleware = is_a?(ClientMiddleware) ? :client : :server
       digest = item["unique_digest"]
 
       if defined?(Sidekiq::Logging)

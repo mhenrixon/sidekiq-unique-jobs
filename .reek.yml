@@ -11,6 +11,8 @@ detectors:
   DuplicateMethodCall:
     exclude:
     - Sidekiq#self.use_options
+    - SidekiqUniqueJobs::Locksmith#grab_token
+    - SidekiqUniqueJobs::Locksmith#touch_grabbed_token
     - SidekiqUniqueJobs::Web#self.registered
   IrresponsibleModule:
     enabled: false
@@ -21,19 +23,22 @@ detectors:
     - Hash#slice
     - SidekiqUniqueJobs::Locksmith#create_lock
     - SidekiqUniqueJobs::Locksmith#expire_when_necessary
-    - SidekiqUniqueJobs::Client::Middleware#call
+    - SidekiqUniqueJobs::ClientMiddleware#call
   TooManyStatements:
     exclude:
     - initialize
     - Hash#slice
-    - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
-    - SidekiqUniqueJobs::Middleware#configure_server_middleware
-    - SidekiqUniqueJobs::Server::Middleware#call
-    - SidekiqUniqueJobs::UniqueArgs#filtered_args
-    - SidekiqUniqueJobs::Util#del
+    - SidekiqUniqueJobs::ClientMiddleware#call
     - SidekiqUniqueJobs::Digests#batch_delete
     - SidekiqUniqueJobs::Digests#delete_by_pattern
+    - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+    - SidekiqUniqueJobs::Locksmith#create_lock
+    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
+    - SidekiqUniqueJobs::Middleware#self.configure_server
+    - SidekiqUniqueJobs::Middleware#with_logging_context
+    - SidekiqUniqueJobs::ServerMiddleware#call
+    - SidekiqUniqueJobs::UniqueArgs#filtered_args
+    - SidekiqUniqueJobs::Util#del
     - SidekiqUniqueJobs::Web#self.registered
   UncommunicativeVariableName:
     exclude:
@@ -51,6 +56,7 @@ detectors:
     exclude:
     - Hash#slice
     - Hash#slice!
+    - SidekiqUniqueJobs::Middleware#with_configured_loggers_context
     - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
     - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
     - SidekiqUniqueJobs::Web::Helpers#redirect_to
@@ -75,13 +81,14 @@ detectors:
     exclude:
     - SidekiqUniqueJobs::Digests#batch_delete
     - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Middleware#configure_client_middleware
-    - SidekiqUniqueJobs::Middleware#configure_server_middleware
+    - SidekiqUniqueJobs::Middleware#self.configure_client
+    - SidekiqUniqueJobs::Middleware#self.configure_server
     - SidekiqUniqueJobs::Util#batch_delete
     - SidekiqUniqueJobs::Util#keys_with_ttl
   TooManyInstanceVariables:
     exclude:
     - SidekiqUniqueJobs::Locksmith
+    - SidekiqUniqueJobs::Key
   TooManyMethods:
     exclude:
     - SidekiqUniqueJobs::Locksmith

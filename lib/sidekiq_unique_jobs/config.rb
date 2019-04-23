@@ -48,9 +48,10 @@ module SidekiqUniqueJobs
     # @param [String] name the name of the lock
     # @param [Class] klass the class describing the lock
     def add_lock(name, klass)
-      raise ArgumentError, "Lock #{name} already defined, please use another name" if locks.key?(name.to_sym)
+      lock_sym = name.to_sym
+      raise ArgumentError, "Lock #{name} already defined, please use another name" if locks.key?(lock_sym)
 
-      new_locks = locks.dup.merge(name.to_sym => klass).freeze
+      new_locks = locks.dup.merge(lock_sym => klass).freeze
       self.locks = new_locks
     end
 
@@ -60,9 +61,10 @@ module SidekiqUniqueJobs
     # @param [String] name the name of the custom strategy
     # @param [Class] klass the class describing the strategy
     def add_strategy(name, klass)
-      raise ArgumentError, "strategy #{name} already defined, please use another name" if strategies.key?(name.to_sym)
+      strategy_sym = name.to_sym
+      raise ArgumentError, "strategy #{name} already defined, please use another name" if strategies.key?(strategy_sym)
 
-      new_strategies = strategies.dup.merge(name.to_sym => klass).freeze
+      new_strategies = strategies.dup.merge(strategy_sym => klass).freeze
       self.strategies = new_strategies
     end
   end

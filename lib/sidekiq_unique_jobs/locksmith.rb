@@ -169,5 +169,4 @@ module SidekiqUniqueJobs
       redis(&:time)
     end
   end
-  # rubocop:enable ClassLength
 end

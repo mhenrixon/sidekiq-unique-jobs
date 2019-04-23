@@ -3,7 +3,7 @@
 require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
-RSpec.describe "delete_by_digest.lua" do
+RSpec.describe "delete_job_by_digest.lua" do
   subject(:delete_by_digest) { call_script(:delete_by_digest, keys: [SidekiqUniqueJobs::UNIQUE_SET, digest]) }
 
   let(:job_id)  { "jobid" }
