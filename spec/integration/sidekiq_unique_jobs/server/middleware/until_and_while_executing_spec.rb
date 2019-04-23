@@ -25,15 +25,8 @@ RSpec.describe SidekiqUniqueJobs::ServerMiddleware, "unique: :until_and_while_ex
     item_one.merge("jid" => jid_two)
   end
 
-  let(:available_key) { "uniquejobs:f07093737839f88af8593c945143574d:AVAILABLE" }
-  let(:exists_key)    { "uniquejobs:f07093737839f88af8593c945143574d:EXISTS" }
-  let(:grabbed_key)   { "uniquejobs:f07093737839f88af8593c945143574d:GRABBED" }
-  let(:version_key)   { "uniquejobs:f07093737839f88af8593c945143574d:VERSION" }
-
-  let(:available_run_key) { "uniquejobs:f07093737839f88af8593c945143574d:RUN:AVAILABLE" }
-  let(:exists_run_key)    { "uniquejobs:f07093737839f88af8593c945143574d:RUN:EXISTS" }
-  let(:grabbed_run_key)   { "uniquejobs:f07093737839f88af8593c945143574d:RUN:GRABBED" }
-  let(:version_run_key)   { "uniquejobs:f07093737839f88af8593c945143574d:RUN:VERSION" }
+  let(:key)     { SidekiqUniqueJobs::Key.new("uniquejobs:f07093737839f88af8593c945143574d") }
+  let(:run_key) { SidekiqUniqueJobs::Key.new("uniquejobs:f07093737839f88af8593c945143574d:RUN") }
 
   context "when item_one is locked" do
     let(:pushed_jid) { push_item(item_one) }
@@ -55,12 +48,12 @@ RSpec.describe SidekiqUniqueJobs::ServerMiddleware, "unique: :until_and_while_ex
         end
 
         # TODO: Why is this all of a sudden -2?
-        xit "item_one can be executed by server" do
-          expect(unique_keys).to match_array([grabbed_key, exists_key])
+        it "item_one can be executed by server" do
+          expect(unique_keys).to match_array([key.grabbed, key.exists])
           server.call(worker_class, item_one, queue) {}
-          expect(unique_keys).to match_array([available_key, available_run_key])
-          expect(ttl(available_key)).to eq(5)
-          expect(ttl(available_run_key)).to eq(5)
+          expect(unique_keys).to match_array([key.available, run_key.available])
+          expect(ttl(key.available)).to eq(5)
+          expect(ttl(run_key.available)).to eq(5)
         end
       end
     end

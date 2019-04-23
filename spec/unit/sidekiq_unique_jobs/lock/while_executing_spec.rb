@@ -32,6 +32,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
     before do
       allow(locksmith).to receive(:lock).with(0).and_return(token)
+      allow(locksmith).to receive(:unlock)
     end
 
     # context 'when lock is successful' do
