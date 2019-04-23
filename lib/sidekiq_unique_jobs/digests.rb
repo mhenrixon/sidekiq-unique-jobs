@@ -123,7 +123,7 @@ module SidekiqUniqueJobs
     end
 
     def current_time
-      Time.now
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
   end
 end
