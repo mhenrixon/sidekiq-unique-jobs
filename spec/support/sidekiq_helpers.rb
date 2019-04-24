@@ -7,8 +7,12 @@ module SidekiqHelpers
     zcard("dead")
   end
 
-  def get_key(key)
+  def get(key)
     redis { |conn| conn.get(key) }
+  end
+
+  def set(key, value, options = {})
+    redis { |conn| conn.set(key, value, options) }
   end
 
   def hexists(hash, key)

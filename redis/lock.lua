@@ -6,9 +6,9 @@ local available_key = KEYS[3]
 local unique_keys   = KEYS[4]
 local unique_digest = KEYS[5]
 
-local job_id = ARGV[1]
-local ttl    = tonumber(ARGV[2])
-local lock   = ARGV[3]
+local job_id    = ARGV[1]
+local ttl       = tonumber(ARGV[2])
+local lock_type = ARGV[3]
 
 local function current_time()
   local time = redis.call('time')
@@ -49,7 +49,7 @@ redis.call('RPUSH', available_key, job_id)
 
 -- The client should only set ttl for until_expired
 -- The server should set ttl for all other jobs
-if lock == "until_expired" and ttl then
+if lock_type == "until_expired" and ttl then
   -- We can't keep the key here because it will otherwise never be deleted
   redis.call('SREM', unique_keys, unique_digest)
 

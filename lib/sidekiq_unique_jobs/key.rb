@@ -39,6 +39,10 @@ module SidekiqUniqueJobs
       @version   = namespaced_key("VERSION")
     end
 
+    def unique_set
+      SidekiqUniqueJobs::UNIQUE_SET
+    end
+
     def all
       [available, exists, grabbed]
     end

@@ -6,10 +6,11 @@ require "spec_helper"
 RSpec.describe "delete_job_by_digest.lua" do
   subject(:delete_by_digest) { call_script(:delete_by_digest, keys: [SidekiqUniqueJobs::UNIQUE_SET, digest]) }
 
-  let(:job_id)  { "jobid" }
-  let(:digest)  { "uniquejobs:digest" }
-  let(:key)     { SidekiqUniqueJobs::Key.new(digest) }
-  let(:run_key) { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
+  let(:job_id)   { "jobid" }
+  let(:digest)   { "uniquejobs:digest" }
+  let(:key)      { SidekiqUniqueJobs::Key.new(digest) }
+  let(:run_key)  { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
+  let(:lock_ttl) { nil }
 
   before do
     lock_jid(key, job_id)
