@@ -36,7 +36,21 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
     allow(process_two).to receive(:runtime_lock).and_return(runtime_two)
   end
 
-  it_behaves_like "a lock implementation"
+  it "can be locked" do
+    expect(process_one.lock).to eq(jid_one)
+  end
+
+  context "when process one has locked the job" do
+    before { process_one.lock }
+
+    it "has locked process_one" do
+      expect(process_one).to be_locked
+    end
+
+    it "prevents process_two from locking" do
+      expect(process_two.lock).to eq(nil)
+    end
+  end
 
   it "has not locked runtime_one" do
     process_one.lock

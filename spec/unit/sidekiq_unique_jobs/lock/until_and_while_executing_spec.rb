@@ -45,11 +45,11 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting do
       it "unlocks the unique key before yielding" do
         inside_block_value = false
         lock.execute { inside_block_value = true }
-        expect(inside_block_value).to eq(false)
+        expect(inside_block_value).to eq(true)
 
         expect(lock).to have_received(:locked?)
         expect(lock).not_to have_received(:unlock)
-        expect(runtime_lock).not_to have_received(:execute)
+        expect(runtime_lock).to have_received(:execute)
       end
     end
   end
