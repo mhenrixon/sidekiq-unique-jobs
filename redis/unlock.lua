@@ -5,9 +5,9 @@ local version_key   = KEYS[4]
 local unique_keys   = KEYS[5]
 local unique_digest = KEYS[6] -- TODO: Legacy support (Remove in v6.1)
 
-local job_id = ARGV[1]
-local ttl    = tonumber(ARGV[2])
-local lock   = ARGV[3]
+local job_id    = ARGV[1]
+local ttl       = tonumber(ARGV[2])
+local lock_type = ARGV[3]
 
 redis.call('SREM', unique_keys, unique_digest)
 
@@ -30,6 +30,6 @@ end
 
 redis.call('HDEL', grabbed_key, job_id)
 local count = redis.call('LPUSH', available_key, job_id)
-redis.call('EXPIRE', available_key, 5 )
+redis.call('EXPIRE', available_key, 5)
 return count
 
