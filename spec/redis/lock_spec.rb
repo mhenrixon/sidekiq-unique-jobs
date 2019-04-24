@@ -3,7 +3,7 @@
 require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
-RSpec.describe "lock.lua" do
+RSpec.describe "lock.lua", redis: :redis do
   subject(:lock) { call_script(:lock, keys: key_args, argv: argv) }
 
   let(:key_args) do
@@ -27,21 +27,23 @@ RSpec.describe "lock.lua" do
   let(:digest)     { "uniquejobs:digest" }
   let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
   let(:lock_ttl)   { nil }
-  let(:locked_jid) { nil }
+  let(:locked_jid) { job_id }
 
   context "without existing locks" do
     before do
       lock
     end
 
-    it_behaves_like "keys created by lock"
+    it_behaves_like "keys created by other locks than until_expired"
   end
 
   context "when lock_type is :until_expired" do
     let(:lock_type) { :until_expired }
     let(:lock_ttl)  { 10 }
 
-    it_behaves_like "keys created by lock"
+    before { lock }
+
+    it_behaves_like "keys created by until_expired"
   end
 
   context "when a lock exists" do
@@ -59,7 +61,7 @@ RSpec.describe "lock.lua" do
     context "when lock value is same job_id" do
       let(:locked_jid) { job_id }
 
-      it_behaves_like "keys created by lock"
+      it_behaves_like "keys created by other locks than until_expired"
 
       it { is_expected.to eq(job_id) }
     end
@@ -78,16 +80,14 @@ RSpec.describe "lock.lua" do
     end
 
     context "when lock value is same job_id" do
-      let(:locked_jid) { job_id }
-
-      it_behaves_like "keys created by lock"
+      it_behaves_like "keys created by other locks than until_expired"
       it { is_expected.to eq(job_id) }
     end
 
     context "when lock value is '2'" do
       let(:locked_jid) { "2" }
 
-      it_behaves_like "keys created by lock"
+      it_behaves_like "keys created by other locks than until_expired"
       it { is_expected.to eq(job_id) }
     end
   end

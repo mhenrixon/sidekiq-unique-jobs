@@ -9,6 +9,12 @@ local job_id    = ARGV[1]
 local ttl       = tonumber(ARGV[2])
 local lock_type = ARGV[3]
 
+local stored_jid = redis.call('GET', exists_key)
+
+if stored_jid and stored_jid ~= job_id then
+  return stored_jid
+end
+
 redis.call('SREM', unique_keys, unique_digest)
 
 if ttl then

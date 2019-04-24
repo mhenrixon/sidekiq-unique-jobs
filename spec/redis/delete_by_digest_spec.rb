@@ -3,14 +3,15 @@
 require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
-RSpec.describe "delete_by_digest.lua" do
+RSpec.describe "delete_by_digest.lua", redis: :redis do
   subject(:delete_by_digest) { call_script(:delete_by_digest, keys: [SidekiqUniqueJobs::UNIQUE_SET, digest]) }
 
-  let(:job_id)   { "jobid" }
-  let(:digest)   { "uniquejobs:digest" }
-  let(:key)      { SidekiqUniqueJobs::Key.new(digest) }
-  let(:run_key)  { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
-  let(:lock_ttl) { nil }
+  let(:job_id)     { "jobid" }
+  let(:digest)     { "uniquejobs:digest" }
+  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
+  let(:run_key)    { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
+  let(:lock_ttl)   { nil }
+  let(:locked_jid) { job_id }
 
   before do
     lock_jid(key, job_id)
