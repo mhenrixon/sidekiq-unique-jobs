@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 RSpec.shared_examples "adds available key" do
   it "creates a key with suffix :AVAILABLE" do
     expect(unique_keys).to include(key.available)

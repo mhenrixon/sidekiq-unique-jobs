@@ -12,7 +12,7 @@ RSpec.describe "lock.lua" do
       key.grabbed,
       key.available,
       key.unique_set,
-      key.digest
+      key.digest,
     ]
   end
   let(:argv) do
@@ -51,7 +51,7 @@ RSpec.describe "lock.lua" do
     end
 
     context "when lock value is another job_id" do
-      let(:locked_jid) { 'anotherjobid' }
+      let(:locked_jid) { "anotherjobid" }
 
       it { is_expected.to eq(locked_jid) }
     end
@@ -72,7 +72,7 @@ RSpec.describe "lock.lua" do
     end
 
     context "when lock value is another job_id" do
-      let(:locked_jid) { 'anotherjobid' }
+      let(:locked_jid) { "anotherjobid" }
 
       it { is_expected.to eq(locked_jid) }
     end
@@ -85,7 +85,7 @@ RSpec.describe "lock.lua" do
     end
 
     context "when lock value is '2'" do
-      let(:locked_jid) { '2' }
+      let(:locked_jid) { "2" }
 
       it_behaves_like "keys created by lock"
       it { is_expected.to eq(job_id) }
