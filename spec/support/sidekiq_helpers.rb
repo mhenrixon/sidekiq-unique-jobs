@@ -31,6 +31,10 @@ module SidekiqHelpers
     Sidekiq::Client.push(item)
   end
 
+  def flush_redis
+    redis(&:flushdb)
+  end
+
   def queue_count(queue)
     redis { |conn| conn.llen("queue:#{queue}") }
   end

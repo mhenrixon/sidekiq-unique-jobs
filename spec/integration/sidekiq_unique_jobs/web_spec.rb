@@ -12,7 +12,7 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
   end
 
   before do
-    Sidekiq.redis(&:flushdb)
+    flush_redis
   end
 
   let(:digest)           { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }

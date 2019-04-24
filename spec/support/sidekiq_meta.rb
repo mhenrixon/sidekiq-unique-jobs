@@ -16,7 +16,7 @@ RSpec.configure do |config|
     end
 
     Sidekiq.redis = redis
-    Sidekiq.redis(&:flushdb)
+    flush_redis
   end
 
   config.before do |example|
@@ -40,6 +40,6 @@ RSpec.configure do |config|
   end
 
   config.after(:each, redis: :redis) do |_example|
-    Sidekiq.redis(&:flushdb)
+    flush_redis
   end
 end

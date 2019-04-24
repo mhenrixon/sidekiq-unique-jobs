@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+
 RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
   def item_with_digest
     SidekiqUniqueJobs::UniqueArgs.digest(item)
@@ -24,7 +25,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
 
     specify do
       expect(unique_keys.size).to eq(0)
-      Sidekiq::Client.push(item_with_digest)
+      push_item(item_with_digest)
 
       expect(unique_keys.size).to eq(2)
 
@@ -39,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
 
     specify do
       expect(unique_keys.size).to eq(0)
-      Sidekiq::Client.push(item_with_digest)
+      push_item(item_with_digest)
 
       expect(unique_keys.size).to eq(2)
 

@@ -56,11 +56,11 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
     10.times { MyUniqueJobWithFilterProc.perform_async(1) }
     expect(queue_count("customqueue")).to eq(1)
 
-    Sidekiq.redis(&:flushdb)
+    flush_redis
     expect(queue_count("customqueue")).to eq(0)
 
     10.times do
-      Sidekiq::Client.push(
+      push_item(
         "class" => MyUniqueJobWithFilterProc,
         "queue" => "customqueue",
         "args" => [1, type: "value", some: "not used"],
@@ -74,11 +74,11 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
     10.times { MyUniqueJobWithFilterMethod.perform_async(1) }
 
     expect(queue_count("customqueue")).to eq(1)
-    Sidekiq.redis(&:flushdb)
+    flush_redis
     expect(queue_count("customqueue")).to eq(0)
 
     10.times do
-      Sidekiq::Client.push(
+      push_item(
         "class" => MyUniqueJobWithFilterMethod,
         "queue" => "customqueue",
         "args" => [1, type: "value", some: "not used"],
@@ -97,7 +97,7 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
   context "when class is not unique" do
     it "pushes duplicate messages" do
       10.times do
-        Sidekiq::Client.push("class" => CustomQueueJob, "queue" => "customqueue", "args" => [1, 2])
+        push_item("class" => CustomQueueJob, "queue" => "customqueue", "args" => [1, 2])
       end
 
       expect(queue_count("customqueue")).to eq(10)
@@ -111,7 +111,7 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
         expect(CustomQueueJobWithFilterMethod.get_sidekiq_options["unique_args"]).to eq :args_filter
 
         (0..10).each do |i|
-          Sidekiq::Client.push(
+          push_item(
             "class" => CustomQueueJobWithFilterMethod,
             "queue" => "customqueue",
             "args" => [1, i],
@@ -135,8 +135,8 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
     context "when unique_on_all_queues is set" do
       it "pushes no duplicate messages on other queues" do
         item = { "class" => UniqueOnAllQueuesJob, "args" => [1, 2] }
-        Sidekiq::Client.push(item.merge("queue" => "customqueue"))
-        Sidekiq::Client.push(item.merge("queue" => "customqueue2"))
+        push_item(item.merge("queue" => "customqueue"))
+        push_item(item.merge("queue" => "customqueue2"))
 
         expect(queue_count("customqueue")).to eq(1)
         expect(queue_count("customqueue2")).to eq(0)
@@ -159,8 +159,8 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
           "args" => [1, 2],
         }
 
-        Sidekiq::Client.push(item_one)
-        Sidekiq::Client.push(item_two)
+        push_item(item_one)
+        push_item(item_two)
 
         expect(queue_count("customqueue1")).to eq(1)
       end
@@ -182,7 +182,7 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
 
     with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: true) do
       2.times do
-        Sidekiq::Client.push("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
+        push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
       end
 
       expect(queue_count("customqueue")).to eq(1)
@@ -194,7 +194,7 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
     allow(SidekiqUniqueJobs.logger).to receive(:warn)
     with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: false) do
       2.times do
-        Sidekiq::Client.push("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
+        push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
       end
 
       expect(queue_count("customqueue")).to eq(1)

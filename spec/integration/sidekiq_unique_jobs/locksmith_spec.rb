@@ -175,14 +175,14 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     end
 
     it "expires keys" do
-      Sidekiq.redis(&:flushdb)
+      flush_redis
       locksmith_one.lock
       keys = unique_keys
       expect(unique_keys).not_to include(keys)
     end
 
     it "expires keys after unlocking" do
-      Sidekiq.redis(&:flushdb)
+      flush_redis
       locksmith_one.lock do
         # noop
       end
