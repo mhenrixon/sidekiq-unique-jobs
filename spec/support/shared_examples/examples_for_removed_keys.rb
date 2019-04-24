@@ -3,7 +3,6 @@
 RSpec.shared_examples "available key does not exist" do
   it "contains no key with suffix :AVAILABLE" do
     expect(unique_keys).not_to include(key.available)
-    expect(lrange(key.available, -1, 1).shift).to eq(locked_jid)
   end
 end
 
@@ -49,6 +48,13 @@ end
 
 RSpec.shared_examples "keys are removed by unlock" do
   it_behaves_like "available key expires after 5 seconds"
+  it_behaves_like "grabbed key does not exist"
+  it_behaves_like "exists key does not exist"
+  it_behaves_like "digest does not exist in unique set"
+end
+
+RSpec.shared_examples "keys are removed by delete" do
+  it_behaves_like "available key does not exist"
   it_behaves_like "grabbed key does not exist"
   it_behaves_like "exists key does not exist"
   it_behaves_like "digest does not exist in unique set"
