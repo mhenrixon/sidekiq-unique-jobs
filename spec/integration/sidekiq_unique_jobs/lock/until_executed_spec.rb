@@ -51,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
     subject(:delete) { process_one.delete }
 
     context "when locked" do
-      context "when expiration is not negative" do
+      context "without expiration" do
         it "deletes the lock without fuss" do
           worker_class.use_options(lock_expiration: nil) do
             process_one.lock
@@ -60,12 +60,22 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
         end
       end
 
-      context "when expiration is positive" do
+      context "with expiration" do
         it "does not delete the lock" do
           worker_class.use_options(lock_expiration: 100) do
             process_one.lock
             expect { delete }.not_to change { unique_keys.size }
           end
+        end
+      end
+    end
+
+    context "when locked by another job_id" do
+      before { process_two.lock }
+
+      it "deletes the lock" do
+        worker_class.use_options(lock_expiration: nil) do
+          expect { delete }.to change { unique_keys.size }.from(2).to(0)
         end
       end
     end
