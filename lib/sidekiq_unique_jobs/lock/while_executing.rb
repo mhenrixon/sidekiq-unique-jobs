@@ -33,18 +33,15 @@ module SidekiqUniqueJobs
       #   These jobs are locked in the server process not from the client
       # @yield to the worker class perform method
       def execute
-        log_debug("Start #{self.class}#{__method__} (#{Sidekiq.dump_json(item)})")
         return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
 
         yield
         callback_safely
       rescue Exception => ex # rubocop:disable Lint/RescueException
-        log_debug("Error #{self.class}#{__method__} (#{Sidekiq.dump_json(item)})")
         log_error(ex)
         raise
       ensure
         unlock
-        log_debug("Complete #{self.class}#{__method__} (#{Sidekiq.dump_json(item)})")
       end
 
       private

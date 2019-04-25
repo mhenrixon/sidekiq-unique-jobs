@@ -19,6 +19,7 @@ redis.call('SREM', unique_keys, unique_digest)
 
 if ttl then
   redis.call('SREM', unique_keys, unique_digest)
+  redis.call('HDEL', grabbed_key, job_id)
   redis.call('EXPIRE', exists_key, ttl)
   redis.call('EXPIRE', grabbed_key, ttl)
   redis.call('EXPIRE', available_key, ttl)
@@ -27,14 +28,16 @@ if ttl then
 else
   redis.call('DEL', exists_key)
   redis.call('SREM', unique_keys, unique_digest)
-  redis.call('DEL', grabbed_key)
+  redis.call('HDEL', grabbed_key, job_id)
+  if redis.call('HLEN', grabbed_key) == 0 then -- TODO: Allow multiple jobs to have the same lock
+    redis.call('DEL', grabbed_key)
+  end
   redis.call('DEL', available_key)
   redis.call('DEL', version_key)    -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', 'uniquejobs')   -- TODO: Old job hash, just drop the darn thing  (Remove in v6.1)
   redis.call('DEL', unique_digest)  -- TODO: Legacy support (Remove in v6.1)
 end
 
-redis.call('HDEL', grabbed_key, job_id)
 local count = redis.call('LPUSH', available_key, job_id)
 redis.call('EXPIRE', available_key, 5)
 return count

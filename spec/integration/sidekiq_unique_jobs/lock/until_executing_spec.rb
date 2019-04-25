@@ -9,8 +9,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting, redis: :redis do
 
   let(:jid_one)      { "jid one" }
   let(:jid_two)      { "jid two" }
-  let(:worker_class) { UntilExecutedJob }
-  let(:unique)       { :until_executed }
+  let(:worker_class) { UntilExecutingJob }
+  let(:unique)       { :until_executing }
   let(:queue)        { :executed }
   let(:args)         { %w[array of arguments] }
   let(:callback)     { -> {} }

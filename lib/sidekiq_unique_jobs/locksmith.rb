@@ -6,6 +6,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Locksmith
     include SidekiqUniqueJobs::Connection
+    include SidekiqUniqueJobs::Logging
 
     #
     # Initialize a new Locksmith instance
@@ -98,16 +99,11 @@ module SidekiqUniqueJobs
       )
     end
 
-    #
-    # @param [String] token the unique token to check for a lock.
-    #   nil will default to the jid provided in the initializer
-    # @return [true, false]
-    #
     # Checks if this instance is considered locked
     #
-    # @param [<type>] token <description>
+    # @param [String] token sidekiq job_id
     #
-    # @return [<type>] <description>
+    # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?(token = nil)
       token ||= jid
@@ -132,18 +128,23 @@ module SidekiqUniqueJobs
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
+          log_debug("BLPOP :AVAILABLE")
           # passing timeout 0 to blpop causes it to block
           _key, token = conn.blpop(key.available, timeout || 0)
         else
+          log_debug("LPOP :AVAILABLE")
           token = conn.lpop(key.available)
         end
 
-        return yield jid if token
+        log_debug("Got token #{token} yielding it")
+
+        return yield token if token
       end
     end
 
     def touch_grabbed_token(token)
       redis(redis_pool) do |conn|
+        log_debug("Setting :GRABBED to #{token}")
         conn.hset(key.grabbed, token, current_time.to_f)
         conn.expire(key.grabbed, ttl) if ttl && lock_type == :until_expired
       end
@@ -154,6 +155,7 @@ module SidekiqUniqueJobs
 
       # The reason for begin is to only signal when we have a block
       begin
+        log_debug("yielding #{token}")
         yield token
       ensure
         unlock(token)

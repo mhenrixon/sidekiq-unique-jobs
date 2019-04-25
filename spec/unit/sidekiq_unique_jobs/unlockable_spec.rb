@@ -19,10 +19,6 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
   describe ".unlock" do
     subject(:unlock) { described_class.unlock(item_with_digest) }
 
-    let(:expected_keys) do
-      %W[#{unique_digest}:EXISTS #{unique_digest}:VERSION]
-    end
-
     specify do
       expect(unique_keys.size).to eq(0)
       push_item(item_with_digest)
@@ -30,7 +26,6 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       expect(unique_keys.size).to eq(2)
 
       unlock
-
       expect(unique_keys.size).to eq(2)
     end
   end

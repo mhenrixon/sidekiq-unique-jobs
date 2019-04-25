@@ -12,7 +12,9 @@ module SidekiqUniqueJobs
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join("../../redis").freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
 
-    include SidekiqUniqueJobs::Connection
+    extend SidekiqUniqueJobs::Connection
+    extend SidekiqUniqueJobs::Logging
+    extend SidekiqUniqueJobs::Timing
 
     module_function
 
@@ -31,7 +33,12 @@ module SidekiqUniqueJobs
     # @return value from script
     #
     def call(file_name, redis_pool, options = {})
-      execute_script(file_name, redis_pool, options)
+      result, elapsed = timed do
+        execute_script(file_name, redis_pool, options)
+      end
+
+      log_debug("Executed #{file_name} in #{elapsed}s")
+      result
     rescue Redis::CommandError => ex
       handle_error(ex, file_name) do
         call(file_name, redis_pool, options)

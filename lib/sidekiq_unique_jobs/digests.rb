@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
 
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection
+    include SidekiqUniqueJobs::Timing
     extend self
 
     # Return unique digests matching pattern
@@ -113,17 +114,6 @@ module SidekiqUniqueJobs
           end
         end
       end
-    end
-
-    def timed
-      start = current_time
-      result = yield
-      elapsed = (current_time - start).round(2)
-      [result, elapsed]
-    end
-
-    def current_time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
   end
 end
