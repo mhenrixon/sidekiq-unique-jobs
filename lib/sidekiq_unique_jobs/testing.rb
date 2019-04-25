@@ -25,6 +25,7 @@ module Sidekiq
 
         yield
       ensure
+        self.sidekiq_options_hash = Sidekiq.default_worker_options
         sidekiq_options(old_config)
       end
 
