@@ -70,7 +70,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       it "unlocks immediately" do
         locksmith_one.unlock!(jid_one)
 
-        expect(ttl(unique_digest)).to eq(-2) # key does not exist anymore
+        expect(unique_digest).not_to eq(-2) # key does not exist anymore
       end
 
       it "can soft deletes the lock" do

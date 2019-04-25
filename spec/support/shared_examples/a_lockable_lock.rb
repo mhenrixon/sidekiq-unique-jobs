@@ -40,6 +40,10 @@ RSpec.shared_examples "an executing lock implementation" do
       end
     end
 
+    it "prevents process_two from executing" do
+      expect { process_two.execute { raise "Hell" } }.not_to raise_error
+    end
+
     it "keeps being locked when an error is raised" do
       expect { process_one.execute { raise "Hell" } }
         .to raise_error("Hell")

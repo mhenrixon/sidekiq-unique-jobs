@@ -47,8 +47,8 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
                                          ])
     end
 
-    specify { expect(ttl("#{unique_digest}:EXISTS")).to eq(-1) }
-    specify { expect(ttl("#{unique_digest}:GRABBED")).to eq(-1) }
+    specify { expect("#{unique_digest}:EXISTS").to expire_in(-1) }
+    specify { expect("#{unique_digest}:GRABBED").to expire_in(-1) }
 
     it "can be put back on queue" do
       expect { described_class.new.retry_all }

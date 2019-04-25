@@ -52,8 +52,8 @@ RSpec.describe SidekiqUniqueJobs::ServerMiddleware, "unique: :until_and_while_ex
           expect(unique_keys).to match_array([key.grabbed, key.exists])
           server.call(worker_class, item_one, queue) {}
           expect(unique_keys).to match_array([key.available, run_key.available])
-          expect(ttl(key.available)).to eq(5)
-          expect(ttl(run_key.available)).to eq(5)
+          expect(key.available).to expire_in(5)
+          expect(run_key.available).to expire_in(5)
         end
       end
     end

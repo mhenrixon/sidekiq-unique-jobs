@@ -51,7 +51,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       end
       available_key = "uniquejobs:863b7cb639bd71c828459b97788b2ada:AVAILABLE"
       expect(unique_keys).to match_array([available_key])
-      expect(ttl(available_key)).to eq(5)
+      expect(available_key).to expire_in(5)
       expect(JustAWorker.perform_in(60 * 60 * 3, boo: "far")).to be_truthy
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       Sidekiq::Queue.new("testqueue").find_job(jid).delete
       available_key = "uniquejobs:c2253601bbfe4f3ad300103026ed02f2:AVAILABLE"
       expect(unique_keys).to match_array([available_key])
-      expect(ttl(available_key)).to eq(5)
+      expect(available_key).to expire_in(5)
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       Sidekiq::Queue.new("testqueue").clear
       available_key = "uniquejobs:ebd23329089b53ea1e93066a3365541f:AVAILABLE"
       expect(unique_keys).to match_array([available_key])
-      expect(ttl(available_key)).to eq(5)
+      expect(available_key).to expire_in(5)
     end
   end
 
@@ -85,7 +85,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       Sidekiq::JobSet.new("schedule").clear
       available_key = "uniquejobs:a88de37817cb5da99cf76408c7251a1d:AVAILABLE"
       expect(unique_keys).to match_array([available_key])
-      expect(ttl(available_key)).to eq(5)
+      expect(available_key).to expire_in(5)
     end
   end
 end

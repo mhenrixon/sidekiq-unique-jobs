@@ -15,7 +15,7 @@ RSpec.shared_examples "exists key exists" do
   it "contains a key with suffix :EXISTS" do
     expect(unique_keys).to include(key.exists)
     expect(get(key.exists)).to eq(jid_to_compare)
-    expect(ttl(key.exists)).to eq(lock_ttl) if lock_ttl # TODO: Refactor this
+    expect(key.exists).to expire_in(lock_ttl) if lock_ttl # TODO: Refactor this
   end
 end
 
@@ -23,7 +23,7 @@ RSpec.shared_examples "grabbed key exists" do
   it "contains a key with suffix :GRABBED" do
     expect(unique_keys).to include(key.grabbed)
     expect(hget(key.grabbed, jid_to_compare)).to resemble_date
-    expect(ttl(key.grabbed)).to eq(lock_ttl) if lock_ttl # TODO: Refactor this
+    expect(key.grabbed).to expire_in(100) if lock_ttl # TODO: Refactor this
   end
 end
 

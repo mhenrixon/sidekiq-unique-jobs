@@ -9,6 +9,5 @@ class WhileExecutingRejectJob
 
   def perform(args)
     sleep 5
-    p args
   end
 end

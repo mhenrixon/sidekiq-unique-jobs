@@ -44,7 +44,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
       process_one.lock
       process_one.execute {}
       expect(process_one).to be_locked
-      expect(ttl("uniquejobs:da6005926a8457526e998f0033901dfc:EXISTS")).to eq(1)
+      expect("uniquejobs:da6005926a8457526e998f0033901dfc:EXISTS").to expire_in(1)
     end
   end
 

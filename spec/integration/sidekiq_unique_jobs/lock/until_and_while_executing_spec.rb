@@ -62,6 +62,11 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       end
     end
 
+    it "prevents process_two from executing" do
+      process_one.lock
+      expect { process_two.execute { raise "Hell" } }.not_to raise_error
+    end
+
     it "process two cannot execute the job" do
       process_one.execute do
         process_two.lock

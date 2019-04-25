@@ -173,7 +173,7 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
     MyUniqueJob.perform_in(expected_expires_at, "mika", "hel")
 
     unique_keys.each do |key|
-      expect(ttl(key)).to eq(-1)
+      expect(key).to expire_in(-1)
     end
   end
 

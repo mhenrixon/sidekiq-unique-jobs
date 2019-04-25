@@ -46,7 +46,7 @@ RSpec.describe UntilExpiredJob do
         unique_keys.each do |key|
           next if key.include?(":GRABBED")
 
-          expect(ttl(key)).to be_within(1).of(lock_expiration + 60)
+          expect(key).to expire_in(lock_expiration + 60)
         end
       end
     end
@@ -81,7 +81,7 @@ RSpec.describe UntilExpiredJob do
         unique_keys.each do |key|
           next if key.include?(":GRABBED")
 
-          expect(ttl(key)).to be_within(1).of(lock_expiration)
+          expect(key).to expire_in(lock_expiration)
         end
       end
     end

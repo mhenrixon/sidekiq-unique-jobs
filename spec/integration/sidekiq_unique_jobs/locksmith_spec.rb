@@ -112,15 +112,15 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       it "prevents other processes from locking" do
         locksmith_one.lock
 
-        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
+        expect("uniquejobs:randomvalue:EXISTS").to expire_in(3)
 
         # PLEASE keep this spec. It verifies that the next lock
         #   doesn't persist the exist_key of another lock
         sleep 1
 
-        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
+        expect("uniquejobs:randomvalue:EXISTS").to expire_in(2)
         expect(locksmith_two.lock(0)).to eq(nil)
-        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(2)
+        expect("uniquejobs:randomvalue:EXISTS").to expire_in(2)
 
         expect(unique_digests).to match_array([])
         expect(unique_keys).to match_array(%w[
@@ -137,8 +137,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
                                              uniquejobs:randomvalue:GRABBED
                                            ])
 
-        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
-        expect(ttl("uniquejobs:randomvalue:GRABBED")).to eq(3)
+        expect("uniquejobs:randomvalue:EXISTS").to expire_in(3)
+        expect("uniquejobs:randomvalue:GRABBED").to expire_in(3)
       end
     end
 
@@ -152,13 +152,13 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
                                              uniquejobs:randomvalue:EXISTS
                                              uniquejobs:randomvalue:GRABBED
                                            ])
-        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(-1)
-        expect(ttl("uniquejobs:randomvalue:GRABBED")).to eq(-1)
+        expect("uniquejobs:randomvalue:EXISTS").to expire_in(-1)
+        expect("uniquejobs:randomvalue:GRABBED").to expire_in(-1)
 
         locksmith_one.unlock
 
-        expect(ttl("uniquejobs:randomvalue:EXISTS")).to eq(3)
-        expect(ttl("uniquejobs:randomvalue:GRABBED")).to eq(-2)
+        expect("uniquejobs:randomvalue:EXISTS").to expire_in(3)
+        expect("uniquejobs:randomvalue:GRABBED").to expire_in(-2)
       end
     end
 

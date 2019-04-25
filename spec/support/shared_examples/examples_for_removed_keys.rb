@@ -10,7 +10,7 @@ RSpec.shared_examples "available key expires after 5 seconds" do
   it "contains a key with suffix :AVAILABLE" do
     expect(unique_keys).to include(key.available)
     expect(lrange(key.available, -1, 1).shift).to eq(locked_jid)
-    expect(ttl(key.available)).to eq(5)
+    expect(key.available).to expire_in(5)
   end
 end
 
@@ -20,7 +20,7 @@ RSpec.shared_examples "exists key does not exist" do
 
     if lock_ttl # TODO: Refactor this
       expect(get(key.exists)).to eq(locked_jid)
-      expect(ttl(key.exists)).to eq(lock_ttl)
+      expect(key.exists).to expire_in(lock_ttl)
     else
       expect(get(key.exists)).to be_nil
     end
@@ -33,7 +33,7 @@ RSpec.shared_examples "grabbed key does not exist" do
 
     if lock_ttl # TODO: Refactor this
       expect(hget(key.grabbed, locked_jid)).to resemble_date
-      expect(ttl(key.grabbed)).to eq(lock_ttl)
+      expect(key.grabbed).to expire_in(lock_ttl)
     else
       expect(get(key.exists)).to be_nil
     end

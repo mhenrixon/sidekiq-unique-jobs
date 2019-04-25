@@ -16,10 +16,7 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        return unless locked?
-
-        unlock
-        runtime_lock.execute { yield }
+        runtime_lock.execute { yield } if unlock
       end
 
       def runtime_lock
