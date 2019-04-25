@@ -94,7 +94,7 @@ gem install sidekiq-unique-jobs
 
 ## Support Me
 
-Want to show me some ❤️ for the hard work I do on this gem? You can use the following [PayPal link][]. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
+Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link [https://paypal.me/mhenrixon](https://paypal.me/mhenrixon). Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
 
 ## General Information
 
@@ -562,4 +562,3 @@ You can find a list of contributors over on [Contributors][]
 [Sidekiq requirements]: https://github.com/mperham/sidekiq#requirements
 [Enterprise unique jobs]: https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
 [Contributors]: https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
-[Paypal link https://paypal.me/mhenrixon]: https://paypal.me/mhenrixon
