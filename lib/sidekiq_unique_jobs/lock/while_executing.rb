@@ -37,9 +37,6 @@ module SidekiqUniqueJobs
 
         yield
         callback_safely
-      rescue Exception => ex # rubocop:disable Lint/RescueException
-        log_error(ex)
-        raise
       ensure
         unlock
       end
