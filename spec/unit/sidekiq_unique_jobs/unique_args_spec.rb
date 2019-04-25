@@ -216,12 +216,26 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
       let(:args)         { [1] }
 
-      it { is_expected.to eq([1]) }
+      it "raises a descriptive error" do
+        expect { filter_by_symbol }
+          .to raise_error(
+            SidekiqUniqueJobs::InvalidUniqueArguments,
+            'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
+            ' received [1]'
+          )
+      end
 
       context "when provided nil" do
         let(:args) { [] }
 
-        it { is_expected.to eq([]) }
+        it "raises a descriptive error" do
+          expect { filter_by_symbol }
+            .to raise_error(
+              SidekiqUniqueJobs::InvalidUniqueArguments,
+              'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
+              ' received []'
+            )
+        end
       end
     end
 
@@ -229,7 +243,14 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
       let(:args)         { ["name", 2, "whatever" => nil, "type" => "test"] }
 
-      it { is_expected.to eq(args) }
+      it "raises a descriptive error" do
+        expect { filter_by_symbol }
+          .to raise_error(
+            SidekiqUniqueJobs::InvalidUniqueArguments,
+            'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
+            ' received ["name", 2, {"whatever"=>nil, "type"=>"test"}]'
+          )
+      end
     end
 
     context "when @worker_class does not respond_to unique_args_method" do
