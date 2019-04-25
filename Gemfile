@@ -25,5 +25,4 @@ platforms :mri_25 do
   gem "rubocop-rspec"
   gem "simplecov-json"
   gem "travis"
-  gem "timeasure"
 end

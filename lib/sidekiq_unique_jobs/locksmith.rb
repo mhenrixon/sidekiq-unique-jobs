@@ -128,15 +128,11 @@ module SidekiqUniqueJobs
     def grab_token(timeout = nil)
       redis(redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
-          log_debug("BLPOP :AVAILABLE")
           # passing timeout 0 to blpop causes it to block
           _key, token = conn.blpop(key.available, timeout || 0)
         else
-          log_debug("LPOP :AVAILABLE")
           token = conn.lpop(key.available)
         end
-
-        log_debug("Got token #{token} yielding it")
 
         return yield token if token
       end
@@ -144,7 +140,6 @@ module SidekiqUniqueJobs
 
     def touch_grabbed_token(token)
       redis(redis_pool) do |conn|
-        log_debug("Setting :GRABBED to #{token}")
         conn.hset(key.grabbed, token, current_time.to_f)
         conn.expire(key.grabbed, ttl) if ttl && lock_type == :until_expired
       end
@@ -155,7 +150,6 @@ module SidekiqUniqueJobs
 
       # The reason for begin is to only signal when we have a block
       begin
-        log_debug("yielding #{token}")
         yield token
       ensure
         unlock(token)

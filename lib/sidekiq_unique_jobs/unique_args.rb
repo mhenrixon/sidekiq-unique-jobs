@@ -129,8 +129,11 @@ module SidekiqUniqueJobs
       return args unless worker_method_defined?(unique_args_method)
 
       worker_class.send(unique_args_method, args)
-    rescue ArgumentError => ex
-      raise SidekiqUniqueJobs::InvalidUniqueArguments, given: args, worker_class: worker_class, unique_args_method: unique_args_method
+    rescue ArgumentError
+      raise SidekiqUniqueJobs::InvalidUniqueArguments,
+            given: args,
+            worker_class: worker_class,
+            unique_args_method: unique_args_method
     end
 
     # The method to use for filtering unique arguments

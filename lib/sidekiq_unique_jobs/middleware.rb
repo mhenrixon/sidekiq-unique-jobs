@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "sidekiq"
-
 module SidekiqUniqueJobs
   #
   # Provides the sidekiq middleware that makes the gem work
@@ -24,12 +22,10 @@ module SidekiqUniqueJobs
     def self.configure_server
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
-          require "sidekiq_unique_jobs/client_middleware"
           chain.add SidekiqUniqueJobs::ClientMiddleware
         end
 
         config.server_middleware do |chain|
-          require "sidekiq_unique_jobs/server_middleware"
           chain.add SidekiqUniqueJobs::ServerMiddleware
         end
       end
@@ -38,7 +34,6 @@ module SidekiqUniqueJobs
     def self.configure_client
       Sidekiq.configure_client do |config|
         config.client_middleware do |chain|
-          require "sidekiq_unique_jobs/client_middleware"
           chain.add SidekiqUniqueJobs::ClientMiddleware
         end
       end

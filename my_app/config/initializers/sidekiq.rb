@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "sidekiq_unique_jobs/profiling"
-
 Sidekiq.default_worker_options = {
   backtrace: true,
   retry: false,
@@ -35,7 +33,7 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.logger       = Sidekiq::Logger.new(STDOUT)
-Sidekiq.logger.level = Logger::DEBUG
+Sidekiq.logger.level = Logger::INFO
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 
 Dir[Rails.root.join("app", "workers", "**", "*.rb")].each { |worker| require worker }

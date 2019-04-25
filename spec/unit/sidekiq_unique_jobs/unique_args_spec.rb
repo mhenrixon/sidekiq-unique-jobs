@@ -220,8 +220,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
         expect { filter_by_symbol }
           .to raise_error(
             SidekiqUniqueJobs::InvalidUniqueArguments,
-            'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
-            ' received [1]'
+            "UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments," \
+            " received [1]",
           )
       end
 
@@ -232,8 +232,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
           expect { filter_by_symbol }
             .to raise_error(
               SidekiqUniqueJobs::InvalidUniqueArguments,
-              'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
-              ' received []'
+              "UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments," \
+              " received []",
             )
         end
       end
@@ -248,7 +248,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
           .to raise_error(
             SidekiqUniqueJobs::InvalidUniqueArguments,
             'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
-            ' received ["name", 2, {"whatever"=>nil, "type"=>"test"}]'
+            ' received ["name", 2, {"whatever"=>nil, "type"=>"test"}]',
           )
       end
     end

@@ -47,6 +47,9 @@ RSpec.configure do |config|
   config.warnings = false
   config.default_formatter = "doc" if config.files_to_run.one?
   config.order = :random
+
+  config.include SidekiqHelpers
+
   Kernel.srand config.seed
 end
 

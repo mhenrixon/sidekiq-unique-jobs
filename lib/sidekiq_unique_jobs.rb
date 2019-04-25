@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "sidekiq"
 require "forwardable"
 require "concurrent/mutable_struct"
 

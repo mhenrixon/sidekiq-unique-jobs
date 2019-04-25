@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: true do
   include SidekiqHelpers
 
   let(:process_one) { described_class.new(item_one, callback) }

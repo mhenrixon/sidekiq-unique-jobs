@@ -7,7 +7,7 @@ class WhileExecutingRejectJob
   sidekiq_options lock: :while_executing_reject,
                   queue: :rejecting
 
-  def perform(args)
+  def perform(_args)
     sleep 5
   end
 end

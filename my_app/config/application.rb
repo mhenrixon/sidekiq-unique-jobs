@@ -25,6 +25,6 @@ module MyApp
     # config.i18n.default_locale = :de
 
     # config.active_record.schema_format = :sql
-    config.autoload_paths += %w[app/workers]
+    config.autoload_paths += %w[lib app/workers]
   end
 end

@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
     def initialize(given:, worker_class:, unique_args_method:)
       uniq_args_meth  = worker_class.method(unique_args_method)
       num_args        = uniq_args_meth.arity
-      source_location = uniq_args_meth.source_location
+      # source_location = uniq_args_meth.source_location
 
       super(
         "#{worker_class}#unique_args takes #{num_args} arguments, received #{given.inspect}"
