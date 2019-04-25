@@ -54,9 +54,9 @@ module SidekiqUniqueJobs
     def with_logging_context
       SidekiqUniqueJobs::Job.add_uniqueness(item)
       with_configured_loggers_context do
-        log_debug("started")
+        # log_debug("started")
         yield
-        log_debug("ended")
+        # log_debug("ended")
       end
       nil # Need to make sure we don't return anything here
     end
