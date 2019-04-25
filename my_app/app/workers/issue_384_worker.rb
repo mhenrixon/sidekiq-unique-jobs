@@ -6,8 +6,8 @@ class Issue384Worker
                   on_conflict: :reschedule
 
   def perform
-    puts 'hello'
+    SidekiqUniqueJobs.logger.info('hello')
     sleep 1
-    puts 'bye'
+    SidekiqUniqueJobs.logger.info('bye')
   end
 end
