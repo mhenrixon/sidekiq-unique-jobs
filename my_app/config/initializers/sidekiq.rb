@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "sidekiq_unique_jobs/profiling"
+
 Sidekiq.default_worker_options = {
   backtrace: true,
   retry: false,
@@ -32,7 +34,7 @@ Sidekiq.configure_client do |config|
   # Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
 end
 
-Sidekiq.logger       = Sidekiq::Logger.new(STDERR)
+Sidekiq.logger       = Sidekiq::Logger.new(STDOUT)
 Sidekiq.logger.level = Logger::DEBUG
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 
