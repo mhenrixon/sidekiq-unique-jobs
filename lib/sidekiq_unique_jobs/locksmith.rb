@@ -29,12 +29,13 @@ module SidekiqUniqueJobs
       @jid           = item[JID_KEY]
       @key           = Key.new(item[UNIQUE_DIGEST_KEY])
       @ttl           = item[LOCK_EXPIRATION_KEY].to_i * 1000
+      @lock_timeout  = item[LOCK_TIMEOUT_KEY]
       @lock_type     = item[LOCK_KEY]
       @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
-      @retry_count   = item["lock_retry_count"] || DEFAULT_RETRY_COUNT
-      @retry_delay   = item["lock_retry_delay"] || DEFAULT_RETRY_DELAY
-      @retry_jitter  = item["lock_retry_jitter"] || DEFAULT_RETRY_JITTER
+      @retry_count   = item[LOCK_RETRY_COUNT_KEY] || DEFAULT_RETRY_COUNT
+      @retry_delay   = item[LOCK_RETRY_DELAY_KEY] || DEFAULT_RETRY_DELAY
+      @retry_jitter  = item[LOCK_RETRY_JITTER_KEY] || DEFAULT_RETRY_JITTER
       @extend        = item["lock_extend"]
       @extend_owned  = item["lock_extend_owned"]
     end
@@ -121,20 +122,26 @@ module SidekiqUniqueJobs
 
     private
 
-    attr_reader :key, :ttl, :jid, :redis_pool, :lock_type
+    attr_reader :key, :ttl, :jid, :redis_pool, :lock_type, :lock_timeout
 
     def try_lock
       tries = @extend ? 1 : (@retry_count + 1)
 
       tries.times do |attempt_number|
         # Wait a random delay before retrying.
-        sleep((@retry_delay + rand(@retry_jitter)).to_f / 1000) if attempt_number.positive?
+        if lock_timeout.nil? || lock_timeout.positive?
+          sleep(sleepy_time) if attempt_number.positive?
+        end
 
         locked = create_lock
         return locked if locked
       end
 
       false
+    end
+
+    def sleepy_time
+      (@retry_delay + rand(@retry_jitter)).to_f / 1000
     end
 
     def create_lock
