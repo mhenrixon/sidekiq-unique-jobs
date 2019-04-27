@@ -35,7 +35,7 @@ RSpec.describe "lock.lua", redis: :redis do
     before { lock }
 
     it "creates a lock with ttl" do
-      expect(ock).to eq(job_id)
+      expect(lock).to eq(job_id)
       expect(ttl(digest)).to eq(lock_ttl / 1000)
       expect(pttl(digest)).to be_within(100).of(lock_ttl)
     end
