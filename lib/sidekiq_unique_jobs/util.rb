@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
 
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection
+    include SidekiqUniqueJobs::Timing
     extend self
 
     # Find unique keys in redis
@@ -70,17 +71,6 @@ module SidekiqUniqueJobs
           end
         end
       end
-    end
-
-    def timed
-      start   = current_time
-      result  = yield
-      elapsed = (current_time - start).round(2)
-      [result, elapsed]
-    end
-
-    def current_time
-      Time.now
     end
 
     def prefix(key)

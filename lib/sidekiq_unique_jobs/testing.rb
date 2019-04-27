@@ -31,7 +31,7 @@ module Sidekiq
 
       def clear
         jobs.each do |job|
-          SidekiqUniqueJobs::Unlockable.delete(job)
+          SidekiqUniqueJobs::Unlockable.delete!(job)
         end
 
         Sidekiq::Queues[queue].clear

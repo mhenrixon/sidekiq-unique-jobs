@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
     subject(:execute) { lock.execute }
 
     before do
-      allow(locksmith).to receive(:lock).with(0).and_return(token)
+      allow(locksmith).to receive(:lock).and_return(token)
       allow(locksmith).to receive(:unlock)
     end
 

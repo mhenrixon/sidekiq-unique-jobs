@@ -43,12 +43,6 @@ module SidekiqUniqueJobs
       end
     end
 
-    def locked?
-      locked = lock_instance.lock
-      warn_about_duplicate unless locked
-      locked
-    end
-
     def warn_about_duplicate
       return unless log_duplicate_payload?
 

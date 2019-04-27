@@ -19,7 +19,6 @@ RSpec.shared_examples "exists key exists" do
   end
 end
 
-
 RSpec.shared_examples "digest exists in unique set" do
   it "has an entry for digest in unique set" do
     expect(unique_digests).to include(key.digest)
@@ -35,7 +34,7 @@ end
 RSpec.shared_examples "keys created by until_expired" do
   it_behaves_like "available key exists"
   it_behaves_like "exists key exists"
-  it_behaves_like "digest does not exist in unique set"
+  it_behaves_like "unique set does not exist"
 end
 
 RSpec.shared_examples "a lock with all keys created" do

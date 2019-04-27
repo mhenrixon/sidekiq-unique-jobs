@@ -15,6 +15,10 @@ module SidekiqHelpers
     redis { |conn| conn.set(key, value, options) }
   end
 
+  def exists?(key)
+    redis { |conn| conn.exists(key) }
+  end
+
   def hexists(hash, key)
     redis { |conn| conn.hexists(hash, key) }
   end
@@ -61,6 +65,10 @@ module SidekiqHelpers
 
   def ttl(key)
     redis { |conn| conn.ttl(key) }
+  end
+
+  def pttl(key)
+    redis { |conn| conn.pttl(key) }
   end
 
   def unique_digests

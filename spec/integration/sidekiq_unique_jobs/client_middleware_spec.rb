@@ -10,7 +10,7 @@ RSpec.describe SidekiqUniqueJobs::ClientMiddleware, redis: :redis, redis_db: 1 d
       expect(schedule_count).to eq(1)
 
       expected = %w[
-        uniquejobs:6e47d668ad22db2a3ba0afd331514ce2:EXISTS
+        uniquejobs:6e47d668ad22db2a3ba0afd331514ce2
       ]
 
       expect(keys).to include(*expected)

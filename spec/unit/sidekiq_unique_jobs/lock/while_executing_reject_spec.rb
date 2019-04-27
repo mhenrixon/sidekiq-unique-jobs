@@ -28,7 +28,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
     let(:token) { nil }
 
     before do
-      allow(locksmith).to receive(:lock).with(0).and_return(token)
+      allow(locksmith).to receive(:lock).and_return(token)
       allow(lock).to receive(:callback_safely)
       allow(lock).to receive(:unlock)
     end

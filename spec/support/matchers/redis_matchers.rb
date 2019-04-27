@@ -52,3 +52,9 @@ RSpec::Matchers.define :expire_in do |seconds|
     @ttl == seconds
   end
 end
+
+RSpec::Matchers.define :exist do
+  match do |key|
+    exists?(key)
+  end
+end

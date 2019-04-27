@@ -1,6 +1,7 @@
 local queue         = KEYS[1]
 local schedule_set  = KEYS[2]
 local retry_set     = KEYS[3]
+
 local unique_digest = ARGV[1]
 
 local function delete_from_sorted_set(name, digest)

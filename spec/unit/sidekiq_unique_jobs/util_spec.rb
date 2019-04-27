@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:unique_digest) { item["unique_digest"] }
   let(:jid)           { "e3049b05b0bd9c809182bbe0" }
   let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
-  let(:expected_keys) { %W[#{unique_digest}:EXISTS] }
+  let(:expected_keys) { [unique_digest] }
 
   shared_context "with an old lock" do
     let!(:old_lock) do
@@ -53,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
 
     context "when new lock exists" do
       before do
-        lock.lock(0)
+        lock.lock
       end
 
       it { is_expected.to match_array(expected_keys) }
@@ -85,7 +85,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
 
     context "when a new lock exists" do
       before do
-        lock.lock(0)
+        lock.lock
       end
 
       after { lock.delete }

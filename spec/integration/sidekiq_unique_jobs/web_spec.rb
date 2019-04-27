@@ -44,7 +44,6 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
     get "/unique_digests/#{digest}"
     expect(last_response.status).to eq(200)
     expect(last_response.body).to match("uniquejobs:9e9b5ce5d423d3ea470977004b50ff84")
-    expect(last_response.body).to match("uniquejobs:9e9b5ce5d423d3ea470977004b50ff84:EXISTS")
   end
 
   it "can delete a digest" do

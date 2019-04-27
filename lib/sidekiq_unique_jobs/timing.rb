@@ -6,15 +6,25 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Timing
     def timed
-      start   = current_time
-      result  = yield
-      elapsed = (current_time - start)
+      start_time = time_source.call()
 
-      [result, elapsed]
+      [yield, time_source.call() - start_time]
     end
 
     def current_time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      if defined?(Process::CLOCK_MONOTONIC)
+        Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      else
+        Time.now
+      end
+    end
+
+    def time_source
+      if defined?(Process::CLOCK_MONOTONIC)
+        proc { (Process.clock_gettime(Process::CLOCK_MONOTONIC) * 1000).to_i }
+      else
+        proc { (Time.now.to_f * 1000).to_i }
+      end
     end
   end
 end

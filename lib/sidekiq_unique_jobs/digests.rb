@@ -81,9 +81,10 @@ module SidekiqUniqueJobs
       result
     end
 
-    # Get a total count of unique digests
+    # Delete unique digests by digest
+    #   Also deletes the :AVAILABLE, :EXPIRED etc keys
     #
-    # @param [String] digest a key pattern to match with
+    # @param [String] digest a unique digest to delete
     def delete_by_digest(digest)
       result, elapsed = timed do
         Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])

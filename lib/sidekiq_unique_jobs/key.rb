@@ -43,8 +43,8 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs::UNIQUE_SET
     end
 
-    def all
-      [available, exists, grabbed]
+    def to_a
+      [digest, exists, grabbed, available, version, unique_set]
     end
 
     private

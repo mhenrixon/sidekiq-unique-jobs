@@ -26,7 +26,7 @@ module SidekiqUniqueJobs
         @attempt = 0
         return item[JID_KEY] if locked?
 
-        if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
+        if (token = locksmith.lock)
           token
         else
           call_strategy

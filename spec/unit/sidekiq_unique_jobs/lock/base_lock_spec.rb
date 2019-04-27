@@ -36,7 +36,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     context "when not locked?" do
       before do
         allow(lock).to receive(:locked?).and_return(false)
-        allow(locksmith).to receive(:lock).with(kind_of(Integer)).and_return(token)
+        allow(locksmith).to receive(:lock).and_return(token)
       end
 
       context "when a token is retrieved" do

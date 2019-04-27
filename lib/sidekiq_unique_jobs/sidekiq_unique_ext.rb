@@ -41,7 +41,7 @@ module Sidekiq
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
+        SidekiqUniqueJobs::Unlockable.delete!(item) if delete_orig
       end
     end
     include UniqueExtension
@@ -57,8 +57,8 @@ module Sidekiq
       end
 
       def delete_ext
+        SidekiqUniqueJobs::Unlockable.delete!(item)
         delete_orig
-        SidekiqUniqueJobs::Unlockable.unlock(item)
       end
     end
 

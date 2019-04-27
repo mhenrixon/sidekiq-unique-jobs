@@ -3,9 +3,17 @@
 require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
-RSpec.describe "lock.lua", redis: :redis do
-  subject(:lock) { call_script(:lock, keys: key.to_a, argv: argv) }
+RSpec.describe "old_lock.lua", redis: :redis do
+  subject(:old_lock) { call_script(:old_lock, keys: key_args, argv: argv) }
 
+  let(:key_args) do
+    [
+      key.exists,
+      key.available,
+      key.unique_set,
+      key.digest,
+    ]
+  end
   let(:argv) do
     [
       job_id,
@@ -22,29 +30,25 @@ RSpec.describe "lock.lua", redis: :redis do
 
   context "without existing locks" do
     before do
-      lock
+      old_lock
     end
 
-    it { expect(get(digest)).to eq(job_id) }
+    it_behaves_like "keys created by other locks than until_expired"
   end
 
   context "when lock_type is :until_expired" do
     let(:lock_type) { :until_expired }
-    let(:lock_ttl)  { 10 * 1000 }
+    let(:lock_ttl)  { 10 }
 
-    before { lock }
+    before { old_lock }
 
-    it "creates a lock with ttl" do
-      expect(ock).to eq(job_id)
-      expect(ttl(digest)).to eq(lock_ttl / 1000)
-      expect(pttl(digest)).to be_within(100).of(lock_ttl)
-    end
+    it_behaves_like "keys created by until_expired"
   end
 
   context "when a lock exists" do
     before do
       set(key.exists, locked_jid)
-      lock
+      old_lock
     end
 
     context "when lock value is another job_id" do
@@ -56,6 +60,8 @@ RSpec.describe "lock.lua", redis: :redis do
     context "when lock value is same job_id" do
       let(:locked_jid) { job_id }
 
+      it_behaves_like "keys created by other locks than until_expired"
+
       it { is_expected.to eq(job_id) }
     end
   end
@@ -63,7 +69,7 @@ RSpec.describe "lock.lua", redis: :redis do
   context "when a deprecated lock exists" do
     before do
       set(key.digest, locked_jid)
-      lock
+      old_lock
     end
 
     context "when lock value is another job_id" do
@@ -73,12 +79,14 @@ RSpec.describe "lock.lua", redis: :redis do
     end
 
     context "when lock value is same job_id" do
+      it_behaves_like "keys created by other locks than until_expired"
       it { is_expected.to eq(job_id) }
     end
 
     context "when lock value is '2'" do
       let(:locked_jid) { "2" }
 
+      it_behaves_like "keys created by other locks than until_expired"
       it { is_expected.to eq(job_id) }
     end
   end

@@ -4,18 +4,8 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "unlock.lua", redis: :redis do
-  subject(:unlock) { call_script(:unlock, keys: key_args, argv: argv) }
+  subject(:unlock) { call_script(:unlock, keys: key.to_a, argv: argv) }
 
-  let(:key_args) do
-    [
-      key.exists,
-      key.grabbed,
-      key.available,
-      key.version,
-      key.unique_set,
-      key.digest,
-    ]
-  end
   let(:argv) do
     [
       job_id,
@@ -35,35 +25,39 @@ RSpec.describe "unlock.lua", redis: :redis do
       unlock
     end
 
-    it_behaves_like "available key expires after 5 seconds"
-    it_behaves_like "exists key does not exist"
-    it_behaves_like "digest does not exist in unique set"
+    it { expect(get(digest)).to be_nil }
+    it_behaves_like "keys are removed by unlock"
   end
 
   context "when a lock exists for another job_id" do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: [key.exists, key.available, key.unique_set, key.digest],
-                         argv: [locked_jid, lock_ttl, lock_type])
+      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type])
       unlock
     end
 
-    it { is_expected.to eq(locked_jid) }
-    it_behaves_like "available key exists"
-    it_behaves_like "exists key exists"
-    it_behaves_like "digest exists in unique set"
+    it "converts the lock and returns the other job_id" do
+      expect(unlock).to eq(locked_jid)
+
+      expect(exists?(key.digest)).to eq(true)
+      expect(get(key.digest)).to eq(locked_jid)
+      expect(exists?(key.exists)).to eq(false)
+      expect(exists?(key.available)).to eq(false)
+      expect(unique_digests).to include(digest)
+      expect(exists?(key.grabbed)).to eq(false)
+    end
   end
 
   context "when lock exists for the same job_id" do
     let(:locked_jid) { job_id }
 
     before do
-      call_script(:lock, keys: [key.exists, key.available, key.unique_set, key.digest], argv: argv)
+      call_script(:lock, keys: key.to_a, argv: argv)
       unlock
     end
 
-    it { is_expected.to eq(1) }
+    it { is_expected.to eq(locked_jid) }
     it_behaves_like "keys are removed by unlock"
   end
 end

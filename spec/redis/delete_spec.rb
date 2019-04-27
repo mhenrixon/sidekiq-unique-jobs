@@ -4,18 +4,8 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "delete.lua", redis: :redis do
-  subject(:delete) { call_script(:delete, keys: key_args, argv: argv) }
+  subject(:delete) { call_script(:delete, keys: key.to_a, argv: argv) }
 
-  let(:key_args) do
-    [
-      key.exists,
-      key.grabbed,
-      key.available,
-      key.version,
-      key.unique_set,
-      key.digest,
-    ]
-  end
   let(:argv) do
     [
       job_id,
@@ -42,8 +32,7 @@ RSpec.describe "delete.lua", redis: :redis do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: [key.exists, key.available, key.unique_set, key.digest],
-                         argv: [locked_jid, lock_ttl, lock_type])
+      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type])
       delete
     end
 
@@ -54,7 +43,7 @@ RSpec.describe "delete.lua", redis: :redis do
     let(:locked_jid) { job_id }
 
     before do
-      call_script(:lock, keys: key_args, argv: [job_id, lock_ttl, lock_type])
+      call_script(:lock, keys: key.to_a, argv: [job_id, lock_ttl, lock_type])
       delete
     end
 

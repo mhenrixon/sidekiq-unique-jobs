@@ -7,6 +7,13 @@ module SidekiqUniqueJobs
   class Locksmith
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
+    include SidekiqUniqueJobs::Timing
+
+    DEFAULT_REDIS_TIMEOUT = 0.1
+    DEFAULT_RETRY_COUNT   = 3
+    DEFAULT_RETRY_DELAY   = 200
+    DEFAULT_RETRY_JITTER  = 50
+    CLOCK_DRIFT_FACTOR    = 0.01
 
     #
     # Initialize a new Locksmith instance
@@ -18,13 +25,18 @@ module SidekiqUniqueJobs
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)
-      # @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @ttl           = item[LOCK_EXPIRATION_KEY]
+      # @concurrency = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @jid           = item[JID_KEY]
-      @key           = SidekiqUniqueJobs::Key.new(item[UNIQUE_DIGEST_KEY])
+      @key           = Key.new(item[UNIQUE_DIGEST_KEY])
+      @ttl           = item[LOCK_EXPIRATION_KEY].to_i * 1000
       @lock_type     = item[LOCK_KEY]
       @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
+      @retry_count   = item["lock_retry_count"] || DEFAULT_RETRY_COUNT
+      @retry_delay   = item["lock_retry_delay"] || DEFAULT_RETRY_DELAY
+      @retry_jitter  = item["lock_retry_jitter"] || DEFAULT_RETRY_JITTER
+      @extend        = item["lock_extend"]
+      @extend_owned  = item["lock_extend_owned"]
     end
 
     #
@@ -32,7 +44,7 @@ module SidekiqUniqueJobs
     #
     #
     def delete
-      return if ttl
+      return if ttl.positive?
 
       delete!
     end
@@ -44,7 +56,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :delete,
         redis_pool,
-        keys: [key.exists, key.grabbed, key.available, key.version, UNIQUE_SET, key.digest],
+        keys: key.to_a,
       )
     end
 
@@ -55,13 +67,14 @@ module SidekiqUniqueJobs
     #
     # @return [String] the Sidekiq job_id (jid)
     #
-    def lock(timeout = nil, &block)
-      Scripts.call(:lock, redis_pool,
-                   keys: [key.exists, key.available, UNIQUE_SET, key.digest],
-                   argv: [jid, ttl, lock_type])
+    def lock
+      locked_jid = try_lock
+      return locked_jid unless block_given?
 
-      grab_lock(timeout) do |token|
-        return_jid_or_block_value(&block)
+      begin
+        return yield locked_jid if locked_jid
+      ensure
+        unlock
       end
     end
     alias wait lock
@@ -88,7 +101,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :unlock,
         redis_pool,
-        keys: [key.exists, key.grabbed, key.available, key.version, UNIQUE_SET, key.digest],
+        keys: key.to_a,
         argv: [jid, ttl, lock_type],
       )
     end
@@ -98,61 +111,53 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?
-      convert_legacy_lock
-      redis(redis_pool) { |conn| conn.get(key.exists) == jid }
+      Scripts.call(
+        :locked,
+        redis_pool,
+        keys: [key.digest, key.exists, key.grabbed],
+        argv: [jid],
+      ) >= 1
     end
 
     private
 
     attr_reader :key, :ttl, :jid, :redis_pool, :lock_type
 
-    def convert_legacy_lock
-      Scripts.call(
-        :convert_legacy_lock,
-        redis_pool,
-        keys: [key.exists, key.digest],
-        argv: [jid, current_time.to_f],
-      )
+    def try_lock
+      tries = @extend ? 1 : (@retry_count + 1)
+
+      tries.times do |attempt_number|
+        # Wait a random delay before retrying.
+        sleep((@retry_delay + rand(@retry_jitter)).to_f / 1000) if attempt_number.positive?
+
+        locked = create_lock
+        return locked if locked
+      end
+
+      false
     end
 
-    def grab_lock(timeout = nil)
-      redis(redis_pool) do |conn|
-        if timeout.nil? || timeout.positive?
-          # passing timeout 0 to blpop causes it to block
-          _key, token = conn.brpop(key.available, timeout || 0)
-        else
-          token = conn.lpop(key.available)
-        end
+    def create_lock
+      locked_jid, time_elapsed = timed do
+        Scripts.call(:lock, redis_pool,
+                     keys: key.to_a,
+                     argv: [jid, ttl, lock_type])
+      end
 
-        return yield jid if token
+      validity = ttl.to_i - time_elapsed - drift
+
+      if locked_jid == jid && (validity >= 0 || ttl.zero?)
+        locked_jid
+      else
+        false
       end
     end
 
-    def touch_grabbed_token
-      redis(redis_pool) do |conn|
-        conn.hset(grabbed_key, jid, current_time.to_f)
-        conn.expire(grabbed_key, ttl) if ttl && lock_type == :until_expired
-      end
-    end
-
-    def return_jid_or_block_value
-      return jid unless block_given?
-
-      # The reason for begin is to only signal when we have a block
-      begin
-        return yield jid
-      ensure
-        unlock
-      end
-    end
-
-    def current_time
-      seconds, microseconds_with_frac = redis_time
-      Time.at(seconds, microseconds_with_frac)
-    end
-
-    def redis_time
-      redis(&:time)
+    def drift
+      # Add 2 milliseconds to the drift to account for Redis expires
+      # precision, which is 1 millisecond, plus 1 millisecond min drift
+      # for small TTLs.
+      (ttl * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
 end
