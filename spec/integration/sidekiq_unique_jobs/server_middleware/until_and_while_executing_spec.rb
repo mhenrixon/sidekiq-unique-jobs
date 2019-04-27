@@ -49,7 +49,7 @@ RSpec.describe SidekiqUniqueJobs::ServerMiddleware, "unique: :until_and_while_ex
 
         # TODO: Why is this all of a sudden -2?
         it "item_one can be executed by server" do
-          expect(unique_keys).to match_array([key.grabbed, key.exists])
+          expect(unique_keys).to match_array([key.exists])
           server.call(worker_class, item_one, queue) {}
           expect(unique_keys).to match_array([key.available, run_key.available])
           expect(key.available).to expire_in(5)

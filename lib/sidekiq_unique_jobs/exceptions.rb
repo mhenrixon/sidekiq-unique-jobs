@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
     # @param [Symbol] file_name the name of the lua script
     # @param [Redis::CommandError] source_exception exception to handle
     def initialize(file_name:, source_exception:)
-      super("Problem compiling #{file_name}. Message: #{source_exception.message}")
+      super("Problem compiling #{file_name}.lua - message: #{source_exception.message}")
     end
   end
 

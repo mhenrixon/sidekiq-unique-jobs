@@ -46,7 +46,6 @@ RSpec.describe SidekiqUniqueJobs::ServerMiddleware, redis: :redis, redis_db: 9 d
         end
 
         unique_keys.each do |key|
-          next if key.end_with?(":GRABBED")
           next if key.end_with?(":EXISTS")
 
           expect(key).to expire_in(5)

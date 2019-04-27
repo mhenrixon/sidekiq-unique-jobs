@@ -35,14 +35,16 @@ RSpec.describe "unlock.lua", redis: :redis do
       unlock
     end
 
-    it_behaves_like "keys are removed by unlock"
+    it_behaves_like "available key expires after 5 seconds"
+    it_behaves_like "exists key does not exist"
+    it_behaves_like "digest does not exist in unique set"
   end
 
   context "when a lock exists for another job_id" do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: [key.exists, key.grabbed, key.available, key.unique_set, key.digest],
+      call_script(:lock, keys: [key.exists, key.available, key.unique_set, key.digest],
                          argv: [locked_jid, lock_ttl, lock_type])
       unlock
     end
@@ -57,7 +59,7 @@ RSpec.describe "unlock.lua", redis: :redis do
     let(:locked_jid) { job_id }
 
     before do
-      call_script(:lock, keys: key_args, argv: [job_id, lock_ttl, lock_type])
+      call_script(:lock, keys: [key.exists, key.available, key.unique_set, key.digest], argv: argv)
       unlock
     end
 

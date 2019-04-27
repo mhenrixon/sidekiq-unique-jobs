@@ -13,7 +13,6 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: "bar")).to be_truthy
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
-                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
                                          ])
 
       Sidekiq::ScheduledSet.new.each(&:delete)
@@ -26,7 +25,6 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: "bar")).to be_truthy
       expect(unique_keys).to match_array(%w[
                                            uniquejobs:863b7cb639bd71c828459b97788b2ada:EXISTS
-                                           uniquejobs:863b7cb639bd71c828459b97788b2ada:GRABBED
                                          ])
 
       Sidekiq::ScheduledSet.new.each do |entry|

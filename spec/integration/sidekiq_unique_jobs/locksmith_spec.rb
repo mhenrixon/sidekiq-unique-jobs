@@ -27,10 +27,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
     end
 
     it "locks and unlocks" do
-      locksmith_one.lock(1)
+      locksmith_one.lock(0)
       expect(locksmith_one.locked?).to eq(true)
       locksmith_one.unlock
-      expect(locksmith_one.locked?).to eq(false)
+      expect(locksmith_one.locked?).to eq(false) if lock_expiration.nil?
     end
 
     it "does not lock twice as a mutex" do
@@ -40,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
 
     it "executes the given code block" do
       code_executed = false
-      locksmith_one.lock(1) do
+      locksmith_one.lock(0) do
         code_executed = true
       end
       expect(code_executed).to eq(true)
@@ -61,7 +61,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
         end
       end.to raise_error(Exception, "redis lock exception")
 
-      expect(locksmith_one.locked?).to eq(false)
+      expect(locksmith_one.locked?).to eq(false) if lock_expiration.nil?
     end
 
     it "returns the value of the block if block-style locking is used" do
@@ -96,7 +96,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
       locksmith_one.lock(0) do
         expect(locksmith_one.locked?).to be true
       end
-      expect(locksmith_one.locked?).to eq false
+
+      expect(locksmith_one.locked?).to eq false if lock_expiration.nil?
     end
   end
 
@@ -123,22 +124,16 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
         expect("uniquejobs:randomvalue:EXISTS").to expire_in(2)
 
         expect(unique_digests).to match_array([])
-        expect(unique_keys).to match_array(%w[
-                                             uniquejobs:randomvalue:EXISTS
-                                             uniquejobs:randomvalue:GRABBED
-                                           ])
+        expect(unique_keys).to match_array(%w[uniquejobs:randomvalue:EXISTS])
       end
 
       it "expires the expected keys" do
         locksmith_one.lock
         expect(unique_digests).to match_array([])
-        expect(unique_keys).to match_array(%w[
-                                             uniquejobs:randomvalue:EXISTS
-                                             uniquejobs:randomvalue:GRABBED
+        expect(unique_keys).to match_array(%w[uniquejobs:randomvalue:EXISTS
                                            ])
 
         expect("uniquejobs:randomvalue:EXISTS").to expire_in(3)
-        expect("uniquejobs:randomvalue:GRABBED").to expire_in(3)
       end
     end
 
@@ -148,27 +143,19 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
       it "expires the expected keys" do
         locksmith_one.lock
         expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
-        expect(unique_keys).to match_array(%w[
-                                             uniquejobs:randomvalue:EXISTS
-                                             uniquejobs:randomvalue:GRABBED
-                                           ])
+        expect(unique_keys).to match_array(%w[uniquejobs:randomvalue:EXISTS])
         expect("uniquejobs:randomvalue:EXISTS").to expire_in(-1)
-        expect("uniquejobs:randomvalue:GRABBED").to expire_in(-1)
 
         locksmith_one.unlock
 
         expect("uniquejobs:randomvalue:EXISTS").to expire_in(3)
-        expect("uniquejobs:randomvalue:GRABBED").to expire_in(-2)
       end
     end
 
     it "deletes the expected keys" do
       locksmith_one.lock
       expect(unique_digests).to match_array(["uniquejobs:randomvalue"])
-      expect(unique_keys).to match_array(%w[
-                                           uniquejobs:randomvalue:EXISTS
-                                           uniquejobs:randomvalue:GRABBED
-                                         ])
+      expect(unique_keys).to match_array(%w[uniquejobs:randomvalue:EXISTS])
       locksmith_one.delete!
       expect(unique_digests).to match_array([])
       expect(unique_keys).to match_array(%w[])

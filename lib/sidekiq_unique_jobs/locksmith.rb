@@ -57,12 +57,11 @@ module SidekiqUniqueJobs
     #
     def lock(timeout = nil, &block)
       Scripts.call(:lock, redis_pool,
-                   keys: [key.exists, key.grabbed, key.available, UNIQUE_SET, key.digest],
+                   keys: [key.exists, key.available, UNIQUE_SET, key.digest],
                    argv: [jid, ttl, lock_type])
 
-      grab_token(timeout) do |token|
-        touch_grabbed_token(token)
-        return_token_or_block_value(token, &block)
+      grab_lock(timeout) do |token|
+        return_jid_or_block_value(&block)
       end
     end
     alias wait lock
@@ -73,86 +72,77 @@ module SidekiqUniqueJobs
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     #
-    def unlock(token = nil)
-      token ||= jid
-      return false unless locked?(token)
+    def unlock
+      return false unless locked?
 
-      unlock!(token)
+      unlock!
     end
 
     #
     # Removes the lock keys from Redis
     #
-    # @param [String] token the token to unlock (defaults to jid)
-    #
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     #
-    def unlock!(token = nil)
-      token ||= jid
-
+    def unlock!
       Scripts.call(
         :unlock,
         redis_pool,
         keys: [key.exists, key.grabbed, key.available, key.version, UNIQUE_SET, key.digest],
-        argv: [token, ttl, lock_type],
+        argv: [jid, ttl, lock_type],
       )
     end
 
     # Checks if this instance is considered locked
     #
-    # @param [String] token sidekiq job_id
-    #
     # @return [true, false] true when the grabbed token contains the job_id
     #
-    def locked?(token = nil)
-      token ||= jid
-
-      convert_legacy_lock(token)
-      redis(redis_pool) { |conn| conn.hexists(key.grabbed, token) }
+    def locked?
+      convert_legacy_lock
+      redis(redis_pool) { |conn| conn.get(key.exists) == jid }
     end
 
     private
 
     attr_reader :key, :ttl, :jid, :redis_pool, :lock_type
 
-    def convert_legacy_lock(token)
+    def convert_legacy_lock
       Scripts.call(
         :convert_legacy_lock,
         redis_pool,
-        keys: [key.grabbed, key.digest],
-        argv: [token, current_time.to_f],
+        keys: [key.exists, key.digest],
+        argv: [jid, current_time.to_f],
       )
     end
 
-    def grab_token(timeout = nil)
+    def grab_lock(timeout = nil)
       redis(redis_pool) do |conn|
         if timeout.nil? || timeout.positive?
           # passing timeout 0 to blpop causes it to block
-          _key, token = conn.blpop(key.available, timeout || 0)
+          _key, token = conn.brpop(key.available, timeout || 0)
         else
           token = conn.lpop(key.available)
         end
 
-        return yield token if token
+        return yield jid if token
       end
     end
 
-    def touch_grabbed_token(token)
+    def touch_grabbed_token
       redis(redis_pool) do |conn|
-        conn.hset(key.grabbed, token, current_time.to_f)
-        conn.expire(key.grabbed, ttl) if ttl && lock_type == :until_expired
+        conn.hset(grabbed_key, jid, current_time.to_f)
+        conn.expire(grabbed_key, ttl) if ttl && lock_type == :until_expired
       end
     end
 
-    def return_token_or_block_value(token)
-      return token unless block_given?
+    def return_jid_or_block_value
+      return jid unless block_given?
 
       # The reason for begin is to only signal when we have a block
       begin
-        yield token
+        return yield jid
       ensure
-        unlock(token)
+        unlock
       end
     end
 

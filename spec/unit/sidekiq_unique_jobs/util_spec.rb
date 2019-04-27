@@ -26,12 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:unique_digest) { item["unique_digest"] }
   let(:jid)           { "e3049b05b0bd9c809182bbe0" }
   let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
-  let(:expected_keys) do
-    %W[
-      #{unique_digest}:EXISTS
-      #{unique_digest}:GRABBED
-    ]
-  end
+  let(:expected_keys) { %W[#{unique_digest}:EXISTS] }
 
   shared_context "with an old lock" do
     let!(:old_lock) do
@@ -100,14 +95,14 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
       context "when pattern is a wildcard" do
         let(:pattern) { described_class::SCAN_PATTERN }
 
-        it { is_expected.to eq(2) }
+        it { is_expected.to eq(1) }
         it { expect { del }.to change(described_class, :keys).to([]) }
       end
 
       context "when pattern is a specific key" do
         let(:pattern) { unique_digest }
 
-        it { is_expected.to eq(2) }
+        it { is_expected.to eq(1) }
         it { expect { del }.to change(described_class, :keys).to([]) }
       end
     end

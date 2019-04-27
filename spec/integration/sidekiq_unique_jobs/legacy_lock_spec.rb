@@ -57,9 +57,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       )
     end
 
-    it "creates grabbed keys when needed" do
+    it "creates exists keys when needed" do
       expect { locksmith_one.locked? }.to change { unique_keys }
-        .to include("uniquejobs:test_mutex_key:GRABBED")
+        .to include("uniquejobs:test_mutex_key:EXISTS")
     end
 
     specify { expect(locksmith_one.locked?).to eq(true) }
@@ -68,7 +68,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
 
     context "when lock_expiration is unset" do
       it "unlocks immediately" do
-        locksmith_one.unlock!(jid_one)
+        locksmith_one.unlock!
 
         expect(unique_digest).not_to eq(-2) # key does not exist anymore
       end

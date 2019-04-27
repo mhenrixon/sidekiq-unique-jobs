@@ -42,7 +42,7 @@ RSpec.describe "delete.lua", redis: :redis do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: [key.exists, key.grabbed, key.available, key.unique_set, key.digest],
+      call_script(:lock, keys: [key.exists, key.available, key.unique_set, key.digest],
                          argv: [locked_jid, lock_ttl, lock_type])
       delete
     end

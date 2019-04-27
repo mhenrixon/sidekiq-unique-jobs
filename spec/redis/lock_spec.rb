@@ -9,7 +9,6 @@ RSpec.describe "lock.lua", redis: :redis do
   let(:key_args) do
     [
       key.exists,
-      key.grabbed,
       key.available,
       key.unique_set,
       key.digest,
@@ -53,7 +52,7 @@ RSpec.describe "lock.lua", redis: :redis do
     end
 
     context "when lock value is another job_id" do
-      let(:locked_jid) { "anotherjobid" }
+      let(:locked_jid) { "bogusjobid" }
 
       it { is_expected.to eq(locked_jid) }
     end

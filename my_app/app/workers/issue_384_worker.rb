@@ -3,6 +3,7 @@ class Issue384Worker
 
   sidekiq_options lock: :while_executing,
                   lock_timeout: nil,
+                  lock_expiration: nil,
                   on_conflict: :reschedule
 
   def perform

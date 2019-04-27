@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
       # @return [String] sidekiq job id when successful
       # @return [false] when unsuccessful
       def unlock
-        locksmith.unlock(item[JID_KEY]) # Only signal to release the lock
+        locksmith.unlock # Only signal to release the lock
       end
 
       # Deletes the job from redis if it is locked.
@@ -61,7 +61,7 @@ module SidekiqUniqueJobs
       # @return [true] when this jid has locked the job
       # @return [false] when this jid has not locked the job
       def locked?
-        locksmith.locked?(item[JID_KEY])
+        locksmith.locked?
       end
 
       private

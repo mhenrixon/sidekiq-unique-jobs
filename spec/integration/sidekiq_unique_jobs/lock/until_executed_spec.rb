@@ -43,7 +43,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
     it "unlocks after executing" do
       process_one.lock
       process_one.execute {}
-      expect(process_one).not_to be_locked
+      expect(process_one).to be_locked # Because we have expiration set to 5000
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
         it "deletes the lock without fuss" do
           worker_class.use_options(lock_expiration: nil) do
             process_one.lock
-            expect { delete }.to change { unique_keys.size }.from(2).to(0)
+            expect { delete }.to change { unique_keys.size }.from(1).to(0)
           end
         end
       end
@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
 
       it "deletes the lock" do
         worker_class.use_options(lock_expiration: nil) do
-          expect { delete }.to change { unique_keys.size }.from(2).to(0)
+          expect { delete }.to change { unique_keys.size }.from(1).to(0)
         end
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
       before { process_one.lock }
 
       it "deletes the lock without fuss" do
-        expect { delete! }.to change { unique_keys.size }.from(2).to(0)
+        expect { delete! }.to change { unique_keys.size }.from(1).to(0)
       end
     end
   end

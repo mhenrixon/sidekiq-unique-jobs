@@ -35,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
         expect(described_class).to receive(:execute_script).with(script_name, nil, options).once
         expect { call }.to raise_error(
           SidekiqUniqueJobs::ScriptError,
-          "Problem compiling #{script_name}. Message: Some interesting error",
+          "Problem compiling #{script_name}.lua - message: Some interesting error",
         )
       end
 

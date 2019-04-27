@@ -7,7 +7,7 @@ end
 RSpec.shared_examples "available key exists" do
   it "contains a key with suffix :AVAILABLE" do
     expect(unique_keys).to include(key.available)
-    expect(lrange(key.available, -1, 1).shift).to eq(jid_to_compare) unless lock_ttl # TODO: Refactor this
+    expect(lrange(key.available, -1, 1).shift).to eq(jid_to_compare) # unless lock_ttl # TODO: Refactor this
   end
 end
 
@@ -19,13 +19,6 @@ RSpec.shared_examples "exists key exists" do
   end
 end
 
-RSpec.shared_examples "grabbed key exists" do
-  it "contains a key with suffix :GRABBED" do
-    expect(unique_keys).to include(key.grabbed)
-    expect(hget(key.grabbed, jid_to_compare)).to resemble_date
-    expect(key.grabbed).to expire_in(100) if lock_ttl # TODO: Refactor this
-  end
-end
 
 RSpec.shared_examples "digest exists in unique set" do
   it "has an entry for digest in unique set" do
@@ -48,6 +41,5 @@ end
 RSpec.shared_examples "a lock with all keys created" do
   it_behaves_like "available key exists"
   it_behaves_like "exists key exists"
-  it_behaves_like "grabbed key exists"
   it_behaves_like "digest exists in unique set"
 end

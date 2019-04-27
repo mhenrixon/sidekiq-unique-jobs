@@ -12,7 +12,7 @@ detectors:
     exclude:
     - Sidekiq#self.use_options
     - SidekiqUniqueJobs::Lock::WhileExecuting#execute
-    - SidekiqUniqueJobs::Locksmith#grab_token
+    - SidekiqUniqueJobs::Locksmith#grab_lock
     - SidekiqUniqueJobs::Locksmith#touch_grabbed_token
     - SidekiqUniqueJobs::Profiler#self.stop
     - SidekiqUniqueJobs::Web#self.registered
