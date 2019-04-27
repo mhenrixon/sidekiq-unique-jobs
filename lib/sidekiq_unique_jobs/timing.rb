@@ -6,9 +6,9 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Timing
     def timed
-      start_time = time_source.call()
+      start_time = time_source.call
 
-      [yield, time_source.call() - start_time]
+      [yield, time_source.call - start_time]
     end
 
     def current_time

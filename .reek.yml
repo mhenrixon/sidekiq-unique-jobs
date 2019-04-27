@@ -12,9 +12,8 @@ detectors:
     exclude:
     - Sidekiq#self.use_options
     - SidekiqUniqueJobs::Lock::WhileExecuting#execute
-    - SidekiqUniqueJobs::Locksmith#grab_lock
-    - SidekiqUniqueJobs::Locksmith#touch_grabbed_token
     - SidekiqUniqueJobs::Profiler#self.stop
+    - SidekiqUniqueJobs::Timing#timed
     - SidekiqUniqueJobs::Web#self.registered
   IrresponsibleModule:
     enabled: false
@@ -23,8 +22,6 @@ detectors:
     exclude:
     - initialize
     - Hash#slice
-    - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
     - SidekiqUniqueJobs::ClientMiddleware#call
   TooManyStatements:
     exclude:
@@ -34,11 +31,11 @@ detectors:
     - SidekiqUniqueJobs::Digests#batch_delete
     - SidekiqUniqueJobs::Digests#delete_by_pattern
     - SidekiqUniqueJobs::Lock::WhileExecuting#execute
-    - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
+    - SidekiqUniqueJobs::Locksmith#try_lock
     - SidekiqUniqueJobs::Profiler#self.stop
     - SidekiqUniqueJobs::Middleware#self.configure_server
     - SidekiqUniqueJobs::Middleware#with_logging_context
+    - SidekiqUniqueJobs::Scripts#call
     - SidekiqUniqueJobs::ServerMiddleware#call
     - SidekiqUniqueJobs::UniqueArgs#filtered_args
     - SidekiqUniqueJobs::Util#del
