@@ -22,7 +22,10 @@ platforms :mri_25 do
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rspec"
+  gem "ruby-prof"
   gem "simplecov-json"
+  gem "stackprof"
+  gem "test-prof"
   gem "travis"
 end
 
