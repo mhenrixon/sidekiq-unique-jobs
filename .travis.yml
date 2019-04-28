@@ -34,6 +34,8 @@ rvm:
 
 matrix:
   fast_finish: true
+  allow_failures:
+    - truffleruby
   include:
     - rvm: 2.5.5
       gemfile: gemfiles/sidekiq_develop.gemfile
