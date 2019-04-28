@@ -8,7 +8,7 @@ gem "rspec-eventually", require: false
 gem "rspec-its",        require: false
 gem "sidekiq", git: "https://github.com/mperham/sidekiq.git", branch: "6-0"
 
-platforms :mri_25 do
+platforms :mri do
   gem "benchmark-ips"
   gem "fasterer"
   gem "fuubar"
@@ -16,6 +16,7 @@ platforms :mri_25 do
   gem "guard-reek"
   gem "guard-rspec"
   gem "guard-rubocop"
+  gem "hiredis"
   gem "memory_profiler"
   gem "pry"
   gem "redcarpet", "~> 3.4"

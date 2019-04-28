@@ -30,6 +30,7 @@ rvm:
   - 2.4.5
   - 2.3.8
   - jruby-9.2.7.0
+  - truffleruby
 
 matrix:
   fast_finish: true
@@ -40,6 +41,8 @@ matrix:
     - rvm: 2.6.2
       gemfile: gemfiles/sidekiq_6.0.gemfile
     - rvm: 2.5.5
+      gemfile: gemfiles/sidekiq_6.0.gemfile
+    - rvm: truffleruby
       gemfile: gemfiles/sidekiq_6.0.gemfile
 
 gemfile:

@@ -4,11 +4,20 @@ require "sidekiq/testing"
 
 require_relative "version_check"
 
+def sidekiq_redis_driver
+  if RUBY_ENGINE == "ruby"
+    require "hiredis"
+    :hiredis
+  else
+    :ruby
+  end
+end
+
 RSpec.configure do |config|
   config.before(:each, redis: :redis) do |example|
     redis_db = example.metadata.fetch(:redis_db) { 0 }
     redis_url = "redis://localhost/#{redis_db}"
-    redis_options = { url: redis_url }
+    redis_options = { url: redis_url, driver: sidekiq_redis_driver }
     redis = Sidekiq::RedisConnection.create(redis_options)
 
     Sidekiq.configure_client do |sidekiq_config|
