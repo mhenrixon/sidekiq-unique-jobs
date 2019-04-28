@@ -13,7 +13,6 @@ begin
     # color output
     config.color = true
   end
-
 rescue LoadError
   # Do nothing, we don't have test_prof
 end
