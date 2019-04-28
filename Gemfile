@@ -28,5 +28,6 @@ platforms :mri do
   gem "simplecov-json"
   gem "stackprof"
   gem "test-prof"
+  gem "toxiproxy"
   gem "travis"
 end
