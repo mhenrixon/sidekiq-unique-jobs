@@ -21,9 +21,9 @@ module SidekiqUniqueJobs
 
     def time_source
       if defined?(Process::CLOCK_MONOTONIC)
-        proc { (Process.clock_gettime(Process::CLOCK_MONOTONIC) * 1000).to_i }
+        proc { (current_time * 1000).to_i }
       else
-        proc { (Time.now.to_f * 1000).to_i }
+        proc { (current_time.to_f * 1000).to_i }
       end
     end
   end
