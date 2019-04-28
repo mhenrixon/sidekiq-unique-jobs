@@ -13,6 +13,6 @@ begin
     # color output
     config.color = true
   end
-rescue LoadError
+rescue LoadError # rubocop:disable Lint/HandleExceptions
   # Do nothing, we don't have test_prof
 end

@@ -14,17 +14,25 @@ module SidekiqUniqueJobs
     #   @return [String] digest with `:AVAILABLE` suffix
     attr_reader :available
     #
-    # @!attribute [r] available
+    # @!attribute [r] exists
     #   @return [String] digest with `:EXISTS` suffix
     attr_reader :exists
     #
-    # @!attribute [r] available
+    # @!attribute [r] grabbed
     #   @return [String] digest with `:GRABBED` suffix
     attr_reader :grabbed
     #
-    # @!attribute [r] available
+    # @!attribute [r] version
     #   @return [String] digest with `:VERSION` suffix
     attr_reader :version
+    #
+    # @!attribute [r] wait
+    #   @return [String] digest with `:WAIT` suffix
+    attr_reader :wait
+    #
+    # @!attribute [r] work
+    #   @return [String] digest with `:PROCESS` suffix
+    attr_reader :work
 
     #
     # Initialize a new Key
@@ -37,14 +45,22 @@ module SidekiqUniqueJobs
       @exists    = namespaced_key("EXISTS")
       @grabbed   = namespaced_key("GRABBED")
       @version   = namespaced_key("VERSION")
+      @wait      = namespaced_key("WAIT")
+      @work      = namespaced_key("WORK")
     end
 
     def unique_set
       SidekiqUniqueJobs::UNIQUE_SET
     end
 
+    #
+    # Returns all keys as an ordered array
+    #
+    #
+    # @return [Array] an ordered array with all keys
+    #
     def to_a
-      [digest, exists, grabbed, available, version, unique_set]
+      [digest, wait, work, exists, grabbed, available, version, unique_set]
     end
 
     private

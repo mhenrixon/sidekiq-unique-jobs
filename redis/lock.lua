@@ -1,11 +1,13 @@
 -- redis.replicate_commands();
 
-local unique_digest = KEYS[1] -- TODO: Legacy support (Remove in v6.1)
-local exists_key    = KEYS[2]
-local grabbed_key   = KEYS[3]
-local available_key = KEYS[4]
-local version_key   = KEYS[5]
-local unique_set    = KEYS[6]
+local unique_digest = KEYS[1]
+local wait_key      = KEYS[2]
+local work_key      = KEYS[3]
+local exists_key    = KEYS[4]
+local grabbed_key   = KEYS[5]
+local available_key = KEYS[6]
+local version_key   = KEYS[7]
+local unique_set    = KEYS[8]
 
 local job_id    = ARGV[1]
 local ttl       = tonumber(ARGV[2])
@@ -24,7 +26,7 @@ else
   redis.call('DEL', exists_key)    -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', grabbed_key)   -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', available_key) -- TODO: Legacy support (Remove in v6.1)
-  redis.call('DEL', version_key) -- TODO: Legacy support (Remove in v6.1)
+  redis.call('DEL', version_key)   -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', 'uniquejobs')  -- TODO: Legacy support (Remove in v6.1)
 
   redis.call('SET', unique_digest, stored_jid)
@@ -60,6 +62,11 @@ if lock_type == "until_expired" and ttl > 0 then
   redis.log(redis.LOG_DEBUG, "lock.lua - Until expired job, expiring " .. unique_digest .. " in " .. tostring(ttl) .. "ms")
   redis.call('SREM', unique_set, unique_digest)
   redis.call('PEXPIRE', unique_digest, ttl)
+  redis.call('RPUSH', wait_key, job_id)
+  redis.call('PEXPIRE', wait_key, ttl)
+else
+  redis.call('RPUSH', wait_key, job_id)
+  redis.call('PEXPIRE', wait_key, 5)
 end
 
 return job_id

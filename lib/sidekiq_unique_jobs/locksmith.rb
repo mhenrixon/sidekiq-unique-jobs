@@ -4,6 +4,7 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
+  # rubocop:disable Metrics/ClassLength
   class Locksmith
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
@@ -64,21 +65,27 @@ module SidekiqUniqueJobs
     #
     # Create a lock for the item
     #
-    # @param [Integer] timeout the number of seconds to wait for a lock.
-    #
-    # @return [String] the Sidekiq job_id (jid)
+    # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock
-      locked_jid = try_lock
-      return locked_jid unless block_given?
-
-      begin
-        return yield locked_jid if locked_jid
-      ensure
-        unlock
+      if lock_timeout
+        create_lock
+      else
+        try_lock
       end
     end
     alias wait lock
+
+    def execute
+      raise ArgumentError, "#execute needs a block" unless block_given?
+
+      grabbed_jid = grab_lock
+      return yield grabbed_jid if grabbed_jid == locked_jid
+
+      enqueue_lock(locked_jid)
+    ensure
+      unlock
+    end
 
     #
     # Removes the lock keys from Redis if locked by the provided jid/token
@@ -115,7 +122,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :locked,
         redis_pool,
-        keys: [key.digest, key.exists, key.grabbed],
+        keys: key.to_a,
         argv: [jid],
       ) >= 1
     end
@@ -129,9 +136,7 @@ module SidekiqUniqueJobs
 
       tries.times do |attempt_number|
         # Wait a random delay before retrying.
-        if lock_timeout.nil? || lock_timeout.positive?
-          sleep(sleepy_time) if attempt_number.positive?
-        end
+        sleep(sleepy_time) if attempt_number.positive?
 
         locked = create_lock
         return locked if locked
@@ -153,10 +158,27 @@ module SidekiqUniqueJobs
 
       validity = ttl.to_i - time_elapsed - drift
 
-      if locked_jid == jid && (validity >= 0 || ttl.zero?)
-        locked_jid
-      else
-        false
+      return false unless locked_jid == jid && (validity >= 0 || ttl.zero?)
+
+      locked_jid
+    end
+
+    def grab_lock
+      redis(redis_pool) do |conn|
+        if lock_timeout.nil? || lock_timeout.positive?
+          conn.brpoplpush(key.waiting, key.working, lock_timeout || 0)
+        else
+          conn.rpoplpush(key.waiting, key.working)
+        end
+      end
+    end
+
+    def enqueue_lock(grabbed_jid)
+      redis(redis_pool) do |conn|
+        conn.multi do
+          conn.lpush(key.waiting, grabbed_jid)
+          conn.pexpire(key.waiting, 5)
+        end
       end
     end
 
@@ -167,4 +189,5 @@ module SidekiqUniqueJobs
       (ttl * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

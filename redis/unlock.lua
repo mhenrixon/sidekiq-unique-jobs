@@ -1,9 +1,13 @@
-local unique_digest = KEYS[1] -- TODO: Legacy support (Remove in v6.1)
-local exists_key    = KEYS[2]
-local grabbed_key   = KEYS[3]
-local available_key = KEYS[4]
-local version_key   = KEYS[5]
-local unique_set    = KEYS[6]
+local unique_digest = KEYS[1]
+local wait_key      = KEYS[2]
+local work_key      = KEYS[3]
+local exists_key    = KEYS[4]
+local grabbed_key   = KEYS[5]
+local available_key = KEYS[6]
+local version_key   = KEYS[7]
+local unique_set    = KEYS[8]
+
+local job_id    = ARGV[1]
 
 local job_id    = ARGV[1]
 local ttl       = tonumber(ARGV[2])
@@ -24,7 +28,7 @@ end
 local old_jid    = redis.call('GET', exists_key)
 if old_jid and old_jid ~= job_id then
   redis.log(redis.LOG_DEBUG, "unlock.lua - Locked by another job_id. Converting lock and returning job_id: " .. old_jid )
-  redis.call('DEL', unique_set)   -- TODO: Legacy support (Remove in v6.1)
+  redis.call('DEL', unique_set)    -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', available_key) -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', grabbed_key)   -- TODO: Legacy support (Remove in v6.1)
   redis.call('DEL', exists_key)    -- TODO: Legacy support (Remove in v6.1)
@@ -43,12 +47,16 @@ end
 -- BEGIN deleting lock
 redis.log(redis.LOG_DEBUG, "unlock.lua - Removing digest: " .. unique_digest .. " from: " .. unique_set)
 
-redis.call('SREM', unique_set, unique_digest)
-redis.call('DEL', available_key) -- TODO: Legacy support (Remove in v6.1)
-redis.call('DEL', grabbed_key)   -- TODO: Legacy support (Remove in v6.1)
+-- BEGIN deleting depreacted keys
 redis.call('DEL', exists_key)    -- TODO: Legacy support (Remove in v6.1)
+redis.call('DEL', grabbed_key)   -- TODO: Legacy support (Remove in v6.1)
+redis.call('DEL', available_key) -- TODO: Legacy support (Remove in v6.1)
 redis.call('DEL', version_key)   -- TODO: Legacy support (Remove in v6.1)
 redis.call('DEL', 'uniquejobs')  -- TODO: Legacy support (Remove in v6.1)
+-- END deleting deprecsated keys
+
+redis.call('SREM', unique_set, unique_digest)
+redis.call('LREM', work_key, 1, job_id)
 
 if ttl and ttl > 0 then
   redis.log(redis.LOG_DEBUG, "unlock.lua - Expiring keys in: " .. ttl)

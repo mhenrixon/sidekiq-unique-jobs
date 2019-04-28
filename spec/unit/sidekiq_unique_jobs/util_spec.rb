@@ -26,20 +26,21 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:unique_digest) { item["unique_digest"] }
   let(:jid)           { "e3049b05b0bd9c809182bbe0" }
   let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
-  let(:expected_keys) { [unique_digest] }
+  let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
+  let(:expected_keys) { [key.digest, key.waiting] }
 
   shared_context "with an old lock" do
     let!(:old_lock) do
       SidekiqUniqueJobs::Scripts.call(
         :acquire_lock,
         nil,
-        keys: [unique_digest],
+        keys: [key.digest],
         argv: [jid, 7200],
       )
     end
 
     specify { expect(old_lock).to eq(1) }
-    specify { expect(described_class.keys).to include(unique_digest) }
+    specify { expect(described_class.keys).to include(key.digest) }
   end
 
   describe ".keys" do
@@ -48,7 +49,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     context "when old lock exists" do
       include_context "with an old lock"
 
-      it { is_expected.to match_array([unique_digest]) }
+      it { is_expected.to match_array(expected_keys) }
     end
 
     context "when new lock exists" do
@@ -66,20 +67,22 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     context "when an old lock exists" do
       include_context "with an old lock"
 
-      it { expect(described_class.keys).to match_array([unique_digest]) }
-
       context "when pattern is a wildcard" do
         let(:pattern) { described_class::SCAN_PATTERN }
 
-        it { is_expected.to eq(1) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it "deletes the matching keys" do
+          expect { del }.to change { described_class.keys }.from([key.digest]).to([])
+          expect(del).to eq(1)
+        end
       end
 
       context "when pattern is a specific key" do
-        let(:pattern) { unique_digest }
+        let(:pattern) { key.digest }
 
-        it { is_expected.to eq(1) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it "deletes the matching keys" do
+          expect { del }.to change { described_class.keys }.from([key.digest]).to([])
+          expect(del).to eq(1)
+        end
       end
     end
 
@@ -88,22 +91,22 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
         lock.lock
       end
 
-      after { lock.delete }
-
-      it { expect(described_class.keys).to match_array(expected_keys) }
-
       context "when pattern is a wildcard" do
         let(:pattern) { described_class::SCAN_PATTERN }
 
-        it { is_expected.to eq(1) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it "deletes the matching keys" do
+          expect { del }.to change { described_class.keys }.from(expected_keys).to([])
+          expect(del).to eq(2)
+        end
       end
 
       context "when pattern is a specific key" do
-        let(:pattern) { unique_digest }
+        let(:pattern) { key.digest }
 
-        it { is_expected.to eq(1) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it "deletes the matching keys" do
+          expect { del }.to change { described_class.keys }.from(expected_keys).to([])
+          expect(del).to eq(2)
+        end
       end
     end
   end

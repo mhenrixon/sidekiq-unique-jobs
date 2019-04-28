@@ -1,4 +1,5 @@
 local unique_key = KEYS[1]
+
 local job_id     = ARGV[1]
 local expires    = tonumber(ARGV[2])
 local stored_jid = redis.pcall('get', unique_key)
