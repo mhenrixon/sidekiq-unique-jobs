@@ -6,16 +6,13 @@ module SimulateLock
   extend self
   @items = Concurrent::Array.new
 
-  def lock_jid(key, jid)
+  def lock_jid(key, jid, ttl: nil, lock_type: :until_executed)
     raise ArgumentError, ":key needs to be a Key" unless key.is_a?(SidekiqUniqueJobs::Key)
-
-    SidekiqUniqueJobs.redis do |conn|
-      conn.multi do
-        conn.zadd(SidekiqUniqueJobs::UNIQUE_SET, key.digest)
-        conn.set(key.digest, jid)
-        conn.zadd(key.wait, Time.now.to_f, jid)
-      end
-    end
+    call_script(
+      :lock,
+      keys: key.to_a,
+      argv: [jid, ttl, lock_type, SidekiqUniqueJobs::Timing.current_time]
+    )
   end
 
   def lock_until_executed(digest, jid, ttl = nil)

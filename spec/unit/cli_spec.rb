@@ -79,7 +79,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
       after { SidekiqUniqueJobs::Util.del("*", 1000) }
 
       it { is_expected.to include("Found 1 keys matching '*':") }
-      it { is_expected.to include("uniquejobs:abcdefab") }
+      it { is_expected.to include("uniquejobs:abcdefab       uniquejobs:abcdefab:WAIT") }
     end
   end
 

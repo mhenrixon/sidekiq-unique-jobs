@@ -13,7 +13,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
   describe Sidekiq::SortedEntry::UniqueExtension do
     it "deletes uniqueness lock on delete" do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: "bar")).to be_truthy
-      expect(unique_keys).to match_array(%w[uniquejobs:863b7cb639bd71c828459b97788b2ada])
+      expect(unique_keys).not_to match_array([])
 
       Sidekiq::ScheduledSet.new.each(&:delete)
       expect(keys("uniquejobs")).to match_array([])
@@ -23,7 +23,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
 
     it "deletes uniqueness lock on remove_job" do
       expect(JustAWorker.perform_in(60 * 60 * 3, foo: "bar")).to be_truthy
-      expect(unique_keys).to match_array(["uniquejobs:863b7cb639bd71c828459b97788b2ada"])
+      expect(unique_keys).not_to match_array([])
 
       Sidekiq::ScheduledSet.new.each do |entry|
         entry.send(:remove_job) do |message|

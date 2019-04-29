@@ -8,6 +8,9 @@
 - [Installation](#installation)
 - [Support Me](#support-me)
 - [Usage](#usage)
+  - [While Executing](#while-executing)
+    - [](#)
+    - [Example](#example)
 - [Debugging](#debugging)
   - [Sidekiq Web](#sidekiq-web)
     - [Show Unique Digests](#show-unique-digests)
@@ -74,7 +77,37 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
 
 ## Usage
 
-TODO: Rewrite documentation so that people can make sense out of it
+### While Executing
+
+Jobs with this lock can be scheduled any number of times. Nothing prevents these jobs from being enqueued by Sidekiq. The uniqueness of the job is enforced only while the Sidekiq server is processing jobs.
+
+####
+
+#### Example
+
+```ruby
+class WhileExecutingWorker
+  include Sidekiq::Worker
+  sidekiq_options lock: :while_executing
+
+  def perform(id)
+    puts id
+    sleep 1
+  end
+end
+```
+
+```ruby
+3.times { WhileExecutingWorker.perform_async(1) }
+```
+
+We immediately get the following logs in sidekiq:
+
+```
+7:39:02 PM worker.1 |  2019-04-27T17:39:02.447Z pid=90150 tid=ox4ybzaai class=WhileExecutingWorker jid=1d69086361d02099be04a86c INFO: start
+7:39:02 PM worker.1 |  2019-04-27T17:39:02.447Z pid=90150 tid=ox4ybzajq class=WhileExecutingWorker jid=239b4bebf35fc84148229b01 INFO: start
+7:39:02 PM worker.1 |  2019-04-27T17:39:02.450Z pid=90150 tid=ox4ybz89u class=WhileExecutingWorker jid=156e07ba613c7e2a6d5fcb91 INFO: start
+```
 
 ## Debugging
 

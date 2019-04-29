@@ -14,11 +14,11 @@ RSpec.describe "delete_by_digest.lua", redis: :redis do
   let(:locked_jid) { job_id }
 
   before do
-    lock_jid(key, job_id)
-    lock_jid(run_key, job_id)
+    lock_jid(key, job_id, ttl: lock_ttl, lock_type: :until_expred)
+    lock_jid(run_key, job_id, ttl: lock_ttl, lock_type: :until_expred)
   end
 
-  it_behaves_like "a lock with all keys created"
+  it_behaves_like "redis has keys created by lock.lua"
 
   it "removes all keys for the given digest" do
     delete_by_digest

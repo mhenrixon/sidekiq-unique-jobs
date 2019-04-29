@@ -32,7 +32,7 @@ RSpec.describe "delete.lua", redis: :redis do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type])
+      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type, current_time])
       delete
     end
 
@@ -43,7 +43,7 @@ RSpec.describe "delete.lua", redis: :redis do
     let(:locked_jid) { job_id }
 
     before do
-      call_script(:lock, keys: key.to_a, argv: [job_id, lock_ttl, lock_type])
+      call_script(:lock, keys: key.to_a, argv: [job_id, lock_ttl, lock_type, current_time])
       delete
     end
 

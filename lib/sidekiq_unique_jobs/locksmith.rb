@@ -85,10 +85,6 @@ module SidekiqUniqueJobs
 
       grabbed_jid = grab_lock
       return yield grabbed_jid if grabbed_jid == locked_jid
-
-      enqueue_lock(locked_jid)
-    ensure
-      unlock
     end
 
     #
@@ -126,7 +122,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :locked,
         redis_pool,
-        keys: [key.digest, key.work],
+        keys: [key.digest],
         argv: [jid],
       ) >= 1
     end
@@ -140,7 +136,7 @@ module SidekiqUniqueJobs
 
       tries.times do |attempt_number|
         # Wait a random delay before retrying.
-        sleep([sleepy_time, lock_timeout].min) if attempt_number.positive?
+        sleep(sleepy_time) if attempt_number.positive?
         locked = create_lock
         return locked if locked
       end
@@ -169,9 +165,11 @@ module SidekiqUniqueJobs
     def grab_lock
       redis(redis_pool) do |conn|
         if lock_timeout.nil? || lock_timeout.positive?
-          conn.bzpopmin(key.wait, key.work, lock_timeout)
+          conn.bzpopmin(key.wait, key.work, lock_timeout || 0)
         else
-          conn.zpopmin(key.wait, key.work)
+          conn.multi do
+            conn.zadd(key.work, conn.zpopmin(key.wait))
+          end
         end
       end
     end

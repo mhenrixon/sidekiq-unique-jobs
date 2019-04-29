@@ -4,41 +4,63 @@ def jid_to_compare
   (locked_jid == "2") ? job_id : locked_jid
 end
 
-RSpec.shared_examples "available key exists" do
-  it "contains a key with suffix :AVAILABLE" do
-    expect(unique_keys).to include(key.available)
-    expect(lrange(key.available, -1, 1).shift).to eq(jid_to_compare) # unless lock_ttl # TODO: Refactor this
+RSpec.shared_examples "digest key exists" do
+  it "contains a key with without suffix" do
+    expect(unique_keys).to include(key.digest)
+    expect(get(key.digest)).to eq(jid_to_compare)
+    expect(key.digest).to expire_in(lock_ttl) if lock_ttl
   end
 end
 
-RSpec.shared_examples "exists key exists" do
-  it "contains a key with suffix :EXISTS" do
-    expect(unique_keys).to include(key.exists)
-    expect(get(key.exists)).to eq(jid_to_compare)
-    expect(key.exists).to expire_in(lock_ttl) if lock_ttl # TODO: Refactor this
+RSpec.shared_examples "wait key exists" do
+  it "contains a key with suffix :WAIT" do
+    expect(unique_keys).to include(key.wait)
+    expect(zrank(key.wait, jid_to_compare)).to eq(1)
+    expect(zscore(key.wait, jid_to_compare)).to be_a(Float)
+
+    if lock_ttl
+      expect(key.wait).to expire_in(lock_ttl)
+    else
+      expect(key.wait).to expire_in(5)
+    end
+  end
+end
+
+RSpec.shared_examples "work key exists" do
+  it "contains a key with suffix :WORK" do
+    expect(unique_keys).to include(key.work)
+    expect(zrank(key.work, jid_to_compare)).to eq(1)
+    expect(zscore(key.work, jid_to_compare)).to be_a(Float)
+
+    if lock_ttl
+      expect(key.work).to expire_in(lock_ttl)
+    else
+      expect(key.work).to expire_in(5)
+    end
   end
 end
 
 RSpec.shared_examples "digest exists in unique set" do
   it "has an entry for digest in unique set" do
-    expect(unique_digests).to include(key.digest)
+    expect(key.unique_set).to include(key.digest)
   end
 end
 
-RSpec.shared_examples "keys created by other locks than until_expired" do
-  it_behaves_like "available key exists"
-  it_behaves_like "exists key exists"
+RSpec.shared_examples "lock creates keys" do
+  it_behaves_like "digest key exists"
+  it_behaves_like "wait key exists"
   it_behaves_like "digest exists in unique set"
 end
 
-RSpec.shared_examples "keys created by until_expired" do
-  it_behaves_like "available key exists"
-  it_behaves_like "exists key exists"
+RSpec.shared_examples "keys created by lock until_expired" do
+  it_behaves_like "digest key exists"
+  it_behaves_like "wait key exists"
   it_behaves_like "unique set does not exist"
 end
 
-RSpec.shared_examples "a lock with all keys created" do
-  it_behaves_like "available key exists"
-  it_behaves_like "exists key exists"
+RSpec.shared_examples "redis has keys created by lock.lua" do
+  it_behaves_like "digest key exists"
+  it_behaves_like "wait key exists"
+  it_behaves_like "work key exists"
   it_behaves_like "digest exists in unique set"
 end

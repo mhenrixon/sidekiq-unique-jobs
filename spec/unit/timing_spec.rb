@@ -10,7 +10,7 @@ RSpec.describe SidekiqUniqueJobs::Timing do
   describe ".current_time" do
     subject(:current_time) { described_class.current_time }
 
-    it { is_expected.to eq(locked_time.to_f) }
+    it { is_expected.to be_a(Float) }
   end
 end
 

@@ -30,14 +30,20 @@ module SidekiqUniqueJobs
     #
     def initialize(digest)
       @digest  = digest
-      @wait    = suffixed_key("WAIT")
-      @work    = suffixed_key("WORK")
-      @version = suffixed_key("WORK")
     end
 
     def unique_set
       SidekiqUniqueJobs::UNIQUE_SET
     end
+
+    def waiting_set
+      SidekiqUniqueJobs::WAITING_SET
+    end
+
+    def working_set
+      SidekiqUniqueJobs::WORKING_SET
+    end
+
     #
     # Returns all keys as an ordered array
     #
@@ -45,7 +51,7 @@ module SidekiqUniqueJobs
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [digest, wait, work, version, unique_set]
+      [digest, wait, work, unique_set]
     end
 
     private

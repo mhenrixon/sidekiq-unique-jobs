@@ -18,7 +18,7 @@ RSpec.describe "delete_job_by_digest.lua", redis: :redis do
     lock_jid(run_key, job_id)
   end
 
-  it_behaves_like "a lock with all keys created"
+  it_behaves_like "redis has keys created by lock.lua"
 
   it "removes all keys for the given digest" do
     delete_by_digest

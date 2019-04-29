@@ -94,6 +94,18 @@ module SidekiqUniqueJobs
       def zrange(key, starting = 0, ending = -1, with_scores: true)
         redis { |conn| conn.zrange(key, starting, ending, with_scores: with_scores) }
       end
+
+      def zrem(key, value)
+        redis { |conn| conn.zrem(key, value) }
+      end
+
+      def zrank(key, value)
+        redis { |conn| conn.zrank(key, value) }
+      end
+
+      def zscore(key, value)
+        redis { |conn| conn.zscore(key, value) }
+      end
     end
 
     include SidekiqUniqueJobs::Testing::Redis
@@ -111,12 +123,12 @@ module SidekiqUniqueJobs
       keys("uniquejobs:*")
     end
 
+    def current_time
+      SidekiqUniqueJobs::Timing.current_time
+    end
+
     def call_script(file_name, keys: [], argv: [])
       SidekiqUniqueJobs::Scripts.call(file_name, nil, keys: keys, argv: argv)
     end
   end
-end
-
-RSpec.configure do |config|
-  config.include SidekiqUniqueJobs::Testing
 end

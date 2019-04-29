@@ -11,6 +11,7 @@ RSpec.describe "lock.lua", redis: :redis do
       job_id,
       lock_ttl,
       lock_type,
+      SidekiqUniqueJobs::Timing.current_time,
     ]
   end
   let(:job_id)     { "jobid" }
@@ -21,18 +22,15 @@ RSpec.describe "lock.lua", redis: :redis do
   let(:locked_jid) { job_id }
 
   context "without existing locks" do
-    before do
-      lock
+    it "creates the right keys in redis" do
+      expect(lock).to eq(locked_jid)
+      expect(unique_keys).to include(digest)
     end
-
-    it { expect(get(digest)).to eq(job_id) }
   end
 
   context "when lock_type is :until_expired" do
     let(:lock_type) { :until_expired }
     let(:lock_ttl)  { 10 * 1000 }
-
-    before { lock }
 
     it "creates a lock with ttl" do
       expect(lock).to eq(job_id)
@@ -44,19 +42,20 @@ RSpec.describe "lock.lua", redis: :redis do
   context "when a lock exists" do
     before do
       set(key.digest, locked_jid)
-      lock
     end
 
     context "when lock value is another job_id" do
       let(:locked_jid) { "bogusjobid" }
 
-      it { is_expected.to eq(locked_jid) }
+      it "returns the locked job_id" do
+        expect(lock).to eq(locked_jid)
+      end
     end
 
     context "when lock value is same job_id" do
       let(:locked_jid) { job_id }
 
-      it { is_expected.to eq(job_id) }
+      it { expect(lock).to eq(job_id) }
     end
   end
 end

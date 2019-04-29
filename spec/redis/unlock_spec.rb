@@ -34,19 +34,12 @@ RSpec.describe "unlock.lua", redis: :redis do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type])
+      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type, current_time])
       unlock
     end
 
-    it "converts the lock and returns the other job_id" do
+    it "returns the other job_id" do
       expect(unlock).to eq(locked_jid)
-
-      expect(exists?(key.digest)).to eq(true)
-      expect(get(key.digest)).to eq(locked_jid)
-      expect(exists?(key.exists)).to eq(false)
-      expect(exists?(key.available)).to eq(false)
-      expect(unique_digests).to include(digest)
-      expect(exists?(key.grabbed)).to eq(false)
     end
   end
 
