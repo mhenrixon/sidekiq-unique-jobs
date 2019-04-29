@@ -68,11 +68,15 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock
-      if lock_timeout
+      locked_jid = if lock_timeout
         create_lock
       else
         try_lock
       end
+
+      return yield if locked_jid && block_given?
+
+      locked_jid
     end
     alias wait lock
 
@@ -122,7 +126,7 @@ module SidekiqUniqueJobs
       Scripts.call(
         :locked,
         redis_pool,
-        keys: key.to_a,
+        keys: [key.digest, key.work],
         argv: [jid],
       ) >= 1
     end
@@ -136,8 +140,7 @@ module SidekiqUniqueJobs
 
       tries.times do |attempt_number|
         # Wait a random delay before retrying.
-        sleep(sleepy_time) if attempt_number.positive?
-
+        sleep([sleepy_time, lock_timeout].min) if attempt_number.positive?
         locked = create_lock
         return locked if locked
       end
@@ -153,12 +156,12 @@ module SidekiqUniqueJobs
       locked_jid, time_elapsed = timed do
         Scripts.call(:lock, redis_pool,
                      keys: key.to_a,
-                     argv: [jid, ttl, lock_type])
+                     argv: [jid, ttl, lock_type, current_time])
       end
 
-      validity = ttl.to_i - time_elapsed - drift
+      # validity = ttl.to_i - time_elapsed - drift
 
-      return false unless locked_jid == jid && (validity >= 0 || ttl.zero?)
+      return false unless locked_jid == jid # && (validity >= 0 || ttl.zero?)
 
       locked_jid
     end
@@ -166,9 +169,9 @@ module SidekiqUniqueJobs
     def grab_lock
       redis(redis_pool) do |conn|
         if lock_timeout.nil? || lock_timeout.positive?
-          conn.brpoplpush(key.waiting, key.working, lock_timeout || 0)
+          conn.bzpopmin(key.wait, key.work, lock_timeout)
         else
-          conn.rpoplpush(key.waiting, key.working)
+          conn.zpopmin(key.wait, key.work)
         end
       end
     end
@@ -176,8 +179,8 @@ module SidekiqUniqueJobs
     def enqueue_lock(grabbed_jid)
       redis(redis_pool) do |conn|
         conn.multi do
-          conn.lpush(key.waiting, grabbed_jid)
-          conn.pexpire(key.waiting, 5)
+          conn.lpush(key.wait, grabbed_jid)
+          conn.pexpire(key.wait, 5)
         end
       end
     end

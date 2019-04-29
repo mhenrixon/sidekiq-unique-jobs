@@ -5,6 +5,8 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Timing
+    module_function
+
     def timed
       start_time = time_source.call
 
@@ -15,7 +17,7 @@ module SidekiqUniqueJobs
       if defined?(Process::CLOCK_MONOTONIC)
         Process.clock_gettime(Process::CLOCK_MONOTONIC)
       else
-        Time.now
+        Time.now.to_f
       end
     end
 
@@ -23,7 +25,7 @@ module SidekiqUniqueJobs
       if defined?(Process::CLOCK_MONOTONIC)
         proc { (current_time * 1000).to_i }
       else
-        proc { (current_time.to_f * 1000).to_i }
+        proc { (current_time * 1000).to_i }
       end
     end
   end

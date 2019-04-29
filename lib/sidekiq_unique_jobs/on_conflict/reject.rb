@@ -6,6 +6,8 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Reject < OnConflict::Strategy
+      include SidekiqUniqueJobs::Timing
+
       # Send jobs to dead queue
       def call
         log_debug { "Rejecting job with jid: #{item[JID_KEY]}" }
@@ -58,10 +60,6 @@ module SidekiqUniqueJobs
             conn.zremrangebyrank("dead", 0, -Sidekiq::DeadSet.max_jobs)
           end
         end
-      end
-
-      def current_time
-        @current_time ||= Time.now.to_f
       end
 
       def payload

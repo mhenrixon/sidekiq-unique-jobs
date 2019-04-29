@@ -7,6 +7,8 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
       "queue" => "testqueue",
       "args" => [foo: "bar"] }
   end
+  let(:unique_digest) { "uniquejobs:863b7cb639bd71c828459b97788b2ada" }
+  let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
 
   describe Sidekiq::SortedEntry::UniqueExtension do
     it "deletes uniqueness lock on delete" do
@@ -37,13 +39,13 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
               "retry" => true,
               "lock" => "until_executed",
               "unique_args" => [{ "foo" => "bar" }],
-              "unique_digest" => "uniquejobs:863b7cb639bd71c828459b97788b2ada",
+              "unique_digest" => key.digest,
               "unique_prefix" => "uniquejobs",
             ),
           )
         end
       end
-      expect(unique_keys).to match_array([])
+      expect(unique_keys).to match_array([key.wait])
       expect(JustAWorker.perform_in(60 * 60 * 3, boo: "far")).to be_truthy
     end
   end

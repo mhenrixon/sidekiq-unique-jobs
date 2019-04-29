@@ -2,8 +2,6 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: true do
-  include SidekiqHelpers
-
   let(:process_one) { described_class.new(item_one, callback) }
   let(:process_two) { described_class.new(item_two, callback) }
 
@@ -55,7 +53,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
         it "deletes the lock without fuss" do
           worker_class.use_options(lock_expiration: nil) do
             process_one.lock
-            expect { delete }.to change { unique_keys.size }.from(1).to(0)
+            expect(process_one.delete).to eq(true)
+            expect(process_one).not_to be_locked
           end
         end
       end
@@ -64,7 +63,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
         it "does not delete the lock" do
           worker_class.use_options(lock_expiration: 100) do
             process_one.lock
-            expect { delete }.not_to change { unique_keys.size }
+            expect(process_one.delete).to eq(false)
+            expect(process_one).to be_locked
           end
         end
       end
@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
 
       it "deletes the lock" do
         worker_class.use_options(lock_expiration: nil) do
-          expect { delete }.to change { unique_keys.size }.from(1).to(0)
+          expect(process_one.delete).to eq(true)
         end
       end
     end

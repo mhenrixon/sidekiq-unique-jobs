@@ -27,32 +27,11 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:jid)           { "e3049b05b0bd9c809182bbe0" }
   let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
   let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
-  let(:expected_keys) { [key.digest, key.waiting] }
-
-  shared_context "with an old lock" do
-    let!(:old_lock) do
-      SidekiqUniqueJobs::Scripts.call(
-        :acquire_lock,
-        nil,
-        keys: [key.digest],
-        argv: [jid, 7200],
-      )
-    end
-
-    specify { expect(old_lock).to eq(1) }
-    specify { expect(described_class.keys).to include(key.digest) }
-  end
+  let(:expected_keys) { [key.digest, key.wait] }
 
   describe ".keys" do
     subject(:keys) { described_class.keys }
-
-    context "when old lock exists" do
-      include_context "with an old lock"
-
-      it { is_expected.to match_array(expected_keys) }
-    end
-
-    context "when new lock exists" do
+    context "with existing lock" do
       before do
         lock.lock
       end
@@ -64,49 +43,25 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   describe ".del" do
     subject(:del) { described_class.del(pattern, 100) }
 
-    context "when an old lock exists" do
-      include_context "with an old lock"
+    before do
+      lock.lock
+    end
 
-      context "when pattern is a wildcard" do
-        let(:pattern) { described_class::SCAN_PATTERN }
+    context "when pattern is a wildcard" do
+      let(:pattern) { described_class::SCAN_PATTERN }
 
-        it "deletes the matching keys" do
-          expect { del }.to change { described_class.keys }.from([key.digest]).to([])
-          expect(del).to eq(1)
-        end
-      end
-
-      context "when pattern is a specific key" do
-        let(:pattern) { key.digest }
-
-        it "deletes the matching keys" do
-          expect { del }.to change { described_class.keys }.from([key.digest]).to([])
-          expect(del).to eq(1)
-        end
+      it "deletes the matching keys" do
+        expect { del }.to change { described_class.keys }.to([])
+        expect(del).to eq(2)
       end
     end
 
-    context "when a new lock exists" do
-      before do
-        lock.lock
-      end
+    context "when pattern is a specific key" do
+      let(:pattern) { key.digest }
 
-      context "when pattern is a wildcard" do
-        let(:pattern) { described_class::SCAN_PATTERN }
-
-        it "deletes the matching keys" do
-          expect { del }.to change { described_class.keys }.from(expected_keys).to([])
-          expect(del).to eq(2)
-        end
-      end
-
-      context "when pattern is a specific key" do
-        let(:pattern) { key.digest }
-
-        it "deletes the matching keys" do
-          expect { del }.to change { described_class.keys }.from(expected_keys).to([])
-          expect(del).to eq(2)
-        end
+      it "deletes the matching keys" do
+        expect { del }.to change { described_class.keys }.to([])
+        expect(del).to eq(2)
       end
     end
   end

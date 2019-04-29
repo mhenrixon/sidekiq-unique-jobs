@@ -2,8 +2,6 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, redis_db: 3 do
-  include SidekiqHelpers
-
   let(:process_one) { described_class.new(item_one, callback) }
   let(:runtime_one) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_one.dup, callback) }
 

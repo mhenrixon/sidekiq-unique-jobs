@@ -34,11 +34,12 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         return strategy.call unless locksmith.lock
-
-        yield
-        callback_safely
+        locksmith.execute do
+          yield
+          callback_safely
+        end
       ensure
-        unlock
+        locksmith.unlock
       end
 
       private

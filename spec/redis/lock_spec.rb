@@ -43,7 +43,7 @@ RSpec.describe "lock.lua", redis: :redis do
 
   context "when a lock exists" do
     before do
-      set(key.exists, locked_jid)
+      set(key.digest, locked_jid)
       lock
     end
 
@@ -55,29 +55,6 @@ RSpec.describe "lock.lua", redis: :redis do
 
     context "when lock value is same job_id" do
       let(:locked_jid) { job_id }
-
-      it { is_expected.to eq(job_id) }
-    end
-  end
-
-  context "when a deprecated lock exists" do
-    before do
-      set(key.digest, locked_jid)
-      lock
-    end
-
-    context "when lock value is another job_id" do
-      let(:locked_jid) { "anotherjobid" }
-
-      it { is_expected.to eq(locked_jid) }
-    end
-
-    context "when lock value is same job_id" do
-      it { is_expected.to eq(job_id) }
-    end
-
-    context "when lock value is '2'" do
-      let(:locked_jid) { "2" }
 
       it { is_expected.to eq(job_id) }
     end

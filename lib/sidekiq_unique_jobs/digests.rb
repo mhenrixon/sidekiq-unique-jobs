@@ -33,8 +33,8 @@ module SidekiqUniqueJobs
     def page(pattern: SCAN_PATTERN, cursor: 0, page_size: 100)
       redis do |conn|
         total_size, digests = conn.multi do
-          conn.scard(UNIQUE_SET)
-          conn.sscan(UNIQUE_SET, cursor, match: pattern, count: page_size)
+          conn.zcard(UNIQUE_SET)
+          conn.zscan(UNIQUE_SET, cursor, match: pattern, count: page_size)
         end
 
         [total_size, digests[0], digests[1]]

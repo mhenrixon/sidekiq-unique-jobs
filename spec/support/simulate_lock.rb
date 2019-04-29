@@ -11,11 +11,9 @@ module SimulateLock
 
     SidekiqUniqueJobs.redis do |conn|
       conn.multi do
-        conn.sadd(SidekiqUniqueJobs::UNIQUE_SET, key.digest)
-        conn.set(key.exists, jid)
-        conn.set(key.version, "1")
-        conn.hset(key.grabbed, jid, Time.now.to_f)
-        conn.rpush(key.available, jid)
+        conn.zadd(SidekiqUniqueJobs::UNIQUE_SET, key.digest)
+        conn.set(key.digest, jid)
+        conn.zadd(key.wait, Time.now.to_f, jid)
       end
     end
   end

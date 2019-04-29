@@ -11,6 +11,7 @@ RSpec.describe "unlock.lua", redis: :redis do
       job_id,
       lock_ttl,
       lock_type,
+      SidekiqUniqueJobs::Timing.current_time,
     ]
   end
   let(:job_id)     { "jobid" }

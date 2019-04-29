@@ -6,6 +6,7 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
   let(:args)            { [1, 2] }
   let(:worker_class)    { MyUniqueJob }
   let(:jid)             { "ajobid" }
+  let(:key)             { SidekiqUniqueJobs::Key.new(unique_digest) }
   let(:lock)            { :until_executed }
   let(:lock_expiration) { 7_200 }
   let(:queue)           { :customqueue }
@@ -26,30 +27,26 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
     }
   end
 
-  before do
-    zadd("retry", retry_at.to_s, Sidekiq.dump_json(item))
-  end
-
-  specify { expect(retry_count).to eq(1) }
-
-  context "when a job is locked" do
-    let(:locked_jid) { locksmith.lock }
-
+  describe "#retry_all" do
     before do
-      locked_jid
+      zadd("retry", retry_at.to_s, Sidekiq.dump_json(item))
     end
 
-    specify { expect(locked_jid).to eq(jid) }
-    specify do
-      expect(unique_keys).to match_array([unique_digest])
-    end
+    context "when a job is locked" do
+      let(:locked_jid) { locksmith.lock }
 
-    specify { expect(unique_digest).to expire_in(-1) }
+      before do
+        locksmith.lock
+      end
 
-    it "can be put back on queue" do
-      expect { described_class.new.retry_all }
-        .to change { queue_count(queue) }
-        .from(0).to(1)
+      it "can be put back on queue" do
+        expect(retry_count).to eq(1)
+        expect { described_class.new.retry_all }
+          .to change { queue_count(queue) }
+          .from(0).to(1)
+
+        expect(retry_count).to eq(0)
+      end
     end
   end
 end
