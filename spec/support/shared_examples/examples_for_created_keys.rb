@@ -6,9 +6,9 @@ end
 
 RSpec.shared_examples "digest key exists" do
   it "contains a key with without suffix" do
-    expect(unique_keys).to include(key.digest)
-    expect(get(key.digest)).to eq(jid_to_compare)
-    expect(key.digest).to expire_in(lock_ttl) if lock_ttl
+    expect(unique_keys).to include(key.lock_key)
+    expect(get(key.lock_key)).to eq(jid_to_compare)
+    expect(key.lock_key).to expire_in(lock_ttl) if lock_ttl
   end
 end
 
@@ -42,7 +42,7 @@ end
 
 RSpec.shared_examples "digest exists in unique set" do
   it "has an entry for digest in unique set" do
-    expect(key.unique_set).to include(key.digest)
+    expect(key.unique_set).to include(key.lock_key)
   end
 end
 

@@ -8,20 +8,7 @@ module SidekiqUniqueJobs
     #
     # @!attribute [r] digest
     #   @return [String] the digest for which keys are created
-    attr_reader :digest
-    #
-    # @!attribute [r] wait
-    #   @return [String] digest with `:WAIT` suffix
-    attr_reader :wait
-    #
-    # @!attribute [r] work
-    #   @return [String] digest with `:PROCESS` suffix
-    attr_reader :work
-    #
-    #
-    # @!attribute [r] version
-    #   @return [String] digest with `:VERSION` suffix
-    attr_reader :version
+    attr_reader :lock_key
 
     #
     # Initialize a new Key
@@ -29,35 +16,42 @@ module SidekiqUniqueJobs
     # @param [String] digest the digest to use as key
     #
     def initialize(digest)
-      @digest  = digest
+      @lock_key = digest
     end
 
-    def unique_set
-      SidekiqUniqueJobs::UNIQUE_SET
+    def free_list
+      @free_list ||= suffixed_key("FREE_LIST")
     end
 
-    def waiting_set
-      SidekiqUniqueJobs::WAITING_SET
+    def held_list
+      @held_list ||= suffixed_key("HELD_LIST")
     end
 
-    def working_set
-      SidekiqUniqueJobs::WORKING_SET
+    def free_zet
+      @free_zet ||= suffixed_key("FREE_ZET")
+    end
+
+    def held_zet
+      @held_zet ||= suffixed_key("HELD_ZET")
+    end
+
+    def lock_hash
+      @lock_hash ||= suffixed_key("LOCK")
     end
 
     #
     # Returns all keys as an ordered array
     #
-    #
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [digest, wait, work, unique_set]
+      [lock_key, free_list, held_list, free_zet, held_zet, lock_hash]
     end
 
     private
 
     def suffixed_key(variable)
-      "#{digest}:#{variable}"
+      "#{lock_key}:#{variable}"
     end
   end
 end

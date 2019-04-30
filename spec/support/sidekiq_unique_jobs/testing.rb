@@ -123,6 +123,14 @@ module SidekiqUniqueJobs
       keys("uniquejobs:*")
     end
 
+    def free_set
+      zrange("unique:free", 0, -1)
+    end
+
+    def held_set
+      zrange("unique:held")
+    end
+
     def current_time
       SidekiqUniqueJobs::Timing.current_time
     end

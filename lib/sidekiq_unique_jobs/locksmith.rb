@@ -26,14 +26,14 @@ module SidekiqUniqueJobs
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)
-      # @concurrency = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @jid           = item[JID_KEY]
       @key           = Key.new(item[UNIQUE_DIGEST_KEY])
+      @jid           = item[JID_KEY]
       @ttl           = item[LOCK_EXPIRATION_KEY].to_i * 1000
-      @lock_timeout  = item[LOCK_TIMEOUT_KEY]
+      @timeout       = item[LOCK_TIMEOUT_KEY]
       @lock_type     = item[LOCK_KEY]
       @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
+      @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @retry_count   = item[LOCK_RETRY_COUNT_KEY] || DEFAULT_RETRY_COUNT
       @retry_delay   = item[LOCK_RETRY_DELAY_KEY] || DEFAULT_RETRY_DELAY
       @retry_jitter  = item[LOCK_RETRY_JITTER_KEY] || DEFAULT_RETRY_JITTER
@@ -68,24 +68,15 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock
-      locked_jid = if lock_timeout
-        create_lock
-      else
-        try_lock
+      locked_jid = create_lock
+      obtain_lock do |token, conn|
+        store_lock_token(token)
+        return_token_or_block_value(token, &block)
       end
-
-      return yield if locked_jid && block_given?
 
       locked_jid
     end
     alias wait lock
-
-    def execute
-      raise ArgumentError, "#execute needs a block" unless block_given?
-
-      grabbed_jid = grab_lock
-      return yield grabbed_jid if grabbed_jid == locked_jid
-    end
 
     #
     # Removes the lock keys from Redis if locked by the provided jid/token
@@ -122,14 +113,29 @@ module SidekiqUniqueJobs
       Scripts.call(
         :locked,
         redis_pool,
-        keys: [key.digest],
+        keys: [key.lock_key],
         argv: [jid],
       ) >= 1
     end
 
     private
 
-    attr_reader :key, :ttl, :jid, :redis_pool, :lock_type, :lock_timeout
+    attr_reader :key, :ttl, :jid, :redis_pool, :lock_type, :timeout, :concurrency
+
+    def obtain_lock
+      redis(redis_pool) do |conn|
+        token, elapsed = timed do
+          if timeout.nil? || timeout.positive?
+            # passing timeout 0 to brpoplpush causes it to block indefinitely
+            conn.brpoplpush(key.free_key, held_key, timeout || 0)
+          else
+            conn.rpoplpush(key.free_key, held_key)
+          end
+        end
+
+        return yield token, conn if token
+      end
+    end
 
     def try_lock
       tries = @extend ? 1 : (@retry_count + 1)
@@ -164,8 +170,8 @@ module SidekiqUniqueJobs
 
     def grab_lock
       redis(redis_pool) do |conn|
-        if lock_timeout.nil? || lock_timeout.positive?
-          conn.bzpopmin(key.wait, key.work, lock_timeout || 0)
+        if timeout.nil? || timeout.positive?
+          conn.bzpopmin(key.wait, key.work, timeout || 0)
         else
           conn.multi do
             conn.zadd(key.work, conn.zpopmin(key.wait))

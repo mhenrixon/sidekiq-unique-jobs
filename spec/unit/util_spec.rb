@@ -27,7 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:jid)           { "e3049b05b0bd9c809182bbe0" }
   let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
   let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
-  let(:expected_keys) { [key.digest, key.wait] }
+  let(:expected_keys) { [key.lock_key, key.wait] }
 
   describe ".keys" do
     subject(:keys) { described_class.keys }
@@ -57,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     end
 
     context "when pattern is a specific key" do
-      let(:pattern) { key.digest }
+      let(:pattern) { key.lock_key }
 
       it "deletes the matching keys" do
         expect { del }.to change { described_class.keys }.to([])
