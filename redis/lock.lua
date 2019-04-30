@@ -14,25 +14,16 @@ local concurrency  = tonumber(ARGV[5])
 -- BEGIN lock
 redis.log(redis.LOG_DEBUG, "lock.lua - BEGIN lock for key: " .. lock_key .. " with job_id: " .. job_id)
 
-local prev_jid = redis.call('GETSET', lock_key, job_id)
-if not prev_jid then
-  redis.log(redis.LOG_DEBUG, "lock.lua - Lock key: " .. lock_key .. " created for job_id: " .. job_id)
-elseif prev_jid == job_id then
-  redis.log(redis.LOG_DEBUG, "lock.lua - Lock key: " .. lock_key .. " existed for job_id: " .. job_id)
-  return job_id
-else
-  redis.log(redis.LOG_DEBUG, "lock.lua - Lock key: " .. lock_key .. " updated for job_id: " .. prev_jid)
-  return prev_jid
-end
-
-if redis.call('HLEN', lock_hash) >= concurrency then
-  redis.log(redis.LOG_DEBUG, "lock.lua - Lock hash: " .. lock_hash .. " limited")
-end
-
-if redis.call('HGET', lock_hash, job_id) then
+if redis.call('HEXIST', lock_hash, job_id) then
   redis.log(redis.LOG_DEBUG, "lock.lua - Lock hash: " .. lock_hash .. " existed for job_id: " .. job_id)
   return job_id
 end
+
+redis.call('HSET', lock_hash, job_id, current_time)
+local enqueued_at = redis.call('ZSCORE', free_zet, job_id)
+redis.log(redis.LOG_DEBUG, "lock.lua - job_id: " .. job_id .. " enqueued for : " .. tostring(tonumber((current_time - enqueued_at) * 1000)))
+redis.call('ZREM', free_zet, job_id)
+redis.call('ZADD', held_zet, current_time, job_id)
 
 -- The Sidekiq client should only set ttl for until_expired
 -- The Sidekiq server should set ttl for all other jobs
@@ -41,17 +32,20 @@ if lock_type == "until_expired" and ttl > 0 then
   redis.call('PEXPIRE', lock_key, ttl)
 end
 
-if redis.call('ZCARD', free_zet) < concurrency then
-  redis.log(redis.LOG_DEBUG, "lock.lua - ZADD" .. free_zet .. " with " .. tostring(current_time) .. " and " .. job_id)
+local exist_count = redis.call('ZCARD', free_zet)
+if exist_count < concurrency then
+  redis.log(redis.LOG_DEBUG, "lock.lua - ZADD " .. free_zet .. " " .. tostring(current_time) .. " " .. job_id)
   redis.call('ZADD', free_zet, current_time, job_id)
 else
-  redis.log(redis.LOG_DEBUG, "lock.lua - Expiring " .. lock_key .. " in " .. tostring(ttl) .. "ms")
+  redis.log(redis.LOG_DEBUG, "lock.lua - Skipping ZADD (" .. free_zet .. " concurrency: " .. tostring(concurrency) .. ", exist_count: " .. tostring(exist_count) .. ")")
 end
 
-local free_count = redis.call('LLEN', free_list)
-if free_count == nil or free_count < concurrency then
+local exist_count = redis.call('LLEN', free_list)
+if exist_count == nil or exist_count < concurrency then
+  redis.log(redis.LOG_DEBUG, "lock.lua - LPUSH " .. free_list .. " " .. tostring(current_time) .. " " .. job_id)
   redis.call('LPUSH', free_list, lock_key)
 end
 
+redis.log(redis.LOG_DEBUG, "lock.lua - END lock for key: " .. lock_key .. " with job_id: " .. job_id)
 return job_id
   -- END lock

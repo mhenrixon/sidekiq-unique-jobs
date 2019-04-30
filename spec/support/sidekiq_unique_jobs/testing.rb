@@ -3,6 +3,7 @@
 module SidekiqUniqueJobs
   module Testing
     include SidekiqUniqueJobs::Connection
+    include SidekiqUniqueJobs::Scripts::Caller
 
     module Sidekiq
       def push_item(item = {})
@@ -133,10 +134,6 @@ module SidekiqUniqueJobs
 
     def current_time
       SidekiqUniqueJobs::Timing.current_time
-    end
-
-    def call_script(file_name, keys: [], argv: [])
-      SidekiqUniqueJobs::Scripts.call(file_name, nil, keys: keys, argv: argv)
     end
   end
 end

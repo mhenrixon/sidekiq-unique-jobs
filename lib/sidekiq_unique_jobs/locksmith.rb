@@ -9,6 +9,7 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Timing
+    include SidekiqUniqueJobs::Scripts::Caller
 
     DEFAULT_REDIS_TIMEOUT = 0.1
     DEFAULT_RETRY_COUNT   = 3
@@ -55,11 +56,7 @@ module SidekiqUniqueJobs
     # Deletes the lock regardless of if it has a ttl set
     #
     def delete!
-      Scripts.call(
-        :delete,
-        redis_pool,
-        keys: key.to_a,
-      )
+      call_script(:delete, key.to_a)
     end
 
     #
@@ -97,12 +94,7 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!
-      Scripts.call(
-        :unlock,
-        redis_pool,
-        keys: key.to_a,
-        argv: [jid, ttl, lock_type],
-      )
+      call_script(:unlock, key.to_a, [jid, ttl, lock_type])
     end
 
     # Checks if this instance is considered locked
@@ -110,12 +102,7 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?
-      Scripts.call(
-        :locked,
-        redis_pool,
-        keys: [key.lock_key],
-        argv: [jid],
-      ) >= 1
+      call_script(:locked, [key.lock_key], [jid]) >= 1
     end
 
     private
@@ -137,6 +124,16 @@ module SidekiqUniqueJobs
       end
     end
 
+    def store(token)
+      call_script(:store, key.to_a, [jid, ttl, current_time])
+      Scripts.call(
+        :store,
+        redis_pool,
+        keys: [key.lock_key],
+        argv: [jid],
+      )
+    end
+
     def try_lock
       tries = @extend ? 1 : (@retry_count + 1)
 
@@ -154,16 +151,14 @@ module SidekiqUniqueJobs
       (@retry_delay + rand(@retry_jitter)).to_f / 1000
     end
 
-    def create_lock
+    def setup
       locked_jid, time_elapsed = timed do
-        Scripts.call(:lock, redis_pool,
-                     keys: key.to_a,
-                     argv: [jid, ttl, lock_type, current_time])
+        call_script(:setup, key.to_a, [jid, ttl, lock_type, current_time])
       end
 
-      # validity = ttl.to_i - time_elapsed - drift
+      validity = ttl.to_i - time_elapsed - drift
 
-      return false unless locked_jid == jid # && (validity >= 0 || ttl.zero?)
+      return false unless locked_jid == jid && (validity >= 0 || ttl.zero?)
 
       locked_jid
     end

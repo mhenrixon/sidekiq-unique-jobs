@@ -1,40 +1,48 @@
-local unique_digest = KEYS[1]
-local wait_key      = KEYS[2]
-local work_key      = KEYS[3]
-local unique_set    = KEYS[4]
+local lock_key  = KEYS[1]
+local free_list = KEYS[2]
+local held_list = KEYS[3]
+local free_zet  = KEYS[4]
+local held_zet  = KEYS[5]
+local lock_hash = KEYS[6]
 
 local job_id       = ARGV[1]
 local ttl          = tonumber(ARGV[2])
 local lock_type    = ARGV[3]
-
--- BEGIN check if we own the lock
-redis.log(redis.LOG_DEBUG, "unlock.lua - Check if owning the lock")
-
-local stored_jid = redis.call('GET', unique_digest)
-
-if stored_jid and stored_jid ~= job_id then
-  redis.log(redis.LOG_DEBUG, "unlock.lua - Locked by another process job_id: " .. stored_jid)
-  return
-else
-  redis.log(redis.LOG_DEBUG, "unlock.lua - Locked by the current job_id: " .. job_id )
-end
--- END check if we own the lock
+local current_time = tonumber(ARGV[4])
+local concurrency  = tonumber(ARGV[5])
 
 -- BEGIN unlock
+redis.log(redis.LOG_DEBUG, "unlock.lua - BEGIN unlock for key: " .. lock_key .. " with job_id: " .. job_id)
 
-redis.call('ZREM', unique_set, unique_digest)
+if not redis.call('HEXIST', lock_hash, job_id) then
+  redis.log(redis.LOG_DEBUG, "lock.lua - Not locked by: " .. lock_hash .. " with job_id: " .. job_id)
+  return nil
+end
+
+redis.log(redis.LOG_DEBUG, "unlock.lua - ZREM " .. held_zet " " .. job_id)
+redis.call('ZREM', held_zet, job_id)
+
+redis.log(redis.LOG_DEBUG, "unlock.lua - LREM " .. held_list " -1 " .. job_id .. "(the last entry)")
+redis.call('LREM', held_list, -1, job_id)
 
 if ttl and ttl > 0 then
   redis.log(redis.LOG_DEBUG, "unlock.lua - Expiring keys in: " .. ttl)
   redis.call('PEXPIRE', unique_digest, ttl)
-  redis.call('ZREM', work_key, job_id)
-  redis.call('PEXPIRE', work_key, ttl)
+
+  redis.log(redis.LOG_DEBUG, "unlock.lua - PEXPIRE " .. held_zet " " .. tostring(ttl))
+  redis.call('PEXPIRE', held_list, ttl)
+
+  redis.log(redis.LOG_DEBUG, "unlock.lua - PEXPIRE " .. held_list " " .. tostring(ttl))
+  redis.call('PEXPIRE', held_list, ttl)
 else
-  redis.log(redis.LOG_DEBUG, "unlock.lua - No expiration, deleting digest immediately")
   redis.call('DEL', unique_digest)
-  redis.call('ZREM', work_key, job_id)
-  redis.call('PEXPIRE', work_key, 5)
+
+  redis.log(redis.LOG_DEBUG, "unlock.lua - PEXPIRE " .. held_zet " " .. tostring(ttl))
+  redis.call('PEXPIRE', held_zet, 10)
+
+  redis.log(redis.LOG_DEBUG, "unlock.lua - PEXPIRE " .. held_list " " .. tostring(ttl))
+  redis.call('PEXPIRE', held_list, 10)
 end
 
+redis.log(redis.LOG_DEBUG, "unlock.lua - END unlock for key: " .. lock_key .. " with job_id: " .. job_id)
 return job_id
--- END unlock

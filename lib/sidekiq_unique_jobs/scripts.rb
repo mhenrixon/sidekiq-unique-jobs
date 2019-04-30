@@ -9,6 +9,13 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Scripts
+    module Caller
+      def call_script(file_name, keys = [], argv = [])
+        redis_pool = nil unless defined?(redis_pool)
+        Scripts.call(file_name, redis_pool, keys: keys, argv: argv)
+      end
+    end
+
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join("../../redis").freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
 
