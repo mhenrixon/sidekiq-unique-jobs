@@ -34,6 +34,7 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         return call_strategy unless locksmith.lock
+
         locksmith.execute do
           yield
           callback_safely

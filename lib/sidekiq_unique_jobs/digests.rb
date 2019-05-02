@@ -87,7 +87,7 @@ module SidekiqUniqueJobs
     # @param [String] digest a unique digest to delete
     def delete_by_digest(digest)
       result, elapsed = timed do
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])
+        Script.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])
         count
       end
 

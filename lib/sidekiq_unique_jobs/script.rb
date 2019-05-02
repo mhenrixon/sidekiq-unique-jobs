@@ -8,11 +8,29 @@ module SidekiqUniqueJobs
   # Interface to dealing with .lua files
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  module Scripts
+  module Script
+    #
+    # Module Caller provides the convenience method #call_script
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module Caller
+      module_function
+
+      #
+      # Convenience method to reduce typing,
+      #   calls redis lua scripts.
+      #
+      #
+      # @param [Symbol] file_name the name of the `script.lua` without extension
+      # @param [Array<String>] keys the keys to pass to the script
+      # @param [Array<String>] argv any extra arguments to pass
+      #
+      # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
+      #
       def call_script(file_name, keys = [], argv = [])
         redis_pool = nil unless defined?(redis_pool)
-        Scripts.call(file_name, redis_pool, keys: keys, argv: argv)
+        Script.call(file_name, redis_pool, keys: keys, argv: argv)
       end
     end
 

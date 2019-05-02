@@ -2,16 +2,13 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Scripts, redis: :redis do
-  subject { SidekiqUniqueJobs::Scripts }
+RSpec.describe SidekiqUniqueJobs::Script::Caller, redis: :redis do
+  subject { described_class }
 
-  it { is_expected.to respond_to(:call).with(3).arguments }
-  it { is_expected.to respond_to(:redis).with(1).arguments }
-  it { is_expected.to respond_to(:script_source).with(1).arguments }
-  it { is_expected.to respond_to(:script_path).with(1).arguments }
+  it { is_expected.to respond_to(:call_script).with(3).arguments }
 
-  describe ".call" do
-    subject(:call) { described_class.call(script_name, nil, options) }
+  describe ".call_script" do
+    subject(:call_script) { described_class.call(script_name, nil, options) }
 
     let(:jid)           { "abcefab" }
     let(:unique_key)    { "uniquejobs:abcefab" }

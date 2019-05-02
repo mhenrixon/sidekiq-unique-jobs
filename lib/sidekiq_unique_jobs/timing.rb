@@ -22,11 +22,7 @@ module SidekiqUniqueJobs
     end
 
     def time_source
-      if defined?(Process::CLOCK_MONOTONIC)
-        proc { (current_time * 1000).to_i }
-      else
-        proc { (current_time * 1000).to_i }
-      end
+      proc { (current_time * 1000).to_i }
     end
   end
 end

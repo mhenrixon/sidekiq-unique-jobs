@@ -48,7 +48,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each, redis: :redis) do |_example|
+  config.after(:each, redis: :redis) do
     flush_redis
   end
 end

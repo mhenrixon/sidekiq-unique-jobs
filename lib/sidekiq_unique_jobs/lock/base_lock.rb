@@ -83,24 +83,24 @@ module SidekiqUniqueJobs
         strategy.replace? && attempt < 2
       end
 
-      # The sidekiq job hash
-      # @return [Hash] the Sidekiq job hash
+      # @!attribute [r] item
+      #   @return [Hash<String, Object>] the Sidekiq job hash
       attr_reader :item
-
-      # The sidekiq redis pool
-      # @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
+      # @!attribute [r] redis_pool
+      #   @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
       attr_reader :redis_pool
-
-      # The sidekiq job hash
-      # @return [Proc] the callback to use after unlock
+      # @!attribute [r] callback
+      #   @return [Proc] the block to call after unlock
       attr_reader :callback
-
-      # The current attempt to lock the job
-      # @return [Integer] the numerical value of the attempt
+      # @!attribute [r] attempt
+      #   @return [Integer] the current locking attempt
       attr_reader :attempt
 
-      # The interface to the locking mechanism
-      # @return [SidekiqUniqueJobs::Locksmith]
+      #
+      # The lock manager/client
+      #
+      # @return [SidekiqUniqueJobs::Locksmith] the locksmith for this sidekiq job
+      #
       def locksmith
         @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
       end
@@ -120,7 +120,7 @@ module SidekiqUniqueJobs
       end
 
       def strategy
-        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item)
+        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item, redis_pool)
       end
     end
   end

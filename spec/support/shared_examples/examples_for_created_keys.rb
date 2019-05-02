@@ -6,16 +6,16 @@ end
 
 RSpec.shared_examples "digest key exists" do
   it "contains a key with without suffix" do
-    expect(unique_keys).to include(key.lock_key)
-    expect(get(key.lock_key)).to eq(jid_to_compare)
-    expect(key.lock_key).to expire_in(lock_ttl) if lock_ttl
+    expect(unique_keys).to include(key.digest)
+    expect(get(key.digest)).to eq(jid_to_compare)
+    expect(key.digest).to expire_in(lock_ttl) if lock_ttl
   end
 end
 
 RSpec.shared_examples "wait key exists" do
   it "contains a key with suffix :WAIT" do
     expect(unique_keys).to include(key.wait)
-    expect(zrank(key.wait, jid_to_compare)).to eq(1)
+    expect(zrank(key.wait, jid_to_compare)).to have_member(jid_to_compare).with_zrank(1)
     expect(zscore(key.wait, jid_to_compare)).to be_a(Float)
 
     if lock_ttl
@@ -42,7 +42,7 @@ end
 
 RSpec.shared_examples "digest exists in unique set" do
   it "has an entry for digest in unique set" do
-    expect(key.unique_set).to include(key.lock_key)
+    expect(key.unique_set).to include(key.digest)
   end
 end
 

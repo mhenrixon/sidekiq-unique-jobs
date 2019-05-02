@@ -25,8 +25,8 @@ module SidekiqUniqueJobs
   UNIQUE_DIGEST_KEY         ||= "unique_digest"
   UNIQUE_KEY                ||= "unique"
   UNIQUE_SET                ||= "unique:keys"
-  FREE_SET                  ||= "unique:free"
-  HELD_SET                  ||= "unique:held"
+  PREPARED_ZET              ||= "unique:prepared"
+  OBTAINED_ZET              ||= "unique:obtained"
   LOCK_KEY                  ||= "lock"
   ON_CONFLICT_KEY           ||= "on_conflict"
   UNIQUE_ON_ALL_QUEUES_KEY  ||= "unique_on_all_queues" # TODO: Remove in v6.1

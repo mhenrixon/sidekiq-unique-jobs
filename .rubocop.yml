@@ -94,7 +94,7 @@ RSpec/FilePath:
   Enabled: true
 RSpec/MessageSpies:
   Exclude:
-    - spec/unit/sidekiq_unique_jobs/scripts_spec.rb
+    - spec/unit/sidekiq_unique_jobs/script_spec.rb
 
 RSpec/MultipleExpectations:
   Enabled: false

@@ -4,12 +4,11 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  # rubocop:disable Metrics/ClassLength
   class Locksmith
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Timing
-    include SidekiqUniqueJobs::Scripts::Caller
+    include SidekiqUniqueJobs::Script::Caller
 
     DEFAULT_REDIS_TIMEOUT = 0.1
     DEFAULT_RETRY_COUNT   = 3
@@ -65,10 +64,11 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock
-      locked_jid = create_lock
-      obtain_lock do |token, conn|
+      return unless (locked_jid = prepare)
+      return unless locked_jid == job_id
+
+      obtain do
         store_lock_token(token)
-        return_token_or_block_value(token, &block)
       end
 
       locked_jid
@@ -102,36 +102,48 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?
-      call_script(:locked, [key.lock_key], [jid]) >= 1
+      call_script(:locked, [key.digest], [jid]) >= 1
     end
 
     private
 
     attr_reader :key, :ttl, :jid, :redis_pool, :lock_type, :timeout, :concurrency
 
-    def obtain_lock
-      redis(redis_pool) do |conn|
-        token, elapsed = timed do
-          if timeout.nil? || timeout.positive?
-            # passing timeout 0 to brpoplpush causes it to block indefinitely
-            conn.brpoplpush(key.free_key, held_key, timeout || 0)
-          else
-            conn.rpoplpush(key.free_key, held_key)
-          end
-        end
-
-        return yield token, conn if token
+    def prepare
+      locked_jid, time_elapsed = timed do
+        call_script(:prepare, key.to_a, [jid, ttl, lock_type, current_time])
       end
+
+      validity = ttl.to_i - time_elapsed - drift
+
+      return unless locked_jid == jid
+      return unless validity >= 0 || ttl.zero?
+
+      locked_jid
     end
 
-    def store(token)
-      call_script(:store, key.to_a, [jid, ttl, current_time])
-      Scripts.call(
-        :store,
-        redis_pool,
-        keys: [key.lock_key],
-        argv: [jid],
-      )
+    def obtain
+      return unless (token = pop_token)
+
+      call_script(:obtain, key.to_a, [jid, ttl, current_time, concurrency, token])
+      yield token
+    end
+
+    def pop_token
+      token, elapsed = timed do
+        redis do |conn|
+          if timeout.nil? || timeout.positive?
+            # passing timeout 0 to brpoplpush causes it to block indefinitely
+            conn.brpoplpush(key.prepared, key.obtained, timeout || 0)
+          else
+            conn.rpoplpush(key.prepared, key.obtained)
+          end
+        end
+      end
+
+      # TODO: Collect metrics and stats
+      log_debug("Waited #{elapsed}ms for #{token} to be released (digest: #{key.digest}, job_id: #{jid})")
+      token
     end
 
     def try_lock
@@ -151,39 +163,6 @@ module SidekiqUniqueJobs
       (@retry_delay + rand(@retry_jitter)).to_f / 1000
     end
 
-    def setup
-      locked_jid, time_elapsed = timed do
-        call_script(:setup, key.to_a, [jid, ttl, lock_type, current_time])
-      end
-
-      validity = ttl.to_i - time_elapsed - drift
-
-      return false unless locked_jid == jid && (validity >= 0 || ttl.zero?)
-
-      locked_jid
-    end
-
-    def grab_lock
-      redis(redis_pool) do |conn|
-        if timeout.nil? || timeout.positive?
-          conn.bzpopmin(key.wait, key.work, timeout || 0)
-        else
-          conn.multi do
-            conn.zadd(key.work, conn.zpopmin(key.wait))
-          end
-        end
-      end
-    end
-
-    def enqueue_lock(grabbed_jid)
-      redis(redis_pool) do |conn|
-        conn.multi do
-          conn.lpush(key.wait, grabbed_jid)
-          conn.pexpire(key.wait, 5)
-        end
-      end
-    end
-
     def drift
       # Add 2 milliseconds to the drift to account for Redis expires
       # precision, which is 1 millisecond, plus 1 millisecond min drift
@@ -191,5 +170,4 @@ module SidekiqUniqueJobs
       (ttl * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

@@ -1,11 +1,20 @@
-local unique_digest = KEYS[1]
-local wait_key      = KEYS[2]
-local work_key      = KEYS[3]
-local unique_set    = KEYS[4]
+local lock_key  = KEYS[1]
+local prepared  = KEYS[2]
+local obtained  = KEYS[3]
+local locked    = KEYS[4]
+local changelog = KEYS[5]
 
-redis.call('DEL', unique_digest)
-redis.call('DEL', wait_key)
-redis.call('DEL', work_key)
-redis.call('ZREM', unique_set, unique_digest)
+print("delete.lua - BEGIN delete keys for: " .. lock_key)
+
+print("delete.lua - DEL " .. lock_key)
+redis.call('DEL', lock_key)
+print("delete.lua - DEL " .. prepared)
+redis.call('DEL', prepared)
+print("delete.lua - DEL " .. obtained)
+redis.call('DEL', obtained)
+print("delete.lua - DEL " .. locked)
+redis.call('DEL', locked)
+
+print("delete.lua - END delete keys for: " .. lock_key)
 
 return 1

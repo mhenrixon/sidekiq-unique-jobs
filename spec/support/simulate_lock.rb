@@ -8,10 +8,11 @@ module SimulateLock
 
   def lock_jid(key, jid, ttl: nil, lock_type: :until_executed)
     raise ArgumentError, ":key needs to be a Key" unless key.is_a?(SidekiqUniqueJobs::Key)
+
     call_script(
       :lock,
       keys: key.to_a,
-      argv: [jid, ttl, lock_type, SidekiqUniqueJobs::Timing.current_time]
+      argv: [jid, ttl, lock_type, SidekiqUniqueJobs::Timing.current_time],
     )
   end
 

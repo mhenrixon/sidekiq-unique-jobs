@@ -6,11 +6,23 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Replace < OnConflict::Strategy
-      attr_reader :queue, :unique_digest
+      #
+      # @!attribute [r] queue
+      #   @return [String] rthe sidekiq queue this job belongs to
+      attr_reader :queue
+      #
+      # @!attribute [r] unique_digest
+      #   @return [String] the unique digest to use for locking
+      attr_reader :unique_digest
 
       # @param [Hash] item sidekiq job hash
-      def initialize(item)
-        super
+      #
+      # <description>
+      #
+      # @param [<type>] item <description>
+      #
+      def initialize(item, redis_pool = nil)
+        super(item, redis_pool)
         @queue         = item[QUEUE_KEY]
         @unique_digest = item[UNIQUE_DIGEST_KEY]
       end
@@ -26,16 +38,13 @@ module SidekiqUniqueJobs
 
       # Delete the job from either schedule, retry or the queue
       def delete_job_by_digest
-        Scripts.call(
-          :delete_job_by_digest,
-          nil,
-          keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET], argv: [unique_digest],
-        )
+        call_script(:delete_job_by_digest, nil,
+                    keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET], argv: [unique_digest])
       end
 
       # Delete the keys belonging to the job
       def delete_lock
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, unique_digest])
+        Script.call(:delete_by_digest, nil, keys: [UNIQUE_SET, unique_digest])
       end
     end
   end

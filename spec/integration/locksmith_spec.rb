@@ -25,7 +25,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
   describe "#lock" do
-
   end
 
   shared_examples_for "a lock" do
@@ -130,16 +129,16 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
         sleep 1
 
         expect(unique_digest).to expire_in(2)
-        p get(key.lock_key)
+        p get(key.digest)
         p zrange(key.wait, 0, -1)
         expect(locksmith_two.lock).to eq(false)
 
-        expect(unique_keys).to match_array([key.lock_key, key.wait])
+        expect(unique_keys).to match_array([key.digest, key.wait])
       end
 
       it "expires the expected keys" do
         locksmith_one.lock
-        expect(unique_keys).to match_array([key.lock_key, key.wait])
+        expect(unique_keys).to match_array([key.digest, key.wait])
       end
     end
 
@@ -148,11 +147,11 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
 
       it "expires the expected keys" do
         locksmith_one.lock
-        expect(unique_keys).to match_array([key.lock_key, key.wait])
+        expect(unique_keys).to match_array([key.digest, key.wait])
         expect(unique_digest).to expire_in(-1)
 
         locksmith_one.unlock
-        expect(unique_keys).to match_array([key.lock_key, key.wait])
+        expect(unique_keys).to match_array([key.digest, key.wait])
 
         expect(unique_digest).to expire_in(3)
       end
@@ -160,7 +159,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
 
     it "deletes the expected keys" do
       locksmith_one.lock
-      expect(unique_keys).to match_array([key.lock_key, key.wait])
+      expect(unique_keys).to match_array([key.digest, key.wait])
       locksmith_one.delete!
       expect(unique_keys).to match_array([])
     end

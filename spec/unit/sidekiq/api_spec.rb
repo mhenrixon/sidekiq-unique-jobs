@@ -39,7 +39,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
               "retry" => true,
               "lock" => "until_executed",
               "unique_args" => [{ "foo" => "bar" }],
-              "unique_digest" => key.lock_key,
+              "unique_digest" => key.digest,
               "unique_prefix" => "uniquejobs",
             ),
           )

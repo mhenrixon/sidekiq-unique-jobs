@@ -35,7 +35,7 @@ detectors:
     - SidekiqUniqueJobs::Profiler#self.stop
     - SidekiqUniqueJobs::Middleware#self.configure_server
     - SidekiqUniqueJobs::Middleware#with_logging_context
-    - SidekiqUniqueJobs::Scripts#call
+    - SidekiqUniqueJobs::Script#call
     - SidekiqUniqueJobs::ServerMiddleware#call
     - SidekiqUniqueJobs::UniqueArgs#filtered_args
     - SidekiqUniqueJobs::Util#del

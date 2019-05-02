@@ -8,7 +8,23 @@ module SidekiqUniqueJobs
     #
     # @!attribute [r] digest
     #   @return [String] the digest for which keys are created
-    attr_reader :lock_key
+    attr_reader :digest
+    #
+    # @!attribute [r] prepared
+    #   @return [String] the key for the list with prepared locks
+    attr_reader :prepared
+    #
+    # @!attribute [r] obtained
+    #   @return [String] the key for the list with obtained locks
+    attr_reader :obtained
+    #
+    # @!attribute [r] locked
+    #   @return [String] the key for the hash with locks
+    attr_reader :locked
+    #
+    # @!attribute [r] changelog
+    #   @return [String] the key for the changelog sorted set
+    attr_reader :changelog
 
     #
     # Initialize a new Key
@@ -16,27 +32,11 @@ module SidekiqUniqueJobs
     # @param [String] digest the digest to use as key
     #
     def initialize(digest)
-      @lock_key = digest
-    end
-
-    def free_list
-      @free_list ||= suffixed_key("FREE_LIST")
-    end
-
-    def held_list
-      @held_list ||= suffixed_key("HELD_LIST")
-    end
-
-    def free_zet
-      @free_zet ||= suffixed_key("FREE_ZET")
-    end
-
-    def held_zet
-      @held_zet ||= suffixed_key("HELD_ZET")
-    end
-
-    def lock_hash
-      @lock_hash ||= suffixed_key("LOCK")
+      @digest    = digest
+      @prepared  = suffixed_key("PREPARED")
+      @obtained  = suffixed_key("OBTAINED")
+      @locked    = suffixed_key("LOCKED")
+      @changelog = "unique:changelog"
     end
 
     #
@@ -45,13 +45,13 @@ module SidekiqUniqueJobs
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [lock_key, free_list, held_list, free_zet, held_zet, lock_hash]
+      [digest, prepared, obtained, locked, changelog]
     end
 
     private
 
     def suffixed_key(variable)
-      "#{lock_key}:#{variable}"
+      "#{digest}:#{variable}"
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "digest key does not exist" do
-  it { expect(key.lock_key).not_to exist }
+  it { expect(key.digest).not_to exist }
 end
 
 RSpec.shared_examples "wait key does not exist" do

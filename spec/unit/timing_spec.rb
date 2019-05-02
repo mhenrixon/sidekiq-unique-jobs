@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Timing do
@@ -13,4 +15,3 @@ RSpec.describe SidekiqUniqueJobs::Timing do
     it { is_expected.to be_a(Float) }
   end
 end
-

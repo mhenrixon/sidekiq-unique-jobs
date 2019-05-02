@@ -37,7 +37,7 @@ RSpec.describe SidekiqUniqueJobs::ServerMiddleware, "unique: :until_and_while_ex
 
     it "creates all necessary lock keys" do
       expect(pushed_jid).to eq(jid_one)
-      expect(unique_keys).to match_array([key.lock_key, key.wait])
+      expect(unique_keys).to match_array([key.digest, key.wait])
     end
 
     context "with a lock_timeout of 0" do

@@ -88,7 +88,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
       before { process_one.lock }
 
       it "deletes the lock without fuss" do
-        expect { delete! }.to change { unique_keys.size }.from(1).to(0)
+        expect { delete! }.to change(unique_keys, :size).from(1).to(0)
       end
     end
   end
