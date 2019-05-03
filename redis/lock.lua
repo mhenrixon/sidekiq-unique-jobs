@@ -1,6 +1,6 @@
 local digest    = KEYS[1]
-local prepared  = KEYS[2]
-local obtained  = KEYS[3]
+local queued    = KEYS[2]
+local primed    = KEYS[3]
 local locked    = KEYS[4]
 local changelog = KEYS[5]
 
@@ -40,8 +40,8 @@ end
 log_debug("HSET", locked, job_id, current_time)
 redis.call('HSET', locked, job_id, current_time)
 
-log_debug("LREM", obtained, 1, digest)
-redis.call('LREM', obtained, 1, digest)
+log_debug("LREM", primed, 1, digest)
+redis.call('LREM', primed, 1, digest)
 
 -- The Sidekiq client should only set ttl for until_expired
 -- The Sidekiq server should set ttl for all other jobs

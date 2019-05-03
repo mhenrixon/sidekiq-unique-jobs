@@ -175,10 +175,8 @@ module RedisMatchers
   def have_member(member)
     case type(key)
     when "string"
-      HaveKeyValue.new(key, member)
       valid_string_member?(key, member)
     when "hash"
-      HaveHashMember.new(key, member)
       valid_hash_member?(key, member, @value)
     when "list"
       valid_list_member?(key, member, @index)

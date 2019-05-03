@@ -10,20 +10,20 @@ module SidekiqUniqueJobs
     #   @return [String] the digest for which keys are created
     attr_reader :digest
     #
-    # @!attribute [r] prepared
-    #   @return [String] the key for the list with prepared locks
-    attr_reader :prepared
+    # @!attribute [r] queued
+    #   @return [String] the list with queued job_id's
+    attr_reader :queued
     #
-    # @!attribute [r] obtained
-    #   @return [String] the key for the list with obtained locks
-    attr_reader :obtained
+    # @!attribute [r] primed
+    #   @return [String] the list with primed job_id's
+    attr_reader :primed
     #
     # @!attribute [r] locked
-    #   @return [String] the key for the hash with locks
+    #   @return [String] the hash with locked job_id's
     attr_reader :locked
     #
     # @!attribute [r] changelog
-    #   @return [String] the key for the changelog sorted set
+    #   @return [String] the zset with changelog entries
     attr_reader :changelog
 
     #
@@ -33,8 +33,8 @@ module SidekiqUniqueJobs
     #
     def initialize(digest)
       @digest    = digest
-      @prepared  = suffixed_key("PREPARED")
-      @obtained  = suffixed_key("OBTAINED")
+      @queued    = suffixed_key("QUEUED")
+      @primed    = suffixed_key("PRIMED")
       @locked    = suffixed_key("LOCKED")
       @changelog = "unique:changelog"
     end
@@ -45,7 +45,7 @@ module SidekiqUniqueJobs
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [digest, prepared, obtained, locked, changelog]
+      [digest, queued, primed, locked, changelog]
     end
 
     private

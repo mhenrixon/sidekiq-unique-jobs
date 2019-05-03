@@ -1,6 +1,6 @@
 local digest    = KEYS[1]
-local prepared  = KEYS[2]
-local obtained  = KEYS[3]
+local queued    = KEYS[2]
+local primed    = KEYS[3]
 local locked    = KEYS[4]
 local changelog = KEYS[5]
 
@@ -10,7 +10,7 @@ local lock_type    = ARGV[3]
 local current_time = tonumber(ARGV[4])
 local concurrency  = tonumber(ARGV[5])
 
-local queued_count = redis.call('LLEN', prepared)
+local queued_count = redis.call('LLEN', queued)
 local locked_count = redis.call('HLEN', locked)
 local within_limit = concurrency > locked_count
 local limit_exceeded = not within_limit
@@ -47,11 +47,12 @@ if not prev_jid then
   log_debug("SET", digest, job_id)
   redis.call('SET', digest, job_id)
 elseif prev_jid == job_id then
-  log_debug(digest, "already prepared with job_id:", job_id)
-  log("Attempted to prepare already prepared lock", digest, job_id, current_time)
+  log_debug(digest, "already queued with job_id:", job_id)
+  log("Attempted to prepare already queued lock", digest, job_id, current_time)
 else
+  -- TODO: Consider constraining the total count of both locked and queued?
   if within_limit and queued_count < concurrency then
-    log_debug("Within limit:", digest, "(",  locked_count, "of", concurrency, ")")
+    log_debug("Within limit:", digest, "(",  locked_count, "of", concurrency, ")", "queued (", queued_count, "of", concurrency, ")")
     log_debug("SET", digest, job_id, "(was", prev_jid, ")")
     redis.call('SET', digest, job_id)
   else
@@ -69,13 +70,13 @@ if lock_type == "until_expired" and ttl > 0 then
 end
 
 if within_limit and queued_count < concurrency then
-  log_debug("LPUSH", prepared, job_id)
-  redis.call('LPUSH', prepared, job_id)
+  log_debug("LPUSH", queued, job_id)
+  redis.call('LPUSH', queued, job_id)
 else
-  log_debug("Skipping LPUSH (" .. prepared .. " concurrency limited (" .. tostring(queued_count) .. " of " .. tostring(concurrency) .. " is used)")
+  log_debug("Skipping LPUSH (" .. queued .. " concurrency limited (" .. tostring(queued_count) .. " of " .. tostring(concurrency) .. " is used)")
 end
 
-log("Lock prepared successfully", digest, job_id, current_time)
+log("Lock queued successfully", digest, job_id, current_time)
 
 log_debug("END prepare key: " .. digest .. " with job_id: " .. job_id)
 return job_id

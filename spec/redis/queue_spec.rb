@@ -3,9 +3,9 @@
 require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
-RSpec.describe "prepare.lua", redis: :redis do
+RSpec.describe "queue.lua", redis: :redis do
   include SidekiqUniqueJobs::Script::Caller
-  let(:prepare) { call_script(:prepare, key.to_a, argv) }
+  let(:queue) { call_script(:queue, key.to_a, argv) }
 
   let(:argv) do
     [
@@ -30,13 +30,13 @@ RSpec.describe "prepare.lua", redis: :redis do
     flush_redis
   end
 
-  context "without previously prepared lock" do
+  context "without previously queued lock" do
     it "stores the right keys in redis" do
-      expect(prepare).to eq(job_id_one)
+      expect(queue).to eq(job_id_one)
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
-      expect(llen(key.prepared)).to eq(1)
-      expect(exists(key.obtained)).to eq(false)
+      expect(llen(key.queued)).to eq(1)
+      expect(exists(key.primed)).to eq(false)
       expect(exists(key.locked)).to eq(false)
       expect(zcard(key.changelog)).to eq(1)
     end
@@ -46,28 +46,28 @@ RSpec.describe "prepare.lua", redis: :redis do
       let(:lock_pttl) { 10 * 1000 }
 
       it "stores digest with pexpiration in redis" do
-        prepare
+        queue
         expect(pttl(key.digest)).to be_within(10).of(lock_pttl)
       end
     end
   end
 
-  context "when prepared by another job_id" do
+  context "when queued by another job_id" do
     before do
-      call_script(:prepare, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
     end
 
     context "with concurrency 1" do
       let(:concurrency) { 1 }
 
       it "stores the right keys in redis" do
-        expect(prepare).to eq(job_id_two)
+        expect(queue).to eq(job_id_two)
         expect(get(key.digest)).to eq(job_id_two)
         expect(pttl(key.digest)).to eq(-1) # key exists without pttl
-        expect(llen(key.prepared)).to eq(1)
-        expect(lrange(key.prepared, 0, -1)).to match_array([job_id_two])
-        expect(rpop(key.prepared)).to eq(job_id_two)
-        expect(exists(key.obtained)).to eq(false)
+        expect(llen(key.queued)).to eq(1)
+        expect(lrange(key.queued, 0, -1)).to match_array([job_id_two])
+        expect(rpop(key.queued)).to eq(job_id_two)
+        expect(exists(key.primed)).to eq(false)
         expect(exists(key.locked)).to eq(false)
         expect(zcard(key.changelog)).to eq(2)
       end
@@ -76,51 +76,51 @@ RSpec.describe "prepare.lua", redis: :redis do
     context "with concurrency 2" do
       let(:concurrency) { 2 }
       it "stores the right keys in redis" do
-        expect(prepare).to eq(job_id_one)
+        expect(queue).to eq(job_id_one)
         expect(get(key.digest)).to eq(job_id_one)
         expect(pttl(key.digest)).to eq(-1) # key exists without pttl
-        expect(llen(key.prepared)).to eq(2)
-        expect(lrange(key.prepared, 0, -1)).to match_array([job_id_two, job_id_one])
-        expect(rpop(key.prepared)).to eq(job_id_two)
-        expect(exists(key.obtained)).to eq(false)
+        expect(llen(key.queued)).to eq(2)
+        expect(lrange(key.queued, 0, -1)).to match_array([job_id_two, job_id_one])
+        expect(rpop(key.queued)).to eq(job_id_two)
+        expect(exists(key.primed)).to eq(false)
         expect(exists(key.locked)).to eq(false)
         expect(zcard(key.changelog)).to eq(2)
       end
     end
   end
 
-  context "when prepared by same job_id" do
+  context "when queued by same job_id" do
     before do
-      call_script(:prepare, key.to_a, [job_id_one, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, [job_id_one, lock_pttl, lock_type, current_time, concurrency])
     end
 
     it "stores the right keys in redis" do
-      expect(prepare).to eq(job_id_one)
+      expect(queue).to eq(job_id_one)
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
-      expect(llen(key.prepared)).to eq(1)
-      expect(lrange(key.prepared, 0, -1)).to match_array([job_id_one])
-      expect(rpop(key.prepared)).to eq(job_id_one)
-      expect(exists(key.obtained)).to eq(false)
+      expect(llen(key.queued)).to eq(1)
+      expect(lrange(key.queued, 0, -1)).to match_array([job_id_one])
+      expect(rpop(key.queued)).to eq(job_id_one)
+      expect(exists(key.primed)).to eq(false)
       expect(exists(key.locked)).to eq(false)
       expect(zcard(key.changelog)).to eq(2)
     end
   end
 
-  context "when obtained by another job_id" do
+  context "when primed by another job_id" do
     before do
-      call_script(:prepare, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
-      rpoplpush(key.prepared, key.obtained)
-      call_script(:obtain, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      rpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
     end
 
     context "with concurrency 1" do
       it "stores the right keys in redis" do
-        expect(prepare).to eq(job_id_two)
+        expect(queue).to eq(job_id_two)
         expect(get(key.digest)).to eq(job_id_two)
-        expect(llen(key.prepared)).to eq(0) # There should be no keys available to be locked
-        expect(llen(key.obtained)).to eq(1)
-        expect(lrange(key.obtained, 0, -1)).to match_array([job_id_two])
+        expect(llen(key.queued)).to eq(0) # There should be no keys available to be locked
+        expect(llen(key.primed)).to eq(1)
+        expect(lrange(key.primed, 0, -1)).to match_array([job_id_two])
         expect(exists(key.locked)).to eq(true)
         expect(hexists(key.locked, job_id_two)).to eq(true)
         expect(hexists(key.locked, job_id_one)).to eq(false)
@@ -132,12 +132,12 @@ RSpec.describe "prepare.lua", redis: :redis do
       let(:concurrency) { 2 }
 
       it "stores the right keys in redis" do
-        expect(prepare).to eq(job_id_one)
+        expect(queue).to eq(job_id_one)
         expect(get(key.digest)).to eq(job_id_one)
-        expect(llen(key.prepared)).to eq(1) # There should be no keys available to be locked
-        expect(lrange(key.prepared, 0, -1)).to match_array([job_id_one])
-        expect(llen(key.obtained)).to eq(1)
-        expect(lrange(key.obtained, 0, -1)).to match_array([job_id_two])
+        expect(llen(key.queued)).to eq(1) # There should be no keys available to be locked
+        expect(lrange(key.queued, 0, -1)).to match_array([job_id_one])
+        expect(llen(key.primed)).to eq(1)
+        expect(lrange(key.primed, 0, -1)).to match_array([job_id_two])
         expect(exists(key.locked)).to eq(true)
         expect(hexists(key.locked, job_id_two)).to eq(true)
         expect(hexists(key.locked, job_id_one)).to eq(false)
