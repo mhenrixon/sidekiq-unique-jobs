@@ -32,6 +32,8 @@ RSpec.describe "queue.lua", redis: :redis do
 
   context "without previously queued lock" do
     it "stores the right keys in redis" do
+      expect { queue }.to change { zcard(key.changelog) }.by(1)
+
       expect(queue).to eq(job_id_one)
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
@@ -61,6 +63,8 @@ RSpec.describe "queue.lua", redis: :redis do
       let(:concurrency) { 1 }
 
       it "stores the right keys in redis" do
+        expect { queue }.to change { zcard(key.changelog) }.by(1)
+
         expect(queue).to eq(job_id_two)
         expect(get(key.digest)).to eq(job_id_two)
         expect(pttl(key.digest)).to eq(-1) # key exists without pttl
@@ -76,6 +80,8 @@ RSpec.describe "queue.lua", redis: :redis do
     context "with concurrency 2" do
       let(:concurrency) { 2 }
       it "stores the right keys in redis" do
+        expect { queue }.to change { zcard(key.changelog) }.by(1)
+
         expect(queue).to eq(job_id_one)
         expect(get(key.digest)).to eq(job_id_one)
         expect(pttl(key.digest)).to eq(-1) # key exists without pttl
@@ -95,6 +101,8 @@ RSpec.describe "queue.lua", redis: :redis do
     end
 
     it "stores the right keys in redis" do
+      expect { queue }.to change { zcard(key.changelog) }.by(1)
+
       expect(queue).to eq(job_id_one)
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
@@ -103,7 +111,6 @@ RSpec.describe "queue.lua", redis: :redis do
       expect(rpop(key.queued)).to eq(job_id_one)
       expect(exists(key.primed)).to eq(false)
       expect(exists(key.locked)).to eq(false)
-      expect(zcard(key.changelog)).to eq(2)
     end
   end
 
@@ -116,6 +123,8 @@ RSpec.describe "queue.lua", redis: :redis do
 
     context "with concurrency 1" do
       it "stores the right keys in redis" do
+        expect { queue }.to change { zcard(key.changelog) }.by(1)
+
         expect(queue).to eq(job_id_two)
         expect(get(key.digest)).to eq(job_id_two)
         expect(llen(key.queued)).to eq(0) # There should be no keys available to be locked
@@ -124,7 +133,6 @@ RSpec.describe "queue.lua", redis: :redis do
         expect(exists(key.locked)).to eq(true)
         expect(hexists(key.locked, job_id_two)).to eq(true)
         expect(hexists(key.locked, job_id_one)).to eq(false)
-        expect(zcard(key.changelog)).to eq(2)
       end
     end
 
@@ -132,6 +140,8 @@ RSpec.describe "queue.lua", redis: :redis do
       let(:concurrency) { 2 }
 
       it "stores the right keys in redis" do
+        expect { queue }.to change { zcard(key.changelog) }.by(1)
+
         expect(queue).to eq(job_id_one)
         expect(get(key.digest)).to eq(job_id_one)
         expect(llen(key.queued)).to eq(1) # There should be no keys available to be locked
@@ -141,7 +151,6 @@ RSpec.describe "queue.lua", redis: :redis do
         expect(exists(key.locked)).to eq(true)
         expect(hexists(key.locked, job_id_two)).to eq(true)
         expect(hexists(key.locked, job_id_one)).to eq(false)
-        expect(zcard(key.changelog)).to eq(2)
       end
     end
   end

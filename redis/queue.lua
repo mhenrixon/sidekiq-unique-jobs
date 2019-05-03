@@ -5,7 +5,7 @@ local locked    = KEYS[4]
 local changelog = KEYS[5]
 
 local job_id       = ARGV[1]
-local ttl          = tonumber(ARGV[2])
+local pttl         = tonumber(ARGV[2])
 local lock_type    = ARGV[3]
 local current_time = tonumber(ARGV[4])
 local concurrency  = tonumber(ARGV[5])
@@ -20,12 +20,12 @@ local function log_debug( ... )
   for i,v in ipairs(arg) do
     result = result .. " " .. tostring(v)
   end
-  redis.log(redis.LOG_DEBUG, "prepare.lua -" ..  result)
+  redis.log(redis.LOG_DEBUG, "queue.lua -" ..  result)
 end
 
-local function log(message, digest, job_id, time, prev_jid)
+local function log(message, prev_jid)
 
-  local entry = cjson.encode({digest = digest, job_id = job_id, script = "prepare.lua", message = message, time = time, prev_jid = prev_jid })
+  local entry = cjson.encode({digest = digest, job_id = job_id, script = "queue.lua", message = message, time = current_time, prev_jid = prev_jid })
 
   redis.call('ZADD', changelog, current_time, entry);
   redis.call('ZREMRANGEBYSCORE', changelog, '-inf', math.floor(current_time) - 86400000);
@@ -33,11 +33,11 @@ local function log(message, digest, job_id, time, prev_jid)
 end
 
 -- BEGIN lock
-log_debug("BEGIN prepare key: ", digest, " with job_id: ", job_id)
+log_debug("BEGIN queue key: ", digest, " with job_id: ", job_id)
 
 if redis.call('HEXISTS', locked, job_id) == 1 then
   log_debug("HEXISTS", locked, job_id, "== 1")
-  log("Alredy locked", digest, job_id, current_time)
+  log("Alredy locked by this job")
   return job_id
 end
 
@@ -48,7 +48,7 @@ if not prev_jid then
   redis.call('SET', digest, job_id)
 elseif prev_jid == job_id then
   log_debug(digest, "already queued with job_id:", job_id)
-  log("Attempted to prepare already queued lock", digest, job_id, current_time)
+  log("Already queued by this job")
 else
   -- TODO: Consider constraining the total count of both locked and queued?
   if within_limit and queued_count < concurrency then
@@ -57,16 +57,16 @@ else
     redis.call('SET', digest, job_id)
   else
     log_debug("Limit exceeded:", digest, "(",  locked_count, "of", concurrency, ")")
-    log("Limit exceeded", digest, job_id, current_time, prev_jid)
+    log("Limit exceeded", prev_jid)
     return prev_jid
   end
 end
 
--- The Sidekiq client should only set ttl for until_expired
--- The Sidekiq server should set ttl for all other jobs
-if lock_type == "until_expired" and ttl > 0 then
-  log_debug("PEXPIRE", digest, ttl)
-  redis.call('PEXPIRE', digest, ttl)
+-- The Sidekiq client should only set pttl for until_expired
+-- The Sidekiq server should set pttl for all other jobs
+if lock_type == "until_expired" and pttl > 0 then
+  log_debug("PEXPIRE", digest, pttl)
+  redis.call('PEXPIRE', digest, pttl)
 end
 
 if within_limit and queued_count < concurrency then
@@ -76,8 +76,8 @@ else
   log_debug("Skipping LPUSH (" .. queued .. " concurrency limited (" .. tostring(queued_count) .. " of " .. tostring(concurrency) .. " is used)")
 end
 
-log("Lock queued successfully", digest, job_id, current_time)
+log("Queued successfully")
 
-log_debug("END prepare key: " .. digest .. " with job_id: " .. job_id)
+log_debug("END queue key: " .. digest .. " with job_id: " .. job_id)
 return job_id
 -- END lock

@@ -4,7 +4,7 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "delete.lua", redis: :redis do
-  subject(:delete) { call_script(:delete, keys: key.to_a) }
+  subject(:delete) { call_script(:delete, key.to_a, [job_id, current_time]) }
 
   let(:argv) do
     [
@@ -23,51 +23,51 @@ RSpec.describe "delete.lua", redis: :redis do
   let(:locked_jid)  { job_id }
   let(:concurrency) { 1 }
 
-  before do
-    call_script(:prepare, key.to_a, argv)
-    lpush(key.obtained, key.digest)
-    call_script(:obtain, key.to_a, argv)
-
-    delete
-  end
-
-  context "without existing locks" do
+  context "when queued" do
     before do
-      delete
+      call_script(:queue, key.to_a, argv)
     end
 
-    it "deletes keys in redis" do
+    it "deletes keys from Redis" do
+      expect { delete }.to change { zcard(key.changelog) }.by(1)
+
       expect(key.digest).not_to exist
-      expect(key.free_set).not_to exist
-      expect(key.free_zet).not_to exist
-      expect(key.held_set).not_to exist
-      expect(key.held_zet).not_to exist
+      expect(key.queued).not_to exist
+      expect(key.primed).not_to exist
       expect(key.locked).not_to exist
     end
   end
 
-  context "when a lock exists for another job_id" do
-    let(:locked_jid)   { "anotherjobid" }
+  context "when primed" do
+    before do
+      call_script(:queue, key.to_a, argv)
+      rpoplpush(key.queued, key.primed)
+    end
 
-    it "deletes keys in redis" do
-      expect(key.digest).not_to exist
-      expect(key.free_set).not_to exist
-      expect(key.free_zet).not_to exist
-      expect(key.held_set).not_to exist
-      expect(key.held_zet).not_to exist
-      expect(key.locked).not_to exist
+    it "deletes keys from Redis" do
+      expect { delete }.to change { zcard(key.changelog) }.by(1)
+
+      expect(exists(key.digest)).to eq(false)
+      expect(exists(key.queued)).to eq(false)
+      expect(exists(key.primed)).to eq(false)
+      expect(exists(key.locked)).to eq(false)
     end
   end
 
-  context "when lock exists for the same job_id" do
-    let(:locked_jid) { job_id }
 
-    it "deletes keys in redis" do
+  context "when locked" do
+    before do
+      call_script(:queue, key.to_a, argv)
+      brpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, argv)
+    end
+
+    it "deletes keys from Redis" do
+      expect { delete }.to change { zcard(key.changelog) }.by(1)
+
       expect(key.digest).not_to exist
-      expect(key.free_set).not_to exist
-      expect(key.free_zet).not_to exist
-      expect(key.held_set).not_to exist
-      expect(key.held_zet).not_to exist
+      expect(key.queued).not_to exist
+      expect(key.primed).not_to exist
       expect(key.locked).not_to exist
     end
   end
