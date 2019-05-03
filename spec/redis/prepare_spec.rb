@@ -29,44 +29,35 @@ RSpec.describe "prepare.lua", redis: :redis do
     flush_redis
   end
 
-  shared_examples "successfully prepared" do
-    it "stores the right data in redis" do
-      expect(prepare).to eq(locked_jid)
-
-      # Key for existance checks
-      expect(get(key.digest)).to eq(job_id)
-
-      if lock_pttl
-        expect(pttl(key.digest)).to be_within(10).of(lock_pttl)
-      else
-        expect(pttl(key.digest)).to eq(-1)  # key exists without pttl
-      end
-
-      # Queue for blocking commands
-      expect(llen(key.prepared)).to eq(1)
-
-      # Obtained digests
-      expect(exists(key.obtained)).to eq(false)
-
-      # Locked job_ids
-      expect(exists(key.locked)).to eq(false)
-    end
-  end
-
   context "without previously prepared lock" do
-    it_behaves_like "successfully prepared"
+    its(:obtained) { is_exected.to be_in() }
+    it { expect(prepare).to eq(locked_jid) }
+    it { expect(get(key.digest)).to eq(job_id) }
+    it { expect(pttl(key.digest)).to eq(-1) } # key exists without pttl
+    it { expect(llen(key.prepared)).to eq(1) }
+    it { expect(exists(key.obtained)).to eq(false) }
+    it { expect(exists(key.locked)).to eq(false) }
+    it { expect(zcard(key.changelog)).to eq(1) }
+    it { expect { prepare }.to change { zcard(key.changelog) }.to(1)
 
     context "when lock_type is :until_expired" do
       let(:lock_type) { :until_expired }
       let(:lock_pttl) { 10 * 1000 }
 
-      it_behaves_like "successfully prepared"
+      it { expect(prepare).to eq(locked_jid) }
+      it { expect(get(key.digest)).to eq(job_id) }
+      it { expect(pttl(key.digest)).to be_within(10).of(lock_pttl) }
+      it { expect(llen(key.prepared)).to eq(1) }
+      it { expect(exists(key.obtained)).to eq(false) }
+      it { expect(exists(key.locked)).to eq(false) }
+      it { expect(zcard(key.changelog)).to eq(1) }
     end
   end
 
   context "with existing lock_key" do
     before do
       set(key.digest, locked_jid)
+      lpush(key.prepared, locked_jid)
     end
 
     context "with entry in locked" do
@@ -80,10 +71,17 @@ RSpec.describe "prepare.lua", redis: :redis do
         context "when lock value is another job_id" do
           let(:locked_jid) { "bogusjobid" }
 
-          it "prepares keys in redis" do
-            expect(prepare).to eq(job_id)
-            expect(key.prepared).to have_member(key.digest)
-          end
+          it { expect(get(key.digest)).to eq(job_id) }
+          it { expect(pttl(key.digest)).to eq(-1) } # key exists without pttl
+          it { expect(llen(key.prepared)).to eq(1) }
+          it { expect(rpop(key.prepared)).to eq(locked_jid) }
+          it { expect(lpop(key.prepared)).to eq(job_id) }
+          it { expect(exists(key.obtained)).to eq(true) }
+          it { expect(hget(key.obtained, locked_jid)).to eq(current_time.to_s) }
+          it { expect(exists(key.locked)).to eq(false) }
+          it { expect(hget(key.locked, locked_jid)).to eq(current_time.to_s) }
+          it { expect(hget(key.locked, job_id)).to eq(nil) }
+          it { expect(zcard(key.changelog)).to eq(1) }
         end
 
         context "when lock value is same job_id" do
