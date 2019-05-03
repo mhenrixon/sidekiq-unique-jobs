@@ -122,7 +122,7 @@ module SidekiqUniqueJobs
         return yield if block_given?
       end
 
-      raise ScriptError, file_name: file_name, source_exception: ex
+      raise ScriptError, ex, script_path(file_name), script_source(file_name)
     end
 
     #

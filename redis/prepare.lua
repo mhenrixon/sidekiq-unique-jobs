@@ -10,8 +10,10 @@ local lock_type    = ARGV[3]
 local current_time = tonumber(ARGV[4])
 local concurrency  = tonumber(ARGV[5])
 
+local queued_count = redis.call('LLEN', prepared)
 local locked_count = redis.call('HLEN', locked)
 local within_limit = concurrency > locked_count
+local limit_exceeded = not within_limit
 
 local function log_debug( ... )
   local result = ""
@@ -33,32 +35,28 @@ end
 -- BEGIN lock
 log_debug("BEGIN prepare key: ", digest, " with job_id: ", job_id)
 
-if not within_limit then
-  log_debug("Limited by lock concurrency digest:", digest, "(",  locked_count, "of", concurrency, ")")
-  log("Concurrency exceeded", digest, job_id, current_time)
-  return nil
-end
-
 if redis.call('HEXISTS', locked, job_id) == 1 then
-  log_debug("Lock hash: ", locked, " existed for job_id: ", job_id)
+  log_debug("HEXISTS", locked, job_id, "== 1")
   log("Alredy locked", digest, job_id, current_time)
   return job_id
 end
 
 local prev_jid = redis.call('GET', digest)
+
 if not prev_jid then
   log_debug("SET", digest, job_id)
   redis.call('SET', digest, job_id)
 elseif prev_jid == job_id then
   log_debug(digest, "already prepared with job_id:", job_id)
   log("Attempted to prepare already prepared lock", digest, job_id, current_time)
-  return job_id
 else
-  if within_limit then
+  if within_limit and queued_count < concurrency then
+    log_debug("Within limit:", digest, "(",  locked_count, "of", concurrency, ")")
     log_debug("SET", digest, job_id, "(was", prev_jid, ")")
     redis.call('SET', digest, job_id)
   else
-    log("Returning prev_jid", digest, job_id, current_time, prev_jid)
+    log_debug("Limit exceeded:", digest, "(",  locked_count, "of", concurrency, ")")
+    log("Limit exceeded", digest, job_id, current_time, prev_jid)
     return prev_jid
   end
 end
@@ -70,15 +68,14 @@ if lock_type == "until_expired" and ttl > 0 then
   redis.call('PEXPIRE', digest, ttl)
 end
 
-if within_limit then
+if within_limit and queued_count < concurrency then
   log_debug("LPUSH", prepared, job_id)
-  redis.call('LPUSH', prepared, digest)
+  redis.call('LPUSH', prepared, job_id)
 else
-  log_debug("Skipping LPUSH (" .. prepared .. " concurrency limited (" .. tostring(exist_count) .. " of " .. tostring(concurrency) .. " is used)")
+  log_debug("Skipping LPUSH (" .. prepared .. " concurrency limited (" .. tostring(queued_count) .. " of " .. tostring(concurrency) .. " is used)")
 end
 
 log("Lock prepared successfully", digest, job_id, current_time)
-
 
 log_debug("END prepare key: " .. digest .. " with job_id: " .. job_id)
 return job_id

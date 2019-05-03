@@ -13,11 +13,11 @@ local concurrency  = tonumber(ARGV[5])
 local function log_debug( ... )
   local result = ""
   for i,v in ipairs(arg) do
-    result = result .. tostring(v)
+    result = result .. " " .. tostring(v)
   end
-  result = result .. "\n"
-  redis.log(redis.LOG_DEBUG, result)
+  redis.log(redis.LOG_DEBUG, "obtain.lua -" ..  result)
 end
+
 
 local function log(message, digest, job_id, time, prev_jid)
 
@@ -29,27 +29,27 @@ local function log(message, digest, job_id, time, prev_jid)
 end
 
 -- BEGIN lock
-redis.log(redis.LOG_DEBUG, "obtain.lua - BEGIN lock for key: " .. digest .. " with job_id: " .. job_id)
+log_debug("BEGIN lock for key:", digest, "with job_id:", job_id)
 
 if redis.call('HEXISTS', locked, job_id) == 1 then
-  log_debug("obtain.lua - ", locked, " already locked with job_id: ", job_id)
+  log_debug(locked, "already locked with job_id:", job_id)
   log("Already locked", digest, job_id, current_time)
   return job_id
 end
 
-log_debug("obtain.lua - HSET " .. locked .. " " .. job_id .. " " .. tostring(current_time))
+log_debug("HSET", locked, job_id, current_time)
 redis.call('HSET', locked, job_id, current_time)
 
-redis.log(redis.LOG_DEBUG, "obtain.lua - LREM " .. obtained .. " " .. digest)
+log_debug("LREM", obtained, 1, digest)
 redis.call('LREM', obtained, 1, digest)
 
 -- The Sidekiq client should only set ttl for until_expired
 -- The Sidekiq server should set ttl for all other jobs
 if lock_type ~= "until_expired" and ttl and ttl > 0 then
-  log_debug("obtain.lua - PEXPIRE ", digest, " ", ttl)
+  log_debug("PEXPIRE", digest, ttl)
   redis.call('PEXPIRE', digest, ttl)
 end
 
-redis.log(redis.LOG_DEBUG, "obtain.lua - END lock for key: " .. digest .. " with job_id: " .. job_id)
+log_debug("END lock for key:", digest, "with job_id:", job_id)
 return job_id
   -- END lock

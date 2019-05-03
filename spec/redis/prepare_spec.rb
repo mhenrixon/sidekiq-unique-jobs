@@ -9,17 +9,18 @@ RSpec.describe "prepare.lua", redis: :redis do
 
   let(:argv) do
     [
-      job_id,
+      job_id_one,
       lock_pttl,
       lock_type,
       current_time,
       concurrency,
     ]
   end
-  let(:job_id)       { "jobid" }
-  let(:lock_type)    { :until_executed }
   let(:digest)       { "uniquejobs:digest" }
   let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
+  let(:job_id_one)   { "job_id_one" }
+  let(:job_id_two)   { "job_id_two" }
+  let(:lock_type)    { :until_executed }
   let(:lock_pttl)    { nil }
   let(:locked_jid)   { job_id }
   let(:concurrency)  { 1 }
@@ -30,108 +31,117 @@ RSpec.describe "prepare.lua", redis: :redis do
   end
 
   context "without previously prepared lock" do
-    its(:obtained) { is_exected.to be_in() }
-    it { expect(prepare).to eq(locked_jid) }
-    it { expect(get(key.digest)).to eq(job_id) }
-    it { expect(pttl(key.digest)).to eq(-1) } # key exists without pttl
-    it { expect(llen(key.prepared)).to eq(1) }
-    it { expect(exists(key.obtained)).to eq(false) }
-    it { expect(exists(key.locked)).to eq(false) }
-    it { expect(zcard(key.changelog)).to eq(1) }
-    it { expect { prepare }.to change { zcard(key.changelog) }.to(1)
+    it "stores the right keys in redis" do
+      expect(prepare).to eq(job_id_one)
+      expect(get(key.digest)).to eq(job_id_one)
+      expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+      expect(llen(key.prepared)).to eq(1)
+      expect(exists(key.obtained)).to eq(false)
+      expect(exists(key.locked)).to eq(false)
+      expect(zcard(key.changelog)).to eq(1)
+    end
 
     context "when lock_type is :until_expired" do
       let(:lock_type) { :until_expired }
       let(:lock_pttl) { 10 * 1000 }
 
-      it { expect(prepare).to eq(locked_jid) }
-      it { expect(get(key.digest)).to eq(job_id) }
-      it { expect(pttl(key.digest)).to be_within(10).of(lock_pttl) }
-      it { expect(llen(key.prepared)).to eq(1) }
-      it { expect(exists(key.obtained)).to eq(false) }
-      it { expect(exists(key.locked)).to eq(false) }
-      it { expect(zcard(key.changelog)).to eq(1) }
+      it "stores digest with pexpiration in redis" do
+        prepare
+        expect(pttl(key.digest)).to be_within(10).of(lock_pttl)
+      end
     end
   end
 
-  context "with existing lock_key" do
+  context "when prepared by another job_id" do
     before do
-      set(key.digest, locked_jid)
-      lpush(key.prepared, locked_jid)
+      call_script(:prepare, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
     end
 
-    context "with entry in locked" do
-      before do
-        hset(key.locked, locked_jid, current_time)
-      end
+    context "with concurrency 1" do
+      let(:concurrency) { 1 }
 
-      context "when within limit" do
-        let(:concurrency) { 2 }
-
-        context "when lock value is another job_id" do
-          let(:locked_jid) { "bogusjobid" }
-
-          it { expect(get(key.digest)).to eq(job_id) }
-          it { expect(pttl(key.digest)).to eq(-1) } # key exists without pttl
-          it { expect(llen(key.prepared)).to eq(1) }
-          it { expect(rpop(key.prepared)).to eq(locked_jid) }
-          it { expect(lpop(key.prepared)).to eq(job_id) }
-          it { expect(exists(key.obtained)).to eq(true) }
-          it { expect(hget(key.obtained, locked_jid)).to eq(current_time.to_s) }
-          it { expect(exists(key.locked)).to eq(false) }
-          it { expect(hget(key.locked, locked_jid)).to eq(current_time.to_s) }
-          it { expect(hget(key.locked, job_id)).to eq(nil) }
-          it { expect(zcard(key.changelog)).to eq(1) }
-        end
-
-        context "when lock value is same job_id" do
-          let(:locked_jid) { job_id }
-
-          it "prepares nothing" do
-            expect(prepare).to eq(job_id)
-
-            expect(key.prepared).not_to have_member(key.digest)
-          end
-        end
-      end
-
-      context "when outside limit" do
-        context "when lock value is another job_id" do
-          let(:locked_jid) { "bogusjobid" }
-
-          it "prepares nothing" do
-            expect(prepare).to eq(nil)
-
-            expect(key.prepared).not_to have_member(key.digest)
-          end
-        end
-
-        context "when lock value is same job_id" do
-          let(:locked_jid) { job_id }
-
-          it "prepares nothing" do
-            expect(prepare).to eq(nil)
-
-            expect(key.prepared).not_to have_member(key.digest)
-          end
-        end
+      it "stores the right keys in redis" do
+        expect(prepare).to eq(job_id_two)
+        expect(get(key.digest)).to eq(job_id_two)
+        expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+        expect(llen(key.prepared)).to eq(1)
+        expect(lrange(key.prepared, 0, -1)).to match_array([job_id_two])
+        expect(rpop(key.prepared)).to eq(job_id_two)
+        expect(exists(key.obtained)).to eq(false)
+        expect(exists(key.locked)).to eq(false)
+        expect(zcard(key.changelog)).to eq(2)
       end
     end
 
-    context "when lock value is another job_id" do
-      let(:locked_jid) { "bogusjobid" }
+    context "with concurrency 2" do
+      let(:concurrency) { 2 }
+      it "stores the right keys in redis" do
+        expect(prepare).to eq(job_id_one)
+        expect(get(key.digest)).to eq(job_id_one)
+        expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+        expect(llen(key.prepared)).to eq(2)
+        expect(lrange(key.prepared, 0, -1)).to match_array([job_id_two, job_id_one])
+        expect(rpop(key.prepared)).to eq(job_id_two)
+        expect(exists(key.obtained)).to eq(false)
+        expect(exists(key.locked)).to eq(false)
+        expect(zcard(key.changelog)).to eq(2)
+      end
+    end
+  end
 
-      it "prepares keys in redis" do
-        expect(prepare).to eq(job_id)
+  context "when prepared by same job_id" do
+    before do
+      call_script(:prepare, key.to_a, [job_id_one, lock_pttl, lock_type, current_time, concurrency])
+    end
+
+    it "stores the right keys in redis" do
+      expect(prepare).to eq(job_id_one)
+      expect(get(key.digest)).to eq(job_id_one)
+      expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+      expect(llen(key.prepared)).to eq(1)
+      expect(lrange(key.prepared, 0, -1)).to match_array([job_id_one])
+      expect(rpop(key.prepared)).to eq(job_id_one)
+      expect(exists(key.obtained)).to eq(false)
+      expect(exists(key.locked)).to eq(false)
+      expect(zcard(key.changelog)).to eq(2)
+    end
+  end
+
+  context "when obtained by another job_id" do
+    before do
+      call_script(:prepare, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      rpoplpush(key.prepared, key.obtained)
+      call_script(:obtain, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+    end
+
+    context "with concurrency 1" do
+      it "stores the right keys in redis" do
+        expect(prepare).to eq(job_id_two)
+        expect(get(key.digest)).to eq(job_id_two)
+        expect(llen(key.prepared)).to eq(0) # There should be no keys available to be locked
+        expect(llen(key.obtained)).to eq(1)
+        expect(lrange(key.obtained, 0, -1)).to match_array([job_id_two])
+        expect(exists(key.locked)).to eq(true)
+        expect(hexists(key.locked, job_id_two)).to eq(true)
+        expect(hexists(key.locked, job_id_one)).to eq(false)
+        expect(zcard(key.changelog)).to eq(2)
       end
     end
 
-    context "when lock value is same job_id" do
-      let(:locked_jid) { job_id }
+    context "with concurrency 2" do
+      let(:concurrency) { 2 }
 
-      it "prepares keys in redis" do
-        expect(prepare).to eq(job_id)
-        expect(key.prepared).not_to have_member(key.digest)
+      it "stores the right keys in redis" do
+        expect(prepare).to eq(job_id_one)
+        expect(get(key.digest)).to eq(job_id_one)
+        expect(llen(key.prepared)).to eq(1) # There should be no keys available to be locked
+        expect(lrange(key.prepared, 0, -1)).to match_array([job_id_one])
+        expect(llen(key.obtained)).to eq(1)
+        expect(lrange(key.obtained, 0, -1)).to match_array([job_id_two])
+        expect(exists(key.locked)).to eq(true)
+        expect(hexists(key.locked, job_id_two)).to eq(true)
+        expect(hexists(key.locked, job_id_one)).to eq(false)
+        expect(zcard(key.changelog)).to eq(2)
       end
     end
   end
