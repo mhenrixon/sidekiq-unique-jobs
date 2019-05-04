@@ -6,8 +6,13 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Digests
     DEFAULT_COUNT = 1_000
-    SCAN_PATTERN  = "*"
+    SCAN_PATTERN  = "*[^:*]"
     CHUNK_SIZE    = 100
+    SUFFIXES      = %w[
+      :QUEUED
+      :PRIMED
+      :LOCKED
+    ]
 
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection
@@ -20,7 +25,13 @@ module SidekiqUniqueJobs
     # @param [Integer] count the maximum number to match
     # @return [Array<String>] with unique digests
     def all(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
-      redis { |conn| conn.sscan_each(UNIQUE_SET, match: pattern, count: count).to_a }
+      redis do |conn|
+        results = conn.scan_each(match: prefix(pattern), count: count).to_a
+        results.map do |key|
+          next if SUFFIXES.any? { |s| key.end_with?(s) }
+          key
+        end.compact
+      end
     end
 
     # Paginate unique digests
@@ -33,11 +44,11 @@ module SidekiqUniqueJobs
     def page(pattern: SCAN_PATTERN, cursor: 0, page_size: 100)
       redis do |conn|
         total_size, digests = conn.multi do
-          conn.zcard(UNIQUE_SET)
-          conn.zscan(UNIQUE_SET, cursor, match: pattern, count: page_size)
+          conn.keys(prefix(pattern))
+          conn.scan(cursor, match: prefix(pattern), count: page_size)
         end
 
-        [total_size, digests[0], digests[1]]
+        [total_size.size, digests[0], digests[1]]
       end
     end
 
@@ -45,7 +56,7 @@ module SidekiqUniqueJobs
     #
     # @return [Integer] number of digests
     def count
-      redis { |conn| conn.scard(UNIQUE_SET) }
+      redis { |conn| conn.keys(prefix("*[^:]")) }
     end
 
     # Deletes unique digest either by a digest or pattern
@@ -63,6 +74,23 @@ module SidekiqUniqueJobs
     end
 
     private
+
+    def prefix(key)
+      return key if unique_prefix.nil?
+      return key if key.start_with?("#{unique_prefix}:")
+
+      "#{unique_prefix}:#{key}"
+    end
+
+    def suffix(key)
+      return "#{key}*" unless key.end_with?(":*")
+
+      key
+    end
+
+    def unique_prefix
+      SidekiqUniqueJobs.config.unique_prefix
+    end
 
     # Deletes unique digests by pattern
     #
@@ -87,8 +115,7 @@ module SidekiqUniqueJobs
     # @param [String] digest a unique digest to delete
     def delete_by_digest(digest)
       result, elapsed = timed do
-        Script.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])
-        count
+        Script.call(:delete_by_digest, nil, keys: [digest], argv: [current_time])
       end
 
       log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
@@ -102,15 +129,13 @@ module SidekiqUniqueJobs
           conn.pipelined do
             chunk.each do |digest|
               conn.del digest
-              conn.srem(UNIQUE_SET, digest)
-              conn.del("#{digest}:EXISTS")
-              conn.del("#{digest}:GRABBED")
-              conn.del("#{digest}:VERSION")
-              conn.del("#{digest}:AVAILABLE")
-              conn.del("#{digest}:RUN:EXISTS")
-              conn.del("#{digest}:RUN:GRABBED")
-              conn.del("#{digest}:RUN:VERSION")
-              conn.del("#{digest}:RUN:AVAILABLE")
+              conn.del("#{digest}:QUEUED")
+              conn.del("#{digest}:PRIMED")
+              conn.del("#{digest}:LOCKED")
+              conn.del("#{digest}:RUN")
+              conn.del("#{digest}:RUN:QUEUED")
+              conn.del("#{digest}:RUN:PRIMED")
+              conn.del("#{digest}:RUN:LOCKED")
             end
           end
         end

@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
     # @param [Hash] item a Sidekiq job hash
     def unlock(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
-      SidekiqUniqueJobs::Locksmith.new(item).unlock
+      SidekiqUniqueJobs::Locksmith.new(item).unlock!
     end
 
     # Deletes a lock unless it has ttl

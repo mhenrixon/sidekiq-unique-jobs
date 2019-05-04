@@ -8,6 +8,7 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Strategy
       include SidekiqUniqueJobs::Logging
+      include SidekiqUniqueJobs::Script::Caller
 
       # @!attribute [r] item
       #   @return [Hash] sidekiq job hash

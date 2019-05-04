@@ -7,11 +7,11 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:item) do
     {
       "jid" => jid,
-      "unique_digest" => unique_key,
+      "unique_digest" => digest,
     }
   end
   let(:jid)           { "abcdefab" }
-  let(:unique_key)    { "uniquejobs:abcdefab" }
+  let(:digest)        { "uniquejobs:abcdefab" }
   let(:max_lock_time) { 1 }
   let(:pattern)       { "*" }
 
@@ -72,14 +72,12 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
 
     context "when a key exists" do
-      before do
-        SidekiqUniqueJobs::Locksmith.new(item).lock
-      end
+      before { set(digest, jid) }
 
       after { SidekiqUniqueJobs::Util.del("*", 1000) }
 
       it { is_expected.to include("Found 1 keys matching '*':") }
-      it { is_expected.to include("uniquejobs:abcdefab       uniquejobs:abcdefab:WAIT") }
+      it { is_expected.to include("uniquejobs:abcdefab") }
     end
   end
 
@@ -88,9 +86,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
 
     let(:args) { %W[del * #{options} --count 1000] }
 
-    before do
-      SidekiqUniqueJobs::Locksmith.new(item).lock
-    end
+    before { set(digest, jid) }
 
     context "with argument --dry-run" do
       let(:options) { "--dry-run" }

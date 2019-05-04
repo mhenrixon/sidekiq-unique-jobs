@@ -33,10 +33,7 @@ RSpec.describe SidekiqUniqueJobs::Script, redis: :redis do
       specify do
         expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
         expect(described_class).to receive(:execute_script).with(script_name, nil, options).once
-        expect { call }.to raise_error(
-          SidekiqUniqueJobs::ScriptError,
-          "Problem compiling #{script_name}.lua - message: Some interesting error",
-        )
+        expect { call }.to raise_error(::Redis::CommandError, "Some interesting error")
       end
 
       context "when error message is No matching script" do

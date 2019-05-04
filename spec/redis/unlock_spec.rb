@@ -4,42 +4,44 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "unlock.lua", redis: :redis do
-  subject(:unlock) { call_script(:unlock, keys: key.to_a, argv: argv) }
+  subject(:unlock) { call_script(:unlock, key.to_a, [job_id_one, lock_ttl, lock_type, current_time]) }
 
   let(:argv) do
     [
-      job_id,
+      job_id_one,
       lock_ttl,
       lock_type,
-      SidekiqUniqueJobs::Timing.current_time,
+      current_time,
     ]
   end
-  let(:job_id)     { "jobid" }
-  let(:lock_type)  { :until_executed }
-  let(:digest)     { "uniquejobs:digest" }
-  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
-  let(:lock_ttl)   { nil }
-  let(:locked_jid) { job_id }
+  let(:job_id_one)   { "job_id_one" }
+  let(:job_id_two)   { "job_id_two" }
+  let(:lock_type)    { :until_executed }
+  let(:digest)       { "uniquejobs:digest" }
+  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
+  let(:lock_ttl)     { nil }
+  let(:locked_jid)   { job_id }
+  let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
+  let(:concurrency)  { 1 }
 
-  context "without existing locks" do
-    before do
-      unlock
+  context "when unlocked" do
+    it "succeedes without crashing" do
+      expect { unlock }.to change { zcard(key.changelog) }.by(1)
+      expect(unlock).to eq(job_id_one)
     end
-
-    it { expect(get(digest)).to be_nil }
-    it_behaves_like "keys are removed by unlock"
   end
 
   context "when a lock exists for another job_id" do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:lock, keys: key.to_a, argv: [locked_jid, lock_ttl, lock_type, current_time])
-      unlock
+      call_script(:queue, key.to_a, [job_id_two, lock_ttl, lock_type, current_time, concurrency])
+      primed_jid = rpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, [job_id_two, primed_jid, lock_ttl, lock_type, current_time, concurrency])
     end
 
-    it "returns the other job_id" do
-      expect(unlock).to eq(locked_jid)
+    it "does not unlock" do
+      expect { unlock }.to change { zcard(key.changelog) }.by(1)
     end
   end
 
@@ -50,9 +52,6 @@ RSpec.describe "unlock.lua", redis: :redis do
       call_script(:lock, keys: key.to_a, argv: argv)
       unlock
     end
-
-    it { is_expected.to eq(locked_jid) }
-    it_behaves_like "keys are removed by unlock"
   end
 end
 # rubocop:enable RSpec/DescribeClass

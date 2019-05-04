@@ -653,18 +653,6 @@ module SidekiqUniqueJobs
         redis(&:discard)
       end
 
-      def script(subcommand, *args)
-        redis { |conn| conn.script(subcommand, *args) }
-      end
-
-      def eval(*args)
-        redis { |conn| conn.eval(*args) }
-      end
-
-      def evalsha(*args)
-        redis { |conn| conn.evalsha(*args) }
-      end
-
       def scan(cursor, options = {})
         redis { |conn| conn.scan(cursor, options) }
       end
@@ -826,16 +814,48 @@ module SidekiqUniqueJobs
       smembers("unique:keys")
     end
 
+    def locking_jids
+      queued_jids.merge(primed_jids).merge(locked_jids)
+    end
+
     def unique_keys
       keys("uniquejobs:*")
     end
 
-    def free_set
-      zrange("unique:free", 0, -1)
+    def queued_jids(key = nil)
+      if key
+        { key => lrange(key, 0, -1) }
+      else
+        keys("*:QUEUED").each_with_object({}) do |redis_key, hash|
+          hash[redis_key] ||= []
+          hash[redis_key].concat(lrange(key, 0, -1))
+        end
+      end
     end
 
-    def held_set
-      zrange("unique:held")
+    def primed_jids(key = nil)
+      if key
+        { key => lrange(key, 0, -1) }
+      else
+        keys("*:PRIMED").each_with_object({}) do |redis_key, hash|
+          hash[redis_key] ||= []
+          hash[redis_key].concat(lrange(key, 0, -1))
+        end
+      end
+    end
+
+    def locked_jids(key = nil)
+      if key
+        { key => hgetall(key).to_h }
+      else
+        keys("*:LOCKED").each_with_object({}) do |redis_key, hash|
+          hash[redis_key] = hgetall(redis_key).to_h
+        end
+      end
+    end
+
+    def changelogs
+      Sidekiq.redis { |c| c.zrange("unique:changelog", 0, -1).map { |entry| ::Sidekiq.load_json(entry) } }
     end
 
     def current_time

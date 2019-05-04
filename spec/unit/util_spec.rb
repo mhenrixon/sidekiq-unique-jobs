@@ -27,7 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
   let(:jid)           { "e3049b05b0bd9c809182bbe0" }
   let(:lock)          { SidekiqUniqueJobs::Locksmith.new(item) }
   let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
-  let(:expected_keys) { [key.digest, key.wait] }
+  let(:expected_keys) { [key.digest, key.locked] }
 
   describe ".keys" do
     subject(:keys) { described_class.keys }

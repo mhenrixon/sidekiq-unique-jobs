@@ -8,78 +8,253 @@ RSpec.describe "lock.lua", redis: :redis do
 
   let(:argv) do
     [
-      job_id,
+      job_id_one,
+      primed_jid_one,
       lock_ttl,
       lock_type,
       current_time,
       concurrency,
     ]
   end
-  let(:job_id)       { "jobid" }
-  let(:lock_type)    { :until_executed }
-  let(:digest)       { "uniquejobs:digest" }
-  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
-  let(:lock_ttl)     { nil }
-  let(:locked_jid)   { job_id }
-  let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
-  let(:concurrency)  { 1 }
+  let(:job_id_one)     { "job_id_one" }
+  let(:job_id_two)     { "job_id_two" }
+  let(:primed_jid_one) { rpoplpush(key.queued, key.primed) }
+  let(:primed_jid_two) { rpoplpush(key.queued, key.primed) }
+  let(:lock_type)      { :until_executed }
+  let(:digest)         { "uniquejobs:digest" }
+  let(:key)            { SidekiqUniqueJobs::Key.new(digest) }
+  let(:lock_ttl)       { nil }
+  let(:locked_jid)     { job_id_one }
+  let(:current_time)   { SidekiqUniqueJobs::Timing.current_time }
+  let(:concurrency)    { 1 }
+
+  module SidekiqUniqueJobs
+    class Redis
+      class Entity
+        include SidekiqUniqueJobs::Connection
+        include SidekiqUniqueJobs::Testing::Redis
+
+        attr_reader :key
+
+        def initialize(key)
+          @key = key
+        end
+
+        def exist?
+          exists(key)
+        end
+
+        def pttl
+          pttl(key)
+        end
+
+        def ttl
+          ttl(key)
+        end
+
+        def phave_ttl?(expected_pttl)
+          (expected_pttl - 20)...(expected_pttl + 20).cover?(pttl(key))
+        end
+      end
+
+      class List < Entity
+        def entries
+          lrange(key, 0, -1)
+        end
+      end
+
+      class Hash < Entity
+      end
+
+      class Set < Entity
+        def entries
+          smembers(key)
+        end
+      end
+
+      class SortedSet < Entity
+        def entries
+          zrange(key, 0, -1, with_scores: with_scores)
+        end
+
+        def rank(member)
+          zrank(key, member)
+        end
+
+        def score(member)
+          zscore(key, member)
+        end
+      end
+
+      class Changelog < SortedSet
+
+      end
+
+      class Key < Entity
+        def value
+          get(key)
+        end
+      end
+
+
+      class Lock
+        attr_reader :key
+
+        def new(key)
+          raise ArgumentError, "key is not a SidekiqUniqueJobs::Key" unless key.is_a?(SidekiqUniqueJobs::Key)
+          @key = key
+        end
+
+        def digest_key
+          @digest_key ||= Redis::Key.new(key.digest)
+        end
+
+        def queued_list
+          @queued_list ||= Redis::List.new(key.queued)
+        end
+
+        def primed_list
+          @primed_list ||= Redis::List.new(key.primed)
+        end
+
+        def locked_hash
+          @locked_hash ||= Redis::List.new(key.locked)
+        end
+
+        def changelog
+          @changelog ||= Redis::SortedSet.new(key.changelog)
+        end
+      end
+    end
+  end
+
 
   context "when not queued" do
-    it "stores in redis" do
-      expect(lock).to eq(locked_jid)
+    it "updates Redis correctly" do
+      expect { lock }.to change { zcard(key.changelog) }.by(1)
 
-      expect(key.locked).not_to have_member(job_id)
-      expect(key.queued).not_to have_member(job_id)
-      expect(key.primed).not_to have_member(job_id)
+      expect(lock).to eq(job_id_one)
+      expect(get(key.digest)).to eq(nil)
+      expect(pttl(key.digest)).to eq(-2) # key does not exist
+      expect(llen(key.queued)).to eq(0)
+      expect(lrange(key.primed, 0, -1)).to match_array([])
+      expect(llen(key.primed)).to eq(0)
+      expect(exists(key.queued)).to eq(false)
+      expect(exists(key.primed)).to eq(false)
+      expect(exists(key.locked)).to eq(true)
+      expect(hget(key.locked, job_id_one).to_f).to be_within(0.1).of(current_time)
     end
   end
 
   context "when queued" do
-    let(:key_args) do
-      [locked_jid, key.queued, key.primed, key.locked, key.changelog]
-    end
-
     before do
-      flush_redis
-      call_script(:queue, key_args, [job_id, lock_ttl, lock_type, current_time, concurrency])
-      rpoplpush(key.queued, key.primed)
+      call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
     end
 
-    context "when unlocked" do
-      it "stores in redis" do
-        expect(lock).to eq(locked_jid)
+    it "updates Redis correctly" do
+      expect { lock }.to change { zcard(key.changelog) }.by(1)
 
-        expect(key.locked).to have_field(job_id).with(current_time.to_s)
-        expect(key.queued).not_to have_member(job_id)
-        expect(key.primed).not_to have_member(job_id)
-      end
+      expect(lock).to eq(job_id_one)
+      expect(get(key.digest)).to eq(job_id_one)
+      expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+      expect(llen(key.queued)).to eq(0)
+      expect(llen(key.primed)).to eq(0)
+      expect(exists(key.queued)).to eq(false)
+      expect(exists(key.primed)).to eq(false)
+      expect(exists(key.locked)).to eq(true)
+    end
+  end
+
+  context "when primed" do
+    before do
+      call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+      primed_jid_one
     end
 
-    context "when locked" do
+    it "updates Redis correctly" do
+      expect { lock }.to change { zcard(key.changelog) }.by(1)
+
+      expect(lock).to eq(job_id_one)
+      expect(get(key.digest)).to eq(job_id_one)
+      expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+      expect(llen(key.queued)).to eq(0)
+      expect(llen(key.primed)).to eq(0)
+      expect(exists(key.queued)).to eq(false)
+      expect(exists(key.primed)).to eq(false)
+      expect(exists(key.locked)).to eq(true)
+    end
+  end
+
+  context "when locked by another job" do
+    context "with concurrency 1" do
       before do
-        hset(key.locked, locked_jid, current_time)
+        call_script(:queue, key.to_a, [job_id_two, lock_ttl, lock_type, current_time, concurrency])
+        primed_jid_two
+        call_script(:lock, key.to_a, [job_id_two, primed_jid_two, lock_ttl, lock_type, current_time, concurrency])
       end
 
-      context "when lock value is another job_id" do
-        let(:locked_jid) { "bogusjobid" }
+      it "updates Redis correctly" do
+        expect { lock }.to change { zcard(key.changelog) }.by(1)
 
-        it "updates " do
-          expect(lock).to eq(locked_jid)
-          expect(key.locked).not_to have_member(job_id)
-          expect(key.queued).not_to have_member(job_id)
-        end
+        expect(lock).to eq(nil)
+        expect(get(key.digest)).to eq(job_id_two)
+        expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+        expect(llen(key.queued)).to eq(0)
+        expect(llen(key.primed)).to eq(0)
+        expect(exists(key.primed)).to eq(false)
+        expect(exists(key.locked)).to eq(true)
+        expect(hget(key.locked, job_id_two).to_f).to be_within(0.1).of(current_time)
+      end
+    end
+
+    context "with concurrency 2" do
+      let(:concurrency) { 2 }
+
+      before do
+        call_script(:queue, key.to_a, [job_id_two, lock_ttl, lock_type, current_time, concurrency])
+        primed_jid_two
+        call_script(:lock, key.to_a, [job_id_two, primed_jid_two, lock_ttl, lock_type, current_time, concurrency])
+
+        call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+        primed_jid_one
       end
 
-      context "when lock value is same job_id" do
-        let(:locked_jid) { job_id }
+      it "updates Redis correctly" do
+        expect { lock }.to change { zcard(key.changelog) }.by(1)
 
-        it "updates " do
-          expect(lock).to eq(locked_jid)
-          expect(key.locked).to have_field(locked_jid).with(current_time.to_s)
-          expect(key.queued).not_to have_member(job_id)
-          expect(key.primed).to have_member(job_id)
-        end
+        expect(lock).to eq(job_id_one)
+        expect(get(key.digest)).to eq(job_id_one)
+        expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+        expect(llen(key.queued)).to eq(0)
+        expect(llen(key.primed)).to eq(0)
+        expect(exists(key.primed)).to eq(false)
+        expect(exists(key.locked)).to eq(true)
+        expect(hlen(key.locked)).to eq(2)
+        expect(hget(key.locked, job_id_two).to_f).to be_within(0.1).of(current_time)
+        expect(hget(key.locked, job_id_one).to_f).to be_within(0.1).of(current_time)
       end
+    end
+  end
+
+  context "when locked by same job" do
+    before do
+      call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+      primed_jid_one
+
+      hset(key.locked, job_id_one, current_time)
+    end
+
+    it "updates Redis correctly" do
+      expect { lock }.to change { zcard(key.changelog) }.by(1)
+
+      expect(lock).to eq(nil)
+      expect(get(key.digest)).to eq(job_id_one)
+      expect(pttl(key.digest)).to eq(-1) # key exists without pttl
+      expect(llen(key.queued)).to eq(0)
+      expect(lrange(key.primed, 0, -1)).to match_array([job_id_one])
+      expect(rpop(key.primed)).to eq(job_id_one)
+      expect(exists(key.primed)).to eq(false)
+      expect(exists(key.locked)).to eq(true)
     end
   end
 end

@@ -62,9 +62,9 @@ module SidekiqUniqueJobs
         execute_script(file_name, redis_pool, options)
       end
 
-      log_debug("Executed #{file_name} in #{elapsed}s")
+      log_debug("Executed #{file_name}.lua in #{elapsed}ms")
       result
-    rescue Redis::CommandError => ex
+    rescue ::Redis::CommandError => ex
       handle_error(ex, file_name) do
         call(file_name, redis_pool, options)
       end
@@ -84,7 +84,7 @@ module SidekiqUniqueJobs
     def execute_script(file_name, redis_pool, options = {})
       redis(redis_pool) do |conn|
         sha = script_sha(conn, file_name)
-        conn.evalsha(sha, options)
+        conn.evalsha(sha, options[:keys], options[:argv])
       end
     end
 
@@ -122,7 +122,11 @@ module SidekiqUniqueJobs
         return yield if block_given?
       end
 
-      raise ScriptError, ex, script_path(file_name), script_source(file_name)
+      if ScriptError.intercepts?(ex)
+        raise ScriptError.new(ex, script_path(file_name).to_s, script_source(file_name))
+      else
+        raise
+      end
     end
 
     #

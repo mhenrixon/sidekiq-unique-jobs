@@ -52,7 +52,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting, redis: :redis do
         it "deletes the lock without fuss" do
           worker_class.use_options(lock_expiration: nil) do
             process_one.lock
-            expect { delete }.to change(unique_keys, :size).from(2).to(0)
+            expect { delete }.to change { unique_keys.size }.to(0)
           end
         end
       end
@@ -61,7 +61,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting, redis: :redis do
         it "does not delete the lock" do
           worker_class.use_options(lock_expiration: 100) do
             process_one.lock
-            expect { delete }.not_to change(unique_keys, :size)
+            expect { delete }.not_to change { unique_keys.size }
           end
         end
       end
@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting, redis: :redis do
       before { process_one.lock }
 
       it "deletes the lock without fuss" do
-        expect { delete! }.to change(unique_keys, :size).from(2).to(0)
+        expect { delete! }.to change { unique_keys.size }.to(0)
       end
     end
   end

@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
   LOCK_RETRY_JITTER_KEY     ||= "lock_retry_jitter"
   LOCK_EXPIRATION_KEY       ||= "lock_expiration"
   LOCK_EXPIRATION_KEY       ||= "lock_expiration"
+  LOCK_LIMIT_KEY            ||= "lock_limit"
   LOCK_TIMEOUT_KEY          ||= "lock_timeout"
   LOG_DUPLICATE_KEY         ||= "log_duplicate_payload"
   QUEUE_KEY                 ||= "queue"

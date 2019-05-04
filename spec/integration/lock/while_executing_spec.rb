@@ -64,6 +64,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
     end
 
     context "when worker raises error" do
+      before do
+        allow(process_one.locksmith).to receive(:lock).and_raise(RuntimeError, "Hell")
+      end
+
       it "always unlocks" do
         expect { process_one.execute { raise "Hell" } }
           .to raise_error(RuntimeError, "Hell")

@@ -44,7 +44,7 @@ RSpec.describe UntilExpiredJob do
       it "sets keys to expire as per configuration" do
         lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
         unique_keys.all? do |key|
-          expect(key).to expire_in(lock_expiration + 60)
+          expect(key).to have_ttl(lock_expiration + 60)
         end
       end
     end
@@ -77,7 +77,7 @@ RSpec.describe UntilExpiredJob do
       it "sets keys to expire as per configuration" do
         lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
         unique_keys.all? do |key|
-          expect(key).to expire_in(lock_expiration)
+          expect(key).to have_ttl(lock_expiration)
         end
       end
     end

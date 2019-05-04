@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+  # frozen_string_literal: true
 
 module SidekiqUniqueJobs
   class Lock
@@ -24,13 +24,8 @@ module SidekiqUniqueJobs
       # @return [String] the sidekiq job id
       def lock
         @attempt = 0
-        return item[JID_KEY] if locked?
-
-        if (token = locksmith.lock)
-          token
-        else
-          call_strategy
-        end
+        return call_strategy unless (locked_token = locksmith.lock)
+        locked_token
       end
 
       # Execute the job in the Sidekiq server processor
@@ -64,6 +59,16 @@ module SidekiqUniqueJobs
         locksmith.locked?
       end
 
+      #
+      # The lock manager/client
+      #
+      # @api private
+      # @return [SidekiqUniqueJobs::Locksmith] the locksmith for this sidekiq job
+      #
+      def locksmith
+        @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
+      end
+
       private
 
       def add_uniqueness_when_missing
@@ -95,15 +100,6 @@ module SidekiqUniqueJobs
       # @!attribute [r] attempt
       #   @return [Integer] the current locking attempt
       attr_reader :attempt
-
-      #
-      # The lock manager/client
-      #
-      # @return [SidekiqUniqueJobs::Locksmith] the locksmith for this sidekiq job
-      #
-      def locksmith
-        @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
-      end
 
       def unlock_with_callback
         return log_warn("might need to be unlocked manually") unless unlock

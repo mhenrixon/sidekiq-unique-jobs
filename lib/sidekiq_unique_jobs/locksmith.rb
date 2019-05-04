@@ -5,6 +5,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Locksmith
+    include Comparable
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Timing
@@ -30,10 +31,10 @@ module SidekiqUniqueJobs
       @jid           = item[JID_KEY]
       @ttl           = item[LOCK_EXPIRATION_KEY].to_i * 1000
       @timeout       = item[LOCK_TIMEOUT_KEY]
-      @lock_type     = item[LOCK_KEY]
-      @lock_type   &&= @lock_type.to_sym
+      @type          = item[LOCK_KEY]
+      @type        &&= @type.to_sym
       @redis_pool    = redis_pool
-      @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+      @limit         = item[LOCK_LIMIT_KEY] || 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
       @retry_count   = item[LOCK_RETRY_COUNT_KEY] || DEFAULT_RETRY_COUNT
       @retry_delay   = item[LOCK_RETRY_DELAY_KEY] || DEFAULT_RETRY_DELAY
       @retry_jitter  = item[LOCK_RETRY_JITTER_KEY] || DEFAULT_RETRY_JITTER
@@ -48,14 +49,14 @@ module SidekiqUniqueJobs
     def delete
       return if ttl.positive?
 
-      delete!
+      delete! > 0
     end
 
     #
     # Deletes the lock regardless of if it has a ttl set
     #
     def delete!
-      call_script(:delete, key.to_a)
+      call_script(:delete, key.to_a, [jid, current_time])
     end
 
     #
@@ -64,14 +65,21 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock
-      return unless (locked_jid = prepare)
-      return unless locked_jid == job_id
+      queued_token = enqueue_lock
+      log_debug("#{__method__} queued_token: #{queued_token}")
+      return unless queued_token == jid
 
-      obtain do
-        store_lock_token(token)
+      obtain(queued_token) do |locked_token|
+        if block_given?
+          begin
+            return yield locked_token if locked_token == jid
+          ensure
+            unlock
+          end
+        end
+
+        locked_token if locked_token == jid
       end
-
-      locked_jid
     end
     alias wait lock
 
@@ -94,7 +102,7 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!
-      call_script(:unlock, key.to_a, [jid, ttl, lock_type])
+      call_script(:unlock, key.to_a, [jid, ttl, type, current_time, limit])
     end
 
     # Checks if this instance is considered locked
@@ -102,16 +110,32 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?
-      call_script(:locked, [key.digest], [jid]) >= 1
+      call_script(:locked, key.to_a, [jid]) > 0
+    end
+
+    def to_s
+      "Locksmith(digest=#{key} job_id=#{jid})"
+    end
+
+    def inspect
+      to_s
+    end
+
+    def ==(other)
+      key == other.key && jid == other.jid
+    end
+
+    def <=>(other)
+      key <=> other.key && jid <=> other.jid
     end
 
     private
 
-    attr_reader :key, :ttl, :jid, :redis_pool, :lock_type, :timeout, :concurrency
+    attr_reader :key, :ttl, :jid, :redis_pool, :type, :timeout, :limit
 
-    def prepare
+    def enqueue_lock
       locked_jid, time_elapsed = timed do
-        call_script(:prepare, key.to_a, [jid, ttl, lock_type, current_time])
+        call_script(:queue, key.to_a, [jid, ttl, type, current_time, limit])
       end
 
       validity = ttl.to_i - time_elapsed - drift
@@ -122,28 +146,35 @@ module SidekiqUniqueJobs
       locked_jid
     end
 
-    def obtain
-      return unless (token = pop_token)
+    def obtain(queued_token)
+      log_debug("#{__method__} queued_token: #{queued_token}")
+      return yield jid if locked?
 
-      call_script(:obtain, key.to_a, [jid, ttl, current_time, concurrency, token])
-      yield token
+      return unless (primed_token = pop_token)
+      log_debug("#{__method__} primed_token: #{primed_token}")
+
+      locked_token = call_script(:lock, key.to_a, [jid, primed_token, ttl, type, current_time, limit])
+      log_debug("#{__method__} locked_token: #{locked_token}")
+
+      return yield locked_token if locked_token
     end
 
     def pop_token
-      token, elapsed = timed do
+      return jid if locked?
+      primed_token, elapsed = timed do
         redis do |conn|
           if timeout.nil? || timeout.positive?
             # passing timeout 0 to brpoplpush causes it to block indefinitely
-            conn.brpoplpush(key.prepared, key.obtained, timeout || 0)
+            conn.brpoplpush(key.queued, key.primed, timeout || 0)
           else
-            conn.rpoplpush(key.prepared, key.obtained)
+            conn.rpoplpush(key.queued, key.primed)
           end
         end
       end
 
       # TODO: Collect metrics and stats
-      log_debug("Waited #{elapsed}ms for #{token} to be released (digest: #{key.digest}, job_id: #{jid})")
-      token
+      log_debug("Waited #{elapsed}ms for #{primed_token} to be released (digest: #{key.digest}, job_id: #{jid})")
+      primed_token
     end
 
     def try_lock

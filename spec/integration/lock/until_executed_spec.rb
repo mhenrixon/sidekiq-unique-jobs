@@ -53,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
         it "deletes the lock without fuss" do
           worker_class.use_options(lock_expiration: nil) do
             process_one.lock
-            expect(process_one.delete).to eq(true)
+            expect(process_one.delete).to be_truthy
             expect(process_one).not_to be_locked
           end
         end
@@ -63,7 +63,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
         it "does not delete the lock" do
           worker_class.use_options(lock_expiration: 100) do
             process_one.lock
-            expect(process_one.delete).to eq(false)
+            expect(process_one.delete).to be_falsey
             expect(process_one).to be_locked
           end
         end
@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
 
       it "deletes the lock" do
         worker_class.use_options(lock_expiration: nil) do
-          expect(process_one.delete).to eq(true)
+          expect(process_one.delete).to be_truthy
         end
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis, profile: t
       before { process_one.lock }
 
       it "deletes the lock without fuss" do
-        expect { delete! }.to change(unique_keys, :size).from(1).to(0)
+        expect { delete! }.to change { unique_keys.size }.to(0)
       end
     end
   end

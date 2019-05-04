@@ -14,19 +14,21 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       "args" => [1, 2] }
   end
 
-  let(:unique_digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] }
+  let(:digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] }
 
   describe ".unlock" do
     subject(:unlock) { described_class.unlock(item_with_digest) }
 
     specify do
       expect(unique_keys.size).to eq(0)
+
       push_item(item_with_digest)
 
-      expect(unique_keys.size).to eq(1)
+      expect(unique_keys.size).to eq(2)
 
       unlock
-      expect(unique_keys.size).to eq(1)
+      expect(unique_keys.size).to eq(2)
+      expect(ttl(digest)).to eq(7200)
     end
   end
 
@@ -37,11 +39,11 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       expect(unique_keys.size).to eq(0)
       push_item(item_with_digest)
 
-      expect(unique_keys.size).to eq(1)
+      expect(unique_keys.size).to eq(2)
 
       delete
 
-      expect(unique_keys.size).to eq(1)
+      expect(unique_keys.size).to eq(2)
     end
   end
 end

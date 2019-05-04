@@ -9,8 +9,8 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::SidekiqWorkerMethods
 
       # @param [Hash] item sidekiq job hash
-      def initialize(item)
-        super
+      def initialize(item, redis_pool = nil)
+        super(item, redis_pool)
         @worker_class = item[CLASS_KEY]
       end
 

@@ -15,14 +15,14 @@ module Sidekiq
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
+        SidekiqUniqueJobs::Unlockable.delete!(item) if delete_orig
       end
 
       private
 
       def remove_job_ext
         remove_job_orig do |message|
-          SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(message))
+          SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(message))
           yield message
         end
       end
@@ -41,7 +41,7 @@ module Sidekiq
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item) if delete_orig
+        SidekiqUniqueJobs::Unlockable.delete!(item) if delete_orig
       end
     end
     include UniqueExtension
@@ -57,7 +57,7 @@ module Sidekiq
       end
 
       def delete_ext
-        SidekiqUniqueJobs::Unlockable.unlock(item)
+        SidekiqUniqueJobs::Unlockable.delete!(item)
         delete_orig
       end
     end
@@ -105,7 +105,7 @@ module Sidekiq
       end
 
       def delete_by_value_ext(name, value)
-        SidekiqUniqueJobs::Unlockable.unlock(Sidekiq.load_json(value)) if delete_by_value_orig(name, value)
+        SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(value)) if delete_by_value_orig(name, value)
       end
     end
 

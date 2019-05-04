@@ -13,6 +13,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
   let(:unique_digest)   { "uniquejobs:randomvalue" }
   let(:key)             { SidekiqUniqueJobs::Key.new(unique_digest) }
   let(:lock_timeout)    { 0 }
+  let(:lock_limit)      { 1 }
   let(:item_one) do
     {
       "jid" => jid_one,
@@ -20,28 +21,26 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
       "lock_expiration" => lock_expiration,
       "lock" => lock_type,
       "lock_timeout" => lock_timeout,
+      "lock_limit" => lock_limit,
     }
   end
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
-  describe "#lock" do
-  end
-
   shared_examples_for "a lock" do
     it "is unlocked from the start" do
-      expect(locksmith_one.locked?).to eq(false)
+      expect(locksmith_one).not_to be_locked
     end
 
     it "locks and unlocks" do
       locksmith_one.lock
-      expect(locksmith_one.locked?).to eq(true)
+      expect(locksmith_one).to be_locked
       locksmith_one.unlock
-      expect(locksmith_one.locked?).to eq(false) if lock_expiration.nil?
+      expect(locksmith_one).not_to be_locked if lock_expiration.nil?
     end
 
     it "does not lock twice as a mutex" do
       expect(locksmith_one.lock).to be_truthy
-      expect(locksmith_two.lock).to eq(false)
+      expect(locksmith_two.lock).to be_falsey
     end
 
     it "executes the given code block" do
@@ -67,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
         end
       end.to raise_error(Exception, "redis lock exception")
 
-      expect(locksmith_one.locked?).to eq(false) if lock_expiration.nil?
+      expect(locksmith_one).not_to be_locked if lock_expiration.nil?
     end
 
     it "returns the value of the block if block-style locking is used" do
@@ -79,12 +78,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
     end
 
     it "disappears without a trace when calling `delete!`" do
-      original_key_size = keys.size
-
       locksmith_one.lock
-      locksmith_one.delete!
+      locksmith_two.delete!
 
-      expect(keys.size).to eq(original_key_size)
+      expect(locksmith_one).not_to be_locked
     end
 
     context "when lock_timeout is zero" do
@@ -104,16 +101,16 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
 
       it "is locked" do
         locksmith_one.lock do
-          expect(locksmith_one.locked?).to be true
+          expect(locksmith_one).to be_locked
         end
 
-        expect(locksmith_one.locked?).to eq false if lock_expiration.nil?
+        expect(locksmith_one).not_to be_locked if lock_expiration.nil?
       end
     end
   end
 
   describe "lock with expiration" do
-    let(:lock_expiration) { 3 }
+    let(:lock_expiration) { 2 }
     let(:lock_type)       { :while_executing }
 
     it_behaves_like "a lock"
@@ -124,21 +121,16 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
       it "prevents other processes from locking" do
         locksmith_one.lock
 
-        expect(unique_digest).to expire_in(3)
-
         sleep 1
 
-        expect(unique_digest).to expire_in(2)
-        p get(key.digest)
-        p zrange(key.wait, 0, -1)
-        expect(locksmith_two.lock).to eq(false)
-
-        expect(unique_keys).to match_array([key.digest, key.wait])
+        expect(locksmith_two.lock).to be_falsey
       end
 
       it "expires the expected keys" do
         locksmith_one.lock
-        expect(unique_keys).to match_array([key.digest, key.wait])
+        locksmith_one.unlock
+
+        expect(locksmith_one).to be_locked
       end
     end
 
@@ -147,32 +139,29 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
 
       it "expires the expected keys" do
         locksmith_one.lock
-        expect(unique_keys).to match_array([key.digest, key.wait])
-        expect(unique_digest).to expire_in(-1)
-
+        expect(locksmith_one).to be_locked
         locksmith_one.unlock
-        expect(unique_keys).to match_array([key.digest, key.wait])
+        expect(locksmith_one).to be_locked
+        expect(locksmith_one.delete).to eq(nil)
 
-        expect(unique_digest).to expire_in(3)
+        expect(locksmith_one).to be_locked
       end
     end
 
     it "deletes the expected keys" do
       locksmith_one.lock
-      expect(unique_keys).to match_array([key.digest, key.wait])
+      expect(locksmith_one).to be_locked
       locksmith_one.delete!
-      expect(unique_keys).to match_array([])
+      expect(locksmith_one).not_to be_locked
     end
 
     it "expires keys" do
-      flush_redis
       locksmith_one.lock
       keys = unique_keys
       expect(unique_keys).not_to include(keys)
     end
 
     it "expires keys after unlocking" do
-      flush_redis
       locksmith_one.lock do
         # noop
       end
@@ -208,12 +197,12 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
   #       locksmith_one.lock
 
   #       watchdog.release_stale_locks
-  #       expect(locksmith_one.locked?).to eq(true)
+  #       expect(locksmith_one).to be_locked
 
   #       sleep 0.6
   #       watchdog.release_stale_locks
 
-  #       expect(locksmith_one.locked?).to eq(false)
+  #       expect(locksmith_one).not_to be_locked
   #     end
   #   end
 

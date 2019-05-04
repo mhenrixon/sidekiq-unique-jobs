@@ -45,7 +45,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
           )
         end
       end
-      expect(unique_keys).to match_array([key.wait])
+      expect(unique_keys).to match_array([])
       expect(JustAWorker.perform_in(60 * 60 * 3, boo: "far")).to be_truthy
     end
   end

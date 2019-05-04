@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  # Interface to dealing with .lua files
+  # Handles timing of things
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Timing

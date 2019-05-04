@@ -40,7 +40,6 @@ RSpec.describe "queue.lua", redis: :redis do
       expect(llen(key.queued)).to eq(1)
       expect(exists(key.primed)).to eq(false)
       expect(exists(key.locked)).to eq(false)
-      expect(zcard(key.changelog)).to eq(1)
     end
 
     context "when lock_type is :until_expired" do
@@ -49,7 +48,7 @@ RSpec.describe "queue.lua", redis: :redis do
 
       it "stores digest with pexpiration in redis" do
         queue
-        expect(pttl(key.digest)).to be_within(10).of(lock_pttl)
+        expect(pttl(key.digest)).to be_within(100).of(lock_pttl)
       end
     end
   end
@@ -73,7 +72,6 @@ RSpec.describe "queue.lua", redis: :redis do
         expect(rpop(key.queued)).to eq(job_id_two)
         expect(exists(key.primed)).to eq(false)
         expect(exists(key.locked)).to eq(false)
-        expect(zcard(key.changelog)).to eq(2)
       end
     end
 
@@ -90,7 +88,6 @@ RSpec.describe "queue.lua", redis: :redis do
         expect(rpop(key.queued)).to eq(job_id_two)
         expect(exists(key.primed)).to eq(false)
         expect(exists(key.locked)).to eq(false)
-        expect(zcard(key.changelog)).to eq(2)
       end
     end
   end
@@ -117,8 +114,8 @@ RSpec.describe "queue.lua", redis: :redis do
   context "when primed by another job_id" do
     before do
       call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
-      rpoplpush(key.queued, key.primed)
-      call_script(:lock, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      primed_jid = rpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, [job_id_two, primed_jid, lock_pttl, lock_type, current_time, concurrency])
     end
 
     context "with concurrency 1" do
@@ -128,8 +125,7 @@ RSpec.describe "queue.lua", redis: :redis do
         expect(queue).to eq(job_id_two)
         expect(get(key.digest)).to eq(job_id_two)
         expect(llen(key.queued)).to eq(0) # There should be no keys available to be locked
-        expect(llen(key.primed)).to eq(1)
-        expect(lrange(key.primed, 0, -1)).to match_array([job_id_two])
+        expect(llen(key.primed)).to eq(0)
         expect(exists(key.locked)).to eq(true)
         expect(hexists(key.locked, job_id_two)).to eq(true)
         expect(hexists(key.locked, job_id_one)).to eq(false)
@@ -146,8 +142,7 @@ RSpec.describe "queue.lua", redis: :redis do
         expect(get(key.digest)).to eq(job_id_one)
         expect(llen(key.queued)).to eq(1) # There should be no keys available to be locked
         expect(lrange(key.queued, 0, -1)).to match_array([job_id_one])
-        expect(llen(key.primed)).to eq(1)
-        expect(lrange(key.primed, 0, -1)).to match_array([job_id_two])
+        expect(llen(key.primed)).to eq(0)
         expect(exists(key.locked)).to eq(true)
         expect(hexists(key.locked, job_id_two)).to eq(true)
         expect(hexists(key.locked, job_id_one)).to eq(false)

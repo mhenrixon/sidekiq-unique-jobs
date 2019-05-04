@@ -47,10 +47,10 @@ RSpec.describe "delete.lua", redis: :redis do
     it "deletes keys from Redis" do
       expect { delete }.to change { zcard(key.changelog) }.by(1)
 
-      expect(exists(key.digest)).to eq(false)
-      expect(exists(key.queued)).to eq(false)
-      expect(exists(key.primed)).to eq(false)
-      expect(exists(key.locked)).to eq(false)
+      expect(key.digest).not_to exist
+      expect(key.queued).not_to exist
+      expect(key.primed).not_to exist
+      expect(key.locked).not_to exist
     end
   end
 
@@ -58,8 +58,8 @@ RSpec.describe "delete.lua", redis: :redis do
   context "when locked" do
     before do
       call_script(:queue, key.to_a, argv)
-      brpoplpush(key.queued, key.primed)
-      call_script(:lock, key.to_a, argv)
+      primed_jid = brpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, argv.insert(1, primed_jid))
     end
 
     it "deletes keys from Redis" do

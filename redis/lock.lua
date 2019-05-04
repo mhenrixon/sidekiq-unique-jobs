@@ -5,16 +5,20 @@ local locked    = KEYS[4]
 local changelog = KEYS[5]
 
 local job_id       = ARGV[1]
-local pttl         = tonumber(ARGV[2])
-local lock_type    = ARGV[3]
-local current_time = tonumber(ARGV[4])
-local concurrency  = tonumber(ARGV[5])
+local primed_jid   = ARGV[2]           -- The job_id that was previously primed
+local pttl         = tonumber(ARGV[3])
+local lock_type    = ARGV[4]
+local current_time = tonumber(ARGV[5])
+local limit        = tonumber(ARGV[6])
 
 local locked_count = redis.call('HLEN', locked)
-local within_limit = concurrency > locked_count
+local within_limit = limit > locked_count
 local limit_exceeded = not within_limit
+local verbose = true
+local track   = true
 
 local function log_debug( ... )
+  if verbose == false then return end
   local result = ""
   for i,v in ipairs(arg) do
     result = result .. " " .. tostring(v)
@@ -22,8 +26,9 @@ local function log_debug( ... )
   redis.log(redis.LOG_DEBUG, "lock.lua -" ..  result)
 end
 
-local function log(message, digest, job_id, time, prev_jid)
-  local entry = cjson.encode({digest = digest, job_id = job_id, script = "lock.lua", message = message, time = time, prev_jid = prev_jid })
+local function log(message, prev_jid)
+  if track == false then return end
+  local entry = cjson.encode({digest = digest, job_id = job_id, script = "lock.lua", message = message, time = current_time, prev_jid = prev_jid, primed_jid = primed_jid })
 
   redis.call('ZADD', changelog, current_time, entry);
   redis.call('ZREMRANGEBYSCORE', changelog, '-inf', math.floor(current_time) - 86400000);
@@ -31,10 +36,10 @@ local function log(message, digest, job_id, time, prev_jid)
 end
 
 -- BEGIN lock
-log_debug("BEGIN lock for key:", digest, "with job_id:", job_id)
+log_debug("BEGIN lock digest:", digest, "job_id:", job_id, ", primed_jid:", primed_jid)
 
 if limit_exceeded then
-  log_debug("Limit exceeded:", digest, "(",  locked_count, "of", concurrency, ")")
+  log_debug("Limit exceeded:", digest, "(",  locked_count, "of", limit, ")")
   log("Limit exceeded", digest, job_id, current_time)
   return nil
 end
@@ -45,11 +50,13 @@ if redis.call('HEXISTS', locked, job_id) == 1 then
   return job_id
 end
 
+-- TODO: Verify that we can still obtain the lock
+
 log_debug("HSET", locked, job_id, current_time)
 redis.call('HSET', locked, job_id, current_time)
 
-log_debug("LREM", primed, 1, digest)
-redis.call('LREM', primed, 1, digest)
+log_debug("LREM", primed, 1, job_id)
+redis.call('LREM', primed, 1, job_id)
 
 -- The Sidekiq client should only set pttl for until_expired
 -- The Sidekiq server should set pttl for all other jobs
@@ -67,7 +74,7 @@ if lock_type == 'until_expired' and pttl and pttl > 0 then
   redis.call('PEXPIRE', locked, pttl)
 end
 
-log("Locked successfully", digest, job_id, current_time)
-log_debug("END lock for key:", digest, "with job_id:", job_id)
+log("Locked")
+log_debug("END lock digest:", digest, "job_id:", job_id, ", primed_jid:", primed_jid)
 return job_id
   -- END lock

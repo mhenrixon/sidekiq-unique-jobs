@@ -5,6 +5,8 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Key
+    include Comparable
+
     #
     # @!attribute [r] digest
     #   @return [String] the digest for which keys are created
@@ -37,6 +39,22 @@ module SidekiqUniqueJobs
       @primed    = suffixed_key("PRIMED")
       @locked    = suffixed_key("LOCKED")
       @changelog = "unique:changelog"
+    end
+
+    def to_s
+      digest
+    end
+
+    def inspect
+      digest
+    end
+
+    def ==(other)
+      digest == other.digest
+    end
+
+    def <=>(other)
+      digest <=> other.digest
     end
 
     #

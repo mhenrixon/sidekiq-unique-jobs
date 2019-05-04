@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller, redis: :redis do
   it { is_expected.to respond_to(:call_script).with(3).arguments }
 
   describe ".call_script" do
-    subject(:call_script) { described_class.call(script_name, nil, options) }
+    subject(:call_script) { described_class.call_script(script_name, options[:keys], options[:argv]) }
 
     let(:jid)           { "abcefab" }
     let(:unique_key)    { "uniquejobs:abcefab" }
@@ -18,33 +18,14 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller, redis: :redis do
     let(:script_name)   { :acquire_lock }
     let(:error_message) { "Some interesting error" }
 
-    context "when conn.evalsha raises Redis::CommandError" do
-      before do
-        call_count = 0
-        allow(described_class).to receive(:execute_script).with(script_name, nil, options) do
-          call_count += 1
-          (call_count == 1) ? raise(Redis::CommandError, error_message) : 1
-        end
-      end
+    before do
+      allow(SidekiqUniqueJobs::Script).to receive(:call).with(script_name, nil, keys: options[:keys], argv: options[:argv])
+    end
 
-      specify do
-        expect(described_class::SCRIPT_SHAS).not_to receive(:delete).with(script_name)
-        expect(described_class).to receive(:execute_script).with(script_name, nil, options).once
-        expect { call }.to raise_error(
-          SidekiqUniqueJobs::ScriptError,
-          "Problem compiling #{script_name}.lua - message: Some interesting error",
-        )
-      end
+    it "delegates to Script.call" do
+      call_script
 
-      context "when error message is No matching script" do
-        let(:error_message) { "NOSCRIPT No matching script. Please use EVAL." }
-
-        specify do
-          expect(described_class::SCRIPT_SHAS).to receive(:delete).with(script_name)
-          expect(described_class).to receive(:execute_script).with(script_name, nil, options).twice
-          expect { call }.not_to raise_error
-        end
-      end
+      expect(SidekiqUniqueJobs::Script).to have_received(:call).with(script_name, nil, keys: options[:keys], argv: options[:argv])
     end
   end
 end
