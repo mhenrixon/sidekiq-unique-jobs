@@ -51,11 +51,11 @@ The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by cr
 
 ## Documentation
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: [v5.0.10][]
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
 
 Below are links to the latest major versions (4 & 5):
 
-- [v5.0.10][]
+- [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
 - [v4.0.18][]
 
 ## Requirements
