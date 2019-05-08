@@ -17,6 +17,7 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Timing
+    include SidekiqUniqueJobs::Script::Caller
     extend self
 
     # Return unique digests matching pattern
@@ -26,11 +27,7 @@ module SidekiqUniqueJobs
     # @return [Array<String>] with unique digests
     def all(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
       redis do |conn|
-        results = conn.scan_each(match: prefix(pattern), count: count).to_a
-        results.map do |key|
-          next if SUFFIXES.any? { |s| key.end_with?(s) }
-          key
-        end.compact
+        conn.zscan_each(SidekiqUniqueJobs::DIGESTS_ZSET, match: prefix(pattern), count: count).to_a
       end
     end
 
@@ -44,11 +41,11 @@ module SidekiqUniqueJobs
     def page(pattern: SCAN_PATTERN, cursor: 0, page_size: 100)
       redis do |conn|
         total_size, digests = conn.multi do
-          conn.keys(prefix(pattern))
-          conn.scan(cursor, match: prefix(pattern), count: page_size)
+          conn.zcard(SidekiqUniqueJobs::DIGESTS_ZSET)
+          conn.zscan(SidekiqUniqueJobs::DIGESTS_ZSET, cursor, match: prefix(pattern), count: page_size)
         end
 
-        [total_size.size, digests[0], digests[1]]
+        [total_size, digests[0], digests[1]]
       end
     end
 
@@ -56,7 +53,7 @@ module SidekiqUniqueJobs
     #
     # @return [Integer] number of digests
     def count
-      redis { |conn| conn.keys(prefix("*[^:]")) }
+      redis { |conn| conn.zcard(SidekiqUniqueJobs::DIGESTS_ZSET) }
     end
 
     # Deletes unique digest either by a digest or pattern
@@ -80,12 +77,6 @@ module SidekiqUniqueJobs
       return key if key.start_with?("#{unique_prefix}:")
 
       "#{unique_prefix}:#{key}"
-    end
-
-    def suffix(key)
-      return "#{key}*" unless key.end_with?(":*")
-
-      key
     end
 
     def unique_prefix
@@ -115,7 +106,7 @@ module SidekiqUniqueJobs
     # @param [String] digest a unique digest to delete
     def delete_by_digest(digest)
       result, elapsed = timed do
-        Script.call(:delete_by_digest, nil, keys: [digest], argv: [current_time])
+        call_script(:delete_by_digest, [digest, digest_zset])
       end
 
       log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
@@ -123,12 +114,17 @@ module SidekiqUniqueJobs
       result
     end
 
+    def digest_zset
+      SidekiqUniqueJobs::DIGESTS_ZSET
+    end
+
     def batch_delete(digests) # rubocop:disable Metrics/MethodLength
       redis do |conn|
         digests.each_slice(CHUNK_SIZE) do |chunk|
           conn.pipelined do
             chunk.each do |digest|
-              conn.del digest
+              conn.del(digest)
+              conn.zrem(digest_zset, digest)
               conn.del("#{digest}:QUEUED")
               conn.del("#{digest}:PRIMED")
               conn.del("#{digest}:LOCKED")

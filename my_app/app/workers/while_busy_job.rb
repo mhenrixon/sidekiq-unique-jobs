@@ -1,10 +1,10 @@
-class WhileExecutingJob
+class WhileBusyJob
   include Sidekiq::Worker
 
   sidekiq_options lock: :while_executing,
                   lock_timeout: nil,
                   lock_expiration: nil,
-                  lock_limit: 3,
+                  lock_limit: 1,
                   on_conflict: :reschedule
 
   def perform

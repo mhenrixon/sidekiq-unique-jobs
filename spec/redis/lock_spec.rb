@@ -4,18 +4,12 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "lock.lua", redis: :redis do
-  subject(:lock) { call_script(:lock, key.to_a, argv) }
+  subject(:lock) { call_script(:lock, key.to_a, argv_one) }
 
-  let(:argv) do
-    [
-      job_id_one,
-      primed_jid_one,
-      lock_ttl,
-      lock_type,
-      current_time,
-      concurrency,
-    ]
-  end
+  let(:argv)           { [job_id_one, lock_ttl, lock_type, lock_limit] }
+  let(:argv_one)       { [job_id_one, lock_ttl, lock_type, lock_limit] }
+  let(:argv_two)       { [job_id_two, lock_ttl, lock_type, lock_limit] }
+
   let(:job_id_one)     { "job_id_one" }
   let(:job_id_two)     { "job_id_two" }
   let(:primed_jid_one) { rpoplpush(key.queued, key.primed) }
@@ -26,7 +20,7 @@ RSpec.describe "lock.lua", redis: :redis do
   let(:lock_ttl)       { nil }
   let(:locked_jid)     { job_id_one }
   let(:current_time)   { SidekiqUniqueJobs::Timing.current_time }
-  let(:concurrency)    { 1 }
+  let(:lock_limit)    { 1 }
 
   module SidekiqUniqueJobs
     class Redis
@@ -50,10 +44,6 @@ RSpec.describe "lock.lua", redis: :redis do
 
         def ttl
           ttl(key)
-        end
-
-        def phave_ttl?(expected_pttl)
-          (expected_pttl - 20)...(expected_pttl + 20).cover?(pttl(key))
         end
       end
 
@@ -96,13 +86,23 @@ RSpec.describe "lock.lua", redis: :redis do
         end
       end
 
-
       class Lock
         attr_reader :key
 
         def new(key)
           raise ArgumentError, "key is not a SidekiqUniqueJobs::Key" unless key.is_a?(SidekiqUniqueJobs::Key)
           @key = key
+        end
+
+        def all_jids
+          multi do
+            lrange(key.queued, 0, -1)
+            lrange(key.primed, 0, -1)
+            hkeys(grabbed_key)
+          end.flatten
+        end
+
+        def jids
         end
 
         def digest_key
@@ -142,13 +142,13 @@ RSpec.describe "lock.lua", redis: :redis do
       expect(exists(key.queued)).to eq(false)
       expect(exists(key.primed)).to eq(false)
       expect(exists(key.locked)).to eq(true)
-      expect(hget(key.locked, job_id_one).to_f).to be_within(0.1).of(current_time)
+      expect(hget(key.locked, job_id_one).to_f).to be_within(0.5).of(current_time)
     end
   end
 
   context "when queued" do
     before do
-      call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, argv_one)
     end
 
     it "updates Redis correctly" do
@@ -157,9 +157,9 @@ RSpec.describe "lock.lua", redis: :redis do
       expect(lock).to eq(job_id_one)
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
-      expect(llen(key.queued)).to eq(0)
+      expect(llen(key.queued)).to eq(1)
       expect(llen(key.primed)).to eq(0)
-      expect(exists(key.queued)).to eq(false)
+      expect(exists(key.queued)).to eq(true)
       expect(exists(key.primed)).to eq(false)
       expect(exists(key.locked)).to eq(true)
     end
@@ -167,7 +167,7 @@ RSpec.describe "lock.lua", redis: :redis do
 
   context "when primed" do
     before do
-      call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, argv_one)
       primed_jid_one
     end
 
@@ -186,11 +186,11 @@ RSpec.describe "lock.lua", redis: :redis do
   end
 
   context "when locked by another job" do
-    context "with concurrency 1" do
+    context "with lock_limit 1" do
       before do
-        call_script(:queue, key.to_a, [job_id_two, lock_ttl, lock_type, current_time, concurrency])
+        call_script(:queue, key.to_a, argv_two)
         primed_jid_two
-        call_script(:lock, key.to_a, [job_id_two, primed_jid_two, lock_ttl, lock_type, current_time, concurrency])
+        call_script(:lock, key.to_a, argv_two)
       end
 
       it "updates Redis correctly" do
@@ -207,15 +207,15 @@ RSpec.describe "lock.lua", redis: :redis do
       end
     end
 
-    context "with concurrency 2" do
-      let(:concurrency) { 2 }
+    context "with lock_limit 2" do
+      let(:lock_limit) { 2 }
 
       before do
-        call_script(:queue, key.to_a, [job_id_two, lock_ttl, lock_type, current_time, concurrency])
+        call_script(:queue, key.to_a, argv_two)
         primed_jid_two
-        call_script(:lock, key.to_a, [job_id_two, primed_jid_two, lock_ttl, lock_type, current_time, concurrency])
+        call_script(:lock, key.to_a, argv_two)
 
-        call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+        call_script(:queue, key.to_a, argv_one)
         primed_jid_one
       end
 
@@ -230,15 +230,14 @@ RSpec.describe "lock.lua", redis: :redis do
         expect(exists(key.primed)).to eq(false)
         expect(exists(key.locked)).to eq(true)
         expect(hlen(key.locked)).to eq(2)
-        expect(hget(key.locked, job_id_two).to_f).to be_within(0.1).of(current_time)
-        expect(hget(key.locked, job_id_one).to_f).to be_within(0.1).of(current_time)
+        expect(hget(key.locked, job_id_two).to_f).to be_within(0.2).of(current_time)
       end
     end
   end
 
   context "when locked by same job" do
     before do
-      call_script(:queue, key.to_a, [job_id_one, lock_ttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, argv_one)
       primed_jid_one
 
       hset(key.locked, job_id_one, current_time)
@@ -247,7 +246,7 @@ RSpec.describe "lock.lua", redis: :redis do
     it "updates Redis correctly" do
       expect { lock }.to change { zcard(key.changelog) }.by(1)
 
-      expect(lock).to eq(nil)
+      expect(lock).to eq(job_id_one)
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
       expect(llen(key.queued)).to eq(0)

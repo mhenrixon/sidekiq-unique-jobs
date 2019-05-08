@@ -12,18 +12,17 @@ RSpec.describe "queue.lua", redis: :redis do
       job_id_one,
       lock_pttl,
       lock_type,
-      current_time,
-      concurrency,
+      lock_limit,
     ]
   end
-  let(:digest)       { "uniquejobs:digest" }
-  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
-  let(:job_id_one)   { "job_id_one" }
-  let(:job_id_two)   { "job_id_two" }
-  let(:lock_type)    { :until_executed }
-  let(:lock_pttl)    { nil }
-  let(:locked_jid)   { job_id }
-  let(:concurrency)  { 1 }
+  let(:digest)     { "uniquejobs:digest" }
+  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
+  let(:job_id_one) { "job_id_one" }
+  let(:job_id_two) { "job_id_two" }
+  let(:lock_type)  { :until_executed }
+  let(:lock_pttl)  { nil }
+  let(:locked_jid) { job_id }
+  let(:lock_limit) { 1 }
   let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
 
   before do
@@ -42,6 +41,9 @@ RSpec.describe "queue.lua", redis: :redis do
       expect(exists(key.locked)).to eq(false)
     end
 
+    context "when SidekiqUniqueJobs.config" do
+    end
+
     context "when lock_type is :until_expired" do
       let(:lock_type) { :until_expired }
       let(:lock_pttl) { 10 * 1000 }
@@ -55,11 +57,11 @@ RSpec.describe "queue.lua", redis: :redis do
 
   context "when queued by another job_id" do
     before do
-      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit])
     end
 
-    context "with concurrency 1" do
-      let(:concurrency) { 1 }
+    context "with lock_limit 1" do
+      let(:lock_limit) { 1 }
 
       it "stores the right keys in redis" do
         expect { queue }.to change { zcard(key.changelog) }.by(1)
@@ -75,8 +77,8 @@ RSpec.describe "queue.lua", redis: :redis do
       end
     end
 
-    context "with concurrency 2" do
-      let(:concurrency) { 2 }
+    context "with lock_limit 2" do
+      let(:lock_limit) { 2 }
       it "stores the right keys in redis" do
         expect { queue }.to change { zcard(key.changelog) }.by(1)
 
@@ -94,7 +96,7 @@ RSpec.describe "queue.lua", redis: :redis do
 
   context "when queued by same job_id" do
     before do
-      call_script(:queue, key.to_a, [job_id_one, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, [job_id_one, lock_pttl, lock_type, lock_limit])
     end
 
     it "stores the right keys in redis" do
@@ -113,12 +115,12 @@ RSpec.describe "queue.lua", redis: :redis do
 
   context "when primed by another job_id" do
     before do
-      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit])
       primed_jid = rpoplpush(key.queued, key.primed)
-      call_script(:lock, key.to_a, [job_id_two, primed_jid, lock_pttl, lock_type, current_time, concurrency])
+      call_script(:lock, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit])
     end
 
-    context "with concurrency 1" do
+    context "with lock_limit 1" do
       it "stores the right keys in redis" do
         expect { queue }.to change { zcard(key.changelog) }.by(1)
 
@@ -132,8 +134,8 @@ RSpec.describe "queue.lua", redis: :redis do
       end
     end
 
-    context "with concurrency 2" do
-      let(:concurrency) { 2 }
+    context "with lock_limit 2" do
+      let(:lock_limit) { 2 }
 
       it "stores the right keys in redis" do
         expect { queue }.to change { zcard(key.changelog) }.by(1)

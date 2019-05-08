@@ -1,41 +1,39 @@
+-------- BEGIN keys ---------
 local digest    = KEYS[1]
 local queued    = KEYS[2]
 local primed    = KEYS[3]
 local locked    = KEYS[4]
 local changelog = KEYS[5]
+-------- END keys ---------
 
-local job_id       = ARGV[1]
+
+-------- BEGIN lock arguments ---------
+local job_id       = ARGV[1]      -- The job_id that was previously primed
 local pttl         = tonumber(ARGV[2])
 local lock_type    = ARGV[3]
-local current_time = tonumber(ARGV[4])
-local limit        = tonumber(ARGV[5])
+local limit        = tonumber(ARGV[4])
+-------- END lock arguments -----------
+
+
+--------  BEGIN injected arguments --------
+local current_time = tonumber(ARGV[5])
+local verbose      = ARGV[6] == "true"
+local max_history  = tonumber(ARGV[7])
+local script_name  = "queue.lua"
+---------  END injected arguments ---------
 
 local queued_count = redis.call('LLEN', queued)
 local locked_count = redis.call('HLEN', locked)
 local within_limit = limit > locked_count
 local limit_exceeded = not within_limit
-local verbose = true
-local track   = true
 
-local function log_debug( ... )
-  if verbose == false then return end
-  local result = ""
-  for i,v in ipairs(arg) do
-    result = result .. " " .. tostring(v)
-  end
-  redis.log(redis.LOG_DEBUG, "queue.lua -" ..  result)
-end
 
-local function log(message, prev_jid)
-  if track == false then return end
-  local entry = cjson.encode({digest = digest, job_id = job_id, script = "queue.lua", message = message, time = current_time, prev_jid = prev_jid })
+--------  BEGIN local functions --------
+<%= include_partial 'shared/_common.lua' %>
+----------  END local functions ----------
 
-  redis.call('ZADD', changelog, current_time, entry);
-  redis.call('ZREMRANGEBYSCORE', changelog, '-inf', math.floor(current_time) - 86400000);
-  redis.call('PUBLISH', changelog, entry);
-end
 
--- BEGIN lock
+--------  BEGIN queue.lua --------
 log_debug("BEGIN queue with key:", digest, "for job:", job_id)
 
 if redis.call('HEXISTS', locked, job_id) == 1 then
@@ -85,4 +83,4 @@ end
 log("Queued")
 log_debug("END queue with key:", digest, "for job:", job_id)
 return job_id
--- END lock
+--------  END queue.lua --------

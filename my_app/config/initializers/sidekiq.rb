@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-
 Sidekiq.default_worker_options = {
   backtrace: true,
   retry: false,
 }
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV['REDIS_URL'] }
+  config.redis = { url: ENV['REDIS_URL'], driver: :hiredis }
   config.error_handlers << Proc.new {|ex,ctx_hash| p ex, ctx_hash }
 
   config.death_handlers << ->(job, _ex) do
@@ -27,7 +26,7 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV['REDIS_URL'] }
+  config.redis = { url: ENV['REDIS_URL'], driver: :hiredis }
   # accepts :expiration (optional)
   # Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
 end

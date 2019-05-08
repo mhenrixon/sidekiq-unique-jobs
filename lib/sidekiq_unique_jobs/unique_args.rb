@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
   class UniqueArgs
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::SidekiqWorkerMethods
+    include SidekiqUniqueJobs::JSON
 
     # Convenience method for returning a digest
     # @param [Hash] item a Sidekiq job hash
@@ -47,7 +48,7 @@ module SidekiqUniqueJobs
     # Creates a namespaced unique digest based on the {#digestable_hash} and the {#unique_prefix}
     # @return [String] a unique digest
     def create_digest
-      digest = Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
+      digest = Digest::MD5.hexdigest(dump_json(digestable_hash))
       "#{unique_prefix}:#{digest}"
     end
 

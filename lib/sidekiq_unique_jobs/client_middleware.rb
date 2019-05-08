@@ -46,7 +46,7 @@ module SidekiqUniqueJobs
     def warn_about_duplicate
       return unless log_duplicate_payload?
 
-      log_warn "Already locked with another job_id (#{Sidekiq.dump_json(item)})"
+      log_warn "Already locked with another job_id (#{dump_json(item)})"
     end
   end
 end

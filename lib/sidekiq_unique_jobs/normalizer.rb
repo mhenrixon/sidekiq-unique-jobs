@@ -7,11 +7,13 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Normalizer
+    extend SidekiqUniqueJobs::JSON
+
     # Changes hash to a json compatible hash
     # @param [Hash] args
     # @return [Hash] a json compatible hash
     def self.jsonify(args)
-      Sidekiq.load_json(Sidekiq.dump_json(args))
+      load_json(dump_json(args))
     end
   end
 end

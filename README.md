@@ -91,8 +91,9 @@ class WhileExecutingWorker
   sidekiq_options lock: :while_executing
 
   def perform(id)
-    puts id
+    puts "Hello"
     sleep 1
+    puts "Bye"
   end
 end
 ```

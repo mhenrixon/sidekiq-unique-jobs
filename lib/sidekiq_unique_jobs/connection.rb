@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "docile"
-
 module SidekiqUniqueJobs
   # Shared module for dealing with redis connections
   #

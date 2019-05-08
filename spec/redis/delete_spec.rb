@@ -4,24 +4,23 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "delete.lua", redis: :redis do
-  subject(:delete) { call_script(:delete, key.to_a, [job_id, current_time]) }
+  subject(:delete) { call_script(:delete, key.to_a, argv) }
 
   let(:argv) do
     [
       job_id,
       lock_ttl,
       lock_type,
-      current_time,
-      concurrency,
+      lock_limit,
     ]
   end
-  let(:job_id)      { "jobid" }
-  let(:lock_type)   { :until_executed }
-  let(:digest)      { "uniquejobs:digest" }
-  let(:key)         { SidekiqUniqueJobs::Key.new(digest) }
-  let(:lock_ttl)    { nil }
-  let(:locked_jid)  { job_id }
-  let(:concurrency) { 1 }
+  let(:job_id)     { "jobid" }
+  let(:lock_type)  { :until_executed }
+  let(:digest)     { "uniquejobs:digest" }
+  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
+  let(:lock_ttl)   { nil }
+  let(:locked_jid) { job_id }
+  let(:lock_limit) { 1 }
 
   context "when queued" do
     before do
@@ -59,7 +58,7 @@ RSpec.describe "delete.lua", redis: :redis do
     before do
       call_script(:queue, key.to_a, argv)
       primed_jid = brpoplpush(key.queued, key.primed)
-      call_script(:lock, key.to_a, argv.insert(1, primed_jid))
+      call_script(:lock, key.to_a, argv)
     end
 
     it "deletes keys from Redis" do

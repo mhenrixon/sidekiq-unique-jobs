@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_debug(message_or_exception = nil, &block)
       logger.debug(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at info level
@@ -24,6 +25,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_info(message_or_exception = nil, &block)
       logger.info(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at warn level
@@ -32,6 +34,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_warn(message_or_exception = nil, &block)
       logger.warn(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at error level
@@ -40,6 +43,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_error(message_or_exception = nil, &block)
       logger.error(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at fatal level
@@ -48,6 +52,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_fatal(message_or_exception = nil, &block)
       logger.fatal(message_or_exception, &block)
+      nil
     end
   end
 end

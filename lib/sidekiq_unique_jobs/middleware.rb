@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
       base.class_eval do
         include SidekiqUniqueJobs::Logging
         include SidekiqUniqueJobs::OptionsWithFallback
+        include SidekiqUniqueJobs::JSON
       end
     end
 
@@ -88,7 +89,7 @@ module SidekiqUniqueJobs
       if defined?(Sidekiq::Logging)
         "#{middleware} #{"DIG-#{digest}" if digest}"
       else
-        { gem: "sidekiq-unique-jobs", middleware: middleware, digest: digest }
+        { "uniquejobs" => "#{middleware}", lock_type => digest }
       end
     end
   end

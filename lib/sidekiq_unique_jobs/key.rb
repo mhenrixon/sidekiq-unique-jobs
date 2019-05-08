@@ -27,6 +27,10 @@ module SidekiqUniqueJobs
     # @!attribute [r] changelog
     #   @return [String] the zset with changelog entries
     attr_reader :changelog
+    #
+    # @!attribute [r] digests
+    #   @return [String] the zset with locked digests
+    attr_reader :digests
 
     #
     # Initialize a new Key
@@ -38,7 +42,8 @@ module SidekiqUniqueJobs
       @queued    = suffixed_key("QUEUED")
       @primed    = suffixed_key("PRIMED")
       @locked    = suffixed_key("LOCKED")
-      @changelog = "unique:changelog"
+      @changelog = SidekiqUniqueJobs::CHANGELOG_ZSET
+      @digests   = SidekiqUniqueJobs::DIGESTS_ZSET
     end
 
     def to_s
@@ -63,7 +68,7 @@ module SidekiqUniqueJobs
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [digest, queued, primed, locked, changelog]
+      [digest, queued, primed, locked, changelog, digests]
     end
 
     private

@@ -1,49 +1,46 @@
+-------- BEGIN keys ---------
 local digest    = KEYS[1]
 local queued    = KEYS[2]
 local primed    = KEYS[3]
 local locked    = KEYS[4]
 local changelog = KEYS[5]
+local digests   = KEYS[6]
+-------- END keys ---------
 
+
+-------- BEGIN lock arguments ---------
 local job_id       = ARGV[1]
-local current_time = ARGV[2]
-local verbose = false
-local track   = true
-
-local function log_debug( ... )
-  if verbose == false then return end
-  local result = ""
-  for i,v in ipairs(arg) do
-    result = result .. " " .. tostring(v)
-  end
-  redis.log(redis.LOG_DEBUG, "delete.lua -" ..  result)
-end
-
-local function log(message)
-  if track == false then return end
-  local entry = cjson.encode({digest = digest, job_id = job_id, script = "delete.lua", message = message, time = current_time })
-
-  log_debug('ZADD', changelog, current_time, entry);
-  redis.call('ZADD', changelog, current_time, entry);
-  redis.call('ZREMRANGEBYSCORE', changelog, '-inf', math.floor(current_time) - 86400000);
-  redis.call('PUBLISH', changelog, entry);
-end
-
-log_debug("BEGIN delete keys for:", digest)
-
-log_debug("DEL", digest)
-redis.call('DEL', digest)
-
-log_debug("DEL", queued)
-redis.call('DEL', queued)
-
-log_debug("DEL", primed)
-redis.call('DEL', primed)
-
-log_debug("DEL", locked)
-redis.call('DEL', locked)
+local pttl         = tonumber(ARGV[2])
+local lock_type    = ARGV[3]
+local limit        = tonumber(ARGV[4])
+-------- END lock arguments -----------
 
 
-log("Deleted")
-log_debug("END delete keys for:", digest)
+--------  BEGIN injected arguments --------
+local current_time = tonumber(ARGV[5])
+local verbose      = ARGV[6] == "true"
+local max_history  = tonumber(ARGV[7])
+local script_name  = "delete.lua"
+---------  END injected arguments ---------
+
+
+--------  BEGIN local functions --------
+<%= include_partial 'shared/_common.lua' %>
+----------  END local functions ----------
+
+
+--------  BEGIN delete.lua --------
+log_debug("BEGIN delete ", digest)
+
+log_debug("DEL", digest, queued, primed, locked)
+local del_count = redis.call('DEL', digest, queued, primed, locked)
+
+log_debug('ZREM', digests, digest)
+redis.call('ZREM', digests, digest)
+
+
+log("Deleted (" .. del_count .. ") keys")
+log_debug("END delete (" .. del_count .. ") keys for:", digest)
 
 return 1
+--------  END delete.lua --------

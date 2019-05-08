@@ -4,16 +4,9 @@ require "spec_helper"
 
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe "unlock.lua", redis: :redis do
-  subject(:unlock) { call_script(:unlock, key.to_a, [job_id_one, lock_ttl, lock_type, current_time]) }
+  subject(:unlock) { call_script(:unlock, key.to_a, argv) }
 
-  let(:argv) do
-    [
-      job_id_one,
-      lock_ttl,
-      lock_type,
-      current_time,
-    ]
-  end
+  let(:argv)         { [job_id_one, lock_ttl, lock_type, lock_limit] }
   let(:job_id_one)   { "job_id_one" }
   let(:job_id_two)   { "job_id_two" }
   let(:lock_type)    { :until_executed }
@@ -21,8 +14,7 @@ RSpec.describe "unlock.lua", redis: :redis do
   let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
   let(:lock_ttl)     { nil }
   let(:locked_jid)   { job_id }
-  let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
-  let(:concurrency)  { 1 }
+  let(:lock_limit)   { 1 }
 
   context "when unlocked" do
     it "succeedes without crashing" do
@@ -35,9 +27,9 @@ RSpec.describe "unlock.lua", redis: :redis do
     let(:locked_jid)   { "anotherjobid" }
 
     before do
-      call_script(:queue, key.to_a, [job_id_two, lock_ttl, lock_type, current_time, concurrency])
+      call_script(:queue, key.to_a, argv)
       primed_jid = rpoplpush(key.queued, key.primed)
-      call_script(:lock, key.to_a, [job_id_two, primed_jid, lock_ttl, lock_type, current_time, concurrency])
+      call_script(:lock, key.to_a, argv)
     end
 
     it "does not unlock" do
@@ -49,7 +41,7 @@ RSpec.describe "unlock.lua", redis: :redis do
     let(:locked_jid) { job_id }
 
     before do
-      call_script(:lock, keys: key.to_a, argv: argv)
+      call_script(:lock, key.to_a, argv)
       unlock
     end
   end

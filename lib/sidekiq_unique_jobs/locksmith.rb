@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "concurrent/future"
+
 module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
@@ -28,35 +30,30 @@ module SidekiqUniqueJobs
     #
     def initialize(item, redis_pool = nil)
       @key           = Key.new(item[UNIQUE_DIGEST_KEY])
-      @jid           = item[JID_KEY]
-      @ttl           = item[LOCK_EXPIRATION_KEY].to_i * 1000
-      @timeout       = item[LOCK_TIMEOUT_KEY]
+      @job_id        = item[JID_KEY]
+      @pttl          = item[LOCK_EXPIRATION_KEY].to_i * 1000
+      @timeout       = item.fetch(LOCK_TIMEOUT_KEY) { 0 }
       @type          = item[LOCK_KEY]
       @type        &&= @type.to_sym
       @redis_pool    = redis_pool
       @limit         = item[LOCK_LIMIT_KEY] || 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @retry_count   = item[LOCK_RETRY_COUNT_KEY] || DEFAULT_RETRY_COUNT
-      @retry_delay   = item[LOCK_RETRY_DELAY_KEY] || DEFAULT_RETRY_DELAY
-      @retry_jitter  = item[LOCK_RETRY_JITTER_KEY] || DEFAULT_RETRY_JITTER
-      @extend        = item["lock_extend"]
-      @extend_owned  = item["lock_extend_owned"]
     end
 
     #
-    # Deletes the lock unless it has a ttl set
+    # Deletes the lock unless it has a pttl set
     #
     #
     def delete
-      return if ttl.positive?
+      return if pttl.positive?
 
       delete! > 0
     end
 
     #
-    # Deletes the lock regardless of if it has a ttl set
+    # Deletes the lock regardless of if it has a pttl set
     #
     def delete!
-      call_script(:delete, key.to_a, [jid, current_time])
+      call_script(:delete, key.to_a, [job_id])
     end
 
     #
@@ -65,23 +62,23 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock
-      queued_token = enqueue_lock
-      log_debug("#{__method__} queued_token: #{queued_token}")
-      return unless queued_token == jid
+      log_debug("Entered Locksmith##{__method__}")
+      redis(redis_pool) do |conn|
+        lock_async(conn) do
+          unless block_given?
+            log_debug("Returning from Locksmith##{__method__}")
+            return job_id
+          end
 
-      obtain(queued_token) do |locked_token|
-        if block_given?
           begin
-            return yield locked_token if locked_token == jid
+            log_debug("Yielding from Locksmith##{__method__}")
+            return yield job_id
           ensure
-            unlock
+            unlock!(conn)
           end
         end
-
-        locked_token if locked_token == jid
       end
     end
-    alias wait lock
 
     #
     # Removes the lock keys from Redis if locked by the provided jid/token
@@ -89,10 +86,10 @@ module SidekiqUniqueJobs
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     #
-    def unlock
-      return false unless locked?
+    def unlock(conn = nil)
+      return false unless locked?(conn)
 
-      unlock!
+      unlock!(conn)
     end
 
     #
@@ -101,80 +98,92 @@ module SidekiqUniqueJobs
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     #
-    def unlock!
-      call_script(:unlock, key.to_a, [jid, ttl, type, current_time, limit])
+    def unlock!(conn = nil)
+      log_debug("Entered Locksmith##{__method__}")
+      call_script(:unlock, key.to_a, [job_id, pttl, type, limit], conn)
     end
 
     # Checks if this instance is considered locked
     #
     # @return [true, false] true when the grabbed token contains the job_id
     #
-    def locked?
-      call_script(:locked, key.to_a, [jid]) > 0
+    def locked?(conn = nil)
+      check_if_locked(conn)
     end
 
-    def to_s
-      "Locksmith(digest=#{key} job_id=#{jid})"
-    end
+    # def to_s
+    #   "Locksmith##{object_id}(digest=#{key} job_id=#{job_id})"
+    # end
 
     def inspect
       to_s
     end
 
     def ==(other)
-      key == other.key && jid == other.jid
+      key == other.key && job_id == other.job_id
     end
 
     def <=>(other)
-      key <=> other.key && jid <=> other.jid
+      key <=> other.key && job_id <=> other.job_id
     end
 
     private
 
-    attr_reader :key, :ttl, :jid, :redis_pool, :type, :timeout, :limit
+    attr_reader :key, :pttl, :job_id, :redis_pool, :type, :timeout, :limit
 
-    def enqueue_lock
-      locked_jid, time_elapsed = timed do
-        call_script(:queue, key.to_a, [jid, ttl, type, current_time, limit])
+    def lock_async(conn)
+      log_debug("Entered Locksmith##{__method__}")
+
+      future = Concurrent::Future.execute(executor: :fast) do
+        wait_for_primed_token(conn)
+      end
+      enqueue(conn) do
+        future.wait
+        call_script(:lock, key.to_a, [job_id, pttl, type, limit], conn)
       end
 
-      validity = ttl.to_i - time_elapsed - drift
-
-      return unless locked_jid == jid
-      return unless validity >= 0 || ttl.zero?
-
-      locked_jid
+      yield if locked?(conn)
     end
 
-    def obtain(queued_token)
-      log_debug("#{__method__} queued_token: #{queued_token}")
-      return yield jid if locked?
-
-      return unless (primed_token = pop_token)
-      log_debug("#{__method__} primed_token: #{primed_token}")
-
-      locked_token = call_script(:lock, key.to_a, [jid, primed_token, ttl, type, current_time, limit])
-      log_debug("#{__method__} locked_token: #{locked_token}")
-
-      return yield locked_token if locked_token
+    def check_if_locked(conn = nil)
+      log_debug("Entered Locksmith##{__method__}")
+      call_script(:locked, key.to_a, [job_id], conn) > 0
     end
 
-    def pop_token
-      return jid if locked?
+    def wait_for_primed_token(conn = nil)
+      log_debug("Entered Locksmith##{__method__}")
+
       primed_token, elapsed = timed do
-        redis do |conn|
-          if timeout.nil? || timeout.positive?
-            # passing timeout 0 to brpoplpush causes it to block indefinitely
-            conn.brpoplpush(key.queued, key.primed, timeout || 0)
-          else
-            conn.rpoplpush(key.queued, key.primed)
-          end
+        if timeout.nil? || timeout.positive?
+          # passing timeout 0 to brpoplpush causes it to block indefinitely
+          conn.brpoplpush(key.queued, key.primed, timeout || 0)
+        else
+          conn.rpoplpush(key.queued, key.primed)
         end
       end
 
       # TODO: Collect metrics and stats
-      log_debug("Waited #{elapsed}ms for #{primed_token} to be released (digest: #{key.digest}, job_id: #{jid})")
+      log_debug("Waited #{elapsed}ms for #{primed_token} to be released (digest: #{key.digest}, job_id: #{job_id})")
       primed_token
+    end
+
+    def obtain(conn = nil)
+
+    end
+
+    def enqueue(conn)
+      log_debug("Entered Locksmith##{__method__}")
+
+      queued_token, elapsed = timed do
+        call_script(:queue, key.to_a, [job_id, pttl, type, limit], conn)
+      end
+
+      validity = pttl.to_i - elapsed - drift(pttl)
+
+      return yield queued_token if validity >= 0 || pttl.zero?
+
+      log_debug("Locksmith##{__method__} - Not valid anymore (queued_token: #{queued_token}, job_id: #{job_id})")
+      nil
     end
 
     def try_lock
@@ -194,11 +203,11 @@ module SidekiqUniqueJobs
       (@retry_delay + rand(@retry_jitter)).to_f / 1000
     end
 
-    def drift
+    def drift(val)
       # Add 2 milliseconds to the drift to account for Redis expires
       # precision, which is 1 millisecond, plus 1 millisecond min drift
       # for small TTLs.
-      (ttl * CLOCK_DRIFT_FACTOR).to_i + 2
+      (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
 end

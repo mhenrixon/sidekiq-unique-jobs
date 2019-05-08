@@ -27,6 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       expect(unique_keys.size).to eq(2)
 
       unlock
+
       expect(unique_keys.size).to eq(2)
       expect(ttl(digest)).to eq(7200)
     end
@@ -43,6 +44,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
 
       delete
 
+      # This lock has expiration so won't be unlocked
       expect(unique_keys.size).to eq(2)
     end
   end

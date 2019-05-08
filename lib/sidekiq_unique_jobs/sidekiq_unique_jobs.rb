@@ -6,6 +6,7 @@
 # @author Mikael Henriksson <mikael@zoolutions.se>
 module SidekiqUniqueJobs
   include SidekiqUniqueJobs::Connection
+  extend SidekiqUniqueJobs::JSON
 
   module_function
 

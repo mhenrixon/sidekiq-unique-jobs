@@ -38,13 +38,14 @@ module SidekiqUniqueJobs
 
       # Delete the job from either schedule, retry or the queue
       def delete_job_by_digest
-        call_script(:delete_job_by_digest, nil,
-                    keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET], argv: [unique_digest])
+        keys = ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET]
+        argv = [unique_digest]
+        call_script(:delete_job_by_digest, keys, argv)
       end
 
       # Delete the keys belonging to the job
       def delete_lock
-        Script.call(:delete_by_digest, nil, keys: [UNIQUE_SET, unique_digest])
+        call_script(:delete_by_digest, [unique_digest, DIGESTS_ZSET])
       end
     end
   end

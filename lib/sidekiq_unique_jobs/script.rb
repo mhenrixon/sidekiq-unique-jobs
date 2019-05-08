@@ -9,6 +9,27 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Script
+    class TemplateContext
+      def initialize(script_path)
+        @script_path = script_path
+      end
+
+      def template(pathname)
+        @partial_templates ||= {}
+        ERB.new(File.read(pathname)).result binding
+      end
+
+      # helper method to include a lua partial within another lua script
+      #
+      # @param relative_path [String] the relative path to the script from
+      #     `Wolverine.config.script_path`
+      def include_partial(relative_path)
+        unless @partial_templates.has_key? relative_path
+          @partial_templates[relative_path] = nil
+          template( Pathname.new("#{@script_path}/#{relative_path}") )
+        end
+      end
+    end
     #
     # Module Caller provides the convenience method #call_script
     #
@@ -16,6 +37,8 @@ module SidekiqUniqueJobs
     #
     module Caller
       module_function
+
+      include SidekiqUniqueJobs::Connection
 
       #
       # Convenience method to reduce typing,
@@ -28,9 +51,14 @@ module SidekiqUniqueJobs
       #
       # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
       #
-      def call_script(file_name, keys = [], argv = [])
-        redis_pool = nil unless defined?(redis_pool)
-        Script.call(file_name, redis_pool, keys: keys, argv: argv)
+      def call_script(file_name, keys = [], argv = [], conn = nil)
+        return Script.call(file_name, conn, keys, argv) if conn
+
+        pool = defined?(redis_pool) ? redis_pool : nil
+
+        redis(pool) do |new_conn|
+          Script.call(file_name, new_conn, keys, argv)
+        end
       end
     end
 
@@ -51,22 +79,21 @@ module SidekiqUniqueJobs
     #
     # @param [Symbol] file_name the name of the lua script
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
-    # @param [Hash] options arguments to pass to the script file
-    # @option options [Array] :keys the array of keys to pass to the script
-    # @option options [Array] :argv the array of arguments to pass to the script
+    # @param [Array<String>] keys for the script
+    # @param [Array<Object>] argv for the script
     #
     # @return value from script
     #
-    def call(file_name, redis_pool, options = {})
+    def call(file_name, conn, keys = [], argv = [])
       result, elapsed = timed do
-        execute_script(file_name, redis_pool, options)
+        execute_script(file_name, conn, keys, argv)
       end
 
       log_debug("Executed #{file_name}.lua in #{elapsed}ms")
       result
     rescue ::Redis::CommandError => ex
       handle_error(ex, file_name) do
-        call(file_name, redis_pool, options)
+        call(file_name, conn, keys, argv)
       end
     end
 
@@ -81,11 +108,12 @@ module SidekiqUniqueJobs
     #
     # @return value from script (evalsha)
     #
-    def execute_script(file_name, redis_pool, options = {})
-      redis(redis_pool) do |conn|
-        sha = script_sha(conn, file_name)
-        conn.evalsha(sha, options[:keys], options[:argv])
-      end
+    def execute_script(file_name, conn, keys, argv)
+      conn.evalsha(
+        script_sha(conn, file_name),
+        keys,
+        argv.dup.concat([current_time, verbose_scripts, max_changelog_history])
+      )
     end
 
     #
@@ -137,7 +165,7 @@ module SidekiqUniqueJobs
     # @return [String] the content of the lua file
     #
     def script_source(file_name)
-      script_path(file_name).read
+      TemplateContext.new(LUA_PATHNAME).template(script_path(file_name))
     end
 
     #
@@ -149,6 +177,14 @@ module SidekiqUniqueJobs
     #
     def script_path(file_name)
       LUA_PATHNAME.join("#{file_name}.lua")
+    end
+
+    def verbose_scripts
+      SidekiqUniqueJobs.config.verbose
+    end
+
+    def max_changelog_history
+      SidekiqUniqueJobs.config.max_history
     end
   end
 end

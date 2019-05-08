@@ -49,7 +49,7 @@ module SidekiqUniqueJobs
         redis { |conn| conn.select(db) }
       end
 
-      def ping(_message = nil)
+      def ping(message = nil)
         redis { |conn| conn.ping(message) }
       end
 
@@ -190,7 +190,6 @@ module SidekiqUniqueJobs
       end
 
       def object(*args)
-        redis { |conn| conn.object(*args) }
       end
 
       def randomkey
@@ -263,6 +262,14 @@ module SidekiqUniqueJobs
 
       def mapped_msetnx(hash)
         redis { |conn| conn.mapped_msetnx(hash) }
+      end
+
+      def mget(*keys, &blk)
+        redis { |conn| conn.mget(*keys, &blk) }
+      end
+
+      def mapped_mget(*keys)
+        redis { |conn| conn.mapped_mget(*keys) }
       end
 
       def get(key)
@@ -806,10 +813,6 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Testing::Redis
     include SidekiqUniqueJobs::Testing::Sidekiq
 
-    def keys(pattern = nil)
-      SidekiqUniqueJobs::Util.keys(pattern)
-    end
-
     def unique_digests
       smembers("unique:keys")
     end
@@ -826,7 +829,7 @@ module SidekiqUniqueJobs
       if key
         { key => lrange(key, 0, -1) }
       else
-        keys("*:QUEUED").each_with_object({}) do |redis_key, hash|
+        scan_each(match: "*:QUEUED").each_with_object({}) do |redis_key, hash|
           hash[redis_key] ||= []
           hash[redis_key].concat(lrange(key, 0, -1))
         end
@@ -837,7 +840,7 @@ module SidekiqUniqueJobs
       if key
         { key => lrange(key, 0, -1) }
       else
-        keys("*:PRIMED").each_with_object({}) do |redis_key, hash|
+        scan_each(match: "*:PRIMED").each_with_object({}) do |redis_key, hash|
           hash[redis_key] ||= []
           hash[redis_key].concat(lrange(key, 0, -1))
         end
@@ -848,18 +851,32 @@ module SidekiqUniqueJobs
       if key
         { key => hgetall(key).to_h }
       else
-        keys("*:LOCKED").each_with_object({}) do |redis_key, hash|
+        scan_each(match: "*:LOCKED").each_with_object({}) do |redis_key, hash|
           hash[redis_key] = hgetall(redis_key).to_h
         end
       end
     end
 
     def changelogs
-      Sidekiq.redis { |c| c.zrange("unique:changelog", 0, -1).map { |entry| ::Sidekiq.load_json(entry) } }
+      Sidekiq.redis { |c| c.zrange("unique:changelog", 0, -1).map { |entry| SidekiqUniqueJobs.load_json(entry) } }
     end
 
     def current_time
       SidekiqUniqueJobs::Timing.current_time
     end
+  end
+end
+
+RSpec.configure do |config|
+  config.before(:each) do
+    # unless locking_jids.empty?
+    #   p "after(:each) { #{locking_jids} }"
+    # end
+  end
+
+  config.after(:each) do
+    # unless locking_jids.empty?
+    #   p "after(:each) { #{locking_jids} }"
+    # end
   end
 end

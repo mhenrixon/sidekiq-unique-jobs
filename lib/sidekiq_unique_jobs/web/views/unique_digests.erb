@@ -21,19 +21,23 @@
         <tr>
           <th><%= t('Delete') %></th>
           <th><%= t('Digest') %></th>
+          <th><%= t('Locked At') %></th>
         </tr>
       </thead>
       <% @unique_digests.each do |digest| %>
         <tr>
           <td>
-            <form action="<%= root_path %>unique_digests/<%= digest %>/delete" method="get">
+            <form action="<%= root_path %>unique_digests/<%= digest[0] %>/delete" method="get">
               <%= csrf_tag %>
-              <input name="digest" value="<%= h digest %>" type="hidden" />
+              <input name="digest" value="<%= h digest[0] %>" type="hidden" />
               <input class="btn btn-danger btn-xs" type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('AreYouSure') %>" />
             </form>
           </td>
           <td>
-            <a href="<%= root_path %>unique_digests/<%= digest %>"><%= digest %></a>
+            <a href="<%= root_path %>unique_digests/<%= digest[0] %>"><%= digest[0] %></a>
+          </td>
+          <td>
+            <%= relative_time(Time.at(digest[1]).utc) %>
           </td>
         </tr>
       <% end %>

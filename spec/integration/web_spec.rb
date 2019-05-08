@@ -17,7 +17,12 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
 
   let(:digest)           { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
   let(:another_digest)   { "uniquejobs:24c5b03e2d49d765e5dfb2d7c51c5929" }
-  let(:expected_digests) { [digest, another_digest] }
+  let(:expected_digests) do
+    [
+      a_collection_including(digest, kind_of(Float)),
+      a_collection_including(another_digest, kind_of(Float))
+    ]
+  end
 
   it "can display digests" do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
@@ -61,7 +66,11 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
     expect(last_response.body).not_to match("/unique_digests/#{digest}")
     expect(last_response.body).to match("/unique_digests/#{another_digest}")
 
-    expect(SidekiqUniqueJobs::Digests.all).to match_array([another_digest])
+    expect(SidekiqUniqueJobs::Digests.all).to contain_exactly(
+      a_collection_including(
+        another_digest, kind_of(Float)
+      )
+    )
   end
 
   it "can delete all digests" do

@@ -10,28 +10,11 @@ local expires_in           = tonumber(ARGV[1])
 local stale_client_timeout = tonumber(ARGV[2])
 local expiration           = tonumber(ARGV[3])
 
-local function current_time()
-  local time = redis.call('time')
-  local s = time[1]
-  local ms = time[2]
-  local number = tonumber((s .. '.' .. ms))
-
-  return number
-end
-
-local hgetall = function (key)
-  local bulk = redis.call('HGETALL', key)
-  local result = {}
-  local nextkey
-  for i, v in ipairs(bulk) do
-    if i % 2 == 1 then
-      nextkey = v
-    else
-      result[nextkey] = v
-    end
-  end
-  return result
-end
+--------  BEGIN local functions --------
+<%= include_partial 'shared/_common.lua' %>
+<%= include_partial 'shared/_current_time.lua' %>
+<%= include_partial 'shared/_hgetall.lua' %>
+----------  END local functions ----------
 
 local cached_current_time = current_time()
 redis.log(redis.LOG_DEBUG, "release_stale_locks.lua - started at : " .. cached_current_time)

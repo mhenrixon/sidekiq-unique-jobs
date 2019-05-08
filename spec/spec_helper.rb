@@ -23,7 +23,14 @@ require "timecop"
 require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
-SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}")
+
+LOGLEVEL = ENV.fetch('LOGLEVEL') { 'INFO' }.upcase
+
+SidekiqUniqueJobs.configure do |config|
+  config.logger.level = Logger.const_get("#{LOGLEVEL}")
+  config.verbose      = true
+  config.max_history  = 10_000
+end
 
 require "sidekiq/redis_connection"
 

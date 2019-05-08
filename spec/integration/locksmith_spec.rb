@@ -182,9 +182,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
 
   #     expect(locksmith_one.available_count).to eq(4)
 
-  #     locksmith_one.wait(1)
-  #     locksmith_one.wait(1)
-  #     locksmith_one.wait(1)
+  #     locksmith_one.lock(1)
+  #     locksmith_one.lock(1)
+  #     locksmith_one.lock(1)
 
   #     expect(locksmith_one.available_count).to eq(1)
   #   end

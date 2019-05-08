@@ -2,23 +2,20 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
-  let(:item_hash) do
-    {
+  let!(:item) do
+    my_item = {
       "class" => "MyUniqueJob",
       "args" => [[1, 2]],
       "at" => 1_492_341_850.358196,
       "retry" => true,
       "queue" => "customqueue",
       "lock" => :until_executed,
-      "lock_expiration" => 7200,
+      "lock_expiration" => nil,
+      "lock_timeout" => 0,
       "retry_count" => 10,
       "jid" => jid,
       "created_at" => 1_492_341_790.358217,
     }
-  end
-
-  let!(:item) do
-    my_item = item_hash.dup
     SidekiqUniqueJobs::UniqueArgs.new(my_item).unique_digest
     my_item
   end
