@@ -54,6 +54,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
     end
 
     it "prevents other processes from executing" do
+      flush_redis
       process_one.execute do
         unset = true
         process_two.execute { unset = false }

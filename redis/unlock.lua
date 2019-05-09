@@ -66,6 +66,7 @@ if pttl and pttl > 0 then
   redis.call('PEXPIRE', digest, pttl)
 
   log_debug("PEXPIRE", queued, pttl)
+  redis.call('LPUSH', queued, "1")
   redis.call('PEXPIRE', queued, pttl)
 
   log_debug("PEXPIRE", primed, pttl)
@@ -79,10 +80,10 @@ else
 
   log_debug("PEXPIRE", queued, 10)
   redis.call('LPUSH', queued, "1")
-  redis.call('PEXPIRE', queued, 10)
+  redis.call('PEXPIRE', queued, 5)
 
   log_debug("PEXPIRE", primed, 10)
-  redis.call('PEXPIRE', primed, 10)
+  redis.call('PEXPIRE', primed, 5)
 
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)

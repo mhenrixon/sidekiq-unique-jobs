@@ -24,12 +24,12 @@ require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 
-LOGLEVEL = ENV.fetch('LOGLEVEL') { 'INFO' }.upcase
+LOGLEVEL = ENV.fetch("LOGLEVEL") { "INFO" }.upcase
 
 SidekiqUniqueJobs.configure do |config|
-  config.logger.level = Logger.const_get("#{LOGLEVEL}")
-  config.verbose      = true
-  config.max_history  = 10_000
+  config.logger.level = Logger.const_get(LOGLEVEL.to_s)
+  config.verbose      = %w[1 true].include?(ENV["VERBOSE"])
+  config.max_history  = 10
 end
 
 require "sidekiq/redis_connection"

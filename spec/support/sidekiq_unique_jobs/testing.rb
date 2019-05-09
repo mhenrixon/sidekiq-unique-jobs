@@ -189,8 +189,7 @@ module SidekiqUniqueJobs
         redis { |conn| conn.move(key, db) }
       end
 
-      def object(*args)
-      end
+      def object(*args); end
 
       def randomkey
         redis(&:randomkey)
@@ -868,13 +867,13 @@ module SidekiqUniqueJobs
 end
 
 RSpec.configure do |config|
-  config.before(:each) do
+  config.before do
     # unless locking_jids.empty?
     #   p "after(:each) { #{locking_jids} }"
     # end
   end
 
-  config.after(:each) do
+  config.after do
     # unless locking_jids.empty?
     #   p "after(:each) { #{locking_jids} }"
     # end

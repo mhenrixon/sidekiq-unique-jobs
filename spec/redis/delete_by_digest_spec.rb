@@ -31,7 +31,6 @@ RSpec.describe "delete_by_digest.lua", redis: :redis do
     simulate_lock(run_key, job_id)
   end
 
-
-  it { expect(delete_by_digest).to eq(8)  }
+  it { expect(delete_by_digest).to eq(8) }
 end
 # rubocop:enable RSpec/DescribeClass

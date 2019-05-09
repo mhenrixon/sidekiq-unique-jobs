@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
       :QUEUED
       :PRIMED
       :LOCKED
-    ]
+    ].freeze
 
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Connection

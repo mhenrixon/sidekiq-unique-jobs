@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-require "concurrent/future"
-
 module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
+  # rubocop:disable Metrics/ClassLength
   class Locksmith
     include Comparable
     include SidekiqUniqueJobs::Connection
@@ -13,10 +12,6 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Timing
     include SidekiqUniqueJobs::Script::Caller
 
-    DEFAULT_REDIS_TIMEOUT = 0.1
-    DEFAULT_RETRY_COUNT   = 3
-    DEFAULT_RETRY_DELAY   = 200
-    DEFAULT_RETRY_JITTER  = 50
     CLOCK_DRIFT_FACTOR    = 0.01
 
     #
@@ -46,14 +41,14 @@ module SidekiqUniqueJobs
     def delete
       return if pttl.positive?
 
-      delete! > 0
+      delete!
     end
 
     #
     # Deletes the lock regardless of if it has a pttl set
     #
     def delete!
-      call_script(:delete, key.to_a, [job_id])
+      call_script(:delete, key.to_a, [job_id]).positive?
     end
 
     #
@@ -61,23 +56,19 @@ module SidekiqUniqueJobs
     #
     # @return [String] the Sidekiq job_id that was locked/queued
     #
-    def lock
-      log_debug("Entered Locksmith##{__method__}")
+    def lock(&block) # rubocop:disable Metrics/MethodLength
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
       redis(redis_pool) do |conn|
-        lock_async(conn) do
-          unless block_given?
-            log_debug("Returning from Locksmith##{__method__}")
+        if block_given?
+          return lock_async(conn, &block)
+        else
+          lock_sync(conn) do
+            log_debug("Exit Locksmith##{__method__} at #{current_time} with #{job_id}")
             return job_id
-          end
-
-          begin
-            log_debug("Yielding from Locksmith##{__method__}")
-            return yield job_id
-          ensure
-            unlock!(conn)
           end
         end
       end
+      log_debug("Exit Locksmith##{__method__} at #{current_time}")
     end
 
     #
@@ -99,8 +90,8 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!(conn = nil)
-      log_debug("Entered Locksmith##{__method__}")
-      call_script(:unlock, key.to_a, [job_id, pttl, type, limit], conn)
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
+      call_script(:unlock, key.to_a, argv, conn)
     end
 
     # Checks if this instance is considered locked
@@ -131,27 +122,47 @@ module SidekiqUniqueJobs
 
     attr_reader :key, :pttl, :job_id, :redis_pool, :type, :timeout, :limit
 
-    def lock_async(conn)
-      log_debug("Entered Locksmith##{__method__}")
+    def argv
+      [job_id, pttl, type, limit]
+    end
 
-      future = Concurrent::Future.execute(executor: :fast) do
+    def lock_sync(conn)
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
+
+      enqueue(conn) do
+        return unless wait_for_primed_token(conn)
+        call_script(:lock, key.to_a, argv, conn)
+      end
+      return yield if locked?(conn)
+    end
+
+    def lock_async(conn)
+      return_value = nil
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
+
+      future = Concurrent::Promises.future_on(:io) do
         wait_for_primed_token(conn)
       end
+
       enqueue(conn) do
-        future.wait
-        call_script(:lock, key.to_a, [job_id, pttl, type, limit], conn)
+        future.wait!
+        log_debug("Exit Locksmsith##{__method__} at #{current_time}")
+        return_value = call_script(:lock, key.to_a, argv, conn)
+        return_value = yield job_id if return_value == job_id
       end
 
-      yield if locked?(conn)
+      return_value
+     ensure
+      unlock!(conn)
     end
 
     def check_if_locked(conn = nil)
-      log_debug("Entered Locksmith##{__method__}")
-      call_script(:locked, key.to_a, [job_id], conn) > 0
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
+      call_script(:locked, key.to_a, [job_id], conn).positive?
     end
 
     def wait_for_primed_token(conn = nil)
-      log_debug("Entered Locksmith##{__method__}")
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
 
       primed_token, elapsed = timed do
         if timeout.nil? || timeout.positive?
@@ -163,44 +174,26 @@ module SidekiqUniqueJobs
       end
 
       # TODO: Collect metrics and stats
-      log_debug("Waited #{elapsed}ms for #{primed_token} to be released (digest: #{key.digest}, job_id: #{job_id})")
+      log_debug("Exit Locksmith##{__method__} at #{current_time} (#{elapsed}ms)")
       primed_token
     end
 
-    def obtain(conn = nil)
-
-    end
-
     def enqueue(conn)
-      log_debug("Entered Locksmith##{__method__}")
+      log_debug("Enter Locksmith##{__method__} at #{current_time}")
 
       queued_token, elapsed = timed do
-        call_script(:queue, key.to_a, [job_id, pttl, type, limit], conn)
+        call_script(:queue, key.to_a, argv, conn)
       end
 
       validity = pttl.to_i - elapsed - drift(pttl)
 
-      return yield queued_token if validity >= 0 || pttl.zero?
-
-      log_debug("Locksmith##{__method__} - Not valid anymore (queued_token: #{queued_token}, job_id: #{job_id})")
-      nil
-    end
-
-    def try_lock
-      tries = @extend ? 1 : (@retry_count + 1)
-
-      tries.times do |attempt_number|
-        # Wait a random delay before retrying.
-        sleep(sleepy_time) if attempt_number.positive?
-        locked = create_lock
-        return locked if locked
+      log_debug("Exit Locksmith##{__method__} at #{current_time} (#{elapsed}ms)")
+      if validity >= 0 || pttl.zero?
+        return yield queued_token
+      else
+        log_debug("Exit Locksmith##{__method__} invalid lock (expired)")
+        nil
       end
-
-      false
-    end
-
-    def sleepy_time
-      (@retry_delay + rand(@retry_jitter)).to_f / 1000
     end
 
     def drift(val)
@@ -210,4 +203,5 @@ module SidekiqUniqueJobs
       (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

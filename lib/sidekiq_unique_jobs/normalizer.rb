@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "json"
-
 module SidekiqUniqueJobs
   # Normalizes hashes by dumping them to json and loading them from json
   #

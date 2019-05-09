@@ -1,4 +1,4 @@
-  # frozen_string_literal: true
+# frozen_string_literal: true
 
 module SidekiqUniqueJobs
   class Lock
@@ -25,6 +25,7 @@ module SidekiqUniqueJobs
       def lock
         @attempt = 0
         return call_strategy unless (locked_token = locksmith.lock)
+
         locked_token
       end
 

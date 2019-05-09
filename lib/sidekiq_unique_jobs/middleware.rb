@@ -89,7 +89,7 @@ module SidekiqUniqueJobs
       if defined?(Sidekiq::Logging)
         "#{middleware} #{"DIG-#{digest}" if digest}"
       else
-        { "uniquejobs" => "#{middleware}", lock_type => digest }
+        { "uniquejobs" => middleware.to_s, lock_type => digest }
       end
     end
   end

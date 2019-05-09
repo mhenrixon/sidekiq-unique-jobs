@@ -33,12 +33,12 @@ module SidekiqUniqueJobs
       #   These jobs are locked in the server process not from the client
       # @yield to the worker class perform method
       def execute
-        strategy.call unless locksmith.lock do
-          yield
-          callback_safely
-        end
+        return strategy.call unless locksmith.lock
+
+        yield
+        callback_safely
       ensure
-        locksmith.unlock!
+        locksmith.unlock
       end
 
       private

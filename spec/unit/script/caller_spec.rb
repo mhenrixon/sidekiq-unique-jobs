@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Script::Caller, redis: :redis do
   subject { described_class }
 
-  it { is_expected.to respond_to(:call_script).with(3).arguments }
+  it { is_expected.to respond_to(:call_script).with(4).arguments }
 
   describe ".call_script" do
     subject(:call_script) { described_class.call_script(script_name, keys, argv, nil) }
@@ -20,13 +20,13 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller, redis: :redis do
     let(:error_message) { "Some interesting error" }
 
     before do
-      allow(SidekiqUniqueJobs::Script).to receive(:call).with(script_name, anything, keys, argv)
+      allow(SidekiqUniqueJobs::Script).to receive(:call).with(script_name, keys, argv, anything)
     end
 
     it "delegates to Script.call" do
       call_script
 
-      expect(SidekiqUniqueJobs::Script).to have_received(:call).with(script_name, anything, keys, argv)
+      expect(SidekiqUniqueJobs::Script).to have_received(:call).with(script_name, keys, argv, anything)
     end
   end
 end

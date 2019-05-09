@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-require "sidekiq_unique_jobs/normalizer"
-
 module SidekiqUniqueJobs
   # Handles uniqueness of sidekiq arguments
   #

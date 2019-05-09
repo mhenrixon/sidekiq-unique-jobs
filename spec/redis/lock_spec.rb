@@ -20,7 +20,7 @@ RSpec.describe "lock.lua", redis: :redis do
   let(:lock_ttl)       { nil }
   let(:locked_jid)     { job_id_one }
   let(:current_time)   { SidekiqUniqueJobs::Timing.current_time }
-  let(:lock_limit)    { 1 }
+  let(:lock_limit)     { 1 }
 
   module SidekiqUniqueJobs
     class Redis
@@ -77,7 +77,6 @@ RSpec.describe "lock.lua", redis: :redis do
       end
 
       class Changelog < SortedSet
-
       end
 
       class Key < Entity
@@ -91,6 +90,7 @@ RSpec.describe "lock.lua", redis: :redis do
 
         def new(key)
           raise ArgumentError, "key is not a SidekiqUniqueJobs::Key" unless key.is_a?(SidekiqUniqueJobs::Key)
+
           @key = key
         end
 
@@ -102,8 +102,7 @@ RSpec.describe "lock.lua", redis: :redis do
           end.flatten
         end
 
-        def jids
-        end
+        def jids; end
 
         def digest_key
           @digest_key ||= Redis::Key.new(key.digest)
@@ -127,7 +126,6 @@ RSpec.describe "lock.lua", redis: :redis do
       end
     end
   end
-
 
   context "when not queued" do
     it "updates Redis correctly" do

@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
   let(:expected_digests) do
     [
       a_collection_including(digest, kind_of(Float)),
-      a_collection_including(another_digest, kind_of(Float))
+      a_collection_including(another_digest, kind_of(Float)),
     ]
   end
 
@@ -69,7 +69,7 @@ RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
     expect(SidekiqUniqueJobs::Digests.all).to contain_exactly(
       a_collection_including(
         another_digest, kind_of(Float)
-      )
+      ),
     )
   end
 

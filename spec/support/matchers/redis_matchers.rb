@@ -233,8 +233,8 @@ RSpec::Matchers.define :have_member do |member|
     sismember(key, member)
   end
 
-  def valid_list_member?(key, member, _index)
-    if _index
+  def valid_list_member?(key, member, index)
+    if index
       lindex(key, _index) == member
     else
       lrange(key, 0, -1).include?(member)

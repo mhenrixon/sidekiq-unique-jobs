@@ -13,8 +13,9 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        lock do |locked_token|
-          return yield locked_token
+        if locked?
+          yield
+          unlock_with_callback
         end
       end
     end

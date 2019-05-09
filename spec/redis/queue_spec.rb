@@ -15,14 +15,14 @@ RSpec.describe "queue.lua", redis: :redis do
       lock_limit,
     ]
   end
-  let(:digest)     { "uniquejobs:digest" }
-  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
-  let(:job_id_one) { "job_id_one" }
-  let(:job_id_two) { "job_id_two" }
-  let(:lock_type)  { :until_executed }
-  let(:lock_pttl)  { nil }
-  let(:locked_jid) { job_id }
-  let(:lock_limit) { 1 }
+  let(:digest) { "uniquejobs:digest" }
+  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
+  let(:job_id_one)   { "job_id_one" }
+  let(:job_id_two)   { "job_id_two" }
+  let(:lock_type)    { :until_executed }
+  let(:lock_pttl)    { nil }
+  let(:locked_jid)   { job_id }
+  let(:lock_limit)   { 1 }
   let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
 
   before do
@@ -79,6 +79,7 @@ RSpec.describe "queue.lua", redis: :redis do
 
     context "with lock_limit 2" do
       let(:lock_limit) { 2 }
+
       it "stores the right keys in redis" do
         expect { queue }.to change { zcard(key.changelog) }.by(1)
 

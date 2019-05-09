@@ -1,67 +1,10 @@
 # frozen_string_literal: true
 
-require "pathname"
-require "digest/sha1"
-require "concurrent/map"
-
 module SidekiqUniqueJobs
   # Interface to dealing with .lua files
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Script
-    class TemplateContext
-      def initialize(script_path)
-        @script_path = script_path
-      end
-
-      def template(pathname)
-        @partial_templates ||= {}
-        ERB.new(File.read(pathname)).result binding
-      end
-
-      # helper method to include a lua partial within another lua script
-      #
-      # @param relative_path [String] the relative path to the script from
-      #     `Wolverine.config.script_path`
-      def include_partial(relative_path)
-        unless @partial_templates.has_key? relative_path
-          @partial_templates[relative_path] = nil
-          template( Pathname.new("#{@script_path}/#{relative_path}") )
-        end
-      end
-    end
-    #
-    # Module Caller provides the convenience method #call_script
-    #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
-    #
-    module Caller
-      module_function
-
-      include SidekiqUniqueJobs::Connection
-
-      #
-      # Convenience method to reduce typing,
-      #   calls redis lua scripts.
-      #
-      #
-      # @param [Symbol] file_name the name of the `script.lua` without extension
-      # @param [Array<String>] keys the keys to pass to the script
-      # @param [Array<String>] argv any extra arguments to pass
-      #
-      # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
-      #
-      def call_script(file_name, keys = [], argv = [], conn = nil)
-        return Script.call(file_name, conn, keys, argv) if conn
-
-        pool = defined?(redis_pool) ? redis_pool : nil
-
-        redis(pool) do |new_conn|
-          Script.call(file_name, new_conn, keys, argv)
-        end
-      end
-    end
-
     LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join("../../redis").freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
 
@@ -84,16 +27,16 @@ module SidekiqUniqueJobs
     #
     # @return value from script
     #
-    def call(file_name, conn, keys = [], argv = [])
+    def call(file_name, keys = [], argv = [], conn = nil)
       result, elapsed = timed do
-        execute_script(file_name, conn, keys, argv)
+        execute_script(file_name, keys, argv, conn)
       end
 
       log_debug("Executed #{file_name}.lua in #{elapsed}ms")
       result
     rescue ::Redis::CommandError => ex
       handle_error(ex, file_name) do
-        call(file_name, conn, keys, argv)
+        call(file_name, keys, argv, conn)
       end
     end
 
@@ -108,11 +51,11 @@ module SidekiqUniqueJobs
     #
     # @return value from script (evalsha)
     #
-    def execute_script(file_name, conn, keys, argv)
+    def execute_script(file_name, keys, argv, conn)
       conn.evalsha(
         script_sha(conn, file_name),
         keys,
-        argv.dup.concat([current_time, verbose_scripts, max_changelog_history])
+        argv.dup.concat([current_time, verbose_scripts, max_changelog_history]),
       )
     end
 
@@ -165,7 +108,7 @@ module SidekiqUniqueJobs
     # @return [String] the content of the lua file
     #
     def script_source(file_name)
-      TemplateContext.new(LUA_PATHNAME).template(script_path(file_name))
+      Template.new(LUA_PATHNAME).render(script_path(file_name))
     end
 
     #

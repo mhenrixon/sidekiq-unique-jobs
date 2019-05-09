@@ -6,12 +6,12 @@ require "spec_helper"
 RSpec.describe "delete_job_by_digest.lua", redis: :redis do
   subject(:delete_by_digest) { call_script(:delete_by_digest, [digest, SidekiqUniqueJobs::DIGESTS_ZSET], [current_time]) }
 
-  let(:job_id)     { "jobid" }
-  let(:digest)     { "uniquejobs:digest" }
-  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
-  let(:run_key)    { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
-  let(:lock_ttl)   { nil }
-  let(:locked_jid) { job_id }
+  let(:job_id)       { "jobid" }
+  let(:digest)       { "uniquejobs:digest" }
+  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
+  let(:run_key)      { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
+  let(:lock_ttl)     { nil }
+  let(:locked_jid)   { job_id }
   let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
 
   before do

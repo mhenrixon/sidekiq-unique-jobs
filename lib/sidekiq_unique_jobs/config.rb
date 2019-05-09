@@ -31,7 +31,6 @@ module SidekiqUniqueJobs
       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
     }.freeze
 
-
     LOCKS_WITHOUT_UNLOCK = {
       until_expired: SidekiqUniqueJobs::Lock::UntilExpired,
       until_timeout: SidekiqUniqueJobs::Lock::UntilExpired,
@@ -48,10 +47,10 @@ module SidekiqUniqueJobs
 
     DEFAULT_LOCKS =
       LOCKS_WHEN_BUSY.dup
-        .merge(LOCKS_WHILE_ENQUEUED.dup)
-        .merge(LOCKS_WITHOUT_UNLOCK.dup)
-        .merge(LOCKS_FROM_PUSH_TO_PROCESSED.dup)
-        .freeze
+                     .merge(LOCKS_WHILE_ENQUEUED.dup)
+                     .merge(LOCKS_WITHOUT_UNLOCK.dup)
+                     .merge(LOCKS_FROM_PUSH_TO_PROCESSED.dup)
+                     .freeze
 
     DEFAULT_STRATEGIES = {
       log: SidekiqUniqueJobs::OnConflict::Log,
@@ -78,7 +77,7 @@ module SidekiqUniqueJobs
         DEFAULT_LOCKS,
         DEFAULT_STRATEGIES,
         DEFAULT_VERBOSITY,
-        DEFAULT_MAX_HISTORY
+        DEFAULT_MAX_HISTORY,
       )
     end
 

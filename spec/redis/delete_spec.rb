@@ -53,7 +53,6 @@ RSpec.describe "delete.lua", redis: :redis do
     end
   end
 
-
   context "when locked" do
     before do
       call_script(:queue, key.to_a, argv)

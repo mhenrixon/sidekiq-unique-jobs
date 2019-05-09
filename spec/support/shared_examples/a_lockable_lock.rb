@@ -27,6 +27,7 @@ RSpec.shared_examples "an executing lock implementation" do
     before do
       allow(process_one.locksmith).to receive(:lock).and_return(nil)
     end
+
     it "does not execute" do
       unset = true
       process_one.execute { unset = false }

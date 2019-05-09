@@ -110,7 +110,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
   end
 
   describe "lock with expiration" do
-    let(:lock_expiration) { 2 }
+    let(:lock_expiration) { 1 }
     let(:lock_type)       { :while_executing }
 
     it_behaves_like "a lock"
@@ -121,7 +121,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis, profile: true do
       it "prevents other processes from locking" do
         locksmith_one.lock
 
-        sleep 1
+        sleep 0.1
 
         expect(locksmith_two.lock).to be_falsey
       end

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "json"
-
 module SidekiqUniqueJobs
   # Handles loading and dumping of json
   #

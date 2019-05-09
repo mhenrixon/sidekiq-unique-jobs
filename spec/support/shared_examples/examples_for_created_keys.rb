@@ -55,7 +55,6 @@ end
 RSpec.shared_examples "keys created by lock until_expired" do
   it_behaves_like "digest key exists"
   it_behaves_like "queued key exists"
-
 end
 
 RSpec.shared_examples "redis has keys created by lock.lua" do

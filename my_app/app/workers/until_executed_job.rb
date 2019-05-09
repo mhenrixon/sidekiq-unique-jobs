@@ -7,8 +7,8 @@ class UntilExecutedJob
                   lock_limit: 1
 
   def perform
-    SidekiqUniqueJobs.logger.info('cowboy')
+    logger.info('cowboy')
     sleep 1
-    SidekiqUniqueJobs.logger.info('beebop')
+    logger.info('beebop')
   end
 end
