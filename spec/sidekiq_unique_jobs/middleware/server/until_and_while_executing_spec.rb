@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "unique: :until_and_while_
           expect(push_item(item_two)).to eq(nil)
         end
 
-        it "item_one can be executed by server" do
+        it "item_one can be executed by server", :flaky do
           set = false
           server.call(worker_class, item_one, queue) { set = true }
           expect(set).to eq(true)
