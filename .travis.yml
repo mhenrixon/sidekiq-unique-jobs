@@ -30,12 +30,9 @@ rvm:
   - 2.4.5
   - 2.3.8
   - jruby-9.2.7.0
-  - truffleruby
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - truffleruby
   include:
     - rvm: 2.5.5
       gemfile: gemfiles/sidekiq_develop.gemfile
