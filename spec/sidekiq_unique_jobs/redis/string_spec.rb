@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::String do
     subject(:value) { entity.value }
 
     context "without entries" do
-      it { is_expected.to be.nil? }
+      it { is_expected.to be_nil }
     end
 
     context "with entries" do
