@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Script
-    LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join("../../redis").freeze
+    LUA_PATHNAME ||= Pathname.new(__FILE__).dirname.join("lua").freeze
     SCRIPT_SHAS ||= Concurrent::Map.new
 
     extend SidekiqUniqueJobs::Connection
@@ -21,22 +21,22 @@ module SidekiqUniqueJobs
     #   that wasn't previously loaded.
     #
     # @param [Symbol] file_name the name of the lua script
-    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     # @param [Array<String>] keys for the script
     # @param [Array<Object>] argv for the script
+    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     # @return value from script
     #
-    def call(file_name, keys = [], argv = [], conn = nil)
+    def call(file_name, conn, keys = [], argv = [])
       result, elapsed = timed do
-        execute_script(file_name, keys, argv, conn)
+        execute_script(file_name, conn, keys, argv)
       end
 
       log_debug("Executed #{file_name}.lua in #{elapsed}ms")
       result
     rescue ::Redis::CommandError => ex
       handle_error(ex, file_name) do
-        call(file_name, keys, argv, conn)
+        call(file_name, conn, keys, argv)
       end
     end
 
@@ -51,7 +51,7 @@ module SidekiqUniqueJobs
     #
     # @return value from script (evalsha)
     #
-    def execute_script(file_name, keys, argv, conn)
+    def execute_script(file_name, conn, keys, argv)
       conn.evalsha(
         script_sha(conn, file_name),
         keys,
@@ -93,11 +93,9 @@ module SidekiqUniqueJobs
         return yield if block_given?
       end
 
-      if ScriptError.intercepts?(ex)
-        raise ScriptError.new(ex, script_path(file_name).to_s, script_source(file_name))
-      else
-        raise
-      end
+      raise unless ScriptError.intercepts?(ex)
+
+      raise ScriptError.new(ex, script_path(file_name).to_s, script_source(file_name))
     end
 
     #

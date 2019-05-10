@@ -82,13 +82,6 @@ RSpec::Matchers.define :have_pttl do |ms|
   end
 end
 
-RSpec::Matchers.define :exist do
-  match do |key|
-    @key = key
-    exists(@key)
-  end
-end
-
 RSpec::Matchers.define :have_field do |field|
   match do |key|
     hget(key, field) == @value
@@ -140,58 +133,6 @@ module SidekiqUniqueJobs
   end
 end
 
-module RedisMatchers
-  require "rspec/matchers/expecteds_for_multiple_diffs"
-  require "rspec/expectations/fail_with"
-
-  def have_entry(entry)
-    HaveEntryMatcher.new(entry)
-  end
-
-  class HaveHashMember
-    def initialize(scope, key, _member, _ttl)
-      @label = key
-      @member = param_name
-      @ttl = type
-      @scope = scope
-    end
-
-    def matches?(ol)
-      ol.should @scope.have_tag "li" do
-        @scope.with_tag("label", @label)
-        @scope.with_tag("input[type=#{@type}][name=?]", @param_name)
-      end
-    end
-
-    def failure_message
-      "expected response to contain input[type=#{@type}][name=#{@param_name}] labelled '#{@label}' but it didn't"
-    end
-
-    def negative_failure_message
-      "expected response to not contain input[type=#{@type}][name=#{@param_name}] labelled '#{@label}' but it did"
-    end
-  end
-
-  def have_member(member)
-    case type(key)
-    when "string"
-      valid_string_member?(key, member)
-    when "hash"
-      valid_hash_member?(key, member, @value)
-    when "list"
-      valid_list_member?(key, member, @index)
-    when "set"
-      valid_set_member?(key, member, @value)
-    when "zset"
-      valid_zset_member?(key, member, @value, @score, @rank)
-    when "none"
-      false
-    else
-      raise "Hell"
-    end
-  end
-end
-
 RSpec::Matchers.define :have_member do |member|
   @count = 1
   @value = nil
@@ -235,14 +176,14 @@ RSpec::Matchers.define :have_member do |member|
 
   def valid_list_member?(key, member, index)
     if index
-      lindex(key, _index) == member
+      lindex(key, index) == member
     else
       lrange(key, 0, -1).include?(member)
     end
   end
 
-  chain :at_index do |_index|
-    @index = _index
+  chain :atindex do |index|
+    @index = index
   end
 
   chain :with_value do |value|

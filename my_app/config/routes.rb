@@ -6,4 +6,6 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: '/sidekiq'
 
   get 'issues/:id' => 'issues#show'
+  get "checkout" => 'checkout#new'
+  post "checkout" => 'checkout#create'
 end

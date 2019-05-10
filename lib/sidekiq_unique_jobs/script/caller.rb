@@ -27,12 +27,12 @@ module SidekiqUniqueJobs
       # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
       #
       def call_script(file_name, keys = [], argv = [], conn = nil)
-        return Script.call(file_name, keys, argv, conn) if conn
+        return Script.call(file_name, conn, keys, argv) if conn
 
         pool = defined?(redis_pool) ? redis_pool : nil
 
         redis(pool) do |new_conn|
-          Script.call(file_name, keys, argv, new_conn)
+          Script.call(file_name, new_conn, keys, argv)
         end
       end
     end

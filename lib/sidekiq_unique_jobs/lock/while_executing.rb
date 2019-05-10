@@ -13,6 +13,8 @@ module SidekiqUniqueJobs
     class WhileExecuting < BaseLock
       RUN_SUFFIX ||= ":RUN"
 
+      include SidekiqUniqueJobs::OptionsWithFallback
+
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
@@ -33,10 +35,12 @@ module SidekiqUniqueJobs
       #   These jobs are locked in the server process not from the client
       # @yield to the worker class perform method
       def execute
-        return strategy.call unless locksmith.lock
-
-        yield
-        callback_safely
+        with_logging_context do
+          return strategy.call unless locksmith.lock do
+            yield
+            callback_safely
+          end
+        end
       ensure
         locksmith.unlock
       end

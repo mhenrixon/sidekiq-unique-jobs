@@ -8,7 +8,6 @@ class UntilExecutedJob
 
   def perform
     logger.info('cowboy')
-    sleep 1
     logger.info('beebop')
   end
 end

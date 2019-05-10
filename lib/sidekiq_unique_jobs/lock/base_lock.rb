@@ -22,9 +22,9 @@ module SidekiqUniqueJobs
       # Handles locking of sidekiq jobs.
       #   Will call a conflict strategy if lock can't be achieved.
       # @return [String] the sidekiq job id
-      def lock
+      def lock(&block)
         @attempt = 0
-        return call_strategy unless (locked_token = locksmith.lock)
+        return call_strategy unless (locked_token = locksmith.lock(&block))
 
         locked_token
       end

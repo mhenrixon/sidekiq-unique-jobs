@@ -54,5 +54,58 @@ module SidekiqUniqueJobs
       logger.fatal(message_or_exception, &block)
       nil
     end
+
+    #
+    # Wraps the middleware logic with context aware logging
+    #
+    #
+    # @return [nil]
+    #
+    # @yieldreturn [void] yield to the middleware instance
+    def with_logging_context
+      SidekiqUniqueJobs::Job.add_uniqueness(item)
+      with_configured_loggers_context do
+        # log_debug("started")
+        yield
+        # log_debug("ended")
+      end
+      nil # Need to make sure we don't return anything here
+    end
+
+    #
+    # Attempt to setup context aware logging for the given logger
+    #
+    #
+    # @return [void] <description>
+    #
+    # @yield
+    #
+    def with_configured_loggers_context(&block)
+      if logger.respond_to?(:with_context)
+        logger.with_context(logging_context, &block)
+      elsif defined?(Sidekiq::Logging)
+        Sidekiq::Logging.with_context(logging_context, &block)
+      else
+        logger.warn "Don't know how to create the logging context. Please open a feature request: https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
+      end
+      nil
+    end
+
+    #
+    # Setup some variables to add to each log line
+    #
+    #
+    # @return [Hash] the context to use for each log line
+    #
+    def logging_context
+      middleware = is_a?(Middleware::Client) ? :client : :server
+      digest = item["unique_digest"]
+
+      if defined?(Sidekiq::Logging)
+        "#{middleware} #{"DIG-#{digest}" if digest}"
+      else
+        { "uniquejobs" => middleware.to_s, lock_type => digest }
+      end
+    end
   end
 end

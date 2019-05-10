@@ -24,8 +24,22 @@ module SimulateLock
         conn.lpush(key.queued, job_id)
         conn.lpush(key.primed, job_id)
         conn.hset(key.locked, job_id, current_time)
+        conn.zadd(key.digests, current_time, key.digest)
+        conn.zadd(key.digests, current_time, key.digest)
+        conn.zadd(key.changelog, current_time, changelog_entry(key, job_id, "queue.lua", "Queued"))
+        conn.zadd(key.changelog, current_time, changelog_entry(key, job_id, "lock.lua", "Locked"))
       end
     end
+  end
+
+  def changelog_entry(key, job_id, script, message)
+    dump_json(
+      digest: key.digest,
+      job_id: job_id,
+      script: script,
+      message: message,
+      time: current_time,
+    )
   end
 
   def lock_until_executed(digest, jid, ttl = nil)
