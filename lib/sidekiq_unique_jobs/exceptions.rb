@@ -59,10 +59,10 @@ module SidekiqUniqueJobs
     # @param file [Pathname] full path to the lua file the error ocurred in
     # @param content [String] lua file content the error ocurred in
     def initialize(error, file, content)
-      @error   = error
-      @file    = file
-      @content = content
-
+      @error     = error
+      @file      = file
+      @content   = content
+      @backtrace = @error.backtrace
       @error.message =~ PATTERN
       _stage = Regexp.last_match(1)
       line_number = Regexp.last_match(2)
@@ -89,9 +89,9 @@ module SidekiqUniqueJobs
     end
 
     def generate_backtrace(file, line_number)
-      pre_unique_jobs = backtrace_before_entering_unique_jobs(@error.backtrace)
-      index_of_first_unique_jobs_line = (@error.backtrace.size - pre_unique_jobs.size - 1)
-      pre_unique_jobs.unshift(@error.backtrace[index_of_first_unique_jobs_line])
+      pre_unique_jobs = backtrace_before_entering_unique_jobs(@backtrace)
+      index_of_first_unique_jobs_line = (@backtrace.size - pre_unique_jobs.size - 1)
+      pre_unique_jobs.unshift(@backtrace[index_of_first_unique_jobs_line])
       pre_unique_jobs.unshift("#{file}:#{line_number}")
       pre_unique_jobs
     end

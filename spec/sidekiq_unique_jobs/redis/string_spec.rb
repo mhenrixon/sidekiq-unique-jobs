@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Redis::String do
@@ -24,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::String do
     subject(:value) { entity.value }
 
     context "without entries" do
-      it { is_expected.to be == nil }
+      it { is_expected.to be.nil? }
     end
 
     context "with entries" do

@@ -160,8 +160,6 @@ module SidekiqUniqueJobs
       redis { |conn| conn.move(key, db) }
     end
 
-    def object(*args); end
-
     def randomkey
       redis(&:randomkey)
     end
