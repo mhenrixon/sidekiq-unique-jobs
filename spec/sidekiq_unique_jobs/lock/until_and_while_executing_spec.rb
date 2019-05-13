@@ -82,7 +82,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis: :redis, r
       it "always unlocks" do
         process_one.lock
 
-        expect { process_one.execute { } }
+        expect { process_one.execute {} }
           .to raise_error(RuntimeError, "Hell")
 
         expect(runtime_one.locked?).to eq(false)

@@ -4,7 +4,6 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  # rubocop:disable Metrics/ClassLength
   class Locksmith
     include Comparable
     include SidekiqUniqueJobs::Connection
@@ -57,16 +56,13 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock(&block)
-      # log_debug("Enter Locksmith##{__method__} at #{current_time}")
       redis(redis_pool) do |conn|
         return lock_async(conn, &block) if block_given?
 
         lock_sync(conn) do
-          # log_debug("Exit Locksmith##{__method__} at #{current_time} with #{job_id}")
           return job_id
         end
       end
-      # log_debug("Exit Locksmith##{__method__} at #{current_time}")
     end
 
     #
@@ -88,7 +84,6 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!(conn = nil)
-      # log_debug("Enter Locksmith##{__method__} at #{current_time}")
       call_script(:unlock, key.to_a, argv, conn)
     end
 
@@ -97,7 +92,6 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?(conn = nil)
-      # log_debug("Enter Locksmith##{__method__} at #{current_time}")
       call_script(:locked, key.to_a, [job_id], conn).positive?
     end
 
@@ -134,7 +128,7 @@ module SidekiqUniqueJobs
       return yield job_id if locked?(conn)
     end
 
-    def lock_async(conn) # rubocop:disable Metrics/MethodLength
+    def lock_async(conn)
       return_value = nil
 
       future = Concurrent::Promises.future_on(:io) do
@@ -147,16 +141,13 @@ module SidekiqUniqueJobs
         return_value = yield job_id if return_value == job_id
       end
 
-      # log_debug("Exit Locksmsith##{__method__} at #{current_time}")
       return_value
     ensure
       unlock!(conn)
     end
 
     def wait_for_primed_token(conn = nil)
-      # log_debug("Enter Locksmith##{__method__} at #{current_time}")
-
-      primed_token, elapsed = timed do
+      primed_token, _elapsed = timed do
         if timeout.nil? || timeout.positive?
           # passing timeout 0 to brpoplpush causes it to block indefinitely
           conn.brpoplpush(key.queued, key.primed, timeout || 0)
@@ -165,28 +156,17 @@ module SidekiqUniqueJobs
         end
       end
 
-      # TODO: Collect metrics and stats
-      # log_debug("Exit Locksmith##{__method__} at #{current_time} (#{elapsed}ms)")
       primed_token
     end
 
     def enqueue(conn)
-      # log_debug("Enter Locksmith##{__method__} at #{current_time}")
-
       queued_token, elapsed = timed do
         call_script(:queue, key.to_a, argv, conn)
       end
 
       validity = pttl.to_i - elapsed - drift(pttl)
 
-      # log_debug("Exit Locksmith##{__method__} at #{current_time} (#{elapsed}ms)")
-
-      if validity >= 0 || pttl.zero?
-        return yield queued_token if queued_token == job_id
-      else
-        # log_debug("Exit Locksmith##{__method__} expired  (validity #{validity} < 0)")
-        nil
-      end
+      return yield queued_token if (validity >= 0 || pttl.zero?) && (queued_token == job_id)
     end
 
     def drift(val)
@@ -196,5 +176,4 @@ module SidekiqUniqueJobs
       (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
