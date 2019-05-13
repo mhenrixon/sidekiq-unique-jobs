@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable RSpec/FilePath, RSpec/DescribeMethod
-RSpec.describe SidekiqUniqueJobs::Middleware::Server, "unique: :until_and_while_executing", redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_executing", redis: :redis do
   let(:server) { described_class.new }
 
   let(:jid_one)      { "jid one" }
@@ -29,23 +29,15 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "unique: :until_and_while_
   let(:run_key) { SidekiqUniqueJobs::Key.new("uniquejobs:f07093737839f88af8593c945143574d:RUN") }
 
   context "when item_one is locked" do
-    let(:pushed_jid) { push_item(item_one) }
-
     before do
-      pushed_jid
+      push_item(item_one)
     end
 
     context "with a lock_timeout of 0" do
-      let(:lock_timeout) { 0 }
+      let(:lock_timeout) { nil }
 
       context "when processing takes 0 seconds" do
-        let(:sleepy_time) { 0 }
-
-        it "cannot lock item_two" do
-          expect(push_item(item_two)).to eq(nil)
-        end
-
-        it "item_one can be executed by server", :flaky do
+        it "item_one can be executed by server" do
           set = false
           server.call(worker_class, item_one, queue) { set = true }
           expect(set).to eq(true)

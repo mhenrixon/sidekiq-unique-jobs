@@ -16,7 +16,11 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        runtime_lock.execute { yield } if unlock
+        if unlock
+          runtime_lock.execute { return yield }
+        else
+          log_fatal "couldn't unlock digest: #{item[UNIQUE_DIGEST_KEY]} #{item[JID_KEY]}"
+        end
       end
 
       def runtime_lock

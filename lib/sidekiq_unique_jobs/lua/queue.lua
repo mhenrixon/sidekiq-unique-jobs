@@ -43,7 +43,8 @@ if redis.call('HEXISTS', locked, job_id) == 1 then
 end
 
 local prev_jid = redis.call('GET', digest)
-if not prev_jid then
+log_debug("job_id:", job_id, "prev_jid:", prev_jid)
+if not prev_jid or prev_jid == false then
   log_debug("SET", digest, job_id)
   redis.call('SET', digest, job_id)
 elseif prev_jid == job_id then
@@ -63,14 +64,8 @@ else
   end
 end
 
-if within_limit and queued_count < limit then
-  log_debug("LPUSH", queued, job_id)
-  redis.call('LPUSH', queued, job_id)
-else
-  log_debug("Skipping LPUSH (" .. queued .. " limit limited (" .. tostring(queued_count) .. " of " .. tostring(limit) .. " is used)")
-  log("Limit Exceeded")
-  return nil
-end
+log_debug("LPUSH", queued, job_id)
+redis.call('LPUSH', queued, job_id)
 
 -- The Sidekiq client should only set pttl for until_expired
 -- The Sidekiq server should set pttl for all other jobs
