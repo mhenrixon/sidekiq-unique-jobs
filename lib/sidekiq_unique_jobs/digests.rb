@@ -4,6 +4,7 @@ module SidekiqUniqueJobs
   # Utility module to help manage unique digests in redis.
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
+  # TODO: Deprecate this class in favour of SidekiqUniqueJobs::Redis::Digests
   module Digests
     DEFAULT_COUNT = 1_000
     SCAN_PATTERN  = "*"
