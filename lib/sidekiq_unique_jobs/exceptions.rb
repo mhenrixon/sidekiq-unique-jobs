@@ -58,6 +58,7 @@ module SidekiqUniqueJobs
     # @param error [StandardError] the original error raised by redis
     # @param file [Pathname] full path to the lua file the error ocurred in
     # @param content [String] lua file content the error ocurred in
+    # :nocov:
     def initialize(error, file, content)
       @error     = error
       @file      = file
@@ -75,6 +76,7 @@ module SidekiqUniqueJobs
 
     private
 
+    # :nocov:
     def generate_error_context(content, line_number)
       lines = content.lines.to_a
       beginning_line_number = [1, line_number - CONTEXT_LINE_NUMBER].max
@@ -88,6 +90,7 @@ module SidekiqUniqueJobs
       end.join.chomp
     end
 
+    # :nocov:
     def generate_backtrace(file, line_number)
       pre_unique_jobs = backtrace_before_entering_unique_jobs(@backtrace)
       index_of_first_unique_jobs_line = (@backtrace.size - pre_unique_jobs.size - 1)
@@ -96,10 +99,12 @@ module SidekiqUniqueJobs
       pre_unique_jobs
     end
 
+    # :nocov:
     def backtrace_before_entering_unique_jobs(backtrace)
       backtrace.reverse.take_while { |line| !line_from_unique_jobs(line) }.reverse
     end
 
+    # :nocov:
     def line_from_unique_jobs(line)
       line.split(":").first.include?(LIB_PATH)
     end
