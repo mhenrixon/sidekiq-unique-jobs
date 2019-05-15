@@ -24,7 +24,7 @@ require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 
-LOGLEVEL = ENV.fetch("LOGLEVEL") { "INFO" }.upcase
+LOGLEVEL = ENV.fetch("LOGLEVEL") { "ERROR" }.upcase
 
 SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get(LOGLEVEL.to_s)
