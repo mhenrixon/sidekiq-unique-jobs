@@ -15,8 +15,8 @@ SimpleCov.start do
   add_filter '/lib/sidekiq_unique_jobs/core_ext.rb'
   add_filter '/lib/sidekiq_unique_jobs/redis.rb'
 
-  add_group 'Client', 'lib/sidekiq_unique_jobs/client'
-  add_group 'Locks', 'lib/sidekiq_unique_jobs/lock'
-  add_group 'Server', 'lib/sidekiq_unique_jobs/server'
-  add_group 'Timeout', 'lib/sidekiq_unique_jobs/timeout'
+  add_group 'Locks',      'lib/sidekiq_unique_jobs/lock'
+  add_group 'Middelware', 'lib/sidekiq_unique_jobs/middleware'
+  add_group 'Redis',      'lib/sidekiq_unique_jobs/redis'
+  add_group 'Timeout',    'lib/sidekiq_unique_jobs/timeout'
 end
