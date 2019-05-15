@@ -12,6 +12,6 @@ module Sidekiq::Logging
   end
 
   def logger
-    Sidekiq::Logging.logger
+    Sidekiq.logger
   end
 end
