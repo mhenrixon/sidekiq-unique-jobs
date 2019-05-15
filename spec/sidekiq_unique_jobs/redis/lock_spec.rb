@@ -3,10 +3,15 @@
 require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Redis::Lock do
-  let(:entity) { described_class.new(key) }
+  subject(:entity) { described_class.new(key) }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:digest) { SecureRandom.hex(12) }
   let(:job_id) { SecureRandom.hex(12) }
+
+  its(:digest_key)  { is_expected.to be_a(SidekiqUniqueJobs::Redis::String) }
+  its(:queued_list) { is_expected.to be_a(SidekiqUniqueJobs::Redis::List) }
+  its(:primed_list) { is_expected.to be_a(SidekiqUniqueJobs::Redis::List) }
+  its(:locked_hash) { is_expected.to be_a(SidekiqUniqueJobs::Redis::Hash) }
 
   describe "#all_jids" do
     subject(:all_jids) { entity.all_jids }

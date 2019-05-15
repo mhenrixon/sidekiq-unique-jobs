@@ -38,6 +38,18 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
     end
   end
 
+  describe ".keys_with_ttl" do
+    subject(:keys_with_ttl) { described_class.keys_with_ttl }
+
+    context "with existing lock" do
+      before do
+        lock.lock
+      end
+
+      it { is_expected.to include(key.digest => -1, key.locked => -1) }
+    end
+  end
+
   describe ".del" do
     subject(:del) { described_class.del(pattern, 100) }
 

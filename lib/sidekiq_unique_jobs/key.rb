@@ -5,8 +5,6 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Key
-    include Comparable
-
     #
     # @!attribute [r] digest
     #   @return [String] the digest for which keys are created
@@ -56,10 +54,6 @@ module SidekiqUniqueJobs
 
     def ==(other)
       digest == other.digest
-    end
-
-    def <=>(other)
-      digest <=> other.digest
     end
 
     #

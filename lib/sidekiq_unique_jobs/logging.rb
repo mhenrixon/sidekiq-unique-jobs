@@ -65,9 +65,7 @@ module SidekiqUniqueJobs
     def with_logging_context
       SidekiqUniqueJobs::Job.add_uniqueness(item)
       with_configured_loggers_context do
-        # log_debug("started")
-        yield
-        # log_debug("ended")
+        return yield
       end
       nil # Need to make sure we don't return anything here
     end
@@ -88,6 +86,7 @@ module SidekiqUniqueJobs
       else
         logger.warn "Don't know how to create the logging context. Please open a feature request: https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
       end
+
       nil
     end
 
@@ -99,12 +98,13 @@ module SidekiqUniqueJobs
     #
     def logging_context
       middleware = is_a?(Middleware::Client) ? :client : :server
-      digest = item["unique_digest"]
+      digest = item[UNIQUE_DIGEST_KEY]
+      lock_type = item[LOCK_KEY]
 
-      if defined?(Sidekiq::Logging)
-        "#{middleware} #{"DIG-#{digest}" if digest}"
-      else
+      if logger.respond_to?(:with_context)
         { "uniquejobs" => middleware.to_s, lock_type => digest }
+      else
+        "uniquejobs-#{middleware} #{"DIG-#{digest}" if digest}"
       end
     end
   end
