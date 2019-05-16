@@ -6,14 +6,12 @@ local locked    = KEYS[4]
 local changelog = KEYS[5]
 -------- END keys ---------
 
-
 -------- BEGIN lock arguments ---------
 local job_id       = ARGV[1]      -- The job_id that was previously primed
 local pttl         = tonumber(ARGV[2])
 local lock_type    = ARGV[3]
 local limit        = tonumber(ARGV[4])
 -------- END lock arguments -----------
-
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
@@ -22,11 +20,12 @@ local max_history  = tonumber(ARGV[7])
 local script_name  = "queue.lua"
 ---------  END injected arguments ---------
 
+--------  BEGIN Variables --------
 local queued_count = redis.call('LLEN', queued)
 local locked_count = redis.call('HLEN', locked)
 local within_limit = limit > locked_count
 local limit_exceeded = not within_limit
-
+--------   END Variables  --------
 
 --------  BEGIN local functions --------
 <%= include_partial 'shared/_common.lua' %>

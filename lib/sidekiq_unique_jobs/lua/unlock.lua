@@ -7,14 +7,12 @@ local changelog = KEYS[5]
 local digests   = KEYS[6]
 -------- END keys ---------
 
-
 -------- BEGIN lock arguments ---------
 local job_id = ARGV[1]
 local pttl   = tonumber(ARGV[2])
 local type   = ARGV[3]
 local limit  = tonumber(ARGV[4])
 -------- END lock arguments -----------
-
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
@@ -23,10 +21,11 @@ local max_history  = tonumber(ARGV[7])
 local script_name  = "unlock.lua"
 ---------  END injected arguments ---------
 
+--------  BEGIN Variables --------
 local queued_count = redis.call('LLEN', queued)
 local primed_count = redis.call('LLEN', primed)
 local locked_count = redis.call('HLEN', locked)
-
+---------  END Variables ---------
 
 --------  BEGIN local functions --------
 <%= include_partial 'shared/_common.lua' %>

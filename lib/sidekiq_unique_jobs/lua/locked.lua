@@ -6,11 +6,9 @@ local locked    = KEYS[4]
 local changelog = KEYS[5]
 -------- END keys ---------
 
-
 -------- BEGIN lock arguments ---------
 local job_id = ARGV[1]
 -------- END lock arguments -----------
-
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[2])
@@ -18,7 +16,6 @@ local verbose      = ARGV[3] == "true"
 local max_history  = tonumber(ARGV[4])
 local script_name  = "locked.lua"
 ---------  END injected arguments ---------
-
 
 --------  BEGIN local functions --------
 <%= include_partial 'shared/_common.lua' %>
