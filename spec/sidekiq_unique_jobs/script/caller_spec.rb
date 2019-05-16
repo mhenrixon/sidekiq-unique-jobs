@@ -28,7 +28,8 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller, redis: :redis do
     shared_examples "script gets called with the correct arguments" do
       it "delegates to Script.call" do
         call_script
-        expect(SidekiqUniqueJobs::Script).to have_received(:call).with(script_name, kind_of(Redis), keys: keys, argv: argv)
+        expect(SidekiqUniqueJobs::Script).to have_received(:call)
+          .with(script_name, kind_of(Redis), keys: keys, argv: argv)
       end
     end
 
