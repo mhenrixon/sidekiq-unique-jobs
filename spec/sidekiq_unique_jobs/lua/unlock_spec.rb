@@ -56,8 +56,8 @@ RSpec.describe "unlock.lua", redis: :redis do
       it "does unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
 
-        expect(queued.count).to be == 1
-        expect(queued.entries).to match_array(["1"])
+        expect { queued.count }.to eventually be == 0
+        expect { queued.entries }.to eventually match_array([])
 
         expect(primed.count).to be == 0
 

@@ -30,7 +30,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, redis: :redis, redis_db: 9
 
         middleware.call(worker, item, queue) do
           unique_keys.all? do |key|
-            expect(key).to have_ttl(0)
+            expect { key }.to eventually have_ttl(-2)
           end
         end
       end
