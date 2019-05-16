@@ -93,6 +93,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
 
       before do
         allow(logger).to receive(:respond_to?).with(:with_context).and_return(false)
+        hide_const("Sidekiq::Logging")
       end
 
       it "logs a warning" do
