@@ -62,6 +62,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace, redis: :redis do
 
       it "removes the job from the queue" do
         expect { call }.to change { queue_count(:customqueue) }.from(1).to(0)
+
         expect(block).to have_received(:call)
       end
     end

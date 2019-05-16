@@ -52,7 +52,7 @@ module SidekiqUniqueJobs
       error.message =~ PATTERN
     end
 
-    # Initialize a new {LuaError} from an existing redis error, adjusting
+    # Initialize a new {ScriptError} from an existing redis error, adjusting
     # the message and backtrace in the process.
     #
     # @param error [StandardError] the original error raised by redis

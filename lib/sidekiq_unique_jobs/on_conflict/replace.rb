@@ -30,22 +30,25 @@ module SidekiqUniqueJobs
       # Replace the old job in the queue
       # @yield to retry the lock after deleting the old one
       def call(&block)
-        return unless delete_job_by_digest
+        return unless (deleted_job = delete_job_by_digest)
 
-        delete_lock
+        log_info("Deleting job: #{deleted_job}")
+        if (del_count = delete_lock)
+          log_info("Deleted `#{del_count}` keys for #{unique_digest}")
+        end
         block&.call
       end
 
       # Delete the job from either schedule, retry or the queue
       def delete_job_by_digest
-        keys = ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET]
-        argv = [unique_digest]
-        call_script(:delete_job_by_digest, keys, argv)
+        call_script(:delete_job_by_digest,
+                    keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET],
+                    argv: [unique_digest])
       end
 
       # Delete the keys belonging to the job
       def delete_lock
-        call_script(:delete_by_digest, [unique_digest, DIGESTS_ZSET])
+        call_script(:delete_by_digest, keys: [unique_digest, DIGESTS_ZSET])
       end
     end
   end

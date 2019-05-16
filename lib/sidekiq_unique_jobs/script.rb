@@ -21,13 +21,13 @@ module SidekiqUniqueJobs
     #   that wasn't previously loaded.
     #
     # @param [Symbol] file_name the name of the lua script
-    # @param [Array<String>] keys for the script
+    # @param [Array<String>] keys: for the script
     # @param [Array<Object>] argv for the script
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     # @return value from script
     #
-    def call(file_name, conn, keys = [], argv = [])
+    def call(file_name, conn, keys: [], argv: [])
       result, elapsed = timed do
         execute_script(file_name, conn, keys, argv)
       end
@@ -36,7 +36,7 @@ module SidekiqUniqueJobs
       result
     rescue ::Redis::CommandError => ex
       handle_error(ex, file_name) do
-        call(file_name, conn, keys, argv)
+        call(file_name, conn, keys: keys, argv: argv)
       end
     end
 

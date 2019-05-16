@@ -15,4 +15,5 @@ local function delete_from_queue(queue, digest)
     end
     index = index + per
   end
+  return result
 end
