@@ -76,7 +76,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
       end
 
       after do
-        Sidekiq.send(:remove_const, "Logging") unless @keep_constant
+        Sidekiq.send(:remove_const, "Logging") unless @keep_constant # rubocop:disable RSpec/InstanceVariable
       end
 
       it "sets up a logging context" do
@@ -96,11 +96,11 @@ RSpec.describe SidekiqUniqueJobs::Logging do
       end
 
       it "logs a warning" do
-        with_configured_loggers_context { }
+        with_configured_loggers_context {}
 
         expect(logger).to have_received(:warn).with(
           "Don't know how to create the logging context. Please open a feature request:" \
-          " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
+          " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md",
         )
       end
     end

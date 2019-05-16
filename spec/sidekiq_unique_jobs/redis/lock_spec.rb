@@ -4,6 +4,7 @@ require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Redis::Lock do
   subject(:entity) { described_class.new(key) }
+
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:digest) { SecureRandom.hex(12) }
   let(:job_id) { SecureRandom.hex(12) }

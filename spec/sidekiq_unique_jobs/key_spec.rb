@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Key do
@@ -25,7 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Key do
         #{digest_one}:LOCKED
         unique:changelog
         unique:digests
-      ]
+      ],
     )
   end
 

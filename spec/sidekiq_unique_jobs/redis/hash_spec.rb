@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Redis::Hash do
@@ -9,7 +11,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
   let!(:current_time) { SidekiqUniqueJobs::Timing.current_time }
 
   describe "#entries" do
-    subject(:entries) { entity.entries(with_values: with_values)}
+    subject(:entries) { entity.entries(with_values: with_values) }
 
     let(:with_values) { nil }
 
@@ -22,11 +24,13 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
 
       context "when with_values: false" do
         let(:with_values) { false }
+
         it { is_expected.to match_array([job_id]) }
       end
 
       context "when with_values: true" do
         let(:with_values) { true }
+
         it { is_expected.to eq(job_id => current_time.to_s) }
       end
     end
