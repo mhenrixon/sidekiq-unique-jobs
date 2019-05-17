@@ -16,9 +16,9 @@ local script_name  = "delete_job_by_digest.lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
-<%= include_partial 'shared/_common.lua' %>
-<%= include_partial 'shared/_delete_from_queue.lua' %>
-<%= include_partial 'shared/_delete_from_sorted_set.lua' %>
+<%= include_partial "shared/_common.lua" %>
+<%= include_partial "shared/_delete_from_queue.lua" %>
+<%= include_partial "shared/_delete_from_sorted_set.lua" %>
 ----------  END local functions ----------
 
 

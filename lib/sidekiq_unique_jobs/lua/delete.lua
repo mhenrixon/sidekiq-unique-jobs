@@ -22,18 +22,18 @@ local script_name  = "delete.lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
-<%= include_partial 'shared/_common.lua' %>
+<%= include_partial "shared/_common.lua" %>
 ----------  END local functions ----------
 
 
 --------  BEGIN delete.lua --------
-log_debug("BEGIN delete ", digest)
+log_debug("BEGIN delete", digest)
 
 log_debug("DEL", digest, queued, primed, locked)
-local del_count = redis.call('DEL', digest, queued, primed, locked)
+local del_count = redis.call("DEL", digest, queued, primed, locked)
 
-log_debug('ZREM', digests, digest)
-redis.call('ZREM', digests, digest)
+log_debug("ZREM", digests, digest)
+redis.call("ZREM", digests, digest)
 
 
 log("Deleted (" .. del_count .. ") keys")

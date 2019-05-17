@@ -17,20 +17,21 @@ local script_name  = "delete_orphaned.lua"
 
 
 --------  BEGIN local functions --------
-<%= include_partial 'shared/_common.lua' %>
-<%= include_partial 'shared/_find_digest_in_queues.lua' %>
-<%= include_partial 'shared/_find_digest_in_sorted_set.lua' %>
+<%= include_partial "shared/_common.lua" %>
+<%= include_partial "shared/_find_digest_in_queues.lua" %>
+<%= include_partial "shared/_find_digest_in_sorted_set.lua" %>
 ----------  END local functions ----------
 
 
 --------  BEGIN delete_orphaned.lua --------
+log_debug("BEGIN")
 local cursor = 0
 local per    = 100
 local index  = 0
 local result = nil
 
 while (index < count) do
-  local digs = redis.call('ZREVRANGE', digests, index, index + per -1)
+  local digs = redis.call("ZREVRANGE", digests, index, index + per -1)
   for _, digest in pairs(digs) do
     local pattern = "*" .. digest .. "*"
     local found = find_digest_in_queues("queue:*", pattern)

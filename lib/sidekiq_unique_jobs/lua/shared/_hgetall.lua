@@ -1,5 +1,5 @@
 local hgetall = function (key)
-  local bulk = redis.call('HGETALL', key)
+  local bulk = redis.call("HGETALL", key)
   local result = {}
   local nextkey
   for i, v in ipairs(bulk) do

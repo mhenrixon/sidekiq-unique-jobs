@@ -21,31 +21,31 @@ local script_name  = "queue.lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN Variables --------
-local queued_count = redis.call('LLEN', queued)
-local locked_count = redis.call('HLEN', locked)
+local queued_count = redis.call("LLEN", queued)
+local locked_count = redis.call("HLEN", locked)
 local within_limit = limit > locked_count
 local limit_exceeded = not within_limit
 --------   END Variables  --------
 
 --------  BEGIN local functions --------
-<%= include_partial 'shared/_common.lua' %>
+<%= include_partial "shared/_common.lua" %>
 ----------  END local functions ----------
 
 
 --------  BEGIN queue.lua --------
 log_debug("BEGIN queue with key:", digest, "for job:", job_id)
 
-if redis.call('HEXISTS', locked, job_id) == 1 then
+if redis.call("HEXISTS", locked, job_id) == 1 then
   log_debug("HEXISTS", locked, job_id, "== 1")
   log("Duplicate")
   return job_id
 end
 
-local prev_jid = redis.call('GET', digest)
+local prev_jid = redis.call("GET", digest)
 log_debug("job_id:", job_id, "prev_jid:", prev_jid)
 if not prev_jid or prev_jid == false then
   log_debug("SET", digest, job_id)
-  redis.call('SET', digest, job_id)
+  redis.call("SET", digest, job_id)
 elseif prev_jid == job_id then
   log_debug(digest, "already queued with job_id:", job_id)
   log("Duplicate")
@@ -55,7 +55,7 @@ else
   if within_limit and queued_count < limit then
     log_debug("Within limit:", digest, "(",  locked_count, "of", limit, ")", "queued (", queued_count, "of", limit, ")")
     log_debug("SET", digest, job_id, "(was", prev_jid, ")")
-    redis.call('SET', digest, job_id)
+    redis.call("SET", digest, job_id)
   else
     log_debug("Limit exceeded:", digest, "(",  locked_count, "of", limit, ")")
     log("Limit exceeded", prev_jid)
@@ -64,14 +64,14 @@ else
 end
 
 log_debug("LPUSH", queued, job_id)
-redis.call('LPUSH', queued, job_id)
+redis.call("LPUSH", queued, job_id)
 
 -- The Sidekiq client should only set pttl for until_expired
 -- The Sidekiq server should set pttl for all other jobs
 if lock_type == "until_expired" and pttl > 0 then
   log_debug("PEXPIRE", digest, pttl)
-  redis.call('PEXPIRE', digest, pttl)
-  redis.call('PEXPIRE', queued, pttl)
+  redis.call("PEXPIRE", digest, pttl)
+  redis.call("PEXPIRE", queued, pttl)
 end
 
 log("Queued")

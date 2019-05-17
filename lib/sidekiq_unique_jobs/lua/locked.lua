@@ -18,12 +18,12 @@ local script_name  = "locked.lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
-<%= include_partial 'shared/_common.lua' %>
+<%= include_partial "shared/_common.lua" %>
 ---------  END local functions ---------
 
 
 --------  BEGIN locked.lua --------
-if redis.call('HEXISTS', locked, job_id) == 1 then
+if redis.call("HEXISTS", locked, job_id) == 1 then
   log_debug("Locked", digest, "job_id:", job_id)
   return 1
 else
