@@ -111,8 +111,8 @@ Lock expiration is used for two things. For the `UntilExpired` job releases the 
 Since v6.0.11 the other locks will expire after the server is done processing.
 
 ```ruby
-sidekiq_options lock_expiration: nil # default - don't expire keys
-sidekiq_options lock_expiration: 20.days.to_i # expire this lock in 20 days
+sidekiq_options lock_ttl: nil # default - don't expire keys
+sidekiq_options lock_ttl: 20.days.to_i # expire this lock in 20 days
 ```
 
 ### Lock Timeout
@@ -434,7 +434,7 @@ To see logging in sidekiq when duplicate payload has been filtered out you can e
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :while_executing,
-                  log_duplicate_payload: true
+                  log_duplicate: true
 
   ...
 
