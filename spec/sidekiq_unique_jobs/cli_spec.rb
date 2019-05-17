@@ -127,6 +127,14 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     context "when Pry is available" do
       let(:console_class) { defined?(Pry) ? Pry : IRB }
 
+      before do
+        begin
+          require "pry"
+        rescue NameError, LoadError, NoMethodError
+          p "Pry not available, falling back to IRB"
+        end
+      end
+
       it_behaves_like "start console"
     end
 
