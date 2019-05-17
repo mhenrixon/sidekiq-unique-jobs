@@ -8,84 +8,28 @@ exclude_paths:
   - vendor/bundle
   - lib/sidekiq_unique_jobs/redis
   - lib/sidekiq_unique_jobs/lua
+  - lib/sidekiq
 detectors:
-  DuplicateMethodCall:
-    exclude:
-      - Sidekiq#self.use_options
-      - SidekiqUniqueJobs::Lock::WhileExecuting#execute
-      - SidekiqUniqueJobs::Profiler#self.stop
-      - SidekiqUniqueJobs::Timing#timed
-      - SidekiqUniqueJobs::Web#self.registered
-      - SidekiqUniqueJobs::Locksmith#lock_sync
-      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
-  IrresponsibleModule:
-    enabled: false
-  LongParameterList:
-    enabled: true
-    exclude:
-      - initialize
-      - Hash#slice
-      - SidekiqUniqueJobs::Middleware::Client#call
-      - SidekiqUniqueJobs::Script#call
-      - SidekiqUniqueJobs::Script#execute
-      - SidekiqUniqueJobs::Script::Caller#call_script
-      - SidekiqUniqueJobs::Redis
-  TooManyStatements:
-    exclude:
-      - initialize
-      - Hash#slice
-      - SidekiqUniqueJobs::Locksmith#enqueue
-      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
-      - SidekiqUniqueJobs::Locksmith#lock
-      - SidekiqUniqueJobs::Locksmith#lock_async
-      - SidekiqUniqueJobs::Locksmith#lock_sync
-      - SidekiqUniqueJobs::Digests#batch_delete
-      - SidekiqUniqueJobs::Digests#delete_by_pattern
-      - SidekiqUniqueJobs::Lock::WhileExecuting#execute
-      - SidekiqUniqueJobs::Locksmith#try_lock
-      - SidekiqUniqueJobs::Profiler#self.stop
-      - SidekiqUniqueJobs::Middleware#self.configure_server
-      - SidekiqUniqueJobs::Middleware#with_logging_context
-      - SidekiqUniqueJobs::Script#call
-      - SidekiqUniqueJobs::ScriptError#generate_error_context
-      - SidekiqUniqueJobs::Middleware::Client#call
-      - SidekiqUniqueJobs::Middleware::Server#call
-      - SidekiqUniqueJobs::UniqueArgs#filtered_args
-      - SidekiqUniqueJobs::Util#del
-      - SidekiqUniqueJobs::Web#self.registered
-  UncommunicativeVariableName:
-    exclude:
-      - Hash#slice
   BooleanParameter:
     exclude:
       - SidekiqUniqueJobs::Cli#self.banner
       - SidekiqUniqueJobs::Redis
-  UtilityFunction:
-    enabled: false
-  TooManyConstants:
-    exclude:
-      - SidekiqUniqueJobs
-  ManualDispatch:
-    enabled: true
-    exclude:
-      - Hash#slice
-      - Hash#slice!
-      - SidekiqUniqueJobs::Logging#with_configured_loggers_context
-      - SidekiqUniqueJobs::Middleware#with_configured_loggers_context
-      - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
-      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
-      - SidekiqUniqueJobs::Web::Helpers#redirect_to
-  MissingSafeMethod:
-    exclude:
-      - Array
-  NilCheck:
-    enabled: false
   DataClump:
     enabled: true
     exclude:
-      - SidekiqUniqueJobs::Util
-      - SidekiqUniqueJobs::Script
       - SidekiqUniqueJobs::Redis
+      - SidekiqUniqueJobs::Script
+      - SidekiqUniqueJobs::Util
+  DuplicateMethodCall:
+    exclude:
+      - Sidekiq#self.use_options
+      - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::Locksmith#lock_sync
+      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
+      - SidekiqUniqueJobs::Script::Caller#extract_args
+      - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::Timing#timed
+      - SidekiqUniqueJobs::Web#self.registered
   FeatureEnvy:
     exclude:
       - SidekiqUniqueJobs::Digests#batch_delete
@@ -98,6 +42,34 @@ detectors:
   InstanceVariableAssumption:
     exclude:
       - SidekiqUniqueJobs::Script::Template
+  IrresponsibleModule:
+    enabled: false
+  LongParameterList:
+    enabled: true
+    exclude:
+      - Hash#slice
+      - initialize
+      - SidekiqUniqueJobs::Middleware::Client#call
+      - SidekiqUniqueJobs::Redis
+      - SidekiqUniqueJobs::Script#call
+      - SidekiqUniqueJobs::Script#execute
+      - SidekiqUniqueJobs::Script::Caller#call_script
+  ManualDispatch:
+    enabled: true
+    exclude:
+      - Hash#slice
+      - Hash#slice!
+      - SidekiqUniqueJobs::Logging#logging_context
+      - SidekiqUniqueJobs::Logging#with_configured_loggers_context
+      - SidekiqUniqueJobs::Middleware#with_configured_loggers_context
+      - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
+      - SidekiqUniqueJobs::Web::Helpers#redirect_to
+  MissingSafeMethod:
+    exclude:
+      - Array
+  NilCheck:
+    enabled: false
   NestedIterators:
     exclude:
       - SidekiqUniqueJobs::Digests#batch_delete
@@ -106,17 +78,52 @@ detectors:
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Util#batch_delete
       - SidekiqUniqueJobs::Util#keys_with_ttl
+  TooManyStatements:
+    exclude:
+      - Hash#slice
+      - initialize
+      - SidekiqUniqueJobs::Digests#batch_delete
+      - SidekiqUniqueJobs::Digests#delete_by_pattern
+      - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::Locksmith#enqueue
+      - SidekiqUniqueJobs::Locksmith#lock
+      - SidekiqUniqueJobs::Locksmith#lock_async
+      - SidekiqUniqueJobs::Locksmith#lock_sync
+      - SidekiqUniqueJobs::Locksmith#try_lock
+      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
+      - SidekiqUniqueJobs::Logging#logging_context
+      - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::Middleware#with_logging_context
+      - SidekiqUniqueJobs::Middleware::Client#call
+      - SidekiqUniqueJobs::Middleware::Server#call
+      - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::Script#call
+      - SidekiqUniqueJobs::Script::Caller#call_script
+      - SidekiqUniqueJobs::Script::Caller#extract_args
+      - SidekiqUniqueJobs::ScriptError#generate_error_context
+      - SidekiqUniqueJobs::Timeout::Calculator#lock_ttl
+      - SidekiqUniqueJobs::UniqueArgs#filtered_args
+      - SidekiqUniqueJobs::Util#del
+      - SidekiqUniqueJobs::Web#self.registered
+  TooManyConstants:
+    exclude:
+      - SidekiqUniqueJobs
   RepeatedConditional:
     exclude:
       - SidekiqUniqueJobs::Locksmith
   TooManyInstanceVariables:
     exclude:
-      - SidekiqUniqueJobs::Locksmith
       - SidekiqUniqueJobs::Key
+      - SidekiqUniqueJobs::Locksmith
   TooManyMethods:
     exclude:
-      - SidekiqUniqueJobs::Locksmith
       - SidekiqUniqueJobs::Lock::BaseLock
+      - SidekiqUniqueJobs::Locksmith
+  UncommunicativeVariableName:
+    exclude:
+      - Hash#slice
   UncommunicativeParameterName:
     exclude:
       - SidekiqUniqueJobs::Redis
+  UtilityFunction:
+    enabled: false
