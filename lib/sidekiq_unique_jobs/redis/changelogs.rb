@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     #
     class Changelogs < SortedSet
       def initialize
-        super(SidekiqUniqueJobs::CHANGELOGS)
+        super(CHANGELOGS)
       end
 
       #

@@ -51,6 +51,14 @@ module SidekiqUniqueJobs
     configure(old_config)
   end
 
+  def enable!
+    config.enabled = true
+  end
+
+  def disable!
+    config.enabled = false
+  end
+
   # Configure the gem
   #
   # This is usually called once at startup of an application

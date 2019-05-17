@@ -93,17 +93,3 @@ module SidekiqUniqueJobs
     end
   end
 end
-
-RSpec.configure do |config|
-  config.before do
-    # unless locking_jids.empty?
-    #   p "after(:each) { #{locking_jids} }"
-    # end
-  end
-
-  config.after do
-    # unless locking_jids.empty?
-    #   p "after(:each) { #{locking_jids} }"
-    # end
-  end
-end

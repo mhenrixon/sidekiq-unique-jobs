@@ -40,8 +40,8 @@ module SidekiqUniqueJobs
       @queued    = suffixed_key("QUEUED")
       @primed    = suffixed_key("PRIMED")
       @locked    = suffixed_key("LOCKED")
-      @changelog = SidekiqUniqueJobs::CHANGELOGS
-      @digests   = SidekiqUniqueJobs::DIGESTS
+      @changelog = CHANGELOGS
+      @digests   = DIGESTS
     end
 
     def to_s

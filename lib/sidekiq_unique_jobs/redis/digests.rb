@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     #
     class Digests < SortedSet
       def initialize
-        super(SidekiqUniqueJobs::DIGESTS)
+        super(DIGESTS)
       end
 
       #

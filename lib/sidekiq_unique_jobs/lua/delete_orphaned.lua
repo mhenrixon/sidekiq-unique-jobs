@@ -1,14 +1,18 @@
 -------- BEGIN keys ---------
 local digests      = KEYS[1]
-local schedule_set = KEYS[3]
-local retry_set    = KEYS[4]
+local schedule_set = KEYS[2]
+local retry_set    = KEYS[3]
 --------  END keys  ---------
+
+-------- BEGIN argv ---------
+local count = tonumber(ARGV[1])
+--------  END argv  ---------
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[2])
 local verbose      = ARGV[3] == "true"
 local max_history  = tonumber(ARGV[4])
-local script_name  = "delete_orphaned.lua.lua"
+local script_name  = "delete_orphaned.lua"
 ---------  END injected arguments ---------
 
 
@@ -18,33 +22,24 @@ local script_name  = "delete_orphaned.lua.lua"
 <%= include_partial 'shared/_find_digest_in_sorted_set.lua' %>
 ----------  END local functions ----------
 
+
+--------  BEGIN delete_orphaned.lua --------
 local cursor = 0
-local per    = 50
-local total  = redis.call('ZCARD', digests)
+local per    = 100
 local index  = 0
 local result = nil
 
-while (index < total) do
+while (index < count) do
   local digs = redis.call('ZREVRANGE', digests, index, index + per -1)
   for _, digest in pairs(digs) do
     local pattern = "*" .. digest .. "*"
-    if find_digest_in_queues("queue:*", pattern)
+    local found = find_digest_in_queues("queue:*", pattern)
+    found = tonumber(found)
+    if found and found > 0 then
+      break
+    end
   end
   index = index + per
 end
 return result
-
---------  BEGIN delete_job_by_digest.lua --------
-result = delete_from_queue(queue, digest)
-if result then
-  return result
-end
-
-result = delete_from_sorted_set(schedule_set, digest)
-if result then
-  return result
-end
-
-result = delete_from_sorted_set(retry_set, digest)
-return result
---------   END delete_job_by_digest.lua  --------
+--------   END delete_orphaned.lua  --------
