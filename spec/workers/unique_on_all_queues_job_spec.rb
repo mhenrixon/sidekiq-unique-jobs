@@ -7,7 +7,7 @@ RSpec.describe UniqueOnAllQueuesJob do
       {
         "retry" => true,
         "lock" => :until_executed,
-        "unique_on_all_queues" => true,
+        "unique_across_queues" => true,
       }
     end
   end

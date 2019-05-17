@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
     end
 
     # Check if we should log duplicate payloads
-    def log_duplicate_payload?
+    def log_duplicate?
       options[LOG_DUPLICATE] || item[LOG_DUPLICATE]
     end
 

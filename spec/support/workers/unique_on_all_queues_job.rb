@@ -8,7 +8,7 @@
 # queue removed it won't work.
 class UniqueOnAllQueuesJob
   include Sidekiq::Worker
-  sidekiq_options lock: :until_executed, unique_on_all_queues: true
+  sidekiq_options lock: :until_executed, unique_across_queues: true
 
   def perform(one, two, three = nil)
     [one, two, three]

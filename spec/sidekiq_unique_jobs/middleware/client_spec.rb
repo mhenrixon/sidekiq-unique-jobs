@@ -132,7 +132,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       end
     end
 
-    context "when unique_on_all_queues is set" do
+    context "when unique_across_queues is set" do
       it "pushes no duplicate messages on other queues" do
         item = { "class" => UniqueOnAllQueuesJob, "args" => [1, 2] }
         push_item(item.merge("queue" => "customqueue"))
@@ -178,7 +178,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   it "logs duplicate payload when config turned on" do
     allow(Sidekiq.logger).to receive(:warn)
 
-    with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: true) do
+    with_sidekiq_options_for(UntilExecutedJob, log_duplicate: true) do
       2.times do
         push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
       end
@@ -190,7 +190,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
 
   it "does not log duplicate payload when config turned off" do
     allow(SidekiqUniqueJobs.logger).to receive(:warn)
-    with_sidekiq_options_for(UntilExecutedJob, log_duplicate_payload: false) do
+    with_sidekiq_options_for(UntilExecutedJob, log_duplicate: false) do
       2.times do
         push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
       end

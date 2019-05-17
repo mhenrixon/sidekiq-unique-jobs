@@ -80,7 +80,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     it_behaves_like "a digestable hash"
 
-    with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: true) do
+    with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_across_queues: true) do
       let(:expected_hash) { { "class" => "UntilExecutedJob", "unique_args" => [[1, 2]] } }
 
       it_behaves_like "a digestable hash"
@@ -135,11 +135,11 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     it { is_expected.to eq(nil) }
 
-    with_sidekiq_options_for(UntilExecutedJob, unique_on_all_queues: true) do
+    with_sidekiq_options_for(UntilExecutedJob, unique_across_queues: true) do
       it { is_expected.to eq(true) }
     end
 
-    with_sidekiq_options_for(UntilExecutedJob, unique_on_all_queues: false) do
+    with_sidekiq_options_for(UntilExecutedJob, unique_across_queues: false) do
       it { is_expected.to eq(false) }
     end
   end

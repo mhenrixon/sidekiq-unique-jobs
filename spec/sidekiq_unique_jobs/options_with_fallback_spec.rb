@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   let(:jid)                   { "maaaahjid" }
   let(:unique)                { :until_executed }
   let(:args)                  { [1] }
-  let(:log_duplicate_payload) { false }
+  let(:log_duplicate)         { false }
   let(:item) do
     {
       "jid" => jid,
@@ -28,7 +28,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       "class" => worker_class,
       "lock" => unique,
       "args" => args,
-      "log_duplicate_payload" => log_duplicate_payload,
+      "log_duplicate" => log_duplicate,
     }
   end
 
@@ -93,17 +93,17 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
   end
 
-  describe "#log_duplicate_payload?" do
-    subject(:log_duplicate_payload?) { options_with_fallback.log_duplicate_payload? }
+  describe "#log_duplicate?" do
+    subject(:log_duplicate?) { options_with_fallback.log_duplicate? }
 
-    context 'when options["log_duplicate_payload"] is true' do
-      let(:options) { { "log_duplicate_payload" => true } }
+    context 'when options["log_duplicate"] is true' do
+      let(:options) { { "log_duplicate" => true } }
 
       it { is_expected.to eq(true) }
     end
 
-    context 'when item["log_duplicate_payload"] is true' do
-      let(:log_duplicate_payload) { true }
+    context 'when item["log_duplicate"] is true' do
+      let(:log_duplicate) { true }
 
       it { is_expected.to eq(true) }
     end
