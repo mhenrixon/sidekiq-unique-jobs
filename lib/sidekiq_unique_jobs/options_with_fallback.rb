@@ -31,7 +31,7 @@ module SidekiqUniqueJobs
 
     # Check if we should log duplicate payloads
     def log_duplicate_payload?
-      options[LOG_DUPLICATE_KEY] || item[LOG_DUPLICATE_KEY]
+      options[LOG_DUPLICATE] || item[LOG_DUPLICATE]
     end
 
     # Check if we should log duplicate payloads
@@ -50,11 +50,11 @@ module SidekiqUniqueJobs
 
     # @return [Symbol]
     def lock_type
-      @lock_type ||= options[LOCK_KEY] || item[LOCK_KEY] || unique_type
+      @lock_type ||= options[LOCK] || item[LOCK] || unique_type
     end
 
     def unique_type
-      options[UNIQUE_KEY] || item[UNIQUE_KEY]
+      options[UNIQUE] || item[UNIQUE]
     end
 
     def options

@@ -14,8 +14,8 @@ RSpec.describe SidekiqUniqueJobs::Key do
   its(:queued)    { is_expected.to eq("#{digest_one}:QUEUED") }
   its(:primed)    { is_expected.to eq("#{digest_one}:PRIMED") }
   its(:locked)    { is_expected.to eq("#{digest_one}:LOCKED") }
-  its(:digests)   { is_expected.to eq(SidekiqUniqueJobs::DIGESTS_ZSET) }
-  its(:changelog) { is_expected.to eq(SidekiqUniqueJobs::CHANGELOG_ZSET) }
+  its(:digests)   { is_expected.to eq(SidekiqUniqueJobs::DIGESTS) }
+  its(:changelog) { is_expected.to eq(SidekiqUniqueJobs::CHANGELOGS) }
   its(:to_s)      { is_expected.to eq(digest_one) }
   its(:inspect)   { is_expected.to eq(digest_one) }
   its(:to_a) do

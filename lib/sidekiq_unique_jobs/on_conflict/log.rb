@@ -11,8 +11,8 @@ module SidekiqUniqueJobs
       # Logs an informational message about that the job was not unique
       def call
         log_info(
-          "skipping job with id (#{item[JID_KEY]}) " \
-          "because unique_digest: (#{item[UNIQUE_DIGEST_KEY]}) already exists",
+          "skipping job with id (#{item[JID]}) " \
+          "because unique_digest: (#{item[UNIQUE_DIGEST]}) already exists",
         )
       end
     end

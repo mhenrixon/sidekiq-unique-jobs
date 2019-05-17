@@ -98,8 +98,8 @@ module SidekiqUniqueJobs
     #
     def logging_context
       middleware = is_a?(Middleware::Client) ? :client : :server
-      digest = item[UNIQUE_DIGEST_KEY]
-      lock_type = item[LOCK_KEY]
+      digest = item[UNIQUE_DIGEST]
+      lock_type = item[LOCK]
 
       if logger.respond_to?(:with_context)
         { "uniquejobs" => middleware.to_s, lock_type => digest }

@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
       "args" => [1, 2] }
   end
 
-  let(:digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST_KEY] }
+  let(:digest) { item_with_digest[SidekiqUniqueJobs::UNIQUE_DIGEST] }
 
   describe ".unlock" do
     subject(:unlock) { described_class.unlock(item_with_digest) }

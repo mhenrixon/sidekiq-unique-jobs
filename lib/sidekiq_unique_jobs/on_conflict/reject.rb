@@ -10,12 +10,12 @@ module SidekiqUniqueJobs
 
       # Send jobs to dead queue
       def call
-        log_debug { "Rejecting job with jid: #{item[JID_KEY]}" }
+        log_debug { "Rejecting job with jid: #{item[JID]}" }
         send_to_deadset
       end
 
       def send_to_deadset
-        log_info { "Adding dead #{item[CLASS_KEY]} job #{item[JID_KEY]}" }
+        log_info { "Adding dead #{item[CLASS]} job #{item[JID]}" }
 
         if deadset_kill?
           deadset_kill

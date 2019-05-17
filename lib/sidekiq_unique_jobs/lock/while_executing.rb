@@ -50,7 +50,7 @@ module SidekiqUniqueJobs
       # This is safe as the base_lock always creates a new digest
       #   The append there for needs to be done every time
       def append_unique_key_suffix
-        item[UNIQUE_DIGEST_KEY] = item[UNIQUE_DIGEST_KEY] + RUN_SUFFIX
+        item[UNIQUE_DIGEST] = item[UNIQUE_DIGEST] + RUN_SUFFIX
       end
     end
   end

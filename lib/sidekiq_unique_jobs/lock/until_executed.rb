@@ -17,10 +17,10 @@ module SidekiqUniqueJobs
           yield
           unlock_with_callback
           callback_safely
-          item[JID_KEY]
+          item[JID]
         end
         # else
-        #   log_warn "the unique_key: #{item[UNIQUE_DIGEST_KEY]} is not locked, allowing job to silently complete"
+        #   log_warn "the unique_key: #{item[UNIQUE_DIGEST]} is not locked, allowing job to silently complete"
         #   nil
         # end
       end

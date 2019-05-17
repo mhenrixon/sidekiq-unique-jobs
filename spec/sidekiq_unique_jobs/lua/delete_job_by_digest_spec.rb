@@ -13,9 +13,9 @@ RSpec.describe "delete_job_by_digest.lua", redis: :redis do
   let(:argv)    { [digest] }
   let(:keys) do
     [
-      "#{SidekiqUniqueJobs::QUEUE_KEY}:#{queue}",
-      SidekiqUniqueJobs::SCHEDULE_SET,
-      SidekiqUniqueJobs::RETRY_SET,
+      "#{SidekiqUniqueJobs::QUEUE}:#{queue}",
+      SidekiqUniqueJobs::SCHEDULE,
+      SidekiqUniqueJobs::RETRY,
     ]
   end
 

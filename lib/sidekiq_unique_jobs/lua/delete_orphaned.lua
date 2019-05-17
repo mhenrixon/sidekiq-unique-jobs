@@ -14,12 +14,25 @@ local script_name  = "delete_orphaned.lua.lua"
 
 --------  BEGIN local functions --------
 <%= include_partial 'shared/_common.lua' %>
-<%= include_partial 'shared/_delete_from_queue.lua' %>
-<%= include_partial 'shared/_delete_from_sorted_set.lua' %>
+<%= include_partial 'shared/_find_digest_in_queues.lua' %>
+<%= include_partial 'shared/_find_digest_in_sorted_set.lua' %>
 ----------  END local functions ----------
 
--- local cursor = 0
--- redis.call("ZSCAN", digests, cursor,
+local cursor = 0
+local per    = 50
+local total  = redis.call('ZCARD', digests)
+local index  = 0
+local result = nil
+
+while (index < total) do
+  local digs = redis.call('ZREVRANGE', digests, index, index + per -1)
+  for _, digest in pairs(digs) do
+    local pattern = "*" .. digest .. "*"
+    if find_digest_in_queues("queue:*", pattern)
+  end
+  index = index + per
+end
+return result
 
 --------  BEGIN delete_job_by_digest.lua --------
 result = delete_from_queue(queue, digest)

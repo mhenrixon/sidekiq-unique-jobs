@@ -73,7 +73,7 @@ module SidekiqUniqueJobs
       private
 
       def add_uniqueness_when_missing
-        return if item.key?(UNIQUE_DIGEST_KEY)
+        return if item.key?(UNIQUE_DIGEST)
 
         # The below should only be done to ease testing
         # in production this will be done by the middleware
@@ -106,7 +106,7 @@ module SidekiqUniqueJobs
         return log_warn("might need to be unlocked manually") unless unlock
 
         callback_safely
-        item[JID_KEY]
+        item[JID]
       end
 
       def callback_safely
@@ -117,7 +117,7 @@ module SidekiqUniqueJobs
       end
 
       def strategy
-        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item, redis_pool)
+        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT]).new(item, redis_pool)
       end
     end
   end

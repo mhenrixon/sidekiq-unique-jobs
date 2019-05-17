@@ -26,14 +26,14 @@ module SidekiqUniqueJobs
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)
-      @key           = Key.new(item[UNIQUE_DIGEST_KEY])
-      @job_id        = item[JID_KEY]
-      @timeout       = item.fetch(LOCK_TIMEOUT_KEY) { 0 }
-      @type          = item[LOCK_KEY]
+      @key           = Key.new(item[UNIQUE_DIGEST])
+      @job_id        = item[JID]
+      @timeout       = item.fetch(LOCK_TIMEOUT) { 0 }
+      @type          = item[LOCK]
       @type        &&= @type.to_sym
       @redis_pool    = redis_pool
-      @limit         = item[LOCK_LIMIT_KEY] || 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @ttl           = item.fetch(LOCK_TTL_KEY) { item.fetch(LOCK_EXPIRATION_KEY) }.to_i
+      @limit         = item[LOCK_LIMIT] || 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+      @ttl           = item.fetch(LOCK_TTL) { item.fetch(LOCK_EXPIRATION) }.to_i
       @pttl          = @ttl * 1000
     end
 

@@ -23,8 +23,8 @@ module SidekiqUniqueJobs
       #
       def initialize(item, redis_pool = nil)
         super(item, redis_pool)
-        @queue         = item[QUEUE_KEY]
-        @unique_digest = item[UNIQUE_DIGEST_KEY]
+        @queue         = item[QUEUE]
+        @unique_digest = item[UNIQUE_DIGEST]
       end
 
       # Replace the old job in the queue
@@ -42,13 +42,13 @@ module SidekiqUniqueJobs
       # Delete the job from either schedule, retry or the queue
       def delete_job_by_digest
         call_script(:delete_job_by_digest,
-                    keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET],
+                    keys: ["#{QUEUE}:#{queue}", SCHEDULE, RETRY],
                     argv: [unique_digest])
       end
 
       # Delete the keys belonging to the job
       def delete_lock
-        call_script(:delete_by_digest, keys: [unique_digest, DIGESTS_ZSET])
+        call_script(:delete_by_digest, keys: [unique_digest, DIGESTS])
       end
     end
   end

@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe "delete_by_digest.lua", redis: :redis do
-  subject(:delete_by_digest) { call_script(:delete_by_digest, [digest, SidekiqUniqueJobs::DIGESTS_ZSET]) }
+  subject(:delete_by_digest) { call_script(:delete_by_digest, [digest, SidekiqUniqueJobs::DIGESTS]) }
 
   let(:job_id)      { "jobid" }
   let(:digest)      { "uniquejobs:digest" }

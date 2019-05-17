@@ -80,10 +80,10 @@ module SimulateLock
 
   def get_item(digest: "randomdigest", jid: "randomjid", lock_type: :until_executed, ttl: nil)
     item = {
-      UNIQUE_DIGEST_KEY => digest,
-      JID_KEY => jid,
-      LOCK_EXPIRATION_KEY => ttl,
-      LOCK_KEY => lock_type,
+      UNIQUE_DIGEST => digest,
+      JID => jid,
+      LOCK_EXPIRATION => ttl,
+      LOCK => lock_type,
     }
     @items << item
     item

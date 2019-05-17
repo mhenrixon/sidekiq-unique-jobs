@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
       # @option item [Float] :at the unix time the job is scheduled at
       def initialize(item)
         @item         = item
-        @worker_class = item[CLASS_KEY]
+        @worker_class = item[CLASS]
       end
 
       # The time until a job is scheduled
@@ -32,16 +32,16 @@ module SidekiqUniqueJobs
       # The time a job is scheduled
       # @return [Float] the exact unix time the job is scheduled at
       def scheduled_at
-        @scheduled_at ||= item[AT_KEY]
+        @scheduled_at ||= item[AT]
       end
 
       # The configured lock_ttl
       def lock_ttl
         @lock_ttl ||= begin
-          ttl = item[LOCK_TTL_KEY]
-          ttl ||= worker_options[LOCK_TTL_KEY]
-          ttl ||= item[LOCK_EXPIRATION_KEY] # TODO: Deprecate at some point
-          ttl ||= worker_options[LOCK_EXPIRATION_KEY] # TODO: Deprecate at some point
+          ttl = item[LOCK_TTL]
+          ttl ||= worker_options[LOCK_TTL]
+          ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
+          ttl ||= worker_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
           ttl ||= default_lock_ttl
           ttl && ttl.to_i + time_until_scheduled
         end
@@ -50,9 +50,9 @@ module SidekiqUniqueJobs
       # The configured lock_timeout
       def lock_timeout
         @lock_timeout = begin
-          timeout = default_worker_options[LOCK_TIMEOUT_KEY]
+          timeout = default_worker_options[LOCK_TIMEOUT]
           timeout = default_lock_timeout if default_lock_timeout
-          timeout = worker_options[LOCK_TIMEOUT_KEY] if worker_options.key?(LOCK_TIMEOUT_KEY)
+          timeout = worker_options[LOCK_TIMEOUT] if worker_options.key?(LOCK_TIMEOUT)
           timeout
         end
       end

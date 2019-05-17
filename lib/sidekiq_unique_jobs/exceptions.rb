@@ -33,7 +33,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Conflict < UniqueJobsError
     def initialize(item)
-      super("Item with the key: #{item[UNIQUE_DIGEST_KEY]} is already scheduled or processing")
+      super("Item with the key: #{item[UNIQUE_DIGEST]} is already scheduled or processing")
     end
   end
 

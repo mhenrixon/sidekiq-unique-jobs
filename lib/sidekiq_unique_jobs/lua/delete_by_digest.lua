@@ -24,7 +24,6 @@ local run_locked = digest .. ':RUN:LOCKED'
 <%= include_partial 'shared/_common.lua' %>
 ----------  END local functions ----------
 
-
 --------  BEGIN delete_by_digest.lua --------
 local counter = 0
 
