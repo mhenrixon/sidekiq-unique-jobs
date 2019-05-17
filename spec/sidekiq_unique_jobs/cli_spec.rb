@@ -130,7 +130,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
       before do
         begin
           require "pry"
-        rescue NameError, LoadError, NoMethodError
+        rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/ShadowedException
           p "Pry not available, falling back to IRB"
         end
       end
