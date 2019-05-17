@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
         @item       = item
         @callback   = callback
         @redis_pool = redis_pool
+        @attempt    = 0
         add_uniqueness_when_missing # Used to ease testing
       end
 
@@ -23,7 +24,6 @@ module SidekiqUniqueJobs
       #   Will call a conflict strategy if lock can't be achieved.
       # @return [String] the sidekiq job id
       def lock(&block)
-        @attempt = 0
         return call_strategy unless (locked_token = locksmith.lock(&block))
 
         locked_token

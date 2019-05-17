@@ -13,5 +13,11 @@ RSpec.describe SidekiqUniqueJobs::Timing do
     subject(:current_time) { described_class.current_time }
 
     it { is_expected.to be_a(Float) }
+
+    context "without Process::CLOCK_MONOTONIC" do
+      before { hide_const("Process::CLOCK_MONOTONIC") }
+
+      it { is_expected.to be_a(Float) }
+    end
   end
 end
