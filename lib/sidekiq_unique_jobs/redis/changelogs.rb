@@ -23,7 +23,9 @@ module SidekiqUniqueJobs
         options = {}
         options[:match] = match if match
         options[:count] = count if count
-        zscan_each(key, options).to_a.map { |entry| load_json(entry[0]) }
+        redis do |conn|
+          conn.zscan_each(key, options).to_a.map { |entry| load_json(entry[0]) }
+        end
       end
 
       def page(cursor, match: "*", page_size: 100)

@@ -9,11 +9,11 @@ module SidekiqUniqueJobs
     #
     class Set < Entity
       def entries
-        smembers(key)
+        redis { |conn| conn.smembers(key) }
       end
 
       def count
-        scard(key)
+        redis { |conn| conn.scard(key) }
       end
     end
   end

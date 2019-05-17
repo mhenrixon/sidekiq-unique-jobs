@@ -9,11 +9,11 @@ module SidekiqUniqueJobs
     #
     class List < Entity
       def entries
-        lrange(key, 0, -1)
+        redis { |conn| conn.lrange(key, 0, -1) }
       end
 
       def count
-        llen(key)
+        redis { |conn| conn.llen(key) }
       end
     end
   end

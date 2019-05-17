@@ -9,22 +9,22 @@ module SidekiqUniqueJobs
     #
     class SortedSet < Entity
       def entries(with_scores: true)
-        entrys = zrange(key, 0, -1, with_scores: with_scores)
+        entrys = redis { |conn| conn.zrange(key, 0, -1, with_scores: with_scores) }
         return entrys unless with_scores
 
         entrys.each_with_object({}) { |pair, hash| hash[pair[0]] = pair[1] }
       end
 
       def rank(member)
-        zrank(key, member)
+        redis { |conn| conn.zrank(key, member) }
       end
 
       def score(member)
-        zscore(key, member)
+        redis { |conn| conn.zscore(key, member) }
       end
 
       def count
-        zcard(key)
+        redis { |conn| conn.zcard(key) }
       end
     end
   end

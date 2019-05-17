@@ -10,18 +10,18 @@ module SidekiqUniqueJobs
     class Hash < Entity
       def entries(with_values: false)
         if with_values
-          hgetall(key)
+          redis { |conn| conn.hgetall(key) }
         else
-          hkeys(key)
+          redis { |conn| conn.hkeys(key) }
         end
       end
 
       def [](member)
-        hget(key, member)
+        redis { |conn| conn.hget(key, member) }
       end
 
       def count
-        hlen(key)
+        redis { |conn| conn.hlen(key) }
       end
     end
   end

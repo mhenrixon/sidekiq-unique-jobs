@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
       end
 
       def exist?
-        exists(key)
+        redis { |conn| conn.exists(key) }
       end
 
       def pttl

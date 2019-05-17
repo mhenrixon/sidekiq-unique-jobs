@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     #
     class String < Entity
       def value
-        get(key)
+        redis { |conn| conn.get(key) }
       end
 
       def count
