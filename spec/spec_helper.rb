@@ -27,7 +27,7 @@ Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 LOGLEVEL = ENV.fetch("LOGLEVEL") { "ERROR" }.upcase
 
 SidekiqUniqueJobs.configure do |config|
-  config.logger.level = Logger.const_get(LOGLEVEL.to_s)
+  config.logger.level = Logger.const_get(LOGLEVEL)
   config.verbose      = %w[1 true].include?(ENV["VERBOSE"])
   config.max_history  = 10
 end
