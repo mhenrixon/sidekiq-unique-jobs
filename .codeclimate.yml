@@ -31,4 +31,4 @@ exclude_patterns:
   - "tmp/"
   - "spec/"
   - "assets/"
-  - "lib/sidekiq/logging"
+  - "lib/sidekiq/logging.rb"
