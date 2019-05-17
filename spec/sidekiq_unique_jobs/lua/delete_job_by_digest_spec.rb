@@ -11,16 +11,16 @@ RSpec.describe "delete_job_by_digest.lua", redis: :redis do
   let(:queue)   { :customqueue }
   let(:options) { { keys: keys, argv: argv } }
   let(:argv)    { [digest] }
-  let(:keys)  do
+  let(:keys) do
     [
       "#{SidekiqUniqueJobs::QUEUE_KEY}:#{queue}",
       SidekiqUniqueJobs::SCHEDULE_SET,
-      SidekiqUniqueJobs::RETRY_SET
+      SidekiqUniqueJobs::RETRY_SET,
     ]
   end
 
   context "when job is retried" do
-    let(:job_id)  { "abcdefab" }
+    let(:job_id) { "abcdefab" }
     let(:job)  { Sidekiq.dump_json(item) }
     let(:item) do
       {
