@@ -110,18 +110,32 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   describe ".console" do
     subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
 
-    let(:console_class) { defined?(Pry) ? Pry : IRB }
+    shared_examples "start console" do
+      specify do
+        allow(Object).to receive(:include)
+        allow(console_class).to receive(:start).and_return(true)
+        expect(console).to eq <<~HEADER
+          Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
+          Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
+          Use `del '*', 1000, false to delete the first 1000 keys matching '*'
+        HEADER
 
-    specify do
-      allow(Object).to receive(:include)
-      allow(console_class).to receive(:start).and_return(true)
-      expect(console).to eq <<~HEADER
-        Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
-        Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
-        Use `del '*', 1000, false to delete the first 1000 keys matching '*'
-      HEADER
+        expect(Object).to have_received(:include).with(SidekiqUniqueJobs::Util)
+      end
+    end
 
-      expect(Object).to have_received(:include).with(SidekiqUniqueJobs::Util)
+    context "when Pry is available" do
+      let(:console_class) { defined?(Pry) ? Pry : IRB }
+
+      it_behaves_like "start console"
+    end
+
+    context "when Pry is unavailable" do
+      let(:console_class) { IRB }
+
+      before { hide_const("Pry") }
+
+      it_behaves_like "start console"
     end
   end
 end
