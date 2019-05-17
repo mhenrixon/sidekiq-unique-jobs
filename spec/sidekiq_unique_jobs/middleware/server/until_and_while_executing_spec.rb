@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable RSpec/FilePath, RSpec/DescribeMethod
-RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_executing", redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_executing" do
   let(:server) { described_class.new }
 
   let(:jid_one)      { "jid one" }

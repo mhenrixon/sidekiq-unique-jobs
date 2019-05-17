@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Redis::Changelogs, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Redis::Changelogs do
   let(:entity) { described_class.new }
   let(:digest) { SecureRandom.hex(12) }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }

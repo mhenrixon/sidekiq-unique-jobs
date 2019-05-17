@@ -34,6 +34,7 @@ module SidekiqUniqueJobs
 
       def flush_redis
         redis(&:flushall)
+      rescue StandardError # rubocop:disable Lint/HandleExceptions
       end
     end
 

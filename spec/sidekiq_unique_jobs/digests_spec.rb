@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Digests do
   before do
     (1..10).each do |arg|
       MyUniqueJob.perform_async(arg, arg)

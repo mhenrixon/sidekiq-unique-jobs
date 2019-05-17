@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Unlockable, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Unlockable do
   def item_with_digest
     SidekiqUniqueJobs::UniqueArgs.digest(item)
     item

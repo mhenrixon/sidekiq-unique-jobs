@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Script, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Script do
   subject { described_class }
 
   it { is_expected.to respond_to(:call).with(2).arguments.and_keywords(:keys, :argv) }

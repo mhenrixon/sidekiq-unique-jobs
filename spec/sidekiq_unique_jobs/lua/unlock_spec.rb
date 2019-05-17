@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe "unlock.lua", redis: :redis do
+RSpec.describe "unlock.lua" do
   subject(:unlock) { call_script(:unlock, key.to_a, argv_one) }
 
   let(:argv_one)   { [job_id_one, lock_ttl, lock_type, lock_limit] }

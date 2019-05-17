@@ -4,7 +4,7 @@ require "sidekiq/web"
 require "sidekiq_unique_jobs/web"
 require "rack/test"
 
-RSpec.describe SidekiqUniqueJobs::Web, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Web do
   include Rack::Test::Methods
 
   def app

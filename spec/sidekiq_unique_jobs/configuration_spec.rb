@@ -29,10 +29,10 @@ RSpec.describe SidekiqUniqueJobs do
     let(:ttl)       { nil }
     let(:item) do
       {
-        SidekiqUniqueJobs::UNIQUE_DIGEST_KEY => digest,
-        SidekiqUniqueJobs::JID_KEY => jid,
-        SidekiqUniqueJobs::LOCK_EXPIRATION_KEY => ttl,
-        SidekiqUniqueJobs::LOCK_KEY => lock_type,
+        SidekiqUniqueJobs::UNIQUE_DIGEST => digest,
+        SidekiqUniqueJobs::JID => jid,
+        SidekiqUniqueJobs::LOCK_EXPIRATION => ttl,
+        SidekiqUniqueJobs::LOCK => lock_type,
       }
     end
     let(:worker_class) { FoobarJob }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe "queue.lua", redis: :redis do
+RSpec.describe "queue.lua" do
   include SidekiqUniqueJobs::Script::Caller
   let(:queue) { call_script(:queue, key.to_a, argv) }
 

@@ -14,7 +14,7 @@ def sidekiq_redis_driver
 end
 
 RSpec.configure do |config|
-  config.before(:each, redis: :redis) do |example|
+  config.before do |example|
     redis_db = example.metadata.fetch(:redis_db) { 0 }
     redis_url = "redis://localhost/#{redis_db}"
     redis_options = { url: redis_url, driver: sidekiq_redis_driver }
@@ -26,9 +26,7 @@ RSpec.configure do |config|
 
     Sidekiq.redis = redis
     flush_redis
-  end
 
-  config.before do |example|
     Sidekiq::Worker.clear_all
     Sidekiq::Queues.clear_all
 
@@ -48,7 +46,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each, redis: :redis) do
+  config.after do
     flush_redis
   end
 end

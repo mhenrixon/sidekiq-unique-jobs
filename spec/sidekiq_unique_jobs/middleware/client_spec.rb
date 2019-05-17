@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis: :redis, redis_db: 1 do
+RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   describe "when a job is already scheduled" do
     it "processes jobs properly" do
       jid = NotifyWorker.perform_in(1, 183, "xxxx")

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Util do
   let!(:item) do
     my_item = {
       "class" => "MyUniqueJob",

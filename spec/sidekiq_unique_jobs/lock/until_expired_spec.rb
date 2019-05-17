@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired, redis: :redis do
+RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   let(:process_one) { described_class.new(item_one, callback) }
   let(:process_two) { described_class.new(item_two, callback) }
 

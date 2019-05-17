@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe "delete.lua", redis: :redis do
+RSpec.describe "delete.lua" do
   subject(:delete) { call_script(:delete, key.to_a, argv) }
 
   let(:argv) do

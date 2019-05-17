@@ -17,7 +17,7 @@ RSpec.describe MyUniqueJob do
     let(:args) { %w[one two] }
   end
 
-  describe "client middleware", redis: :redis do
+  describe "client middleware" do
     context "when job is delayed" do
       before { described_class.perform_in(3600, 1, 2) }
 

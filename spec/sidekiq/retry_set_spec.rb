@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe Sidekiq::RetrySet, redis: :redis do
+RSpec.describe Sidekiq::RetrySet do
   let(:locksmith)       { SidekiqUniqueJobs::Locksmith.new(item) }
   let(:args)            { [1, 2] }
   let(:worker_class)    { MyUniqueJob }

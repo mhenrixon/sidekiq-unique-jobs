@@ -3,7 +3,7 @@
 require "thor/runner"
 require "irb"
 
-RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
+RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
   let(:item) do
     {
       "jid" => jid,
