@@ -13,11 +13,11 @@ RSpec.describe SidekiqUniqueJobs::Config do
     end
 
     context "when trying to add an already existing lock" do
-      it "raises an ArgumentError exception" do
+      it "raises an DuplicateLock exception" do
         name = "while_executing"
         expect do
           config.add_lock name, Class
-        end.to raise_exception(ArgumentError, /#{name} already defined/)
+        end.to raise_exception(SidekiqUniqueJobs::DuplicateLock, /#{name} already defined/)
       end
     end
 
@@ -60,11 +60,11 @@ RSpec.describe SidekiqUniqueJobs::Config do
     end
 
     context "when trying to add an already existing lock" do
-      it "raises an ArgumentError exception" do
+      it "raises an DuplicateStrategy exception" do
         name = "log"
         expect do
           config.add_strategy name, Class
-        end.to raise_exception(ArgumentError, /#{name} already defined/)
+        end.to raise_exception(SidekiqUniqueJobs::DuplicateStrategy, /#{name} already defined/)
       end
     end
 

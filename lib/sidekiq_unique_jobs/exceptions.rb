@@ -4,6 +4,15 @@ module SidekiqUniqueJobs
   class UniqueJobsError < ::RuntimeError
   end
 
+  class InvalidArgument < UniqueJobsError
+  end
+
+  class DuplicateLock < UniqueJobsError
+  end
+
+  class DuplicateStrategy < UniqueJobsError
+  end
+
   # Error raised when a Lua script fails to execute
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
