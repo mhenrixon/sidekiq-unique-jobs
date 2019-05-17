@@ -5,7 +5,7 @@ RSpec.describe ExpiringJob do
   it_behaves_like "sidekiq with options" do
     let(:options) do
       {
-        "lock_expiration" => 600,
+        "lock_ttl" => 600,
         "retry" => true,
         "lock" => :until_executed,
       }

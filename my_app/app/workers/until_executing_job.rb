@@ -3,7 +3,7 @@ class WhileEnqueuedJob
 
   sidekiq_options lock: :while_enqueued,
                   lock_timeout: nil,
-                  lock_expiration: nil,
+                  lock_ttl: nil,
                   lock_limit: 1
 
   def perform

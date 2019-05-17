@@ -3,7 +3,7 @@ class WhileBusyJob
 
   sidekiq_options lock: :while_executing,
                   lock_timeout: nil,
-                  lock_expiration: nil,
+                  lock_ttl: nil,
                   lock_limit: 1,
                   on_conflict: :reschedule
 

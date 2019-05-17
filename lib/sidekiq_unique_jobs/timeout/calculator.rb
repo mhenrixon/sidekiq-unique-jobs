@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
       attr_reader :item
 
       # @param [Hash] item the Sidekiq job hash
-      # @option item [Integer, nil] :lock_expiration the configured lock expiration
+      # @option item [Integer, nil] :lock_ttl the configured lock expiration
       # @option item [Integer, nil] :lock_timeout the configured lock timeout
       # @option item [String] :class the class of the sidekiq worker
       # @option item [Float] :at the unix time the job is scheduled at
@@ -35,12 +35,15 @@ module SidekiqUniqueJobs
         @scheduled_at ||= item[AT_KEY]
       end
 
-      # The configured lock_expiration
-      def lock_expiration
-        @lock_expiration ||= begin
-          expiration = item[LOCK_EXPIRATION_KEY]
-          expiration ||= worker_options[LOCK_EXPIRATION_KEY]
-          expiration && expiration.to_i + time_until_scheduled
+      # The configured lock_ttl
+      def lock_ttl
+        @lock_ttl ||= begin
+          ttl = item[LOCK_TTL_KEY]
+          ttl ||= worker_options[LOCK_TTL_KEY]
+          ttl ||= item[LOCK_EXPIRATION_KEY] # TODO: Deprecate at some point
+          ttl ||= worker_options[LOCK_EXPIRATION_KEY] # TODO: Deprecate at some point
+          ttl ||= default_lock_ttl
+          ttl && ttl.to_i + time_until_scheduled
         end
       end
 
@@ -57,6 +60,10 @@ module SidekiqUniqueJobs
       # The default lock_timeout of this gem
       def default_lock_timeout
         SidekiqUniqueJobs.config.default_lock_timeout
+      end
+
+      def default_lock_ttl
+        SidekiqUniqueJobs.config.default_lock_ttl
       end
     end
   end

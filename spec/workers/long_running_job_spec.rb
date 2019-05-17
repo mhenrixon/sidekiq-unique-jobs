@@ -8,7 +8,7 @@ RSpec.describe LongRunningJob do
         "queue" => :customqueue,
         "retry" => 10,
         "lock" => :until_and_while_executing,
-        "lock_expiration" => 7_200,
+        "lock_ttl" => 7_200,
       }
     end
   end

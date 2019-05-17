@@ -10,7 +10,7 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
       "retry" => true,
       "queue" => "customqueue",
       "lock" => :until_executed,
-      "lock_expiration" => nil,
+      "lock_ttl" => nil,
       "lock_timeout" => 0,
       "retry_count" => 10,
       "jid" => jid,

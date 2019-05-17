@@ -6,6 +6,7 @@ module SidekiqUniqueJobs
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
   class Config < Concurrent::MutableStruct.new(
     :default_lock_timeout,
+    :default_lock_ttl,
     :enabled,
     :unique_prefix,
     :logger,
@@ -62,15 +63,17 @@ module SidekiqUniqueJobs
 
     DEFAULT_PREFIX       = "uniquejobs"
     DEFAULT_LOCK_TIMEOUT = 0
+    DEFAULT_LOCK_TTL     = nil
     DEFAULT_ENABLED      = true
     DEFAULT_VERBOSITY    = false
-    DEFAULT_MAX_HISTORY  = 10_000
+    DEFAULT_MAX_HISTORY  = 1_000
 
     # Returns a default configuration
     # @return [Concurrent::MutableStruct] a representation of the configuration object
     def self.default
       new(
         DEFAULT_LOCK_TIMEOUT,
+        DEFAULT_LOCK_TTL,
         DEFAULT_ENABLED,
         DEFAULT_PREFIX,
         Sidekiq.logger,

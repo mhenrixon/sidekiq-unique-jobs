@@ -6,7 +6,7 @@ RSpec.describe MyUniqueJob do
     let(:options) do
       {
         "lock" => :until_executed,
-        "lock_expiration" => 7_200,
+        "lock_ttl" => 7_200,
         "queue" => :customqueue,
         "retry" => 10,
       }

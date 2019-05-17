@@ -51,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
     context "when locked" do
       context "without expiration" do
         it "deletes the lock without fuss" do
-          worker_class.use_options(lock_expiration: nil) do
+          worker_class.use_options(lock_ttl: nil) do
             process_one.lock
             expect(process_one.delete).to be_truthy
             expect(process_one).not_to be_locked
@@ -61,7 +61,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
 
       context "with expiration" do
         it "does not delete the lock" do
-          worker_class.use_options(lock_expiration: 100) do
+          worker_class.use_options(lock_ttl: 100) do
             process_one.lock
             expect(process_one.delete).to be_falsey
             expect(process_one).to be_locked
@@ -74,7 +74,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
       before { process_two.lock }
 
       it "deletes the lock" do
-        worker_class.use_options(lock_expiration: nil) do
+        worker_class.use_options(lock_ttl: nil) do
           expect(process_one.delete).to be_truthy
         end
       end

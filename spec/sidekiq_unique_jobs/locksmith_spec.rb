@@ -6,25 +6,63 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
   let(:locksmith_one)   { described_class.new(item_one) }
   let(:locksmith_two)   { described_class.new(item_two) }
 
-  let(:jid_one)         { "maaaahjid" }
-  let(:jid_two)         { "jidmayhem" }
-  let(:lock_expiration) { nil }
-  let(:lock_type)       { "until_executed" }
-  let(:unique_digest)   { "uniquejobs:randomvalue" }
-  let(:key)             { SidekiqUniqueJobs::Key.new(unique_digest) }
-  let(:lock_timeout)    { 0 }
-  let(:lock_limit)      { 1 }
+  let(:jid_one)      { "maaaahjid" }
+  let(:jid_two)      { "jidmayhem" }
+  let(:lock_ttl)     { nil }
+  let(:lock_type)    { "until_executed" }
+  let(:digest)       { "uniquejobs:randomvalue" }
+  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
+  let(:lock_timeout) { 0 }
+  let(:lock_limit)   { 1 }
   let(:item_one) do
     {
       "jid" => jid_one,
-      "unique_digest" => unique_digest,
-      "lock_expiration" => lock_expiration,
+      "unique_digest" => digest,
+      "lock_ttl" => lock_ttl,
       "lock" => lock_type,
       "lock_timeout" => lock_timeout,
       "lock_limit" => lock_limit,
     }
   end
   let(:item_two) { item_one.merge("jid" => jid_two) }
+
+  describe "#to_s" do
+    subject(:to_s) { locksmith_one.to_s }
+
+    it "outputs a helpful string" do
+      expect(to_s).to eq(
+        "Locksmith##{locksmith_one.object_id}" \
+        "(digest=#{digest} job_id=#{jid_one}, locked=false)",
+      )
+    end
+  end
+
+  describe "#inspect" do
+    subject(:inspect) { locksmith_one.inspect }
+
+    it "outputs a helpful string" do
+      expect(inspect).to eq(
+        "Locksmith##{locksmith_one.object_id}" \
+        "(digest=#{digest} job_id=#{jid_one}, locked=false)",
+      )
+    end
+  end
+
+  describe "#==" do
+    subject(:==) { locksmith_one == comparable_locksmith }
+
+    context "when locksmiths are comparable" do
+      let(:comparable_locksmith) { locksmith_one.dup }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when locksmiths are incomparable" do
+      let(:comparable_locksmith) { locksmith_two }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 
   shared_examples_for "a lock" do
     it "is unlocked from the start" do
@@ -35,7 +73,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
       locksmith_one.lock
       expect(locksmith_one).to be_locked
       locksmith_one.unlock
-      expect(locksmith_one).not_to be_locked if lock_expiration.nil?
+      expect(locksmith_one).not_to be_locked if lock_ttl.nil?
     end
 
     it "does not lock twice as a mutex" do
@@ -66,7 +104,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
         end
       end.to raise_error(Exception, "redis lock exception")
 
-      expect(locksmith_one).not_to be_locked if lock_expiration.nil?
+      expect(locksmith_one).not_to be_locked if lock_ttl.nil?
     end
 
     it "returns the value of the block if block-style locking is used" do
@@ -104,14 +142,14 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
           expect(locksmith_one).to be_locked
         end
 
-        expect(locksmith_one).not_to be_locked if lock_expiration.nil?
+        expect(locksmith_one).not_to be_locked if lock_ttl.nil?
       end
     end
   end
 
   describe "lock with expiration" do
-    let(:lock_expiration) { 1 }
-    let(:lock_type)       { :while_executing }
+    let(:lock_ttl) { 1 }
+    let(:lock_type) { :while_executing }
 
     it_behaves_like "a lock"
 

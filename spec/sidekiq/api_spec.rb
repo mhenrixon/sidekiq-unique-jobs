@@ -33,7 +33,7 @@ RSpec.describe "Sidekiq::Api", redis: :redis do
               "args" => [{ "foo" => "bar" }],
               "class" => "JustAWorker",
               "jid" => kind_of(String),
-              "lock_expiration" => nil,
+              "lock_ttl" => nil,
               "lock_timeout" => 0,
               "queue" => "testqueue",
               "retry" => true,

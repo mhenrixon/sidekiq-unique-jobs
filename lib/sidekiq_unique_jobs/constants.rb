@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
   LOCK_KEY                  ||= "lock"
   LOCK_LIMIT_KEY            ||= "lock_limit"
   LOCK_TIMEOUT_KEY          ||= "lock_timeout"
+  LOCK_TTL_KEY              ||= "lock_ttl"
   LOG_DUPLICATE_KEY         ||= "log_duplicate_payload"
   ON_CONFLICT_KEY           ||= "on_conflict"
   QUEUE_KEY                 ||= "queue"

@@ -8,7 +8,7 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
   let(:jid)             { "ajobid" }
   let(:key)             { SidekiqUniqueJobs::Key.new(unique_digest) }
   let(:lock)            { :until_executed }
-  let(:lock_expiration) { 7_200 }
+  let(:lock_ttl)        { 7_200 }
   let(:queue)           { :customqueue }
   let(:retry_at)        { Time.now.to_f + 360 }
   let(:unique_digest)   { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
@@ -19,7 +19,7 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
       "failed_at" => Time.now.to_f,
       "jid" => jid,
       "lock" => lock,
-      "lock_expiration" => lock_expiration,
+      "lock_ttl" => lock_ttl,
       "queue" => queue,
       "retry_at" => retry_at,
       "retry_count" => 1,

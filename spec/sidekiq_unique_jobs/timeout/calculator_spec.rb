@@ -11,7 +11,7 @@ RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
 
     it { is_expected.to respond_to(:time_until_scheduled) }
     it { is_expected.to respond_to(:worker_class) }
-    it { is_expected.to respond_to(:lock_expiration) }
+    it { is_expected.to respond_to(:lock_ttl) }
     it { is_expected.to respond_to(:lock_timeout) }
     it { is_expected.to respond_to(:worker_options) }
     it { is_expected.to respond_to(:default_worker_options) }

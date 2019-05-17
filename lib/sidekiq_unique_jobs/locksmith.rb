@@ -4,6 +4,7 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
+  # rubocop:disable Metrics/ClassLength
   class Locksmith
     include Comparable
     include SidekiqUniqueJobs::Connection
@@ -13,11 +14,13 @@ module SidekiqUniqueJobs
 
     CLOCK_DRIFT_FACTOR = 0.01
 
+    attr_reader :key, :job_id, :type, :timeout, :limit, :ttl, :pttl
+
     #
     # Initialize a new Locksmith instance
     #
     # @param [Hash] item a Sidekiq job hash
-    # @option item [Integer] :lock_expiration the configured expiration
+    # @option item [Integer] :lock_ttl the configured expiration
     # @option item [String] :jid the sidekiq job id
     # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
@@ -25,12 +28,13 @@ module SidekiqUniqueJobs
     def initialize(item, redis_pool = nil)
       @key           = Key.new(item[UNIQUE_DIGEST_KEY])
       @job_id        = item[JID_KEY]
-      @pttl          = item[LOCK_EXPIRATION_KEY].to_i * 1000
       @timeout       = item.fetch(LOCK_TIMEOUT_KEY) { 0 }
       @type          = item[LOCK_KEY]
       @type        &&= @type.to_sym
       @redis_pool    = redis_pool
       @limit         = item[LOCK_LIMIT_KEY] || 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+      @ttl           = item.fetch(LOCK_TTL_KEY) { item.fetch(LOCK_EXPIRATION_KEY) }.to_i
+      @pttl          = @ttl * 1000
     end
 
     #
@@ -95,9 +99,9 @@ module SidekiqUniqueJobs
       call_script(:locked, key.to_a, [job_id], conn).positive?
     end
 
-    # def to_s
-    #   "Locksmith##{object_id}(digest=#{key} job_id=#{job_id})"
-    # end
+    def to_s
+      "Locksmith##{object_id}(digest=#{key} job_id=#{job_id}, locked=#{locked?})"
+    end
 
     def inspect
       to_s
@@ -113,7 +117,7 @@ module SidekiqUniqueJobs
 
     private
 
-    attr_reader :key, :pttl, :job_id, :redis_pool, :type, :timeout, :limit
+    attr_reader :redis_pool
 
     def argv
       [job_id, pttl, type, limit]
@@ -176,4 +180,5 @@ module SidekiqUniqueJobs
       (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
