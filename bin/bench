@@ -7,30 +7,86 @@ Signal.trap("INT") { abort }
 
 require "bundler/setup"
 require "benchmark/ips"
+
 require "sidekiq-unique-jobs"
 
-ITERATIONS ||= 10_000
-LOCK_TYPES = %w[
-  until_executed
-  until_expired
-  until_and_while_executing
-  until_executing
-  while_executing
-].freeze
+require_relative "../spec/support/workers/my_unique_job"
 
-Benchmark.ips do |x|
-  x.config(time: 180, warmup: 2)
-  x.report("locksmith lock and unlock") do |_times|
-    item = {
-      "ttl" => rand(10),
-      "jid" => SecureRandom.hex,
-      "unique_digest" => SecureRandom.hex,
-      "lock" => LOCK_TYPES.sample,
-    }
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock
-    locksmith.unlock
+Sidekiq.redis(&:flushall)
+
+SidekiqUniqueJobs.configure do |config|
+  config.logger.level = Logger.const_get("INFO")
+  config.debug_lua    = false
+  config.max_history  = 1_000
+  config.max_orphans  = 1_000
+end
+
+COUNT   = 10_000
+DIGESTS = COUNT.times.each_with_object({}) { |n, hash| hash[n] = "digest-#{n}" }
+JOB_IDS = COUNT.times.each_with_object({}) { |n, hash| hash[n] = "jid-#{n}" }
+QUEUES  = Array.new(100) { |n| "custom-#{n}" }
+
+def get_item(num)
+  { "class" => "MyUniqueJob",
+    "args" => [num, num],
+    "queue" => QUEUES.sample,
+    "jid" => JOB_IDS[num],
+    "unique_digest" => DIGESTS[num] }
+end
+
+def simulate_lock(digest, job_id)
+  key          = SidekiqUniqueJobs::Key.new(digest)
+  current_time = SidekiqUniqueJobs::Timing.current_time
+  Sidekiq.redis do |conn|
+    conn.multi do
+      conn.set(key.digest, job_id)
+      conn.lpush(key.queued, job_id)
+      conn.lpush(key.primed, job_id)
+      conn.hset(key.locked, job_id, current_time)
+      conn.zadd(key.digests, current_time, key.digest)
+      conn.zadd(key.digests, current_time, key.digest)
+    end
+  end
+end
+
+Digests = SidekiqUniqueJobs::Redis::Digests.new
+JOBS_TO_SCHEDULE = []
+JOBS_TO_RETRY    = []
+
+Benchmark.ips do |ips|
+  ips.config(time: 5, warmup: 2)
+  ips.report("enqueuing sidekiq jobs") do
+    COUNT.times do |num|
+      item = get_item(num)
+      if (num % 111).zero?
+        item["at"] = Time.now.to_f + (rand * num)
+        JOBS_TO_SCHEDULE << item
+      elsif (num % 121).zero?
+        failed_at = Time.now.to_f - rand(* num)
+        item["retry_count"] = 2
+        item["failed_at"] = failed_at
+        JOBS_TO_RETRY << item
+      else
+        Sidekiq::Client.push(item)
+      end
+    end
   end
 
-  x.compare!
+  ips.report("scheduling sidekiq jobs") do
+    p "Scheduling #{JOBS_TO_SCHEDULE.size} jobs"
+    JOBS_TO_SCHEDULE.each do |item|
+      Sidekiq::Client.push(item)
+    end
+  end
+
+  ips.report("retrying sidekiq jobs") do
+    p "Retrying #{JOBS_TO_RETRY.size} jobs"
+    JOBS_TO_RETRY.each do |item|
+      Sidekiq::Client.push(item)
+    end
+  end
+
+  ips.report("deleting orphans") do
+    Digests.delete_orphans
+  end
 end
