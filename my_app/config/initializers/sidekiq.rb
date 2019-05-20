@@ -35,7 +35,8 @@ Sidekiq.logger       = Sidekiq::Logger.new(STDOUT)
 Sidekiq.logger.level = Logger::DEBUG
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.configure do |config|
-  config.verbose     = true
+  config.debug_lua   = true
   config.max_history = 10_000
+  config.max_orphans = 1_000
 end
 Dir[Rails.root.join("app", "workers", "**", "*.rb")].each { |worker| require worker }

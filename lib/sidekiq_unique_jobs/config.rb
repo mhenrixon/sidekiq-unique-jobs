@@ -12,8 +12,9 @@ module SidekiqUniqueJobs
     :logger,
     :locks,
     :strategies,
-    :verbose,
+    :debug_lua,
     :max_history,
+    :max_orphans,
   )
 
     LOCKS_WHILE_ENQUEUED = {
@@ -65,8 +66,9 @@ module SidekiqUniqueJobs
     DEFAULT_LOCK_TIMEOUT = 0
     DEFAULT_LOCK_TTL     = nil
     DEFAULT_ENABLED      = true
-    DEFAULT_VERBOSITY    = false
+    DEFAULT_DEBUG_LUA    = false
     DEFAULT_MAX_HISTORY  = 1_000
+    DEFAULT_MAX_ORPHANS  = 1_000
 
     # Returns a default configuration
     # @return [Concurrent::MutableStruct] a representation of the configuration object
@@ -79,8 +81,9 @@ module SidekiqUniqueJobs
         Sidekiq.logger,
         DEFAULT_LOCKS,
         DEFAULT_STRATEGIES,
-        DEFAULT_VERBOSITY,
+        DEFAULT_DEBUG_LUA,
         DEFAULT_MAX_HISTORY,
+        DEFAULT_MAX_ORPHANS,
       )
     end
 

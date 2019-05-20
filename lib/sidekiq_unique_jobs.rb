@@ -6,6 +6,7 @@ require "concurrent/map"
 require "concurrent/mutable_struct"
 require "digest"
 require "digest/sha1"
+require "erb"
 require "forwardable"
 require "json"
 require "pathname"
@@ -61,12 +62,4 @@ require "sidekiq_unique_jobs/redis/lock"
 
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
-# require "monitor"
 
-# module MonitorMixin
-#   def mon_synchronize
-#     yield if block_given?
-#   end
-# end
-
-# require "sidekiq_unique_jobs/async_sidekiq"

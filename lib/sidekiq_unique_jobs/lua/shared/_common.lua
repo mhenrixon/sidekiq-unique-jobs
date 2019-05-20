@@ -1,3 +1,8 @@
+local function toboolean(val)
+  val = tostring(val)
+  return val == "1" or val == "true"
+end
+
 local function log_debug( ... )
   if verbose ~= true then return end
 

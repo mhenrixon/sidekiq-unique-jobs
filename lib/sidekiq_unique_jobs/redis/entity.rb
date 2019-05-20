@@ -8,9 +8,9 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
     class Entity
-      include SidekiqUniqueJobs::Connection
-      include SidekiqUniqueJobs::Redis
+      include SidekiqUniqueJobs::Script::Caller
       include SidekiqUniqueJobs::JSON
+      include SidekiqUniqueJobs::Timing
 
       attr_reader :key
 
