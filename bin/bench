@@ -49,9 +49,6 @@ def simulate_lock(key)
   end
 end
 
-JOBS_TO_SCHEDULE = []
-JOBS_TO_RETRY    = []
-
 Benchmark.ips do |ips|
   ips.config(time: 5, warmup: 2)
 
@@ -67,15 +64,14 @@ Benchmark.ips do |ips|
         item["failed_at"] = failed_at
         Sidekiq.redis do |conn|
           conn.zadd(SidekiqUniqueJobs::RETRY,
-            SidekiqUniqueJobs::Timing.current_time + 360, Sidekiq.dump_json(item)
-          )
+                    SidekiqUniqueJobs::Timing.current_time + 360, Sidekiq.dump_json(item))
         end
       else
         Sidekiq::Client.push(item)
       end
     end
 
-    (11_000..20_000).each do
+    9001.times do
       key = SecureRandom.hex(12)
       simulate_lock(key)
     end
@@ -103,7 +99,7 @@ Benchmark.ips do |ips|
       end
     end
 
-    (11_000..20_000).each do
+    9001.times do
       key = SecureRandom.hex(12)
       simulate_lock(key)
     end
@@ -112,7 +108,7 @@ Benchmark.ips do |ips|
       SidekiqUniqueJobs::Script.call(
         :delete_orphans,
         conn,
-        keys: [SidekiqUniqueJobs::DIGESTS, SidekiqUniqueJobs::SCHEDULE, SidekiqUniqueJobs::RETRY,],
+        keys: [SidekiqUniqueJobs::DIGESTS, SidekiqUniqueJobs::SCHEDULE, SidekiqUniqueJobs::RETRY],
         argv: [SidekiqUniqueJobs.config.max_orphans],
       )
     end

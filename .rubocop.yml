@@ -20,6 +20,7 @@ AllCops:
     - "Gemfile.lock"
     - "**/*.erb"
     - "gemfiles/**/*"
+    - "bin/bench"
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
