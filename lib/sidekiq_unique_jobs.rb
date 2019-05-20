@@ -27,6 +27,8 @@ require "sidekiq_unique_jobs/json"
 require "sidekiq_unique_jobs/normalizer"
 require "sidekiq_unique_jobs/job"
 require "sidekiq_unique_jobs/util"
+require "sidekiq_unique_jobs/batch_delete"
+require "sidekiq_unique_jobs/delete_orphans"
 require "sidekiq_unique_jobs/digests"
 require "sidekiq_unique_jobs/cli"
 require "sidekiq_unique_jobs/core_ext"
@@ -62,4 +64,3 @@ require "sidekiq_unique_jobs/redis/lock"
 
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
-

@@ -2,7 +2,7 @@ local function find_digest_in_queues(digest)
   local cursor = "0"
   local count  = 50
   local result = nil
-  local done   = nil
+  local found  = false
 
   repeat
     log_debug("searching all queues for a matching digest:", digest)
@@ -27,8 +27,8 @@ local function find_digest_in_queues(digest)
         for _, item in pairs(items) do
           if string.find(item, digest) then
             log_debug("Found digest:", digest, "in queue:", queue)
-            result = true
-            done = true
+            result = cjson.decode(item).queue
+            found = true
             break
           end
         end
@@ -38,10 +38,9 @@ local function find_digest_in_queues(digest)
       cursor = next_cursor
       if cursor == "0" then
         log_debug("Looped through all queues, stopping iteration")
-        done = true
       end
     end
-  until done == true or cursor == "0"
+  until found == true or cursor == "0"
 
   return result
 end

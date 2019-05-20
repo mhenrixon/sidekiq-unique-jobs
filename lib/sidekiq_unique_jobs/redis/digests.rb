@@ -12,14 +12,6 @@ module SidekiqUniqueJobs
         super(DIGESTS)
       end
 
-      def delete_orphans
-        call_script(
-          :delete_orphans,
-          keys: [key, SCHEDULE, RETRY],
-          argv: [SidekiqUniqueJobs.config.max_orphans]
-        )
-      end
-
       #
       # Adds a digest
       #

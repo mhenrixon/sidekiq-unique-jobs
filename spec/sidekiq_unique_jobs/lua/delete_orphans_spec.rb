@@ -25,14 +25,13 @@ RSpec.describe "delete_orphans.lua" do
   let(:item)     { raw_item }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
 
-  around do |example|
+  before do
     SidekiqUniqueJobs.disable!
-    example.run
-    SidekiqUniqueJobs.enable!
+    digests.add(digest)
   end
 
-  before do
-    digests.add(digest)
+  after do
+    SidekiqUniqueJobs.enable!
   end
 
   context "when scheduled" do

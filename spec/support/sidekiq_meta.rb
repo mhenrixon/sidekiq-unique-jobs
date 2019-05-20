@@ -27,9 +27,6 @@ RSpec.configure do |config|
     Sidekiq.redis = redis
     flush_redis
 
-    Sidekiq::Worker.clear_all
-    Sidekiq::Queues.clear_all
-
     enable_delay = defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
     Sidekiq::Extensions.enable_delay! if enable_delay
 

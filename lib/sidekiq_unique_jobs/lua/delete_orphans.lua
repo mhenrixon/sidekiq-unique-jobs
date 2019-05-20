@@ -46,7 +46,12 @@ while(index < max_orphans) do
 
     if found ~= true then
       log_debug("Searching for digest:", digest, "in all queues")
-      found = find_digest_in_queues(digest)
+      local queue = find_digest_in_queues(digest)
+      log_debug("find_digest_in_queues returned:", queue)
+
+      if queue then
+        found = true
+      end
     end
 
     if found ~= true then
@@ -66,3 +71,5 @@ while(index < max_orphans) do
 
   index = index + per
 end
+
+log_debug("END")

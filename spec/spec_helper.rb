@@ -28,7 +28,7 @@ LOGLEVEL = ENV.fetch("LOGLEVEL") { "ERROR" }.upcase
 
 SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get(LOGLEVEL)
-  config.verbose      = %w[1 true].include?(ENV["VERBOSE"])
+  config.debug_lua    = %w[1 true].include?(ENV["DEBUG_LUA"])
   config.max_history  = 10
 end
 

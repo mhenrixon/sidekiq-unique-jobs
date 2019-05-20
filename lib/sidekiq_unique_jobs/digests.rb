@@ -8,7 +8,6 @@ module SidekiqUniqueJobs
   module Digests
     DEFAULT_COUNT = 1_000
     SCAN_PATTERN  = "*"
-    CHUNK_SIZE    = 100
     SUFFIXES      = %w[
       :QUEUED
       :PRIMED
@@ -87,7 +86,7 @@ module SidekiqUniqueJobs
     def delete_by_pattern(pattern, count: DEFAULT_COUNT)
       result, elapsed = timed do
         digests = all(pattern: pattern, count: count)
-        batch_delete(digests)
+        SidekiqUniqueJobs::BatchDelete.new(digests).call
         digests.size
       end
 
@@ -108,26 +107,6 @@ module SidekiqUniqueJobs
       log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
 
       result
-    end
-
-    def batch_delete(entries) # rubocop:disable Metrics/MethodLength
-      redis do |conn|
-        entries.each_slice(CHUNK_SIZE) do |chunk|
-          conn.pipelined do
-            chunk.each do |digest|
-              conn.del(digest)
-              conn.zrem(digests.key, digest)
-              conn.del("#{digest}:QUEUED")
-              conn.del("#{digest}:PRIMED")
-              conn.del("#{digest}:LOCKED")
-              conn.del("#{digest}:RUN")
-              conn.del("#{digest}:RUN:QUEUED")
-              conn.del("#{digest}:RUN:PRIMED")
-              conn.del("#{digest}:RUN:LOCKED")
-            end
-          end
-        end
-      end
     end
   end
 end
