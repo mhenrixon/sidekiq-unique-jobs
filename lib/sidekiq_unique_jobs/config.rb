@@ -91,7 +91,6 @@ module SidekiqUniqueJobs
       )
     end
 
-
     #
     # Adds a lock type to the configuration. It will raise if the lock exists already
     #

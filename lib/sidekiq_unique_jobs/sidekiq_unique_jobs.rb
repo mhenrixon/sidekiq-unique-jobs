@@ -61,7 +61,6 @@ module SidekiqUniqueJobs
     VERSION
   end
 
-
   #
   # Set a new logger
   #

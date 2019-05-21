@@ -1,14 +1,14 @@
 ---
 exclude_paths:
+  - examples
+  - gemfiles
+  - lib/sidekiq
+  - lib/sidekiq_unique_jobs/lua
+  - lib/sidekiq_unique_jobs/redis
   - my_app
   - spec
   - tmp
-  - gemfiles
-  - examples
   - vendor/bundle
-  - lib/sidekiq_unique_jobs/redis
-  - lib/sidekiq_unique_jobs/lua
-  - lib/sidekiq
 detectors:
   BooleanParameter:
     exclude:
@@ -28,8 +28,8 @@ detectors:
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
-      - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::Timing#timed
       - SidekiqUniqueJobs::Web#self.registered
   FeatureEnvy:
@@ -55,6 +55,7 @@ detectors:
       - SidekiqUniqueJobs::Script#call
       - SidekiqUniqueJobs::Script#execute
       - SidekiqUniqueJobs::Script::Caller#call_script
+      - SidekiqUniqueJobs::Script::Caller#do_call
   ManualDispatch:
     enabled: true
     exclude:
@@ -74,8 +75,8 @@ detectors:
   NestedIterators:
     exclude:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
-      - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::Changelog#entries
+      - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
@@ -85,10 +86,10 @@ detectors:
       - initialize
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Changelog#entries
-      - SidekiqUniqueJobs::DeleteOrphans#find_orphans
-      - SidekiqUniqueJobs::Digests#entries
       - SidekiqUniqueJobs::Changelog#page
+      - SidekiqUniqueJobs::DeleteOrphans#find_orphans
       - SidekiqUniqueJobs::Digests#delete_by_pattern
+      - SidekiqUniqueJobs::Digests#entries
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock
@@ -117,9 +118,9 @@ detectors:
       - SidekiqUniqueJobs::Locksmith
   TooManyInstanceVariables:
     exclude:
+      - SidekiqUniqueJobs::DeleteOrphans
       - SidekiqUniqueJobs::Key
       - SidekiqUniqueJobs::Locksmith
-      - SidekiqUniqueJobs::DeleteOrphans
   TooManyMethods:
     exclude:
       - SidekiqUniqueJobs::Lock::BaseLock
