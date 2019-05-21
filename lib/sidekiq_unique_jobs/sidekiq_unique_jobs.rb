@@ -59,8 +59,8 @@ module SidekiqUniqueJobs
   # @return [true, false] the previous value of enable when given a block
   #
   # @yieldreturn [void] temporarily enable sidekiq unique jobs while executing a block of code
-  def enable!
-    set_enabled(true, &block)
+  def enable!(&block)
+    toggle(true, &block)
   end
 
   #
@@ -72,10 +72,15 @@ module SidekiqUniqueJobs
   #
   # @yieldreturn [void] temporarily disable sidekiq unique jobs while executing a block of code
   def disable!(&block)
-    set_enabled(false, &block)
+    toggle(false, &block)
   end
 
-  def set_enabled(enabled)
+  #
+  # Toggles enabled on or off
+  #
+  # @api private
+  # :nodoc:
+  def toggle(enabled)
     if block_given?
       enabled_was = config.enabled
       config.enabled = enabled

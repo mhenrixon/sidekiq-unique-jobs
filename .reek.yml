@@ -24,6 +24,7 @@ detectors:
   DuplicateMethodCall:
     exclude:
       - Sidekiq#self.use_options
+      - SidekiqUniqueJobs#toggle
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
