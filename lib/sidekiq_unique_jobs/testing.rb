@@ -53,7 +53,7 @@ module Sidekiq
       module Testing
         def clear_all_ext
           clear_all_orig
-          SidekiqUniqueJobs::Util.del("*", 1000)
+          SidekiqUniqueJobs::Digests.new.del(pattern: "*", count: 1_000)
         end
       end
     end

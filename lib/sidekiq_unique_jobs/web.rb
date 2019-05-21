@@ -38,7 +38,7 @@ module SidekiqUniqueJobs
 
       app.get "/unique_digests/:digest" do
         @digest = params[:digest]
-        @lock   = Redis::Lock.new(@digest)
+        @lock   = SidekiqUniqueJobs::Lock.new(@digest)
 
         erb(unique_template(:unique_digest))
       end

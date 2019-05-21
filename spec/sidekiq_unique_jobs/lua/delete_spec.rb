@@ -16,7 +16,7 @@ RSpec.describe "delete.lua" do
   let(:lock_type)  { :until_executed }
   let(:digest)     { "uniquejobs:digest" }
   let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
-  let(:redlock)    { SidekiqUniqueJobs::Redis::Lock.new(digest) }
+  let(:redlock)    { SidekiqUniqueJobs::Lock.new(digest) }
   let(:queued)     { redlock.queued_list }
   let(:primed)     { redlock.primed_list }
   let(:locked)     { redlock.locked_hash }

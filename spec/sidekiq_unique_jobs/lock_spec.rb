@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Redis::Lock do
+RSpec.describe SidekiqUniqueJobs::Lock do
   subject(:entity) { described_class.new(key) }
 
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }

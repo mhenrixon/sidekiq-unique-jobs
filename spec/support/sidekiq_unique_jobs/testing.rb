@@ -49,11 +49,11 @@ module SidekiqUniqueJobs
     end
 
     def changelogs
-      @changelogs || SidekiqUniqueJobs::Redis::Changelogs.new
+      @changelogs || SidekiqUniqueJobs::Changelog.new
     end
 
     def digests
-      @digests || SidekiqUniqueJobs::Redis::Digests.new
+      @digests || SidekiqUniqueJobs::Digests.new
     end
 
     def queued_jids(key = nil)

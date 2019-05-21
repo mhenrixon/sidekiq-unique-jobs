@@ -21,7 +21,6 @@ RSpec.describe "delete_orphans.lua" do
   let(:argv)     { [100] }
   let(:digest)   { "digest" }
   let(:job_id)   { "job_id" }
-  let(:digests)  { SidekiqUniqueJobs::Redis::Digests.new }
   let(:item)     { raw_item }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
 

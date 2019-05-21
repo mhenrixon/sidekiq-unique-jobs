@@ -22,9 +22,9 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
       expect(help).to include <<~HEADER
         Commands:
           jobs  console         # drop into a console with easy access to helper methods
-          jobs  del PATTERN     # deletes unique keys from redis by pattern
+          jobs  del PATTERN     # deletes unique digests from redis by pattern
           jobs  help [COMMAND]  # Describe available commands or one specific command
-          jobs  keys PATTERN    # list all unique keys and their expiry time
+          jobs  list PATTERN    # list all unique digests and their expiry time
       HEADER
     end
 
@@ -38,45 +38,43 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
 
           Options:
             d, [--dry-run], [--no-dry-run]  # set to false to perform deletion
-            c, [--count=N]                  # The max number of keys to return
+            c, [--count=N]                  # The max number of digests to return
                                             # Default: 1000
 
-          deletes unique keys from redis by pattern
+          deletes unique digests from redis by pattern
         HEADER
       end
     end
 
-    describe "#help keys" do
-      subject(:help) { capture(:stdout) { described_class.start(%w[help keys]) } }
+    describe "#help list" do
+      subject(:help) { capture(:stdout) { described_class.start(%w[help list]) } }
 
       it "displays help about the `key` command" do
         expect(help).to eq <<~HEADER
           Usage:
-            jobs  keys PATTERN
+            jobs  list PATTERN
 
           Options:
-            c, [--count=N]  # The max number of keys to return
+            c, [--count=N]  # The max number of digests to return
                             # Default: 1000
 
-          list all unique keys and their expiry time
+          list all unique digests and their expiry time
         HEADER
       end
     end
   end
 
-  describe ".keys" do
-    subject(:keys) { capture(:stdout) { described_class.start(%w[keys * --count 1000]) } }
+  describe ".list" do
+    subject(:list) { capture(:stdout) { described_class.start(%w[list * --count 1000]) } }
 
-    context "when no keys exist" do
-      it { is_expected.to eq("Found 0 keys matching '#{pattern}':\n") }
+    context "when no digests exist" do
+      it { is_expected.to eq("Found 0 digests matching '#{pattern}':\n") }
     end
 
     context "when a key exists" do
-      before { set(digest, jid) }
+      before { digests.add(digest) }
 
-      after { SidekiqUniqueJobs::Util.del("*", 1000) }
-
-      it { is_expected.to include("Found 1 keys matching '*':") }
+      it { is_expected.to include("Found 1 digests matching '*':") }
       it { is_expected.to include("uniquejobs:abcdefab") }
     end
   end
@@ -86,14 +84,14 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
 
     let(:args) { %W[del * #{options} --count 1000] }
 
-    before { set(digest, jid) }
+    before { digests.add(digest) }
 
     context "with argument --dry-run" do
       let(:options) { "--dry-run" }
 
       specify do
-        expect(del).to eq("Would delete 1 keys matching '*'\n")
-        expect(SidekiqUniqueJobs::Util.keys).not_to eq([])
+        expect(del).to eq("Would delete 1 digests matching '*'\n")
+        expect(digests.entries).not_to eq([])
       end
     end
 
@@ -101,8 +99,8 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
       let(:options) { "--no-dry-run" }
 
       specify do
-        expect(del).to eq("Deleted 1 keys matching '*'\n")
-        expect(SidekiqUniqueJobs::Util.keys).to eq([])
+        expect(del).to eq("Deleted 1 digests matching '*'\n")
+        expect(digests.entries).to eq({})
       end
     end
   end
@@ -112,15 +110,12 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
 
     shared_examples "start console" do
       specify do
-        allow(Object).to receive(:include)
         allow(console_class).to receive(:start).and_return(true)
         expect(console).to eq <<~HEADER
-          Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
-          Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
-          Use `del '*', 1000, false to delete the first 1000 keys matching '*'
+          Use `list '*', 1000 to display the first 1000 unique digests matching '*'
+          Use `del '*', 1000, true (default) to see how many digests would be deleted for the pattern '*'
+          Use `del '*', 1000, false to delete the first 1000 digests matching '*'
         HEADER
-
-        expect(Object).to have_received(:include).with(SidekiqUniqueJobs::Util)
       end
     end
 

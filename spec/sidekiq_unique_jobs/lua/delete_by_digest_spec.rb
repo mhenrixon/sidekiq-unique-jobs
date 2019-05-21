@@ -8,12 +8,12 @@ RSpec.describe "delete_by_digest.lua" do
   let(:job_id)      { "jobid" }
   let(:digest)      { "uniquejobs:digest" }
   let(:key)         { SidekiqUniqueJobs::Key.new(digest) }
-  let(:redlock)     { SidekiqUniqueJobs::Redis::Lock.new(key) }
+  let(:redlock)     { SidekiqUniqueJobs::Lock.new(key) }
   let(:queued)      { redlock.queued_list }
   let(:primed)      { redlock.primed_list }
   let(:locked)      { redlock.locked_hash }
   let(:run_key)     { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
-  let(:run_redlock) { SidekiqUniqueJobs::Redis::Lock.new(run_key) }
+  let(:run_redlock) { SidekiqUniqueJobs::Lock.new(run_key) }
   let(:run_queued)  { redlock.queued_list }
   let(:run_primed)  { redlock.primed_list }
   let(:run_locked)  { redlock.locked_hash }

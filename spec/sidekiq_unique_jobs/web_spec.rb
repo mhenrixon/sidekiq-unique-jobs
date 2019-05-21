@@ -55,7 +55,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
     expect(MyUniqueJob.perform_async(2, 3)).not_to eq(nil)
 
-    expect(SidekiqUniqueJobs::Redis::Digests.new.entries).to match_array(expected_digests)
+    expect(digests.entries).to match_array(expected_digests)
 
     get "/unique_digests/#{digest}/delete"
     expect(last_response.status).to eq(302)
@@ -66,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).not_to match("/unique_digests/#{digest}")
     expect(last_response.body).to match("/unique_digests/#{another_digest}")
 
-    expect(SidekiqUniqueJobs::Redis::Digests.new.entries).to contain_exactly(
+    expect(digests.entries).to contain_exactly(
       a_collection_including(
         another_digest, kind_of(Float)
       ),
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(MyUniqueJob.perform_async(1, 2)).not_to eq(nil)
     expect(MyUniqueJob.perform_async(2, 3)).not_to eq(nil)
 
-    expect(SidekiqUniqueJobs::Redis::Digests.new.entries).to match_array(expected_digests)
+    expect(digests.entries).to match_array(expected_digests)
 
     get "/unique_digests/delete_all"
     expect(last_response.status).to eq(302)
@@ -88,6 +88,6 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).not_to match("/unique_digests/#{digest}")
     expect(last_response.body).not_to match("/unique_digests/#{another_digest}")
 
-    expect(SidekiqUniqueJobs::Redis::Digests.new.entries).to be_empty
+    expect(digests.entries).to be_empty
   end
 end

@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
       end
 
       def digests
-        @digests ||= Redis::Digests.new
+        @digests ||= SidekiqUniqueJobs::Digests.new
       end
 
       SAFE_CPARAMS = %w[cursor prev_cursor].freeze
@@ -39,31 +39,24 @@ module SidekiqUniqueJobs
       end
 
       def safe_relative_time(time)
-        time =
-          case time
-          when Integer
-            Time.at(time)
-          when Float
-            Time.at(time)
-          else
-            Time.parse(time.to_s)
-          end
+        time = parse_time(time)
 
         relative_time(time)
       end
 
       def safe_time(time)
-        time =
-          case time
-          when Integer
-            Time.at(time)
-          when Float
-            Time.at(time)
-          else
-            Time.parse(time.to_s)
-          end
+        time = parse_time(time)
 
-        %{<time class="ltr" dir="ltr" title="#{time}" datetime="#{time}">#{time}</time>}
+        %(<time class="ltr" dir="ltr" title="#{time}" datetime="#{time}">#{time}</time>)
+      end
+
+      def parse_time(time)
+        case time
+        when Integer, Float
+          Time.at(time)
+        else
+          Time.parse(time.to_s)
+        end
       end
     end
   end

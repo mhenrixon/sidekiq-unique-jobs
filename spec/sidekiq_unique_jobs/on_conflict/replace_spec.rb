@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
   let(:strategy)      { described_class.new(item) }
   let(:unique_digest) { "uniquejobs:56c68cab5038eb57959538866377560d" }
   let(:block)         { -> { p "Hello" } }
-  let(:digest)        { SidekiqUniqueJobs::Redis::Digests.new.entries.first }
+  let(:digest)        { digests.entries.first }
 
   let(:item) do
     { "unique_digest" => unique_digest, "queue" => :customqueue }

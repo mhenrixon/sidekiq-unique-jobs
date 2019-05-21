@@ -7,7 +7,7 @@ RSpec.describe "delete_job_by_digest.lua" do
   end
 
   let(:job_id)  { "jobid" }
-  let(:digest)  { SidekiqUniqueJobs::Redis::Digests.new.entries.first }
+  let(:digest)  { digests.entries.first }
   let(:queue)   { :customqueue }
   let(:options) { { keys: keys, argv: argv } }
   let(:argv)    { [digest] }

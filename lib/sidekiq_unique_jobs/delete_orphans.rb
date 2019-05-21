@@ -32,7 +32,7 @@ module SidekiqUniqueJobs
     #
     def initialize(max_count = SidekiqUniqueJobs.config.max_orphans)
       @orphans   = []
-      @digests   = Redis::Digests.new
+      @digests   = SidekiqUniqueJobs::Digests.new
       @scheduled = Redis::SortedSet.new(SCHEDULE)
       @retried   = Redis::SortedSet.new(RETRY)
       @max_count = max_count

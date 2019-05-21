@@ -14,13 +14,13 @@ detectors:
     exclude:
       - SidekiqUniqueJobs::Cli#self.banner
       - SidekiqUniqueJobs::Redis
+      - SidekiqUniqueJobs::Lock#locked_jids
   DataClump:
     enabled: true
     exclude:
       - SidekiqUniqueJobs::DeleteOrphan
       - SidekiqUniqueJobs::Redis
       - SidekiqUniqueJobs::Script
-      - SidekiqUniqueJobs::Util
   DuplicateMethodCall:
     exclude:
       - Sidekiq#self.use_options
@@ -39,7 +39,6 @@ detectors:
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
       - SidekiqUniqueJobs::ScriptError#generate_error_context
-      - SidekiqUniqueJobs::Util#batch_delete
       - SidekiqUniqueJobs::Web::Helpers#cparams
   InstanceVariableAssumption:
     exclude:
@@ -75,17 +74,20 @@ detectors:
   NestedIterators:
     exclude:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::Changelog#page
+      - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
-      - SidekiqUniqueJobs::Util#batch_delete
-      - SidekiqUniqueJobs::Util#keys_with_ttl
   TooManyStatements:
     exclude:
       - Hash#slice
       - initialize
       - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::DeleteOrphans#find_orphans
+      - SidekiqUniqueJobs::Digests#entries
+      - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::Digests#delete_by_pattern
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#enqueue
@@ -106,7 +108,6 @@ detectors:
       - SidekiqUniqueJobs::ScriptError#generate_error_context
       - SidekiqUniqueJobs::Timeout::Calculator#lock_ttl
       - SidekiqUniqueJobs::UniqueArgs#filtered_args
-      - SidekiqUniqueJobs::Util#del
       - SidekiqUniqueJobs::Web#self.registered
   TooManyConstants:
     exclude:

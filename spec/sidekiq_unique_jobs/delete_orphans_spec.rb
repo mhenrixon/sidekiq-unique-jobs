@@ -6,7 +6,6 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
   let(:service)  { described_class.new }
   let(:digest)   { "digest" }
   let(:job_id)   { "job_id" }
-  let(:digests)  { SidekiqUniqueJobs::Redis::Digests.new }
   let(:item)     { raw_item }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
 

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe SidekiqUniqueJobs::Redis::Changelogs do
+RSpec.describe SidekiqUniqueJobs::Changelog do
   let(:entity) { described_class.new }
   let(:digest) { SecureRandom.hex(12) }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
@@ -133,7 +133,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Changelogs do
   end
 
   describe "#page" do
-    subject(:page) { entity.page(cursor, match: pattern, page_size: page_size) }
+    subject(:page) { entity.page(cursor, pattern: pattern, page_size: page_size) }
 
     let(:cursor)    { 0 }
     let(:pattern)   { "*" }

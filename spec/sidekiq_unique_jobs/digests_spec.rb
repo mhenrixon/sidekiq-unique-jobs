@@ -1,15 +1,8 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Redis::Digests do
+RSpec.describe SidekiqUniqueJobs::Digests do
   let(:digests) { described_class.new }
-
-  before do
-    (1..10).each do |arg|
-      MyUniqueJob.perform_async(arg, arg)
-    end
-  end
-
   let(:expected_keys) do
     {
       "uniquejobs:e739dadc23533773b920936336341d01" => kind_of(Float),
@@ -23,6 +16,12 @@ RSpec.describe SidekiqUniqueJobs::Redis::Digests do
       "uniquejobs:06c3a5b63038c7b724b8603bb02ace99" => kind_of(Float),
       "uniquejobs:62c11d32fd69c691802579682409a483" => kind_of(Float),
     }
+  end
+
+  before do
+    (1..10).each do |arg|
+      MyUniqueJob.perform_async(arg, arg)
+    end
   end
 
   describe "#entries" do
