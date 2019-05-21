@@ -29,15 +29,23 @@ local script_name  = "delete.lua"
 --------  BEGIN delete.lua --------
 log_debug("BEGIN delete", digest)
 
-log_debug("DEL", digest, queued, primed, locked)
-local del_count = redis.call("DEL", digest, queued, primed, locked)
+local redis_version = redis_version()
+local count          = 0
+
+if tonumber(redis_version["major"]) >= 4 then
+  log_debug("UNLINK", digest, queued, primed, locked)
+  redis.call("UNLINK", digest, queued, primed, locked)
+else
+  log_debug("DEL", digest, queued, primed, locked)
+  local count = redis.call("DEL", digest, queued, primed, locked)
+end
 
 log_debug("ZREM", digests, digest)
 redis.call("ZREM", digests, digest)
 
 
-log("Deleted (" .. del_count .. ") keys")
-log_debug("END delete (" .. del_count .. ") keys for:", digest)
+log("Deleted (" .. count .. ") keys")
+log_debug("END delete (" .. count .. ") keys for:", digest)
 
 return 1
 --------  END delete.lua --------

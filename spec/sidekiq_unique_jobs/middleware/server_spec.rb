@@ -46,7 +46,11 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, redis_db: 9 do
         end
 
         unique_keys.all? do |key|
-          expect(key).to have_ttl(5000)
+          if key.end_with?(":QUEUED")
+            expect(key).to have_ttl(0).within(1)
+          else
+            expect(key).to have_ttl(5000)
+          end
         end
       end
     end

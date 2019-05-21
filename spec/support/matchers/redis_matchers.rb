@@ -51,8 +51,9 @@ RSpec::Matchers.define :have_ttl do |seconds|
     @ttl = ttl(key)
     if @within
       @actual = "#{key} with ttl(#{@ttl} +- #{@within})"
-      @within = ((seconds - @within)...(seconds + @within))
-      @within.cover?(@pttl)
+      @range = ((seconds - @within)...(seconds + @within))
+      @range.cover?(@pttl) ||
+        (@within.between?(0, 1) && seconds.between?(0, 1)) # weird edge case
     else
       @actual = "#{key} with ttl(#{@ttl})"
       @ttl == seconds

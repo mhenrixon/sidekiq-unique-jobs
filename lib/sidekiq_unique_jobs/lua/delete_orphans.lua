@@ -32,6 +32,7 @@ local per       = 50
 local total     = redis.call("ZCARD", digests_set)
 local index     = 0
 local del_count = 0
+local redis_ver = redis_version()
 
 while(index < max_orphans) do
   log_debug("Interating through:", digests_set, "for orphaned locks")
@@ -65,7 +66,12 @@ while(index < max_orphans) do
       local run_primed = digest .. ":RUN:PRIMED"
       local run_locked = digest .. ":RUN:LOCKED"
 
-      redis.call("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+      if tonumber(redis_ver["major"]) >= 4 then
+        redis.call("UNLINK", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+      else
+        redis.call("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+      end
+
       redis.call("ZREM", digests_set, digest)
       del_count = del_count + 1
     end

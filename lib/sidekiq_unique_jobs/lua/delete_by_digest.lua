@@ -26,12 +26,18 @@ local run_locked = digest .. ":RUN:LOCKED"
 
 
 --------  BEGIN delete_by_digest.lua --------
-local counter = 0
-
+local counter       = 0
+local redis_version = redis_version()
 log_debug("BEGIN delete_by_digest:", digest)
 
-log_debug("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
-counter = redis.call("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+
+if tonumber(redis_version["major"]) >= 4 then
+  log_debug("UNLINK", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+  counter = redis.call("UNLINK", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+else
+  log_debug("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+  counter = redis.call("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+end
 
 log_debug("ZREM", digests, digest)
 redis.call("ZREM", digests, digest)

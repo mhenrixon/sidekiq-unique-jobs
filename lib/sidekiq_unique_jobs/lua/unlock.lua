@@ -67,31 +67,21 @@ if pttl and pttl > 0 then
   log_debug("PEXPIRE", digest, pttl)
   redis.call("PEXPIRE", digest, pttl)
 
-  log_debug("LPUSH", queued, "1")
-  redis.call("LPUSH", queued, "1")
-  log_debug("PEXPIRE", queued, pttl)
-  redis.call("PEXPIRE", queued, pttl)
-
-  log_debug("PEXPIRE", primed, pttl)
-  redis.call("PEXPIRE", primed, pttl)
-
   log_debug("PEXPIRE", locked, pttl)
   redis.call("PEXPIRE", locked, pttl)
 else
   log_debug("DEL", digest)
   redis.call("DEL", digest)
 
-  log_debug("PEXPIRE", primed, 5)
-  redis.call("PEXPIRE", primed, 5)
-
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)
-
-  log_debug("LPUSH", queued, "1")
-  redis.call("LPUSH", queued, "1")
-  log_debug("PEXPIRE", queued, 5)
-  redis.call("PEXPIRE", queued, 5)
 end
+
+log_debug("LPUSH", queued, "1")
+redis.call("LPUSH", queued, "1")
+
+log_debug("PEXPIRE", queued, 500)
+redis.call("PEXPIRE", queued, 500)
 
 log("Unlocked")
 log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")
