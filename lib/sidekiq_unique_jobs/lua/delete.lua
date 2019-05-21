@@ -16,7 +16,7 @@ local limit        = tonumber(ARGV[4])
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
-local verbose      = ARGV[6] == "true"
+local debug_lua      = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
 local script_name  = "delete.lua"
 ---------  END injected arguments ---------

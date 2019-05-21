@@ -4,7 +4,7 @@ local digest = KEYS[1]
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[2])
-local verbose      = ARGV[3] == "true"
+local debug_lua    = ARGV[3] == "true"
 local max_history  = tonumber(ARGV[4])
 local script_name  = "delete_orphaned.lua"
 ---------  END injected arguments ---------

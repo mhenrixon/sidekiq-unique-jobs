@@ -1,13 +1,24 @@
+local function redis_version()
+  local serverinfo = redis.call("INFO", "SERVER")
+  local _, _, maj, min, pat = string.find(serverinfo, "redis_version%:(%d+)%.(%d+)%.(%d+)")
+  return {
+    ["version"] = maj .. "." .. min .. "." .. pat,
+    ["major"]   = maj,
+    ["minor"]   = min,
+    ["patch"]   = pat
+  }
+end
+
 local function toboolean(val)
   val = tostring(val)
   return val == "1" or val == "true"
 end
 
 local function log_debug( ... )
-  if verbose ~= true then return end
+  if debug_lua ~= true then return end
 
   local result = ""
-  for i,v in ipairs(arg) do
+  for _,v in ipairs(arg) do
     result = result .. " " .. tostring(v)
   end
   redis.log(redis.LOG_DEBUG, script_name .. " -" ..  result)
