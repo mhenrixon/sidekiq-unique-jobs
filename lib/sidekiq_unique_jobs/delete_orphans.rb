@@ -94,7 +94,6 @@ module SidekiqUniqueJobs
       in_sorted_set?(RETRY, digest, conn)
     end
 
-
     #
     # Checks if the digest exists in a {Sidekiq::Queue}
     #
