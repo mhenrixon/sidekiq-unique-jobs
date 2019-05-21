@@ -23,8 +23,6 @@ module SidekiqUniqueJobs
     #
     # @param [String] digest the digest to add
     #
-    # @return [Integer] <description>
-    #
     def add(digest)
       redis { |conn| conn.zadd(key, current_time, digest) }
     end
@@ -32,10 +30,13 @@ module SidekiqUniqueJobs
     #
     # Deletes unique digest either by a digest or pattern
     #
-    #
-    # @param [String] digest: nil the digest to delete
-    # @param [String] pattern: nil a key pattern to delete
-    # @param [Integer] count: DEFAULT_COUNT the maximum number to delete
+    # @overload call_script(digest: "abcdefab")
+    #   Call script with digest
+    #   @param [String] digest: a digest to delete
+    # @overload call_script(pattern: "*", count: 1_000)
+    #   Call script with pattern
+    #   @param [String] pattern: "*" a pattern to match
+    #   @param [String] count: DEFAULT_COUNT the number of keys to delete
     #
     # @raise [ArgumentError] when given neither pattern nor digest
     #
@@ -51,8 +52,8 @@ module SidekiqUniqueJobs
     #
     # The entries in this sorted set
     #
-    # @param [String] pattern: SCAN_PATTERN the match pattern to search for
-    # @param [Integer] count: DEFAULT_COUNT the number of entries to return
+    # @param [String] pattern SCAN_PATTERN the match pattern to search for
+    # @param [Integer] count DEFAULT_COUNT the number of entries to return
     #
     # @return [Array<String>] an array of digests matching the given pattern
     #
@@ -72,8 +73,8 @@ module SidekiqUniqueJobs
     # Returns a paginated
     #
     # @param [Integer] cursor the cursor for this iteration
-    # @param [String] pattern: SCAN_PATTERN the match pattern to search for
-    # @param [Integer] page_size: 100 the size per page
+    # @param [String] pattern SCAN_PATTERN the match pattern to search for
+    # @param [Integer] page_size 100 the size per page
     #
     # @return [Array<Integer, Integer, Array<String>>] total_size, next_cursor, entries
     #

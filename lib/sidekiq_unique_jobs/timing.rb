@@ -7,12 +7,24 @@ module SidekiqUniqueJobs
   module Timing
     module_function
 
+    #
+    # Used for timing method calls
+    #
+    #
+    # @return [yield return, Float]
+    #
     def timed
       start_time = time_source.call
 
       [yield, time_source.call - start_time]
     end
 
+    #
+    # Returns the current time as float
+    #
+    #
+    # @return [Float]
+    #
     def current_time
       if Process.const_defined?("CLOCK_MONOTONIC")
         Process.clock_gettime(Process::CLOCK_MONOTONIC)

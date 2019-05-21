@@ -20,32 +20,55 @@ module SidekiqUniqueJobs
       #   calls redis lua scripts.
       #
       #
-      # @param [Symbol] file_name the name of the `script.lua` without extension
-      # @param [Array<String>] keys the keys to pass to the script
-      # @param [Array<String>] argv any extra arguments to pass
-      # @param [Hash] options arguments to pass to the script file
-      # @option options [Array] :keys the array of keys to pass to the script
-      # @option options [Array] :argv the array of arguments to pass to the script
+      # @overload call_script(file_name, keys, argv, conn)
+      #   Call script without options hash
+      #   @param [Symbol] file_name the name of the file
+      #   @param [Array<String>] keys to pass to the the script
+      #   @param [Array<String>] argv arguments to pass to the script
+      #   @param [Redis] conn a redis connection
+      # @overload call_script(file_name, conn, keys:, argv:)
+      #   Call script with options hash
+      #   @param [Symbol] file_name the name of the file
+      #   @param [Redis] conn a redis connection
+      #   @param [Hash] options arguments to pass to the script file
+      #   @option options [Array] :keys to pass to the script
+      #   @option options [Array] :argv arguments to pass to the script
       #
       # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
       #
       def call_script(file_name, *args)
         conn, keys, argv = extract_args(*args)
-        return Script.call(file_name, conn, keys: keys, argv: argv) if conn
+        return do_call(file_name, conn, keys, argv) if conn
 
         pool = defined?(redis_pool) ? redis_pool : nil
 
         redis(pool) do |new_conn|
-          Script.call(file_name, new_conn, keys: keys, argv: argv)
+          do_call(file_name, new_conn, keys, argv)
         end
+      end
+
+      def do_call(file_name, conn, keys, argv)
+        Script.call(file_name, conn, keys: keys, argv: argv)
       end
 
       #
       # Utility method to allow both symbol keys and arguments
       #
-      # @param [<type>] *args <description>
+      # @overload call_script(file_name, keys, argv, conn)
+      #   Call script without options hash
+      #   @param [Symbol] file_name the name of the file
+      #   @param [Array<String>] keys to pass to the the script
+      #   @param [Array<String>] argv arguments to pass to the script
+      #   @param [Redis] conn a redis connection
+      # @overload call_script(file_name, conn, keys:, argv:)
+      #   Call script with options hash
+      #   @param [Symbol] file_name the name of the file
+      #   @param [Redis] conn a redis connection
+      #   @param [Hash] options arguments to pass to the script file
+      #   @option options [Array] :keys to pass to the script
+      #   @option options [Array] :argv arguments to pass to the script
       #
-      # @return [<type>] <description>
+      # @return [Array<Redis, Array, Array>] <description>
       #
       def extract_args(*args)
         options = args.extract_options!

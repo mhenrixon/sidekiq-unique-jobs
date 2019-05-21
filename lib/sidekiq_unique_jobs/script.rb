@@ -21,9 +21,9 @@ module SidekiqUniqueJobs
     #   that wasn't previously loaded.
     #
     # @param [Symbol] file_name the name of the lua script
-    # @param [Array<String>] keys: for the script
-    # @param [Array<Object>] argv for the script
-    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
+    # @param [Array<String>] keys script keys
+    # @param [Array<Object>] argv script arguments
+    # @param [Redis] conn the redis connection to use
     #
     # @return value from script
     #
@@ -44,10 +44,9 @@ module SidekiqUniqueJobs
     # Execute the script file
     #
     # @param [Symbol] file_name the name of the lua script
-    # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
-    # @param [Hash] options arguments to pass to the script file
-    # @option options [Array] :keys the array of keys to pass to the script
-    # @option options [Array] :argv the array of arguments to pass to the script
+    # @param [Redis] conn the redis connection to use
+    # @param [Array] keys the array of keys to pass to the script
+    # @param [Array] argv the array of arguments to pass to the script
     #
     # @return value from script (evalsha)
     #

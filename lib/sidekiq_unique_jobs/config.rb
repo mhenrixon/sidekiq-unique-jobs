@@ -70,8 +70,12 @@ module SidekiqUniqueJobs
     DEFAULT_MAX_HISTORY  = 1_000
     DEFAULT_MAX_ORPHANS  = 1_000
 
+    #
     # Returns a default configuration
+    #
+    #
     # @return [Concurrent::MutableStruct] a representation of the configuration object
+    #
     def self.default
       new(
         DEFAULT_LOCK_TIMEOUT,
@@ -87,10 +91,15 @@ module SidekiqUniqueJobs
       )
     end
 
+
+    #
     # Adds a lock type to the configuration. It will raise if the lock exists already
     #
     # @param [String] name the name of the lock
     # @param [Class] klass the class describing the lock
+    #
+    # @return [void]
+    #
     def add_lock(name, klass)
       lock_sym = name.to_sym
       raise DuplicateLock, ":#{name} already defined, please use another name" if locks.key?(lock_sym)
@@ -99,11 +108,13 @@ module SidekiqUniqueJobs
       self.locks = new_locks
     end
 
+    #
     # Adds an on_conflict strategy to the configuration.
-    # It will raise if the strategy exists already
+    #   It will raise if the strategy exists already
     #
     # @param [String] name the name of the custom strategy
     # @param [Class] klass the class describing the strategy
+    #
     def add_strategy(name, klass)
       strategy_sym = name.to_sym
       raise DuplicateStrategy, ":#{name} already defined, please use another name" if strategies.key?(strategy_sym)
