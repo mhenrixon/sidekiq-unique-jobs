@@ -17,6 +17,7 @@ detectors:
   DataClump:
     enabled: true
     exclude:
+      - SidekiqUniqueJobs::DeleteOrphan
       - SidekiqUniqueJobs::Redis
       - SidekiqUniqueJobs::Script
       - SidekiqUniqueJobs::Util
@@ -32,7 +33,7 @@ detectors:
       - SidekiqUniqueJobs::Web#self.registered
   FeatureEnvy:
     exclude:
-      - SidekiqUniqueJobs::Digests#batch_delete
+      - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
@@ -72,7 +73,7 @@ detectors:
     enabled: false
   NestedIterators:
     exclude:
-      - SidekiqUniqueJobs::Digests#batch_delete
+      - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
@@ -82,7 +83,8 @@ detectors:
     exclude:
       - Hash#slice
       - initialize
-      - SidekiqUniqueJobs::Digests#batch_delete
+      - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::DeleteOrphans#find_orphans
       - SidekiqUniqueJobs::Digests#delete_by_pattern
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#enqueue
@@ -115,6 +117,7 @@ detectors:
     exclude:
       - SidekiqUniqueJobs::Key
       - SidekiqUniqueJobs::Locksmith
+      - SidekiqUniqueJobs::DeleteOrphans
   TooManyMethods:
     exclude:
       - SidekiqUniqueJobs::Lock::BaseLock
