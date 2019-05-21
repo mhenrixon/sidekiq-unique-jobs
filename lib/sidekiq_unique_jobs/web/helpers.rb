@@ -9,6 +9,10 @@ module SidekiqUniqueJobs
         File.open(File.join(VIEW_PATH, "#{name}.erb")).read
       end
 
+      def digests
+        @digests ||= Redis::Digests.new
+      end
+
       SAFE_CPARAMS = %w[cursor prev_cursor].freeze
 
       def cparams(options)
@@ -35,13 +39,31 @@ module SidekiqUniqueJobs
       end
 
       def safe_relative_time(time)
-        time = if time.is_a?(Numeric)
-                 Time.at(time)
-               else
-                 Time.parse(time)
-               end
+        time =
+          case time
+          when Integer
+            Time.at(time)
+          when Float
+            Time.at(time)
+          else
+            Time.parse(time.to_s)
+          end
 
         relative_time(time)
+      end
+
+      def safe_time(time)
+        time =
+          case time
+          when Integer
+            Time.at(time)
+          when Float
+            Time.at(time)
+          else
+            Time.parse(time.to_s)
+          end
+
+        %{<time class="ltr" dir="ltr" title="#{time}" datetime="#{time}">#{time}</time>}
       end
     end
   end

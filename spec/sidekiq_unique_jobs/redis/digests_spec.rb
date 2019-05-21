@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Digests do
+RSpec.describe SidekiqUniqueJobs::Redis::Digests do
+  let(:digests) { described_class.new }
+
   before do
     (1..10).each do |arg|
       MyUniqueJob.perform_async(arg, arg)
@@ -23,21 +25,21 @@ RSpec.describe SidekiqUniqueJobs::Digests do
     }
   end
 
-  describe ".all" do
-    subject(:all) { described_class.all(pattern: "*", count: 1000) }
+  describe "#entries" do
+    subject(:entries) { digests.entries(pattern: "*", count: 1000) }
 
     it { is_expected.to match_array(expected_keys) }
   end
 
-  describe ".del" do
-    subject(:del) { described_class.del(digest: digest, pattern: pattern, count: count) }
+  describe "#del" do
+    subject(:del) { digests.del(digest: digest, pattern: pattern, count: count) }
 
     let(:digest)  { nil }
     let(:pattern) { nil }
     let(:count)   { 1000 }
 
     before do
-      allow(described_class).to receive(:log_info)
+      allow(digests).to receive(:log_info)
     end
 
     context "when given a pattern" do
@@ -45,12 +47,12 @@ RSpec.describe SidekiqUniqueJobs::Digests do
 
       it "deletes all matching digests" do
         expect(del).to be_a(Integer)
-        expect(described_class.all).to match_array([])
+        expect(digests.entries).to match_array([])
       end
 
       it "logs performance info" do
         del
-        expect(described_class)
+        expect(digests)
           .to have_received(:log_info).with(
             a_string_starting_with("delete_by_pattern(*, count: 1000)")
             .and(matching(/completed in (\d+(\.\d+)?)ms/)),
@@ -62,12 +64,12 @@ RSpec.describe SidekiqUniqueJobs::Digests do
       let(:digest) { "uniquejobs:62c11d32fd69c691802579682409a483" }
 
       it "deletes just the specific digest" do
-        expect { del }.to change { described_class.all.size }.by(-1)
+        expect { del }.to change { digests.entries.size }.by(-1)
       end
 
       it "logs performance info" do
         del
-        expect(described_class).to have_received(:log_info)
+        expect(digests).to have_received(:log_info)
           .with(
             a_string_starting_with("delete_by_digest(#{digest})")
             .and(matching(/completed in (\d+(\.\d+)?)ms/)),

@@ -25,26 +25,26 @@ module SidekiqUniqueJobs
         @count          = (params[:count] || 100).to_i
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
-        @total_size, @next_cursor, @unique_digests =
-          Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
+        @pagination     = { pattern: @filter, cursor: @current_cursor, page_size: @count }
+        @total_size, @next_cursor, @unique_digests = digests.page(@pagination)
 
         erb(unique_template(:unique_digests))
       end
 
       app.get "/unique_digests/delete_all" do
-        Digests.del(pattern: "*", count: Digests.count)
+        digests.del(pattern: "*", count: digests.count)
         redirect_to :unique_digests
       end
 
       app.get "/unique_digests/:digest" do
         @digest = params[:digest]
-        @unique_keys = Util.keys("#{@digest}*", 1000)
+        @lock   = Redis::Lock.new(@digest)
 
         erb(unique_template(:unique_digest))
       end
 
       app.get "/unique_digests/:digest/delete" do
-        Digests.del(digest: params[:digest])
+        digests.del(digest: params[:digest])
         redirect_to :unique_digests
       end
     end

@@ -71,7 +71,7 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Checks if the digest exists in the {Sidekiq::ScheduledSet}
+    # Checks if the digest exists in the Sidekiq::ScheduledSet
     #
     # @param [String] digest the current digest
     # @param [Redis] conn a connection to redis
@@ -83,7 +83,7 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Checks if the digest exists in the {Sidekiq::RetrySet}
+    # Checks if the digest exists in the Sidekiq::RetrySet
     #
     # @param [String] digest the current digest
     # @param [Redis] conn a connection to redis
@@ -95,7 +95,7 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Checks if the digest exists in a {Sidekiq::Queue}
+    # Checks if the digest exists in a Sidekiq::Queue
     #
     # @param [String] digest the current digest
     # @param [Redis] conn a connection to redis

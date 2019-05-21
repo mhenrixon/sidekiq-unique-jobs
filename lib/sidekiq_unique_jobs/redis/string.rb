@@ -12,6 +12,10 @@ module SidekiqUniqueJobs
         redis { |conn| conn.get(key) }
       end
 
+      def del(*)
+        redis { |conn| conn.del(key) }
+      end
+
       def count
         exist? ? 1 : 0
       end
