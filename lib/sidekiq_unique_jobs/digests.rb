@@ -85,7 +85,7 @@ module SidekiqUniqueJobs
     # @return [Array<String>] with unique digests
     def delete_by_pattern(pattern, count: DEFAULT_COUNT)
       result, elapsed = timed do
-        digests = all(pattern: pattern, count: count)
+        digests = all(pattern: pattern, count: count).keys
         SidekiqUniqueJobs::BatchDelete.new(digests).call
         digests.size
       end
