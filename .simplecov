@@ -11,6 +11,7 @@ SimpleCov.start do
   add_filter '/spec/'
   add_filter '/bin/'
   add_filter '/gemfiles/'
+  add_filter '/lib/sidekiq/'
   add_filter '/lib/sidekiq_unique_jobs/testing.rb'
   add_filter '/lib/sidekiq_unique_jobs/core_ext.rb'
   add_filter '/lib/sidekiq_unique_jobs/redis.rb'
