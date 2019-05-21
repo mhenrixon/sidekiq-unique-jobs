@@ -20,10 +20,17 @@ module SidekiqUniqueJobs
         add_uniqueness_when_missing # Used to ease testing
       end
 
-      # Handles locking of sidekiq jobs.
-      #   Will call a conflict strategy if lock can't be achieved.
-      # @return [String] the sidekiq job id
+      #
+      # Locks a sidekiq job
+      #
+      # @note Will call a conflict strategy if lock can't be achieved.
+      #
+      # @return [String, nil] the locked jid when properly locked, else nil.
+      #
+      # @yield to the caller when given a block
+      #
       def lock(&block)
+        # TODO: only use replace strategy when server is executing the lock
         return call_strategy unless (locked_token = locksmith.lock(&block))
 
         locked_token

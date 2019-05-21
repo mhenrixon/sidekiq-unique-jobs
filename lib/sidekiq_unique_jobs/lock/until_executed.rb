@@ -19,10 +19,6 @@ module SidekiqUniqueJobs
           callback_safely
           item[JID]
         end
-        # else
-        #   log_warn "the unique_key: #{item[UNIQUE_DIGEST]} is not locked, allowing job to silently complete"
-        #   nil
-        # end
       end
     end
   end

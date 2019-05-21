@@ -51,12 +51,39 @@ module SidekiqUniqueJobs
     configure(old_config)
   end
 
+  #
+  # Enable SidekiqUniuqeJobs either temporarily in a block or for good
+  #
+  #
+  # @return [true] when not given a block
+  # @return [true, false] the previous value of enable when given a block
+  #
+  # @yieldreturn [void] temporarily enable sidekiq unique jobs while executing a block of code
   def enable!
-    config.enabled = true
+    set_enabled(true, &block)
   end
 
-  def disable!
-    config.enabled = false
+  #
+  # Disable SidekiqUniuqeJobs either temporarily in a block or for good
+  #
+  #
+  # @return [false] when not given a block
+  # @return [true, false] the previous value of enable when given a block
+  #
+  # @yieldreturn [void] temporarily disable sidekiq unique jobs while executing a block of code
+  def disable!(&block)
+    set_enabled(false, &block)
+  end
+
+  def set_enabled(enabled)
+    if block_given?
+      enabled_was = config.enabled
+      config.enabled = enabled
+      yield
+      config.enabled = enabled_was
+    else
+      config.enabled = enabled
+    end
   end
 
   # Configure the gem

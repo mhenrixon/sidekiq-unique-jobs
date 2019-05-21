@@ -6,8 +6,14 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   # TODO: Deprecate this class in favour of SidekiqUniqueJobs::Redis::Digests
   module Digests
+    #
+    # @return [Integer] the number of matches to return by default
     DEFAULT_COUNT = 1_000
+    #
+    # @return [String] the default pattern to use for matching
     SCAN_PATTERN  = "*"
+    #
+    # @return [Array<String>] the suffixes used for keys
     SUFFIXES      = %w[
       :QUEUED
       :PRIMED

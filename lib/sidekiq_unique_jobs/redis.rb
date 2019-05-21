@@ -7,6 +7,8 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   # rubocop:disable Naming/UncommunicativeMethodParamName, Metrics/ModuleLength
+  # :nodoc:
+  # :nocov:
   module Redis
     def queue(*command)
       redis { |conn| conn.queue(*command) }

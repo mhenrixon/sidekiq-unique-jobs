@@ -15,11 +15,10 @@ module SidekiqUniqueJobs
       #   @return [String] the unique digest to use for locking
       attr_reader :unique_digest
 
+      #
+      # Initialize a new Replace strategy
+      #
       # @param [Hash] item sidekiq job hash
-      #
-      # <description>
-      #
-      # @param [<type>] item <description>
       #
       def initialize(item, redis_pool = nil)
         super(item, redis_pool)
@@ -27,8 +26,14 @@ module SidekiqUniqueJobs
         @unique_digest = item[UNIQUE_DIGEST]
       end
 
+      #
       # Replace the old job in the queue
+      #
+      #
+      # @return [void] <description>
+      #
       # @yield to retry the lock after deleting the old one
+      #
       def call(&block)
         return unless (deleted_job = delete_job_by_digest)
 
@@ -39,14 +44,25 @@ module SidekiqUniqueJobs
         block&.call
       end
 
+      #
       # Delete the job from either schedule, retry or the queue
+      #
+      #
+      # @return [String] the deleted job hash
+      # @return [nil] when deleting nothing
+      #
       def delete_job_by_digest
         call_script(:delete_job_by_digest,
                     keys: ["#{QUEUE}:#{queue}", SCHEDULE, RETRY],
                     argv: [unique_digest])
       end
 
+      #
       # Delete the keys belonging to the job
+      #
+      #
+      # @return [Integer] the number of keys deleted
+      #
       def delete_lock
         call_script(:delete_by_digest, keys: [unique_digest, DIGESTS])
       end

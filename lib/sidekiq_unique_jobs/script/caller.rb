@@ -29,14 +29,6 @@ module SidekiqUniqueJobs
       #
       # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
       #
-      #
-      # <description>
-      #
-      # @param [<type>] file_name <description>
-      # @param [<type>] *args <description>
-      #
-      # @return [<type>] <description>
-      #
       def call_script(file_name, *args)
         conn, keys, argv = extract_args(*args)
         return Script.call(file_name, conn, keys: keys, argv: argv) if conn
