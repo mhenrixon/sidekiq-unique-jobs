@@ -1,3 +1,5 @@
+redis.replicate_commands()
+
 -------- BEGIN keys ---------
 local digests_set  = KEYS[1]
 local schedule_set = KEYS[2]
