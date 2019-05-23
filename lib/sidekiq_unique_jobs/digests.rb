@@ -46,7 +46,7 @@ module SidekiqUniqueJobs
       return delete_by_pattern(pattern, count: count) if pattern
       return delete_by_digest(digest) if digest
 
-      raise ArgumentError, "either digest or pattern need to be provided"
+      raise ArgumentError, "##{__method__} requires either a :digest or a :pattern"
     end
 
     #

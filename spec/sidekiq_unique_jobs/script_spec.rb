@@ -21,8 +21,8 @@ RSpec.describe SidekiqUniqueJobs::Script do
     let(:redis)            { Redis.new }
     let(:scriptsha)        { "abcdefab" }
     let(:script_arguments) { { keys: keys, argv: argv } }
-    let(:script_name)      { :acquire_lock }
-    let(:error_message)    { "Some interesting error" }
+    let(:script_name)      { :lock }
+    let(:error_message)    { "ERR Error running script (call to f_178d75adaa46af3d8237cfd067c9fdff7b9d504f): [string \"func definition\"]:5: attempt to compare nil with number" }
 
     context "when conn.evalsha raises Redis::CommandError" do
       before do
@@ -36,7 +36,19 @@ RSpec.describe SidekiqUniqueJobs::Script do
       end
 
       specify do
-        expect { call }.to raise_error(::Redis::CommandError, "Some interesting error")
+        begin
+          call
+        rescue SidekiqUniqueJobs::ScriptError => ex
+          expect(ex.message).to start_with("attempt to compare nil with number")
+          expect(ex.message).to include("3: local queued    = KEYS[2]")
+          expect(ex.message).to include("4: local primed    = KEYS[3]")
+          expect(ex.message).to include("=> 5: local locked    = KEYS[4]")
+          expect(ex.message).to include("6: local changelog = KEYS[5]")
+          expect(ex.message).to include("7: local digests   = KEYS[6]")
+
+          expect(ex.backtrace.first).to match(%r{lib/sidekiq_unique_jobs/lua/lock.lua:5})
+          expect(ex.backtrace[1]).to match(/script.rb/)
+        end
 
         expect(described_class::SCRIPT_SHAS).not_to have_received(:delete).with(script_name)
         expect(described_class).to have_received(:execute_script).with(script_name, redis, keys, argv).once

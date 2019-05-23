@@ -114,6 +114,26 @@ module SidekiqUniqueJobs
   end
 
   #
+  # Checks if the gem has been disabled
+  #
+  # @return [true] when config.enabled is true
+  # @return [false] when config.enabled is false
+  #
+  def enabled?(&block)
+    config.enabled
+  end
+
+  #
+  # Checks if the gem has been disabled
+  #
+  # @return [true] when config.enabled is false
+  # @return [false] when config.enabled is true
+  #
+  def disabled?(&block)
+    !enabled?
+  end
+
+  #
   # Toggles enabled on or off
   #
   # @api private

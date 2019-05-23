@@ -41,6 +41,13 @@ RSpec.describe SidekiqUniqueJobs::Digests do
       allow(digests).to receive(:log_info)
     end
 
+    context "when given nothing" do
+      let(:digest) { nil }
+      let(:pattern) { nil }
+
+      it { expect { del }.to raise_error(ArgumentError, "#del requires either a :digest or a :pattern") }
+    end
+
     context "when given a pattern" do
       let(:pattern) { "*" }
 

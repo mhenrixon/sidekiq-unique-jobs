@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+
 RSpec.describe SidekiqUniqueJobs do
   describe ".config" do
     subject(:config) { described_class.config }
@@ -71,10 +72,72 @@ RSpec.describe SidekiqUniqueJobs do
     end
   end
 
+  describe ".version" do
+    subject(:version) { described_class.version }
+
+    it { is_expected.to eq(described_class::VERSION) }
+  end
+
+  describe ".enable!" do
+    context "when given a block" do
+      it "enables unique jobs within the block" do
+        described_class.disable!
+        expect(described_class.enabled?).to eq(false)
+
+        described_class.enable! do
+          expect(described_class.enabled?).to eq(true)
+        end
+
+        expect(described_class.enabled?).to eq(false)
+
+        described_class.enable!
+      end
+    end
+  end
+
+  describe ".disable!" do
+    context "when given a block" do
+      it "disables unique jobs within the block" do
+        described_class.enable!
+        expect(described_class.disabled?).to eq(false)
+
+        described_class.disable! do
+          expect(described_class.disabled?).to eq(true)
+        end
+
+        expect(described_class.disabled?).to eq(false)
+      end
+    end
+  end
+
   describe ".redis_version" do
     subject(:redis_version) { described_class.redis_version }
 
     it { is_expected.to be_a(String) }
     it { is_expected.to match(/(\d+\.?)+/) }
+  end
+
+  describe ".now_f" do
+    subject(:now_f) { described_class.now_f }
+
+    let(:frozen_time) { Time.new(2017, 8, 28, 3, 30) }
+
+    it "returns Time.now.to_f" do
+      Timecop.freeze(frozen_time) do
+        expect(now_f).to eq(frozen_time.to_f)
+      end
+    end
+  end
+
+  describe ".now" do
+    subject(:now) { described_class.now }
+
+    let(:frozen_time) { Time.new(2019, 2, 13, 19, 30) }
+
+    it "returns Time.now.to_f" do
+      Timecop.freeze(frozen_time) do
+        expect(now).to eq(frozen_time)
+      end
+    end
   end
 end

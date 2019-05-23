@@ -147,7 +147,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
   end
 
-  describe "lock with expiration" do
+  context "with lock_ttl" do
     let(:lock_ttl) { 1 }
     let(:lock_type) { :while_executing }
 
@@ -208,52 +208,27 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
   end
 
-  # describe 'lock without staleness checking' do
-  #   it_behaves_like 'a lock'
+  context "when lock_timeout is 1" do
+    let(:lock_timeout) { 1 }
 
-  #   it 'can dynamically add resources' do
-  #     locksmith_one.lock
+    it "does not block" do
+      did_we_get_in = false
 
-  #     3.times do
-  #       locksmith_one.unlock
-  #     end
+      locksmith_one.lock do
+        locksmith_two.lock do
+          did_we_get_in = true
+        end
+      end
 
-  #     expect(locksmith_one.available_count).to eq(4)
+      expect(did_we_get_in).to be false
+    end
 
-  #     locksmith_one.lock(1)
-  #     locksmith_one.lock(1)
-  #     locksmith_one.lock(1)
+    it "is locked" do
+      locksmith_one.lock do
+        expect(locksmith_one).to be_locked
+      end
 
-  #     expect(locksmith_one.available_count).to eq(1)
-  #   end
-
-  #   stale clients and concurrency removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-  #   shared_examples 'can release stale clients' do
-  #     # TODO: This spec is flaky and should be improved to not use sleeps
-  #     it 'can have stale locks released by a third process', :retry do
-  #       watchdog = described_class.new(item_one.merge('stale_client_timeout' => 0.5))
-  #       locksmith_one.lock
-
-  #       watchdog.release_stale_locks
-  #       expect(locksmith_one).to be_locked
-
-  #       sleep 0.6
-  #       watchdog.release_stale_locks
-
-  #       expect(locksmith_one).not_to be_locked
-  #     end
-  #   end
-
-  #   context 'when redis version < 3.2', redis_ver: '<= 3.2' do
-  #     before { allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.1') }
-
-  #     it_behaves_like 'can release stale clients'
-  #   end
-
-  #   context 'when redis version >= 3.2' do
-  #     before { allow(SidekiqUniqueJobs).to receive(:redis_version).and_return('3.2') }
-
-  #     it_behaves_like 'can release stale clients'
-  #   end
-  # end
+      expect(locksmith_one).not_to be_locked if lock_ttl.nil?
+    end
+  end
 end

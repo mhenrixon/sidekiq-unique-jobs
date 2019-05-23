@@ -6,7 +6,6 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   # rubocop:disable Metrics/ClassLength
   class Locksmith
-    include Comparable
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Timing
@@ -111,10 +110,6 @@ module SidekiqUniqueJobs
       key == other.key && job_id == other.job_id
     end
 
-    def <=>(other)
-      key <=> other.key && job_id <=> other.job_id
-    end
-
     private
 
     attr_reader :redis_pool
@@ -154,7 +149,7 @@ module SidekiqUniqueJobs
       primed_token, _elapsed = timed do
         if timeout.nil? || timeout.positive?
           # passing timeout 0 to brpoplpush causes it to block indefinitely
-          conn.brpoplpush(key.queued, key.primed, timeout || 0)
+          conn.brpoplpush(key.queued, key.primed, timeout: timeout || 0)
         else
           conn.rpoplpush(key.queued, key.primed)
         end
