@@ -211,7 +211,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   context "when lock_timeout is 1" do
     let(:lock_timeout) { 1 }
 
-    it "does not block" do
+    it "blocks other locks" do
       did_we_get_in = false
 
       locksmith_one.lock do
@@ -221,14 +221,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       end
 
       expect(did_we_get_in).to be false
-    end
-
-    it "is locked" do
-      locksmith_one.lock do
-        expect(locksmith_one).to be_locked
-      end
-
-      expect(locksmith_one).not_to be_locked if lock_ttl.nil?
     end
   end
 end

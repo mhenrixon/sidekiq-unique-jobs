@@ -22,7 +22,11 @@ RSpec.describe SidekiqUniqueJobs::Script do
     let(:scriptsha)        { "abcdefab" }
     let(:script_arguments) { { keys: keys, argv: argv } }
     let(:script_name)      { :lock }
-    let(:error_message)    { "ERR Error running script (call to f_178d75adaa46af3d8237cfd067c9fdff7b9d504f): [string \"func definition\"]:5: attempt to compare nil with number" }
+    let(:error_message) do
+      <<~ERR
+        ERR Error running script (call to f_178d75adaa46af3d8237cfd067c9fdff7b9d504f): [string "func definition"]:5: attempt to compare nil with number
+      ERR
+    end
 
     context "when conn.evalsha raises Redis::CommandError" do
       before do

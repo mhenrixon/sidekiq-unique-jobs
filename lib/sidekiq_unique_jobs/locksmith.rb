@@ -4,7 +4,6 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  # rubocop:disable Metrics/ClassLength
   class Locksmith
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
@@ -175,5 +174,4 @@ module SidekiqUniqueJobs
       (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

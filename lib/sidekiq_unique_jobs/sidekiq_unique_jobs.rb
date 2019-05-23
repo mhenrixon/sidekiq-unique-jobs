@@ -119,7 +119,7 @@ module SidekiqUniqueJobs
   # @return [true] when config.enabled is true
   # @return [false] when config.enabled is false
   #
-  def enabled?(&block)
+  def enabled?
     config.enabled
   end
 
@@ -129,7 +129,7 @@ module SidekiqUniqueJobs
   # @return [true] when config.enabled is false
   # @return [false] when config.enabled is true
   #
-  def disabled?(&block)
+  def disabled?
     !enabled?
   end
 

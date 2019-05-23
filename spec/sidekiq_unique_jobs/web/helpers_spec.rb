@@ -11,12 +11,13 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
     let(:time)        { Time.now.to_f }
 
     before { Timecop.freeze(frozen_time) }
+
     after { Timecop.return }
 
     it "returns relative time html" do
-      expect(safe_relative_time).to eq(
-        "<time class=\"ltr\" dir=\"ltr\" title=\"1982-06-08T12:15:34Z\" datetime=\"1982-06-08T12:15:34Z\">1982-06-08 14:15:34 +0200</time>"
-      )
+      expect(safe_relative_time).to be == <<~HTML.chop
+        <time class="ltr" dir="ltr" title="1982-06-08T12:15:34Z" datetime="1982-06-08T12:15:34Z">1982-06-08 14:15:34 +0200</time>
+      HTML
     end
   end
 
