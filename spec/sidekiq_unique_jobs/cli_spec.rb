@@ -111,7 +111,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
     shared_examples "start console" do
       specify do
         allow(console_class).to receive(:start).and_return(true)
-        expect(console).to eq <<~HEADER
+        expect(console).to include <<~HEADER
           Use `list '*', 1000 to display the first 1000 unique digests matching '*'
           Use `del '*', 1000, true (default) to see how many digests would be deleted for the pattern '*'
           Use `del '*', 1000, false to delete the first 1000 digests matching '*'
@@ -126,7 +126,6 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
         begin
           require "pry"
         rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/ShadowedException
-          p "Pry not available, falling back to IRB"
         end
       end
 

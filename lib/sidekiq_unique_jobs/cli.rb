@@ -40,6 +40,7 @@ module SidekiqUniqueJobs
       say "Use `list '*', 1000 to display the first 1000 unique digests matching '*'"
       say "Use `del '*', 1000, true (default) to see how many digests would be deleted for the pattern '*'"
       say "Use `del '*', 1000, false to delete the first 1000 digests matching '*'"
+
       # Object.include SidekiqUniqueJobs::Api
       console_class.start
     end
