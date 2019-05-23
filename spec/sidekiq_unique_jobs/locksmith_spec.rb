@@ -221,6 +221,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       end
 
       expect(did_we_get_in).to be false
+
+      locksmith_one.delete!
+      locksmith_two.delete!
     end
   end
 end

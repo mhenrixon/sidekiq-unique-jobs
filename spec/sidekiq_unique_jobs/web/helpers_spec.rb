@@ -7,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
   describe "#safe_relative_time" do
     subject(:safe_relative_time) { described_class.safe_relative_time(time) }
 
-    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34).utc }
+    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
     let(:time)        { Time.now.to_f }
 
     before { Timecop.freeze(frozen_time) }
@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
 
     it "returns relative time html" do
       expect(safe_relative_time).to eq(<<~HTML.chop)
-        <time class="ltr" dir="ltr" title="1982-06-08T12:15:34Z" datetime="1982-06-08T12:15:34Z">1982-06-08 14:15:34 +0200</time>
+        <time class="ltr" dir="ltr" title="1982-06-08T12:15:34Z" datetime="1982-06-08T12:15:34Z">#{Time.now}</time>
       HTML
     end
   end
