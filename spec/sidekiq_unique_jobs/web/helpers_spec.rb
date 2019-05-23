@@ -7,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
   describe "#safe_relative_time" do
     subject(:safe_relative_time) { described_class.safe_relative_time(time) }
 
-    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
+    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34).utc }
     let(:time)        { Time.now.to_f }
 
     before { Timecop.freeze(frozen_time) }
