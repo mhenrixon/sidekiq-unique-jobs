@@ -17,7 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     end
 
     context "with entries" do
-      before { zadd(digest, current_time, job_id) }
+      before { zadd(digest, now_f, job_id) }
 
       context "when given with_scores: false" do
         let(:with_scores) { false }
@@ -41,7 +41,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     end
 
     context "with entries" do
-      before { zadd(digest, current_time, job_id) }
+      before { zadd(digest, now_f, job_id) }
 
       it { is_expected.to be == 1 }
     end
@@ -55,9 +55,9 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     end
 
     context "with entries" do
-      before { zadd(digest, current_time, job_id) }
+      before { zadd(digest, now_f, job_id) }
 
-      it { is_expected.to be_within(0.5).of(current_time) }
+      it { is_expected.to be_within(0.5).of(now_f) }
     end
   end
 
@@ -69,7 +69,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     end
 
     context "with entries" do
-      before { zadd(digest, current_time, job_id) }
+      before { zadd(digest, now_f, job_id) }
 
       it { is_expected.to be == 0 }
     end

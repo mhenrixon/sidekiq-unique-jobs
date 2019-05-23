@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
     # Check if unique has been enabled
     # @return [true, false] indicate if the gem has been enabled
     def unique_enabled?
-      SidekiqUniqueJobs.config.enabled && lock_type
+      SidekiqUniqueJobs.enabled? && lock_type
     end
 
     # Check if unique has been disabled

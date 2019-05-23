@@ -256,16 +256,4 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   #     it_behaves_like 'can release stale clients'
   #   end
   # end
-
-  describe "current_time" do
-    let(:lock_stale_client_timeout) { 5 }
-
-    before do
-      Timecop.freeze(Time.local(1990))
-    end
-
-    it "with time support should return a different time than frozen time" do
-      expect(locksmith_one.send(:current_time)).not_to eq(Time.now)
-    end
-  end
 end

@@ -125,7 +125,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
       before do
         begin
           require "pry"
-        rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/ShadowedException
+        rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/HandleExceptions, Lint/ShadowedException
         end
       end
 

@@ -9,17 +9,21 @@ RSpec.describe SidekiqUniqueJobs::Timing do
     Timecop.travel(locked_time)
   end
 
-  describe ".current_time" do
-    subject(:current_time) { described_class.current_time }
+  after do
+    Timecop.return
+  end
+
+  describe ".time_source" do
+    subject(:time_source) { described_class.time_source.call }
 
     context "when defined Process::CLOCK_MONOTONIC" do
-      it { is_expected.to be_a(Float) }
+      it { is_expected.to be_a(Integer) }
     end
 
     context "when undefined Process::CLOCK_MONOTONIC" do
       before { hide_const("Process::CLOCK_MONOTONIC") }
 
-      it { is_expected.to be_a(Float) }
+      it { is_expected.to be_a(Integer) }
     end
   end
 end

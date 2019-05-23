@@ -42,7 +42,7 @@ RSpec.describe "unlock.lua" do
 
         expect(locked.count).to be == 1
         expect(locked.entries).to match_array([job_id_two])
-        expect(locked[job_id_two].to_f).to be_within(0.5).of(current_time)
+        expect(locked[job_id_two].to_f).to be_within(0.5).of(now_f)
       end
     end
 

@@ -19,22 +19,22 @@ module SidekiqUniqueJobs
       [yield, time_source.call - start_time]
     end
 
-    #
-    # Returns the current time as float
-    #
-    #
-    # @return [Float]
-    #
-    def current_time
+    def time_source
+      lambda do
+        (clock_stamp * 1000).to_i
+      end
+    end
+
+    def now_f
+      SidekiqUniqueJobs.now_f
+    end
+
+    def clock_stamp
       if Process.const_defined?("CLOCK_MONOTONIC")
         Process.clock_gettime(Process::CLOCK_MONOTONIC)
       else
         Time.now.to_f
       end
-    end
-
-    def time_source
-      proc { (current_time * 1000).to_i }
     end
   end
 end

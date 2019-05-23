@@ -38,6 +38,10 @@ module SidekiqUniqueJobs
       def count
         0
       end
+
+      def now_f
+        SidekiqUniqueJobs.now_f
+      end
     end
   end
 end

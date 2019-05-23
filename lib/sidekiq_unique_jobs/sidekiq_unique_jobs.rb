@@ -157,4 +157,24 @@ module SidekiqUniqueJobs
   def redis_version
     @redis_version ||= redis { |conn| conn.info("server")["redis_version"] }
   end
+
+  #
+  # Current time as float
+  #
+  #
+  # @return [Float]
+  #
+  def now_f
+    now.to_f
+  end
+
+  #
+  # Current time
+  #
+  #
+  # @return [Time]
+  #
+  def now
+    Time.now
+  end
 end

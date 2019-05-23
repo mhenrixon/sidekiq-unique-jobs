@@ -35,4 +35,18 @@ RSpec.describe SidekiqUniqueJobs::Redis::String do
       it { is_expected.to be == job_id }
     end
   end
+
+  describe "#del" do
+    subject(:del) { entity.del }
+
+    context "without entries" do
+      it { is_expected.to eq(0) }
+    end
+
+    context "with entries" do
+      before { set(digest, job_id) }
+
+      it { is_expected.to be == 1 }
+    end
+  end
 end

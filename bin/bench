@@ -36,15 +36,15 @@ end
 
 def simulate_lock(key)
   key          = SidekiqUniqueJobs::Key.new(key)
-  current_time = SidekiqUniqueJobs::Timing.current_time
+  now_f = SidekiqUniqueJobs.now_f
   Sidekiq.redis do |conn|
     conn.multi do
       conn.set(key.digest, key.digest)
       conn.lpush(key.queued, key.digest)
       conn.lpush(key.primed, key.digest)
-      conn.hset(key.locked, key.digest, current_time)
-      conn.zadd(key.digests, current_time, key.digest)
-      conn.zadd(key.digests, current_time, key.digest)
+      conn.hset(key.locked, key.digest, now_f)
+      conn.zadd(key.digests, now_f, key.digest)
+      conn.zadd(key.digests, now_f, key.digest)
     end
   end
 end
@@ -64,7 +64,7 @@ Benchmark.ips do |ips|
         item["failed_at"] = failed_at
         Sidekiq.redis do |conn|
           conn.zadd(SidekiqUniqueJobs::RETRY,
-                    SidekiqUniqueJobs::Timing.current_time + 360, Sidekiq.dump_json(item))
+                    SidekiqUniqueJobs.now_f + 360, Sidekiq.dump_json(item))
         end
       else
         Sidekiq::Client.push(item)
@@ -91,7 +91,7 @@ Benchmark.ips do |ips|
         item["failed_at"] = failed_at
         Sidekiq.redis do |conn|
           conn.zadd(
-            SidekiqUniqueJobs::RETRY, SidekiqUniqueJobs::Timing.current_time + 360, Sidekiq.dump_json(item)
+            SidekiqUniqueJobs::RETRY, SidekiqUniqueJobs.now_f + 360, Sidekiq.dump_json(item)
           )
         end
       else

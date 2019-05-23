@@ -88,8 +88,8 @@ module SidekiqUniqueJobs
       end
     end
 
-    def current_time
-      SidekiqUniqueJobs::Timing.current_time
+    def now_f
+      SidekiqUniqueJobs.now_f
     end
   end
 end

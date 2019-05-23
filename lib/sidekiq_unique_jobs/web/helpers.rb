@@ -5,6 +5,8 @@ module SidekiqUniqueJobs
     module Helpers
       VIEW_PATH = File.expand_path("../web/views", __dir__)
 
+      module_function
+
       def unique_template(name)
         File.open(File.join(VIEW_PATH, "#{name}.erb")).read
       end
@@ -38,20 +40,21 @@ module SidekiqUniqueJobs
         end
       end
 
+      def relative_time(time)
+        stamp = time.getutc.iso8601
+        %(<time class="ltr" dir="ltr" title="#{stamp}" datetime="#{stamp}">#{time}</time>)
+      end
+
       def safe_relative_time(time)
         time = parse_time(time)
 
         relative_time(time)
       end
 
-      def safe_time(time)
-        time = parse_time(time)
-
-        %(<time class="ltr" dir="ltr" title="#{time}" datetime="#{time}">#{time}</time>)
-      end
-
       def parse_time(time)
         case time
+        when Time
+          time
         when Integer, Float
           Time.at(time)
         else

@@ -54,7 +54,7 @@ module SidekiqUniqueJobs
       conn.evalsha(
         script_sha(conn, file_name),
         keys,
-        argv.dup.concat([current_time, debug_lua, max_history]),
+        argv.dup.concat([now_f, debug_lua, max_history]),
       )
     end
 

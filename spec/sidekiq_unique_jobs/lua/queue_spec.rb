@@ -21,7 +21,7 @@ RSpec.describe "queue.lua" do
   let(:lock_pttl)    { nil }
   let(:locked_jid)   { job_id }
   let(:lock_limit)   { 1 }
-  let(:current_time) { SidekiqUniqueJobs::Timing.current_time }
+  let(:now_f)        { SidekiqUniqueJobs.now_f }
 
   before do
     flush_redis

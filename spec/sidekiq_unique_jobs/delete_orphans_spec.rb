@@ -36,7 +36,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
     end
 
     context "when retried" do
-      let(:item) { raw_item.merge("retry_count" => 2, "failed_at" => current_time) }
+      let(:item) { raw_item.merge("retry_count" => 2, "failed_at" => now_f) }
 
       context "without job in retry" do
         it { is_expected.to match_array([digest]) }
@@ -86,7 +86,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
     end
 
     context "when retried" do
-      let(:item) { raw_item.merge("retry_count" => 2, "failed_at" => current_time) }
+      let(:item) { raw_item.merge("retry_count" => 2, "failed_at" => now_f) }
 
       context "without job in retry" do
         it "keeps the digest" do

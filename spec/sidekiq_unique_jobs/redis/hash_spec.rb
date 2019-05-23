@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
   let(:digest) { SecureRandom.hex(12) }
   let(:job_id) { SecureRandom.hex(12) }
 
-  let!(:current_time) { SidekiqUniqueJobs::Timing.current_time }
+  let!(:now_f) { SidekiqUniqueJobs.now_f }
 
   describe "#entries" do
     subject(:entries) { entity.entries(with_values: with_values) }
@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
     end
 
     context "with entries" do
-      before { hset(digest, job_id, current_time) }
+      before { hset(digest, job_id, now_f) }
 
       context "when with_values: false" do
         let(:with_values) { false }
@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
       context "when with_values: true" do
         let(:with_values) { true }
 
-        it { is_expected.to eq(job_id => current_time.to_s) }
+        it { is_expected.to eq(job_id => now_f.to_s) }
       end
     end
   end
@@ -44,7 +44,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
     end
 
     context "with entries" do
-      before { hset(digest, job_id, current_time) }
+      before { hset(digest, job_id, now_f) }
 
       it { is_expected.to be == 1 }
     end

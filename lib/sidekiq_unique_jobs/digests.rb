@@ -24,7 +24,7 @@ module SidekiqUniqueJobs
     # @param [String] digest the digest to add
     #
     def add(digest)
-      redis { |conn| conn.zadd(key, current_time, digest) }
+      redis { |conn| conn.zadd(key, now_f, digest) }
     end
 
     #
@@ -94,17 +94,6 @@ module SidekiqUniqueJobs
     end
 
     private
-
-    def prefix(key)
-      return key if unique_prefix.nil?
-      return key if key.start_with?("#{unique_prefix}:")
-
-      "#{unique_prefix}:#{key}"
-    end
-
-    def unique_prefix
-      SidekiqUniqueJobs.config.unique_prefix
-    end
 
     # Deletes unique digests by pattern
     #

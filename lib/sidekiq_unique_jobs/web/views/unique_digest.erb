@@ -44,7 +44,7 @@
         <td>
           <% @lock.locked_jids(with_values: true).each do |job_id, timestamp| %>
             <p>
-              <%= job_id %> - <%= safe_time(timestamp.to_f) %><br/>
+              <%= job_id %> - <%= safe_relative_time(timestamp.to_f) %><br/>
             </p>
           <% end %>
         </td>

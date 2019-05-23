@@ -13,7 +13,7 @@ module SimulateLock
     call_script(
       :lock,
       keys: key.to_a,
-      argv: [jid, ttl, lock_type, SidekiqUniqueJobs::Timing.current_time],
+      argv: [jid, ttl, lock_type, SidekiqUniqueJobs.now_f],
     )
   end
 
@@ -23,11 +23,11 @@ module SimulateLock
         conn.set(key.digest, job_id)
         conn.lpush(key.queued, job_id)
         conn.lpush(key.primed, job_id)
-        conn.hset(key.locked, job_id, current_time)
-        conn.zadd(key.digests, current_time, key.digest)
-        conn.zadd(key.digests, current_time, key.digest)
-        conn.zadd(key.changelog, current_time, changelog_entry(key, job_id, "queue.lua", "Queued"))
-        conn.zadd(key.changelog, current_time, changelog_entry(key, job_id, "lock.lua", "Locked"))
+        conn.hset(key.locked, job_id, now_f)
+        conn.zadd(key.digests, now_f, key.digest)
+        conn.zadd(key.digests, now_f, key.digest)
+        conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
+        conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
       end
     end
   end
@@ -38,7 +38,7 @@ module SimulateLock
       job_id: job_id,
       script: script,
       message: message,
-      time: current_time,
+      time: now_f,
     )
   end
 
