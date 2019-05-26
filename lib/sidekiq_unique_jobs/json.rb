@@ -18,7 +18,6 @@ module SidekiqUniqueJobs
       ::JSON.parse(string)
     end
 
-
     #
     # Dumps an object into a JSON string
     #
