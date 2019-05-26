@@ -34,7 +34,7 @@ RSpec.describe "delete_job_by_digest.lua" do
       }
     end
 
-    before { Sidekiq.redis { |conn| conn.zadd("retry", Time.now.to_f.to_s, job) } }
+    before { zadd("retry", Time.now.to_f.to_s, job) }
 
     it "removes the job from the retry set" do
       expect { delete_job_by_digest }.to change { retry_count }.from(1).to(0)

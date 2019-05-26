@@ -40,7 +40,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
 
     it "unlocks after executing" do
       process_one.lock
-      process_one.execute {}
+      process_one.execute do
+        expect(process_one).to be_locked
+      end
       expect(process_one).to be_locked # Because we have expiration set to 5000
     end
   end

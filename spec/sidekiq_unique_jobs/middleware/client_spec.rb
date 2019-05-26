@@ -197,6 +197,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
 
       expect(queue_count("customqueue")).to eq(1)
     end
-    expect(SidekiqUniqueJobs.logger).not_to have_received(:warn) # .with(/^already locked by another job_id/)
+
+    expect(SidekiqUniqueJobs.logger).not_to have_received(:warn).with(/^already locked by another job_id/)
   end
 end

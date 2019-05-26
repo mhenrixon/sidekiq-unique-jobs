@@ -29,7 +29,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
       end
 
       context "with scheduled job" do
-        before { Sidekiq::Client.push(item) }
+        before { push_item(item) }
 
         it { is_expected.to match_array([]) }
       end
@@ -43,7 +43,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
       end
 
       context "with job in retry" do
-        before { Sidekiq.redis { |conn| conn.zadd("retry", Time.now.to_f.to_s, dump_json(item)) } }
+        before { zadd("retry", Time.now.to_f.to_s, dump_json(item)) }
 
         it { is_expected.to match_array([]) }
       end
@@ -55,7 +55,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
       end
 
       context "with enqueued job" do
-        before { Sidekiq::Client.push(item) }
+        before { push_item(item) }
 
         it { is_expected.to match_array([]) }
       end
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
       end
 
       context "with scheduled job" do
-        before { Sidekiq::Client.push(item) }
+        before { push_item(item) }
 
         it "keeps the digest" do
           expect { call }.not_to change { digests.count }.from(1)
@@ -95,7 +95,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
       end
 
       context "with job in retry" do
-        before { Sidekiq.redis { |conn| conn.zadd("retry", Time.now.to_f.to_s, dump_json(item)) } }
+        before { zadd("retry", Time.now.to_f.to_s, dump_json(item)) }
 
         it "keeps the digest" do
           expect { call }.not_to change { digests.count }.from(1)
@@ -111,7 +111,7 @@ RSpec.describe SidekiqUniqueJobs::DeleteOrphans do
       end
 
       context "with enqueued job" do
-        before { Sidekiq::Client.push(item) }
+        before { push_item(item) }
 
         it "keeps the digest" do
           expect { call }.not_to change { digests.count }.from(1)

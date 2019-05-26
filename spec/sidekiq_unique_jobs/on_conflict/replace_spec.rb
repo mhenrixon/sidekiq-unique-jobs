@@ -36,11 +36,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
         }
       end
 
-      before do
-        Sidekiq.redis do |conn|
-          conn.zadd("retry", Time.now.to_f.to_s, job)
-        end
-      end
+      before { zadd("retry", Time.now.to_f.to_s, job) }
 
       it "removes the job from the retry set" do
         expect { call }.to change { retry_count }.from(1).to(0)

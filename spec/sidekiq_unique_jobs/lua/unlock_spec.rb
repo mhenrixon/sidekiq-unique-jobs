@@ -12,9 +12,9 @@ RSpec.describe "unlock.lua" do
   let(:digest)     { "uniquejobs:digest" }
   let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
   let(:redlock)    { SidekiqUniqueJobs::Lock.new(key) }
-  let(:queued)     { redlock.queued_list }
-  let(:primed)     { redlock.primed_list }
-  let(:locked)     { redlock.locked_hash }
+  let(:queued)     { redlock.queued }
+  let(:primed)     { redlock.primed }
+  let(:locked)     { redlock.locked }
   let(:lock_ttl)   { nil }
   let(:locked_jid) { job_id_one }
   let(:lock_limit) { 1 }

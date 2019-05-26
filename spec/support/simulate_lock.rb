@@ -25,7 +25,6 @@ module SimulateLock
         conn.lpush(key.primed, job_id)
         conn.hset(key.locked, job_id, now_f)
         conn.zadd(key.digests, now_f, key.digest)
-        conn.zadd(key.digests, now_f, key.digest)
         conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
         conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
       end

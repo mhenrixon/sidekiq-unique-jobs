@@ -63,6 +63,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
             process_one.lock
             expect { delete }.not_to change { unique_keys.size }
           end
+
+          process_one.delete!
         end
       end
     end

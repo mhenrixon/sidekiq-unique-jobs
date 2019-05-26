@@ -12,6 +12,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:lock_type)    { "until_executed" }
   let(:digest)       { "uniquejobs:randomvalue" }
   let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
+  let(:lock)         { SidekiqUniqueJobs::Lock.new(key) }
   let(:lock_timeout) { 0 }
   let(:lock_limit)   { 1 }
   let(:item_one) do
@@ -89,22 +90,36 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       expect(code_executed).to eq(true)
     end
 
-    it "passes an exception right through" do
-      expect do
-        locksmith_one.lock do
-          raise Exception, "redis lock exception"
-        end
-      end.to raise_error(Exception, "redis lock exception")
-    end
+    context "when exceptions is raised" do
+      let(:error_class)   { Exception }
+      let(:error_message) { "redis lock exception" }
+      let(:block)         { -> { raise error_class, error_message } }
 
-    it "does not leave the lock locked after raising an exception" do
-      expect do
-        locksmith_one.lock do
-          raise Exception, "redis lock exception"
+      context "when given a block" do
+        before do
+          allow(locksmith_one).to receive(:lock_async) { block.call }
         end
-      end.to raise_error(Exception, "redis lock exception")
 
-      expect(locksmith_one).not_to be_locked if lock_ttl.nil?
+        it "cleans up the lock" do
+          expect { locksmith_one.lock(&block) }
+            .to raise_error(error_class, error_message)
+
+          expect(locksmith_one).not_to be_locked # if lock_ttl.nil?
+        end
+      end
+
+      context "when given no block" do
+        before do
+          allow(locksmith_one).to receive(:lock_sync) { block.call }
+        end
+
+        it "cleans up the lock" do
+          expect { locksmith_one.lock }
+            .to raise_error(error_class, error_message)
+
+          expect(locksmith_one).not_to be_locked # if lock_ttl.nil?
+        end
+      end
     end
 
     it "returns the value of the block if block-style locking is used" do
@@ -148,7 +163,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   end
 
   context "with lock_ttl" do
-    let(:lock_ttl) { 1 }
+    let(:lock_ttl)  { 1 }
     let(:lock_type) { :while_executing }
 
     it_behaves_like "a lock"
@@ -221,9 +236,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       end
 
       expect(did_we_get_in).to be false
-
-      locksmith_one.delete!
-      locksmith_two.delete!
     end
   end
 end

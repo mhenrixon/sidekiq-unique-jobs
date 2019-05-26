@@ -8,11 +8,25 @@ RSpec.describe SidekiqUniqueJobs::Lock do
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:digest) { SecureRandom.hex(12) }
   let(:job_id) { SecureRandom.hex(12) }
+  let(:expected_string) do
+    <<~MESSAGE
+      Lock status for #{digest}
 
-  its(:digest_key)  { is_expected.to be_a(SidekiqUniqueJobs::Redis::String) }
-  its(:queued_list) { is_expected.to be_a(SidekiqUniqueJobs::Redis::List) }
-  its(:primed_list) { is_expected.to be_a(SidekiqUniqueJobs::Redis::List) }
-  its(:locked_hash) { is_expected.to be_a(SidekiqUniqueJobs::Redis::Hash) }
+               digest: #{digest}
+                value:\s
+          queued_jids: []
+          primed_jids: []
+          locked_jids: []
+           changelogs: []
+    MESSAGE
+  end
+
+  its(:digest)  { is_expected.to be_a(SidekiqUniqueJobs::Redis::String) }
+  its(:queued)  { is_expected.to be_a(SidekiqUniqueJobs::Redis::List) }
+  its(:primed)  { is_expected.to be_a(SidekiqUniqueJobs::Redis::List) }
+  its(:locked)  { is_expected.to be_a(SidekiqUniqueJobs::Redis::Hash) }
+  its(:inspect) { is_expected.to eq(expected_string) }
+  its(:to_s)    { is_expected.to eq(expected_string) }
 
   describe "#all_jids" do
     subject(:all_jids) { entity.all_jids }
@@ -28,14 +42,14 @@ RSpec.describe SidekiqUniqueJobs::Lock do
     end
   end
 
-  describe "#changelog_entries" do
-    subject(:changelog_entries) { entity.changelog_entries }
+  describe "#changelogs" do
+    subject(:changelogs) { entity.changelogs }
 
-    context "when no changelog_entries exist" do
+    context "when no changelogs exist" do
       it { is_expected.to match_array([]) }
     end
 
-    context "when changelog_entries exist" do
+    context "when changelogs exist" do
       before { simulate_lock(key, job_id) }
 
       let(:locked_entry) do

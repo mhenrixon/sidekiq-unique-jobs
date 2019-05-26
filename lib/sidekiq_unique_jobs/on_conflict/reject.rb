@@ -53,7 +53,7 @@ module SidekiqUniqueJobs
       end
 
       def push_to_deadset
-        Sidekiq.redis do |conn|
+        redis do |conn|
           conn.multi do
             conn.zadd("dead", now_f, payload)
             conn.zremrangebyscore("dead", "-inf", now_f - Sidekiq::DeadSet.timeout)
