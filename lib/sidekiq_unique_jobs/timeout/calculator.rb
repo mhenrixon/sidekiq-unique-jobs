@@ -6,9 +6,12 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Calculator
+      # includes "SidekiqUniqueJobs::SidekiqWorkerMethods"
+      # @!parse include SidekiqUniqueJobs::SidekiqWorkerMethods
       include SidekiqUniqueJobs::SidekiqWorkerMethods
 
-      # @attr [Hash] item the Sidekiq job hash
+      # @!attribute [r] item
+      #   @return [Hash] the Sidekiq job hash
       attr_reader :item
 
       # @param [Hash] item the Sidekiq job hash
@@ -21,8 +24,12 @@ module SidekiqUniqueJobs
         @worker_class = item[CLASS]
       end
 
-      # The time until a job is scheduled
+      #
+      # Calculates the time until the job is scheduled starting from now
+      #
+      #
       # @return [Integer] the number of seconds until job is scheduled
+      #
       def time_until_scheduled
         return 0 unless scheduled_at
 
@@ -35,7 +42,12 @@ module SidekiqUniqueJobs
         @scheduled_at ||= item[AT]
       end
 
-      # The configured lock_ttl
+      #
+      # <description>
+      #
+      #
+      # @return [<type>] <description>
+      #
       def lock_ttl
         @lock_ttl ||= begin
           ttl = item[LOCK_TTL]
@@ -47,7 +59,13 @@ module SidekiqUniqueJobs
         end
       end
 
-      # The configured lock_timeout
+      #
+      # Finds a lock timeout in either of
+      #  default worker options, {default_lock_timeout} or provided worker_options
+      #
+      #
+      # @return [Integer, nil]
+      #
       def lock_timeout
         @lock_timeout = begin
           timeout = default_worker_options[LOCK_TIMEOUT]
@@ -57,11 +75,24 @@ module SidekiqUniqueJobs
         end
       end
 
-      # The default lock_timeout of this gem
+      #
+      # The configured default_lock_timeout
+      # @see SidekiqUniqueJobs.config.default_lock_timeout
+      #
+      #
+      # @return [Integer, nil]
+      #
       def default_lock_timeout
         SidekiqUniqueJobs.config.default_lock_timeout
       end
 
+      #
+      # The configured default_lock_ttl
+      # @see SidekiqUniqueJobs.config.default_lock_ttl
+      #
+      #
+      # @return [Integer, nil]
+      #
       def default_lock_ttl
         SidekiqUniqueJobs.config.default_lock_ttl
       end

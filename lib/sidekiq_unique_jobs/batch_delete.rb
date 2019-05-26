@@ -12,7 +12,14 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Logging
 
-    attr_reader :digests, :conn
+    #
+    # @!attribute [r] digests
+    #   @return [Array<String>] a collection of digests to be deleted
+    attr_reader :digests
+    #
+    # @!attribute [r] conn
+    #   @return [Redis, RedisConnection, ConnectionPool] a redis connection/client
+    attr_reader :conn
 
     #
     # Executes a batch deletion of the provided digests
@@ -44,9 +51,9 @@ module SidekiqUniqueJobs
     #
     #
     def call
-      return log_debug("Nothing to delete; exiting.") if digests.none?
+      return log_info("Nothing to delete; exiting.") if digests.none?
 
-      log_debug("Deleting batch with #{digests.size} digests")
+      log_info("Deleting batch with #{digests.size} digests")
       return batch_delete(conn) if conn
 
       redis { |conn| batch_delete(conn) }
@@ -57,7 +64,7 @@ module SidekiqUniqueJobs
     #
     # @param [Redis] conn the connection to use for deletion
     #
-    # @return [void] <description>
+    # @return [Integer] the number of deleted digests
     #
     def batch_delete(conn) # rubocop:disable Metrics/MethodLength
       count = 0

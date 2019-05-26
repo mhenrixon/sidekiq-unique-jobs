@@ -1,15 +1,35 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+  #
+  # Base class for all exceptions raised from the gem
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   class UniqueJobsError < ::RuntimeError
   end
 
+  #
+  # Error raised when an invalid argument is given
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   class InvalidArgument < UniqueJobsError
   end
 
+  #
+  # Error raised when trying to add a duplicate lock
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   class DuplicateLock < UniqueJobsError
   end
 
+  #
+  # Error raised when trying to add a duplicate stragegy
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   class DuplicateStrategy < UniqueJobsError
   end
 

@@ -4,15 +4,53 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class Locksmith
+  class Locksmith # rubocop:disable Metrics/ClassLength
+    # includes "SidekiqUniqueJobs::Connection"
+    # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
+
+    # includes "SidekiqUniqueJobs::Logging"
+    # @!parse include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Logging
+
+    # includes "SidekiqUniqueJobs::Timing"
+    # @!parse include SidekiqUniqueJobs::Timing
     include SidekiqUniqueJobs::Timing
+
+    # includes "SidekiqUniqueJobs::Script::Caller"
+    # @!parse include SidekiqUniqueJobs::Script::Caller
     include SidekiqUniqueJobs::Script::Caller
 
     CLOCK_DRIFT_FACTOR = 0.01
 
-    attr_reader :key, :job_id, :type, :timeout, :limit, :ttl, :pttl
+    #
+    # @!attribute [r] key
+    #   @return [Key] the key used for locking
+    attr_reader :key
+    #
+    # @!attribute [r] job_id
+    #   @return [String] a sidekiq JID
+    attr_reader :job_id
+    #
+    # @!attribute [r] type
+    #   @return [Symbol] the type of lock see {SidekiqUniqueJobs.locks}
+    attr_reader :type
+    #
+    # @!attribute [r] timeout
+    #   @return [Integer, nil] the number of seconds to wait for lock
+    attr_reader :timeout
+    #
+    # @!attribute [r] limit
+    #   @return [Integer] the number of simultaneous locks
+    attr_reader :limit
+    #
+    # @!attribute [r] ttl
+    #   @return [Integer, nil] the number of seconds to keep the lock after processing
+    attr_reader :ttl
+    #
+    # @!attribute [r] pttl
+    #   @return [Integer, nil] the number of milliseconds to keep the lock after processing
+    attr_reader :pttl
 
     #
     # Initialize a new Locksmith instance
@@ -30,7 +68,7 @@ module SidekiqUniqueJobs
       @type          = item[LOCK]
       @type        &&= @type.to_sym
       @redis_pool    = redis_pool
-      @limit         = item[LOCK_LIMIT] || 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
+      @limit         = item[LOCK_LIMIT] || 1
       @ttl           = item.fetch(LOCK_TTL) { item.fetch(LOCK_EXPIRATION) }.to_i
       @pttl          = @ttl * 1000
     end
@@ -94,7 +132,9 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the grabbed token contains the job_id
     #
     def locked?(conn = nil)
-      call_script(:locked, key.to_a, [job_id], conn).positive?
+      return _locked?(conn) if conn
+
+      redis { |new_conn| _locked?(new_conn) }
     end
 
     def to_s
@@ -118,28 +158,29 @@ module SidekiqUniqueJobs
     end
 
     def lock_sync(conn)
-      enqueue(conn) do
-        return unless wait_for_primed_token(conn)
-
-        call_script(:lock, key.to_a, argv, conn)
-      end
       return yield job_id if locked?(conn)
+
+      enqueue(conn) do
+        if wait_for_primed_token(conn)
+          return yield job_id if call_script(:lock, key.to_a, argv, conn) == job_id
+        else
+          log_warn("Timed out while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+        end
+      end
     end
 
     def lock_async(conn)
-      return_value = nil
-
-      future = Concurrent::Promises.future_on(:io) do
-        wait_for_primed_token(conn)
-      end
+      return yield job_id if locked?(conn)
 
       enqueue(conn) do
-        future.wait!
-        return_value = call_script(:lock, key.to_a, argv, conn)
-        return_value = yield job_id if return_value == job_id
-      end
+        primed = Concurrent::Promises.future { wait_for_primed_token(conn) }
 
-      return_value
+        if primed.value
+          return yield job_id if call_script(:lock, key.to_a, argv, conn) == job_id
+        else
+          log_warn("Timed out after #{timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+        end
+      end
     ensure
       unlock!(conn)
     end
@@ -164,7 +205,7 @@ module SidekiqUniqueJobs
 
       validity = pttl.to_i - elapsed - drift(pttl)
 
-      return yield queued_token if (validity >= 0 || pttl.zero?) && (queued_token == job_id)
+      return yield queued_token if validity >= 0 || pttl.zero?
     end
 
     def drift(val)
@@ -172,6 +213,10 @@ module SidekiqUniqueJobs
       # precision, which is 1 millisecond, plus 1 millisecond min drift
       # for small TTLs.
       (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
+    end
+
+    def _locked?(conn)
+      conn.hexists(key.locked, job_id)
     end
   end
 end

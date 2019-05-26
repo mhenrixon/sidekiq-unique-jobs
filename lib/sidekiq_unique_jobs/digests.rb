@@ -76,7 +76,7 @@ module SidekiqUniqueJobs
     # @param [String] pattern SCAN_PATTERN the match pattern to search for
     # @param [Integer] page_size 100 the size per page
     #
-    # @return [Array<Integer, Integer, Array<String>>] total_size, next_cursor, entries
+    # @return [Array<Integer, Integer, Array<Lock>>] total_size, next_cursor, locks
     #
     def page(cursor: 0, pattern: SCAN_PATTERN, page_size: 100)
       redis do |conn|
@@ -88,7 +88,7 @@ module SidekiqUniqueJobs
         [
           total_size,
           digests[0], # next_cursor
-          digests[1], # entries
+          digests[1].map { |digest, score| Lock.new(digest, time: score) }, # entries
         ]
       end
     end

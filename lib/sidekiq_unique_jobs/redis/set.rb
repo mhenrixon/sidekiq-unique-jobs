@@ -8,10 +8,22 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
     class Set < Entity
+      #
+      # Return entries for this set
+      #
+      #
+      # @return [Array<String>]
+      #
       def entries
         redis { |conn| conn.smembers(key) }
       end
 
+      #
+      # Returns the count for this sorted set
+      #
+      #
+      # @return [Integer] the number of entries
+      #
       def count
         redis { |conn| conn.scard(key) }
       end

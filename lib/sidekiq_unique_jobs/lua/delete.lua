@@ -32,20 +32,20 @@ log_debug("BEGIN delete", digest)
 local redis_version = redis_version()
 local count          = 0
 
+log_debug("ZREM", digests, digest)
+count = count + redis.call("ZREM", digests, digest)
+
 if tonumber(redis_version["major"]) >= 4 then
   log_debug("UNLINK", digest, queued, primed, locked)
-  redis.call("UNLINK", digest, queued, primed, locked)
+  count = count + redis.call("UNLINK", digest, queued, primed, locked)
 else
   log_debug("DEL", digest, queued, primed, locked)
-  local count = redis.call("DEL", digest, queued, primed, locked)
+  count = count + redis.call("DEL", digest, queued, primed, locked)
 end
-
-log_debug("ZREM", digests, digest)
-redis.call("ZREM", digests, digest)
 
 
 log("Deleted (" .. count .. ") keys")
 log_debug("END delete (" .. count .. ") keys for:", digest)
 
-return 1
+return count
 --------  END delete.lua --------

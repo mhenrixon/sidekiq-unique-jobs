@@ -7,10 +7,25 @@ module SidekiqUniqueJobs
   module JSON
     module_function
 
+    #
+    # Parses a JSON string into an object
+    #
+    # @param [String] string the object to parse
+    #
+    # @return [Object]
+    #
     def load_json(string)
       ::JSON.parse(string)
     end
 
+
+    #
+    # Dumps an object into a JSON string
+    #
+    # @param [Object] object a JSON convertible object
+    #
+    # @return [String] a JSON string
+    #
     def dump_json(object)
       ::JSON.generate(object)
     end

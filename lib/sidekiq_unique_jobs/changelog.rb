@@ -12,6 +12,21 @@ module SidekiqUniqueJobs
     end
 
     #
+    # Adds a new changelog entry
+    #
+    # @param [String] message a descriptive message about the entry
+    # @param [String] digest a unique digest
+    # @param [String] job_id a Sidekiq JID
+    # @param [String] script the name of the script adding the entry
+    #
+    # @return [void]
+    #
+    def add(message:, digest:, job_id:, script:)
+      message = dump_json(message: message, digest: digest, job_id: job_id, script: script)
+      redis { |conn| conn.zadd(key, now_f, message) }
+    end
+
+    #
     # The change log entries
     #
     # @param [String] pattern the pattern to match
