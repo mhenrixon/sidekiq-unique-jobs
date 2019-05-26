@@ -25,6 +25,7 @@ detectors:
     exclude:
       - Sidekiq#self.use_options
       - SidekiqUniqueJobs#toggle
+      - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
@@ -50,6 +51,7 @@ detectors:
     exclude:
       - Hash#slice
       - initialize
+      - SidekiqUniqueJobs::Changelog#add
       - SidekiqUniqueJobs::Middleware::Client#call
       - SidekiqUniqueJobs::Redis
       - SidekiqUniqueJobs::Script#call
@@ -77,9 +79,16 @@ detectors:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
+      - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
+  RepeatedConditional:
+    exclude:
+      - SidekiqUniqueJobs::Locksmith
+  TooManyConstants:
+    exclude:
+      - SidekiqUniqueJobs
   TooManyStatements:
     exclude:
       - Hash#slice
@@ -88,8 +97,10 @@ detectors:
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::DeleteOrphans#find_orphans
+      - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Digests#delete_by_pattern
       - SidekiqUniqueJobs::Digests#entries
+      - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock
@@ -110,12 +121,6 @@ detectors:
       - SidekiqUniqueJobs::Timeout::Calculator#lock_ttl
       - SidekiqUniqueJobs::UniqueArgs#filtered_args
       - SidekiqUniqueJobs::Web#self.registered
-  TooManyConstants:
-    exclude:
-      - SidekiqUniqueJobs
-  RepeatedConditional:
-    exclude:
-      - SidekiqUniqueJobs::Locksmith
   TooManyInstanceVariables:
     exclude:
       - SidekiqUniqueJobs::DeleteOrphans
@@ -125,6 +130,7 @@ detectors:
     exclude:
       - SidekiqUniqueJobs::Lock::BaseLock
       - SidekiqUniqueJobs::Locksmith
+      - SidekiqUniqueJobs::Lock
   UncommunicativeVariableName:
     exclude:
       - Hash#slice
