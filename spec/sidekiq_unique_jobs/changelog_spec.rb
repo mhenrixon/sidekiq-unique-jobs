@@ -8,6 +8,24 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:job_id) { SecureRandom.hex(12) }
 
+  describe "#add" do
+    subject(:add) { entity.add(entry) }
+
+    let(:entry) do
+      {
+        message: "Added from test",
+        job_id: job_id,
+        digest: digest,
+        script: __FILE__.to_s,
+      }
+    end
+
+    it "adds a new entry" do
+      expect { add }.to change { entity.entries.size }.by(1)
+      expect(add).to eq(true)
+    end
+  end
+
   describe "#exist?" do
     subject(:exist?) { entity.exist? }
 
