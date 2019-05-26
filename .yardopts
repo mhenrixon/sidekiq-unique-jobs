@@ -2,6 +2,9 @@
 --markup-provider=redcarpet
 --markup=markdown
 --exclude lib/sidekiq_unique_jobs/testing.rb
+--exclude lib/sidekiq/logging.rb
+--exclude lib/sidekiq_unique_jobs/web/helpers.rb
+--exclude lib/redis.rb
 lib/ sidekiq_unique_jobs/**/*.rb
 -
 README.md
