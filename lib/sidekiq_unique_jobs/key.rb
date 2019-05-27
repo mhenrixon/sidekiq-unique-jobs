@@ -7,20 +7,24 @@ module SidekiqUniqueJobs
   class Key
     #
     # @!attribute [r] digest
-    #   @return [String] the digest for which keys are created
+    #   @return [String] the digest key for which keys are created
     attr_reader :digest
     #
     # @!attribute [r] queued
-    #   @return [String] the list with queued job_id's
+    #   @return [String] the list key with queued job_id's
     attr_reader :queued
     #
     # @!attribute [r] primed
-    #   @return [String] the list with primed job_id's
+    #   @return [String] the list key with primed job_id's
     attr_reader :primed
     #
     # @!attribute [r] locked
-    #   @return [String] the hash with locked job_id's
+    #   @return [String] the hash key with locked job_id's
     attr_reader :locked
+    #
+    # @!attribute [r] info
+    #   @return [String] information about the lock
+    attr_reader :info
     #
     # @!attribute [r] changelog
     #   @return [String] the zset with changelog entries
@@ -40,6 +44,7 @@ module SidekiqUniqueJobs
       @queued    = suffixed_key("QUEUED")
       @primed    = suffixed_key("PRIMED")
       @locked    = suffixed_key("LOCKED")
+      @info      = suffixed_key("INFO")
       @changelog = CHANGELOGS
       @digests   = DIGESTS
     end
@@ -62,7 +67,7 @@ module SidekiqUniqueJobs
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [digest, queued, primed, locked, changelog, digests]
+      [digest, queued, primed, locked, info, changelog, digests]
     end
 
     private

@@ -28,6 +28,10 @@
         <tr>
           <th><%= t('Delete') %></th>
           <th><%= t('Digest') %></th>
+          <th><%= t('Type') %></th>
+          <th><%= t('Queued') %></th>
+          <th><%= t('Primed') %></th>
+          <th><%= t('Locked') %></th>
           <th><%= t('Since') %></th>
         </tr>
       </thead>
@@ -42,6 +46,18 @@
           </td>
           <td>
             <a href="<%= root_path %>locks/<%= lock.key %>"><%= lock.key %></a>
+          </td>
+          <td>
+            <%= lock.info["type"] %>
+          </td>
+          <td>
+            <%= lock.queued.count %>
+          </td>
+          <td>
+            <%= lock.primed.count %>
+          </td>
+          <td>
+            <%= lock.locked.count %>
           </td>
           <td>
             <%= safe_relative_time(lock.created_at) %>

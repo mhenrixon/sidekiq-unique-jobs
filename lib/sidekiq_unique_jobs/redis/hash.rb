@@ -11,10 +11,10 @@ module SidekiqUniqueJobs
       #
       # Return entries for this hash
       #
-      # @param [true,false] with_scores false return hash
+      # @param [true,false] with_values false return hash
       #
-      # @return [Array<Object>] when given with_scores: false
-      # @return [Hash<String, String>] when given with_scores: true
+      # @return [Array<Object>] when given with_values: false
+      # @return [Hash<String, String>] when given with_values: true
       #
       def entries(with_values: false)
         if with_values

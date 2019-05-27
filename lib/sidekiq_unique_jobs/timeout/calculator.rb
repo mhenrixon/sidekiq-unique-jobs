@@ -77,7 +77,7 @@ module SidekiqUniqueJobs
 
       #
       # The configured default_lock_timeout
-      # @see SidekiqUniqueJobs.config.default_lock_timeout
+      # @see SidekiqUniqueJobs::Config#default_lock_timeout
       #
       #
       # @return [Integer, nil]
@@ -88,7 +88,7 @@ module SidekiqUniqueJobs
 
       #
       # The configured default_lock_ttl
-      # @see SidekiqUniqueJobs.config.default_lock_ttl
+      # @see SidekiqUniqueJobs::Config#default_lock_ttl
       #
       #
       # @return [Integer, nil]

@@ -10,11 +10,6 @@ module SidekiqUniqueJobs
 
       # Send jobs to dead queue
       def call
-        log_debug { "Rejecting job with jid: #{item[JID]}" }
-        send_to_deadset
-      end
-
-      def send_to_deadset
         log_info { "Adding dead #{item[CLASS]} job #{item[JID]}" }
 
         if deadset_kill?
@@ -24,10 +19,25 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Sidekiq version compatibility check
+      # @api private
+      #
+      #
+      # @return [true, false] depending on if Sidekiq::Deadset responds to kill
+      #
       def deadset_kill?
         deadset.respond_to?(:kill)
       end
 
+      #
+      # Use Sidekiqs built in {Sidekiq::DeadSet#kill}
+      #   to get rid of the job
+      # @api private
+      #
+      #
+      # @return [void]
+      #
       def deadset_kill
         if kill_with_options?
           kill_job_with_options
@@ -36,22 +46,54 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Sidekiq version compatibility check
+      # @api private
+      #
+      #
+      # @return [true] when Sidekiq::Deadset#kill takes more than 1 argument
+      # @return [false] when Sidekiq::Deadset#kill does not take multiple arguments
+      #
       def kill_with_options?
         Sidekiq::DeadSet.instance_method(:kill).arity > 1
       end
 
+      #
+      # Executes the kill instructions without arguments
+      # @api private
+      #
+      # @return [void]
+      #
       def kill_job_without_options
         deadset.kill(payload)
       end
 
+      #
+      # Executes the kill instructions with arguments
+      # @api private
+      #
+      # @return [void]
+      #
       def kill_job_with_options
         deadset.kill(payload, notify_failure: false)
       end
 
+      #
+      # An instance of Sidekiq::Deadset
+      # @api private
+      #
+      # @return [Sidekiq::Deadset]>
+      #
       def deadset
         @deadset ||= Sidekiq::DeadSet.new
       end
 
+      #
+      # Used for compatibility with older Sidekiq versions
+      #
+      #
+      # @return [void]
+      #
       def push_to_deadset
         redis do |conn|
           conn.multi do
@@ -62,6 +104,12 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # The Sidekiq job hash as JSON
+      #
+      #
+      # @return [String] a JSON formatted string
+      #
       def payload
         @payload ||= Sidekiq.dump_json(item)
       end

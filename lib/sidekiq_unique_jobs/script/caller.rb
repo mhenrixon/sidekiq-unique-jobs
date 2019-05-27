@@ -13,6 +13,8 @@ module SidekiqUniqueJobs
     module Caller
       module_function
 
+      # includes "SidekiqUniqueJobs::Connection"
+      # @!parse include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Connection
 
       #

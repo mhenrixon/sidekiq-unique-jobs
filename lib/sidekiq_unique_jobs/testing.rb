@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # :nocov:
+# :nodoc:
 
 require "sidekiq"
 require "sidekiq/testing"
