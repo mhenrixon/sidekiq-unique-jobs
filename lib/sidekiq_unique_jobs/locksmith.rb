@@ -233,7 +233,7 @@ module SidekiqUniqueJobs
               LIMIT, item[LOCK_LIMIT],
               TIMEOUT, item[LOCK_TIMEOUT],
               TTL, item[LOCK_TTL],
-              TYPE, item[LOCK_TYPE],
+              LOCK, type,
               UNIQUE_ARGS, dump_json(item[UNIQUE_ARGS])
             )
             conn.pexpire(key.info, pttl) if type == :until_expired
