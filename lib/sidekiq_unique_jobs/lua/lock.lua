@@ -79,6 +79,9 @@ if lock_type == "until_expired" and pttl and pttl > 0 then
 
   log_debug("PEXPIRE", locked, pttl)
   redis.call("PEXPIRE", locked, pttl)
+
+  log_debug("PEXPIRE", info, pttl)
+  redis.call("PEXPIRE", info, pttl)
 end
 
 log("Locked")

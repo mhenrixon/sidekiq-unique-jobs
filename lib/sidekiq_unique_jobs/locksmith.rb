@@ -21,6 +21,10 @@ module SidekiqUniqueJobs
     # @!parse include SidekiqUniqueJobs::Script::Caller
     include SidekiqUniqueJobs::Script::Caller
 
+    # includes "SidekiqUniqueJobs::JSON"
+    # @!parse include SidekiqUniqueJobs::JSON
+    include SidekiqUniqueJobs::JSON
+
     CLOCK_DRIFT_FACTOR = 0.01
 
     #
@@ -51,6 +55,10 @@ module SidekiqUniqueJobs
     # @!attribute [r] pttl
     #   @return [Integer, nil] the number of milliseconds to keep the lock after processing
     attr_reader :pttl
+    #
+    # @!attribute [r] item
+    #   @return [Hash] a sidekiq job hash
+    attr_reader :item
 
     #
     # Initialize a new Locksmith instance
@@ -62,15 +70,16 @@ module SidekiqUniqueJobs
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)
-      @key           = Key.new(item[UNIQUE_DIGEST])
-      @job_id        = item[JID]
-      @timeout       = item.fetch(LOCK_TIMEOUT) { 0 }
-      @type          = item[LOCK]
-      @type        &&= @type.to_sym
-      @redis_pool    = redis_pool
-      @limit         = item[LOCK_LIMIT] || 1
-      @ttl           = item.fetch(LOCK_TTL) { item.fetch(LOCK_EXPIRATION) }.to_i
-      @pttl          = @ttl * 1000
+      @item        = item
+      @key         = Key.new(item[UNIQUE_DIGEST])
+      @job_id      = item[JID]
+      @timeout     = item.fetch(LOCK_TIMEOUT) { 0 }
+      @type        = item[LOCK]
+      @type      &&= @type.to_sym
+      @redis_pool  = redis_pool
+      @limit       = item[LOCK_LIMIT] || 1
+      @ttl         = item.fetch(LOCK_TTL) { item.fetch(LOCK_EXPIRATION) }.to_i
+      @pttl        = @ttl * 1000
     end
 
     #
@@ -129,12 +138,12 @@ module SidekiqUniqueJobs
 
     # Checks if this instance is considered locked
     #
-    # @return [true, false] true when the grabbed token contains the job_id
+    # @return [true, false] true when the :LOCKED hash contains the job_id
     #
     def locked?(conn = nil)
       return _locked?(conn) if conn
 
-      redis { |new_conn| _locked?(new_conn) }
+      redis { |rcon| _locked?(rcon) }
     end
 
     def to_s
@@ -173,7 +182,7 @@ module SidekiqUniqueJobs
       return yield job_id if locked?(conn)
 
       enqueue(conn) do
-        primed = Concurrent::Promises.future { wait_for_primed_token(conn) }
+        primed = Concurrent::Promises.future(conn) { |red_con| wait_for_primed_token(red_con) }
 
         if primed.value
           return yield job_id if call_script(:lock, key.to_a, argv, conn) == job_id
@@ -205,7 +214,32 @@ module SidekiqUniqueJobs
 
       validity = pttl.to_i - elapsed - drift(pttl)
 
-      return yield queued_token if validity >= 0 || pttl.zero?
+      return unless queued_token && (validity >= 0 || pttl.zero?)
+
+      set_lock_info
+      yield queued_token
+    end
+
+    def set_lock_info # rubocop:disable Metrics/MethodLength
+      return unless SidekiqUniqueJobs.config.use_lock_info
+
+      Concurrent::Promises.future do
+        redis do |conn|
+          conn.multi do
+            conn.hmset(
+              key.info,
+              WORKER, item[CLASS],
+              QUEUE, item[QUEUE],
+              LIMIT, item[LOCK_LIMIT],
+              TIMEOUT, item[LOCK_TIMEOUT],
+              TTL, item[LOCK_TTL],
+              TYPE, item[LOCK_TYPE],
+              UNIQUE_ARGS, dump_json(item[UNIQUE_ARGS])
+            )
+            conn.pexpire(key.info, pttl) if type == :until_expired
+          end
+        end
+      end
     end
 
     def drift(val)

@@ -39,8 +39,8 @@ count = count + redis.call("ZREM", digests, digest)
 
 if redis_version["major"] >= 4 then del_cmd = "UNLINK"; end
 
-log_debug(del_cmd, digest, queued, primed, locked)
-count = count + redis.call(del_cmd, digest, queued, primed, locked)
+log_debug(del_cmd, digest, queued, primed, locked, info)
+count = count + redis.call(del_cmd, digest, queued, primed, locked, info)
 
 
 log("Deleted (" .. count .. ") keys")

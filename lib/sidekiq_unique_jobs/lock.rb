@@ -89,7 +89,7 @@ module SidekiqUniqueJobs
     #
     def del
       redis do |conn|
-        conn.del(key.digest, key.queued, key.primed, key.locked)
+        conn.del(key.digest, key.queued, key.primed, key.locked, key.info)
       end
     end
 

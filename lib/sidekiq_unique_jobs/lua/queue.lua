@@ -73,6 +73,7 @@ redis.call("LPUSH", queued, job_id)
 if lock_type == "until_expired" and pttl > 0 then
   log_debug("PEXPIRE", digest, pttl)
   redis.call("PEXPIRE", digest, pttl)
+  log_debug("PEXPIRE", queued, pttl)
   redis.call("PEXPIRE", queued, pttl)
 end
 

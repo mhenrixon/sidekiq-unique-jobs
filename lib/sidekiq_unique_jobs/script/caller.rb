@@ -50,7 +50,7 @@ module SidekiqUniqueJobs
       end
 
       def do_call(file_name, conn, keys, argv)
-        argv = argv.dup.concat([now_f, debug_lua, max_history, use_lock_info, file_name])
+        argv = argv.dup.concat([now_f, debug_lua, max_history, file_name])
         Script.call(file_name, conn, keys: keys, argv: argv)
       end
 
