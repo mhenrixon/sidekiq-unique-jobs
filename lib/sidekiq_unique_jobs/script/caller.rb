@@ -50,6 +50,7 @@ module SidekiqUniqueJobs
       end
 
       def do_call(file_name, conn, keys, argv)
+        argv = argv.dup.concat([now_f, debug_lua, max_history, use_lock_info, file_name])
         Script.call(file_name, conn, keys: keys, argv: argv)
       end
 
@@ -82,6 +83,34 @@ module SidekiqUniqueJobs
           argv ||= []
           [args.pop, keys, argv]
         end
+      end
+
+      #
+      # @see SidekiqUniqueJobs::Config#use_lock_info
+      #
+      def use_lock_info
+        SidekiqUniqueJobs.config.use_lock_info
+      end
+
+      #
+      # @see SidekiqUniqueJobs#now_f
+      #
+      def now_f
+        SidekiqUniqueJobs.now_f
+      end
+
+      #
+      # @see SidekiqUniqueJobs::Config#debug_lua
+      #
+      def debug_lua
+        SidekiqUniqueJobs.config.debug_lua
+      end
+
+      #
+      # @see SidekiqUniqueJobs::Config#max_history
+      #
+      def max_history
+        SidekiqUniqueJobs.config.max_history
       end
     end
   end

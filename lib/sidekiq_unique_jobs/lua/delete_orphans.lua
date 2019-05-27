@@ -14,7 +14,7 @@ local max_orphans  = tonumber(ARGV[1])
 local current_time = tonumber(ARGV[2])
 local debug_lua    = ARGV[3] == "true"
 local max_history  = tonumber(ARGV[4])
-local script_name  = "delete_orphaned.lua"
+local script_name  = ARGV[5] .. ".lua"
 ---------  END injected arguments ---------
 
 

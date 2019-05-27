@@ -12,7 +12,7 @@ local digest       = ARGV[1]
 local current_time = tonumber(ARGV[2])
 local debug_lua    = ARGV[3] == "true"
 local max_history  = tonumber(ARGV[4])
-local script_name  = "delete_job_by_digest.lua"
+local script_name  = tostring(ARGV[5]) .. ".lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------

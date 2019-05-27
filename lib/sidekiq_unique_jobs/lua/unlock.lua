@@ -3,8 +3,9 @@ local digest    = KEYS[1]
 local queued    = KEYS[2]
 local primed    = KEYS[3]
 local locked    = KEYS[4]
-local changelog = KEYS[5]
-local digests   = KEYS[6]
+local info      = KEYS[5]
+local changelog = KEYS[6]
+local digests   = KEYS[7]
 -------- END keys ---------
 
 -------- BEGIN lock arguments ---------
@@ -18,7 +19,7 @@ local limit  = tonumber(ARGV[4])
 local current_time = tonumber(ARGV[5])
 local debug_lua    = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
-local script_name  = "unlock.lua"
+local script_name  = tostring(ARGV[8]) .. ".lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN Variables --------
@@ -69,9 +70,17 @@ if pttl and pttl > 0 then
 
   log_debug("PEXPIRE", locked, pttl)
   redis.call("PEXPIRE", locked, pttl)
+
+  log_debug("PEXPIRE", info, pttl)
+  redis.call("PEXPIRE", info, pttl)
 else
-  log_debug("DEL", digest)
-  redis.call("DEL", digest)
+  local redis_version = redis_version()
+  local del_cmd       = "DEL"
+
+  if tonumber(redis_version["major"]) >= 4 then del_cmd =  "UNLINK"; end
+
+  log_debug(del_cmd, digest, info)
+  redis.call(del_cmd, digest, info)
 
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)

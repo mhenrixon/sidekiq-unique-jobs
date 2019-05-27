@@ -25,6 +25,7 @@ RSpec.describe SidekiqUniqueJobs::Key do
         #{digest_one}:QUEUED
         #{digest_one}:PRIMED
         #{digest_one}:LOCKED
+        #{digest_one}:INFO
         unique:changelog
         unique:digests
       ],

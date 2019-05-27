@@ -21,6 +21,12 @@ RSpec.describe SidekiqUniqueJobs::Web do
   let(:jid_two)    { "jid_two" }
   let(:digest_one) { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
   let(:digest_two) { "uniquejobs:24c5b03e2d49d765e5dfb2d7c51c5929" }
+  let(:lock_type)  { :until_executed }
+
+  let(:lock_info) do
+    { type: lock_type }
+  end
+
   let(:expected_digests) do
     [
       a_collection_including(digest_one, kind_of(Float)),
@@ -29,8 +35,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   end
 
   it "can display digests" do
-    lock_one.lock(jid_one)
-    lock_two.lock(jid_two)
+    lock_one.lock(jid_one, lock_info)
+    lock_two.lock(jid_two, lock_info)
 
     get "/locks"
 
@@ -50,8 +56,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   end
 
   it "can display digest" do
-    lock_one.lock(jid_one)
-    lock_two.lock(jid_two)
+    lock_one.lock(jid_one, lock_info)
+    lock_two.lock(jid_two, lock_info)
 
     get "/locks/#{digest_one}"
 
@@ -60,8 +66,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   end
 
   it "can delete digest" do
-    lock_one.lock(jid_one)
-    lock_two.lock(jid_two)
+    lock_one.lock(jid_one, lock_info)
+    lock_two.lock(jid_two, lock_info)
 
     expect(digests.entries).to match_array(expected_digests)
 
@@ -84,8 +90,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   end
 
   it "can unlock a job" do
-    lock_one.lock(jid_one)
-    lock_one.lock(jid_two)
+    lock_one.lock(jid_one, lock_info)
+    lock_one.lock(jid_two, lock_info)
 
     get "/locks/#{digest_one}/jobs/#{jid_one}/delete"
 
@@ -102,8 +108,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   end
 
   it "can delete all digests" do
-    lock_one.lock(jid_one)
-    lock_two.lock(jid_two)
+    lock_one.lock(jid_one, lock_info)
+    lock_two.lock(jid_two, lock_info)
 
     expect(digests.entries).to match_array(expected_digests)
 

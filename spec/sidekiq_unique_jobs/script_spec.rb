@@ -47,8 +47,8 @@ RSpec.describe SidekiqUniqueJobs::Script do
           expect(ex.message).to include("3: local queued    = KEYS[2]")
           expect(ex.message).to include("4: local primed    = KEYS[3]")
           expect(ex.message).to include("=> 5: local locked    = KEYS[4]")
-          expect(ex.message).to include("6: local changelog = KEYS[5]")
-          expect(ex.message).to include("7: local digests   = KEYS[6]")
+          expect(ex.message).to include("6: local info      = KEYS[5]")
+          expect(ex.message).to include("7: local changelog = KEYS[6]")
 
           expect(ex.backtrace.first).to match(%r{lib/sidekiq_unique_jobs/lua/lock.lua:5})
           expect(ex.backtrace[1]).to match(/script.rb/)

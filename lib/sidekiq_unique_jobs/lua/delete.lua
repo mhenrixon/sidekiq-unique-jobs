@@ -3,8 +3,9 @@ local digest    = KEYS[1]
 local queued    = KEYS[2]
 local primed    = KEYS[3]
 local locked    = KEYS[4]
-local changelog = KEYS[5]
-local digests   = KEYS[6]
+local info      = KEYS[5]
+local changelog = KEYS[6]
+local digests   = KEYS[7]
 -------- END keys ---------
 
 -------- BEGIN lock arguments ---------
@@ -16,9 +17,9 @@ local limit        = tonumber(ARGV[4])
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
-local debug_lua      = ARGV[6] == "true"
+local debug_lua    = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
-local script_name  = "delete.lua"
+local script_name  = tostring(ARGV[8]) .. ".lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
@@ -31,17 +32,15 @@ log_debug("BEGIN delete", digest)
 
 local redis_version = redis_version()
 local count          = 0
+local del_cmd        = "DEL"
 
 log_debug("ZREM", digests, digest)
 count = count + redis.call("ZREM", digests, digest)
 
-if tonumber(redis_version["major"]) >= 4 then
-  log_debug("UNLINK", digest, queued, primed, locked)
-  count = count + redis.call("UNLINK", digest, queued, primed, locked)
-else
-  log_debug("DEL", digest, queued, primed, locked)
-  count = count + redis.call("DEL", digest, queued, primed, locked)
-end
+if redis_version["major"] >= 4 then del_cmd = "UNLINK"; end
+
+log_debug(del_cmd, digest, queued, primed, locked)
+count = count + redis.call(del_cmd, digest, queued, primed, locked)
 
 
 log("Deleted (" .. count .. ") keys")

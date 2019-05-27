@@ -24,14 +24,14 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
     it { is_expected.to eq(false) }
   end
 
-  describe "#send_to_deadset" do
-    subject(:send_to_deadset) { strategy.send_to_deadset }
+  describe "#call" do
+    subject(:call) { strategy.call }
 
     context "when deadset_kill?" do
       before do
         allow(strategy).to receive(:deadset_kill?).and_return(true)
         allow(strategy).to receive(:deadset_kill)
-        send_to_deadset
+        call
       end
 
       it "calls deadset_kill" do
@@ -43,7 +43,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
       before do
         allow(strategy).to receive(:deadset_kill?).and_return(false)
         allow(strategy).to receive(:push_to_deadset)
-        send_to_deadset
+        call
       end
 
       it "calls push_to_deadset" do

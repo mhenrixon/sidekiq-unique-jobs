@@ -15,6 +15,7 @@ module SidekiqUniqueJobs
     :debug_lua,
     :max_history,
     :max_orphans,
+    :use_lock_info,
   )
 
     LOCKS_WHILE_ENQUEUED = {
@@ -62,13 +63,14 @@ module SidekiqUniqueJobs
       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
     }.freeze
 
-    DEFAULT_PREFIX       = "uniquejobs"
-    DEFAULT_LOCK_TIMEOUT = 0
-    DEFAULT_LOCK_TTL     = nil
-    DEFAULT_ENABLED      = true
-    DEFAULT_DEBUG_LUA    = false
-    DEFAULT_MAX_HISTORY  = 1_000
-    DEFAULT_MAX_ORPHANS  = 1_000
+    DEFAULT_PREFIX        = "uniquejobs"
+    DEFAULT_LOCK_TIMEOUT  = 0
+    DEFAULT_LOCK_TTL      = nil
+    DEFAULT_ENABLED       = true
+    DEFAULT_DEBUG_LUA     = false
+    DEFAULT_MAX_HISTORY   = 1_000
+    DEFAULT_MAX_ORPHANS   = 1_000
+    DEFAULT_USE_LOCK_INFO = false
 
     #
     # Returns a default configuration
@@ -88,6 +90,7 @@ module SidekiqUniqueJobs
         DEFAULT_DEBUG_LUA,
         DEFAULT_MAX_HISTORY,
         DEFAULT_MAX_ORPHANS,
+        DEFAULT_USE_LOCK_INFO,
       )
     end
 

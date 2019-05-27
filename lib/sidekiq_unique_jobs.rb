@@ -62,3 +62,4 @@ require "sidekiq_unique_jobs/digests"
 
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
+require "sidekiq_unique_jobs/update_version"

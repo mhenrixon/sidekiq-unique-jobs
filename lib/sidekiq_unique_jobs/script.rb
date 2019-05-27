@@ -54,7 +54,7 @@ module SidekiqUniqueJobs
       conn.evalsha(
         script_sha(conn, file_name),
         keys,
-        argv.dup.concat([now_f, debug_lua, max_history]),
+        argv,
       )
     end
 
@@ -117,14 +117,6 @@ module SidekiqUniqueJobs
     #
     def script_path(file_name)
       LUA_PATHNAME.join("#{file_name}.lua")
-    end
-
-    def debug_lua
-      SidekiqUniqueJobs.config.debug_lua
-    end
-
-    def max_history
-      SidekiqUniqueJobs.config.max_history
     end
   end
 end

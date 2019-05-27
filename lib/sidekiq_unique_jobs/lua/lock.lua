@@ -3,8 +3,9 @@ local digest    = KEYS[1]
 local queued    = KEYS[2]
 local primed    = KEYS[3]
 local locked    = KEYS[4]
-local changelog = KEYS[5]
-local digests   = KEYS[6]
+local info      = KEYS[5]
+local changelog = KEYS[6]
+local digests   = KEYS[7]
 -------- END keys ---------
 
 -------- BEGIN lock arguments ---------
@@ -18,7 +19,7 @@ local limit        = tonumber(ARGV[4])
 local current_time = tonumber(ARGV[5])
 local debug_lua    = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
-local script_name  = "lock.lua"
+local script_name  = tostring(ARGV[8]) .. ".lua"
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------

@@ -32,8 +32,8 @@ module SidekiqUniqueJobs
     #
     # @return [Lock] a newly lock that has been locked
     #
-    def self.create(digest, job_id)
-      new(digest, time: Timing.now_f).lock(job_id)
+    def self.create(digest, job_id, info = {})
+      new(digest, time: Timing.now_f).lock(job_id, info)
     end
 
     #
@@ -56,11 +56,12 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def lock(job_id)
+    def lock(job_id, info = {})
       redis do |conn|
         conn.multi do
           conn.set(key.digest, job_id)
           conn.hset(key.locked, job_id, now_f)
+          conn.hmset(key.info, *info.to_a.flatten) if SidekiqUniqueJobs.config.use_lock_info && info.any?
           conn.zadd(key.digests, now_f, key.digest)
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
@@ -194,22 +195,38 @@ module SidekiqUniqueJobs
     # The locked hash
     #
     #
-    # @return [Redis::List] for locked JIDs
+    # @return [Redis::Hash] for locked JIDs
     #
     def locked
       @locked ||= Redis::Hash.new(key.locked)
+    end
+
+    #
+    # Information about the lock
+    #
+    #
+    # @return [Redis::Hash] with lock information
+    #
+    def info
+      @info ||= Redis::Hash.new(key.info)
     end
 
     def changelog
       @changelog ||= Changelog.new
     end
 
+    #
+    # A nicely formatted string with information about this lock
+    #
+    #
+    # @return [String]
+    #
     def to_s
       <<~MESSAGE
         Lock status for #{key}
 
-                 digest: #{key}
                   value: #{digest.value}
+                   info: #{info.entries}
             queued_jids: #{queued_jids}
             primed_jids: #{primed_jids}
             locked_jids: #{locked_jids}
@@ -217,6 +234,9 @@ module SidekiqUniqueJobs
       MESSAGE
     end
 
+    #
+    # @see to_s
+    #
     def inspect
       to_s
     end
@@ -224,7 +244,7 @@ module SidekiqUniqueJobs
     private
 
     #
-    # <description>
+    # Ensure the key is a {Key}
     #
     # @param [String, Key] key
     #
@@ -239,11 +259,11 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Get a changelog entry
+    # Generate a changelog entry for the given arguments
     #
     # @param [String] job_id a sidekiq JID
-    # @param [String] script <description>
-    # @param [String] message <description>
+    # @param [String] script the name of the script generating this entry
+    # @param [String] message a descriptive message for later review
     #
     # @return [String] a JSON string matching the Lua script structure
     #
