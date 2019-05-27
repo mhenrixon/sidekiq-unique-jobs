@@ -10,12 +10,25 @@ RSpec::Core::RakeTask.new(:spec)
 
 require "yard"
 YARD::Rake::YardocTask.new do |t|
-  t.files   = %w[lib/sidekiq_unique_jobs/**/*.rb"]
+  t.files   = %w[lib/sidekiq_unique_jobs/**/*.rb]
   t.options = %w[
+    --exclude lib/sidekiq_unique_jobs/testing.rb
+    --exclude lib/sidekiq/logging.rb
+    --exclude lib/sidekiq_unique_jobs/web/helpers.rb
+    --exclude lib/redis.rb
     --no-private
     --markup=markdown
     --markup-provider=redcarpet
     --readme README.md
+  ]
+  t.stats_options = %w[
+    --exclude lib/sidekiq/logging.rb
+    --exclude lib/sidekiq_unique_jobs/testing.rb
+    --exclude lib/sidekiq_unique_jobs/web/helpers.rb
+    --exclude lib/sidekiq_unique_jobs/redis.rb
+    --no-private
+    --compact
+    --list-undoc
   ]
 end
 
