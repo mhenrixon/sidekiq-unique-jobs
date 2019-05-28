@@ -31,7 +31,7 @@ module SidekiqUniqueJobs
       end
 
       #
-      # Use Sidekiqs built in {Sidekiq::DeadSet#kill}
+      # Use Sidekiqs built in Sidekiq::DeadSet#kill
       #   to get rid of the job
       # @api private
       #

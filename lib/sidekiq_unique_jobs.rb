@@ -57,6 +57,7 @@ require "sidekiq_unique_jobs/redis/set"
 require "sidekiq_unique_jobs/redis/sorted_set"
 require "sidekiq_unique_jobs/redis/string"
 require "sidekiq_unique_jobs/lock"
+require "sidekiq_unique_jobs/lock/info"
 require "sidekiq_unique_jobs/changelog"
 require "sidekiq_unique_jobs/digests"
 

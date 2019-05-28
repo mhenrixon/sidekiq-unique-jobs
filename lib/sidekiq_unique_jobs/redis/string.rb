@@ -18,6 +18,10 @@ module SidekiqUniqueJobs
         redis { |conn| conn.get(key) }
       end
 
+      def set(obj)
+        redis { |conn| conn.set(key, obj) }
+      end
+
       #
       # Removes the key from redis
       #

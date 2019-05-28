@@ -32,8 +32,10 @@ module SidekiqUniqueJobs
     #
     # @return [Lock] a newly lock that has been locked
     #
-    def self.create(digest, job_id, info = {})
-      new(digest, time: Timing.now_f).lock(job_id, info)
+    def self.create(digest, job_id, lock_info = {})
+      lock = new(digest, time: Timing.now_f)
+      lock.lock(job_id, lock_info)
+      lock
     end
 
     #
@@ -56,12 +58,12 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def lock(job_id, info = {})
+    def lock(job_id, lock_info = {})
       redis do |conn|
         conn.multi do
           conn.set(key.digest, job_id)
           conn.hset(key.locked, job_id, now_f)
-          conn.set(key.info, dump_json(info)) if SidekiqUniqueJobs.config.use_lock_info && info.any?
+          info.set(lock_info)
           conn.zadd(key.digests, now_f, key.digest)
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
@@ -89,7 +91,10 @@ module SidekiqUniqueJobs
     #
     def del
       redis do |conn|
-        conn.del(key.digest, key.queued, key.primed, key.locked, key.info)
+        conn.multi do
+          conn.zrem(DIGESTS, key.digest)
+          conn.del(key.digest, key.queued, key.primed, key.locked, key.info)
+        end
       end
     end
 
@@ -98,7 +103,7 @@ module SidekiqUniqueJobs
     #   the first changelog entry's timestamp
     #
     #
-    # @return [<type>] <description>
+    # @return [Float] a floaty timestamp represantation
     #
     def created_at
       @created_at ||= changelogs.first&.[]("time")
@@ -208,12 +213,7 @@ module SidekiqUniqueJobs
     # @return [Redis::Hash] with lock information
     #
     def info
-      @info ||= fetch_info
-    end
-
-    def fetch_info
-      info = Redis::String.new(key.info).value
-      load_json(info) if info
+      @info ||= Lock::Info.new(key.info)
     end
 
     def changelog
@@ -231,7 +231,7 @@ module SidekiqUniqueJobs
         Lock status for #{key}
 
                   value: #{digest.value}
-                   info: #{info}
+                   info: #{info.value}
             queued_jids: #{queued_jids}
             primed_jids: #{primed_jids}
             locked_jids: #{locked_jids}
