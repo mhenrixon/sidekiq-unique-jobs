@@ -86,13 +86,6 @@ module SidekiqUniqueJobs
       end
 
       #
-      # @see SidekiqUniqueJobs::Config#use_lock_info
-      #
-      def use_lock_info
-        SidekiqUniqueJobs.config.use_lock_info
-      end
-
-      #
       # @see SidekiqUniqueJobs#now_f
       #
       def now_f

@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
-  class Lock
+  class Lock # rubocop:disable Metrics/ClassLength
     # includes "SidekiqUniqueJobs::Connection"
     # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
@@ -61,7 +61,7 @@ module SidekiqUniqueJobs
         conn.multi do
           conn.set(key.digest, job_id)
           conn.hset(key.locked, job_id, now_f)
-          conn.hmset(key.info, *info.to_a.flatten) if SidekiqUniqueJobs.config.use_lock_info && info.any?
+          conn.set(key.info, dump_json(info)) if SidekiqUniqueJobs.config.use_lock_info && info.any?
           conn.zadd(key.digests, now_f, key.digest)
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
@@ -208,7 +208,12 @@ module SidekiqUniqueJobs
     # @return [Redis::Hash] with lock information
     #
     def info
-      @info ||= Redis::Hash.new(key.info)
+      @info ||= fetch_info
+    end
+
+    def fetch_info
+      info = Redis::String.new(key.info).value
+      load_json(info) if info
     end
 
     def changelog
@@ -226,7 +231,7 @@ module SidekiqUniqueJobs
         Lock status for #{key}
 
                   value: #{digest.value}
-                   info: #{info.entries}
+                   info: #{info}
             queued_jids: #{queued_jids}
             primed_jids: #{primed_jids}
             locked_jids: #{locked_jids}

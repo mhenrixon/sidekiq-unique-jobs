@@ -223,21 +223,20 @@ module SidekiqUniqueJobs
     def set_lock_info # rubocop:disable Metrics/MethodLength
       return unless SidekiqUniqueJobs.config.use_lock_info
 
-      Concurrent::Promises.future do
-        redis do |conn|
-          conn.multi do
-            conn.hmset(
-              key.info,
-              WORKER, item[CLASS],
-              QUEUE, item[QUEUE],
-              LIMIT, item[LOCK_LIMIT],
-              TIMEOUT, item[LOCK_TIMEOUT],
-              TTL, item[LOCK_TTL],
-              LOCK, type,
-              UNIQUE_ARGS, dump_json(item[UNIQUE_ARGS])
-            )
-            conn.pexpire(key.info, pttl) if type == :until_expired
-          end
+      redis do |conn|
+        conn.multi do
+          conn.set(key.info,
+                   dump_json(
+                     WORKER => item[CLASS],
+                     QUEUE => item[QUEUE],
+                     LIMIT => item[LOCK_LIMIT],
+                     TIMEOUT => item[LOCK_TIMEOUT],
+                     TTL => item[LOCK_TTL],
+                     LOCK => type,
+                     UNIQUE_ARGS => item[UNIQUE_ARGS],
+                     "time" => now_f,
+                   ))
+          conn.pexpire(key.info, pttl) if type == :until_expired
         end
       end
     end

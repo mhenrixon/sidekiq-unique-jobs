@@ -13,7 +13,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
       Lock status for #{digest}
 
                 value:\s
-                 info: []
+                 info:\s
           queued_jids: []
           primed_jids: []
           locked_jids: []
