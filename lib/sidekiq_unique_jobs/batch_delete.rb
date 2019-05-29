@@ -39,9 +39,10 @@ module SidekiqUniqueJobs
     # @param [Array<String>] digests the digests to delete
     # @param [Redis] conn the connection to use for deletion
     #
-    def initialize(digests = [], conn = nil)
+    def initialize(digests, conn = nil)
       @digests = digests
-      @digests.compact! if @digests.is_a?(Array)
+      @digests ||= []
+      @digests.compact!
       @conn = conn
     end
 

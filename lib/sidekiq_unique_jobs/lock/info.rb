@@ -24,7 +24,7 @@ module SidekiqUniqueJobs
       end
 
       def [](key)
-        value[key.to_s]
+        value[key.to_s] if value.is_a?(Hash)
       end
 
       #

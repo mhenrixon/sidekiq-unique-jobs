@@ -5,8 +5,8 @@
     </h3>
   </div>
   <div class="col-sm-7 table-responsive">
-    <% if @lock.info.value.empty? %>
-    <h3>This container is for lock information</h3>
+    <% if @lock.info.value&.any? %>
+    <h3>No Lock Information Available</h3>
     <p>To use it turn the following setting on:
       <code>SidekiqUniqueJobs.config.use_lock_info = true</code>
     </p>

@@ -11,14 +11,14 @@ require "benchmark/ips"
 require "sidekiq-unique-jobs"
 
 require_relative "../spec/support/workers/my_unique_job"
-
+include SidekiqUniqueJobs::Script::Caller
 Sidekiq.redis(&:flushall)
 
 SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get("INFO")
   config.debug_lua    = false
   config.max_history  = 1_000
-  config.max_orphans  = 10_000
+  config.max_orphans  = 1_000
 end
 
 COUNT   = 10_000
@@ -32,21 +32,6 @@ def get_item(num)
     "queue" => QUEUES.sample,
     "jid" => JOB_IDS[num],
     "unique_digest" => DIGESTS[num] }
-end
-
-def simulate_lock(key)
-  key          = SidekiqUniqueJobs::Key.new(key)
-  now_f = SidekiqUniqueJobs.now_f
-  Sidekiq.redis do |conn|
-    conn.multi do
-      conn.set(key.digest, key.digest)
-      conn.lpush(key.queued, key.digest)
-      conn.lpush(key.primed, key.digest)
-      conn.hset(key.locked, key.digest, now_f)
-      conn.zadd(key.digests, now_f, key.digest)
-      conn.zadd(key.digests, now_f, key.digest)
-    end
-  end
 end
 
 Benchmark.ips do |ips|
@@ -73,7 +58,7 @@ Benchmark.ips do |ips|
 
     9001.times do
       key = SecureRandom.hex(12)
-      simulate_lock(key)
+      SidekiqUniqueJobs::Lock.create(key, key)
     end
 
     SidekiqUniqueJobs::DeleteOrphans.call
@@ -101,11 +86,11 @@ Benchmark.ips do |ips|
 
     9001.times do
       key = SecureRandom.hex(12)
-      simulate_lock(key)
+      SidekiqUniqueJobs::Lock.create(key, key)
     end
 
     Sidekiq.redis do |conn|
-      SidekiqUniqueJobs::Script.call(
+      call_script(
         :delete_orphans,
         conn,
         keys: [SidekiqUniqueJobs::DIGESTS, SidekiqUniqueJobs::SCHEDULE, SidekiqUniqueJobs::RETRY],
