@@ -7,9 +7,16 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   class UpdateVersion
+    #
+    # Sets the right versions in redis
+    #
+    # @note the version isn't used yet but will be for automatic upgrades
+    #
+    # @return [true] when version changed
+    #
     def self.call
       Script::Caller.call_script(
-        :set_version,
+        :update_version,
         keys: [LIVE_VERSION, DEAD_VERSION],
         argv: [SidekiqUniqueJobs.version],
       )

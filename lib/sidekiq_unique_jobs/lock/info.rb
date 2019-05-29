@@ -23,6 +23,13 @@ module SidekiqUniqueJobs
         @value ||= load_json(super)
       end
 
+      #
+      # Quick access to the hash members for the value
+      #
+      # @param [String, Symbol] key the key who's value to retrieve
+      #
+      # @return [Object]
+      #
       def [](key)
         value[key.to_s] if value.is_a?(Hash)
       end

@@ -4,7 +4,6 @@ exclude_paths:
   - gemfiles
   - lib/sidekiq
   - lib/sidekiq_unique_jobs/lua
-  - lib/sidekiq_unique_jobs/redis
   - my_app
   - spec
   - tmp
@@ -15,6 +14,11 @@ detectors:
       - SidekiqUniqueJobs::Cli#self.banner
       - SidekiqUniqueJobs::Redis
       - SidekiqUniqueJobs::Lock#locked_jids
+  ControlParameter:
+    exclude:
+      - Sidekiq::JobSet::UniqueExtension#delete_by_value
+      - Sidekiq::ScheduledSet::UniqueExtension#delete
+      - SidekiqUniqueJobs::Redis::Hash#entries
   DataClump:
     enabled: true
     exclude:
@@ -121,7 +125,7 @@ detectors:
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::ScriptError#generate_error_context
-      - SidekiqUniqueJobs::Timeout::Calculator#lock_ttl
+      - SidekiqUniqueJobs::TimeCalculator#lock_ttl
       - SidekiqUniqueJobs::UniqueArgs#filtered_args
       - SidekiqUniqueJobs::Web#self.registered
   TooManyInstanceVariables:

@@ -17,7 +17,7 @@ module SidekiqUniqueJobs
     private
 
     def add_timeout_and_expiration(item)
-      calculator = SidekiqUniqueJobs::Timeout::Calculator.new(item)
+      calculator = SidekiqUniqueJobs::TimeCalculator.new(item)
       item[LOCK_TIMEOUT] = calculator.lock_timeout
       item[LOCK_TTL]     = calculator.lock_ttl
     end

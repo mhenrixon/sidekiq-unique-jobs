@@ -49,14 +49,28 @@ module SidekiqUniqueJobs
       @digests   = DIGESTS
     end
 
+    #
+    # Provides the only important information about this keys
+    #
+    #
+    # @return [String]
+    #
     def to_s
       digest
     end
 
+    # @see to_s
     def inspect
       digest
     end
 
+    #
+    # Compares keys by digest
+    #
+    # @param [Key] other the key to compare with
+    #
+    # @return [true, false]
+    #
     def ==(other)
       digest == other.digest
     end

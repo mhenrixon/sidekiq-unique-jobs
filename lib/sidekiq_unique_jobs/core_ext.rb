@@ -2,8 +2,18 @@
 
 # :nocov:
 
+#
+# Monkey patches for the ruby Hash
+#
 class Hash
   unless {}.respond_to?(:slice)
+    #
+    # Returns only the matching keys in a new hash
+    #
+    # @param [Array<String>, Array<Symbol>] keys the keys to match
+    #
+    # @return [Hash]
+    #
     def slice(*keys)
       keys.map! { |key| convert_key(key) } if respond_to?(:convert_key, true)
       keys.each_with_object(self.class.new) { |k, hash| hash[k] = self[k] if key?(k) }
@@ -11,12 +21,24 @@ class Hash
   end
 
   unless {}.respond_to?(:stringify_keys)
+    #
+    # Converts all keys to string
+    #
+    #
+    # @return [Hash<String>]
+    #
     def stringify_keys
       transform_keys(&:to_s)
     end
   end
 
   unless {}.respond_to?(:transform_keys)
+    #
+    # Transforms all keys by yielding to the caller
+    #
+    #
+    # @return [Hash]
+    #
     def transform_keys
       result = {}
       each_key do |key|
@@ -27,6 +49,13 @@ class Hash
   end
 
   unless {}.respond_to?(:slice!)
+    #
+    # Removes all keys not provided from the current hash and returns it
+    #
+    # @param [Array<String>, Array<Symbol>] keys the keys to match
+    #
+    # @return [Hash]
+    #
     def slice!(*keys)
       keys.map! { |key| convert_key(key) } if respond_to?(:convert_key, true)
       omit = slice(*self.keys - keys)
@@ -39,8 +68,17 @@ class Hash
   end
 end
 
+#
+# Monkey patches for the ruby Array
+#
 class Array
   unless [].respond_to?(:extract_options!)
+    #
+    # Extract the last argument if it is a hash
+    #
+    #
+    # @return [Hash]
+    #
     def extract_options!
       if last.is_a?(Hash) && last.instance_of?(Hash)
         pop

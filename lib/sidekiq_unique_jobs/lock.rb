@@ -218,6 +218,14 @@ module SidekiqUniqueJobs
       @info ||= Lock::Info.new(key.info)
     end
 
+    #
+    # A sorted set with changelog entries
+    #
+    # @see Changelog for more information
+    #
+    #
+    # @return [Changelog]
+    #
     def changelog
       @changelog ||= Changelog.new
     end

@@ -32,4 +32,4 @@ exclude_patterns:
   - "spec/"
   - "assets/"
   - "lib/sidekiq/logging.rb"
-  - "lib/sidekiq_unique_jobs/redis.rb"
+  - "spec/support/sidekiq_unique_jobs/testing.rb"

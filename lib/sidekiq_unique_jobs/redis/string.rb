@@ -18,6 +18,13 @@ module SidekiqUniqueJobs
         redis { |conn| conn.get(key) }
       end
 
+      #
+      # Sets the value of the key to given object
+      #
+      # @param [String] obj the object to update the key with
+      #
+      # @return [true, false]
+      #
       def set(obj)
         redis { |conn| conn.set(key, obj) }
       end

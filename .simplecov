@@ -14,7 +14,6 @@ SimpleCov.start do
   add_filter '/lib/sidekiq/'
   add_filter '/lib/sidekiq_unique_jobs/testing.rb'
   add_filter '/lib/sidekiq_unique_jobs/core_ext.rb'
-  add_filter '/lib/sidekiq_unique_jobs/redis.rb'
 
   add_group 'Locks',      'lib/sidekiq_unique_jobs/lock'
   add_group 'Middelware', 'lib/sidekiq_unique_jobs/middleware'

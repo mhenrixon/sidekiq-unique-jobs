@@ -15,11 +15,17 @@ module SidekiqUniqueJobs
       end
     end
 
+    #
+    # Configure both server and client
+    #
     def self.configure
       configure_server
       configure_client
     end
 
+    #
+    # Configures the Sidekiq server
+    #
     def self.configure_server
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
@@ -32,6 +38,9 @@ module SidekiqUniqueJobs
       end
     end
 
+    #
+    # Configures the Sidekiq client
+    #
     def self.configure_client
       Sidekiq.configure_client do |config|
         config.client_middleware do |chain|

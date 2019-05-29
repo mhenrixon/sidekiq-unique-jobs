@@ -7,9 +7,15 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   class BatchDelete
-    CHUNK_SIZE = 100
+    #
+    # @return [Integer] the default batch size
+    BATCH_SIZE = 100
 
+    # includes "SidekiqUniqueJobs::Connection"
+    # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
+    # includes "SidekiqUniqueJobs::Logging"
+    # @!parse include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Logging
 
     #
@@ -69,7 +75,7 @@ module SidekiqUniqueJobs
     #
     def batch_delete(conn) # rubocop:disable Metrics/MethodLength
       count = 0
-      digests.each_slice(CHUNK_SIZE) do |chunk|
+      digests.each_slice(BATCH_SIZE) do |chunk|
         conn.pipelined do
           chunk.each do |digest|
             conn.del(digest)

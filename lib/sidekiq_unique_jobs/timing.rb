@@ -19,16 +19,34 @@ module SidekiqUniqueJobs
       [yield, time_source.call - start_time]
     end
 
+    #
+    # Used to get a current representation of time as Integer
+    #
+    #
+    # @return [Integer]
+    #
     def time_source
-      lambda do
-        (clock_stamp * 1000).to_i
-      end
+      -> { (clock_stamp * 1000).to_i }
     end
 
+    #
+    # Returns the current time as float
+    #
+    # @see SidekiqUniqueJobs.now_f
+    #
+    # @return [Float]
+    #
     def now_f
       SidekiqUniqueJobs.now_f
     end
 
+    #
+    # Returns a float representation of the current time.
+    #   Either from Process or Time
+    #
+    #
+    # @return [Float]
+    #
     def clock_stamp
       if Process.const_defined?("CLOCK_MONOTONIC")
         Process.clock_gettime(Process::CLOCK_MONOTONIC)

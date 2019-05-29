@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+  # ThreadSafe config exists to be able to document the config class without errors
   ThreadSafeConfig = Concurrent::MutableStruct.new("ThreadSafeConfig",
                                                    :default_lock_timeout,
                                                    :default_lock_ttl,
@@ -67,51 +68,48 @@ module SidekiqUniqueJobs
     DEFAULT_DEBUG_LUA     = false
     DEFAULT_MAX_HISTORY   = 1_000
     DEFAULT_MAX_ORPHANS   = 1_000
-    DEFAULT_ORPHANS_JOB   = :ruby # :ruby or :lua
+    DEFAULT_ORPHANS_JOB   = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
     DEFAULT_USE_LOCK_INFO = false
 
     #
     # Returns a default configuration
     #
     # @example
-    #   SidekiqUniqueJobs::Config.default =>
-    #   <#<class:0x00007ff1c61eda38> SidekiqUniqueJobs::Config {
-    #     default_lock_timeout: 0,
-    #     default_lock_ttl: nil
-    #     enabled: true
-    #     unique_prefix: "uniquejobs"
-    #     logger: #<Sidekiq::Logger:0x00007ff1c6118fb8 ...>
-    #     locks: {
-    #       while_executing:SidekiqUniqueJobs::Lock::WhileExecuting
-    #       while_busy: SidekiqUniqueJobs::Lock::WhileExecuting
-    #       while_working: SidekiqUniqueJobs::Lock::WhileExecuting
-    #       around_perform: SidekiqUniqueJobs::Lock::WhileExecuting
-    #       while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject
-    #       until_executing: SidekiqUniqueJobs::Lock::UntilExecuting
-    #       while_enqueued: SidekiqUniqueJobs::Lock::UntilExecuting
-    #       until_expired: SidekiqUniqueJobs::Lock::UntilExpired
-    #       until_timeout: SidekiqUniqueJobs::Lock::UntilExpired
-    #       without_unlock: SidekiqUniqueJobs::Lock::UntilExpired
-    #       until_executed: SidekiqUniqueJobs::Lock::UntilExecuted
-    #       until_after_perform: SidekiqUniqueJobs::Lock::UntilExecuted
-    #       until_completed: SidekiqUniqueJobs::Lock::UntilExecuted
-    #       until_successfully_completed: SidekiqUniqueJobs::Lock::UntilExecuted
-    #       until_processed: SidekiqUniqueJobs::Lock::UntilExecuted
-    #       until_performed: SidekiqUniqueJobs::Lock::UntilExecuted
-    #       until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting
-    #     },
-    #     strategies: {:log=>SidekiqUniqueJobs::OnConflict::Log
-    #       raise: SidekiqUniqueJobs::OnConflict::Raise
-    #       reject: SidekiqUniqueJobs::OnConflict::Reject
-    #       replace: SidekiqUniqueJobs::OnConflict::Replace
-    #       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule
-    #     },
-    #     debug_lua: false
-    #     max_history: 1000
-    #     max_orphans: 1000
-    #     orphans_job: :ruby
-    #     use_lock_info: false
-    #  }>
+    #   SidekiqUniqueJobs::Config.default => <concurrent/mutable_struct/thread_safe_config SidekiqUniqueJobs::Config {
+    #   default_lock_timeout: 0,
+    #   default_lock_ttl: nil,
+    #   enabled: true,
+    #   unique_prefix: "uniquejobs",
+    #   logger: #<Sidekiq::Logger:0x00007f81e096b0e0 @level=1 ...>,
+    #   locks: {
+    #     around_perform: SidekiqUniqueJobs::Lock::WhileExecuting,
+    #     while_busy: SidekiqUniqueJobs::Lock::WhileExecuting,
+    #     while_executing: SidekiqUniqueJobs::Lock::WhileExecuting,
+    #     while_working: SidekiqUniqueJobs::Lock::WhileExecuting,
+    #     while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject,
+    #     until_executing: SidekiqUniqueJobs::Lock::UntilExecuting,
+    #     while_enqueued: SidekiqUniqueJobs::Lock::UntilExecuting,
+    #     until_expired: SidekiqUniqueJobs::Lock::UntilExpired,
+    #     until_completed: SidekiqUniqueJobs::Lock::UntilExecuted,
+    #     until_executed: SidekiqUniqueJobs::Lock::UntilExecuted,
+    #     until_performed: SidekiqUniqueJobs::Lock::UntilExecuted,
+    #     until_processed: SidekiqUniqueJobs::Lock::UntilExecuted,
+    #     until_and_while_executing: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting,
+    #     until_successfully_completed: SidekiqUniqueJobs::Lock::UntilExecuted
+    #   },
+    #   strategies: {
+    #     log: SidekiqUniqueJobs::OnConflict::Log,
+    #     raise: SidekiqUniqueJobs::OnConflict::Raise,
+    #     reject: SidekiqUniqueJobs::OnConflict::Reject,
+    #     replace: SidekiqUniqueJobs::OnConflict::Replace,
+    #     reschedule: SidekiqUniqueJobs::OnConflict::Reschedule
+    #   },
+    #   debug_lua: false,
+    #   max_history: 1000,
+    #   max_orphans: 1000,
+    #   orphans_job:: ruby,
+    #   use_lock_info: false
+    #   }>
     #
     #
     # @return [SidekiqUniqueJobs::Config] a default configuration

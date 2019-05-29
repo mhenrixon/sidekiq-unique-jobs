@@ -23,6 +23,12 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Lock only when the server is processing the job
+      #
+      #
+      # @return [SidekiqUniqueJobs::Lock::WhileExecuting] an instance of a lock
+      #
       def runtime_lock
         @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, callback, redis_pool)
       end

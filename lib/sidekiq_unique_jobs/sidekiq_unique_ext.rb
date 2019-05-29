@@ -2,114 +2,140 @@
 
 require "sidekiq/api"
 
+#
+# @api private
+#
 module Sidekiq
+  # See Sidekiq::Api
   class SortedEntry
+    #
+    # Provides extensions for unlocking jobs that are removed and deleted
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module UniqueExtension
-      def self.included(base)
-        base.class_eval do
-          alias_method :delete_orig, :delete
-          alias_method :delete, :delete_ext
-          alias_method :remove_job_orig, :remove_job
-          alias_method :remove_job, :remove_job_ext
-        end
-      end
-
-      def delete_ext
-        SidekiqUniqueJobs::Unlockable.delete!(item) if delete_orig
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      #
+      # @return [Hash] the deleted sidekiq job hash
+      #
+      def delete
+        SidekiqUniqueJobs::Unlockable.delete!(item) if super
+        item
       end
 
       private
 
-      def remove_job_ext
-        remove_job_orig do |message|
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      #
+      # @yieldparam [Hash] message the sidekiq job hash
+      def remove_job
+        super do |message|
           SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(message))
           yield message
         end
       end
     end
 
-    include UniqueExtension
+    prepend UniqueExtension
   end
 
+  # See Sidekiq::Api
   class ScheduledSet
+    #
+    # Provides extensions for unlocking jobs that are removed and deleted
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module UniqueExtension
-      def self.included(base)
-        base.class_eval do
-          alias_method :delete_orig, :delete
-          alias_method :delete, :delete_ext
-        end
-      end
-
-      def delete_ext(score, job_id)
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      #
+      # @param [Integer, Float] score the score in the scheduled set
+      # @param [String] job_id the Sidekiq JID
+      #
+      def delete(score, job_id)
         entry = find_job(job_id)
-        SidekiqUniqueJobs::Unlockable.delete!(entry.item) if delete_orig(score, job_id)
+        SidekiqUniqueJobs::Unlockable.delete!(entry.item) if super(score, job_id)
+        entry
       end
     end
-    include UniqueExtension
+
+    prepend UniqueExtension
   end
 
+  # See Sidekiq::Api
   class Job
+    #
+    # Provides extensions for unlocking jobs that are removed and deleted
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module UniqueExtension
-      def self.included(base)
-        base.class_eval do
-          alias_method :delete_orig, :delete
-          alias_method :delete, :delete_ext
-        end
-      end
-
-      def delete_ext
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      def delete
         SidekiqUniqueJobs::Unlockable.delete!(item)
-        delete_orig
+        super
       end
     end
 
-    include UniqueExtension
+    prepend UniqueExtension
   end
 
+  # See Sidekiq::Api
   class Queue
+    #
+    # Provides extensions for unlocking jobs that are removed and deleted
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module UniqueExtension
-      def self.included(base)
-        base.class_eval do
-          alias_method :clear_orig, :clear
-          alias_method :clear, :clear_ext
-        end
-      end
-
-      def clear_ext
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      def clear
         each(&:delete)
-        clear_orig
+        super
       end
     end
 
-    include UniqueExtension
+    prepend UniqueExtension
   end
 
+  # See Sidekiq::Api
   class JobSet
+    #
+    # Provides extensions for unlocking jobs that are removed and deleted
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module UniqueExtension
-      def self.included(base)
-        base.class_eval do
-          if base.method_defined?(:clear)
-            alias_method :clear_orig, :clear
-            alias_method :clear, :clear_ext
-          end
-
-          if base.method_defined?(:delete_by_value)
-            alias_method :delete_by_value_orig, :delete_by_value
-            alias_method :delete_by_value, :delete_by_value_ext
-          end
-        end
-      end
-
-      def clear_ext
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      def clear
         each(&:delete)
-        clear_orig
+        super
       end
 
-      def delete_by_value_ext(name, value)
-        SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(value)) if delete_by_value_orig(name, value)
+      #
+      # Wraps the original method to ensure locks for the job are deleted
+      #
+      #
+      # @param [String] name the name of the key
+      # @param [String] value a sidekiq job hash
+      #
+      def delete_by_value(name, value)
+        SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(value)) if super(name, value)
       end
     end
 
-    include UniqueExtension
+    prepend UniqueExtension
   end
 end

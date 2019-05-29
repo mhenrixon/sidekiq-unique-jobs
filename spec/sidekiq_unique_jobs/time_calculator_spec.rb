@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::Timeout::Calculator do
+RSpec.describe SidekiqUniqueJobs::TimeCalculator do
   let(:calculator)         { described_class.new("class" => worker_class_name, "at" => schedule_time) }
   let(:worker_class_name)  { "MyUniqueJob" }
   let(:schedule_time)      { nil }

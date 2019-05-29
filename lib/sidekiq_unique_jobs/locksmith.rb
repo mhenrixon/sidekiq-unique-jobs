@@ -146,14 +146,30 @@ module SidekiqUniqueJobs
       redis { |rcon| taken?(rcon) }
     end
 
+    #
+    # Nicely formatted string with information about self
+    #
+    #
+    # @return [String]
+    #
     def to_s
       "Locksmith##{object_id}(digest=#{key} job_id=#{job_id}, locked=#{locked?})"
     end
 
+    #
+    # @see to_s
+    #
     def inspect
       to_s
     end
 
+    #
+    # Compare this locksmith with another
+    #
+    # @param [Locksmith] other the locksmith to compare with
+    #
+    # @return [true, false]
+    #
     def ==(other)
       key == other.key && job_id == other.job_id
     end

@@ -31,7 +31,7 @@ task style: [:reek, :rubocop]
 RSpec::Core::RakeTask.new(:rspec)
 
 require "yard"
-YARD::Rake::YardocTask.new do |t|
+YARD::Rake::YardocTask.new(:yard) do |t|
   t.files   = %w[lib/sidekiq_unique_jobs/**/*.rb]
   t.options = %w[
     --exclude lib/sidekiq_unique_jobs/testing.rb
@@ -39,6 +39,7 @@ YARD::Rake::YardocTask.new do |t|
     --exclude lib/sidekiq_unique_jobs/web/helpers.rb
     --exclude lib/redis.rb
     --no-private
+    --embed-mixins
     --markup=markdown
     --markup-provider=redcarpet
     --readme README.md
@@ -47,14 +48,13 @@ YARD::Rake::YardocTask.new do |t|
     --exclude lib/sidekiq/logging.rb
     --exclude lib/sidekiq_unique_jobs/testing.rb
     --exclude lib/sidekiq_unique_jobs/web/helpers.rb
-    --exclude lib/sidekiq_unique_jobs/redis.rb
     --no-private
     --compact
     --list-undoc
   ]
 end
 
-task default: [:style, :rspec]
+task default: [:style, :rspec, :yard]
 
 task :release do
   sh("./update_docs.sh")

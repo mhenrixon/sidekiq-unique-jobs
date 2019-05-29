@@ -5,8 +5,7 @@ require "logger"
 require "fcntl"
 
 # rubocop:disable all
-# :nocov:
-# :nodoc:
+
 module Sidekiq
   module Logging
     class Pretty < Logger::Formatter

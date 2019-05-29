@@ -55,6 +55,12 @@ module SidekiqUniqueJobs
       end
     end
 
+    #
+    # Returns the default worker options from Sidekiq
+    #
+    #
+    # @return [Hash<Symbol, Object>]
+    #
     def default_worker_options
       Sidekiq.default_worker_options
     end
