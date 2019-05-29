@@ -3,14 +3,16 @@
 <!-- MarkdownTOC -->
 
 - [Introduction](#introduction)
-- [Documentation](#documentation)
 - [Requirements](#requirements)
-  - [ActiveJob](#activejob)
-  - [redis-namespace](#redis-namespace)
 - [Installation](#installation)
 - [Support Me](#support-me)
 - [General Information](#general-information)
-- [Options](#options)
+- [Gem Configuration](#gem-configuration)
+  - [use_lock_info - default: false](#uselockinfo---default-false)
+  - [debug_lua - default: false](#debug_lua---default-false)
+  - [max_history - default: 1_000](#maxhistory---default-1000)
+  - [max_orphans - default: 1_000](#maxorphans---default-1000)
+  - [orphans_job - default: :ruby](#orphans_job---default-ruby)
   - [Lock Expiration](#lock-expiration)
   - [Lock Timeout](#lock-timeout)
   - [Unique Across Queues](#unique-across-queues)
@@ -49,28 +51,26 @@
 
 The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.
 
-## Documentation
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: [v5.0.10][]
+Here are links to some of the old versions
 
-Below are links to the latest major versions (4 & 5):
-
-- [v5.0.10][]
-- [v4.0.18][]
+- [v6.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13)
+- [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
+- [v4.0.18][https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18]
 
 ## Requirements
 
-See [Sidekiq requirements][] for what is required. Starting from 5.0.0 only sidekiq >= 4 and MRI >= 2.2. ActiveJob is not supported
+- Sidekiq `>= 4.0` (`>= 5.2` recommended)
+- Ruby:
+  - MRI `>= 2.3` (`>= 2.5` recommended)
+  - JRuby `>= 9.0` (`>= 9.2` recommended)
+  - Truffleruby
+- Redis Server `>= 3.0.2` (`>= 3.2` recommended)
+- [ActiveJob officially not supported][48]
+- [redis-namespace officially not supported][49]
 
-### ActiveJob
-
-Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why. It simply is too complex and generates more issues than I can handle given how little timer I have to spend on this project.
-
-### redis-namespace
-
-Will not be officially supported anymore. Since Mike [won't support redis-namespace](https://github.com/mperham/sidekiq/issues/3366#issuecomment-284270120) neither will I.
-
-[Read this](http://www.mikeperham.com/2017/04/10/migrating-from-redis-namespace/) for how to migrate away from namespacing.
+See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).
 
 ## Installation
 
@@ -102,7 +102,47 @@ See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wi
 
 See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
 
-## Options
+## Gem Configuration
+
+The gem supports a few different configuration options that might be of interest if you run into some weird issues.
+
+```ruby
+SidekiqUniqueJobs.configure do |config|
+  config.logger.level  = Logger.const_get("DEBUG")
+  config.debug_lua     = false
+  config.max_history   = 1_000
+  config.use_lock_info = false
+  config.max_orphans   = 1_000
+end
+```
+
+### use_lock_info - default: false
+
+Using lock info will create an additional key for the lock with a json object containing information about the lock. This will be presented in the web interface and might help track down why some jobs are getting stuck.
+
+### debug_lua - default: false
+
+Turning on debug_lua will allow the lua scripts to output debug information about what the lua scripts do. It will log all redis commands that are executed and also some helpful messages about what is going on inside the lua script.
+
+### max_history - default: 1_000
+
+The max_history setting can be used to tweak the number of changelogs generated. It can also be completely turned off if performance suffers or if you are just not interested in using the changelog.
+
+This is a log that can be accessed by a lock to see what happened for that lock. Any items after the configured `max_history` will be automatically deleted as new items are added.
+
+### max_orphans - default: 1_000
+
+The max_orphans setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.
+
+### orphans_job - default: :ruby
+
+If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. There for the batch size (controlled by the `max_orphans` setting) needs to be reduced.
+
+In my benchmarks deleting 1000 orphaned locks with lua performs around 65% faster than deleting 1000 keys in ruby.
+
+On the other hand if I increase it to 10 000 orphaned locks per cleanup (`max_orphans: 10_0000`) then redis starts throwing:
+
+> BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
 
 ### Lock Expiration
 
