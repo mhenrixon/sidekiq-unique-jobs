@@ -24,7 +24,7 @@ module SidekiqUniqueJobs
       end
 
       def [](key)
-        value[key]
+        value[key.to_s]
       end
 
       #
