@@ -29,6 +29,7 @@ module SidekiqUniqueJobs
     #
     # @param [String] digest a unique digest
     # @param [String] job_id a sidekiq JID
+    # @param [Hash] lock_info information about the lock
     #
     # @return [Lock] a newly lock that has been locked
     #
@@ -55,6 +56,7 @@ module SidekiqUniqueJobs
     # @note intended only for testing purposez
     #
     # @param [String] job_id a sidekiq JID
+    # @param [Hash] lock_info information about the lock
     #
     # @return [void]
     #

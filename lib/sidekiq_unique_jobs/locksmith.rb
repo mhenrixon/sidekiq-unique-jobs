@@ -100,7 +100,7 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Create a lock for the item
+    # Create a lock for the Sidekiq job
     #
     # @return [String] the Sidekiq job_id that was locked/queued
     #
@@ -141,9 +141,9 @@ module SidekiqUniqueJobs
     # @return [true, false] true when the :LOCKED hash contains the job_id
     #
     def locked?(conn = nil)
-      return _locked?(conn) if conn
+      return taken?(conn) if conn
 
-      redis { |rcon| _locked?(rcon) }
+      redis { |rcon| taken?(rcon) }
     end
 
     def to_s
@@ -166,47 +166,119 @@ module SidekiqUniqueJobs
       [job_id, pttl, type, limit]
     end
 
-    def lock_sync(conn)
-      return yield job_id if locked?(conn)
-
-      enqueue(conn) do
-        if wait_for_primed_token(conn)
-          return yield job_id if call_script(:lock, key.to_a, argv, conn) == job_id
-        else
-          log_warn("Timed out while waiting for primed token (digest: #{key}, job_id: #{job_id})")
-        end
-      end
-    end
-
+    #
+    # Used for runtime locks that need automatic unlock after yielding
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    # @yieldparam [String] job_id a Sidekiq JID
+    #
     def lock_async(conn)
       return yield job_id if locked?(conn)
 
       enqueue(conn) do
-        primed = Concurrent::Promises.future(conn) { |red_con| wait_for_primed_token(red_con) }
-
-        if primed.value
-          return yield job_id if call_script(:lock, key.to_a, argv, conn) == job_id
-        else
-          log_warn("Timed out after #{timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+        primed_async(conn) do
+          locked_token = call_script(:lock, key.to_a, argv, conn)
+          return yield job_id if locked_token == job_id
         end
       end
     ensure
       unlock!(conn)
     end
 
-    def wait_for_primed_token(conn = nil)
-      primed_token, _elapsed = timed do
-        if timeout.nil? || timeout.positive?
-          # passing timeout 0 to brpoplpush causes it to block indefinitely
-          conn.brpoplpush(key.queued, key.primed, timeout: timeout || 0)
-        else
-          conn.rpoplpush(key.queued, key.primed)
-        end
-      end
+    #
+    # Pops an enqueued token
+    # @note Used for runtime locks to avoid problems with blocking commands
+    #   in current thread
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    def primed_async(conn)
+      return yield if Concurrent::Promises.future(conn) { |red_con| pop_queued(red_con) }.value
 
-      primed_token
+      warn_about_timeout
     end
 
+    #
+    # Used for non-runtime locks (no block was given)
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    # @yieldparam [String] job_id a Sidekiq JID
+    #
+    def lock_sync(conn)
+      return yield job_id if locked?(conn)
+
+      enqueue(conn) do
+        primed_sync(conn) do
+          locked_token = call_script(:lock, key.to_a, argv, conn)
+          return yield job_id if locked_token == job_id
+        end
+      end
+    end
+
+    #
+    # Pops an enqueued token
+    # @note Used for non-runtime locks
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    def primed_sync(conn)
+      return yield if pop_queued(conn)
+
+      warn_about_timeout
+    end
+
+    #
+    # Does the actual popping of the enqueued token
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [String] a previously enqueued token (now taken off the queue)
+    #
+    def pop_queued(conn)
+      if timeout.nil? || timeout.positive?
+        brpoplpush(conn)
+      else
+        rpoplpush(conn)
+      end
+    end
+
+    #
+    # @api private
+    #
+    def brpoplpush(conn)
+      # passing timeout 0 to brpoplpush causes it to block indefinitely
+      conn.brpoplpush(key.queued, key.primed, timeout: timeout || 0)
+    end
+
+    #
+    # @api private
+    #
+    def rpoplpush(conn)
+      conn.rpoplpush(key.queued, key.primed)
+    end
+
+    #
+    # Prepares all the various lock data
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when redis was already prepared for this lock
+    # @return [yield<String>] when successfully enqueued
+    #
     def enqueue(conn)
       queued_token, elapsed = timed do
         call_script(:queue, key.to_a, argv, conn)
@@ -220,6 +292,13 @@ module SidekiqUniqueJobs
       yield queued_token
     end
 
+    #
+    # Writes lock information to redis.
+    #   The lock information contains information about worker, queue, limit etc.
+    #
+    #
+    # @return [void]
+    #
     def set_lock_info # rubocop:disable Metrics/MethodLength
       return unless SidekiqUniqueJobs.config.use_lock_info
 
@@ -241,6 +320,13 @@ module SidekiqUniqueJobs
       end
     end
 
+    #
+    # Used to combat redis imprecision with ttl/pttl
+    #
+    # @param [Integer] val the value to compute drift for
+    #
+    # @return [Integer] a computed drift value
+    #
     def drift(val)
       # Add 2 milliseconds to the drift to account for Redis expires
       # precision, which is 1 millisecond, plus 1 millisecond min drift
@@ -248,8 +334,19 @@ module SidekiqUniqueJobs
       (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
 
-    def _locked?(conn)
+    #
+    # Checks if the lock has been taken
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [true, false]
+    #
+    def taken?(conn)
       conn.hexists(key.locked, job_id)
+    end
+
+    def warn_about_timeout
+      log_warn("Timed out after #{timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
     end
   end
 end
