@@ -1,12 +1,34 @@
 # frozen_string_literal: true
 
+require "reek/rake/task"
 require "rspec/core/rake_task"
 require "rubocop/rake_task"
 
 Dir.glob("#{File.expand_path(__dir__)}/lib/tasks/**/*.rake").each { |f| import f }
 
-RuboCop::RakeTask.new(:style)
-RSpec::Core::RakeTask.new(:spec)
+Reek::Rake::Task.new(:reek) do |t|
+  t.name          = "reek"
+  t.config_file   = ".reek.yml"
+  t.source_files  = "."
+  t.reek_opts     = %w[
+    --line-numbers
+    --color
+    --documentation
+    --progress
+    --single-line
+    --sort-by smelliness
+  ].join(" ")
+  t.fail_on_error = true
+  t.verbose       = true
+end
+
+RuboCop::RakeTask.new(:rubocop) do |t|
+  # t.
+end
+
+task style: [:reek, :rubocop]
+
+RSpec::Core::RakeTask.new(:rspec)
 
 require "yard"
 YARD::Rake::YardocTask.new do |t|
@@ -32,7 +54,7 @@ YARD::Rake::YardocTask.new do |t|
   ]
 end
 
-task default: [:style, :spec]
+task default: [:style, :rspec]
 
 task :release do
   sh("./update_docs.sh")

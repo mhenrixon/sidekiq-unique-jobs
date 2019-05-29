@@ -26,6 +26,7 @@ detectors:
       - Sidekiq#self.use_options
       - SidekiqUniqueJobs#toggle
       - SidekiqUniqueJobs::Lock#lock
+      - SidekiqUniqueJobs::Lock#del
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#set_lock_info
