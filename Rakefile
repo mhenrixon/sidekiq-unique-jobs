@@ -22,8 +22,14 @@ Reek::Rake::Task.new(:reek) do |t|
   t.verbose       = true
 end
 
-RuboCop::RakeTask.new(:rubocop) do |t|
-  # t.
+def changed_files(pedantry)
+  `git diff-tree --no-commit-id --name-only -r HEAD~#{pedantry} HEAD`
+    .split("\n").select { |f| f.match(/(\.rb\z)|Rakefile/) && File.exist?(f) && !f.match(/db/) }
+end
+
+RuboCop::RakeTask.new(:rubocop) do |task|
+  # task.patterns = changed_files(5)
+  task.options = %w[-DEP] # Dispays name of failing cop in output.
 end
 
 task style: [:reek, :rubocop]
