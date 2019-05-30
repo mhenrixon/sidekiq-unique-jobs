@@ -29,7 +29,7 @@ end
 
 RuboCop::RakeTask.new(:rubocop) do |task|
   # task.patterns = changed_files(5)
-  task.options = %w[-DEP] # Dispays name of failing cop in output.
+  task.options = %w[-DEP]
 end
 
 task style: [:reek, :rubocop]

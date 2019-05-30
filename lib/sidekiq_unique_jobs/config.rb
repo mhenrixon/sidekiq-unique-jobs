@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
                                                    :orphans_job,
                                                    :use_lock_info)
 
+  #
   # Shared class for dealing with gem configuration
   #
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
@@ -134,7 +135,12 @@ module SidekiqUniqueJobs
     #
     # Adds a lock type to the configuration. It will raise if the lock exists already
     #
-    # @param [String] name the name of the lock
+    # @example Add a custom lock
+    #   add_lock(:my_lock, CustomLocks::MyLock)
+    #
+    # @raise DuplicateLock when the name already exists
+    #
+    # @param [String, Symbol] name the name of the lock
     # @param [Class] klass the class describing the lock
     #
     # @return [void]
@@ -149,7 +155,11 @@ module SidekiqUniqueJobs
 
     #
     # Adds an on_conflict strategy to the configuration.
-    #   It will raise if the strategy exists already
+    #
+    # @example Add a custom strategy
+    #   add_lock(:my_strategy, CustomStrategies::MyStrategy)
+    #
+    # @raise [DuplicateStrategy] when the name already exists
     #
     # @param [String] name the name of the custom strategy
     # @param [Class] klass the class describing the strategy
