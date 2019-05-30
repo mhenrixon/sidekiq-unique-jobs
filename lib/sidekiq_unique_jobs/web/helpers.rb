@@ -55,6 +55,28 @@ module SidekiqUniqueJobs
       end
 
       #
+      # Used to avoid incompatibility with older sidekiq versions
+      #
+      #
+      # @param [Array] args the unique arguments to display
+      # @param [Integer] truncate_after_chars
+      #
+      # @return [String] a string containing all non-truncated arguments
+      #
+      def display_unique_args(args, truncate_after_chars = 2000)
+        return "Invalid job payload, args is nil" if args.nil?
+        return "Invalid job payload, args must be an Array, not #{args.class.name}" unless args.is_a?(Array)
+
+        begin
+          args.map { |arg|
+            h(truncate(to_display(arg), truncate_after_chars))
+          }.join(", ")
+        rescue
+          "Illegal job arguments: #{h args.inspect}"
+        end
+      end
+
+      #
       # Redirect to with falback
       #
       # @param [String] subpath the path to redirect to
