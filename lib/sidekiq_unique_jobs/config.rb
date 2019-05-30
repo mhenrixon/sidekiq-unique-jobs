@@ -12,8 +12,10 @@ module SidekiqUniqueJobs
                                                    :strategies,
                                                    :debug_lua,
                                                    :max_history,
-                                                   :max_orphans,
-                                                   :orphans_job,
+                                                   :reaper,
+                                                   :reaper_count,
+                                                   :reaper_interval,
+                                                   :reaper_timeout,
                                                    :use_lock_info)
 
   #
@@ -62,14 +64,16 @@ module SidekiqUniqueJobs
       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
     }.freeze
 
-    DEFAULT_PREFIX        = "uniquejobs"
-    DEFAULT_LOCK_TIMEOUT  = 0
-    DEFAULT_LOCK_TTL      = nil
-    DEFAULT_ENABLED       = true
-    DEFAULT_DEBUG_LUA     = false
-    DEFAULT_MAX_HISTORY   = 1_000
-    DEFAULT_MAX_ORPHANS   = 1_000
-    DEFAULT_ORPHANS_JOB   = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
+    DEFAULT_PREFIX          = "uniquejobs"
+    DEFAULT_LOCK_TIMEOUT    = 0
+    DEFAULT_LOCK_TTL        = nil
+    DEFAULT_ENABLED         = true
+    DEFAULT_DEBUG_LUA       = false
+    DEFAULT_MAX_HISTORY     = 1_000
+    DEFAULT_REAPER          = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
+    DEFAULT_REAPER_COUNT    = 1_000
+    DEFAULT_REAPER_INTERVAL = 60 * 100 # Every 10 minutes
+    DEFAULT_REAPER_TIMEOUT  = 10 # 10 seconds
     DEFAULT_USE_LOCK_INFO = false
 
     #
@@ -107,8 +111,8 @@ module SidekiqUniqueJobs
     #   },
     #   debug_lua: false,
     #   max_history: 1000,
-    #   max_orphans: 1000,
-    #   orphans_job:: ruby,
+    #   reaper:: ruby,
+    #   reaper_count: 1000,
     #   use_lock_info: false
     #   }>
     #
@@ -126,8 +130,10 @@ module SidekiqUniqueJobs
         DEFAULT_STRATEGIES,
         DEFAULT_DEBUG_LUA,
         DEFAULT_MAX_HISTORY,
-        DEFAULT_MAX_ORPHANS,
-        DEFAULT_ORPHANS_JOB,
+        DEFAULT_REAPER,
+        DEFAULT_REAPER_COUNT,
+        DEFAULT_REAPER_INTERVAL,
+        DEFAULT_REAPER_TIMEOUT,
         DEFAULT_USE_LOCK_INFO,
       )
     end

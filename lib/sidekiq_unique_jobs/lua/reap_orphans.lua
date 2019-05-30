@@ -7,7 +7,7 @@ local retry_set    = KEYS[3]
 --------  END keys  ---------
 
 -------- BEGIN argv ---------
-local max_orphans  = tonumber(ARGV[1])
+local reaper_count  = tonumber(ARGV[1])
 --------  END argv  ---------
 
 --------  BEGIN injected arguments --------
@@ -34,7 +34,7 @@ local index     = 0
 local del_count = 0
 local redis_ver = redis_version()
 
-while(index < max_orphans) do
+while(index < reaper_count) do
   log_debug("Interating through:", digests_set, "for orphaned locks")
   local digests  = redis.call("ZREVRANGE", digests_set, index, index + per -1)
 

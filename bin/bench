@@ -18,7 +18,7 @@ SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get("INFO")
   config.debug_lua    = false
   config.max_history  = 1_000
-  config.max_orphans  = 1_000
+  config.reaper_count  = 1_000
 end
 
 COUNT   = 10_000
@@ -91,11 +91,13 @@ Benchmark.ips do |ips|
 
     Sidekiq.redis do |conn|
       call_script(
-        :delete_orphans,
+        :reap_orphans,
         conn,
         keys: [SidekiqUniqueJobs::DIGESTS, SidekiqUniqueJobs::SCHEDULE, SidekiqUniqueJobs::RETRY],
-        argv: [SidekiqUniqueJobs.config.max_orphans],
+        argv: [SidekiqUniqueJobs.config.reaper_count],
       )
+    rescue => ex
+      conn.script(:kill)
     end
   end
 end

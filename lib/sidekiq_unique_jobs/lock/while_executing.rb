@@ -14,6 +14,7 @@ module SidekiqUniqueJobs
       RUN_SUFFIX ||= ":RUN"
 
       include SidekiqUniqueJobs::OptionsWithFallback
+      include SidekiqUniqueJobs::Logging::Middleware
 
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock

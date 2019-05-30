@@ -34,7 +34,9 @@ end
 
 task style: [:reek, :rubocop]
 
-RSpec::Core::RakeTask.new(:rspec)
+RSpec::Core::RakeTask.new(:rspec) do |t|
+  t.rspec_opts = "--format Fuubar"
+end
 
 require "yard"
 YARD::Rake::YardocTask.new(:yard) do |t|

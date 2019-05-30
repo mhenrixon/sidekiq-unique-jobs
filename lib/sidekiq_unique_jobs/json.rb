@@ -15,7 +15,7 @@ module SidekiqUniqueJobs
     # @return [Object]
     #
     def load_json(string)
-      return unless string
+      return unless string && !string.empty?
 
       ::JSON.parse(string)
     end

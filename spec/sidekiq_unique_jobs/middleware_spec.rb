@@ -15,6 +15,12 @@ RSpec.describe SidekiqUniqueJobs::Middleware do
 
     allow(server_config).to receive(:client_middleware).and_yield(client_middleware)
     allow(server_config).to receive(:server_middleware).and_yield(server_middleware)
+    allow(server_config).to receive(:on).with(:startup)
+    allow(server_config).to receive(:on).with(:shutdown)
+
+    allow(SidekiqUniqueJobs::UpdateVersion).to receive(:call)
+    allow(SidekiqUniqueJobs::Orphans::Manager).to receive(:start)
+    allow(SidekiqUniqueJobs::Orphans::Manager).to receive(:stop)
   end
 
   shared_examples "configures client middleware" do
@@ -31,6 +37,23 @@ RSpec.describe SidekiqUniqueJobs::Middleware do
 
       expect(server_config).to have_received(:server_middleware)
       expect(server_middleware).to have_received(:add).with(SidekiqUniqueJobs::Middleware::Server)
+    end
+
+    it "configures on(:startup)" do
+      expect(server_config).to have_received(:on).with(:startup) do |&block|
+        block.call
+
+        expect(SidekiqUniqueJobs::UpdateVersion).to have_received(:call)
+        expect(SidekiqUniqueJobs::Orphans::Manager).to have_received(:start)
+      end
+    end
+
+    it "configures on(:shutdown)" do
+      expect(server_config).to have_received(:on).with(:shutdown) do |&block|
+        block.call
+
+        expect(SidekiqUniqueJobs::Orphans::Manager).to have_received(:stop)
+      end
     end
   end
 

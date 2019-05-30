@@ -59,8 +59,16 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     end
   end
 
+  describe "#logging_context" do
+    let(:level)   { :error }
+
+    it { expect { logging_context }.to raise_error(NotImplementedError) }
+  end
+
   describe "#with_configured_loggers_context" do
     let(:level) { :warn }
+
+    include SidekiqUniqueJobs::Logging::Middleware
 
     context "when Sidekiq::Logging is defined" do
       before do

@@ -2,10 +2,10 @@
 
 require "spec_helper"
 
-RSpec.describe "delete_orphans.lua" do
-  subject(:delete_orphans) do
+RSpec.describe "reap_orphans.lua" do
+  subject(:reap_orphans) do
     call_script(
-      :delete_orphans,
+      :reap_orphans,
       keys: keys,
       argv: argv,
     )
@@ -38,7 +38,7 @@ RSpec.describe "delete_orphans.lua" do
 
     context "without scheduled job" do
       it "keeps the digest" do
-        expect { delete_orphans }.to change { digests.count }.by(-1)
+        expect { reap_orphans }.to change { digests.count }.by(-1)
       end
     end
 
@@ -46,7 +46,7 @@ RSpec.describe "delete_orphans.lua" do
       before { push_item(item) }
 
       it "keeps the digest" do
-        expect { delete_orphans }.not_to change { digests.count }.from(1)
+        expect { reap_orphans }.not_to change { digests.count }.from(1)
       end
     end
   end
@@ -56,7 +56,7 @@ RSpec.describe "delete_orphans.lua" do
 
     context "without job in retry" do
       it "keeps the digest" do
-        expect { delete_orphans }.to change { digests.count }.by(-1)
+        expect { reap_orphans }.to change { digests.count }.by(-1)
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe "delete_orphans.lua" do
       before { zadd("retry", Time.now.to_f.to_s, dump_json(item)) }
 
       it "keeps the digest" do
-        expect { delete_orphans }.not_to change { digests.count }.from(1)
+        expect { reap_orphans }.not_to change { digests.count }.from(1)
       end
     end
   end
@@ -72,7 +72,7 @@ RSpec.describe "delete_orphans.lua" do
   context "when digest exists in a queue" do
     context "without enqueued job" do
       it "keeps the digest" do
-        expect { delete_orphans }.to change { digests.count }.by(-1)
+        expect { reap_orphans }.to change { digests.count }.by(-1)
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe "delete_orphans.lua" do
       before { push_item(item) }
 
       it "keeps the digest" do
-        expect { delete_orphans }.not_to change { digests.count }.from(1)
+        expect { reap_orphans }.not_to change { digests.count }.from(1)
       end
     end
   end

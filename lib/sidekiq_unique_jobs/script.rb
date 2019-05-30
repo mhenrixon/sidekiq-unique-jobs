@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
       log_debug("Executed #{file_name}.lua in #{elapsed}ms")
       result
     rescue ::Redis::CommandError => ex
-      handle_error(ex, file_name) do
+      handle_error(ex, file_name, conn) do
         call(file_name, conn, keys: keys, argv: argv)
       end
     end
@@ -82,13 +82,18 @@ module SidekiqUniqueJobs
     #
     # @param [Redis::CommandError] ex exception to handle
     # @param [Symbol] file_name the name of the lua script
+    # @param [Redis] conn the redis connection to use
     #
     # @return [void]
     #
     # @yieldreturn [void] yields back to the caller when NOSCRIPT is raised
-    def handle_error(ex, file_name)
-      if ex.message == "NOSCRIPT No matching script. Please use EVAL."
+    def handle_error(ex, file_name, conn)
+      case ex.message
+      when "NOSCRIPT No matching script. Please use EVAL."
         SCRIPT_SHAS.delete(file_name)
+        return yield if block_given?
+      when "BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE."
+        conn.script(:kill)
         return yield if block_given?
       end
 

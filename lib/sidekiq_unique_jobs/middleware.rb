@@ -7,13 +7,9 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   module Middleware
-    def self.included(base)
-      base.class_eval do
-        include SidekiqUniqueJobs::Logging
-        include SidekiqUniqueJobs::OptionsWithFallback
-        include SidekiqUniqueJobs::JSON
-      end
-    end
+    include SidekiqUniqueJobs::Logging::Middleware
+    include SidekiqUniqueJobs::OptionsWithFallback
+    include SidekiqUniqueJobs::JSON
 
     #
     # Configure both server and client
@@ -26,7 +22,7 @@ module SidekiqUniqueJobs
     #
     # Configures the Sidekiq server
     #
-    def self.configure_server
+    def self.configure_server # rubocop:disable Metrics/MethodLength
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
           chain.add SidekiqUniqueJobs::Middleware::Client
@@ -34,6 +30,16 @@ module SidekiqUniqueJobs
 
         config.server_middleware do |chain|
           chain.add SidekiqUniqueJobs::Middleware::Server
+        end
+
+        config.on(:startup) do
+          SidekiqUniqueJobs::UpdateVersion.call
+          # TODO: SidekiqUniqueJobs::ConvertLocks.start
+          SidekiqUniqueJobs::Orphans::Manager.start
+        end
+
+        config.on(:shutdown) do
+          SidekiqUniqueJobs::Orphans::Manager.stop
         end
       end
     end
@@ -46,6 +52,37 @@ module SidekiqUniqueJobs
         config.client_middleware do |chain|
           chain.add SidekiqUniqueJobs::Middleware::Client
         end
+      end
+    end
+
+    # The sidekiq job hash
+    # @return [Hash] the Sidekiq job hash
+    attr_reader :item
+
+    #
+    # This method runs before (prepended) the actual middleware implementation.
+    #   This is done to reduce duplication
+    #
+    # @param [Sidekiq::Worker] worker_class
+    # @param [Hash] item a sidekiq job hash
+    # @param [String] queue name of the queue
+    # @param [ConnectionPool] redis_pool only used for compatility reasons
+    #
+    # @return [yield<super>] <description>
+    #
+    # @yieldparam [<type>] if <description>
+    # @yieldreturn [<type>] <describe what yield should return>
+    def call(worker_class, item, queue, redis_pool = nil)
+      @worker_class = worker_class
+      @item         = item
+      @queue        = queue
+      @redis_pool   = redis_pool
+      return yield if unique_disabled?
+
+      SidekiqUniqueJobs::Job.add_uniqueness(item)
+
+      with_logging_context do
+        super
       end
     end
   end

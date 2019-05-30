@@ -35,9 +35,12 @@ Sidekiq.logger       = Sidekiq::Logger.new(STDOUT)
 Sidekiq.logger.level = Logger::DEBUG
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.configure do |config|
-  config.debug_lua     = true
-  config.max_history   = 10_000
-  config.max_orphans   = 1_000
-  config.use_lock_info = true
+  config.debug_lua       = true
+  config.max_history     = 10_000
+  config.reaper          = :lua
+  config.reaper_count    = 100
+  config.reaper_interval = 10
+  config.reaper_timeout  = 2
+  config.use_lock_info   = true
 end
 Dir[Rails.root.join("app", "workers", "**", "*.rb")].each { |worker| require worker }

@@ -11,9 +11,9 @@
   - [use_lock_info - default: false](#uselockinfo---default-false)
   - [debug_lua - default: false](#debug_lua---default-false)
   - [max_history - default: 1_000](#maxhistory---default-1000)
-  - [max_orphans - default: 1_000](#maxorphans---default-1000)
-  - [orphans_job - default: :ruby](#orphans_job---default-ruby)
-  - [](#)
+  - [reaper_count - default: 1_000](#reapercount---default-1000)
+  - [reaper - default: :ruby](#reaper---default-ruby)
+  - [reaper_](#reaper_)
 - [Worker Configuration](#worker-configuration)
   - [Lock Expiration](#lock-expiration)
   - [Lock Timeout](#lock-timeout)
@@ -114,7 +114,7 @@ SidekiqUniqueJobs.configure do |config|
   config.debug_lua     = false
   config.max_history   = 1_000
   config.use_lock_info = false
-  config.max_orphans   = 1_000
+  config.reaper_count   = 1_000
 end
 ```
 
@@ -132,21 +132,21 @@ The max_history setting can be used to tweak the number of changelogs generated.
 
 This is a log that can be accessed by a lock to see what happened for that lock. Any items after the configured `max_history` will be automatically deleted as new items are added.
 
-### max_orphans - default: 1_000
+### reaper_count - default: 1_000
 
-The max_orphans setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.
+The reaper_count setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.
 
-### orphans_job - default: :ruby
+### reaper - default: :ruby
 
-If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. There for the batch size (controlled by the `max_orphans` setting) needs to be reduced.
+If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. There for the batch size (controlled by the `reaper_count` setting) needs to be reduced.
 
 In my benchmarks deleting 1000 orphaned locks with lua performs around 65% faster than deleting 1000 keys in ruby.
 
-On the other hand if I increase it to 10 000 orphaned locks per cleanup (`max_orphans: 10_0000`) then redis starts throwing:
+On the other hand if I increase it to 10 000 orphaned locks per cleanup (`reaper_count: 10_0000`) then redis starts throwing:
 
 > BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
 
-###
+### reaper_
 
 ## Worker Configuration
 

@@ -23,6 +23,14 @@ module SidekiqUniqueJobs
         @value ||= load_json(super)
       end
 
+      def none?
+        value.nil? || value.empty?
+      end
+
+      def present?
+        !none?
+      end
+
       #
       # Quick access to the hash members for the value
       #
@@ -43,10 +51,11 @@ module SidekiqUniqueJobs
       #
       def set(obj)
         return unless SidekiqUniqueJobs.config.use_lock_info
-        raise InvalidArgument, "obj needs to be a hash" unless obj.is_a?(Hash)
+        raise InvalidArgument, "argument `obj` (#{obj}) needs to be a hash" unless obj.is_a?(Hash)
 
-        @value = obj
-        super(dump_json(obj))
+        json = dump_json(obj)
+        @value = load_json(json)
+        super(json)
         value
       end
     end

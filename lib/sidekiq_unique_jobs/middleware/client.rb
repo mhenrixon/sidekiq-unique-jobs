@@ -6,34 +6,23 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Client
-      include SidekiqUniqueJobs::Middleware
+      prepend SidekiqUniqueJobs::Middleware
 
       # Calls this client middleware
       #   Used from Sidekiq.process_single
-      # @param [String] worker_class name of the sidekiq worker class
-      # @param [Hash] item a sidekiq job hash
-      # @param [String] queue name of the queue
-      # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
-      # @yield when uniqueness is disable or lock successful
-      def call(worker_class, item, queue, redis_pool = nil)
-        @worker_class = worker_class
-        @item         = item
-        @queue        = queue
-        @redis_pool   = redis_pool
-        return yield if unique_disabled?
-
-        with_logging_context do
-          lock do
-            return yield
-          end
-        end
+      #
+      # @see SidekiqUniqueJobs::Middleware#call
+      #
+      # @see https://github.com/mperham/sidekiq/wiki/Job-Format
+      # @see https://github.com/mperham/sidekiq/wiki/Middleware
+      #
+      # @yield when uniqueness is disable
+      # @yield when the lock is successful
+      def call(*)
+        lock { yield }
       end
 
       private
-
-      # The sidekiq job hash
-      # @return [Hash] the Sidekiq job hash
-      attr_reader :item
 
       def lock
         if (token = lock_instance.lock)

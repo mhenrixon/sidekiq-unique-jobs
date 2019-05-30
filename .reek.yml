@@ -29,8 +29,8 @@ detectors:
     exclude:
       - Sidekiq#self.use_options
       - SidekiqUniqueJobs#toggle
-      - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock#del
+      - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#set_lock_info
@@ -58,7 +58,7 @@ detectors:
       - Hash#slice
       - initialize
       - SidekiqUniqueJobs::Changelog#add
-      - SidekiqUniqueJobs::Middleware::Client#call
+      - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Redis
       - SidekiqUniqueJobs::Script#call
       - SidekiqUniqueJobs::Script#execute
@@ -69,10 +69,12 @@ detectors:
     exclude:
       - Hash#slice
       - Hash#slice!
-      - SidekiqUniqueJobs::Logging#logging_context
+      - SidekiqUniqueJobs::Lock::WhileExecuting#logging_context
       - SidekiqUniqueJobs::Logging#with_configured_loggers_context
+      - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#with_configured_loggers_context
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
+      - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
   MissingSafeMethod:
@@ -103,10 +105,11 @@ detectors:
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::DeleteOrphans#find_orphans
-      - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Digests#delete_by_pattern
       - SidekiqUniqueJobs::Digests#entries
+      - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Lock#lock
+      - SidekiqUniqueJobs::Lock::Info#set
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock
@@ -115,13 +118,14 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#set_lock_info
       - SidekiqUniqueJobs::Locksmith#try_lock
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
-      - SidekiqUniqueJobs::Logging#logging_context
+      - SidekiqUniqueJobs::Logging::Middleware#logging_context
+      - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Middleware#with_logging_context
-      - SidekiqUniqueJobs::Middleware::Client#call
-      - SidekiqUniqueJobs::Middleware::Server#call
+      - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script#call
+      - SidekiqUniqueJobs::Script#handle_error
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::ScriptError#generate_error_context
@@ -130,7 +134,6 @@ detectors:
       - SidekiqUniqueJobs::Web#self.registered
   TooManyInstanceVariables:
     exclude:
-      - SidekiqUniqueJobs::DeleteOrphans
       - SidekiqUniqueJobs::Key
       - SidekiqUniqueJobs::Locksmith
   TooManyMethods:

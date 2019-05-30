@@ -58,6 +58,23 @@ RSpec.describe SidekiqUniqueJobs::Script do
         expect(described_class).to have_received(:execute_script).with(script_name, redis, keys, argv).once
       end
 
+      context "when error message is BUSY" do
+        let(:redis) { Redis.new }
+        let(:error_message) { "BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE." }
+
+        before do
+          allow(Redis).to receive(:new).and_return(redis)
+          allow(redis).to receive(:script).with(:kill).and_return(true)
+        end
+
+        specify do
+          expect { call }.not_to raise_error
+
+          expect(redis).to have_received(:script).with(:kill)
+          expect(described_class).to have_received(:execute_script).with(script_name, redis, keys, argv).twice
+        end
+      end
+
       context "when error message is No matching script" do
         let(:error_message) { "NOSCRIPT No matching script. Please use EVAL." }
 

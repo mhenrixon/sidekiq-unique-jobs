@@ -5,6 +5,10 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Logging
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
     # A convenience method for using the configured logger
     def logger
       SidekiqUniqueJobs.logger
@@ -63,7 +67,6 @@ module SidekiqUniqueJobs
     #
     # @yieldreturn [void] yield to the middleware instance
     def with_logging_context
-      SidekiqUniqueJobs::Job.add_uniqueness(item)
       with_configured_loggers_context do
         return yield
       end
@@ -97,15 +100,7 @@ module SidekiqUniqueJobs
     # @return [Hash] the context to use for each log line
     #
     def logging_context
-      middleware = is_a?(Middleware::Client) ? :client : :server
-      digest = item[UNIQUE_DIGEST]
-      lock_type = item[LOCK]
-
-      if logger.respond_to?(:with_context)
-        { "uniquejobs" => middleware.to_s, lock_type => digest }
-      else
-        "uniquejobs-#{middleware} #{"DIG-#{digest}" if digest}"
-      end
+      raise NotImplementedError, "#{__method__} needs to be implemented in #{self.class}"
     end
   end
 end
