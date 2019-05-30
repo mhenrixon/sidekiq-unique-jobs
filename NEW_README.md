@@ -7,12 +7,14 @@
 - [Installation](#installation)
 - [Support Me](#support-me)
 - [General Information](#general-information)
-- [Gem Configuration](#gem-configuration)
+- [Global Configuration](#global-configuration)
   - [use_lock_info - default: false](#uselockinfo---default-false)
   - [debug_lua - default: false](#debug_lua---default-false)
   - [max_history - default: 1_000](#maxhistory---default-1000)
   - [max_orphans - default: 1_000](#maxorphans---default-1000)
   - [orphans_job - default: :ruby](#orphans_job---default-ruby)
+  - [](#)
+- [Worker Configuration](#worker-configuration)
   - [Lock Expiration](#lock-expiration)
   - [Lock Timeout](#lock-timeout)
   - [Unique Across Queues](#unique-across-queues)
@@ -102,7 +104,7 @@ See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wi
 
 See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
 
-## Gem Configuration
+## Global Configuration
 
 The gem supports a few different configuration options that might be of interest if you run into some weird issues.
 
@@ -144,11 +146,15 @@ On the other hand if I increase it to 10 000 orphaned locks per cleanup (`max_or
 
 > BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
 
+###
+
+## Worker Configuration
+
 ### Lock Expiration
 
 Lock expiration is used for two things. For the `UntilExpired` job releases the lock upon expiry. This is done from the client.
 
-Since v6.0.11 the other locks will expire after the server is done processing.
+Since `v6.0.11` the other locks will expire after the server is done processing.
 
 ```ruby
 sidekiq_options lock_ttl: nil # default - don't expire keys
