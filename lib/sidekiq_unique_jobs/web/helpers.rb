@@ -68,10 +68,10 @@ module SidekiqUniqueJobs
         return "Invalid job payload, args must be an Array, not #{args.class.name}" unless args.is_a?(Array)
 
         begin
-          args.map { |arg|
+          args.map do |arg|
             h(truncate(to_display(arg), truncate_after_chars))
-          }.join(", ")
-        rescue
+          end.join(", ")
+        rescue StandardError
           "Illegal job arguments: #{h args.inspect}"
         end
       end
