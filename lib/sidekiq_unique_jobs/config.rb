@@ -72,7 +72,7 @@ module SidekiqUniqueJobs
     DEFAULT_MAX_HISTORY     = 1_000
     DEFAULT_REAPER          = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
     DEFAULT_REAPER_COUNT    = 1_000
-    DEFAULT_REAPER_INTERVAL = 60 * 100 # Every 10 minutes
+    DEFAULT_REAPER_INTERVAL = 600 # Every 10 minutes
     DEFAULT_REAPER_TIMEOUT  = 10 # 10 seconds
     DEFAULT_USE_LOCK_INFO = false
 
