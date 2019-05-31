@@ -9,8 +9,8 @@
 - [General Information](#general-information)
 - [Global Configuration](#global-configuration)
   - [debug_lua](#debug_lua)
-  - [default_lock_timeout](#defaultlocktimeout)
-  - [default_lock_ttl](#defaultlockttl)
+  - [lock_timeout](#lock_timeout)
+  - [lock_ttl](#lock_ttl)
   - [enabled](#enabled)
   - [logger](#logger)
   - [max_history](#max_history)
@@ -19,10 +19,10 @@
   - [reaper_interval](#reaper_interval)
   - [reaper_timeout](#reaper_timeout)
   - [unique_prefix](#unique_prefix)
-  - [use_lock_info](#uselockinfo)
+  - [lock_info](#lock_info)
 - [Worker Configuration](#worker-configuration)
-  - [lock_ttl](#lock_ttl)
-  - [lock_timeout](#lock_timeout)
+  - [lock_ttl](#lock_ttl-1)
+  - [lock_timeout](#lock_timeout-1)
   - [unique_across_queues](#uniqueacrossqueues)
   - [unique_across_workers](#uniqueacrossworkers)
 - [Locks](#locks)
@@ -46,8 +46,8 @@
   - [Cleanup Dead Locks](#cleanup-dead-locks)
 - [Debugging](#debugging)
   - [Sidekiq Web](#sidekiq-web)
-    - [Show Unique Digests](#show-unique-digests)
-    - [Show keys for digest](#show-keys-for-digest)
+    - [Show Locks](#show-locks)
+    - [Show Lock](#show-lock)
 - [Communication](#communication)
 - [Testing](#testing)
 - [Contributing](#contributing)
@@ -116,11 +116,16 @@ The gem supports a few different configuration options that might be of interest
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
-  config.logger.level  = Logger.const_get("DEBUG")
-  config.debug_lua     = false
-  config.max_history   = 1_000
-  config.use_lock_info = false
-  config.reaper_count   = 1_000
+  config.debug_lua       = true
+  config.lock_info       = true
+  config.lock_ttl        = 10.minutes
+  config.lock_timeout    = 10.minutes
+  config.logger          = Sidekiq.logger
+  config.max_history     = 10_000
+  config.reaper          = :lua
+  config.reaper_count    = 100
+  config.reaper_interval = 10
+  config.reaper_timeout  = 5
 end
 ```
 
@@ -132,20 +137,20 @@ SidekiqUniqueJobs.config.debug_lua #=> false
 
 Turning on debug_lua will allow the lua scripts to output debug information about what the lua scripts do. It will log all redis commands that are executed and also some helpful messages about what is going on inside the lua script.
 
-### default_lock_timeout
+### lock_timeout
 
 ```ruby
-SidekiqUniqueJobs.config.default_lock_timeout #=> 0
+SidekiqUniqueJobs.config.lock_timeout #=> 0
 ```
 
 Set a global lock_timeout to use for all jobs that don't otherwise specify a lock_timeout.
 
 Lock timeout decides how long to wait for acquiring the lock. A value of nil means to wait indefinitely for a lock resource to become available.
 
-### default_lock_ttl
+### lock_ttl
 
 ```ruby
-SidekiqUniqueJobs.config.default_lock_ttl #=> nil
+SidekiqUniqueJobs.config.lock_ttl #=> nil
 ```
 
 Set a global lock_ttl to use for all jobs that don't otherwise specify a lock_ttl.
@@ -224,10 +229,10 @@ SidekiqUniqueJobs.config.unique_prefix #=> "uniquejobs"
 
 Use if you want a different key prefix for the keys in redis.
 
-### use_lock_info
+### lock_info
 
 ```ruby
-SidekiqUniqueJobs.config.use_lock_info #=> false
+SidekiqUniqueJobs.config.lock_info #=> false
 ```
 
 Using lock info will create an additional key for the lock with a json object containing information about the lock. This will be presented in the web interface and might help track down why some jobs are getting stuck.
@@ -484,7 +489,9 @@ end
 
 And then you can use it in the jobs definition:
 
-`sidekiq_options lock: :while_executing, on_conflict: :my_custom_strategy`
+```ruby
+sidekiq_options lock: :while_executing, on_conflict: :my_custom_strategy
+```
 
 Please not that if you try to override a default lock, an `ArgumentError` will be raised.
 
@@ -502,7 +509,9 @@ Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to define either a `unique_args` method, or a ruby proc.
 
-The unique_args method need to return an array of values to use for uniqueness check.
+*NOTE:* The unique_args method need to return an array of values to use for uniqueness check.
+
+*NOTE:* The arguments passed to the proc or the method is always an array. If your method takes a single array as argument the value of args will be `[[...]]`.
 
 The method or the proc can return a modified version of args without the transient arguments included, as shown below:
 
@@ -530,7 +539,7 @@ class UniqueJobWithFilterProc
 end
 ```
 
-It is also quite possible to ensure different types of unique args based on context. I can't vouch for the below example but see [#203](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203) for the discussion.
+It is possible to ensure different types of unique args based on context. I can't vouch for the below example but see [#203](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203) for the discussion.
 
 ```ruby
 class UniqueJobWithFilterMethod
@@ -553,7 +562,7 @@ end
 
 If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that.
 
-**Exception 1:** UntilExecuting unlocks and calls back before yielding.
+**Exception 1:** UntilExecuting unlocks and uses callback before yielding.
 **Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
 
 ```ruby
@@ -625,13 +634,13 @@ already does this.
 
 To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
 
-#### Show Unique Digests
+#### Show Locks
 
-![Unique Digests](assets/unique_digests_1.png)
+![Locks](assets/unique_digests_1.png)
 
-#### Show keys for digest
+#### Show Lock
 
-![Unique Digests](assets/unique_digests_2.png)
+![Lock](assets/unique_digests_2.png)
 
 ## Communication
 
@@ -679,7 +688,7 @@ RSpec.describe Workers::CoolOne do
 end
 ```
 
-I would strongly suggest you let this gem test uniqueness. If you care about how the gem is integration tested have a look at the following specs:
+It is recommened to leave the uniqueness testing to the gem maintainers. If you care about how the gem is integration tested have a look at the following specs:
 
 - [spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb)
 - [spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb)

@@ -316,7 +316,7 @@ module SidekiqUniqueJobs
     # @return [void]
     #
     def set_lock_info # rubocop:disable Metrics/MethodLength
-      return unless SidekiqUniqueJobs.config.use_lock_info
+      return unless SidekiqUniqueJobs.config.lock_info
 
       redis do |conn|
         conn.multi do

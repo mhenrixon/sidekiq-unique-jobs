@@ -27,10 +27,10 @@ Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 LOGLEVEL = ENV.fetch("LOGLEVEL") { "ERROR" }.upcase
 
 SidekiqUniqueJobs.configure do |config|
-  config.logger.level  = Logger.const_get(LOGLEVEL)
-  config.debug_lua     = %w[1 true].include?(ENV["DEBUG_LUA"])
-  config.max_history   = 10
-  config.use_lock_info = true
+  config.logger.level = Logger.const_get(LOGLEVEL)
+  config.debug_lua    = %w[1 true].include?(ENV["DEBUG_LUA"])
+  config.max_history  = 10
+  config.lock_info    = true
 end
 
 require "sidekiq/redis_connection"

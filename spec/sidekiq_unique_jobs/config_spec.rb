@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Config do
 
     context "when using default config" do
       it "falls back on default option" do
-        expect(config.locks).to eq(SidekiqUniqueJobs::Config::DEFAULT_LOCKS)
+        expect(config.locks).to eq(SidekiqUniqueJobs::Config::LOCKS)
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe SidekiqUniqueJobs::Config do
 
     context "when using default config" do
       it "falls back on default option" do
-        expect(config.strategies).to eq(SidekiqUniqueJobs::Config::DEFAULT_STRATEGIES)
+        expect(config.strategies).to eq(SidekiqUniqueJobs::Config::STRATEGIES)
       end
     end
 
@@ -98,8 +98,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
   end
 
   # Test backported from spec/unit/on_conflict_spec.rb
-  describe "::DEFAULT_STRATEGIES" do
-    subject { described_class::DEFAULT_STRATEGIES }
+  describe "::STRATEGIES" do
+    subject { described_class::STRATEGIES }
 
     let(:expected) do
       {

@@ -16,7 +16,7 @@ module SidekiqUniqueJobs
                                                    :reaper_count,
                                                    :reaper_interval,
                                                    :reaper_timeout,
-                                                   :use_lock_info)
+                                                   :lock_info)
 
   #
   # Shared class for dealing with gem configuration
@@ -113,7 +113,7 @@ module SidekiqUniqueJobs
     #   max_history: 1000,
     #   reaper:: ruby,
     #   reaper_count: 1000,
-    #   use_lock_info: false
+    #   lock_info: false
     #   }>
     #
     #

@@ -23,10 +23,22 @@ module SidekiqUniqueJobs
         @value ||= load_json(super)
       end
 
+      #
+      # Check if this redis string is blank
+      #
+      #
+      # @return [Boolean]
+      #
       def none?
         value.nil? || value.empty?
       end
 
+      #
+      # Check if this redis string has a value
+      #
+      #
+      # @return [Boolean]
+      #
       def present?
         !none?
       end
@@ -50,7 +62,7 @@ module SidekiqUniqueJobs
       # @return [<type>] <description>
       #
       def set(obj)
-        return unless SidekiqUniqueJobs.config.use_lock_info
+        return unless SidekiqUniqueJobs.config.lock_info
         raise InvalidArgument, "argument `obj` (#{obj}) needs to be a hash" unless obj.is_a?(Hash)
 
         json = dump_json(obj)

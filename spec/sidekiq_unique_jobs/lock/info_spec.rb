@@ -69,9 +69,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::Info do
 
     let(:obj) { nil }
 
-    context "when SidekiqUniqueJobs.config.use_lock_info = false" do
+    context "when SidekiqUniqueJobs.config.lock_info = false" do
       around do |example|
-        SidekiqUniqueJobs.use_config(use_lock_info: false) do
+        SidekiqUniqueJobs.use_config(lock_info: false) do
           example.run
         end
       end
