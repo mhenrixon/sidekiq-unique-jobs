@@ -11,9 +11,10 @@
   - [use_lock_info - default: false](#uselockinfo---default-false)
   - [debug_lua - default: false](#debug_lua---default-false)
   - [max_history - default: 1_000](#maxhistory---default-1000)
-  - [reaper_count - default: 1_000](#reapercount---default-1000)
   - [reaper - default: :ruby](#reaper---default-ruby)
-  - [reaper_](#reaper_)
+  - [reaper_count - default: 1_000](#reapercount---default-1000)
+  - [reaper_interval - default: 600](#reaper_interval---default-600)
+  - [reaper_timeout - default: 10](#reaper_timeout---default-10)
 - [Worker Configuration](#worker-configuration)
   - [Lock Expiration](#lock-expiration)
   - [Lock Timeout](#lock-timeout)
@@ -78,19 +79,19 @@ See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be s
 
 Add this line to your application's Gemfile:
 
-```
+```ruby
 gem 'sidekiq-unique-jobs'
 ```
 
 And then execute:
 
-```
+```bash
 bundle
 ```
 
 Or install it yourself as:
 
-```
+```bash
 gem install sidekiq-unique-jobs
 ```
 
@@ -132,10 +133,6 @@ The max_history setting can be used to tweak the number of changelogs generated.
 
 This is a log that can be accessed by a lock to see what happened for that lock. Any items after the configured `max_history` will be automatically deleted as new items are added.
 
-### reaper_count - default: 1_000
-
-The reaper_count setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.
-
 ### reaper - default: :ruby
 
 If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. There for the batch size (controlled by the `reaper_count` setting) needs to be reduced.
@@ -146,7 +143,17 @@ On the other hand if I increase it to 10 000 orphaned locks per cleanup (`reaper
 
 > BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
 
-### reaper_
+### reaper_count - default: 1_000
+
+The reaper_count setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.
+
+### reaper_interval - default: 600
+
+The number of seconds between reaping.
+
+### reaper_timeout - default: 10
+
+The number of seconds to wait for the reaper to finish before raising a TimeoutError. This is done to ensure that the next time we reap isn't getting stuck due to the previous process already running.
 
 ## Worker Configuration
 
@@ -266,7 +273,7 @@ There is an example of this to try it out in the `my_app` application. Run `fore
 
 In the console you should see something like:
 
-```
+```bash
 0:32:24 worker.1 | 2017-04-23T08:32:24.955Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 INFO: start
 10:32:24 worker.1 | 2017-04-23T08:32:24.956Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 INFO: start
 10:32:24 worker.1 | 2017-04-23T08:32:24.957Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 INFO: start
