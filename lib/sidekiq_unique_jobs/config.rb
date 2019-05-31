@@ -49,14 +49,14 @@ module SidekiqUniqueJobs
       while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze
 
-    DEFAULT_LOCKS =
+    LOCKS =
       LOCKS_WHEN_BUSY.dup
                      .merge(LOCKS_WHILE_ENQUEUED.dup)
                      .merge(LOCKS_WITHOUT_UNLOCK.dup)
                      .merge(LOCKS_FROM_PUSH_TO_PROCESSED.dup)
                      .freeze
 
-    DEFAULT_STRATEGIES = {
+    STRATEGIES = {
       log: SidekiqUniqueJobs::OnConflict::Log,
       raise: SidekiqUniqueJobs::OnConflict::Raise,
       reject: SidekiqUniqueJobs::OnConflict::Reject,
@@ -64,17 +64,17 @@ module SidekiqUniqueJobs
       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
     }.freeze
 
-    DEFAULT_PREFIX          = "uniquejobs"
-    DEFAULT_LOCK_TIMEOUT    = 0
-    DEFAULT_LOCK_TTL        = nil
-    DEFAULT_ENABLED         = true
-    DEFAULT_DEBUG_LUA       = false
-    DEFAULT_MAX_HISTORY     = 1_000
-    DEFAULT_REAPER          = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
-    DEFAULT_REAPER_COUNT    = 1_000
-    DEFAULT_REAPER_INTERVAL = 600 # Every 10 minutes
-    DEFAULT_REAPER_TIMEOUT  = 10 # 10 seconds
-    DEFAULT_USE_LOCK_INFO = false
+    PREFIX          = "uniquejobs"
+    LOCK_TIMEOUT    = 0
+    LOCK_TTL        = nil
+    ENABLED         = true
+    DEBUG_LUA       = false
+    MAX_HISTORY     = 1_000
+    REAPER          = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
+    REAPER_COUNT    = 1_000
+    REAPER_INTERVAL = 600 # Every 10 minutes
+    REAPER_TIMEOUT  = 10 # 10 seconds
+    USE_LOCK_INFO   = false
 
     #
     # Returns a default configuration
@@ -121,20 +121,20 @@ module SidekiqUniqueJobs
     #
     def self.default # rubocop:disable Metrics/MethodLength
       new(
-        DEFAULT_LOCK_TIMEOUT,
-        DEFAULT_LOCK_TTL,
-        DEFAULT_ENABLED,
-        DEFAULT_PREFIX,
+        LOCK_TIMEOUT,
+        LOCK_TTL,
+        ENABLED,
+        PREFIX,
         Sidekiq.logger,
-        DEFAULT_LOCKS,
-        DEFAULT_STRATEGIES,
-        DEFAULT_DEBUG_LUA,
-        DEFAULT_MAX_HISTORY,
-        DEFAULT_REAPER,
-        DEFAULT_REAPER_COUNT,
-        DEFAULT_REAPER_INTERVAL,
-        DEFAULT_REAPER_TIMEOUT,
-        DEFAULT_USE_LOCK_INFO,
+        LOCKS,
+        STRATEGIES,
+        DEBUG_LUA,
+        MAX_HISTORY,
+        REAPER,
+        REAPER_COUNT,
+        REAPER_INTERVAL,
+        REAPER_TIMEOUT,
+        USE_LOCK_INFO,
       )
     end
 
