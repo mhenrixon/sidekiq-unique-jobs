@@ -4,7 +4,6 @@
 --exclude lib/sidekiq/logging.rb
 --exclude lib/sidekiq_unique_jobs/testing.rb
 --exclude lib/sidekiq_unique_jobs/web/helpers.rb
+--readme README.md
+--files CHANGELOG.md,LICENSE.txt
 lib/ sidekiq_unique_jobs/**/*.rb
--
-README.md
-CHANGELOG.md

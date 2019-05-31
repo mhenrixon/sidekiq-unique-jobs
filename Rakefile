@@ -51,6 +51,7 @@ YARD::Rake::YardocTask.new(:yard) do |t|
     --markup=markdown
     --markup-provider=redcarpet
     --readme README.md
+    --files CHANGELOG.md,LICENSE.txt
   ]
   t.stats_options = %w[
     --exclude lib/sidekiq/logging.rb
