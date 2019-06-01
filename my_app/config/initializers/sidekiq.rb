@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+
+require Rails.root.join("lib", "lock_simulator")
+
 Sidekiq.default_worker_options = {
   backtrace: true,
   retry: false,

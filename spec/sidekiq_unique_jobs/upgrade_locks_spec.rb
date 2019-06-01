@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::UpgradeLocks do
   let(:old_digests) { Array.new(20) { |n| "uniquejobs:digest-#{n}" } }
 
   describe ".call" do
-    subject(:call) { redis { |conn| described_class.call(conn) } }
+    subject(:call) { described_class.call }
 
     context "with v6 locks" do
       before do
@@ -33,6 +33,7 @@ RSpec.describe SidekiqUniqueJobs::UpgradeLocks do
         end
 
         expect(exists("unique:keys")).to eq(false)
+        expect(digests.count).to eq(20)
       end
     end
   end

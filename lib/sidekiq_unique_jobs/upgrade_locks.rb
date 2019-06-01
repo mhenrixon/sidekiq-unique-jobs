@@ -16,6 +16,7 @@ module SidekiqUniqueJobs
     ].freeze
 
     include SidekiqUniqueJobs::Logging
+    include SidekiqUniqueJobs::Connection
 
     #
     # Performs upgrade of old locks
@@ -23,8 +24,10 @@ module SidekiqUniqueJobs
     #
     # @return [Integer] the number of upgrades locks
     #
-    def self.call(conn)
-      new(conn).call
+    def self.call
+      redis do |conn|
+        new(conn).call
+      end
     end
 
     attr_reader :conn
@@ -44,6 +47,7 @@ module SidekiqUniqueJobs
     def call
       log_info("Start - Upgrading Locks")
       return if conn.hget(upgraded_key, SidekiqUniqueJobs.version)
+      return if conn.get(DEAD_VERSION) # TODO: Needs handling of v7.0.0 => v7.0.1 where we don't want to
 
       upgrade_v6_locks
       delete_unused_v6_keys
@@ -64,7 +68,10 @@ module SidekiqUniqueJobs
       log_info("Start - Converting v6 locks to v7")
       conn.scan_each(match: "*:GRABBED", count: BATCH_SIZE) do |grabbed_key|
         locked_key = grabbed_key.gsub(":GRABBED", ":LOCKED")
-        conn.hmset(locked_key, *conn.hgetall(grabbed_key).to_a)
+        digest     = grabbed_key.gsub(":GRABBED", "")
+        locks      = conn.hgetall(grabbed_key)
+        conn.hmset(locked_key, *locks.to_a)
+        conn.zadd(DIGESTS, locks.values.first, digest)
         @count += 1
       end
       log_info("Done - Converting v6 locks to v7")

@@ -34,7 +34,8 @@ module SidekiqUniqueJobs
 
         config.on(:startup) do
           SidekiqUniqueJobs::UpdateVersion.call
-          # TODO: SidekiqUniqueJobs::ConvertLocks.start
+          SidekiqUniqueJobs::UpgradeLocks.call
+
           SidekiqUniqueJobs::Orphans::Manager.start
         end
 
