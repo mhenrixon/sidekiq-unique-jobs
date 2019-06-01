@@ -85,12 +85,14 @@ detectors:
   NestedIterators:
     exclude:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::BatchDelete#keys_for_digest
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::UpgradeLocks#keys_for_digest
   RepeatedConditional:
     exclude:
       - SidekiqUniqueJobs::Locksmith

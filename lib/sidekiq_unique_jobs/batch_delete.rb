@@ -11,6 +11,12 @@ module SidekiqUniqueJobs
     # @return [Integer] the default batch size
     BATCH_SIZE = 100
 
+    SUFFIXES = %w[
+      QUEUED
+      PRIMED
+      LOCKED
+    ].freeze
+
     # includes "SidekiqUniqueJobs::Connection"
     # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
@@ -24,7 +30,7 @@ module SidekiqUniqueJobs
     attr_reader :digests
     #
     # @!attribute [r] conn
-    #   @return [Redis, RedisConnection, ConnectionPool] a redis connection/client
+    #   @return [Redis, RedisConnection, ConnectionPool] a redis connection
     attr_reader :conn
 
     #
@@ -35,7 +41,7 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def self.call(digests, conn = nil)
+    def self.call(digests, conn)
       new(digests, conn).call
     end
 
@@ -45,11 +51,13 @@ module SidekiqUniqueJobs
     # @param [Array<String>] digests the digests to delete
     # @param [Redis] conn the connection to use for deletion
     #
-    def initialize(digests, conn = nil)
+    def initialize(digests, conn)
+      @count   = 0
       @digests = digests
+      @conn    = conn
       @digests ||= []
       @digests.compact!
-      @conn = conn
+      redis_version # Avoid pipelined calling redis_version and getting a future.
     end
 
     #
@@ -63,36 +71,49 @@ module SidekiqUniqueJobs
       log_info("Deleting batch with #{digests.size} digests")
       return batch_delete(conn) if conn
 
-      redis { |conn| batch_delete(conn) }
+      redis { |rcon| batch_delete(rcon) }
     end
+
+    private
 
     #
     # Does the actual batch deletion
     #
-    # @param [Redis] conn the connection to use for deletion
     #
     # @return [Integer] the number of deleted digests
     #
-    def batch_delete(conn) # rubocop:disable Metrics/MethodLength
-      count = 0
+    def batch_delete(conn)
       digests.each_slice(BATCH_SIZE) do |chunk|
         conn.pipelined do
           chunk.each do |digest|
-            conn.del(digest)
+            del_digest(conn, digest)
             conn.zrem(SidekiqUniqueJobs::DIGESTS, digest)
-            conn.del("#{digest}:QUEUED")
-            conn.del("#{digest}:PRIMED")
-            conn.del("#{digest}:LOCKED")
-            conn.del("#{digest}:RUN")
-            conn.del("#{digest}:RUN:QUEUED")
-            conn.del("#{digest}:RUN:PRIMED")
-            conn.del("#{digest}:RUN:LOCKED")
-            count += 1
+            @count += 1
           end
         end
       end
 
-      count
+      @count
+    end
+
+    def del_digest(conn, digest)
+      removable_keys = keys_for_digest(digest)
+
+      if VersionCheck.satisfied?(redis_version, ">= 4.0.0")
+        conn.unlink(*removable_keys)
+      else
+        conn.del(*removable_keys)
+      end
+    end
+
+    def keys_for_digest(digest)
+      [digest, "#{digest}:RUN"].map do |key|
+        SUFFIXES.map { |suffix| "#{key}:#{suffix}" }
+      end.flatten
+    end
+
+    def redis_version
+      @redis_version ||= SidekiqUniqueJobs.redis_version
     end
   end
 end

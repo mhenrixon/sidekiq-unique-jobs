@@ -2,8 +2,6 @@
 
 require "sidekiq/testing"
 
-require_relative "version_check"
-
 def sidekiq_redis_driver
   if RUBY_ENGINE == "ruby"
     require "hiredis"
@@ -36,9 +34,8 @@ RSpec.configure do |config|
     end
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
-      check = VersionCheck.new(Sidekiq::VERSION, sidekiq_ver)
-      check.invalid? do |operator1, version1, operator2, version2|
-        skip("Sidekiq (#{Sidekiq::VERSION}) should be #{operator1} #{version1} AND #{operator2} #{version2}")
+      unless SidekiqUniqueJobs::VersionCheck.satisfied?(Sidekiq::VERSION, sidekiq_ver)
+        skip("Sidekiq (#{Sidekiq::VERSION}) should be #{sidekiq_ver}")
       end
     end
   end

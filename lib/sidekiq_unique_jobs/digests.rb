@@ -103,7 +103,7 @@ module SidekiqUniqueJobs
     def delete_by_pattern(pattern, count: DEFAULT_COUNT)
       result, elapsed = timed do
         digests = entries(pattern: pattern, count: count).keys
-        SidekiqUniqueJobs::BatchDelete.new(digests).call
+        redis { |conn| BatchDelete.call(digests, conn) }
       end
 
       log_info("#{__method__}(#{pattern}, count: #{count}) completed in #{elapsed}ms")
