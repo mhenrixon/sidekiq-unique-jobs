@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
-  class UpgradeLocks
+  class UpgradeLocks # rubocop:disable Metrics/ClassLength
     BATCH_SIZE = 100
     OLD_SUFFIXES = %w[
       GRABBED
@@ -45,16 +45,21 @@ module SidekiqUniqueJobs
     # @return [Integer] the number of upgrades locks
     #
     def call
-      log_info("Start - Upgrading Locks")
-      return if conn.hget(upgraded_key, SidekiqUniqueJobs.version)
-      return if conn.get(DEAD_VERSION) # TODO: Needs handling of v7.0.0 => v7.0.1 where we don't want to
+      with_logging_context do
+        return log_info("Already upgraded to #{version}") if conn.hget(upgraded_key, version)
+        # TODO: Needs handling of v7.0.0 => v7.0.1 where we don't want to
+        return log_info("Skipping upgrade because #{DEAD_VERSION} has been set") if conn.get(DEAD_VERSION)
 
-      upgrade_v6_locks
-      delete_unused_v6_keys
-      delete_supporting_v6_keys
+        log_info("Start - Upgrading Locks")
 
-      conn.hset(upgraded_key, SidekiqUniqueJobs.version, SidekiqUniqueJobs.now_f)
-      log_info("Done - Upgrading Locks")
+        upgrade_v6_locks
+        delete_unused_v6_keys
+        delete_supporting_v6_keys
+
+        conn.hset(upgraded_key, version, now_f)
+        log_info("Done - Upgrading Locks")
+      end
+
       @count
     end
 
@@ -67,14 +72,21 @@ module SidekiqUniqueJobs
     def upgrade_v6_locks
       log_info("Start - Converting v6 locks to v7")
       conn.scan_each(match: "*:GRABBED", count: BATCH_SIZE) do |grabbed_key|
-        locked_key = grabbed_key.gsub(":GRABBED", ":LOCKED")
-        digest     = grabbed_key.gsub(":GRABBED", "")
-        locks      = conn.hgetall(grabbed_key)
-        conn.hmset(locked_key, *locks.to_a)
-        conn.zadd(DIGESTS, locks.values.first, digest)
+        upgrade_v6_lock(grabbed_key)
         @count += 1
       end
       log_info("Done - Converting v6 locks to v7")
+    end
+
+    def upgrade_v6_lock(grabbed_key)
+      locked_key = grabbed_key.gsub(":GRABBED", ":LOCKED")
+      digest     = grabbed_key.gsub(":GRABBED", "")
+      locks      = conn.hgetall(grabbed_key)
+
+      conn.pipelined do
+        conn.hmset(locked_key, *locks.to_a)
+        conn.zadd(DIGESTS, locks.values.first, digest)
+      end
     end
 
     def delete_unused_v6_keys
@@ -116,8 +128,24 @@ module SidekiqUniqueJobs
       end
     end
 
+    def version
+      SidekiqUniqueJobs.version
+    end
+
+    def now_f
+      SidekiqUniqueJobs.now_f
+    end
+
     def redis_version
       @redis_version ||= SidekiqUniqueJobs.redis_version
+    end
+
+    def logging_context
+      if logger.respond_to?(:with_context)
+        { "uniquejobs" => :upgrade_locks }
+      else
+        "uniquejobs-#{upgrade_locks}"
+      end
     end
   end
 end

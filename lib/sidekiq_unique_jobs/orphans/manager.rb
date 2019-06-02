@@ -47,7 +47,11 @@ module SidekiqUniqueJobs
       #
       def self.task
         @task ||= Concurrent::TimerTask.new(timer_task_options) do
-          redis { |conn| Orphans::Reaper.call(conn) }
+          with_logging_context do
+            redis do |conn|
+              Orphans::Reaper.call(conn)
+            end
+          end
         end
       end
 
@@ -86,9 +90,9 @@ module SidekiqUniqueJobs
       #
       def self.logging_context
         if logger.respond_to?(:with_context)
-          { "thread" => "orphan-reaper" }
+          { "uniquejobs" => "reaper" }
         else
-          "thread=orphan-reaper"
+          "uniquejobs=orphan-reaper"
         end
       end
     end

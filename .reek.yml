@@ -76,6 +76,7 @@ detectors:
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
       - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
+      - SidekiqUniqueJobs::UpgradeLocks#logging_context
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
   MissingSafeMethod:
     exclude:
@@ -133,6 +134,8 @@ detectors:
       - SidekiqUniqueJobs::ScriptError#generate_error_context
       - SidekiqUniqueJobs::TimeCalculator#lock_ttl
       - SidekiqUniqueJobs::UniqueArgs#filtered_args
+      - SidekiqUniqueJobs::UpgradeLocks#call
+      - SidekiqUniqueJobs::UpgradeLocks#upgrade_v6_lock
       - SidekiqUniqueJobs::Web#self.registered
   TooManyInstanceVariables:
     exclude:
