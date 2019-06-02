@@ -15,6 +15,7 @@ module SidekiqUniqueJobs
       QUEUED
       PRIMED
       LOCKED
+      INFO
     ].freeze
 
     # includes "SidekiqUniqueJobs::Connection"
@@ -107,9 +108,10 @@ module SidekiqUniqueJobs
     end
 
     def keys_for_digest(digest)
-      [digest, "#{digest}:RUN"].map do |key|
-        SUFFIXES.map { |suffix| "#{key}:#{suffix}" }
-      end.flatten
+      [digest, "#{digest}:RUN"].each_with_object([]) do |key, digest_keys|
+        digest_keys.concat([key])
+        digest_keys.concat(SUFFIXES.map { |suffix| "#{key}:#{suffix}" })
+      end
     end
 
     def redis_version

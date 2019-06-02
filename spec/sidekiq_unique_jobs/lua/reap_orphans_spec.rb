@@ -6,12 +6,12 @@ RSpec.describe "reap_orphans.lua" do
   subject(:reap_orphans) do
     call_script(
       :reap_orphans,
-      keys: keys,
+      keys: redis_keys,
       argv: argv,
     )
   end
 
-  let(:keys) do
+  let(:redis_keys) do
     [
       SidekiqUniqueJobs::DIGESTS,
       SidekiqUniqueJobs::SCHEDULE,
@@ -19,14 +19,27 @@ RSpec.describe "reap_orphans.lua" do
     ]
   end
   let(:argv)     { [100] }
-  let(:digest)   { "digest" }
+  let(:digest)   { "uniquejobs:digest" }
+  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
   let(:job_id)   { "job_id" }
   let(:item)     { raw_item }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
+  let(:lock_info) do
+    {
+      "job_id" => job_id,
+      "limit" => 1,
+      "lock" => :while_executing,
+      "time" => now_f,
+      "timeout" => nil,
+      "ttl" => nil,
+      "unique_args" => [],
+      "worker" => "MyUniqueJob",
+    }
+  end
 
   before do
     SidekiqUniqueJobs.disable!
-    digests.add(digest)
+    lock
   end
 
   after do
@@ -39,6 +52,7 @@ RSpec.describe "reap_orphans.lua" do
     context "without scheduled job" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
+        expect(unique_keys).to match_array([])
       end
     end
 
@@ -47,6 +61,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
+        expect(unique_keys).not_to match_array([])
       end
     end
   end
@@ -57,6 +72,7 @@ RSpec.describe "reap_orphans.lua" do
     context "without job in retry" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
+        expect(unique_keys).to match_array([])
       end
     end
 
@@ -65,6 +81,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
+        expect(unique_keys).not_to match_array([])
       end
     end
   end
@@ -73,6 +90,7 @@ RSpec.describe "reap_orphans.lua" do
     context "without enqueued job" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
+        expect(unique_keys).to match_array([])
       end
     end
 
@@ -81,6 +99,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
+        expect(unique_keys).not_to match_array([])
       end
     end
   end

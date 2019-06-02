@@ -33,8 +33,11 @@ local total     = redis.call("ZCARD", digests_set)
 local index     = 0
 local del_count = 0
 local redis_ver = redis_version()
+local del_cmd   = "DEL"
 
-while(index < reaper_count) do
+if tonumber(redis_ver["major"]) >= 4 then del_cmd = "UNLINK"; end
+
+while(index <= reaper_count) do
   log_debug("Interating through:", digests_set, "for orphaned locks")
   local digests  = redis.call("ZREVRANGE", digests_set, index, index + per -1)
 
@@ -50,9 +53,9 @@ while(index < reaper_count) do
     if found ~= true then
       log_debug("Searching for digest:", digest, "in all queues")
       local queue = find_digest_in_queues(digest)
-      log_debug("find_digest_in_queues returned:", queue)
 
       if queue then
+        log_debug("found digest:", digest, "in queue:", queue)
         found = true
       end
     end
@@ -61,17 +64,17 @@ while(index < reaper_count) do
       local queued     = digest .. ":QUEUED"
       local primed     = digest .. ":PRIMED"
       local locked     = digest .. ":LOCKED"
+      local info       = digest .. ":INFO"
       local run_digest = digest .. ":RUN"
       local run_queued = digest .. ":RUN:QUEUED"
       local run_primed = digest .. ":RUN:PRIMED"
       local run_locked = digest .. ":RUN:LOCKED"
+      local run_info   = digest .. ":RUN:INFO"
 
-      if tonumber(redis_ver["major"]) >= 4 then
-        redis.call("UNLINK", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
-      else
-        redis.call("DEL", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
-      end
 
+      log_debug(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
+      redis.call(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
+      log_debug("ZREM", digests_set, digest)
       redis.call("ZREM", digests_set, digest)
       del_count = del_count + 1
     end
@@ -81,3 +84,4 @@ while(index < reaper_count) do
 end
 
 log_debug("END")
+return del_count
