@@ -5,6 +5,41 @@ require "concurrent/array"
 module SimulateLock
   extend self
   @items = Concurrent::Array.new
+  include SidekiqUniqueJobs::Timing
+
+  def lock_jid(key, jid, ttl: nil, lock_type: :until_executed)
+    raise ArgumentError, ":key needs to be a Key" unless key.is_a?(SidekiqUniqueJobs::Key)
+
+    call_script(
+      :lock,
+      keys: key.to_a,
+      argv: [jid, ttl, lock_type, SidekiqUniqueJobs.now_f],
+    )
+  end
+
+  def simulate_lock(key, job_id)
+    redis do |conn|
+      conn.multi do
+        conn.set(key.digest, job_id)
+        conn.lpush(key.queued, job_id)
+        conn.lpush(key.primed, job_id)
+        conn.hset(key.locked, job_id, now_f)
+        conn.zadd(key.digests, now_f, key.digest)
+        conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
+        conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
+      end
+    end
+  end
+
+  def changelog_entry(key, job_id, script, message)
+    dump_json(
+      digest: key.digest,
+      job_id: job_id,
+      script: script,
+      message: message,
+      time: now_f,
+    )
+  end
 
   def lock_until_executed(digest, jid, ttl = nil)
     item = get_item(digest: digest, jid: jid, lock_type: :until_executed, ttl: ttl)
@@ -22,6 +57,7 @@ module SimulateLock
   end
 
   def lock_while_executing(digest, jid, ttl = nil)
+    digest = digest.dup + ":RUN"
     item = get_item(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl)
     lock(item)
   end
@@ -43,12 +79,16 @@ module SimulateLock
 
   def get_item(digest: "randomdigest", jid: "randomjid", lock_type: :until_executed, ttl: nil)
     item = {
-      UNIQUE_DIGEST_KEY => digest,
-      JID_KEY => jid,
-      LOCK_EXPIRATION_KEY => ttl,
-      LOCK_KEY => lock_type,
+      UNIQUE_DIGEST => digest,
+      JID => jid,
+      LOCK_EXPIRATION => ttl,
+      LOCK => lock_type,
     }
     @items << item
     item
   end
+end
+
+RSpec.configure do |config|
+  config.include SimulateLock
 end

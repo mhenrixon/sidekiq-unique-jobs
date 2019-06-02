@@ -7,7 +7,7 @@ RSpec.describe UntilExecutedJob do
       {
         "backtrace" => 10,
         "lock_timeout" => 0,
-        "lock_expiration" => 5000,
+        "lock_ttl" => 5000,
         "queue" => :working,
         "retry" => 1,
         "lock" => :until_executed,

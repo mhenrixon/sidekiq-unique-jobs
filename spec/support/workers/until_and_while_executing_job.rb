@@ -6,7 +6,7 @@ class UntilAndWhileExecutingJob
   include Sidekiq::Worker
 
   sidekiq_options lock: :until_and_while_executing,
-                  lock_expiration: nil,
+                  lock_ttl: nil,
                   lock_timeout: 0,
                   queue: :working
 

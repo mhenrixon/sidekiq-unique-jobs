@@ -18,7 +18,7 @@ plugins:
       file: .reek.yml
   rubocop:
     enabled: true
-    channel: rubocop-0-67
+    channel: rubocop-0-70
     config:
       file: .rubocop.yml
 
@@ -28,5 +28,8 @@ exclude_patterns:
   - "Appraisals"
   - "gemfiles/"
   - "my_app/"
-  - "redis/"
   - "tmp/"
+  - "spec/"
+  - "assets/"
+  - "lib/sidekiq/logging.rb"
+  - "spec/support/sidekiq_unique_jobs/testing.rb"

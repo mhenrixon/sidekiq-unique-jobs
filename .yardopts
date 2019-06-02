@@ -1,1 +1,9 @@
---no-private --markup-provider=redcarpet --markup=markdown lib/**/*.rb - README.md
+--no-private
+--markup-provider=redcarpet
+--markup=markdown
+--exclude lib/sidekiq/logging.rb
+--exclude lib/sidekiq_unique_jobs/testing.rb
+--exclude lib/sidekiq_unique_jobs/web/helpers.rb
+--readme README.md
+--files CHANGELOG.md,LICENSE.txt
+lib/ sidekiq_unique_jobs/**/*.rb

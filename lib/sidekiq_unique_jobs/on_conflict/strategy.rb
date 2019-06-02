@@ -7,20 +7,27 @@ module SidekiqUniqueJobs
     # @abstract
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Strategy
+      include SidekiqUniqueJobs::JSON
       include SidekiqUniqueJobs::Logging
+      include SidekiqUniqueJobs::Script::Caller
+      include SidekiqUniqueJobs::Timing
 
       # @!attribute [r] item
       #   @return [Hash] sidekiq job hash
       attr_reader :item
+      # @!attribute [r] redis_pool
+      #   @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
+      attr_reader :redis_pool
 
-      # @param [Hash] item the Sidekiq job hash
       #
       # Initialize a new Strategy
       #
       # @param [Hash] item sidekiq job hash
+      # @param [ConnectionPool] redis_pool the connection pool instance
       #
-      def initialize(item)
-        @item = item
+      def initialize(item, redis_pool = nil)
+        @item       = item
+        @redis_pool = redis_pool
       end
 
       # Use strategy on conflict
@@ -29,6 +36,12 @@ module SidekiqUniqueJobs
         raise NotImplementedError, "needs to be implemented in child class"
       end
 
+      #
+      # Check if the strategy is kind of {Replace}
+      #
+      #
+      # @return [<type>] <description>
+      #
       def replace?
         is_a?(Replace)
       end

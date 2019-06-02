@@ -23,7 +23,15 @@ require "timecop"
 require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
-SidekiqUniqueJobs.logger.level = Object.const_get("Logger::#{ENV.fetch('LOGLEVEL') { 'error' }.upcase}")
+
+LOGLEVEL = ENV.fetch("LOGLEVEL") { "ERROR" }.upcase
+
+SidekiqUniqueJobs.configure do |config|
+  config.logger.level = Logger.const_get(LOGLEVEL)
+  config.debug_lua    = %w[1 true].include?(ENV["DEBUG_LUA"])
+  config.max_history  = 10
+  config.lock_info    = true
+end
 
 require "sidekiq/redis_connection"
 
@@ -47,6 +55,9 @@ RSpec.configure do |config|
   config.warnings = false
   config.default_formatter = "doc" if config.files_to_run.one?
   config.order = :random
+
+  config.include SidekiqUniqueJobs::Testing
+
   Kernel.srand config.seed
 end
 

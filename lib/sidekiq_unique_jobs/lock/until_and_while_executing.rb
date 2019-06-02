@@ -16,12 +16,19 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        return unless locked?
-
-        unlock
-        runtime_lock.execute { yield }
+        if unlock
+          runtime_lock.execute { return yield }
+        else
+          log_warn "couldn't unlock digest: #{item[UNIQUE_DIGEST]} #{item[JID]}"
+        end
       end
 
+      #
+      # Lock only when the server is processing the job
+      #
+      #
+      # @return [SidekiqUniqueJobs::Lock::WhileExecuting] an instance of a lock
+      #
       def runtime_lock
         @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, callback, redis_pool)
       end

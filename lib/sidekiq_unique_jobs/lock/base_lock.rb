@@ -16,21 +16,24 @@ module SidekiqUniqueJobs
         @item       = item
         @callback   = callback
         @redis_pool = redis_pool
+        @attempt    = 0
         add_uniqueness_when_missing # Used to ease testing
       end
 
-      # Handles locking of sidekiq jobs.
-      #   Will call a conflict strategy if lock can't be achieved.
-      # @return [String] the sidekiq job id
-      def lock
-        @attempt = 0
-        return item[JID_KEY] if locked?
+      #
+      # Locks a sidekiq job
+      #
+      # @note Will call a conflict strategy if lock can't be achieved.
+      #
+      # @return [String, nil] the locked jid when properly locked, else nil.
+      #
+      # @yield to the caller when given a block
+      #
+      def lock(&block)
+        # TODO: only use replace strategy when server is executing the lock
+        return call_strategy unless (locked_token = locksmith.lock(&block))
 
-        if (token = locksmith.lock(item[LOCK_TIMEOUT_KEY]))
-          token
-        else
-          call_strategy
-        end
+        locked_token
       end
 
       # Execute the job in the Sidekiq server processor
@@ -43,7 +46,7 @@ module SidekiqUniqueJobs
       # @return [String] sidekiq job id when successful
       # @return [false] when unsuccessful
       def unlock
-        locksmith.unlock(item[JID_KEY]) # Only signal to release the lock
+        locksmith.unlock # Only signal to release the lock
       end
 
       # Deletes the job from redis if it is locked.
@@ -61,13 +64,23 @@ module SidekiqUniqueJobs
       # @return [true] when this jid has locked the job
       # @return [false] when this jid has not locked the job
       def locked?
-        locksmith.locked?(item[JID_KEY])
+        locksmith.locked?
+      end
+
+      #
+      # The lock manager/client
+      #
+      # @api private
+      # @return [SidekiqUniqueJobs::Locksmith] the locksmith for this sidekiq job
+      #
+      def locksmith
+        @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
       end
 
       private
 
       def add_uniqueness_when_missing
-        return if item.key?(UNIQUE_DIGEST_KEY)
+        return if item.key?(UNIQUE_DIGEST)
 
         # The below should only be done to ease testing
         # in production this will be done by the middleware
@@ -83,42 +96,24 @@ module SidekiqUniqueJobs
         strategy.replace? && attempt < 2
       end
 
-      # The sidekiq job hash
-      # @return [Hash] the Sidekiq job hash
+      # @!attribute [r] item
+      #   @return [Hash<String, Object>] the Sidekiq job hash
       attr_reader :item
-
-      # The sidekiq redis pool
-      # @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
+      # @!attribute [r] redis_pool
+      #   @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
       attr_reader :redis_pool
-
-      # The sidekiq job hash
-      # @return [Proc] the callback to use after unlock
+      # @!attribute [r] callback
+      #   @return [Proc] the block to call after unlock
       attr_reader :callback
-
-      # The current attempt to lock the job
-      # @return [Integer] the numerical value of the attempt
+      # @!attribute [r] attempt
+      #   @return [Integer] the current locking attempt
       attr_reader :attempt
-
-      # The interface to the locking mechanism
-      # @return [SidekiqUniqueJobs::Locksmith]
-      def locksmith
-        @locksmith ||= SidekiqUniqueJobs::Locksmith.new(item, redis_pool)
-      end
-
-      def with_cleanup
-        yield
-      rescue Sidekiq::Shutdown
-        log_info("Sidekiq is shutting down, the job `should` be put back on the queue. Keeping the lock!")
-        raise
-      else
-        unlock_with_callback
-      end
 
       def unlock_with_callback
         return log_warn("might need to be unlocked manually") unless unlock
 
         callback_safely
-        item[JID_KEY]
+        item[JID]
       end
 
       def callback_safely
@@ -129,7 +124,7 @@ module SidekiqUniqueJobs
       end
 
       def strategy
-        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT_KEY]).new(item)
+        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT]).new(item, redis_pool)
       end
     end
   end

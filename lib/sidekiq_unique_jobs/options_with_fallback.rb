@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
     # Check if unique has been enabled
     # @return [true, false] indicate if the gem has been enabled
     def unique_enabled?
-      SidekiqUniqueJobs.config.enabled && lock_type
+      SidekiqUniqueJobs.enabled? && lock_type
     end
 
     # Check if unique has been disabled
@@ -29,19 +29,31 @@ module SidekiqUniqueJobs
       !unique_enabled?
     end
 
-    # Check if we should log duplicate payloads
-    def log_duplicate_payload?
-      options[LOG_DUPLICATE_KEY] || item[LOG_DUPLICATE_KEY]
+    # Should duplicate payloads be logged?
+    #
+    #
+    # @return [true, false, nil]
+    #
+    def log_duplicate?
+      options[LOG_DUPLICATE] || item[LOG_DUPLICATE]
     end
 
-    # Check if we should log duplicate payloads
-    # @return [SidekiqUniqueJobs::Lock::BaseLock] an instance of a child class
-    def lock
-      @lock ||= lock_class.new(item, after_unlock_hook, @redis_pool)
+    #
+    # A new lock for this Sidekiq Job
+    #
+    #
+    # @return [Lock::BaseLock] an instance of a lock implementation
+    #
+    def lock_instance
+      @lock_instance ||= lock_class.new(item, after_unlock_hook, @redis_pool)
     end
 
-    # Check if we should log duplicate payloads
-    # @return [SidekiqUniqueJobs::Lock::BaseLock] an instance of a child class
+    #
+    # Returns the corresponding class for the lock_type
+    #
+    #
+    # @return [Class]
+    #
     def lock_class
       @lock_class ||= begin
         locks.fetch(lock_type.to_sym) do
@@ -50,15 +62,32 @@ module SidekiqUniqueJobs
       end
     end
 
+    #
+    # The type of lock for this worker
+    #
+    #
     # @return [Symbol]
+    #
     def lock_type
-      @lock_type ||= options[LOCK_KEY] || item[LOCK_KEY] || unique_type
+      @lock_type ||= options[LOCK] || item[LOCK] || unique_type
     end
 
+    #
+    # @deprecated in favour of {lock_type}
+    #
+    #
+    # @return [Symbol]
+    #
     def unique_type
-      options[UNIQUE_KEY] || item[UNIQUE_KEY]
+      options[UNIQUE] || item[UNIQUE]
     end
 
+    #
+    # The default options with any matching keys overridden from worker options
+    #
+    #
+    # @return [Hash<String, Object>]
+    #
     def options
       @options ||= begin
         opts = default_worker_options.dup

@@ -1,64 +1,96 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  # Utility module to help manage unique digests in redis.
+  #
+  # Class Changelogs provides access to the changelog entries
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  module Digests
+  #
+  class Digests < Redis::SortedSet
+    #
+    # @return [Integer] the number of matches to return by default
     DEFAULT_COUNT = 1_000
+    #
+    # @return [String] the default pattern to use for matching
     SCAN_PATTERN  = "*"
-    CHUNK_SIZE    = 100
 
-    include SidekiqUniqueJobs::Logging
-    include SidekiqUniqueJobs::Connection
-    extend self
-
-    # Return unique digests matching pattern
-    #
-    # @param [String] pattern a pattern to match with
-    # @param [Integer] count the maximum number to match
-    # @return [Array<String>] with unique digests
-    def all(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
-      redis { |conn| conn.sscan_each(UNIQUE_SET, match: pattern, count: count).to_a }
+    def initialize
+      super(DIGESTS)
     end
 
-    # Paginate unique digests
     #
-    # @param [String] pattern a pattern to match with
-    # @param [Integer] cursor the maximum number to match
-    # @param [Integer] page_size the current cursor position
+    # Adds a digest
     #
-    # @return [Array<String>] with unique digests
-    def page(pattern: SCAN_PATTERN, cursor: 0, page_size: 100)
-      redis do |conn|
-        total_size, digests = conn.multi do
-          conn.scard(UNIQUE_SET)
-          conn.sscan(UNIQUE_SET, cursor, match: pattern, count: page_size)
-        end
-
-        [total_size, digests[0], digests[1]]
-      end
+    # @param [String] digest the digest to add
+    #
+    def add(digest)
+      redis { |conn| conn.zadd(key, now_f, digest) }
     end
 
-    # Get a total count of unique digests
     #
-    # @return [Integer] number of digests
-    def count
-      redis { |conn| conn.scard(UNIQUE_SET) }
-    end
-
     # Deletes unique digest either by a digest or pattern
     #
-    # @param [String] digest the full digest to delete
-    # @param [String] pattern a key pattern to match with
-    # @param [Integer] count the maximum number
-    # @raise [ArgumentError] when both pattern and digest are nil
+    # @overload call_script(digest: "abcdefab")
+    #   Call script with digest
+    #   @param [String] digest: a digest to delete
+    # @overload call_script(pattern: "*", count: 1_000)
+    #   Call script with pattern
+    #   @param [String] pattern: "*" a pattern to match
+    #   @param [String] count: DEFAULT_COUNT the number of keys to delete
+    #
+    # @raise [ArgumentError] when given neither pattern nor digest
+    #
     # @return [Array<String>] with unique digests
+    #
     def del(digest: nil, pattern: nil, count: DEFAULT_COUNT)
       return delete_by_pattern(pattern, count: count) if pattern
       return delete_by_digest(digest) if digest
 
-      raise ArgumentError, "either digest or pattern need to be provided"
+      raise ArgumentError, "##{__method__} requires either a :digest or a :pattern"
+    end
+
+    #
+    # The entries in this sorted set
+    #
+    # @param [String] pattern SCAN_PATTERN the match pattern to search for
+    # @param [Integer] count DEFAULT_COUNT the number of entries to return
+    #
+    # @return [Array<String>] an array of digests matching the given pattern
+    #
+    def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
+      options = {}
+      options[:match] = pattern
+      options[:count] = count if count
+
+      result = redis { |conn| conn.zscan_each(key, options).to_a }
+
+      result.each_with_object({}) do |entry, hash|
+        hash[entry[0]] = entry[1]
+      end
+    end
+
+    #
+    # Returns a paginated
+    #
+    # @param [Integer] cursor the cursor for this iteration
+    # @param [String] pattern SCAN_PATTERN the match pattern to search for
+    # @param [Integer] page_size 100 the size per page
+    #
+    # @return [Array<Integer, Integer, Array<Lock>>] total_size, next_cursor, locks
+    #
+    def page(cursor: 0, pattern: SCAN_PATTERN, page_size: 100)
+      redis do |conn|
+        total_size, digests = conn.multi do
+          conn.zcard(key)
+          conn.zscan(key, cursor, match: pattern, count: page_size)
+        end
+
+        [
+          total_size,
+          digests[0], # next_cursor
+          digests[1].map { |digest, score| Lock.new(digest, time: score) }, # entries
+        ]
+      end
     end
 
     private
@@ -70,9 +102,8 @@ module SidekiqUniqueJobs
     # @return [Array<String>] with unique digests
     def delete_by_pattern(pattern, count: DEFAULT_COUNT)
       result, elapsed = timed do
-        digests = all(pattern: pattern, count: count)
-        batch_delete(digests)
-        digests.size
+        digests = entries(pattern: pattern, count: count).keys
+        redis { |conn| BatchDelete.call(digests, conn) }
       end
 
       log_info("#{__method__}(#{pattern}, count: #{count}) completed in #{elapsed}ms")
@@ -80,50 +111,18 @@ module SidekiqUniqueJobs
       result
     end
 
-    # Get a total count of unique digests
+    # Delete unique digests by digest
+    #   Also deletes the :AVAILABLE, :EXPIRED etc keys
     #
-    # @param [String] digest a key pattern to match with
+    # @param [String] digest a unique digest to delete
     def delete_by_digest(digest)
       result, elapsed = timed do
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])
-        count
+        call_script(:delete_by_digest, [digest, key])
       end
 
       log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
 
       result
-    end
-
-    def batch_delete(digests) # rubocop:disable Metrics/MethodLength
-      redis do |conn|
-        digests.each_slice(CHUNK_SIZE) do |chunk|
-          conn.pipelined do
-            chunk.each do |digest|
-              conn.del digest
-              conn.srem(UNIQUE_SET, digest)
-              conn.del("#{digest}:EXISTS")
-              conn.del("#{digest}:GRABBED")
-              conn.del("#{digest}:VERSION")
-              conn.del("#{digest}:AVAILABLE")
-              conn.del("#{digest}:RUN:EXISTS")
-              conn.del("#{digest}:RUN:GRABBED")
-              conn.del("#{digest}:RUN:VERSION")
-              conn.del("#{digest}:RUN:AVAILABLE")
-            end
-          end
-        end
-      end
-    end
-
-    def timed
-      start = current_time
-      result = yield
-      elapsed = (current_time - start).round(2)
-      [result, elapsed]
-    end
-
-    def current_time
-      Time.now
     end
   end
 end

@@ -3,30 +3,40 @@
 <!-- MarkdownTOC -->
 
 - [Introduction](#introduction)
-- [Documentation](#documentation)
 - [Requirements](#requirements)
-  - [ActiveJob](#activejob)
-  - [redis-namespace](#redis-namespace)
 - [Installation](#installation)
 - [Support Me](#support-me)
 - [General Information](#general-information)
-- [Options](#options)
-  - [Lock Expiration](#lock-expiration)
-  - [Lock Timeout](#lock-timeout)
-  - [Unique Across Queues](#unique-across-queues)
-  - [Unique Across Workers](#unique-across-workers)
+- [Global Configuration](#global-configuration)
+  - [debug_lua](#debug_lua)
+  - [lock_timeout](#lock_timeout)
+  - [lock_ttl](#lock_ttl)
+  - [enabled](#enabled)
+  - [logger](#logger)
+  - [max_history](#max_history)
+  - [reaper](#reaper)
+  - [reaper_count](#reaper_count)
+  - [reaper_interval](#reaper_interval)
+  - [reaper_timeout](#reaper_timeout)
+  - [unique_prefix](#unique_prefix)
+  - [lock_info](#lock_info)
+- [Worker Configuration](#worker-configuration)
+  - [lock_ttl](#lock_ttl-1)
+  - [lock_timeout](#lock_timeout-1)
+  - [unique_across_queues](#uniqueacrossqueues)
+  - [unique_across_workers](#uniqueacrossworkers)
 - [Locks](#locks)
   - [Until Executing](#until-executing)
   - [Until Executed](#until-executed)
-  - [Until Timeout](#until-timeout)
-  - [Unique Until And While Executing](#unique-until-and-while-executing)
+  - [Until Expired](#until-expired)
+  - [Until And While Executing](#until-and-while-executing)
   - [While Executing](#while-executing)
   - [Custom Locks](#custom-locks)
 - [Conflict Strategy](#conflict-strategy)
-  - [Log](#log)
-  - [Raise](#raise)
-  - [Reject](#reject)
-  - [Replace](#replace)
+  - [log](#log)
+  - [raise](#raise)
+  - [reject](#reject)
+  - [replace](#replace)
   - [Reschedule](#reschedule)
   - [Custom Strategies](#custom-strategies)
 - [Usage](#usage)
@@ -36,8 +46,8 @@
   - [Cleanup Dead Locks](#cleanup-dead-locks)
 - [Debugging](#debugging)
   - [Sidekiq Web](#sidekiq-web)
-    - [Show Unique Digests](#show-unique-digests)
-    - [Show keys for digest](#show-keys-for-digest)
+    - [Show Locks](#show-locks)
+    - [Show Lock](#show-lock)
 - [Communication](#communication)
 - [Testing](#testing)
 - [Contributing](#contributing)
@@ -49,46 +59,44 @@
 
 The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.
 
-## Documentation
+This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag: [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
+Here are links to some of the old versions
 
-Below are links to the latest major versions (4 & 5):
-
+- [v6.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13)
 - [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
-- [v4.0.18][]
+- [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
 
 ## Requirements
 
-See [Sidekiq requirements][] for what is required. Starting from 5.0.0 only sidekiq >= 4 and MRI >= 2.2. ActiveJob is not supported
+- Sidekiq `>= 4.0` (`>= 5.2` recommended)
+- Ruby:
+  - MRI `>= 2.3` (`>= 2.5` recommended)
+  - JRuby `>= 9.0` (`>= 9.2` recommended)
+  - Truffleruby
+- Redis Server `>= 3.0.2` (`>= 3.2` recommended)
+- [ActiveJob officially not supported][48]
+- [redis-namespace officially not supported][49]
 
-### ActiveJob
-
-Version 6 requires Redis >= 3 and pure Sidekiq, no ActiveJob supported anymore. See [About ActiveJob](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/About-ActiveJob) for why. It simply is too complex and generates more issues than I can handle given how little timer I have to spend on this project.
-
-### redis-namespace
-
-Will not be officially supported anymore. Since Mike [won't support redis-namespace](https://github.com/mperham/sidekiq/issues/3366#issuecomment-284270120) neither will I.
-
-[Read this](http://www.mikeperham.com/2017/04/10/migrating-from-redis-namespace/) for how to migrate away from namespacing.
+See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-```
+```ruby
 gem 'sidekiq-unique-jobs'
 ```
 
 And then execute:
 
-```
+```bash
 bundle
 ```
 
 Or install it yourself as:
 
-```
+```bash
 gem install sidekiq-unique-jobs
 ```
 
@@ -102,20 +110,147 @@ See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wi
 
 See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
 
-## Options
+## Global Configuration
 
-### Lock Expiration
-
-Lock expiration is used for two things. For the `UntilExpired` job releases the lock upon expiry. This is done from the client.
-
-Since v6.0.11 the other locks will expire after the server is done processing.
+The gem supports a few different configuration options that might be of interest if you run into some weird issues.
 
 ```ruby
-sidekiq_options lock_expiration: nil # default - don't expire keys
-sidekiq_options lock_expiration: 20.days.to_i # expire this lock in 20 days
+SidekiqUniqueJobs.configure do |config|
+  config.debug_lua       = true
+  config.lock_info       = true
+  config.lock_ttl        = 10.minutes
+  config.lock_timeout    = 10.minutes
+  config.logger          = Sidekiq.logger
+  config.max_history     = 10_000
+  config.reaper          = :lua
+  config.reaper_count    = 100
+  config.reaper_interval = 10
+  config.reaper_timeout  = 5
+end
 ```
 
-### Lock Timeout
+### debug_lua
+
+```ruby
+SidekiqUniqueJobs.config.debug_lua #=> false
+```
+
+Turning on debug_lua will allow the lua scripts to output debug information about what the lua scripts do. It will log all redis commands that are executed and also some helpful messages about what is going on inside the lua script.
+
+### lock_timeout
+
+```ruby
+SidekiqUniqueJobs.config.lock_timeout #=> 0
+```
+
+Set a global lock_timeout to use for all jobs that don't otherwise specify a lock_timeout.
+
+Lock timeout decides how long to wait for acquiring the lock. A value of nil means to wait indefinitely for a lock resource to become available.
+
+### lock_ttl
+
+```ruby
+SidekiqUniqueJobs.config.lock_ttl #=> nil
+```
+
+Set a global lock_ttl to use for all jobs that don't otherwise specify a lock_ttl.
+
+Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.
+
+### enabled
+
+```ruby
+SidekiqUniqueJobs.config.enabled #=> true
+```
+
+Globally turn the locking mechanism on or off.
+
+### logger
+
+```ruby
+SidekiqUniqueJobs.config.logger #=> #<Sidekiq::Logger:0x00007fdc1f96d180>
+```
+
+By default this gem piggybacks on the Sidekiq logger. It is not recommended to change this as the gem uses some features in the Sidekiq logger and you might run into problems. If you need a different logger and you do run into problems then get in touch and we'll see what we can do about it.
+
+### max_history
+
+```ruby
+SidekiqUniqueJobs.config.max_history #=> 1_000
+```
+
+The max_history setting can be used to tweak the number of changelogs generated. It can also be completely turned off if performance suffers or if you are just not interested in using the changelog.
+
+This is a log that can be accessed by a lock to see what happened for that lock. Any items after the configured `max_history` will be automatically deleted as new items are added.
+
+### reaper
+
+```ruby
+SidekiqUniqueJobs.config.reaper #=> :ruby
+```
+
+If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. There for the batch size (controlled by the `reaper_count` setting) needs to be reduced.
+
+In my benchmarks deleting 1000 orphaned locks with lua performs around 65% faster than deleting 1000 keys in ruby.
+
+On the other hand if I increase it to 10 000 orphaned locks per cleanup (`reaper_count: 10_0000`) then redis starts throwing:
+
+> BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
+
+### reaper_count
+
+```ruby
+SidekiqUniqueJobs.config.reaper_count #=> 1_000
+```
+
+The reaper_count setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.
+
+### reaper_interval
+
+```ruby
+SidekiqUniqueJobs.config.reaper_interval #=> 600
+```
+
+The number of seconds between reaping.
+
+### reaper_timeout
+
+```ruby
+SidekiqUniqueJobs.config.reaper_timeout #=> 10
+```
+
+The number of seconds to wait for the reaper to finish before raising a TimeoutError. This is done to ensure that the next time we reap isn't getting stuck due to the previous process already running.
+
+### unique_prefix
+
+```ruby
+SidekiqUniqueJobs.config.unique_prefix #=> "uniquejobs"
+```
+
+Use if you want a different key prefix for the keys in redis.
+
+### lock_info
+
+```ruby
+SidekiqUniqueJobs.config.lock_info #=> false
+```
+
+Using lock info will create an additional key for the lock with a json object containing information about the lock. This will be presented in the web interface and might help track down why some jobs are getting stuck.
+
+## Worker Configuration
+
+### lock_ttl
+
+Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.
+
+Since `v6.0.11` the other locks will expire after the server is done processing.
+
+```ruby
+sidekiq_options lock_ttl: nil # default - don't expire keys
+sidekiq_options lock_ttl: 20.days.to_i # expire this lock in 20 days
+```
+
+### lock_timeout
 
 This is the timeout (how long to wait) when creating the lock. By default we don't use a timeout so we won't wait for the lock to be created. If you want it is possible to set this like below.
 
@@ -125,7 +260,7 @@ sidekiq_options lock_timeout: 5 # wait 5 seconds
 sidekiq_options lock_timeout: nil # lock indefinitely, this process won't continue until it gets a lock. VERY DANGEROUS!!
 ```
 
-### Unique Across Queues
+### unique_across_queues
 
 This configuration option is slightly misleading. It doesn't disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.
 
@@ -141,9 +276,9 @@ end
 
 Now if you push override the queue with `Worker.set(queue: 'another').perform_async(1)` it will still be considered unique when compared to `Worker.perform_async(1)` (that was actually pushed to the queue `default`).
 
-### Unique Across Workers
+### unique_across_workers
 
-This configuration option is slightly misleading. It doesn't disregard the worker class on other jobs. Just on itself, this means that a worker that the worker class won't be used for generating the unique digest. The only way this option really makes sense is when you want to have uniqueness between two different worker classes.
+This configuration option is slightly misleading. It doesn't disregard the worker class on other jobs. Just on itself, this means  that the worker class won't be used for generating the unique digest. The only way this option really makes sense is when you want to have uniqueness between two different worker classes.
 
 ```ruby
 class WorkerOne
@@ -174,53 +309,55 @@ WorkerTwo.perform_async(1)
 
 ### Until Executing
 
-Locks from when the client pushes the job to the queue. Will be unlocked before the server starts processing the job.
-
-**NOTE** this is probably not so good for jobs that shouldn't be running simultaneously (aka slow jobs).
-
 ```ruby
 sidekiq_options lock: :until_executing
 ```
 
-### Until Executed
+Locks from when the client pushes the job to the queue. Will be unlocked before the server starts processing the job.
 
-Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.
+**NOTE** this is probably not so good for jobs that shouldn't be running simultaneously (aka slow jobs).
+
+The reason this type of lock exists is to fix the following problem: [sidekiq/issues/3471](https://github.com/mperham/sidekiq/issues/3471#issuecomment-300866335)
+
+### Until Executed
 
 ```ruby
 sidekiq_options lock: :until_executed
 ```
 
-### Until Timeout
+Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.
 
-Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.
+### Until Expired
 
 ```ruby
 sidekiq_options lock: :until_expired
 ```
 
-### Unique Until And While Executing
+Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.
 
-Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. As soon as the server starts processing a job, the client can push the same job to the queue.
+### Until And While Executing
 
 ```ruby
 sidekiq_options lock: :until_and_while_executing
 ```
 
+Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. As soon as the server starts processing a job, the client can push the same job to the queue.
+
 ### While Executing
+
+```ruby
+sidekiq_options lock: :while_executing, lock_timeout: 10
+```
 
 With this lock type it is possible to put any number of these jobs on the queue, but as the server pops the job from the queue it will create a lock and then wait until other locks are done processing. It _looks_ like multiple jobs are running at the same time but in fact the second job will only be waiting for the first job to finish.
 
 **NOTE** Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
 
-```ruby
-sidekiq_options lock: :while_executing, lock_timeout: nil
-```
-
 There is an example of this to try it out in the `my_app` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
 
 In the console you should see something like:
 
-```
+```bash
 0:32:24 worker.1 | 2017-04-23T08:32:24.955Z 84404 TID-ougq4thko WhileExecutingWorker JID-400ec51c9523f41cd4a35058 INFO: start
 10:32:24 worker.1 | 2017-04-23T08:32:24.956Z 84404 TID-ougq8csew WhileExecutingWorker JID-8d6d9168368eedaed7f75763 INFO: start
 10:32:24 worker.1 | 2017-04-23T08:32:24.957Z 84404 TID-ougq8crt8 WhileExecutingWorker JID-affcd079094c9b26e8b9ba60 INFO: start
@@ -250,7 +387,7 @@ module Locks
 end
 ```
 
-You can refer on all the locks defined in `lib/sidekiq_unique_jobs/lock`.
+You can refer on all the locks defined in `lib/sidekiq_unique_jobs/lock/*.rb`.
 
 In order to make it available, you should call in your project startup:
 
@@ -276,25 +413,35 @@ Decides how we handle conflict. We can either reject the job to the dead queue o
 
 The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
 
-### Log
+### log
+
+```ruby
+sidekiq_options on_conflict: :log`
+```
 
 This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
 
-`sidekiq_options lock: :until_executed, on_conflict: :log`
+### raise
 
-### Raise
+```ruby
+sidekiq_options on_conflict: :raise`
+```
 
 This strategy is intended to be used with `WhileExecuting`. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.
 
-`sidekiq_options lock: :while_executing, on_conflict: :raise, retry: 10`
+### reject
 
-### Reject
+```ruby
+sidekiq_options on_conflict: :reject`
+```
 
 This strategy is intended to be used with `WhileExecuting` and will push the job to the dead queue on conflict.
 
-`sidekiq_options lock: :while_executing, on_conflict: :reject`
+### replace
 
-### Replace
+```ruby
+sidekiq_options on_conflict: :replace`
+```
 
 This strategy is intended to be used with client locks like `UntilExecuted`.
 It will delete any existing job for these arguments from retry, schedule and
@@ -303,13 +450,13 @@ queue and retry the lock again.
 This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.
 
-`sidekiq_options lock: :until_executed, on_conflict: :replace`
-
 ### Reschedule
 
-This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
+```ruby
+sidekiq_options on_conflict: :reschedule`
+```
 
-`sidekiq_options lock: :while_executing, on_conflict: :reschedule`
+This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
 
 ### Custom Strategies
 
@@ -342,7 +489,9 @@ end
 
 And then you can use it in the jobs definition:
 
-`sidekiq_options lock: :while_executing, on_conflict: :my_custom_strategy`
+```ruby
+sidekiq_options lock: :while_executing, on_conflict: :my_custom_strategy
+```
 
 Please not that if you try to override a default lock, an `ArgumentError` will be raised.
 
@@ -360,7 +509,9 @@ Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to define either a `unique_args` method, or a ruby proc.
 
-The unique_args method need to return an array of values to use for uniqueness check.
+*NOTE:* The unique_args method need to return an array of values to use for uniqueness check.
+
+*NOTE:* The arguments passed to the proc or the method is always an array. If your method takes a single array as argument the value of args will be `[[...]]`.
 
 The method or the proc can return a modified version of args without the transient arguments included, as shown below:
 
@@ -388,7 +539,7 @@ class UniqueJobWithFilterProc
 end
 ```
 
-It is also quite possible to ensure different types of unique args based on context. I can't vouch for the below example but see [#203](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203) for the discussion.
+It is possible to ensure different types of unique args based on context. I can't vouch for the below example but see [#203](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/203) for the discussion.
 
 ```ruby
 class UniqueJobWithFilterMethod
@@ -411,7 +562,7 @@ end
 
 If you need to perform any additional work after the lock has been released you can provide an `#after_unlock` instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that.
 
-**Exception 1:** UntilExecuting unlocks and calls back before yielding.
+**Exception 1:** UntilExecuting unlocks and uses callback before yielding.
 **Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
 
 ```ruby
@@ -434,7 +585,7 @@ To see logging in sidekiq when duplicate payload has been filtered out you can e
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :while_executing,
-                  log_duplicate_payload: true
+                  log_duplicate: true
 
   ...
 
@@ -483,13 +634,13 @@ already does this.
 
 To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
 
-#### Show Unique Digests
+#### Show Locks
 
-![Unique Digests](assets/unique_digests_1.png)
+![Locks](assets/unique_digests_1.png)
 
-#### Show keys for digest
+#### Show Lock
 
-![Unique Digests](assets/unique_digests_2.png)
+![Lock](assets/unique_digests_2.png)
 
 ## Communication
 
@@ -537,7 +688,7 @@ RSpec.describe Workers::CoolOne do
 end
 ```
 
-I would strongly suggest you let this gem test uniqueness. If you care about how the gem is integration tested have a look at the following specs:
+It is recommened to leave the uniqueness testing to the gem maintainers. If you care about how the gem is integration tested have a look at the following specs:
 
 - [spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb)
 - [spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb)

@@ -6,36 +6,65 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Replace < OnConflict::Strategy
-      attr_reader :queue, :unique_digest
+      #
+      # @!attribute [r] queue
+      #   @return [String] rthe sidekiq queue this job belongs to
+      attr_reader :queue
+      #
+      # @!attribute [r] unique_digest
+      #   @return [String] the unique digest to use for locking
+      attr_reader :unique_digest
 
+      #
+      # Initialize a new Replace strategy
+      #
       # @param [Hash] item sidekiq job hash
-      def initialize(item)
-        super
-        @queue         = item[QUEUE_KEY]
-        @unique_digest = item[UNIQUE_DIGEST_KEY]
+      #
+      def initialize(item, redis_pool = nil)
+        super(item, redis_pool)
+        @queue         = item[QUEUE]
+        @unique_digest = item[UNIQUE_DIGEST]
       end
 
+      #
       # Replace the old job in the queue
+      #
+      #
+      # @return [void] <description>
+      #
       # @yield to retry the lock after deleting the old one
+      #
       def call(&block)
-        return unless delete_job_by_digest
+        return unless (deleted_job = delete_job_by_digest)
 
-        delete_lock
+        log_info("Deleting job: #{deleted_job}")
+        if (del_count = delete_lock)
+          log_info("Deleted `#{del_count}` keys for #{unique_digest}")
+        end
         block&.call
       end
 
+      #
       # Delete the job from either schedule, retry or the queue
+      #
+      #
+      # @return [String] the deleted job hash
+      # @return [nil] when deleting nothing
+      #
       def delete_job_by_digest
-        Scripts.call(
-          :delete_job_by_digest,
-          nil,
-          keys: ["#{QUEUE_KEY}:#{queue}", SCHEDULE_SET, RETRY_SET], argv: [unique_digest],
-        )
+        call_script(:delete_job_by_digest,
+                    keys: ["#{QUEUE}:#{queue}", SCHEDULE, RETRY],
+                    argv: [unique_digest])
       end
 
+      #
       # Delete the keys belonging to the job
+      #
+      #
+      # @return [Integer] the number of keys deleted
+      #
       def delete_lock
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, unique_digest])
+        call_script(:delete_by_digest, keys: [unique_digest, DIGESTS])
       end
     end
   end

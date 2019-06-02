@@ -1,88 +1,156 @@
 ---
 exclude_paths:
+  - examples
+  - gemfiles
+  - lib/sidekiq
+  - lib/sidekiq_unique_jobs/lua
   - my_app
-  - redis
   - spec
   - tmp
-  - gemfiles
-  - examples
   - vendor/bundle
 detectors:
+  BooleanParameter:
+    exclude:
+      - SidekiqUniqueJobs::Cli#self.banner
+      - SidekiqUniqueJobs::Redis
+      - SidekiqUniqueJobs::Lock#locked_jids
+  ControlParameter:
+    exclude:
+      - Sidekiq::JobSet::UniqueExtension#delete_by_value
+      - Sidekiq::ScheduledSet::UniqueExtension#delete
+      - SidekiqUniqueJobs::Redis::Hash#entries
+  DataClump:
+    enabled: true
+    exclude:
+      - SidekiqUniqueJobs::DeleteOrphan
+      - SidekiqUniqueJobs::Redis
+      - SidekiqUniqueJobs::Script
   DuplicateMethodCall:
     exclude:
-    - Sidekiq#self.use_options
-    - SidekiqUniqueJobs::Web#self.registered
+      - Sidekiq#self.use_options
+      - SidekiqUniqueJobs#toggle
+      - SidekiqUniqueJobs::Lock#del
+      - SidekiqUniqueJobs::Lock#lock
+      - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::Locksmith#lock_sync
+      - SidekiqUniqueJobs::Locksmith#set_lock_info
+      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
+      - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::Script::Caller#extract_args
+      - SidekiqUniqueJobs::Timing#timed
+      - SidekiqUniqueJobs::Web#self.registered
+  FeatureEnvy:
+    exclude:
+      - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::Logging#debug_item
+      - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
+      - SidekiqUniqueJobs::ScriptError#generate_error_context
+      - SidekiqUniqueJobs::Web::Helpers#cparams
+  InstanceVariableAssumption:
+    exclude:
+      - SidekiqUniqueJobs::Script::Template
   IrresponsibleModule:
     enabled: false
   LongParameterList:
     enabled: true
     exclude:
-    - initialize
-    - Hash#slice
-    - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
-    - SidekiqUniqueJobs::Client::Middleware#call
-  TooManyStatements:
-    exclude:
-    - initialize
-    - Hash#slice
-    - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Locksmith#expire_when_necessary
-    - SidekiqUniqueJobs::Middleware#configure_server_middleware
-    - SidekiqUniqueJobs::Server::Middleware#call
-    - SidekiqUniqueJobs::UniqueArgs#filtered_args
-    - SidekiqUniqueJobs::Util#del
-    - SidekiqUniqueJobs::Digests#batch_delete
-    - SidekiqUniqueJobs::Digests#delete_by_pattern
-    - SidekiqUniqueJobs::Web#self.registered
-  UncommunicativeVariableName:
-    exclude:
-    - Hash#slice
-  BooleanParameter:
-    exclude:
-    - SidekiqUniqueJobs::Cli#self.banner
-  UtilityFunction:
-    enabled: false
-  TooManyConstants:
-    exclude:
-    - SidekiqUniqueJobs
+      - Hash#slice
+      - initialize
+      - SidekiqUniqueJobs::Changelog#add
+      - SidekiqUniqueJobs::Middleware#call
+      - SidekiqUniqueJobs::Redis
+      - SidekiqUniqueJobs::Script#call
+      - SidekiqUniqueJobs::Script#execute
+      - SidekiqUniqueJobs::Script::Caller#call_script
+      - SidekiqUniqueJobs::Script::Caller#do_call
   ManualDispatch:
     enabled: true
     exclude:
-    - Hash#slice
-    - Hash#slice!
-    - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
-    - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
-    - SidekiqUniqueJobs::Web::Helpers#redirect_to
+      - Hash#slice
+      - Hash#slice!
+      - SidekiqUniqueJobs::Lock::WhileExecuting#logging_context
+      - SidekiqUniqueJobs::Logging#with_configured_loggers_context
+      - SidekiqUniqueJobs::Logging::Middleware#logging_context
+      - SidekiqUniqueJobs::Middleware#with_configured_loggers_context
+      - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
+      - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
+      - SidekiqUniqueJobs::UpgradeLocks#logging_context
+      - SidekiqUniqueJobs::Web::Helpers#redirect_to
   MissingSafeMethod:
     exclude:
-    - Array
+      - Array
   NilCheck:
     enabled: false
-  DataClump:
-    enabled: true
-    exclude:
-      - SidekiqUniqueJobs::Util
-  FeatureEnvy:
-    exclude:
-    - SidekiqUniqueJobs::Digests#batch_delete
-    - SidekiqUniqueJobs::Digests#page
-    - SidekiqUniqueJobs::Logging#debug_item
-    - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
-    - SidekiqUniqueJobs::Util#batch_delete
-    - SidekiqUniqueJobs::Web::Helpers#cparams
   NestedIterators:
     exclude:
-    - SidekiqUniqueJobs::Digests#batch_delete
-    - SidekiqUniqueJobs::Locksmith#create_lock
-    - SidekiqUniqueJobs::Middleware#configure_client_middleware
-    - SidekiqUniqueJobs::Middleware#configure_server_middleware
-    - SidekiqUniqueJobs::Util#batch_delete
-    - SidekiqUniqueJobs::Util#keys_with_ttl
+      - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::BatchDelete#keys_for_digest
+      - SidekiqUniqueJobs::Changelog#entries
+      - SidekiqUniqueJobs::Changelog#page
+      - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::Locksmith#create_lock
+      - SidekiqUniqueJobs::Middleware#self.configure_client
+      - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::UpgradeLocks#keys_for_digest
+  RepeatedConditional:
+    exclude:
+      - SidekiqUniqueJobs::Locksmith
+  TooManyConstants:
+    exclude:
+      - SidekiqUniqueJobs
+  TooManyStatements:
+    exclude:
+      - Hash#slice
+      - initialize
+      - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::Changelog#entries
+      - SidekiqUniqueJobs::Changelog#page
+      - SidekiqUniqueJobs::DeleteOrphans#find_orphans
+      - SidekiqUniqueJobs::Digests#delete_by_pattern
+      - SidekiqUniqueJobs::Digests#entries
+      - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::Lock#lock
+      - SidekiqUniqueJobs::Lock::Info#set
+      - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::Locksmith#enqueue
+      - SidekiqUniqueJobs::Locksmith#lock
+      - SidekiqUniqueJobs::Locksmith#lock_async
+      - SidekiqUniqueJobs::Locksmith#lock_sync
+      - SidekiqUniqueJobs::Locksmith#set_lock_info
+      - SidekiqUniqueJobs::Locksmith#try_lock
+      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
+      - SidekiqUniqueJobs::Logging::Middleware#logging_context
+      - SidekiqUniqueJobs::Middleware#call
+      - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::Middleware#with_logging_context
+      - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
+      - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::Script#call
+      - SidekiqUniqueJobs::Script#handle_error
+      - SidekiqUniqueJobs::Script::Caller#call_script
+      - SidekiqUniqueJobs::Script::Caller#extract_args
+      - SidekiqUniqueJobs::ScriptError#generate_error_context
+      - SidekiqUniqueJobs::TimeCalculator#lock_ttl
+      - SidekiqUniqueJobs::UniqueArgs#filtered_args
+      - SidekiqUniqueJobs::UpgradeLocks#call
+      - SidekiqUniqueJobs::UpgradeLocks#upgrade_v6_lock
+      - SidekiqUniqueJobs::Web#self.registered
   TooManyInstanceVariables:
     exclude:
-    - SidekiqUniqueJobs::Locksmith
+      - SidekiqUniqueJobs::Key
+      - SidekiqUniqueJobs::Locksmith
   TooManyMethods:
     exclude:
-    - SidekiqUniqueJobs::Locksmith
-    - SidekiqUniqueJobs::Lock::BaseLock
+      - SidekiqUniqueJobs::Lock::BaseLock
+      - SidekiqUniqueJobs::Locksmith
+      - SidekiqUniqueJobs::Lock
+  UncommunicativeVariableName:
+    exclude:
+      - Hash#slice
+  UncommunicativeParameterName:
+    exclude:
+      - SidekiqUniqueJobs::Redis
+  UtilityFunction:
+    enabled: false

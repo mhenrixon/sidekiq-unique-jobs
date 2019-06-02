@@ -5,6 +5,10 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Logging
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
     # A convenience method for using the configured logger
     def logger
       SidekiqUniqueJobs.logger
@@ -16,6 +20,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_debug(message_or_exception = nil, &block)
       logger.debug(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at info level
@@ -24,6 +29,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_info(message_or_exception = nil, &block)
       logger.info(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at warn level
@@ -32,6 +38,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_warn(message_or_exception = nil, &block)
       logger.warn(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at error level
@@ -40,6 +47,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_error(message_or_exception = nil, &block)
       logger.error(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at fatal level
@@ -48,15 +56,51 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_fatal(message_or_exception = nil, &block)
       logger.fatal(message_or_exception, &block)
+      nil
     end
 
-    def logging_context(middleware_class, job_hash)
-      digest = job_hash["unique_digest"]
-      if defined?(Sidekiq::Logging)
-        "#{middleware_class} #{"DIG-#{digest}" if digest}"
-      else
-        { middleware: middleware_class, unique_digest: digest }
+    #
+    # Wraps the middleware logic with context aware logging
+    #
+    #
+    # @return [nil]
+    #
+    # @yieldreturn [void] yield to the middleware instance
+    def with_logging_context
+      with_configured_loggers_context do
+        return yield
       end
+      nil # Need to make sure we don't return anything here
+    end
+
+    #
+    # Attempt to setup context aware logging for the given logger
+    #
+    #
+    # @return [void] <description>
+    #
+    # @yield
+    #
+    def with_configured_loggers_context(&block)
+      if logger.respond_to?(:with_context)
+        logger.with_context(logging_context, &block)
+      elsif defined?(Sidekiq::Logging)
+        Sidekiq::Logging.with_context(logging_context, &block)
+      else
+        logger.warn "Don't know how to create the logging context. Please open a feature request: https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
+      end
+
+      nil
+    end
+
+    #
+    # Setup some variables to add to each log line
+    #
+    #
+    # @return [Hash] the context to use for each log line
+    #
+    def logging_context
+      raise NotImplementedError, "#{__method__} needs to be implemented in #{self.class}"
     end
   end
 end

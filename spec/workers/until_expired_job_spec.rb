@@ -5,7 +5,7 @@ RSpec.describe UntilExpiredJob do
   it_behaves_like "sidekiq with options" do
     let(:options) do
       {
-        "lock_expiration" => 1,
+        "lock_ttl" => 1,
         "lock_timeout" => 0,
         "retry" => true,
         "lock" => :until_expired,
@@ -42,11 +42,9 @@ RSpec.describe UntilExpiredJob do
       end
 
       it "sets keys to expire as per configuration" do
-        lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
-        unique_keys.each do |key|
-          next if key.include?(":GRABBED")
-
-          expect(ttl(key)).to be_within(1).of(lock_expiration + 60)
+        lock_ttl = described_class.get_sidekiq_options["lock_ttl"]
+        unique_keys.all? do |key|
+          expect(key).to have_ttl(lock_ttl + 60).within(10)
         end
       end
     end
@@ -77,11 +75,9 @@ RSpec.describe UntilExpiredJob do
       end
 
       it "sets keys to expire as per configuration" do
-        lock_expiration = described_class.get_sidekiq_options["lock_expiration"]
-        unique_keys.each do |key|
-          next if key.include?(":GRABBED")
-
-          expect(ttl(key)).to be_within(1).of(lock_expiration)
+        lock_ttl = described_class.get_sidekiq_options["lock_ttl"]
+        unique_keys.all? do |key|
+          expect(key).to have_ttl(lock_ttl).within(10)
         end
       end
     end

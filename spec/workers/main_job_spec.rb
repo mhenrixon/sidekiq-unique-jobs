@@ -5,7 +5,7 @@ RSpec.describe MainJob do
   it_behaves_like "sidekiq with options" do
     let(:options) do
       {
-        "log_duplicate_payload" => true,
+        "log_duplicate" => true,
         "queue" => :customqueue,
         "retry" => true,
         "lock" => :until_executed,

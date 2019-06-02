@@ -6,14 +6,11 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class Reject < OnConflict::Strategy
+      include SidekiqUniqueJobs::Timing
+
       # Send jobs to dead queue
       def call
-        log_debug { "Rejecting job with jid: #{item[JID_KEY]}" }
-        send_to_deadset
-      end
-
-      def send_to_deadset
-        log_info { "Adding dead #{item[CLASS_KEY]} job #{item[JID_KEY]}" }
+        log_info { "Adding dead #{item[CLASS]} job #{item[JID]}" }
 
         if deadset_kill?
           deadset_kill
@@ -22,10 +19,25 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Sidekiq version compatibility check
+      # @api private
+      #
+      #
+      # @return [true, false] depending on if Sidekiq::Deadset responds to kill
+      #
       def deadset_kill?
         deadset.respond_to?(:kill)
       end
 
+      #
+      # Use Sidekiqs built in Sidekiq::DeadSet#kill
+      #   to get rid of the job
+      # @api private
+      #
+      #
+      # @return [void]
+      #
       def deadset_kill
         if kill_with_options?
           kill_job_with_options
@@ -34,36 +46,70 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Sidekiq version compatibility check
+      # @api private
+      #
+      #
+      # @return [true] when Sidekiq::Deadset#kill takes more than 1 argument
+      # @return [false] when Sidekiq::Deadset#kill does not take multiple arguments
+      #
       def kill_with_options?
         Sidekiq::DeadSet.instance_method(:kill).arity > 1
       end
 
+      #
+      # Executes the kill instructions without arguments
+      # @api private
+      #
+      # @return [void]
+      #
       def kill_job_without_options
         deadset.kill(payload)
       end
 
+      #
+      # Executes the kill instructions with arguments
+      # @api private
+      #
+      # @return [void]
+      #
       def kill_job_with_options
         deadset.kill(payload, notify_failure: false)
       end
 
+      #
+      # An instance of Sidekiq::Deadset
+      # @api private
+      #
+      # @return [Sidekiq::Deadset]>
+      #
       def deadset
         @deadset ||= Sidekiq::DeadSet.new
       end
 
+      #
+      # Used for compatibility with older Sidekiq versions
+      #
+      #
+      # @return [void]
+      #
       def push_to_deadset
-        Sidekiq.redis do |conn|
+        redis do |conn|
           conn.multi do
-            conn.zadd("dead", current_time, payload)
-            conn.zremrangebyscore("dead", "-inf", current_time - Sidekiq::DeadSet.timeout)
+            conn.zadd("dead", now_f, payload)
+            conn.zremrangebyscore("dead", "-inf", now_f - Sidekiq::DeadSet.timeout)
             conn.zremrangebyrank("dead", 0, -Sidekiq::DeadSet.max_jobs)
           end
         end
       end
 
-      def current_time
-        @current_time ||= Time.now.to_f
-      end
-
+      #
+      # The Sidekiq job hash as JSON
+      #
+      #
+      # @return [String] a JSON formatted string
+      #
       def payload
         @payload ||= Sidekiq.dump_json(item)
       end

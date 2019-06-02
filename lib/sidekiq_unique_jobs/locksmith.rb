@@ -4,68 +4,115 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  # rubocop:disable ClassLength
-  class Locksmith
+  class Locksmith # rubocop:disable Metrics/ClassLength
+    # includes "SidekiqUniqueJobs::Connection"
+    # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
+
+    # includes "SidekiqUniqueJobs::Logging"
+    # @!parse include SidekiqUniqueJobs::Logging
+    include SidekiqUniqueJobs::Logging
+
+    # includes "SidekiqUniqueJobs::Timing"
+    # @!parse include SidekiqUniqueJobs::Timing
+    include SidekiqUniqueJobs::Timing
+
+    # includes "SidekiqUniqueJobs::Script::Caller"
+    # @!parse include SidekiqUniqueJobs::Script::Caller
+    include SidekiqUniqueJobs::Script::Caller
+
+    # includes "SidekiqUniqueJobs::JSON"
+    # @!parse include SidekiqUniqueJobs::JSON
+    include SidekiqUniqueJobs::JSON
+
+    CLOCK_DRIFT_FACTOR = 0.01
+
+    #
+    # @!attribute [r] key
+    #   @return [Key] the key used for locking
+    attr_reader :key
+    #
+    # @!attribute [r] job_id
+    #   @return [String] a sidekiq JID
+    attr_reader :job_id
+    #
+    # @!attribute [r] type
+    #   @return [Symbol] the type of lock see {SidekiqUniqueJobs.locks}
+    attr_reader :type
+    #
+    # @!attribute [r] timeout
+    #   @return [Integer, nil] the number of seconds to wait for lock
+    attr_reader :timeout
+    #
+    # @!attribute [r] limit
+    #   @return [Integer] the number of simultaneous locks
+    attr_reader :limit
+    #
+    # @!attribute [r] ttl
+    #   @return [Integer, nil] the number of seconds to keep the lock after processing
+    attr_reader :ttl
+    #
+    # @!attribute [r] pttl
+    #   @return [Integer, nil] the number of milliseconds to keep the lock after processing
+    attr_reader :pttl
+    #
+    # @!attribute [r] item
+    #   @return [Hash] a sidekiq job hash
+    attr_reader :item
 
     #
     # Initialize a new Locksmith instance
     #
     # @param [Hash] item a Sidekiq job hash
-    # @option item [Integer] :lock_expiration the configured expiration
+    # @option item [Integer] :lock_ttl the configured expiration
     # @option item [String] :jid the sidekiq job id
     # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)
-      # @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @ttl           = item[LOCK_EXPIRATION_KEY]
-      @jid           = item[JID_KEY]
-      @unique_digest = item[UNIQUE_DIGEST_KEY]
-      @lock_type     = item[LOCK_KEY]
-      @lock_type   &&= @lock_type.to_sym
-      @redis_pool    = redis_pool
+      @item        = item
+      @key         = Key.new(item[UNIQUE_DIGEST])
+      @job_id      = item[JID]
+      @timeout     = item.fetch(LOCK_TIMEOUT) { 0 }
+      @type        = item[LOCK]
+      @type      &&= @type.to_sym
+      @redis_pool  = redis_pool
+      @limit       = item[LOCK_LIMIT] || 1
+      @ttl         = item.fetch(LOCK_TTL) { item.fetch(LOCK_EXPIRATION) }.to_i
+      @pttl        = @ttl * 1000
     end
 
     #
-    # Deletes the lock unless it has a ttl set
+    # Deletes the lock unless it has a pttl set
     #
     #
     def delete
-      return if ttl
+      return if pttl.positive?
 
       delete!
     end
 
     #
-    # Deletes the lock regardless of if it has a ttl set
+    # Deletes the lock regardless of if it has a pttl set
     #
     def delete!
-      Scripts.call(
-        :delete,
-        redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
-      )
+      call_script(:delete, key.to_a, [job_id]).positive?
     end
 
     #
-    # Create a lock for the item
+    # Create a lock for the Sidekiq job
     #
-    # @param [Integer] timeout the number of seconds to wait for a lock.
+    # @return [String] the Sidekiq job_id that was locked/queued
     #
-    # @return [String] the Sidekiq job_id (jid)
-    #
-    def lock(timeout = nil, &block)
-      Scripts.call(:lock, redis_pool,
-                   keys: [exists_key, grabbed_key, available_key, UNIQUE_SET, unique_digest],
-                   argv: [jid, ttl, lock_type])
+    def lock(&block)
+      redis(redis_pool) do |conn|
+        return lock_async(conn, &block) if block_given?
 
-      grab_token(timeout) do |token|
-        touch_grabbed_token(token)
-        return_token_or_block_value(token, &block)
+        lock_sync(conn) do
+          return job_id
+        end
       end
     end
-    alias wait lock
 
     #
     # Removes the lock keys from Redis if locked by the provided jid/token
@@ -73,122 +120,249 @@ module SidekiqUniqueJobs
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     #
-    def unlock(token = nil)
-      token ||= jid
-      return false unless locked?(token)
+    def unlock(conn = nil)
+      return false unless locked?(conn)
 
-      unlock!(token)
+      unlock!(conn)
     end
 
     #
     # Removes the lock keys from Redis
     #
-    # @param [String] token the token to unlock (defaults to jid)
-    #
     # @return [false] unless locked?
     # @return [String] Sidekiq job_id (jid) if successful
     #
-    def unlock!(token = nil)
-      token ||= jid
+    def unlock!(conn = nil)
+      call_script(:unlock, key.to_a, argv, conn)
+    end
 
-      Scripts.call(
-        :unlock,
-        redis_pool,
-        keys: [exists_key, grabbed_key, available_key, version_key, UNIQUE_SET, unique_digest],
-        argv: [token, ttl, lock_type],
-      )
+    # Checks if this instance is considered locked
+    #
+    # @return [true, false] true when the :LOCKED hash contains the job_id
+    #
+    def locked?(conn = nil)
+      return taken?(conn) if conn
+
+      redis { |rcon| taken?(rcon) }
     end
 
     #
-    # @param [String] token the unique token to check for a lock.
-    #   nil will default to the jid provided in the initializer
+    # Nicely formatted string with information about self
+    #
+    #
+    # @return [String]
+    #
+    def to_s
+      "Locksmith##{object_id}(digest=#{key} job_id=#{job_id}, locked=#{locked?})"
+    end
+
+    #
+    # @see to_s
+    #
+    def inspect
+      to_s
+    end
+
+    #
+    # Compare this locksmith with another
+    #
+    # @param [Locksmith] other the locksmith to compare with
+    #
     # @return [true, false]
     #
-    # Checks if this instance is considered locked
-    #
-    # @param [<type>] token <description>
-    #
-    # @return [<type>] <description>
-    #
-    def locked?(token = nil)
-      token ||= jid
-
-      convert_legacy_lock(token)
-      redis(redis_pool) { |conn| conn.hexists(grabbed_key, token) }
+    def ==(other)
+      key == other.key && job_id == other.job_id
     end
 
     private
 
-    attr_reader :unique_digest, :ttl, :jid, :redis_pool, :lock_type
+    attr_reader :redis_pool
 
-    def convert_legacy_lock(token)
-      Scripts.call(
-        :convert_legacy_lock,
-        redis_pool,
-        keys: [grabbed_key, unique_digest],
-        argv: [token, current_time.to_f],
-      )
+    def argv
+      [job_id, pttl, type, limit]
     end
 
-    def grab_token(timeout = nil)
-      redis(redis_pool) do |conn|
-        if timeout.nil? || timeout.positive?
-          # passing timeout 0 to blpop causes it to block
-          _key, token = conn.blpop(available_key, timeout || 0)
-        else
-          token = conn.lpop(available_key)
+    #
+    # Used for runtime locks that need automatic unlock after yielding
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    # @yieldparam [String] job_id a Sidekiq JID
+    #
+    def lock_async(conn)
+      return yield job_id if locked?(conn)
+
+      enqueue(conn) do
+        primed_async(conn) do
+          locked_token = call_script(:lock, key.to_a, argv, conn)
+          return yield job_id if locked_token == job_id
         end
+      end
+    ensure
+      unlock!(conn)
+    end
 
-        return yield jid if token
+    #
+    # Pops an enqueued token
+    # @note Used for runtime locks to avoid problems with blocking commands
+    #   in current thread
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    def primed_async(conn)
+      return yield if Concurrent::Promises.future(conn) { |red_con| pop_queued(red_con) }.value
+
+      warn_about_timeout
+    end
+
+    #
+    # Used for non-runtime locks (no block was given)
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    # @yieldparam [String] job_id a Sidekiq JID
+    #
+    def lock_sync(conn)
+      return yield job_id if locked?(conn)
+
+      enqueue(conn) do
+        primed_sync(conn) do
+          locked_token = call_script(:lock, key.to_a, argv, conn)
+          return yield job_id if locked_token == job_id
+        end
       end
     end
 
-    def touch_grabbed_token(token)
-      redis(redis_pool) do |conn|
-        conn.hset(grabbed_key, token, current_time.to_f)
-        conn.expire(grabbed_key, ttl) if ttl && lock_type == :until_expired
+    #
+    # Pops an enqueued token
+    # @note Used for non-runtime locks
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when lock was not possible
+    # @return [Object] whatever the block returns when lock was acquired
+    #
+    def primed_sync(conn)
+      return yield if pop_queued(conn)
+
+      warn_about_timeout
+    end
+
+    #
+    # Does the actual popping of the enqueued token
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [String] a previously enqueued token (now taken off the queue)
+    #
+    def pop_queued(conn)
+      if timeout.nil? || timeout.positive?
+        brpoplpush(conn)
+      else
+        rpoplpush(conn)
       end
     end
 
-    def return_token_or_block_value(token)
-      return token unless block_given?
+    #
+    # @api private
+    #
+    def brpoplpush(conn)
+      # passing timeout 0 to brpoplpush causes it to block indefinitely
+      conn.brpoplpush(key.queued, key.primed, timeout: timeout || 0)
+    end
 
-      # The reason for begin is to only signal when we have a block
-      begin
-        yield token
-      ensure
-        unlock(token)
+    #
+    # @api private
+    #
+    def rpoplpush(conn)
+      conn.rpoplpush(key.queued, key.primed)
+    end
+
+    #
+    # Prepares all the various lock data
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when redis was already prepared for this lock
+    # @return [yield<String>] when successfully enqueued
+    #
+    def enqueue(conn)
+      queued_token, elapsed = timed do
+        call_script(:queue, key.to_a, argv, conn)
+      end
+
+      validity = pttl.to_i - elapsed - drift(pttl)
+
+      return unless queued_token && (validity >= 0 || pttl.zero?)
+
+      set_lock_info
+      yield queued_token
+    end
+
+    #
+    # Writes lock information to redis.
+    #   The lock information contains information about worker, queue, limit etc.
+    #
+    #
+    # @return [void]
+    #
+    def set_lock_info # rubocop:disable Metrics/MethodLength
+      return unless SidekiqUniqueJobs.config.lock_info
+
+      redis do |conn|
+        conn.multi do
+          conn.set(key.info,
+                   dump_json(
+                     WORKER => item[CLASS],
+                     QUEUE => item[QUEUE],
+                     LIMIT => item[LOCK_LIMIT],
+                     TIMEOUT => item[LOCK_TIMEOUT],
+                     TTL => item[LOCK_TTL],
+                     LOCK => type,
+                     UNIQUE_ARGS => item[UNIQUE_ARGS],
+                     "time" => now_f,
+                   ))
+          conn.pexpire(key.info, pttl) if type == :until_expired
+        end
       end
     end
 
-    def available_key
-      @available_key ||= namespaced_key("AVAILABLE")
+    #
+    # Used to combat redis imprecision with ttl/pttl
+    #
+    # @param [Integer] val the value to compute drift for
+    #
+    # @return [Integer] a computed drift value
+    #
+    def drift(val)
+      # Add 2 milliseconds to the drift to account for Redis expires
+      # precision, which is 1 millisecond, plus 1 millisecond min drift
+      # for small TTLs.
+      (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
     end
 
-    def exists_key
-      @exists_key ||= namespaced_key("EXISTS")
+    #
+    # Checks if the lock has been taken
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [true, false]
+    #
+    def taken?(conn)
+      conn.hexists(key.locked, job_id)
     end
 
-    def grabbed_key
-      @grabbed_key ||= namespaced_key("GRABBED")
-    end
-
-    def version_key
-      @version_key ||= namespaced_key("VERSION")
-    end
-
-    def namespaced_key(variable)
-      "#{unique_digest}:#{variable}"
-    end
-
-    def current_time
-      seconds, microseconds_with_frac = redis_time
-      Time.at(seconds, microseconds_with_frac)
-    end
-
-    def redis_time
-      redis(&:time)
+    def warn_about_timeout
+      log_warn("Timed out after #{timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
     end
   end
-  # rubocop:enable ClassLength
 end

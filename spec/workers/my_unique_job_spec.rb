@@ -6,7 +6,7 @@ RSpec.describe MyUniqueJob do
     let(:options) do
       {
         "lock" => :until_executed,
-        "lock_expiration" => 7_200,
+        "lock_ttl" => 7_200,
         "queue" => :customqueue,
         "retry" => 10,
       }
@@ -17,7 +17,7 @@ RSpec.describe MyUniqueJob do
     let(:args) { %w[one two] }
   end
 
-  describe "client middleware", redis: :redis do
+  describe "client middleware" do
     context "when job is delayed" do
       before { described_class.perform_in(3600, 1, 2) }
 
@@ -27,7 +27,7 @@ RSpec.describe MyUniqueJob do
         described_class.perform_in(3600, 1, 2)
         described_class.perform_in(3600, 1, 2)
         expect(1).to be_enqueued_in("customqueue")
-        expect(1).to be_enqueued_in("schedule")
+        expect(1).to be_scheduled
         expect(schedule_count).to eq(1)
         expect(1).to be_scheduled_at(Time.now.to_f + 2 * 3600)
       end

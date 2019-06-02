@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "sidekiq"
-
 module SidekiqUniqueJobs
   #
   # Provides the sidekiq middleware that makes the gem work
@@ -9,39 +7,84 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   module Middleware
-    def self.extended(base)
-      base.class_eval do
-        configure_middleware
-      end
+    include SidekiqUniqueJobs::Logging::Middleware
+    include SidekiqUniqueJobs::OptionsWithFallback
+    include SidekiqUniqueJobs::JSON
+
+    #
+    # Configure both server and client
+    #
+    def self.configure
+      configure_server
+      configure_client
     end
 
-    def configure_middleware
-      configure_server_middleware
-      configure_client_middleware
-    end
-
-    def configure_server_middleware
+    #
+    # Configures the Sidekiq server
+    #
+    def self.configure_server # rubocop:disable Metrics/MethodLength
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
-          require "sidekiq_unique_jobs/client/middleware"
-          chain.add SidekiqUniqueJobs::Client::Middleware
+          chain.add SidekiqUniqueJobs::Middleware::Client
         end
 
         config.server_middleware do |chain|
-          require "sidekiq_unique_jobs/server/middleware"
-          chain.add SidekiqUniqueJobs::Server::Middleware
+          chain.add SidekiqUniqueJobs::Middleware::Server
+        end
+
+        config.on(:startup) do
+          SidekiqUniqueJobs::UpdateVersion.call
+          SidekiqUniqueJobs::UpgradeLocks.call
+
+          SidekiqUniqueJobs::Orphans::Manager.start
+        end
+
+        config.on(:shutdown) do
+          SidekiqUniqueJobs::Orphans::Manager.stop
         end
       end
     end
 
-    def configure_client_middleware
+    #
+    # Configures the Sidekiq client
+    #
+    def self.configure_client
       Sidekiq.configure_client do |config|
         config.client_middleware do |chain|
-          require "sidekiq_unique_jobs/client/middleware"
-          chain.add SidekiqUniqueJobs::Client::Middleware
+          chain.add SidekiqUniqueJobs::Middleware::Client
         end
+      end
+    end
+
+    # The sidekiq job hash
+    # @return [Hash] the Sidekiq job hash
+    attr_reader :item
+
+    #
+    # This method runs before (prepended) the actual middleware implementation.
+    #   This is done to reduce duplication
+    #
+    # @param [Sidekiq::Worker] worker_class
+    # @param [Hash] item a sidekiq job hash
+    # @param [String] queue name of the queue
+    # @param [ConnectionPool] redis_pool only used for compatility reasons
+    #
+    # @return [yield<super>] <description>
+    #
+    # @yieldparam [<type>] if <description>
+    # @yieldreturn [<type>] <describe what yield should return>
+    def call(worker_class, item, queue, redis_pool = nil)
+      @worker_class = worker_class
+      @item         = item
+      @queue        = queue
+      @redis_pool   = redis_pool
+      return yield if unique_disabled?
+
+      SidekiqUniqueJobs::Job.add_uniqueness(item)
+
+      with_logging_context do
+        super
       end
     end
   end
 end
-SidekiqUniqueJobs.send(:extend, SidekiqUniqueJobs::Middleware)

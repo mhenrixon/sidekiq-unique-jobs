@@ -12,14 +12,23 @@ module SidekiqUniqueJobs
     # @param [Hash] item a Sidekiq job hash
     def unlock(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
-      SidekiqUniqueJobs::Locksmith.new(item).unlock
+      SidekiqUniqueJobs::Locksmith.new(item).unlock!
     end
 
-    # Deletes a lock regardless of if it was locked or not.
+    # Deletes a lock unless it has ttl
     #
     # This is good for situations when a job is locked by another item
     # @param [Hash] item a Sidekiq job hash
     def delete(item)
+      SidekiqUniqueJobs::UniqueArgs.digest(item)
+      SidekiqUniqueJobs::Locksmith.new(item).delete
+    end
+
+    # Deletes a lock regardless of if it was locked or has ttl.
+    #
+    # This is good for situations when a job is locked by another item
+    # @param [Hash] item a Sidekiq job hash
+    def delete!(item)
       SidekiqUniqueJobs::UniqueArgs.digest(item)
       SidekiqUniqueJobs::Locksmith.new(item).delete!
     end

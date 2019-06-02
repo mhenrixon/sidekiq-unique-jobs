@@ -5,7 +5,7 @@
 class WithoutArgumentJob
   include Sidekiq::Worker
   sidekiq_options lock: :until_executed,
-                  log_duplicate_payload: true
+                  log_duplicate: true
 
   def perform
     sleep 20

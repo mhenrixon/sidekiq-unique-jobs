@@ -13,6 +13,9 @@ module SidekiqUniqueJobs
     class WhileExecuting < BaseLock
       RUN_SUFFIX ||= ":RUN"
 
+      include SidekiqUniqueJobs::OptionsWithFallback
+      include SidekiqUniqueJobs::Logging::Middleware
+
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
@@ -33,14 +36,14 @@ module SidekiqUniqueJobs
       #   These jobs are locked in the server process not from the client
       # @yield to the worker class perform method
       def execute
-        return strategy.call unless locksmith.lock(item[LOCK_TIMEOUT_KEY])
-
-        yield
-      rescue Exception # rubocop:disable Lint/RescueException
-        delete!
-        raise
-      else
-        unlock_with_callback
+        with_logging_context do
+          return strategy.call unless locksmith.lock do
+            yield
+            callback_safely
+          end
+        end
+      ensure
+        locksmith.unlock
       end
 
       private
@@ -48,7 +51,7 @@ module SidekiqUniqueJobs
       # This is safe as the base_lock always creates a new digest
       #   The append there for needs to be done every time
       def append_unique_key_suffix
-        item[UNIQUE_DIGEST_KEY] = item[UNIQUE_DIGEST_KEY] + RUN_SUFFIX
+        item[UNIQUE_DIGEST] = item[UNIQUE_DIGEST] + RUN_SUFFIX
       end
     end
   end

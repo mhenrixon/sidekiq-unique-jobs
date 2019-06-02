@@ -11,11 +11,12 @@ module SidekiqUniqueJobs
 
     # Creates a connection to redis
     # @return [Sidekiq::RedisConnection, ConnectionPool] a connection to redis
-    def redis(redis_pool = nil)
-      if redis_pool
-        redis_pool.with { |conn| yield conn }
+    def redis(r_pool = nil, &block)
+      r_pool ||= defined?(redis_pool) ? redis_pool : r_pool
+      if r_pool
+        r_pool.with(&block)
       else
-        Sidekiq.redis { |conn| yield conn }
+        Sidekiq.redis(&block)
       end
     end
   end

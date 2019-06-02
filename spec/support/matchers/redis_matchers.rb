@@ -3,6 +3,18 @@
 require "rspec/expectations"
 require "rspec/eventually"
 
+RSpec::Matchers.define :have_enqueued do |number_of_jobs|
+  SidekiqUniqueJobs.redis do |_conn|
+    # @actual = conn.llen("queue:#{queue}")
+
+    match do |queue|
+      @actual = queue_count(queue)
+      @expected = number_of_jobs
+      @actual == @expected
+    end
+  end
+end
+
 RSpec::Matchers.define :be_enqueued_in do |queue|
   SidekiqUniqueJobs.redis do |conn|
     @actual = conn.llen("queue:#{queue}")
@@ -10,46 +22,44 @@ RSpec::Matchers.define :be_enqueued_in do |queue|
       @expected = count_in_queue
       expect(@actual).to eq(@expected)
     end
-    diffable
+  end
+end
+
+RSpec::Matchers.define :be_scheduled do |_queue|
+  SidekiqUniqueJobs.redis do |conn|
+    @actual = conn.llen("queue:schedule")
+    match do |count_in_queue|
+      @expected = count_in_queue
+      expect(@actual).to eq(@expected)
+    end
   end
 end
 
 RSpec::Matchers.define :be_scheduled_at do |time|
   SidekiqUniqueJobs.redis do |conn|
     @actual = conn.zcount("schedule", -1, time)
-
     match do |count_in_queue|
       @expected = count_in_queue
-      expect(@actual).to eq(@expected)
+      @actual == @expected
     end
-    diffable
   end
 end
 
-RSpec::Matchers.define :have_key do |_unique_key|
-  SidekiqUniqueJobs.redis do |conn|
-    match do |_unique_jobs|
-      @value       = conn.get(@unique_key)
-      @ttl         = conn.ttl(@unique_key)
-
-      @value && with_value && for_seconds
+RSpec::Matchers.define :have_ttl do |seconds|
+  @within = 0
+  match do |key|
+    @ttl = ttl(key)
+    if @within
+      @actual = "#{key} with ttl(#{@ttl} +- #{@within})"
+      @range = ((seconds - @within)...(seconds + @within))
+      @range.cover?(@ttl) ||
+        (@within.between?(0, 1) && seconds.between?(0, 1)) # weird edge case
+    else
+      @actual = "#{key} with ttl(#{@ttl})"
+      @ttl == seconds
     end
-
-    chain :with_value do |value = nil|
-      @expected_value = value
-      @expected_value && @value == @expected_value
-    end
-
-    chain :for_seconds do |ttl = nil|
-      @expected_ttl = ttl
-      @expected_ttl && @ttl == @expected_ttl
-    end
-
-    failure_message do |_actual|
-      msg = "expected Redis to have key #{@unique_key}"
-      msg += " with value #{@expected_value} was (#{@value})" if @expected_value
-      msg += " with value #{@expected_ttl} was (#{@ttl})" if @expected_ttl
-      msg
-    end
+  end
+  chain :within do |within|
+    @within = within
   end
 end

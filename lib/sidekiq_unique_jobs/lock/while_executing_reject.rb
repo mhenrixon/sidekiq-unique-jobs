@@ -14,7 +14,7 @@ module SidekiqUniqueJobs
       # Overridden with a forced {OnConflict::Reject} strategy
       # @return [OnConflict::Reject] a reject strategy
       def strategy
-        @strategy ||= OnConflict.find_strategy(:reject).new(item)
+        @strategy ||= OnConflict.find_strategy(:reject).new(item, redis_pool)
       end
     end
   end

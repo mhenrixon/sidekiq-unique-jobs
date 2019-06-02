@@ -14,38 +14,46 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   module Web
-    def self.registered(app) # rubocop:disable Metrics/MethodLength
+    def self.registered(app) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       app.helpers do
         include Web::Helpers
       end
 
-      app.get "/unique_digests" do
+      app.get "/locks" do
         @filter         = params[:filter] || "*"
         @filter         = "*" if @filter == ""
         @count          = (params[:count] || 100).to_i
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
-        @total_size, @next_cursor, @unique_digests =
-          Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
+        @pagination     = { pattern: @filter, cursor: @current_cursor, page_size: @count }
+        @total_size, @next_cursor, @locks = digests.page(@pagination)
 
-        erb(unique_template(:unique_digests))
+        erb(unique_template(:locks))
       end
 
-      app.get "/unique_digests/delete_all" do
-        Digests.del(pattern: "*", count: Digests.count)
-        redirect_to :unique_digests
+      app.get "/locks/delete_all" do
+        digests.del(pattern: "*", count: digests.count)
+        redirect_to :locks
       end
 
-      app.get "/unique_digests/:digest" do
+      app.get "/locks/:digest" do
         @digest = params[:digest]
-        @unique_keys = Util.keys("#{@digest}*", 1000)
+        @lock   = SidekiqUniqueJobs::Lock.new(@digest)
 
-        erb(unique_template(:unique_digest))
+        erb(unique_template(:lock))
       end
 
-      app.get "/unique_digests/:digest/delete" do
-        Digests.del(digest: params[:digest])
-        redirect_to :unique_digests
+      app.get "/locks/:digest/delete" do
+        digests.del(digest: params[:digest])
+        redirect_to :locks
+      end
+
+      app.get "/locks/:digest/jobs/:job_id/delete" do
+        @digest = params[:digest]
+        @lock   = SidekiqUniqueJobs::Lock.new(@digest)
+        @lock.unlock(params[:job_id])
+
+        redirect_to "locks/#{@lock.key}"
       end
     end
   end
@@ -53,6 +61,6 @@ end
 
 if defined?(Sidekiq::Web)
   Sidekiq::Web.register SidekiqUniqueJobs::Web
-  Sidekiq::Web.tabs["Unique Digests"] = "unique_digests"
-  # Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), 'locales')
+  Sidekiq::Web.tabs["Locks"] = "locks"
+  Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")
 end

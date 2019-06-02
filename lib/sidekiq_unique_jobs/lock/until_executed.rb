@@ -13,11 +13,11 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        if locked?
-          with_cleanup { yield }
-        else
-          log_warn "the unique_key: #{item[UNIQUE_DIGEST_KEY]} is not locked, allowing job to silently complete"
-          nil
+        lock do
+          yield
+          unlock_with_callback
+          callback_safely
+          item[JID]
         end
       end
     end

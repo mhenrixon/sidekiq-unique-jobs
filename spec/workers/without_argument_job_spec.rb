@@ -5,7 +5,7 @@ RSpec.describe WithoutArgumentJob do
   it_behaves_like "sidekiq with options" do
     let(:options) do
       {
-        "log_duplicate_payload" => true,
+        "log_duplicate" => true,
         "retry" => true,
         "lock" => :until_executed,
       }

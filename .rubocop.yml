@@ -20,6 +20,10 @@ AllCops:
     - "Gemfile.lock"
     - "**/*.erb"
     - "gemfiles/**/*"
+    - "bin/bench"
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
@@ -77,8 +81,9 @@ RSpec/AlignLeftLetBrace:
 
 RSpec/DescribeClass:
   Exclude:
-    - spec/unit/sidekiq_unique_jobs/sidekiq/api_spec.rb
-    - spec/unit/sidekiq_unique_jobs/core_ext_spec.rb
+    - spec/sidekiq/api_spec.rb
+    - spec/sidekiq_unique_jobs/core_ext_spec.rb
+    - spec/sidekiq_unique_jobs/lua/**/*_spec.rb
 
 RSpec/ExampleLength:
   Enabled: false
@@ -87,14 +92,15 @@ RSpec/ExpectActual:
   Enabled: false
 
 RSpec/ExpectChange:
-  Exclude:
-    - spec/integration/sidekiq_unique_jobs/lock/**/*_spec.rb
+  EnforcedStyle: block
 
 RSpec/FilePath:
   Enabled: true
-RSpec/MessageSpies:
+
+RSpec/InstanceVariable:
   Exclude:
-    - spec/unit/sidekiq_unique_jobs/scripts_spec.rb
+    - spec/sidekiq_unique_jobs/middleware/client/call_spec.rb
+    - spec/sidekiq_unique_jobs/middleware/server/call_spec.rb
 
 RSpec/MultipleExpectations:
   Enabled: false
@@ -105,7 +111,7 @@ RSpec/NestedGroups:
 
 RSpec/RepeatedExample:
   Exclude:
-    - spec/unit/sidekiq_unique_jobs/unique_args_spec.rb
+    - spec/sidekiq_unique_jobs/unique_args_spec.rb
 
 Style/Documentation:
   Enabled: true

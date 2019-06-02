@@ -10,7 +10,7 @@ class UntilExecutedJob
   include Sidekiq::Worker
   sidekiq_options backtrace: 10,
                   lock: :until_executed,
-                  lock_expiration: 5_000,
+                  lock_ttl: 5_000,
                   lock_timeout: 0,
                   queue: :working,
                   retry: 1

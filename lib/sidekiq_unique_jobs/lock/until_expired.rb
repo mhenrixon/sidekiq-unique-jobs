@@ -20,10 +20,10 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        return unless locked?
-
-        yield
-        # this lock does not handle after_unlock since we don't know when that would happen
+        locksmith.lock do
+          yield
+          # this lock does not handle after_unlock since we don't know when that would happen
+        end
       end
     end
   end
