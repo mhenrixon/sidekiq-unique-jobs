@@ -24,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs do
 
     let(:queue)     { :customqueue }
     let(:lock_type) { :foobar }
-    let(:digest)    { "1234567890" }
+    let(:digest)    { "uniquejobs:1234567890" }
     let(:jid)       { "randomjid" }
     let(:ttl)       { nil }
     let(:item) do

@@ -815,7 +815,7 @@ module SidekiqUniqueJobs
     end
 
     def unique_keys
-      keys("uniquejobs:*")
+      keys("uniquejobs:*") - [SidekiqUniqueJobs::CHANGELOGS, SidekiqUniqueJobs::DIGESTS]
     end
 
     def changelogs

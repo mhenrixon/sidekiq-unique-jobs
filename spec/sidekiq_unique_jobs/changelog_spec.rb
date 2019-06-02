@@ -4,7 +4,7 @@ require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Changelog do
   let(:entity) { described_class.new }
-  let(:digest) { SecureRandom.hex(12) }
+  let(:digest) { "uniquejobs:#{SecureRandom.hex(12)}" }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:job_id) { SecureRandom.hex(12) }
 

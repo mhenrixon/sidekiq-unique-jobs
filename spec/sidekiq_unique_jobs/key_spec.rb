@@ -5,8 +5,8 @@ require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Key do
   subject(:key) { described_class.new(digest_one) }
 
-  let(:digest_one) { "abcdefab" }
-  let(:digest_two) { "12334556" }
+  let(:digest_one) { "uniquejobs:abcdefab" }
+  let(:digest_two) { "uniquejobs:12334556" }
 
   let(:key_two) { described_class.new(digest_two) }
 
@@ -26,8 +26,8 @@ RSpec.describe SidekiqUniqueJobs::Key do
         #{digest_one}:PRIMED
         #{digest_one}:LOCKED
         #{digest_one}:INFO
-        unique:changelog
-        unique:digests
+        uniquejobs:changelog
+        uniquejobs:digests
       ],
     )
   end

@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Redis::Hash do
   let(:entity) { described_class.new(key) }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
-  let(:digest) { SecureRandom.hex(12) }
+  let(:digest) { "digest:#{SecureRandom.hex(12)}" }
   let(:job_id) { SecureRandom.hex(12) }
 
   let!(:now_f) { SidekiqUniqueJobs.now_f }
