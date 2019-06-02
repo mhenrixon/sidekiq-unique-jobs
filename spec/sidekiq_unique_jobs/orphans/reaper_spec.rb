@@ -4,14 +4,27 @@ require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
   let(:service)  { redis { |conn| described_class.new(conn) } }
-  let(:digest)   { "digest" }
+  let(:digest)   { "uniquejobs:digest" }
   let(:job_id)   { "job_id" }
   let(:item)     { raw_item }
+  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
+  let(:lock_info) do
+    {
+      "job_id" => job_id,
+      "limit" => 1,
+      "lock" => :while_executing,
+      "time" => now_f,
+      "timeout" => nil,
+      "ttl" => nil,
+      "unique_args" => [],
+      "worker" => "MyUniqueJob",
+    }
+  end
 
   before do
     SidekiqUniqueJobs.disable!
-    digests.add(digest)
+    lock
   end
 
   after do
@@ -71,15 +84,14 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
       end
     end
 
-    before { digests.add(digest) }
-
     shared_examples "deletes orphans" do
       context "when scheduled" do
         let(:item) { raw_item.merge("at" => Time.now.to_f + 3_600) }
 
         context "without scheduled job" do
-          it "keeps the digest" do
+          it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
+            expect(unique_keys).to match_array([])
           end
         end
 
@@ -88,6 +100,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           it "keeps the digest" do
             expect { call }.not_to change { digests.count }.from(1)
+            expect(unique_keys).not_to match_array([])
           end
         end
       end
@@ -96,8 +109,9 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         let(:item) { raw_item.merge("retry_count" => 2, "failed_at" => now_f) }
 
         context "without job in retry" do
-          it "keeps the digest" do
+          it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
+            expect(unique_keys).to match_array([])
           end
         end
 
@@ -106,14 +120,16 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           it "keeps the digest" do
             expect { call }.not_to change { digests.count }.from(1)
+            expect(unique_keys).not_to match_array([])
           end
         end
       end
 
       context "when digest exists in a queue" do
         context "without enqueued job" do
-          it "keeps the digest" do
+          it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
+            expect(unique_keys).to match_array([])
           end
         end
 
@@ -122,6 +138,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           it "keeps the digest" do
             expect { call }.not_to change { digests.count }.from(1)
+            expect(unique_keys).not_to match_array([])
           end
         end
       end
