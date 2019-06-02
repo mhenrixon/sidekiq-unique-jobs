@@ -144,7 +144,7 @@ module SidekiqUniqueJobs
       if logger.respond_to?(:with_context)
         { "uniquejobs" => :upgrade_locks }
       else
-        "uniquejobs-#{upgrade_locks}"
+        "uniquejobs-upgrade_locks"
       end
     end
   end
