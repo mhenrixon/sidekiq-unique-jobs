@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::Info do
   subject(:entity) { described_class.new(key) }
 
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
-  let(:digest) { SecureRandom.hex(12) }
+  let(:digest) { "digest:#{SecureRandom.hex(12)}" }
 
   describe "#value" do
     subject(:value) { entity.value }

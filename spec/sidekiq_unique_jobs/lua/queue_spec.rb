@@ -13,15 +13,15 @@ RSpec.describe "queue.lua" do
       lock_limit,
     ]
   end
-  let(:digest) { "uniquejobs:digest" }
-  let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
-  let(:job_id_one)   { "job_id_one" }
-  let(:job_id_two)   { "job_id_two" }
-  let(:lock_type)    { :until_executed }
-  let(:lock_pttl)    { nil }
-  let(:locked_jid)   { job_id }
-  let(:lock_limit)   { 1 }
-  let(:now_f)        { SidekiqUniqueJobs.now_f }
+  let(:digest)     { "uniquejobs:digest" }
+  let(:key)        { SidekiqUniqueJobs::Key.new(digest) }
+  let(:job_id_one) { "job_id_one" }
+  let(:job_id_two) { "job_id_two" }
+  let(:lock_type)  { :until_executed }
+  let(:lock_pttl)  { nil }
+  let(:locked_jid) { job_id }
+  let(:lock_limit) { 1 }
+  let(:now_f)      { SidekiqUniqueJobs.now_f }
 
   before do
     flush_redis
