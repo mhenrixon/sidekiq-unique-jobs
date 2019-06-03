@@ -93,8 +93,13 @@ module SidekiqUniqueJobs
         SCRIPT_SHAS.delete(file_name)
         return yield if block_given?
       when "BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE."
-        conn.script(:kill)
-        return yield if block_given?
+        begin
+          conn.script(:kill)
+          return yield if block_given?
+        rescue ::Redis::CommandError => ex
+          log_warn(ex)
+          return yield if block_given?
+        end
       end
 
       raise unless ScriptError.intercepts?(ex)
