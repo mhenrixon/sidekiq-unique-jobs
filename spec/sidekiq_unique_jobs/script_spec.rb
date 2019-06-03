@@ -64,15 +64,34 @@ RSpec.describe SidekiqUniqueJobs::Script do
 
         before do
           allow(Redis).to receive(:new).and_return(redis)
-          allow(redis).to receive(:script).with(:kill).and_return(true)
         end
 
-        specify do
-          expect { call }.not_to raise_error
+        # rubocop:disable RSpec/NestedGroups
+        context "when .script(:kill) raises CommandError" do
+          before do
+            allow(redis).to receive(:script).with(:kill) { raise Redis::CommandError, "NOT BUSY" }
+            allow(described_class).to receive(:log_warn)
+          end
 
-          expect(redis).to have_received(:script).with(:kill)
-          expect(described_class).to have_received(:execute_script).with(script_name, redis, keys, argv).twice
+          specify do
+            expect { call }.not_to raise_error
+            expect(described_class).to have_received(:log_warn).with(kind_of(Redis::CommandError))
+            expect(described_class).to have_received(:execute_script).with(script_name, redis, keys, argv).twice
+          end
         end
+
+        context "when .script(:kill) is successful" do
+          before { allow(redis).to receive(:script).with(:kill).and_return(true) }
+
+          specify do
+            expect { call }.not_to raise_error
+
+            expect(redis).to have_received(:script).with(:kill)
+            expect(described_class).to have_received(:execute_script).with(script_name, redis, keys, argv).twice
+          end
+        end
+
+        # rubocop:enable RSpec/NestedGroups
       end
 
       context "when error message is No matching script" do
