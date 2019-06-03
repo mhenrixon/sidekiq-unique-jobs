@@ -32,6 +32,7 @@ detectors:
       - SidekiqUniqueJobs::Lock#del
       - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#set_lock_info
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
@@ -112,7 +113,7 @@ detectors:
       - SidekiqUniqueJobs::Digests#entries
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Lock#lock
-      - SidekiqUniqueJobs::Lock::Info#set
+      - SidekiqUniqueJobs::LockInfo#set
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock
@@ -140,6 +141,7 @@ detectors:
   TooManyInstanceVariables:
     exclude:
       - SidekiqUniqueJobs::Key
+      - SidekiqUniqueJobs::LockConfig
       - SidekiqUniqueJobs::Locksmith
   TooManyMethods:
     exclude:
