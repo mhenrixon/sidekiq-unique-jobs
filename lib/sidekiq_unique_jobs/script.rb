@@ -87,7 +87,7 @@ module SidekiqUniqueJobs
     # @return [void]
     #
     # @yieldreturn [void] yields back to the caller when NOSCRIPT is raised
-    def handle_error(ex, file_name, conn)
+    def handle_error(ex, file_name, conn) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
       case ex.message
       when "NOSCRIPT No matching script. Please use EVAL."
         SCRIPT_SHAS.delete(file_name)
