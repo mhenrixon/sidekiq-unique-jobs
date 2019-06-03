@@ -215,7 +215,7 @@ module SidekiqUniqueJobs
     # @return [Redis::Hash] with lock information
     #
     def info
-      @info ||= Lock::Info.new(key.info)
+      @info ||= LockInfo.new(key.info)
     end
 
     #
