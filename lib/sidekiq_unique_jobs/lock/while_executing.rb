@@ -16,6 +16,10 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::OptionsWithFallback
       include SidekiqUniqueJobs::Logging::Middleware
 
+      def self.validate_options(options = {})
+        options
+      end
+
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback callback to call after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection

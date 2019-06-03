@@ -70,6 +70,12 @@ module Sidekiq
     # Prepends deletion of locks to clear_all
     #
     module Overrides
+      def sidekiq_options(options = {})
+        SidekiqUniqueJobs.validate_worker!(options) if options[:lock]
+
+        super(options)
+      end
+
       #
       # Clears all jobs for this worker and removes all locks
       #
