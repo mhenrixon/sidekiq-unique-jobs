@@ -10,6 +10,17 @@ module SidekiqUniqueJobs
   end
 
   #
+  # Raised when a workers configuration is invalid
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
+  class InvalidWorker < UniqueJobsError
+    def initialize(options: {})
+      @config = LockConfig.new(options)
+    end
+  end
+
+  #
   # Error raised when an invalid argument is given
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>

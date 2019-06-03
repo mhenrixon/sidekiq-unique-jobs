@@ -197,4 +197,26 @@ module SidekiqUniqueJobs
   def now
     Time.now
   end
+
+  #
+  # Checks that the worker is valid with the given options
+  #
+  # @param [Hash] options the `sidekiq_options` to validate
+  #
+  # @return [Boolean]
+  #
+  def validate_worker(options)
+    return true unless options[:lock]
+  end
+
+  #
+  # Checks that the worker is valid with the given options
+  #
+  # @param [Hash] options the `sidekiq_options` to validate
+  #
+  # @raise [InvalidWorker] when {#validate_worker} returns false or nil
+  #
+  def validate_worker!(options)
+    raise InvalidWorker, options: options unless validate_worker(options)
+  end
 end
