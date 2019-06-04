@@ -87,14 +87,19 @@ module SidekiqUniqueJobs
     # @return [void]
     #
     # @yieldreturn [void] yields back to the caller when NOSCRIPT is raised
-    def handle_error(ex, file_name, conn)
+    def handle_error(ex, file_name, conn) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
       case ex.message
       when "NOSCRIPT No matching script. Please use EVAL."
         SCRIPT_SHAS.delete(file_name)
         return yield if block_given?
       when "BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE."
-        conn.script(:kill)
-        return yield if block_given?
+        begin
+          conn.script(:kill)
+          return yield if block_given?
+        rescue ::Redis::CommandError => ex
+          log_warn(ex)
+          return yield if block_given?
+        end
       end
 
       raise unless ScriptError.intercepts?(ex)

@@ -30,7 +30,7 @@ RSpec.describe SidekiqUniqueJobs::TimeCalculator do
 
       it do
         Timecop.travel(Time.at(now_in_utc)) do
-          expect(time_until_scheduled).to be_within(1).of(schedule_time - now_in_utc)
+          expect(time_until_scheduled).to be_within(10).of(schedule_time - now_in_utc)
         end
       end
     end
