@@ -37,7 +37,7 @@ local del_cmd   = "DEL"
 
 if tonumber(redis_ver["major"]) >= 4 then del_cmd = "UNLINK"; end
 
-while(index <= reaper_count) do
+repeat
   log_debug("Interating through:", digests_set, "for orphaned locks")
   local digests  = redis.call("ZREVRANGE", digests_set, index, index + per -1)
 
@@ -79,7 +79,7 @@ while(index <= reaper_count) do
   end
 
   index = index + per
-end
+until index >= total or del_count >= reaper_count
 
 log_debug("END")
 return del_count

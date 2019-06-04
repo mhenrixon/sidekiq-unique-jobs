@@ -17,3 +17,5 @@ my_app/spec/examples.txt
 tmp/
 
 /OLD_README.md
+
+/Gemfile.local
