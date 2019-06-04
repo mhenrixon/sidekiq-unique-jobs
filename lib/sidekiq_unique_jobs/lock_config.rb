@@ -37,6 +37,14 @@ module SidekiqUniqueJobs
     #   @return [Symbol, Hash<Symbol, Symbol>] the strategies to use as conflict resolution
     attr_reader :on_conflict
     #
+    # @!attribute [r] on_client_conflict
+    #   @return [Symbol] the strategy to use as conflict resolution from sidekiq client
+    attr_reader :on_client_conflict
+    #
+    # @!attribute [r] on_server_conflict
+    #   @return [Symbol] the strategy to use as conflict resolution from sidekiq server
+    attr_reader :on_server_conflict
+    #
     # @!attribute [r] errors
     #   @return [Array<Hash<Symbol, Array<String>] a collection of configuration errors
     attr_reader :errors
@@ -54,6 +62,8 @@ module SidekiqUniqueJobs
       @lock_info   = job_hash.fetch(LOCK_INFO) { SidekiqUniqueJobs.config.lock_info }
       @on_conflict = job_hash[ON_CONFLICT]
       @errors      = job_hash[ERRORS]
+      @on_client_conflict = job_hash[ON_CLIENT_CONFLICT]
+      @on_server_conflict = job_hash[ON_SERVER_CONFLICT]
     end
 
     def wait_for_lock?

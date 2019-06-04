@@ -17,7 +17,9 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::Logging::Middleware
 
       def self.validate_options(options = {})
-        options
+        options[:errors] ||= []
+
+        ServerValidator.validate(options)
       end
 
       # @param [Hash] item the Sidekiq job hash
