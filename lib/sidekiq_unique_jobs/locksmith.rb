@@ -36,25 +36,9 @@ module SidekiqUniqueJobs
     #   @return [String] a sidekiq JID
     attr_reader :job_id
     #
-    # @!attribute [r] type
-    #   @return [Symbol] the type of lock see {SidekiqUniqueJobs.locks}
-    attr_reader :type
-    #
-    # @!attribute [r] timeout
-    #   @return [Integer, nil] the number of seconds to wait for lock
-    attr_reader :timeout
-    #
-    # @!attribute [r] limit
-    #   @return [Integer] the number of simultaneous locks
-    attr_reader :limit
-    #
-    # @!attribute [r] ttl
-    #   @return [Integer, nil] the number of seconds to keep the lock after processing
-    attr_reader :ttl
-    #
-    # @!attribute [r] pttl
-    #   @return [Integer, nil] the number of milliseconds to keep the lock after processing
-    attr_reader :pttl
+    # @!attribute [r] config
+    #   @return [LockConfig] the configuration for this lock
+    attr_reader :config
     #
     # @!attribute [r] item
     #   @return [Hash] a sidekiq job hash
@@ -73,13 +57,8 @@ module SidekiqUniqueJobs
       @item        = item
       @key         = Key.new(item[UNIQUE_DIGEST])
       @job_id      = item[JID]
-      @timeout     = item.fetch(LOCK_TIMEOUT) { 0 }
-      @type        = item[LOCK]
-      @type      &&= @type.to_sym
+      @config      = LockConfig.new(item)
       @redis_pool  = redis_pool
-      @limit       = item[LOCK_LIMIT] || 1
-      @ttl         = item.fetch(LOCK_TTL) { item.fetch(LOCK_EXPIRATION) }.to_i
-      @pttl        = @ttl * 1000
     end
 
     #
@@ -87,7 +66,7 @@ module SidekiqUniqueJobs
     #
     #
     def delete
-      return if pttl.positive?
+      return if config.pttl.positive?
 
       delete!
     end
@@ -179,7 +158,7 @@ module SidekiqUniqueJobs
     attr_reader :redis_pool
 
     def argv
-      [job_id, pttl, type, limit]
+      [job_id, config.pttl, config.type, config.limit]
     end
 
     #
@@ -265,7 +244,7 @@ module SidekiqUniqueJobs
     # @return [String] a previously enqueued token (now taken off the queue)
     #
     def pop_queued(conn)
-      if timeout.nil? || timeout.positive?
+      if config.wait_for_lock?
         brpoplpush(conn)
       else
         rpoplpush(conn)
@@ -277,7 +256,7 @@ module SidekiqUniqueJobs
     #
     def brpoplpush(conn)
       # passing timeout 0 to brpoplpush causes it to block indefinitely
-      conn.brpoplpush(key.queued, key.primed, timeout: timeout || 0)
+      conn.brpoplpush(key.queued, key.primed, timeout: config.timeout || 0)
     end
 
     #
@@ -300,11 +279,11 @@ module SidekiqUniqueJobs
         call_script(:queue, key.to_a, argv, conn)
       end
 
-      validity = pttl.to_i - elapsed - drift(pttl)
+      validity = config.pttl - elapsed - drift(config.pttl)
 
-      return unless queued_token && (validity >= 0 || pttl.zero?)
+      return unless queued_token && (validity >= 0 || config.pttl.zero?)
 
-      set_lock_info
+      write_lock_info(conn)
       yield queued_token
     end
 
@@ -315,25 +294,10 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def set_lock_info # rubocop:disable Metrics/MethodLength
-      return unless SidekiqUniqueJobs.config.lock_info
+    def write_lock_info(conn)
+      return unless config.lock_info
 
-      redis do |conn|
-        conn.multi do
-          conn.set(key.info,
-                   dump_json(
-                     WORKER => item[CLASS],
-                     QUEUE => item[QUEUE],
-                     LIMIT => item[LOCK_LIMIT],
-                     TIMEOUT => item[LOCK_TIMEOUT],
-                     TTL => item[LOCK_TTL],
-                     LOCK => type,
-                     UNIQUE_ARGS => item[UNIQUE_ARGS],
-                     "time" => now_f,
-                   ))
-          conn.pexpire(key.info, pttl) if type == :until_expired
-        end
-      end
+      conn.set(key.info, lock_info)
     end
 
     #
@@ -362,7 +326,20 @@ module SidekiqUniqueJobs
     end
 
     def warn_about_timeout
-      log_warn("Timed out after #{timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+      log_warn("Timed out after #{config.timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+    end
+
+    def lock_info
+      @lock_info ||= dump_json(
+        WORKER => item[CLASS],
+        QUEUE => item[QUEUE],
+        LIMIT => item[LOCK_LIMIT],
+        TIMEOUT => item[LOCK_TIMEOUT],
+        TTL => item[LOCK_TTL],
+        LOCK => config.type,
+        UNIQUE_ARGS => item[UNIQUE_ARGS],
+        TIME => now_f,
+      )
     end
   end
 end
