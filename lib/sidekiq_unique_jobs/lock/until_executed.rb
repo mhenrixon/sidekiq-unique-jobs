@@ -8,10 +8,6 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class UntilExecuted < BaseLock
-      def self.validate_options(options = {})
-        options
-      end
-
       OK ||= "OK"
 
       # Executes in the Sidekiq server process

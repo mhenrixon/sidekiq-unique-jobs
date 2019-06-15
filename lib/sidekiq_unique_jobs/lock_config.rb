@@ -53,7 +53,7 @@ module SidekiqUniqueJobs
       @pttl        = ttl * 1_000
       @lock_info   = job_hash.fetch(LOCK_INFO) { SidekiqUniqueJobs.config.lock_info }
       @on_conflict = job_hash[ON_CONFLICT]
-      @errors      = job_hash[ERRORS]
+      @errors      = job_hash[ERRORS] || {}
 
       @on_client_conflict = job_hash[ON_CLIENT_CONFLICT]
       @on_server_conflict = job_hash[ON_SERVER_CONFLICT]

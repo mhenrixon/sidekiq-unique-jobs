@@ -13,13 +13,6 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     class UntilAndWhileExecuting < BaseLock
-      def self.validate_options(options = {})
-        options[:errors] ||= []
-
-        ClientValidator.validate(options)
-        ServerValidator.validate(options)
-      end
-
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
