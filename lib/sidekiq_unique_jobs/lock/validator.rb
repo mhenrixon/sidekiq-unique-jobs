@@ -1,6 +1,13 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   class Lock
-    class ServerValidator < Validator
+    #
+    # Validator base class to avoid some duplication
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
+    class Validator < Validator
       #
       # Shorthand for `new(options).validate`
       #

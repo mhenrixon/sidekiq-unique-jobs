@@ -1,15 +1,26 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   class Lock
+    #
+    # Validates the sidekiq options for the Sidekiq server process
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     class ServerValidator < Validator
-      INVALID_ON_SERVER_CONFLICTS = %i[
-        replace
-      ]
+      #
+      # @return [Array<Symbol>] a collection of invalid conflict resolutions
+      INVALID_ON_CONFLICTS = [:replace].freeze
 
+      #
+      # Validates the sidekiq options for the Sidekiq server process
+      #
+      #
       def validate
-        on_server_conflict = config.on_server_conflict
-        if INVALID_ON_SERVER_CONFLICTS.include?(on_server_conflict)
-          options[:errors][:on_server_conflict] = "#{on_server_conflict} is incompatible with the server process"
-        end
+        on_conflict = config.on_server_conflict
+        return unless INVALID_ON_CONFLICTS.include?(on_conflict)
+
+        options[:errors][:on_server_conflict] = "#{on_conflict} is incompatible with the server process"
       end
     end
   end
