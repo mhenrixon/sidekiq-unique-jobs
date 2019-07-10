@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
 
   spec.files         = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject do |file|
-      file.match(%r{^(test|spec|features|gemfiles|pkg|my_app|tmp)/})
+      file.match(%r{^(lib\/sidekiq|test|spec|features|gemfiles|pkg|my_app|tmp)/})
     end
   end
 
@@ -45,11 +45,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sidekiq", ">= 4.0", "< 7.0"
   spec.add_dependency "thor", "~> 0"
 
-  spec.add_development_dependency "bundler", ">= 2.0"
-  spec.add_development_dependency "rack-test"
+  spec.add_development_dependency "bundler", "~> 2.0"
+  spec.add_development_dependency "rack-test", ">= 1.0", "< 2.0"
   spec.add_development_dependency "rake", "~> 12.3"
   spec.add_development_dependency "rspec", "~> 3.7"
-  spec.add_development_dependency "sinatra"
+  spec.add_development_dependency "sinatra", ">= 2.0", "< 3.0"
   spec.add_development_dependency "timecop", "~> 0.9"
 
   # ===== Documentation =====
@@ -59,5 +59,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "yard", "~> 0.9.18"
 
   # ===== Release Management =====
-  spec.add_development_dependency "gem-release", ">= 2.0"
+  spec.add_development_dependency "gem-release", "~> 2.0"
 end
