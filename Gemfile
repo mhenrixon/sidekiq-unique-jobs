@@ -23,6 +23,7 @@ platforms :mri do
   gem "pry"
   gem "redcarpet", "~> 3.4"
   gem "reek", ">= 5.3"
+  gem "rspec-benchmark"
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rspec"
