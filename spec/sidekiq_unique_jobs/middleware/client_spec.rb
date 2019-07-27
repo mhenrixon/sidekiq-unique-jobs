@@ -3,6 +3,14 @@
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   describe "when a job is already scheduled" do
+    let(:shit_class) do
+      Class.new do
+        def self.do_it(_one)
+          # whatever
+        end
+      end
+    end
+
     it "processes jobs properly" do
       jid = NotifyWorker.perform_in(1, 183, "xxxx")
       expect(jid).not_to eq(nil)
@@ -38,14 +46,8 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     end
 
     it "schedules allows jobs to be scheduled " do
-      class ShitClass
-        def self.do_it(_one)
-          # whatever
-        end
-      end
-
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-        ShitClass.delay_for(x, unique: :while_executing).do_it(1)
+        shit_class.delay_for(x, unique: :while_executing).do_it(1)
       end
 
       expect(schedule_count).to eq(20)
@@ -125,7 +127,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     context "when filter proc is defined" do
       let(:args) { [1, { random: rand, name: "foobar" }] }
 
-      it "pushes no duplicate messages" do
+      it "pushes no duplicate messsages" do
         100.times { CustomQueueJobWithFilterProc.perform_async(args) }
 
         expect(queue_count("customqueue")).to eq(1)
@@ -201,3 +203,5 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     expect(SidekiqUniqueJobs.logger).not_to have_received(:warn).with(/^already locked by another job_id/)
   end
 end
+
+s

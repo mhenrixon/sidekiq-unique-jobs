@@ -2,17 +2,6 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
-  class ClassWithOptions
-    include SidekiqUniqueJobs::OptionsWithFallback
-
-    attr_reader :item, :worker_class
-
-    def initialize(item, options, worker_class = nil)
-      @item         = item
-      @options      = options
-      @worker_class = worker_class
-    end
-  end
   let(:options_with_fallback) { ClassWithOptions.new(item, options, worker_class) }
   let(:options)               { nil }
   let(:worker_class)          { "UntilExecutedJob" }
@@ -30,6 +19,20 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       "args" => args,
       "log_duplicate" => log_duplicate,
     }
+  end
+
+  let(:class_with_options) do
+    Class.new do
+      include SidekiqUniqueJobs::OptionsWithFallback
+
+      attr_reader :item, :worker_class
+
+      def initialize(item, options, worker_class = nil)
+        @item         = item
+        @options      = options
+        @worker_class = worker_class
+      end
+    end
   end
 
   describe "#unique_enabled?" do

@@ -4,21 +4,25 @@ require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs do
   describe "define custom lock strategies" do
-    class FoobarJob < MyJob
-      sidekiq_options lock: :foobar,
-                      queue: :customqueue,
-                      on_conflict: :raise
-    end
-
-    class CustomLock < SidekiqUniqueJobs::Lock::BaseLock
-      def lock
+    subject(:middleware_call) do
+      SidekiqUniqueJobs::Middleware::Client.new.call(worker_class, item, queue) do
         true
       end
     end
 
-    subject(:middleware_call) do
-      SidekiqUniqueJobs::Middleware::Client.new.call(worker_class, item, queue) do
-        true
+    let(:foobar_job) do
+      Class.new(MyJob) do
+        sidekiq_options lock: :foobar,
+                        queue: :customqueue,
+                        on_conflict: :raise
+      end
+    end
+
+    let(:custom_lock) do
+      Class.new(SidekiqUniqueJobs::Lock::BaseLock) do
+        def lock
+          true
+        end
       end
     end
 
@@ -35,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs do
         "lock" => lock_type,
       }
     end
-    let(:worker_class) { FoobarJob }
+    let(:worker_class) { foobar_job }
 
     context "when the lock is not defined" do
       it "raises SidekiqUniqueJobs::UnknownLock" do
@@ -48,7 +52,7 @@ RSpec.describe SidekiqUniqueJobs do
     context "when the lock is defined" do
       let(:custom_config) do
         SidekiqUniqueJobs::Config.default.tap do |cfg|
-          cfg.add_lock :foobar, CustomLock
+          cfg.add_lock :foobar, custom_lock
         end
       end
 
