@@ -28,5 +28,5 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
   specify { expect { locksmith_one.lock {} }.to perform_under(3).ms }
-  specify { expect { locksmith_one.lock {} }.to perform_allocation(Array => 92, Hash => 14).bytes }
+  specify { expect { locksmith_one.lock {} }.to perform_allocation(Array => 11_048, Hash => 6_184).bytes }
 end
