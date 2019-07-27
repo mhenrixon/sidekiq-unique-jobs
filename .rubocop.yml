@@ -96,6 +96,8 @@ RSpec/ExpectChange:
 
 RSpec/FilePath:
   Enabled: true
+  Exclude:
+    - spec/performance/locksmith_spec.rb
 
 RSpec/InstanceVariable:
   Exclude:

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
-  let(:options_with_fallback) { ClassWithOptions.new(item, options, worker_class) }
+  let(:options_with_fallback) { class_with_options.new(item, options, worker_class) }
   let(:options)               { nil }
   let(:worker_class)          { "UntilExecutedJob" }
   let(:queue)                 { "default" }
