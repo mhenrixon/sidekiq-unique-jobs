@@ -29,7 +29,7 @@ end
 
 RuboCop::RakeTask.new(:rubocop) do |task|
   # task.patterns = changed_files(5)
-  task.options = %w[-DEP]
+  task.options = %w[-DEP --format fuubar]
 end
 
 task style: [:reek, :rubocop]
