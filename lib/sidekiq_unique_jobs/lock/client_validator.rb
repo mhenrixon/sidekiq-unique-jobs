@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
-    class ClientValidator
+    class ClientValidator < Validator
       #
       # @return [Array<Symbol>] a collection of invalid conflict resolutions
       INVALID_ON_CONFLICTS = [:raise, :reject, :reschedule].freeze
@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
         on_conflict = config.on_client_conflict
         return unless INVALID_ON_CONFLICTS.include?(on_conflict)
 
-        options[:errors][:on_client_conflict] = "#{on_conflict} is incompatible with the server process"
+        config.errors[:on_client_conflict] = "#{on_conflict} is incompatible with the server process"
       end
     end
   end

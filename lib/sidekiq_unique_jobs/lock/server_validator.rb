@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
         on_conflict = config.on_server_conflict
         return unless INVALID_ON_CONFLICTS.include?(on_conflict)
 
-        options[:errors][:on_server_conflict] = "#{on_conflict} is incompatible with the server process"
+        config.errors[:on_server_conflict] = "#{on_conflict} is incompatible with the server process"
       end
     end
   end

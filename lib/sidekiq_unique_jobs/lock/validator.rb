@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
-    class Validator < Validator
+    class Validator
       #
       # Shorthand for `new(options).validate`
       #

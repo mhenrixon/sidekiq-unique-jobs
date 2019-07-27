@@ -5,6 +5,9 @@
 
 require "sidekiq"
 require "sidekiq/testing"
+require "sidekiq_unique_jobs/lock/validator"
+require "sidekiq_unique_jobs/lock/client_validator"
+require "sidekiq_unique_jobs/lock/server_validator"
 
 #
 # See Sidekiq gem for more details
