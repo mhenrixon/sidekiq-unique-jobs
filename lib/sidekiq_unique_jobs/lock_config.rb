@@ -63,6 +63,10 @@ module SidekiqUniqueJobs
       timeout.nil? || timeout.positive?
     end
 
+    def valid?
+      errors.empty?
+    end
+
     # the strategy to use as conflict resolution from sidekiq client
     def on_client_conflict
       @on_client_conflict ||= on_conflict&.(:[], :client) if on_conflict.is_a?(Hash)

@@ -16,7 +16,8 @@ module SidekiqUniqueJobs
                                                    :reaper_count,
                                                    :reaper_interval,
                                                    :reaper_timeout,
-                                                   :lock_info)
+                                                   :lock_info,
+                                                   :raise_on_config_error)
 
   #
   # Shared class for dealing with gem configuration
@@ -75,6 +76,7 @@ module SidekiqUniqueJobs
     REAPER_INTERVAL = 600 # Every 10 minutes
     REAPER_TIMEOUT  = 10 # 10 seconds
     USE_LOCK_INFO   = false
+    RAISE_ON_CONFIG_ERROR = false
 
     #
     # Returns a default configuration
@@ -113,7 +115,8 @@ module SidekiqUniqueJobs
     #   max_history: 1000,
     #   reaper:: ruby,
     #   reaper_count: 1000,
-    #   lock_info: false
+    #   lock_info: false,
+    #   raise_on_config_error: false,
     #   }>
     #
     #
@@ -135,6 +138,7 @@ module SidekiqUniqueJobs
         REAPER_INTERVAL,
         REAPER_TIMEOUT,
         USE_LOCK_INFO,
+        RAISE_ON_CONFIG_ERROR,
       )
     end
 

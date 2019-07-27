@@ -13,16 +13,16 @@ module SidekiqUniqueJobs
       #
       # @param [Hash] options the sidekiq_options for the worker being validated
       #
-      # @return [void]
+      # @return [LockConfig] the lock configuration with errors if any
       #
       def self.validate(options)
         new(options).validate
       end
 
       #
-      # @!attribute [r] config
+      # @!attribute [r] lock_config
       #   @return [LockConfig] the lock configuration for this worker
-      attr_reader :config
+      attr_reader :lock_config
 
       #
       # Initialize a new validator
@@ -30,17 +30,35 @@ module SidekiqUniqueJobs
       # @param [Hash] options the sidekiq_options for the worker being validated
       #
       def initialize(options)
-        @config = LockConfig.new(options)
+        @lock_config = LockConfig.new(options)
       end
 
       #
       # Validate the workers lock configuration
       #
       #
-      # @return [void]
+      # @return [LockConfig] the lock configuration with errors if any
       #
       def validate
-        raise NotImplementedError, "no implementation for `validate`"
+        case lock_config.type
+        when :while_executing
+          validate_server
+        when :until_executing
+          validate_client
+        else
+          validate_client
+          validate_server
+        end
+
+        lock_config
+      end
+
+      def validate_client
+        ClientValidator.validate(lock_config)
+      end
+
+      def validate_server
+        ServerValidator.validate(lock_config)
       end
     end
   end

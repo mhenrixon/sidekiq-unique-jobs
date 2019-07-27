@@ -9,23 +9,13 @@ module SidekiqUniqueJobs
   class UniqueJobsError < ::RuntimeError
   end
 
-  #
-  # Raised when a workers configuration is invalid
+  # Error raised when a Lua script fails to execute
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  #
-  class InvalidWorker < UniqueJobsError
-    def initialize(options: {})
-      @config = LockConfig.new(options)
+  class Conflict < UniqueJobsError
+    def initialize(item)
+      super("Item with the key: #{item[UNIQUE_DIGEST]} is already scheduled or processing")
     end
-  end
-
-  #
-  # Error raised when an invalid argument is given
-  #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
-  #
-  class InvalidArgument < UniqueJobsError
   end
 
   #
@@ -44,6 +34,25 @@ module SidekiqUniqueJobs
   class DuplicateStrategy < UniqueJobsError
   end
 
+  #
+  # Error raised when an invalid argument is given
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
+  class InvalidArgument < UniqueJobsError
+  end
+
+  #
+  # Raised when a workers configuration is invalid
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
+  class InvalidWorker < UniqueJobsError
+    def initialize(options: {})
+      @config = LockConfig.new(options)
+    end
+  end
+
   # Error raised when a Lua script fails to execute
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
@@ -59,12 +68,14 @@ module SidekiqUniqueJobs
     end
   end
 
-  # Error raised when a Lua script fails to execute
+  #
+  # Raised when a workers configuration is invalid
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class Conflict < UniqueJobsError
-    def initialize(item)
-      super("Item with the key: #{item[UNIQUE_DIGEST]} is already scheduled or processing")
+  #
+  class NotUniqueWorker < UniqueJobsError
+    def initialize(options: {})
+      super("#{options[:class]} is not configured for uniqueness. Missing the key `:lock` in #{options.inspect}")
     end
   end
 

@@ -12,4 +12,8 @@ module SidekiqUniqueJobs
   end
 end
 
-require_relative "matchers/be_lockable"
+require_relative "matchers/have_valid_sidekiq_options"
+
+RSpec.configure do |config|
+  config.include SidekiqUniqueJobs::RSpec::Matchers
+end

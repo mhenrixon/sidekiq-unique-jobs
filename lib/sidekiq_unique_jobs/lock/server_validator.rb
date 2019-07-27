@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
-    class ServerValidator < Validator
+    class ServerValidator
       #
       # @return [Array<Symbol>] a collection of invalid conflict resolutions
       INVALID_ON_CONFLICTS = [:replace].freeze
@@ -16,11 +16,11 @@ module SidekiqUniqueJobs
       # Validates the sidekiq options for the Sidekiq server process
       #
       #
-      def validate
-        on_conflict = config.on_server_conflict
-        return unless INVALID_ON_CONFLICTS.include?(on_conflict)
+      def self.validate(lock_config)
+        on_conflict = lock_config.on_server_conflict
+        return lock_config unless INVALID_ON_CONFLICTS.include?(on_conflict)
 
-        config.errors[:on_server_conflict] = "#{on_conflict} is incompatible with the server process"
+        lock_config.errors[:on_server_conflict] = "#{on_conflict} is incompatible with the server process"
       end
     end
   end

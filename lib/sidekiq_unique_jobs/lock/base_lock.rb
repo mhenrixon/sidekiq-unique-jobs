@@ -17,8 +17,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def self.validate_options(options = {})
-        ClientValidator.validate(options)
-        ServerValidator.validate(options)
+        Validator.validate(options)
       end
 
       # @param [Hash] item the Sidekiq job hash
