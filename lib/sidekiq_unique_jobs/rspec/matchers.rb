@@ -2,10 +2,14 @@
 
 module SidekiqUniqueJobs
   module RSpec
+    #
+    # Module Matchers provides RSpec matcher for your workers
+    #
+    # @author Mikael Henriksson <mikael@zoolutions.se>
+    #
     module Matchers
-      def have_valid_sidekiq_options(*args)
-        HaveValidSidekiqOptions.new(*args)
-      end
     end
   end
 end
+
+require_relative "matchers/be_lockable"
