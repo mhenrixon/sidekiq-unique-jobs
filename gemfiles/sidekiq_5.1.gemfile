@@ -12,6 +12,7 @@ platforms :mri do
   gem "fasterer"
   gem "fuubar"
   gem "guard"
+  gem "guard-bundler"
   gem "guard-reek"
   gem "guard-rspec"
   gem "guard-rubocop"
