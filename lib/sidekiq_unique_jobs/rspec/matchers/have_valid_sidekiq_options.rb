@@ -30,6 +30,10 @@ module SidekiqUniqueJobs
           FAILURE_MESSAGE
         end
 
+        def description
+          "have valid sidekiq options"
+        end
+
         def errors_as_string
           @errors_as_string ||= begin
             error_msg = +"\t"

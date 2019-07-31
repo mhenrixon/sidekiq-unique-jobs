@@ -50,6 +50,8 @@
     - [Show Lock](#show-lock)
 - [Communication](#communication)
 - [Testing](#testing)
+  - [Worker Configuration](#worker-configuration-1)
+  - [Uniqueness](#uniqueness)
 - [Contributing](#contributing)
 - [Contributors](#contributors)
 
@@ -648,9 +650,34 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 ## Testing
 
-This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs.
+### Worker Configuration
 
-[Enterprise unique jobs][]
+Since v7 it is possible to perform some simple validation against your workers sidekiq_options. What it does is scan for some issues that are known to cause problems in production.
+
+Let's take a _bad_ worker:
+
+```ruby
+# app/workers/bad_worker.rb
+class BadWorker
+  sidekiq_options lock: :while_executing, on_conflict: :replace
+end
+
+# spec/workers/bad_worker_spec.rb
+RSpec.describe BadWorker do
+  specify { expect(described_class).to have_valid_sidekiq_options }
+end
+```
+
+This gives us a helpful error message for a wrongly configured worker:
+
+```
+Expected BadWorker to have valid sidekiq options but found the following problems:
+    on_server_conflict: :replace is incompatible with the server process
+```
+
+### Uniqueness
+
+This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][]
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
@@ -661,6 +688,8 @@ end
 If you truly wanted to test the sidekiq client push you could do something like below. Note that it will only work for the jobs that lock when the client pushes the job to redis (UntilExecuted, UntilAndWhileExecuting and UntilExpired).
 
 ```ruby
+require "sidekiq_unique_jobs/testing"
+
 RSpec.describe Workers::CoolOne do
   before do
     SidekiqUniqueJobs.config.enabled = false
