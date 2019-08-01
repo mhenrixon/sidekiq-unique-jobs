@@ -663,6 +663,11 @@ class BadWorker
 end
 
 # spec/workers/bad_worker_spec.rb
+
+require "sidekiq_unique_jobs/testing"
+# OR
+require "sidekiq_unique_jobs/rspec/matchers"
+
 RSpec.describe BadWorker do
   specify { expect(described_class).to have_valid_sidekiq_options }
 end
@@ -674,6 +679,13 @@ This gives us a helpful error message for a wrongly configured worker:
 Expected BadWorker to have valid sidekiq options but found the following problems:
     on_server_conflict: :replace is incompatible with the server process
 ```
+
+If you are not using RSpec (a lot of people prefer minitest or test unit) you can do something like:
+
+```ruby
+assert SidekiqUniqueJobs.validate_worker!(BadWorker.get_sidekiq_options)
+```
+
 
 ### Uniqueness
 
