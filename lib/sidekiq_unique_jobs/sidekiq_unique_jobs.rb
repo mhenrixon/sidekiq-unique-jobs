@@ -220,6 +220,7 @@ module SidekiqUniqueJobs
   # @raise [InvalidWorker] when {#validate_worker} returns false or nil
   #
   def validate_worker!(options)
-    raise InvalidWorker, options: options unless validate_worker(options)
+    lock_config = validate_worker(options)
+    raise InvalidWorker, lock_config unless lock_config.errors.empty?
   end
 end

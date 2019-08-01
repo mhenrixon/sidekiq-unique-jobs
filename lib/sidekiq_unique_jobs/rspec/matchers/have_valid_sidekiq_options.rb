@@ -26,20 +26,12 @@ module SidekiqUniqueJobs
         def failure_message
           <<~FAILURE_MESSAGE
             Expected #{worker} to have valid sidekiq options but found the following problems:
-            #{errors_as_string}
+            #{lock_config.errors_as_string}
           FAILURE_MESSAGE
         end
 
         def description
           "have valid sidekiq options"
-        end
-
-        def errors_as_string
-          @errors_as_string ||= begin
-            error_msg = +"\t"
-            error_msg << lock_config.errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
-            error_msg
-          end
         end
       end
 

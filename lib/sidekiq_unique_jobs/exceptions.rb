@@ -48,8 +48,11 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   class InvalidWorker < UniqueJobsError
-    def initialize(options: {})
-      @config = LockConfig.new(options)
+    def initialize(lock_config)
+      super(<<~FAILURE_MESSAGE)
+        Expected #{lock_config.worker} to have valid sidekiq options but found the following problems:
+        #{lock_config.errors_as_string}
+      FAILURE_MESSAGE
     end
   end
 

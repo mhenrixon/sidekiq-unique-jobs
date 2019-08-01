@@ -9,9 +9,13 @@ module SidekiqUniqueJobs
   #
   class LockConfig
     #
-    # @!attribute [r] lock
+    # @!attribute [r] type
     #   @return [Symbol] the type of lock
     attr_reader :type
+    #
+    # @!attribute [r] worker
+    #   @return [Symbol] the worker class
+    attr_reader :worker
     #
     # @!attribute [r] limit
     #   @return [Integer] the number of simultaneous locks
@@ -47,6 +51,7 @@ module SidekiqUniqueJobs
 
     def initialize(job_hash = {})
       @type        = job_hash[LOCK]&.to_sym
+      @worker      = job_hash[CLASS]
       @limit       = job_hash.fetch(LOCK_LIMIT) { 1 }
       @timeout     = job_hash.fetch(LOCK_TIMEOUT) { 0 }
       @ttl         = job_hash.fetch(LOCK_TTL) { job_hash.fetch(LOCK_EXPIRATION) { nil } }.to_i
@@ -65,6 +70,14 @@ module SidekiqUniqueJobs
 
     def valid?
       errors.empty?
+    end
+
+    def errors_as_string
+      @errors_as_string ||= begin
+        error_msg = +"\t"
+        error_msg << lock_config.errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
+        error_msg
+      end
     end
 
     # the strategy to use as conflict resolution from sidekiq client
