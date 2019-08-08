@@ -28,6 +28,7 @@ platforms :mri do
   gem "ruby-prof"
   gem "simplecov-json"
   gem "stackprof"
+  gem "terminal-notifier-guard"
   gem "test-prof"
   gem "toxiproxy"
   gem "travis"

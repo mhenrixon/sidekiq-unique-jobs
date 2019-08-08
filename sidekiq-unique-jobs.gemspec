@@ -20,15 +20,12 @@ Gem::Specification.new do |spec|
     Highly configurable to suite your specific needs.
   DESCRIPTION
 
-  if spec.respond_to?(:metadata)
-    spec.metadata["homepage_uri"]      = spec.homepage
-    spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
-    spec.metadata["documentation_uri"] = "https://mhenrixon.github.io/sidekiq-unique-jobs"
-    spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
-    spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/CHANGELOG.md"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
-  end
+  raise "RubyGems 2.0 or newer is required to protect against public gem pushes." unless spec.respond_to?(:metadata)
+  spec.metadata["homepage_uri"]      = spec.homepage
+  spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
+  spec.metadata["documentation_uri"] = "https://mhenrixon.github.io/sidekiq-unique-jobs"
+  spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
+  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/CHANGELOG.md"
 
   spec.bindir        = "bin"
   spec.executables   = %w[uniquejobs]
