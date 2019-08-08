@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   DESCRIPTION
 
   raise "RubyGems 2.0 or newer is required to protect against public gem pushes." unless spec.respond_to?(:metadata)
+
   spec.metadata["homepage_uri"]      = spec.homepage
   spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
   spec.metadata["documentation_uri"] = "https://mhenrixon.github.io/sidekiq-unique-jobs"
