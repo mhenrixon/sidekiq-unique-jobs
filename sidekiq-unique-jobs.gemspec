@@ -27,16 +27,15 @@ Gem::Specification.new do |spec|
     spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
     spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/CHANGELOG.md"
   else
-    raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
+    raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
   end
 
   spec.bindir        = "bin"
   spec.executables   = %w[uniquejobs]
 
   spec.files         = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject do |file|
-      file.match(%r{^(lib\/sidekiq|test|spec|features|gemfiles|pkg|my_app|tmp)/})
+    `git ls-files -z`.split("\x0").select do |file|
+      file.match(%r{^(lib/*|bin/uniquejobs|README|LICENSE|CHANGELOG)})
     end
   end
 

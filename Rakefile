@@ -43,7 +43,6 @@ YARD::Rake::YardocTask.new(:yard) do |t|
   t.files   = %w[lib/sidekiq_unique_jobs/**/*.rb]
   t.options = %w[
     --exclude lib/sidekiq_unique_jobs/testing.rb
-    --exclude lib/sidekiq/logging.rb
     --exclude lib/sidekiq_unique_jobs/web/helpers.rb
     --exclude lib/redis.rb
     --no-private
@@ -54,7 +53,6 @@ YARD::Rake::YardocTask.new(:yard) do |t|
     --files CHANGELOG.md,LICENSE.txt
   ]
   t.stats_options = %w[
-    --exclude lib/sidekiq/logging.rb
     --exclude lib/sidekiq_unique_jobs/testing.rb
     --exclude lib/sidekiq_unique_jobs/web/helpers.rb
     --no-private

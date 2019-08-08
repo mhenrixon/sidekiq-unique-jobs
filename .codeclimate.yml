@@ -63,5 +63,5 @@ exclude_patterns:
   - "tmp/"
   - "spec/"
   - "assets/"
-  - "lib/sidekiq/logging.rb"
+  - "spec/support/sidekiq/logging.rb"
   - "spec/support/sidekiq_unique_jobs/testing.rb"
