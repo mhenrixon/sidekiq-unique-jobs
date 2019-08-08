@@ -40,7 +40,8 @@ module SidekiqUniqueJobs
       # Check if the strategy is kind of {Replace}
       #
       #
-      # @return [<type>] <description>
+      # @return [true] when the strategy is a {Replace}
+      # @return [false] when the strategy is not a {Replace}
       #
       def replace?
         is_a?(Replace)

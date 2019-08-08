@@ -9,51 +9,82 @@ module SidekiqUniqueJobs
       base.send(:extend, self)
     end
 
-    # A convenience method for using the configured logger
+    #
+    # A convenience method for using the configured gem logger
+    #
+    # @see SidekiqUniqueJobs#.logger
+    #
+    # @return [Logger]
+    #
     def logger
       SidekiqUniqueJobs.logger
     end
 
+    #
     # Logs a message at debug level
-    # @param message_or_exception [String, Exception] the message or exception to log
-    # @yield the message or exception to use for log message
-    #   Used for compatibility with logger
+    #
+    # @param [String, Exception] message_or_exception the message or exception to log
+    #
+    # @return [void]
+    #
+    # @yield [String, Exception] the message or exception to use for log message
+    #
     def log_debug(message_or_exception = nil, &block)
       logger.debug(message_or_exception, &block)
       nil
     end
 
+    #
     # Logs a message at info level
-    # @param message_or_exception [String, Exception] the message or exception to log
-    # @yield the message or exception to use for log message
-    #   Used for compatibility with logger
+    #
+    # @param [String, Exception] message_or_exception the message or exception to log
+    #
+    # @return [void]
+    #
+    # @yield [String, Exception] the message or exception to use for log message
+    #
     def log_info(message_or_exception = nil, &block)
       logger.info(message_or_exception, &block)
       nil
     end
 
+    #
     # Logs a message at warn level
-    # @param message_or_exception [String, Exception] the message or exception to log
-    # @yield the message or exception to use for log message
-    #   Used for compatibility with logger
+    #
+    # @param [String, Exception] message_or_exception the message or exception to log
+    #
+    # @return [void]
+    #
+    # @yield [String, Exception] the message or exception to use for log message
+    #
     def log_warn(message_or_exception = nil, &block)
       logger.warn(message_or_exception, &block)
       nil
     end
 
+    #
     # Logs a message at error level
-    # @param message_or_exception [String, Exception] the message or exception to log
-    # @yield the message or exception to use for log message
-    #   Used for compatibility with logger
+    #
+    # @param [String, Exception] message_or_exception the message or exception to log
+    #
+    # @return [void]
+    #
+    # @yield [String, Exception] the message or exception to use for log message
+    #
     def log_error(message_or_exception = nil, &block)
       logger.error(message_or_exception, &block)
       nil
     end
 
+    #
     # Logs a message at fatal level
-    # @param message_or_exception [String, Exception] the message or exception to log
-    # @yield the message or exception to use for log message
-    #   Used for compatibility with logger
+    #
+    # @param [String, Exception] message_or_exception the message or exception to log
+    #
+    # @return [void]
+    #
+    # @yield [String, Exception] the message or exception to use for log message
+    #
     def log_fatal(message_or_exception = nil, &block)
       logger.fatal(message_or_exception, &block)
       nil
@@ -63,9 +94,10 @@ module SidekiqUniqueJobs
     # Wraps the middleware logic with context aware logging
     #
     #
-    # @return [nil]
+    # @return [void]
     #
     # @yieldreturn [void] yield to the middleware instance
+    #
     def with_logging_context
       with_configured_loggers_context do
         return yield
@@ -77,7 +109,7 @@ module SidekiqUniqueJobs
     # Attempt to setup context aware logging for the given logger
     #
     #
-    # @return [void] <description>
+    # @return [void]
     #
     # @yield
     #
