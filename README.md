@@ -50,7 +50,7 @@
     - [Show Lock](#show-lock)
 - [Communication](#communication)
 - [Testing](#testing)
-  - [Worker Configuration](#worker-configuration-1)
+  - [Unique Sidekiq Configuration](#unique-sidekiq-configuration)
   - [Uniqueness](#uniqueness)
 - [Contributing](#contributing)
 - [Contributors](#contributors)
@@ -650,7 +650,7 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 ## Testing
 
-### Worker Configuration
+### Unique Sidekiq Configuration
 
 Since v7 it is possible to perform some simple validation against your workers sidekiq_options. What it does is scan for some issues that are known to cause problems in production.
 
@@ -675,7 +675,7 @@ end
 
 This gives us a helpful error message for a wrongly configured worker:
 
-```
+```bash
 Expected BadWorker to have valid sidekiq options but found the following problems:
     on_server_conflict: :replace is incompatible with the server process
 ```
