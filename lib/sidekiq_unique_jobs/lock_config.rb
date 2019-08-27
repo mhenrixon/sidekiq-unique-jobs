@@ -9,9 +9,13 @@ module SidekiqUniqueJobs
   #
   class LockConfig
     #
-    # @!attribute [r] lock
+    # @!attribute [r] type
     #   @return [Symbol] the type of lock
     attr_reader :type
+    #
+    # @!attribute [r] worker
+    #   @return [Symbol] the worker class
+    attr_reader :worker
     #
     # @!attribute [r] limit
     #   @return [Integer] the number of simultaneous locks
@@ -47,17 +51,45 @@ module SidekiqUniqueJobs
 
     def initialize(job_hash = {})
       @type        = job_hash[LOCK]&.to_sym
+      @worker      = job_hash[CLASS]
       @limit       = job_hash.fetch(LOCK_LIMIT) { 1 }
       @timeout     = job_hash.fetch(LOCK_TIMEOUT) { 0 }
-      @ttl         = job_hash.fetch(LOCK_TTL) { job_hash.fetch(LOCK_EXPIRATION) }.to_i
+      @ttl         = job_hash.fetch(LOCK_TTL) { job_hash.fetch(LOCK_EXPIRATION) { nil } }.to_i
       @pttl        = ttl * 1_000
       @lock_info   = job_hash.fetch(LOCK_INFO) { SidekiqUniqueJobs.config.lock_info }
-      @on_conflict = job_hash[ON_CONFLICT]
-      @errors      = job_hash[ERRORS]
+      @on_conflict = job_hash.fetch(ON_CONFLICT) { nil }
+      @errors      = job_hash.fetch(ERRORS) { {} }
+
+      @on_client_conflict = job_hash[ON_CLIENT_CONFLICT]
+      @on_server_conflict = job_hash[ON_SERVER_CONFLICT]
     end
 
     def wait_for_lock?
       timeout.nil? || timeout.positive?
+    end
+
+    def valid?
+      errors.empty?
+    end
+
+    def errors_as_string
+      @errors_as_string ||= begin
+        error_msg = +"\t"
+        error_msg << lock_config.errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
+        error_msg
+      end
+    end
+
+    # the strategy to use as conflict resolution from sidekiq client
+    def on_client_conflict
+      @on_client_conflict ||= on_conflict&.(:[], :client) if on_conflict.is_a?(Hash)
+      @on_client_conflict ||= on_conflict
+    end
+
+    # the strategy to use as conflict resolution from sidekiq server
+    def on_server_conflict
+      @on_client_conflict ||= on_conflict&.(:[], :server) if on_conflict.is_a?(Hash)
+      @on_server_conflict ||= on_conflict
     end
   end
 end

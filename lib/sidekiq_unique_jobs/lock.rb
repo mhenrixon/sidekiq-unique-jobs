@@ -172,7 +172,7 @@ module SidekiqUniqueJobs
     #   the same lock twice
     #
     #
-    # @return [] <description>
+    # @return [Redis::String] a string representation of the key
     #
     def digest
       @digest ||= Redis::String.new(key.digest)

@@ -9,6 +9,17 @@ module SidekiqUniqueJobs
     class BaseLock
       include SidekiqUniqueJobs::Logging
 
+      #
+      # Validates that the sidekiq_options for the worker is valid
+      #
+      # @param [Hash] options the sidekiq_options given to the worker
+      #
+      # @return [void]
+      #
+      def self.validate_options(options = {})
+        Validator.validate(options)
+      end
+
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback the callback to use after unlock
       # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection

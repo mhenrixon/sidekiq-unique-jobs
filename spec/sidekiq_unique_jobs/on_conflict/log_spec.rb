@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Log do
       allow(strategy).to receive(:log_info)
       strategy.call
       expect(strategy).to have_received(:log_info).with(
-        "skipping job with id (#{jid}) because unique_digest: (#{unique_digest}) already exists",
+        "Skipping job with id (#{jid}) because unique_digest: (#{unique_digest}) already exists",
       )
     end
   end

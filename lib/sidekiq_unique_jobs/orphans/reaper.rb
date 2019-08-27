@@ -22,7 +22,8 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def self.call(conn = nil)
-        new(conn).call if conn
+        return new(conn).call if conn
+
         redis { |rcon| new(rcon).call }
       end
 

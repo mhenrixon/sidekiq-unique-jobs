@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require Rails.root.join("lib", "lock_simulator")
-
 Sidekiq.default_worker_options = {
   backtrace: true,
   retry: false,
@@ -42,8 +40,8 @@ SidekiqUniqueJobs.configure do |config|
   config.lock_info       = true
   config.max_history     = 10_000
   config.reaper          = :lua
-  config.reaper_count    = 100
+  config.reaper_count    = 10_000
   config.reaper_interval = 10
-  config.reaper_timeout  = 2
+  config.reaper_timeout  = 5
 end
 Dir[Rails.root.join("app", "workers", "**", "*.rb")].each { |worker| require worker }

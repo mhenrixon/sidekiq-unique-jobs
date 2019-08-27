@@ -8,12 +8,16 @@ module SidekiqUniqueJobs
     class Log < OnConflict::Strategy
       include SidekiqUniqueJobs::Logging
 
+      #
       # Logs an informational message about that the job was not unique
+      #
+      #
+      # @return [void]
+      #
       def call
-        log_info(
-          "skipping job with id (#{item[JID]}) " \
-          "because unique_digest: (#{item[UNIQUE_DIGEST]}) already exists",
-        )
+        log_info(<<~MESSAGE.chomp)
+          Skipping job with id (#{item[JID]}) because unique_digest: (#{item[UNIQUE_DIGEST]}) already exists
+        MESSAGE
       end
     end
   end

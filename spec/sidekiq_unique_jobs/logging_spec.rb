@@ -76,7 +76,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
           @keep_constant = true
         else
           @keep_constant = false
-          require "sidekiq/logging"
+          require "spec/support/sidekiq/logging"
         end
 
         allow(logger).to receive(:respond_to?).with(:with_context).and_return(false)

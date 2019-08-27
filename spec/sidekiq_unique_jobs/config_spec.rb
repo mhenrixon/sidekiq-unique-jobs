@@ -36,8 +36,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
       end
 
       it "accepts as many locks as you want" do
-        CustomLock1 = Class.new
-        CustomLock2 = Class.new
+        stub_const("CustomLock1", Class.new)
+        stub_const("CustomLock2", Class.new)
 
         config.add_lock :custom_lock1, CustomLock1
         config.add_lock :custom_lock2, CustomLock2
@@ -83,8 +83,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
       end
 
       it "accepts as many strategies as you want" do
-        CustomStrategy1 = Class.new
-        CustomStrategy2 = Class.new
+        stub_const("CustomStrategy1", Class.new)
+        stub_const("CustomStrategy2", Class.new)
 
         config.add_strategy "custom_strategy1", CustomStrategy1
         config.add_strategy :custom_strategy2, CustomStrategy2

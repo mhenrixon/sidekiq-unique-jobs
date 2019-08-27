@@ -20,9 +20,25 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs.strategies
     end
 
-    # returns OnConflict::NullStrategy when no other could be found
+    #
+    # Find a strategy to use for conflicting locks
+    #
+    # @param [Symbol] strategy the key for the strategy
+    #
+    # @return [OnConflict::Strategy] when found
+    # @return [OnConflict::NullStrategy] when no other could be found
+    #
     def self.find_strategy(strategy)
-      strategies.fetch(strategy.to_s.to_sym) { OnConflict::NullStrategy }
+      return OnConflict::NullStrategy unless strategy
+
+      strategies.fetch(strategy.to_sym) do
+        SidekiqUniqueJobs.logger.warn(
+          "No matching implementation for strategy: #{strategy}, returning OnConflict::NullStrategy." \
+          " Available strategies are (#{strategies.inspect})",
+        )
+
+        OnConflict::NullStrategy
+      end
     end
   end
 end

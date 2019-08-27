@@ -71,10 +71,8 @@ repeat
       local run_locked = digest .. ":RUN:LOCKED"
       local run_info   = digest .. ":RUN:INFO"
 
-
-      log_debug(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
       redis.call(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
-      log_debug("ZREM", digests_set, digest)
+
       redis.call("ZREM", digests_set, digest)
       del_count = del_count + 1
     end

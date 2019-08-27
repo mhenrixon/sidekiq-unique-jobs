@@ -5,6 +5,10 @@
 
 require "sidekiq"
 require "sidekiq/testing"
+require "sidekiq_unique_jobs/rspec/matchers"
+require "sidekiq_unique_jobs/lock/validator"
+require "sidekiq_unique_jobs/lock/client_validator"
+require "sidekiq_unique_jobs/lock/server_validator"
 
 #
 # See Sidekiq gem for more details
@@ -70,6 +74,12 @@ module Sidekiq
     # Prepends deletion of locks to clear_all
     #
     module Overrides
+      def sidekiq_options(options = {})
+        SidekiqUniqueJobs.validate_worker!(options) if SidekiqUniqueJobs.config.raise_on_config_error
+
+        super(options)
+      end
+
       #
       # Clears all jobs for this worker and removes all locks
       #

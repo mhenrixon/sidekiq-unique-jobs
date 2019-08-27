@@ -38,14 +38,8 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     end
 
     it "schedules allows jobs to be scheduled " do
-      class ShitClass
-        def self.do_it(_one)
-          # whatever
-        end
-      end
-
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-        ShitClass.delay_for(x, unique: :while_executing).do_it(1)
+        PlainClass.delay_for(x, unique: :while_executing).run(1)
       end
 
       expect(schedule_count).to eq(20)
@@ -125,7 +119,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     context "when filter proc is defined" do
       let(:args) { [1, { random: rand, name: "foobar" }] }
 
-      it "pushes no duplicate messages" do
+      it "pushes no duplicate messsages" do
         100.times { CustomQueueJobWithFilterProc.perform_async(args) }
 
         expect(queue_count("customqueue")).to eq(1)

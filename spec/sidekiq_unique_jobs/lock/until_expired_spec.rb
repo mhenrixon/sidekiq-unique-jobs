@@ -52,11 +52,11 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
       before { process_one.lock }
 
       it "keeps the lock even when unlocking" do
-        expect(process_one.unlock).to eq(true)
+        expect(process_one.unlock).to eq(jid_one)
         expect(process_one).to be_locked
       end
     end
 
-    it { expect(process_one.unlock).to eq(true) }
+    it { expect(process_one.unlock).to eq(false) }
   end
 end

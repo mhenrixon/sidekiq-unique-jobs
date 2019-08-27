@@ -44,7 +44,10 @@ detectors:
     exclude:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::InvalidWorker#initialize
       - SidekiqUniqueJobs::Logging#debug_item
+      - SidekiqUniqueJobs::NotUniqueWorker#initialize
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
       - SidekiqUniqueJobs::ScriptError#generate_error_context
       - SidekiqUniqueJobs::Web::Helpers#cparams
