@@ -104,7 +104,7 @@ gem install sidekiq-unique-jobs
 
 ## Support Me
 
-Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link [https://paypal.me/mhenrixon](https://paypal.me/mhenrixon). Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
+Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link: [https://paypal.me/mhenrixon1](https://paypal.me/mhenrixon1). Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
 
 ## General Information
 
