@@ -81,9 +81,8 @@ RSpec/AlignLeftLetBrace:
 
 RSpec/DescribeClass:
   Exclude:
-    - spec/sidekiq/api_spec.rb
-    - spec/sidekiq_unique_jobs/core_ext_spec.rb
-    - spec/sidekiq_unique_jobs/lua/**/*_spec.rb
+    - spec/unit/sidekiq_unique_jobs/sidekiq/api_spec.rb
+    - spec/unit/sidekiq_unique_jobs/core_ext_spec.rb
 
 RSpec/ExampleLength:
   Enabled: false

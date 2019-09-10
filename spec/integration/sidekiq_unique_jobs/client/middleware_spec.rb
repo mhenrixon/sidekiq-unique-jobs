@@ -38,11 +38,14 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
     end
 
     it "schedules allows jobs to be scheduled " do
-      class ShitClass
-        def self.do_it(_one)
-          # whatever
-        end
-      end
+      stub_const(
+        "ShitClass",
+        Class.new do
+          def self.do_it(_one)
+            # whatever
+          end
+        end,
+      )
 
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
         ShitClass.delay_for(x, unique: :while_executing).do_it(1)

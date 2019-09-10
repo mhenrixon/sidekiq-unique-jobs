@@ -96,12 +96,9 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   describe "#unique_args_enabled?" do
     subject(:unique_args_enabled?) { unique_args.unique_args_enabled? }
 
-    shared_examples "" do
-    end
-
     with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]["test"] }) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
-        it { is_expected.to eq(:unique_args) }
+        it { is_expected.to eq(:unique_args) } # rubocop:disable RSpec/RepeatedExample
       end
 
       with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
@@ -113,18 +110,18 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
 
     with_default_worker_options(unique: false, unique_args: nil) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
-        it { is_expected.to eq(:unique_args) }
+        it { is_expected.to eq(:unique_args) } # rubocop:disable RSpec/RepeatedExample
       end
 
       with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
-        it { is_expected.to be_falsy }
+        it { is_expected.to be_falsy } # rubocop:disable RSpec/RepeatedExample
       end
 
       with_sidekiq_options_for("MissingWorker", unique_args: true) do
-        it { is_expected.to be_falsy }
+        it { is_expected.to be_falsy } # rubocop:disable RSpec/RepeatedExample
       end
 
-      it { is_expected.to be_falsy }
+      it { is_expected.to be_falsy } # rubocop:disable RSpec/RepeatedExample
     end
   end
 

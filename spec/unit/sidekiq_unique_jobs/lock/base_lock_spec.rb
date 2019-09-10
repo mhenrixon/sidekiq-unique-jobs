@@ -16,10 +16,15 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     }
   end
 
-  class FailedExecutingLock < SidekiqUniqueJobs::Lock::BaseLock
-    def execute
-      with_cleanup { yield }
-    end
+  before do
+    stub_const(
+      "FailedExecutingLock",
+      Class.new(SidekiqUniqueJobs::Lock::BaseLock) do
+        def execute
+          with_cleanup { yield }
+        end
+      end,
+    )
   end
 
   describe "#lock" do

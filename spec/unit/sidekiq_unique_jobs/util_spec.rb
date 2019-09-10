@@ -77,14 +77,14 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
         let(:pattern) { described_class::SCAN_PATTERN }
 
         it { is_expected.to eq(1) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it { expect { del }.to change { described_class.keys }.to([]) }
       end
 
       context "when pattern is a specific key" do
         let(:pattern) { unique_digest }
 
         it { is_expected.to eq(1) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it { expect { del }.to change { described_class.keys }.to([]) }
       end
     end
 
@@ -101,14 +101,14 @@ RSpec.describe SidekiqUniqueJobs::Util, redis: :redis do
         let(:pattern) { described_class::SCAN_PATTERN }
 
         it { is_expected.to eq(2) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it { expect { del }.to change { described_class.keys }.to([]) }
       end
 
       context "when pattern is a specific key" do
         let(:pattern) { unique_digest }
 
         it { is_expected.to eq(2) }
-        it { expect { del }.to change(described_class, :keys).to([]) }
+        it { expect { del }.to change { described_class.keys }.to([]) }
       end
     end
   end
