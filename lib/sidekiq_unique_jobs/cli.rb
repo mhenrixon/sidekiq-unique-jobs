@@ -48,7 +48,7 @@ module SidekiqUniqueJobs
       def console_class
         require "pry"
         Pry
-      rescue LoadError
+      rescue LoadError, NameError
         require "irb"
         IRB
       end

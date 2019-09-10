@@ -14,9 +14,28 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:unique_key)    { "uniquejobs:abcdefab" }
   let(:max_lock_time) { 1 }
   let(:pattern)       { "*" }
+  let(:pry) do
+    stub_const("Pry",
+      Class.new do
+        def self.start
+        end
+      end
+    )
+  end
+
+  def exec(*cmds)
+    described_class.start(cmds)
+  end
+
+  before do
+    begin
+      require "pry"
+    rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/HandleExceptions, Lint/ShadowedException
+    end
+  end
 
   describe "#help" do
-    subject(:help) { capture(:stdout) { described_class.start(%w[help]) } }
+    subject(:help) { capture(:stdout) { exec(:help) } }
 
     it "displays help" do
       expect(help).to include <<~HEADER
@@ -29,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
 
     describe "#help del" do
-      subject(:help) { capture(:stdout) { described_class.start(%w[help del]) } }
+      subject(:help) { capture(:stdout) { exec(:help, :del) } }
 
       it "displays help about the `del` command" do
         expect(help).to eq <<~HEADER
@@ -47,7 +66,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
 
     describe "#help keys" do
-      subject(:help) { capture(:stdout) { described_class.start(%w[help keys]) } }
+      subject(:help) { capture(:stdout) { exec(:help, :keys) } }
 
       it "displays help about the `key` command" do
         expect(help).to eq <<~HEADER
@@ -65,7 +84,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   end
 
   describe ".keys" do
-    subject(:keys) { capture(:stdout) { described_class.start(%w[keys * --count 1000]) } }
+    subject(:keys) { capture(:stdout) { exec("keys", "*", "--count", "1000") } }
 
     context "when no keys exist" do
       it { is_expected.to eq("Found 0 keys matching '#{pattern}':\n") }
@@ -85,28 +104,26 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   end
 
   describe ".console" do
-    subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
+    subject(:console) { capture(:stdout) { exec(:console) } }
+
+    before do
+      allow(console_class).to receive(:start).and_return(true)
+    end
 
     shared_examples "start console" do
       specify do
-        allow(console_class).to receive(:start).and_return(true)
         expect(console).to include <<~HEADER
           Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
           Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
           Use `del '*', 1000, false to delete the first 1000 keys matching '*'
         HEADER
+
+        expect(console_class).to have_received(:start)
       end
     end
 
     context "when Pry is available" do
-      let(:console_class) { defined?(Pry) ? Pry : IRB }
-
-      before do
-        begin
-          require "pry"
-        rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/HandleExceptions, Lint/ShadowedException
-        end
-      end
+      let(:console_class) { Pry }
 
       it_behaves_like "start console"
     end
