@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.name        = "sidekiq-unique-jobs"
   spec.version     = SidekiqUniqueJobs::VERSION
   spec.authors     = ["Mikael Henriksson"]
-  spec.email       = ["mikael@zoolutions.se"]
+  spec.email       = ["mikael@mhenrixon.com"]
   spec.homepage    = "https://mhenrixon.github.io/sidekiq-unique-jobs"
   spec.license     = "MIT"
   spec.summary     = <<~SUMMARY
@@ -20,23 +20,20 @@ Gem::Specification.new do |spec|
     Highly configurable to suite your specific needs.
   DESCRIPTION
 
-  if spec.respond_to?(:metadata)
-    spec.metadata["homepage_uri"]      = spec.homepage
-    spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
-    spec.metadata["documentation_uri"] = "https://mhenrixon.github.io/sidekiq-unique-jobs"
-    spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
-    spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/CHANGELOG.md"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
-  end
+  raise "RubyGems 2.0 or newer is required to protect against public gem pushes." unless spec.respond_to?(:metadata)
+
+  spec.metadata["homepage_uri"]      = spec.homepage
+  spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
+  spec.metadata["documentation_uri"] = "https://mhenrixon.github.io/sidekiq-unique-jobs"
+  spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
+  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/CHANGELOG.md"
 
   spec.bindir        = "bin"
   spec.executables   = %w[uniquejobs]
 
   spec.files         = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject do |file|
-      file.match(%r{^(test|spec|features|gemfiles|pkg|rails_example|tmp)/})
+    `git ls-files -z`.split("\x0").select do |file|
+      file.match(%r{^(lib/*|bin/uniquejobs|README|LICENSE|CHANGELOG)})
     end
   end
 
@@ -45,11 +42,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sidekiq", ">= 4.0", "< 7.0"
   spec.add_dependency "thor", "~> 0"
 
-  spec.add_development_dependency "bundler", ">= 2.0"
-  spec.add_development_dependency "rack-test"
+  spec.add_development_dependency "bundler", "~> 2.0"
+  spec.add_development_dependency "rack-test", ">= 1.0", "< 2.0"
   spec.add_development_dependency "rake", "~> 12.3"
   spec.add_development_dependency "rspec", "~> 3.7"
-  spec.add_development_dependency "sinatra"
+  spec.add_development_dependency "sinatra", ">= 2.0", "< 3.0"
   spec.add_development_dependency "timecop", "~> 0.9"
 
   # ===== Documentation =====
@@ -59,5 +56,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "yard", "~> 0.9.18"
 
   # ===== Release Management =====
-  spec.add_development_dependency "gem-release", ">= 2.0"
+  spec.add_development_dependency "gem-release", "~> 2.0"
 end
