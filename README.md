@@ -1,4 +1,5 @@
 # SidekiqUniqueJobs [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg)](https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.png?branch=master)](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs) [![Code Climate](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.png)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs) [![Test Coverage](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmhenrixon%2Fsidekiq-unique-jobs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmhenrixon%2Fsidekiq-unique-jobs?ref=badge_shield)
 
 <!-- MarkdownTOC -->
 
@@ -754,3 +755,7 @@ You can find a list of contributors over on [Contributors][]
 [Sidekiq requirements]: https://github.com/mperham/sidekiq#requirements
 [Enterprise unique jobs]: https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
 [Contributors]: https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmhenrixon%2Fsidekiq-unique-jobs.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmhenrixon%2Fsidekiq-unique-jobs?ref=badge_large)
