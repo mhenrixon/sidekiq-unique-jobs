@@ -44,4 +44,4 @@ module SidekiqUniqueJobs
     end
   end
 end
-SidekiqUniqueJobs.send(:extend, SidekiqUniqueJobs::Middleware)
+SidekiqUniqueJobs.extend SidekiqUniqueJobs::Middleware

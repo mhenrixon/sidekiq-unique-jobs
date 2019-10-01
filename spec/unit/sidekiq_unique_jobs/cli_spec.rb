@@ -15,11 +15,11 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:max_lock_time) { 1 }
   let(:pattern)       { "*" }
   let(:pry) do
-    stub_const("Pry",
+    stub_const(
+      "Pry",
       Class.new do
-        def self.start
-        end
-      end
+        def self.start; end
+      end,
     )
   end
 
