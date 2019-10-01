@@ -18,6 +18,7 @@ RSpec.describe SidekiqUniqueJobs::Key do
   its(:changelog) { is_expected.to eq(SidekiqUniqueJobs::CHANGELOGS) }
   its(:to_s)      { is_expected.to eq(digest_one) }
   its(:inspect)   { is_expected.to eq(digest_one) }
+
   its(:to_a) do
     is_expected.to eq(
       %W[
