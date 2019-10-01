@@ -2,8 +2,6 @@
 
 require "sidekiq/testing"
 
-require_relative "version_check"
-
 RSpec.configure do |config|
   config.before(:each, redis: :redis) do |example|
     redis_db = example.metadata.fetch(:redis_db) { 0 }
@@ -32,9 +30,8 @@ RSpec.configure do |config|
     end
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
-      check = VersionCheck.new(Sidekiq::VERSION, sidekiq_ver)
-      check.invalid? do |operator1, version1, operator2, version2|
-        skip("Sidekiq (#{Sidekiq::VERSION}) should be #{operator1} #{version1} AND #{operator2} #{version2}")
+      unless SidekiqUniqueJobs::VersionCheck.satisfied?(RUBY_VERSION, sidekiq_ver)
+        skip("Ruby (#{Sidekiq::VERSION}) should be #{sidekiq_ver}")
       end
     end
   end
