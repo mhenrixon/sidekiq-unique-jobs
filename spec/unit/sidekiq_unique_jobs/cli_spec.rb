@@ -123,7 +123,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
 
     context "when Pry is available" do
-      let(:console_class) { Pry }
+      let(:console_class) { pry }
 
       it_behaves_like "start console"
     end
