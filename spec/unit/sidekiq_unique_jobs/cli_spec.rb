@@ -106,7 +106,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
 
     def setup_console(gem_name, constant_name)
       require gem_name
-    rescue LoadError, NameError
+    rescue LoadError, NameError # rubocop:disable Lint/HandleExceptions
       # Do absolutely nothing
     ensure
       stub_const(constant_name, Class.new do
