@@ -14,9 +14,17 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:unique_key)    { "uniquejobs:abcdefab" }
   let(:max_lock_time) { 1 }
   let(:pattern)       { "*" }
-  let(:pry) do
+  let(:fake_pry) do
     stub_const(
       "Pry",
+      Class.new do
+        def self.start; end
+      end,
+    )
+  end
+  let(:fake_irb) do
+    stub_const(
+      "IRB",
       Class.new do
         def self.start; end
       end,
@@ -25,13 +33,6 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
 
   def exec(*cmds)
     described_class.start(cmds)
-  end
-
-  before do
-    begin
-      require "pry"
-    rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/HandleExceptions, Lint/ShadowedException
-    end
   end
 
   describe "#help" do
@@ -107,7 +108,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     subject(:console) { capture(:stdout) { exec(:console) } }
 
     before do
-      allow(console_class).to receive(:start).and_return(true)
+      allow(console_class).to receive(:start)
     end
 
     shared_examples "start console" do
@@ -117,19 +118,17 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
           Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
           Use `del '*', 1000, false to delete the first 1000 keys matching '*'
         HEADER
-
-        expect(console_class).to have_received(:start)
       end
     end
 
     context "when Pry is available" do
-      let(:console_class) { pry }
+      let(:console_class) { fake_pry }
 
       it_behaves_like "start console"
     end
 
     context "when Pry is unavailable" do
-      let(:console_class) { IRB }
+      let(:console_class) { fake_irb }
 
       before { hide_const("Pry") }
 
