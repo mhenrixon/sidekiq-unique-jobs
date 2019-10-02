@@ -10,7 +10,7 @@ gem "rspec-eventually", require: false
 gem "rspec-its",        require: false
 
 platforms :jruby do
-  gem 'pry-debugger-jruby'
+  gem "pry-debugger-jruby"
 end
 
 platforms :mri do

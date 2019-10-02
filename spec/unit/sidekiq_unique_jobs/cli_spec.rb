@@ -110,7 +110,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
       # Do absolutely nothing
     ensure
       stub_const(constant_name, Class.new do
-        def self.start(*args)
+        def self.start(*_args)
           puts "whatever"
         end
       end)
