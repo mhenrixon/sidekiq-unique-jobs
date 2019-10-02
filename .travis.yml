@@ -38,8 +38,6 @@ matrix:
   include:
     - rvm: 2.5.7
       gemfile: gemfiles/sidekiq_6.0.gemfile
-    - rvm: truffleruby
-      gemfile: gemfiles/sidekiq_6.0.gemfile
     - rvm: 2.6.5
       gemfile: gemfiles/sidekiq_develop.gemfile
     - rvm: 2.6.5
