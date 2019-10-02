@@ -9,6 +9,7 @@ module SidekiqUniqueJobs
   ARGS_KEY                  ||= "args"
   AT_KEY                    ||= "at"
   CLASS_KEY                 ||= "class"
+  JAVA                      ||= "java"
   JID_KEY                   ||= "jid"
   LOCK_EXPIRATION_KEY       ||= "lock_expiration"
   LOCK_TIMEOUT_KEY          ||= "lock_timeout"
