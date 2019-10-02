@@ -16,6 +16,7 @@ AllCops:
     - "bin/**/*.rb"
     - "spec/**/*.rb"
     - "examples/**/*.rb"
+    - ".simplecov"
   Exclude:
     - "Gemfile.lock"
     - "**/*.erb"
