@@ -14,22 +14,6 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:unique_key)    { "uniquejobs:abcdefab" }
   let(:max_lock_time) { 1 }
   let(:pattern)       { "*" }
-  let(:fake_pry) do
-    stub_const(
-      "Pry",
-      Class.new do
-        def self.start; end
-      end,
-    )
-  end
-  let(:fake_irb) do
-    stub_const(
-      "IRB",
-      Class.new do
-        def self.start; end
-      end,
-    )
-  end
 
   def exec(*cmds)
     described_class.start(cmds)
@@ -104,35 +88,71 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
   end
 
-  describe ".console" do
+  describe ".console", ruby_ver: ">= 2.6.5" do
     subject(:console) { capture(:stdout) { exec(:console) } }
 
-    before do
-      allow(console_class).to receive(:start)
+    def rspec_constantize(klazz)
+      return klazz unless klazz.is_a?(String)
+
+      Object.const_get(klazz)
+    rescue NameError => ex
+      case ex.message
+      when /uninitialized constant/
+        klazz
+      else
+        raise
+      end
     end
 
-    shared_examples "start console" do
+    def setup_console(gem_name, constant_name)
+      require gem_name
+    rescue LoadError, NameError
+      # Do absolutely nothing
+    ensure
+      stub_const(constant_name, Class.new do
+        def self.start(*args)
+          puts "whatever"
+        end
+      end)
+
+      allow(rspec_constantize(constant_name)).to receive(:start)
+    end
+
+    def setup_pry
+      setup_console("pry", "Pry")
+    end
+
+    def setup_irb
+      hide_const("Pry")
+      setup_console("irb", "IRB")
+    end
+
+    shared_examples "starts console" do
       specify do
         expect(console).to include <<~HEADER
           Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
           Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
           Use `del '*', 1000, false to delete the first 1000 keys matching '*'
         HEADER
+
+        expect(console_class).to have_received(:start)
       end
     end
 
     context "when Pry is available" do
-      let(:console_class) { fake_pry }
+      let(:console_class) { Pry }
 
-      it_behaves_like "start console"
+      before { setup_pry }
+
+      it_behaves_like "starts console"
     end
 
     context "when Pry is unavailable" do
-      let(:console_class) { fake_irb }
+      let(:console_class) { IRB }
 
-      before { hide_const("Pry") }
+      before { setup_irb }
 
-      it_behaves_like "start console"
+      it_behaves_like "starts console"
     end
   end
 end
