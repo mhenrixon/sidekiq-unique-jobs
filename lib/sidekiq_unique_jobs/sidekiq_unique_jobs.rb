@@ -37,8 +37,12 @@ module SidekiqUniqueJobs
   def with_context(context, &block)
     if logger.respond_to?(:with_context)
       logger.with_context(context, &block)
+    elsif defined?(Sidekiq::Context)
+      Sidekiq::Context.with(context, &block)
     elsif defined?(Sidekiq::Logging)
       Sidekiq::Logging.with_context(context, &block)
+    else
+      block.call
     end
   end
 
