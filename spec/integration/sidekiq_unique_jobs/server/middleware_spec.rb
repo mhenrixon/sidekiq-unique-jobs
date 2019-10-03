@@ -2,7 +2,7 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Server::Middleware, redis: :redis, redis_db: 9 do
-  let(:middleware) { SidekiqUniqueJobs::Server::Middleware.new }
+  let(:middleware) { described_class.new }
 
   let(:queue) { "working" }
 

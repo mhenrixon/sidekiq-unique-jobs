@@ -40,6 +40,7 @@ RSpec.describe Sidekiq::RetrySet, redis: :redis do
     end
 
     specify { expect(locked_jid).to eq(jid) }
+
     specify do
       expect(unique_keys).to match_array(%W[
                                            #{unique_digest}:EXISTS

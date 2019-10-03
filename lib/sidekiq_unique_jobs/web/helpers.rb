@@ -36,10 +36,10 @@ module SidekiqUniqueJobs
 
       def safe_relative_time(time)
         time = if time.is_a?(Numeric)
-                 Time.at(time)
-               else
-                 Time.parse(time)
-               end
+          Time.at(time)
+        else
+          Time.parse(time)
+        end
 
         relative_time(time)
       end

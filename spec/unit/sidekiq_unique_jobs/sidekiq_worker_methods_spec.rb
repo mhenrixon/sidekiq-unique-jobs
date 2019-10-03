@@ -2,12 +2,17 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
-  class WorkerWithSidekiqMethods
-    include SidekiqUniqueJobs::SidekiqWorkerMethods
+  before do
+    stub_const(
+      "WorkerWithSidekiqMethods",
+      Class.new do
+        include SidekiqUniqueJobs::SidekiqWorkerMethods
 
-    def initialize(worker_class)
-      @worker_class = worker_class
-    end
+        def initialize(worker_class)
+          @worker_class = worker_class
+        end
+      end,
+    )
   end
 
   let(:worker) { WorkerWithSidekiqMethods.new(worker_class) }

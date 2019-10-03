@@ -46,9 +46,11 @@ module SidekiqUniqueJobs
 
     no_commands do
       def console_class
+        return IRB if RUBY_PLATFORM == JAVA
+
         require "pry"
         Pry
-      rescue LoadError
+      rescue LoadError, NameError
         require "irb"
         IRB
       end

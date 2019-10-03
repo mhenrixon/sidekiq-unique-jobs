@@ -4,6 +4,7 @@ require "forwardable"
 require "concurrent/mutable_struct"
 
 require "sidekiq_unique_jobs/version"
+require "sidekiq_unique_jobs/version_check"
 require "sidekiq_unique_jobs/constants"
 require "sidekiq_unique_jobs/logging"
 require "sidekiq_unique_jobs/sidekiq_worker_methods"

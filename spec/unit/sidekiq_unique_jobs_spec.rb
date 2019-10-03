@@ -63,7 +63,7 @@ RSpec.describe SidekiqUniqueJobs do
 
     it "changes the SidekiqUniqueJobs.logger" do
       expect { described_class.logger = another_logger }
-        .to change(described_class, :logger)
+        .to change { described_class.logger }
         .from(original_logger)
         .to(another_logger)
 

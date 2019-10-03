@@ -34,11 +34,15 @@ module SidekiqUniqueJobs
   end
 
   # :reek:ManualDispatch
-  def with_context(context, &block)
+  def with_context(context)
     if logger.respond_to?(:with_context)
-      logger.with_context(context, &block)
+      logger.with_context(context) { yield }
+    elsif defined?(Sidekiq::Context)
+      Sidekiq::Context.with(context) { yield }
     elsif defined?(Sidekiq::Logging)
-      Sidekiq::Logging.with_context(context, &block)
+      Sidekiq::Logging.with_context(context) { yield }
+    else
+      yield
     end
   end
 

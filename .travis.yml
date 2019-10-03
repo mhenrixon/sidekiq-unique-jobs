@@ -12,38 +12,39 @@ services:
   - redis-server
 
 before_install:
-  - gem install bundler -v 2.0.1
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
+  - gem install bundler -v 2.0.2
+  - if [[ "${COV}" = "true" ]]; then curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter; fi;
+  - if [[ "${COV}" = "true" ]]; then chmod +x ./cc-test-reporter; fi;
 
 before_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter before-build; fi;
 
 script:
   - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
-  - bundle exec rspec --require spec_helper
+  - if [[ "${COV}" = "true" ]]; then bundle exec reek .; fi;
+  - bundle exec rspec --require spec_helper --tag ~perf
 
 after_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 rvm:
-  - 2.6.2
-  - 2.4.5
-  - 2.3.8
-  - jruby-9.2.7.0
+  - 2.6.5
+  - 2.4.8
+  - jruby-9.2.8.0
 
 matrix:
   fast_finish: true
+  allow_failures:
+    - gemfile: gemfiles/sidekiq_develop.gemfile
   include:
-    - rvm: 2.5.5
+    - rvm: 2.5.7
+      gemfile: gemfiles/sidekiq_6.0.gemfile
+    - rvm: 2.6.5
       gemfile: gemfiles/sidekiq_develop.gemfile
+    - rvm: 2.6.5
+      gemfile: gemfiles/sidekiq_6.0.gemfile
       env: COV=true
-    - rvm: 2.6.2
-      gemfile: gemfiles/sidekiq_6.0.gemfile
-    - rvm: 2.5.5
-      gemfile: gemfiles/sidekiq_6.0.gemfile
 
 gemfile:
-  - gemfiles/sidekiq_develop.gemfile
   - gemfiles/sidekiq_4.0.gemfile
   - gemfiles/sidekiq_4.1.gemfile
   - gemfiles/sidekiq_4.2.gemfile

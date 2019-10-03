@@ -26,25 +26,25 @@ module SidekiqUniqueJobs
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
         @total_size, @next_cursor, @unique_digests =
-          Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
+          SidekiqUniqueJobs::Digests.page(pattern: @filter, cursor: @current_cursor, page_size: @count)
 
         erb(unique_template(:unique_digests))
       end
 
       app.get "/unique_digests/delete_all" do
-        Digests.del(pattern: "*", count: Digests.count)
+        SidekiqUniqueJobs::Digests.del(pattern: "*", count: SidekiqUniqueJobs::Digests.count)
         redirect_to :unique_digests
       end
 
       app.get "/unique_digests/:digest" do
         @digest = params[:digest]
-        @unique_keys = Util.keys("#{@digest}*", 1000)
+        @unique_keys = SidekiqUniqueJobs::Util.keys("#{@digest}*", 1000)
 
         erb(unique_template(:unique_digest))
       end
 
       app.get "/unique_digests/:digest/delete" do
-        Digests.del(digest: params[:digest])
+        SidekiqUniqueJobs::Digests.del(digest: params[:digest])
         redirect_to :unique_digests
       end
     end

@@ -15,8 +15,12 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   let(:max_lock_time) { 1 }
   let(:pattern)       { "*" }
 
+  def exec(*cmds)
+    described_class.start(cmds)
+  end
+
   describe "#help" do
-    subject(:help) { capture(:stdout) { described_class.start(%w[help]) } }
+    subject(:help) { capture(:stdout) { exec(:help) } }
 
     it "displays help" do
       expect(help).to include <<~HEADER
@@ -29,7 +33,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
 
     describe "#help del" do
-      subject(:help) { capture(:stdout) { described_class.start(%w[help del]) } }
+      subject(:help) { capture(:stdout) { exec(:help, :del) } }
 
       it "displays help about the `del` command" do
         expect(help).to eq <<~HEADER
@@ -47,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
 
     describe "#help keys" do
-      subject(:help) { capture(:stdout) { described_class.start(%w[help keys]) } }
+      subject(:help) { capture(:stdout) { exec(:help, :keys) } }
 
       it "displays help about the `key` command" do
         expect(help).to eq <<~HEADER
@@ -65,7 +69,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
   end
 
   describe ".keys" do
-    subject(:keys) { capture(:stdout) { described_class.start(%w[keys * --count 1000]) } }
+    subject(:keys) { capture(:stdout) { exec("keys", "*", "--count", "1000") } }
 
     context "when no keys exist" do
       it { is_expected.to eq("Found 0 keys matching '#{pattern}':\n") }
@@ -84,49 +88,36 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
   end
 
-  describe ".del" do
-    subject(:del) { capture(:stdout) { described_class.start(args) } }
+  describe ".console", ruby_ver: ">= 2.6.5" do
+    subject(:console) { capture(:stdout) { exec(:console) } }
 
-    let(:args) { %W[del * #{options} --count 1000] }
-
-    before do
-      SidekiqUniqueJobs::Locksmith.new(item).lock
-    end
-
-    context "with argument --dry-run" do
-      let(:options) { "--dry-run" }
-
-      specify do
-        expect(del).to eq("Would delete 2 keys matching '*'\n")
-        expect(SidekiqUniqueJobs::Util.keys).not_to eq([])
-      end
-    end
-
-    context "with argument --no-dry-run" do
-      let(:options) { "--no-dry-run" }
-
-      specify do
-        expect(del).to eq("Deleted 2 keys matching '*'\n")
-        expect(SidekiqUniqueJobs::Util.keys).to eq([])
-      end
-    end
-  end
-
-  describe ".console" do
-    subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
-
-    let(:console_class) { defined?(Pry) ? Pry : IRB }
-
-    specify do
-      allow(Object).to receive(:include)
-      allow(console_class).to receive(:start).and_return(true)
-      expect(console).to eq <<~HEADER
+    let(:header) do
+      <<~HEADER
         Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
         Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
         Use `del '*', 1000, false to delete the first 1000 keys matching '*'
       HEADER
+    end
 
-      expect(Object).to have_received(:include).with(SidekiqUniqueJobs::Util)
+    before do
+      allow(self).to receive(:require).with("pry").and_return(true)
+      allow(console_class).to receive(:start).and_return(true)
+    end
+
+    def stub_console(const)
+      stub_const(const, Class.new { def self.start; end })
+    end
+
+    context "when Pry is available" do
+      let(:console_class) { stub_console("Pry") }
+
+      it { is_expected.to include(header) }
+    end
+
+    context "when Pry is unavailable" do
+      let(:console_class) { stub_console("IRB") }
+
+      it { is_expected.to include(header) }
     end
   end
 end
