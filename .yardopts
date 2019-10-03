@@ -5,4 +5,4 @@
 --exclude lib/sidekiq_unique_jobs/web/helpers.rb
 --readme README.md
 --files CHANGELOG.md,LICENSE.txt
-lib/ sidekiq_unique_jobs/**/*.rb
+lib/sidekiq_unique_jobs/**/*.rb
