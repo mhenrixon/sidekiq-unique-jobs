@@ -72,20 +72,18 @@ RSpec.describe SidekiqUniqueJobs::Logging do
 
       before do
         hide_const("Sidekiq::Context")
-
-        if defined?(Sidekiq::Logging)
-          @keep_constant = true
-        else
-          @keep_constant = false
-          require "spec/support/sidekiq/logging"
-        end
+        stub_const("Sidekiq::Logging", Class.new do
+          def self.with_context(msg)
+            Thread.current[:sidekiq_context] = []
+            Thread.current[:sidekiq_context] << msg
+            yield
+          ensure
+            Thread.current[:sidekiq_context] = {}
+          end
+        end)
 
         allow(logger).to receive(:respond_to?).with(:with_context).and_return(false)
         allow(Sidekiq::Logging).to receive(:with_context).and_call_original
-      end
-
-      after do
-        Sidekiq.send(:remove_const, "Logging") unless @keep_constant # rubocop:disable RSpec/InstanceVariable
       end
 
       it "sets up a logging context" do
@@ -105,6 +103,8 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         allow(logger).to receive(:respond_to?).with(:with_context).and_return(false)
         hide_const("Sidekiq::Logging")
         hide_const("Sidekiq::Context")
+
+        allow(self).to receive(:fake_logger_context_method).and_call_original
       end
 
       it "logs a warning" do
@@ -121,6 +121,12 @@ RSpec.describe SidekiqUniqueJobs::Logging do
       let(:logging_context) { { "sheet" => "ya" } }
 
       before do
+        stub_const("Sidekiq::Context", Class.new do
+          def self.with(_hash)
+            yield
+          end
+        end)
+
         allow(Sidekiq::Context).to receive(:with).and_call_original
       end
 
