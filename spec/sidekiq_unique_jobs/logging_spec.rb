@@ -6,7 +6,6 @@ RSpec.describe SidekiqUniqueJobs::Logging do
   let(:logger)  { SidekiqUniqueJobs.logger }
   let(:message) { "A log message" }
   let(:level)   { nil }
-  let(:item)    { { "lock" => "until_executed", "unique_digest" => "abcdef" } }
 
   before do
     allow(logger).to receive(level)
@@ -68,10 +67,12 @@ RSpec.describe SidekiqUniqueJobs::Logging do
   describe "#with_configured_loggers_context" do
     let(:level) { :warn }
 
-    include SidekiqUniqueJobs::Logging::Middleware
-
     context "when Sidekiq::Logging is defined" do
+      let(:logging_context) { { "hey" => "ho" } }
+
       before do
+        hide_const("Sidekiq::Context")
+
         if defined?(Sidekiq::Logging)
           @keep_constant = true
         else
@@ -97,7 +98,8 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     end
 
     context "when logger does not support context" do
-      let(:logger) { Logger.new("/dev/null") }
+      let(:logger)          { Logger.new("/dev/null") }
+      let(:logging_context) { { "fuu" => "bar" } }
 
       before do
         allow(logger).to receive(:respond_to?).with(:with_context).and_return(false)
@@ -109,20 +111,17 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         with_configured_loggers_context {}
 
         expect(logger).to have_received(:warn).with(
-          "Received uniquejobs-server DIG-abcdef for logs but don't know how to setup the logging context." \
-          " Please open a feature request:" \
+          "Don't know how to setup the logging context. Please open a feature request:" \
           " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md",
         )
       end
     end
 
     context "when Sidekiq::Context is defined" do
+      let(:logging_context) { { "sheet" => "ya" } }
+
       before do
         allow(Sidekiq::Context).to receive(:with).and_call_original
-      end
-
-      def logging_context
-        { "sheet" => "ya" }
       end
 
       it "sets up a logging context" do

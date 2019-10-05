@@ -102,6 +102,7 @@ module SidekiqUniqueJobs
       with_configured_loggers_context do
         return yield
       end
+
       nil # Need to make sure we don't return anything here
     end
 
@@ -129,27 +130,54 @@ module SidekiqUniqueJobs
 
     private
 
+    #
+    # A memoized method to use for setting up a logging context
+    #
+    #
+    # @return [proc] the method to call
+    #
     def logger_method
       @logger_method ||= Sidekiq::Context.method(:with)         if defined?(Sidekiq::Context)
       @logger_method ||= logger.method(:with_context)           if logger_respond_to_with_context?
       @logger_method ||= Sidekiq::Logging.method(:with_context) if defined?(Sidekiq::Logging)
-      @logger_method ||= method(:fake_logger_method)
+      @logger_method ||= method(:fake_logger_context_method)
     end
 
-    def logger_context_hash?
-      defined?(Sidekiq::Context) || logger_respond_to_with_context?
+    #
+    # Method used for fallback to prevent future Sidekiq releases from breaking the gem
+    #
+    #
+    # @param [Hash, String] context the logging context to dump in the warning
+    #
+    def fake_logger_context_method(_context)
+      logger.warn "Don't know how to setup the logging context. Please open a feature request:" \
+                  " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
+
+      yield
     end
 
+    #
+    # Checks if the logger respond to `with_context`.
+    #
+    # @note only used to remove the need for explicitly ignoring manual dispatch in other places.
+    #
+    #
+    # @return [true,false]
+    #
     def logger_respond_to_with_context?
       logger.respond_to?(:with_context)
     end
 
-    def fake_logger_method(context)
-      logger.warn "Received #{context} for logs but don't know how to setup the logging context." \
-                  " Please open a feature request:" \
-                  " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
-
-      yield
+    #
+    # Checks if the logger context takes a hash argument
+    #
+    # @note only used to remove the need for explicitly ignoring manual dispatch in other places.
+    #
+    #
+    # @return [true,false]
+    #
+    def logger_context_hash?
+      defined?(Sidekiq::Context) || logger_respond_to_with_context?
     end
   end
 end

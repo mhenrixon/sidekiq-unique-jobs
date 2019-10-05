@@ -61,6 +61,8 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
+RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 10_000
+
 def capture(stream)
   begin
     stream = stream.to_s
