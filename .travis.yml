@@ -12,11 +12,11 @@ services:
   - redis-server
 
 before_install:
+  - gem install bundler -v 2.0.2
   - >
-    gem install bundler -v 2.0.2
     if [[ "${COV}" = "true" ]]; then
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter;
-    then chmod +x ./cc-test-reporter;
+    chmod +x ./cc-test-reporter;
     fi;
 
 before_script:
@@ -26,7 +26,7 @@ script:
   - >
     if [[ "${COV}" = "true" ]]; then
     bundle exec rubocop -P;
-    then bundle exec reek .;
+    bundle exec reek .;
     fi;
     bundle exec rspec --require spec_helper --tag ~perf
 
