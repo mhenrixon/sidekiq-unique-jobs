@@ -7,7 +7,10 @@ env:
 dist: bionic
 sudo: required
 language: ruby
-cache: bundler
+cache:
+  bundler: true
+  directories:
+     - /home/travis/.rvm/
 services:
   - redis-server
 
