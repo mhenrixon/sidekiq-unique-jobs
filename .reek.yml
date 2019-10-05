@@ -26,6 +26,7 @@ detectors:
     exclude:
     - initialize
     - Hash#slice
+    - SidekiqUniqueJobs#with_context
     - SidekiqUniqueJobs::Locksmith#create_lock
     - SidekiqUniqueJobs::Locksmith#expire_when_necessary
     - SidekiqUniqueJobs::Middleware#configure_server_middleware
