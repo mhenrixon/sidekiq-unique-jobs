@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
 
   spec.files         = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").select do |file|
-      file.match(%r{^(lib/*|bin/uniquejobs|README|LICENSE|CHANGELOG)})
+      file.match(%r{^(lib/*|redis/*|bin/uniquejobs|README|LICENSE|CHANGELOG)})
     end
   end
 
