@@ -38,8 +38,6 @@ after_script:
 
 rvm:
   - 2.4.8
-  - 2.5.7
-  - 2.6.5
 
 matrix:
   fast_finish: true
@@ -51,11 +49,15 @@ matrix:
       gemfile: gemfiles/sidekiq_develop.gemfile
 
   include:
+    - rvm: 2.5.7
+      gemfile: gemfiles/sidekiq_6.0.gemfile
+    - rvm: jruby-9.2.8.0
+      gemfile: gemfiles/sidekiq_6.0.gemfile
+    - rvm: 2.6.5
+      gemfile: gemfiles/sidekiq_develop.gemfile
     - rvm: 2.6.5
       gemfile: gemfiles/sidekiq_6.0.gemfile
       env: COV=true
-    - rvm: jruby-9.2.8.0
-      gemfile: gemfiles/sidekiq_6.0.gemfile
 
 gemfile:
   - gemfiles/sidekiq_4.0.gemfile
@@ -64,8 +66,6 @@ gemfile:
   - gemfiles/sidekiq_5.0.gemfile
   - gemfiles/sidekiq_5.1.gemfile
   - gemfiles/sidekiq_5.2.gemfile
-  - gemfiles/sidekiq_6.0.gemfile
-  - gemfiles/sidekiq_develop.gemfile
 
 notifications:
   email:
