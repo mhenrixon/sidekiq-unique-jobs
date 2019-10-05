@@ -40,7 +40,6 @@ rvm:
   - 2.4.8
   - 2.5.7
   - 2.6.5
-  - jruby-9.2.8.0
 
 matrix:
   fast_finish: true
@@ -55,6 +54,8 @@ matrix:
     - rvm: 2.6.5
       gemfile: gemfiles/sidekiq_6.0.gemfile
       env: COV=true
+    - rvm: jruby-9.2.8.0
+      gemfile: gemfiles/sidekiq_6.0.gemfile
 
 gemfile:
   - gemfiles/sidekiq_4.0.gemfile
