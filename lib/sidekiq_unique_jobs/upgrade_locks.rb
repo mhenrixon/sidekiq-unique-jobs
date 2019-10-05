@@ -141,7 +141,7 @@ module SidekiqUniqueJobs
     end
 
     def logging_context
-      if logger.respond_to?(:with_context)
+      if logger_context_hash?
         { "uniquejobs" => :upgrade_locks }
       else
         "uniquejobs-upgrade_locks"

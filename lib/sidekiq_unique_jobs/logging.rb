@@ -113,16 +113,8 @@ module SidekiqUniqueJobs
     #
     # @yield
     #
-    def with_configured_loggers_context(&block)
-      if logger.respond_to?(:with_context)
-        logger.with_context(logging_context, &block)
-      elsif defined?(Sidekiq::Logging)
-        Sidekiq::Logging.with_context(logging_context, &block)
-      else
-        logger.warn "Don't know how to create the logging context. Please open a feature request: https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
-      end
-
-      nil
+    def with_configured_loggers_context
+      logger_method.call(logging_context) { yield }
     end
 
     #
@@ -133,6 +125,31 @@ module SidekiqUniqueJobs
     #
     def logging_context
       raise NotImplementedError, "#{__method__} needs to be implemented in #{self.class}"
+    end
+
+    private
+
+    def logger_method
+      @logger_method ||= Sidekiq::Context.method(:with)         if defined?(Sidekiq::Context)
+      @logger_method ||= logger.method(:with_context)           if logger_respond_to_with_context?
+      @logger_method ||= Sidekiq::Logging.method(:with_context) if defined?(Sidekiq::Logging)
+      @logger_method ||= method(:fake_logger_method)
+    end
+
+    def logger_context_hash?
+      defined?(Sidekiq::Context) || logger_respond_to_with_context?
+    end
+
+    def logger_respond_to_with_context?
+      logger.respond_to?(:with_context)
+    end
+
+    def fake_logger_method(context)
+      logger.warn "Received #{context} for logs but don't know how to setup the logging context." \
+                  " Please open a feature request:" \
+                  " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
+
+      yield
     end
   end
 end

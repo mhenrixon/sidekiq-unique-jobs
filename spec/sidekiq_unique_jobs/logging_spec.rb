@@ -102,15 +102,35 @@ RSpec.describe SidekiqUniqueJobs::Logging do
       before do
         allow(logger).to receive(:respond_to?).with(:with_context).and_return(false)
         hide_const("Sidekiq::Logging")
+        hide_const("Sidekiq::Context")
       end
 
       it "logs a warning" do
         with_configured_loggers_context {}
 
         expect(logger).to have_received(:warn).with(
-          "Don't know how to create the logging context. Please open a feature request:" \
+          "Received uniquejobs-server DIG-abcdef for logs but don't know how to setup the logging context." \
+          " Please open a feature request:" \
           " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md",
         )
+      end
+    end
+
+    context "when Sidekiq::Context is defined" do
+      before do
+        allow(Sidekiq::Context).to receive(:with).and_call_original
+      end
+
+      def logging_context
+        { "sheet" => "ya" }
+      end
+
+      it "sets up a logging context" do
+        with_configured_loggers_context do
+          log_warn("TOODELEE")
+        end
+
+        expect(logger).to have_received(:warn).with("TOODELEE")
       end
     end
   end
