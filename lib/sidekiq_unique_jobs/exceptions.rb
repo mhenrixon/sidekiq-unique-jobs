@@ -94,7 +94,7 @@ module SidekiqUniqueJobs
 
     PATTERN  = /ERR Error (compiling|running) script \(.*?\): .*?:(\d+): (.*)/.freeze
     LIB_PATH = File.expand_path("..", __dir__)
-    CONTEXT_LINE_NUMBER = 2
+    CONTEXT_LINE_NUMBER = 3
 
     attr_reader :error, :file, :content
 
@@ -114,28 +114,29 @@ module SidekiqUniqueJobs
     # @param content [String] lua file content the error ocurred in
     # :nocov:
     def initialize(error, file, content)
-      @error     = error
-      @file      = file
-      @content   = content
-      @backtrace = @error.backtrace
-      @error.message =~ PATTERN
-      _stage = Regexp.last_match(1)
-      line_number = Regexp.last_match(2)
-      message = Regexp.last_match(3)
-      error_context = generate_error_context(content, line_number.to_i)
+      @error        = error
+      @file         = file
+      @content      = content
+      @backtrace    = @error.backtrace
 
-      super("#{message}\n\n#{error_context}\n\n")
-      set_backtrace(generate_backtrace(file, line_number))
+      @error.message.match(PATTERN) do |regexp_match|
+        line_number   = regexp_match[2].to_i
+        message       = regexp_match[3]
+        error_context = generate_error_context(content, line_number)
+
+        super("#{message}\n\n#{error_context}\n\n")
+        set_backtrace(generate_backtrace(file, line_number))
+      end
     end
 
     private
 
     # :nocov:
     def generate_error_context(content, line_number)
-      lines = content.lines.to_a
+      lines                 = content.lines.to_a
       beginning_line_number = [1, line_number - CONTEXT_LINE_NUMBER].max
-      ending_line_number = [lines.count, line_number + CONTEXT_LINE_NUMBER].min
-      line_number_width = ending_line_number.to_s.length
+      ending_line_number    = [lines.count, line_number + CONTEXT_LINE_NUMBER].min
+      line_number_width     = ending_line_number.to_s.length
 
       (beginning_line_number..ending_line_number).map do |number|
         indicator = (number == line_number) ? "=>" : "  "
@@ -146,20 +147,20 @@ module SidekiqUniqueJobs
 
     # :nocov:
     def generate_backtrace(file, line_number)
-      pre_unique_jobs = backtrace_before_entering_unique_jobs(@backtrace)
-      index_of_first_unique_jobs_line = (@backtrace.size - pre_unique_jobs.size - 1)
-      pre_unique_jobs.unshift(@backtrace[index_of_first_unique_jobs_line])
-      pre_unique_jobs.unshift("#{file}:#{line_number}")
-      pre_unique_jobs
+      pre_gem                         = backtrace_before_entering_gem(@backtrace)
+      index_of_first_unique_jobs_line = (@backtrace.size - pre_gem.size - 1)
+      pre_gem.unshift(@backtrace[index_of_first_unique_jobs_line])
+      pre_gem.unshift("#{file}:#{line_number}")
+      pre_gem
     end
 
     # :nocov:
-    def backtrace_before_entering_unique_jobs(backtrace)
-      backtrace.reverse.take_while { |line| !line_from_unique_jobs(line) }.reverse
+    def backtrace_before_entering_gem(backtrace)
+      backtrace.reverse.take_while { |line| !line_from_gem(line) }.reverse
     end
 
     # :nocov:
-    def line_from_unique_jobs(line)
+    def line_from_gem(line)
       line.split(":").first.include?(LIB_PATH)
     end
   end
