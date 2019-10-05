@@ -63,6 +63,30 @@ end
 
 task default: [:style, :rspec, :yard]
 
+namespace :appraisal do
+  namespace :rspec do
+    task :all do
+      sh("bundle exec appraisal rspec")
+    end
+
+    task :pre_sidekiq_6 do
+      sh("bundle exec appraisal sidekiq-4.0 rspec")
+      sh("bundle exec appraisal sidekiq-4.1 rspec")
+      sh("bundle exec appraisal sidekiq-4.2 rspec")
+      sh("bundle exec appraisal sidekiq-5.0 rspec")
+      sh("bundle exec appraisal sidekiq-5.1 rspec")
+      sh("bundle exec appraisal sidekiq-5.2 rspec")
+    end
+
+    task :post_sidekiq_6 do
+      sh("bundle exec appraisal sidekiq-6.0 rspec")
+      sh("bundle exec appraisal sidekiq-develop rspec")
+    end
+
+    task default: [:all]
+  end
+end
+
 task :release do
   sh("./update_docs.sh")
   sh("gem release --tag --push")
