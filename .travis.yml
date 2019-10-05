@@ -4,7 +4,7 @@ env:
   global:
     - CC_TEST_REPORTER_ID=88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
-dist: trusty
+dist: xenial
 sudo: required
 language: ruby
 cache: bundler
@@ -12,36 +12,43 @@ services:
   - redis-server
 
 before_install:
-  - gem install bundler -v 2.0.2
-  - if [[ "${COV}" = "true" ]]; then curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter; fi;
-  - if [[ "${COV}" = "true" ]]; then chmod +x ./cc-test-reporter; fi;
+  - >
+    gem install bundler -v 2.0.2
+    if [[ "${COV}" = "true" ]]; then
+    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter;
+    then chmod +x ./cc-test-reporter;
+    fi;
 
 before_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter before-build; fi;
 
 script:
-  - if [[ "${COV}" = "true" ]]; then bundle exec rubocop -P; fi;
-  - if [[ "${COV}" = "true" ]]; then bundle exec reek .; fi;
-  - bundle exec rspec --require spec_helper --tag ~perf
+  - >
+    if [[ "${COV}" = "true" ]]; then
+    bundle exec rubocop -P;
+    then bundle exec reek .;
+    fi;
+    bundle exec rspec --require spec_helper --tag ~perf
 
 after_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
+
 rvm:
-  - 2.6.5
   - 2.4.8
+  - 2.5.7
+  - 2.6.5
   - jruby-9.2.8.0
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - gemfile: gemfiles/sidekiq_develop.gemfile
-  include:
-    - rvm: 2.5.7
+
+  exclude:
+    - rvm: 2.4.8
       gemfile: gemfiles/sidekiq_6.0.gemfile
-    - rvm: truffleruby
-      gemfile: gemfiles/sidekiq_6.0.gemfile
-    - rvm: 2.6.5
+    - rvm: 2.4.8
       gemfile: gemfiles/sidekiq_develop.gemfile
+
+  include:
     - rvm: 2.6.5
       gemfile: gemfiles/sidekiq_6.0.gemfile
       env: COV=true
@@ -53,6 +60,8 @@ gemfile:
   - gemfiles/sidekiq_5.0.gemfile
   - gemfiles/sidekiq_5.1.gemfile
   - gemfiles/sidekiq_5.2.gemfile
+  - gemfiles/sidekiq_6.0.gemfile
+  - gemfiles/sidekiq_develop.gemfile
 
 notifications:
   email:
