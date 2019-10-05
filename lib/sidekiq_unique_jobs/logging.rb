@@ -43,6 +43,7 @@ module SidekiqUniqueJobs
     #   Used for compatibility with logger
     def log_error(message_or_exception = nil, &block)
       logger.error(message_or_exception, &block)
+      nil
     end
 
     # Logs a message at fatal level
