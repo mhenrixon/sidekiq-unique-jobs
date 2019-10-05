@@ -74,11 +74,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         hide_const("Sidekiq::Context")
         stub_const("Sidekiq::Logging", Class.new do
           def self.with_context(msg)
-            Thread.current[:sidekiq_context] = []
-            Thread.current[:sidekiq_context] << msg
             yield
-          ensure
-            Thread.current[:sidekiq_context] = {}
           end
         end)
 
