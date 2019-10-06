@@ -137,23 +137,10 @@ module SidekiqUniqueJobs
     # @return [proc] the method to call
     #
     def logger_method
-      @logger_method ||= Sidekiq::Context.method(:with)         if defined?(Sidekiq::Context)
-      @logger_method ||= logger.method(:with_context)           if logger_respond_to_with_context?
-      @logger_method ||= Sidekiq::Logging.method(:with_context) if defined?(Sidekiq::Logging)
-      @logger_method ||= method(:fake_logger_context_method)
-    end
-
-    #
-    # Method used for fallback to prevent future Sidekiq releases from breaking the gem
-    #
-    #
-    # @param [Hash, String] context the logging context to dump in the warning
-    #
-    def fake_logger_context_method(_context)
-      logger.warn "Don't know how to setup the logging context. Please open a feature request:" \
-                  " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
-
-      yield
+      @logger_method ||= sidekiq_context_method
+      @logger_method ||= sidekiq_logger_context_method
+      @logger_method ||= sidekiq_logging_context_method
+      @logger_method ||= no_sidekiq_context_method
     end
 
     #
@@ -178,6 +165,29 @@ module SidekiqUniqueJobs
     #
     def logger_context_hash?
       defined?(Sidekiq::Context) || logger_respond_to_with_context?
+    end
+
+    def sidekiq_context_method
+      Sidekiq::Context.method(:with) if defined?(Sidekiq::Context)
+    end
+
+    def sidekiq_logger_context_method
+      logger.method(:with_context)           if logger_respond_to_with_context?
+    end
+
+    def sidekiq_logging_context_method
+      Sidekiq::Logging.method(:with_context) if defined?(Sidekiq::Logging)
+    end
+
+    def no_sidekiq_context_method
+      method(:fake_logger_context)
+    end
+
+    def fake_logger_context(_context)
+      logger.warn "Don't know how to setup the logging context. Please open a feature request:" \
+                  " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
+
+      yield
     end
   end
 end

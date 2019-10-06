@@ -73,7 +73,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
       before do
         hide_const("Sidekiq::Context")
         stub_const("Sidekiq::Logging", Class.new do
-          def self.with_context(msg)
+          def self.with_context(_msg)
             yield
           end
         end)
@@ -100,7 +100,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         hide_const("Sidekiq::Logging")
         hide_const("Sidekiq::Context")
 
-        allow(self).to receive(:fake_logger_context_method).and_call_original
+        allow(self).to receive(:no_sidekiq_context_method).and_call_original
       end
 
       it "logs a warning" do
