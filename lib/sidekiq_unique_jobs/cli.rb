@@ -49,7 +49,7 @@ module SidekiqUniqueJobs
       def console_class
         require "pry"
         Pry
-      rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/ShadowedException
+      rescue NameError, LoadError
         require "irb"
         IRB
       end

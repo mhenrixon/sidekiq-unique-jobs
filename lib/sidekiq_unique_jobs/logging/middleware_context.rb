@@ -33,7 +33,7 @@ module SidekiqUniqueJobs
         digest     = item[UNIQUE_DIGEST]
         lock_type  = item[LOCK]
 
-        if logger.respond_to?(:with_context)
+        if logger_context_hash?
           { "uniquejobs" => middleware, lock_type => digest }
         else
           "uniquejobs-#{middleware} #{"DIG-#{digest}" if digest}"

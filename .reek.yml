@@ -73,14 +73,9 @@ detectors:
     exclude:
       - Hash#slice
       - Hash#slice!
-      - SidekiqUniqueJobs::Lock::WhileExecuting#logging_context
-      - SidekiqUniqueJobs::Logging#with_configured_loggers_context
-      - SidekiqUniqueJobs::Logging::Middleware#logging_context
-      - SidekiqUniqueJobs::Middleware#with_configured_loggers_context
+      - SidekiqUniqueJobs::Logging#logger_respond_to_with_context?
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
-      - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
-      - SidekiqUniqueJobs::UpgradeLocks#logging_context
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
   MissingSafeMethod:
     exclude:
@@ -128,8 +123,6 @@ detectors:
       - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
-      - SidekiqUniqueJobs::Middleware#with_logging_context
-      - SidekiqUniqueJobs::Orphans::Manager#self.logging_context
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script#call
       - SidekiqUniqueJobs::Script#handle_error

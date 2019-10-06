@@ -89,7 +89,7 @@ module SidekiqUniqueJobs
       # @return [String] when logger does not responds to `:with_context`
       #
       def self.logging_context
-        if logger.respond_to?(:with_context)
+        if logger_context_hash?
           { "uniquejobs" => "reaper" }
         else
           "uniquejobs=orphan-reaper"
