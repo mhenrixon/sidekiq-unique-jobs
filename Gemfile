@@ -10,7 +10,6 @@ gem "rspec-eventually", require: false
 gem "rspec-its",        require: false
 
 platforms :mri do
-  gem "benchmark-ips"
   gem "fasterer"
   gem "fuubar"
   gem "guard"
@@ -19,7 +18,6 @@ platforms :mri do
   gem "guard-rspec"
   gem "guard-rubocop"
   gem "hiredis"
-  gem "memory_profiler"
   gem "pry"
   gem "redcarpet", "~> 3.4"
   gem "reek", ">= 5.3"
@@ -27,12 +25,7 @@ platforms :mri do
   gem "rubocop"
   gem "rubocop-performance"
   gem "rubocop-rspec"
-  gem "ruby-prof"
   gem "simplecov-json"
-  gem "stackprof"
-  gem "terminal-notifier-guard"
-  gem "test-prof"
-  gem "toxiproxy"
   gem "travis"
 end
 
