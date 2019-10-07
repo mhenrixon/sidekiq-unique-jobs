@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::OptionsWithFallback
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -76,7 +76,7 @@
   
   <dl>
     <dt>Included in:</dt>
-    <dd><span class='object_link'><a href="Client/Middleware.html" title="SidekiqUniqueJobs::Client::Middleware (class)">Client::Middleware</a></span>, <span class='object_link'><a href="Server/Middleware.html" title="SidekiqUniqueJobs::Server::Middleware (class)">Server::Middleware</a></span></dd>
+    <dd><span class='object_link'><a href="Lock/WhileExecuting.html" title="SidekiqUniqueJobs::Lock::WhileExecuting (class)">Lock::WhileExecuting</a></span>, <span class='object_link'><a href="Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></dd>
   </dl>
   
 
@@ -139,7 +139,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong>  &#x21d2; SidekiqUniqueJobs::Lock::BaseLock </a>
+      <a href="#lock_class-instance_method" title="#lock_class (instance method)">#<strong>lock_class</strong>  &#x21d2; Class </a>
     
 
     
@@ -153,7 +153,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Check if we should log duplicate payloads.</p>
+    <span class="summary_desc"><div class='inline'><p>Returns the corresponding class for the lock_type.</p>
 </div></span>
   
 </li>
@@ -162,7 +162,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock_class-instance_method" title="#lock_class (instance method)">#<strong>lock_class</strong>  &#x21d2; SidekiqUniqueJobs::Lock::BaseLock </a>
+      <a href="#lock_instance-instance_method" title="#lock_instance (instance method)">#<strong>lock_instance</strong>  &#x21d2; Lock::BaseLock </a>
     
 
     
@@ -176,7 +176,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Check if we should log duplicate payloads.</p>
+    <span class="summary_desc"><div class='inline'><p>A new lock for this Sidekiq Job.</p>
 </div></span>
   
 </li>
@@ -199,7 +199,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The type of lock for this worker.</p>
+</div></span>
   
 </li>
 
@@ -230,7 +231,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#log_duplicate_payload%3F-instance_method" title="#log_duplicate_payload? (instance method)">#<strong>log_duplicate_payload?</strong>  &#x21d2; Boolean </a>
+      <a href="#log_duplicate%3F-instance_method" title="#log_duplicate? (instance method)">#<strong>log_duplicate?</strong>  &#x21d2; true, ... </a>
     
 
     
@@ -244,7 +245,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Check if we should log duplicate payloads.</p>
+    <span class="summary_desc"><div class='inline'><p>Should duplicate payloads be logged?.</p>
 </div></span>
   
 </li>
@@ -253,7 +254,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Object </a>
+      <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Hash&lt;String, Object&gt; </a>
     
 
     
@@ -267,7 +268,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The default options with any matching keys overridden from worker options.</p>
+</div></span>
   
 </li>
 
@@ -318,10 +320,10 @@
 </li>
 
       
-        <li class="public ">
+        <li class="public deprecated">
   <span class="summary_signature">
     
-      <a href="#unique_type-instance_method" title="#unique_type (instance method)">#<strong>unique_type</strong>  &#x21d2; Object </a>
+      <a href="#unique_type-instance_method" title="#unique_type (instance method)">#<strong>unique_type</strong>  &#x21d2; Symbol </a>
     
 
     
@@ -331,11 +333,12 @@
   
   
   
-  
+  <span class="deprecated note title">deprecated</span>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span></p>
+</div></span>
   
 </li>
 
@@ -350,9 +353,9 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="lock-instance_method">
+  <h3 class="signature first" id="lock_class-instance_method">
   
-    #<strong>lock</strong>  &#x21d2; <tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">SidekiqUniqueJobs::Lock::BaseLock</a></span></tt> 
+    #<strong>lock_class</strong>  &#x21d2; <tt>Class</tt> 
   
 
   
@@ -360,7 +363,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Check if we should log duplicate payloads</p>
+    <p>Returns the corresponding class for the lock_type</p>
 
 
   </div>
@@ -373,13 +376,9 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">SidekiqUniqueJobs::Lock::BaseLock</a></span></tt>)</span>
+        <span class='type'>(<tt>Class</tt>)</span>
       
       
-      
-        &mdash;
-        <div class='inline'><p>an instance of a child class</p>
-</div>
       
     </li>
   
@@ -391,73 +390,16 @@
       <pre class="lines">
 
 
-39
-40
-41</pre>
+57
+58
+59
+60
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 39</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span>
-  <span class='ivar'>@lock</span> <span class='op'>||=</span> <span class='id identifier rubyid_lock_class'>lock_class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_after_unlock_hook'>after_unlock_hook</span><span class='comma'>,</span> <span class='ivar'>@redis_pool</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="lock_class-instance_method">
-  
-    #<strong>lock_class</strong>  &#x21d2; <tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">SidekiqUniqueJobs::Lock::BaseLock</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Check if we should log duplicate payloads</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">SidekiqUniqueJobs::Lock::BaseLock</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>an instance of a child class</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-45
-46
-47
-48
-49
-50
-51</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_class'>lock_class</span>
   <span class='ivar'>@lock_class</span> <span class='op'>||=</span> <span class='kw'>begin</span>
@@ -465,6 +407,63 @@
       <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="UnknownLock.html" title="SidekiqUniqueJobs::UnknownLock (class)">UnknownLock</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No implementation for `lock: :</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_lock_type'>lock_type</span><span class='embexpr_end'>}</span><span class='tstring_content'>`</span><span class='tstring_end'>&quot;</span></span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock_instance-instance_method">
+  
+    #<strong>lock_instance</strong>  &#x21d2; <tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">Lock::BaseLock</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A new lock for this Sidekiq Job</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">Lock::BaseLock</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>an instance of a lock implementation</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 47</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_instance'>lock_instance</span>
+  <span class='ivar'>@lock_instance</span> <span class='op'>||=</span> <span class='id identifier rubyid_lock_class'>lock_class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_after_unlock_hook'>after_unlock_hook</span><span class='comma'>,</span> <span class='ivar'>@redis_pool</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -482,7 +481,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>The type of lock for this worker</p>
+
 
   </div>
 </div>
@@ -508,15 +508,15 @@
       <pre class="lines">
 
 
-54
-55
-56</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_type'>lock_type</span>
-  <span class='ivar'>@lock_type</span> <span class='op'>||=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK_KEY</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_KEY</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_unique_type'>unique_type</span>
+  <span class='ivar'>@lock_type</span> <span class='op'>||=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_unique_type'>unique_type</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -564,9 +564,9 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="log_duplicate_payload?-instance_method">
+  <h3 class="signature " id="log_duplicate?-instance_method">
   
-    #<strong>log_duplicate_payload?</strong>  &#x21d2; <tt>Boolean</tt> 
+    #<strong>log_duplicate?</strong>  &#x21d2; <tt>true</tt>, ... 
   
 
   
@@ -574,7 +574,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Check if we should log duplicate payloads</p>
+    <p>Should duplicate payloads be logged?</p>
 
 
   </div>
@@ -587,7 +587,7 @@
     <li>
       
       
-        <span class='type'>(<tt>Boolean</tt>)</span>
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
       
       
       
@@ -601,15 +601,15 @@
       <pre class="lines">
 
 
-33
-34
-35</pre>
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 37</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_log_duplicate_payload?'>log_duplicate_payload?</span>
-  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOG_DUPLICATE_KEY</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOG_DUPLICATE_KEY</span><span class='rbracket'>]</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_log_duplicate?'>log_duplicate?</span>
+  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOG_DUPLICATE</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOG_DUPLICATE</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -619,28 +619,51 @@
       <div class="method_details ">
   <h3 class="signature " id="options-instance_method">
   
-    #<strong>options</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String, Object&gt;</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The default options with any matching keys overridden from worker options</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String, Object&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-62
-63
-64
-65
-66
-67
-68</pre>
+91
+92
+93
+94
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 91</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span> <span class='op'>||=</span> <span class='kw'>begin</span>
@@ -757,7 +780,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unique_enabled?'>unique_enabled?</span>
-  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_lock_type'>lock_type</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enabled?'><span class='object_link'><a href="../SidekiqUniqueJobs.html#enabled%3F-class_method" title="SidekiqUniqueJobs.enabled? (method)">enabled?</a></span></span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_lock_type'>lock_type</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -767,27 +790,51 @@
       <div class="method_details ">
   <h3 class="signature " id="unique_type-instance_method">
   
-    #<strong>unique_type</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>unique_type</strong>  &#x21d2; <tt>Symbol</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span></p>
+</div></div>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-58
-59
-60</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unique_type'>unique_type</span>
-  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_KEY</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_KEY</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>UNIQUE</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -799,9 +846,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:40 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

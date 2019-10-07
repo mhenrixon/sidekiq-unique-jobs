@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::SidekiqWorkerMethods
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -76,7 +76,7 @@
   
   <dl>
     <dt>Included in:</dt>
-    <dd><span class='object_link'><a href="OnConflict/Reschedule.html" title="SidekiqUniqueJobs::OnConflict::Reschedule (class)">OnConflict::Reschedule</a></span>, <span class='object_link'><a href="Timeout/Calculator.html" title="SidekiqUniqueJobs::Timeout::Calculator (class)">Timeout::Calculator</a></span>, <span class='object_link'><a href="UniqueArgs.html" title="SidekiqUniqueJobs::UniqueArgs (class)">UniqueArgs</a></span></dd>
+    <dd><span class='object_link'><a href="OnConflict/Reschedule.html" title="SidekiqUniqueJobs::OnConflict::Reschedule (class)">OnConflict::Reschedule</a></span>, <span class='object_link'><a href="TimeCalculator.html" title="SidekiqUniqueJobs::TimeCalculator (class)">TimeCalculator</a></span>, <span class='object_link'><a href="UniqueArgs.html" title="SidekiqUniqueJobs::UniqueArgs (class)">UniqueArgs</a></span></dd>
   </dl>
   
 
@@ -154,7 +154,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#default_worker_options-instance_method" title="#default_worker_options (instance method)">#<strong>default_worker_options</strong>  &#x21d2; Object </a>
+      <a href="#default_worker_options-instance_method" title="#default_worker_options (instance method)">#<strong>default_worker_options</strong>  &#x21d2; Hash&lt;Symbol, Object&gt; </a>
     
 
     
@@ -168,7 +168,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the default worker options from Sidekiq.</p>
+</div></span>
   
 </li>
 
@@ -353,24 +354,47 @@
       <div class="method_details ">
   <h3 class="signature " id="default_worker_options-instance_method">
   
-    #<strong>default_worker_options</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>default_worker_options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, Object&gt;</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the default worker options from Sidekiq</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, Object&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-58
-59
-60</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
   <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
@@ -694,9 +718,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:40 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

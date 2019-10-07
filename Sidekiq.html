@@ -6,7 +6,7 @@
 <title>
   Module: Sidekiq
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -62,7 +62,7 @@
       <div id="content"><h1>Module: Sidekiq
   
   
-  
+  <span class="private note title">Private</span>
 </h1>
 <div class="box_info">
   
@@ -85,7 +85,20 @@
   
 </div>
 
-<h2>Defined Under Namespace</h2>
+<div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This module is part of a private API.</strong>
+  You should avoid using this module if possible, as it may be removed or be changed in the future.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
 <p class="children">
   
     
@@ -129,7 +142,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Temporarily turn Sidekiq&#39;s options into something different.</p>
+</div></span>
   
 </li>
 
@@ -152,25 +166,63 @@
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>this method will restore the original options after yielding</p>
+</div>
+  </div>
+
+<p>Temporarily turn Sidekiq&#39;s options into something different</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>tmp_config</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, Object&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the temporary config to use</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18</pre>
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_use_options'>use_options</span><span class='lparen'>(</span><span class='id identifier rubyid_tmp_config'>tmp_config</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_old_config'>old_config</span> <span class='op'>=</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
@@ -192,9 +244,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:39 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

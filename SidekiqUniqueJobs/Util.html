@@ -78,7 +78,7 @@
   
   <dl>
       <dt>Includes:</dt>
-      <dd><span class='object_link'><a href="Connection.html" title="SidekiqUniqueJobs::Connection (module)">Connection</a></span>, <span class='object_link'><a href="Logging.html" title="SidekiqUniqueJobs::Logging (module)">Logging</a></span></dd>
+      <dd><span class='object_link'><a href="Connection.html" title="SidekiqUniqueJobs::Connection (module)">Connection</a></span>, <span class='object_link'><a href="Logging.html" title="SidekiqUniqueJobs::Logging (module)">Logging</a></span>, <span class='object_link'><a href="Timing.html" title="SidekiqUniqueJobs::Timing (module)">Timing</a></span></dd>
   </dl>
   
   
@@ -241,6 +241,17 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
   
   
   
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Timing.html" title="SidekiqUniqueJobs::Timing (module)">Timing</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Timing.html#current_time-class_method" title="SidekiqUniqueJobs::Timing.current_time (method)">current_time</a></span>, <span class='object_link'><a href="Timing.html#time_source-class_method" title="SidekiqUniqueJobs::Timing.time_source (method)">time_source</a></span>, <span class='object_link'><a href="Timing.html#timed-class_method" title="SidekiqUniqueJobs::Timing.timed (method)">timed</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Connection.html" title="SidekiqUniqueJobs::Connection (module)">Connection</a></span></h3>
   <p class="inherited"><span class='object_link'><a href="Connection.html#redis-instance_method" title="SidekiqUniqueJobs::Connection#redis (method)">#redis</a></span></p>
 
@@ -253,7 +264,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Logging.html" title="SidekiqUniqueJobs::Logging (module)">Logging</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">#log_debug</a></span>, <span class='object_link'><a href="Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">#log_error</a></span>, <span class='object_link'><a href="Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">#log_fatal</a></span>, <span class='object_link'><a href="Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">#log_info</a></span>, <span class='object_link'><a href="Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">#log_warn</a></span>, <span class='object_link'><a href="Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">#logger</a></span>, <span class='object_link'><a href="Logging.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging#logging_context (method)">#logging_context</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">#log_debug</a></span>, <span class='object_link'><a href="Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">#log_error</a></span>, <span class='object_link'><a href="Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">#log_fatal</a></span>, <span class='object_link'><a href="Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">#log_info</a></span>, <span class='object_link'><a href="Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">#log_warn</a></span>, <span class='object_link'><a href="Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">#logger</a></span>, <span class='object_link'><a href="Logging.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging#logging_context (method)">#logging_context</a></span>, <span class='object_link'><a href="Logging.html#with_configured_loggers_context-instance_method" title="SidekiqUniqueJobs::Logging#with_configured_loggers_context (method)">#with_configured_loggers_context</a></span>, <span class='object_link'><a href="Logging.html#with_logging_context-instance_method" title="SidekiqUniqueJobs::Logging#with_logging_context (method)">#with_logging_context</a></span></p>
 
 
   <div id="instance_method_details" class="method_details_list">
@@ -353,7 +364,6 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
       <pre class="lines">
 
 
-46
 47
 48
 49
@@ -366,10 +376,11 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 56
 57
 58
-59</pre>
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/util.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/util.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SCAN_PATTERN-constant" title="SidekiqUniqueJobs::Util::SCAN_PATTERN (constant)">SCAN_PATTERN</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_count'>count</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Please provide a number of keys to delete greater than zero</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_count'>count</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -470,14 +481,14 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
       <pre class="lines">
 
 
-21
 22
 23
 24
-25</pre>
+25
+26</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/util.rb', line 21</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/util.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_keys'>keys</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SCAN_PATTERN-constant" title="SidekiqUniqueJobs::Util::SCAN_PATTERN (constant)">SCAN_PATTERN</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_count'>count</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#DEFAULT_COUNT-constant" title="SidekiqUniqueJobs::Util::DEFAULT_COUNT (constant)">DEFAULT_COUNT</a></span></span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_redis'>redis</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:keys</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -569,7 +580,6 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
       <pre class="lines">
 
 
-31
 32
 33
 34
@@ -577,10 +587,11 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 36
 37
 38
-39</pre>
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/util.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/util.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_keys_with_ttl'>keys_with_ttl</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SCAN_PATTERN-constant" title="SidekiqUniqueJobs::Util::SCAN_PATTERN (constant)">SCAN_PATTERN</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_count'>count</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#DEFAULT_COUNT-constant" title="SidekiqUniqueJobs::Util::DEFAULT_COUNT (constant)">DEFAULT_COUNT</a></span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -601,7 +612,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Tue May 21 15:58:18 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.5.5).
 </div>

@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Web::Helpers
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -83,7 +83,32 @@
   
 </div>
 
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Provides view helpers for the Sidekiq::Web extension</p>
 
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Author:</p>
+<ul class="author">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>Mikael Henriksson <a href="mailto:mikael@zoolutions.se">mikael@zoolutions.se</a></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
   
     <h2>
       Constant Summary
@@ -113,7 +138,7 @@
 
   
     <h2>
-      Instance Method Summary
+      Class Method Summary
       <small><a href="#" class="summary_toggle">collapse</a></small>
     </h2>
 
@@ -122,7 +147,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#cparams-instance_method" title="#cparams (instance method)">#<strong>cparams</strong>(options)  &#x21d2; Object </a>
+      <a href="#cparams-class_method" title="cparams (class method)">.<strong>cparams</strong>(options)  &#x21d2; String </a>
     
 
     
@@ -136,7 +161,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Creates url safe parameters.</p>
+</div></span>
   
 </li>
 
@@ -144,7 +170,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#redirect_to-instance_method" title="#redirect_to (instance method)">#<strong>redirect_to</strong>(subpath)  &#x21d2; Object </a>
+      <a href="#digests-class_method" title="digests (class method)">.<strong>digests</strong>  &#x21d2; SidekiqUniqueJobs::Digests </a>
     
 
     
@@ -158,7 +184,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The collection of digests.</p>
+</div></span>
   
 </li>
 
@@ -166,7 +193,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#safe_relative_time-instance_method" title="#safe_relative_time (instance method)">#<strong>safe_relative_time</strong>(time)  &#x21d2; Object </a>
+      <a href="#display_unique_args-class_method" title="display_unique_args (class method)">.<strong>display_unique_args</strong>(args, truncate_after_chars = 2000)  &#x21d2; String </a>
     
 
     
@@ -180,7 +207,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Used to avoid incompatibility with older sidekiq versions.</p>
+</div></span>
   
 </li>
 
@@ -188,7 +216,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#unique_template-instance_method" title="#unique_template (instance method)">#<strong>unique_template</strong>(name)  &#x21d2; Object </a>
+      <a href="#parse_time-class_method" title="parse_time (class method)">.<strong>parse_time</strong>(time)  &#x21d2; Time </a>
     
 
     
@@ -202,7 +230,100 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Constructs a time from a number of different types.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#redirect_to-class_method" title="redirect_to (class method)">.<strong>redirect_to</strong>(subpath)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Redirect to with falback.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#relative_time-class_method" title="relative_time (class method)">.<strong>relative_time</strong>(time)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Gets a relative time as html.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#safe_relative_time-class_method" title="safe_relative_time (class method)">.<strong>safe_relative_time</strong>(time)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Gets a relative time as html without crashing.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unique_template-class_method" title="unique_template (class method)">.<strong>unique_template</strong>(name)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Opens a template file contained within this gem.</p>
+</div></span>
   
 </li>
 
@@ -212,40 +333,86 @@
 
 
 
-  <div id="instance_method_details" class="method_details_list">
-    <h2>Instance Method Details</h2>
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="cparams-instance_method">
+  <h3 class="signature first" id="cparams-class_method">
   
-    #<strong>cparams</strong>(options)  &#x21d2; <tt>Object</tt> 
-  
-
+    .<strong>cparams</strong>(options)  &#x21d2; <tt>String</tt> 
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Creates url safe parameters</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the key/value to parameterize</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a url safe parameter string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25</pre>
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 14</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cparams'>cparams</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='comment'># stringify
@@ -265,32 +432,328 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="redirect_to-instance_method">
+  <h3 class="signature " id="digests-class_method">
   
-    #<strong>redirect_to</strong>(subpath)  &#x21d2; <tt>Object</tt> 
-  
-
+    .<strong>digests</strong>  &#x21d2; <tt><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">SidekiqUniqueJobs::Digests</a></span></tt> 
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The collection of digests</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">SidekiqUniqueJobs::Digests</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the sorted set with digests</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-27
-28
-29
-30
-31
-32
 33
 34
 35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_digests'>digests</span>
+  <span class='ivar'>@digests</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Digests.html#initialize-instance_method" title="SidekiqUniqueJobs::Digests#initialize (method)">new</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="display_unique_args-class_method">
+  
+    .<strong>display_unique_args</strong>(args, truncate_after_chars = 2000)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Used to avoid incompatibility with older sidekiq versions</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>args</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Array.html" title="Array (class)">Array</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the unique arguments to display</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>truncate_after_chars</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>2000</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a string containing all non-truncated arguments</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 66</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_display_unique_args'>display_unique_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='id identifier rubyid_truncate_after_chars'>truncate_after_chars</span> <span class='op'>=</span> <span class='int'>2000</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Invalid job payload, args is nil</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Invalid job payload, args must be an Array, not </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Array.html" title="Array (class)">Array</a></span></span><span class='rparen'>)</span>
+
+  <span class='kw'>begin</span>
+    <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_arg'>arg</span><span class='op'>|</span>
+      <span class='id identifier rubyid_h'>h</span><span class='lparen'>(</span><span class='id identifier rubyid_truncate'>truncate</span><span class='lparen'>(</span><span class='id identifier rubyid_to_display'>to_display</span><span class='lparen'>(</span><span class='id identifier rubyid_arg'>arg</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_truncate_after_chars'>truncate_after_chars</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>rescue</span> <span class='const'>StandardError</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Illegal job arguments: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_h'>h</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse_time-class_method">
+  
+    .<strong>parse_time</strong>(time)  &#x21d2; <tt>Time</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Constructs a time from a number of different types</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>time</span>
+      
+      
+        <span class='type'>(<tt>Float</tt>, <tt>Integer</tt>, <tt>String</tt>, <tt>Time</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a representation of a timestamp</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Time</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 128</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parse_time'>parse_time</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_time'>time</span>
+  <span class='kw'>when</span> <span class='const'>Time</span>
+    <span class='id identifier rubyid_time'>time</span>
+  <span class='kw'>when</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='const'>Float</span>
+    <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="redirect_to-class_method">
+  
+    .<strong>redirect_to</strong>(subpath)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Redirect to with falback</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>subpath</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the path to redirect to</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>a redirect to the new subpath</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+86
+87
+88
+89
+90
+91
+92
+93
+94</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redirect_to'>redirect_to</span><span class='lparen'>(</span><span class='id identifier rubyid_subpath'>subpath</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to</span><span class='rparen'>)</span>
@@ -307,39 +770,155 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="safe_relative_time-instance_method">
+  <h3 class="signature " id="relative_time-class_method">
   
-    #<strong>safe_relative_time</strong>(time)  &#x21d2; <tt>Object</tt> 
-  
-
+    .<strong>relative_time</strong>(time)  &#x21d2; <tt>String</tt> 
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Gets a relative time as html</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>time</span>
+      
+      
+        <span class='type'>(<tt>Time</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>an instance of Time</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a html safe string with relative time information</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42
-43
-44
-45</pre>
+103
+104
+105
+106</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 103</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_relative_time'>relative_time</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_stamp'>stamp</span> <span class='op'>=</span> <span class='id identifier rubyid_time'>time</span><span class='period'>.</span><span class='id identifier rubyid_getutc'>getutc</span><span class='period'>.</span><span class='id identifier rubyid_iso8601'>iso8601</span>
+  <span class='tstring'><span class='tstring_beg'>%(</span><span class='tstring_content'>&lt;time class=&quot;ltr&quot; dir=&quot;ltr&quot; title=&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_stamp'>stamp</span><span class='embexpr_end'>}</span><span class='tstring_content'>&quot; datetime=&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_stamp'>stamp</span><span class='embexpr_end'>}</span><span class='tstring_content'>&quot;&gt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_time'>time</span><span class='embexpr_end'>}</span><span class='tstring_content'>&lt;/time&gt;</span><span class='tstring_end'>)</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="safe_relative_time-class_method">
+  
+    .<strong>safe_relative_time</strong>(time)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Gets a relative time as html without crashing</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>time</span>
+      
+      
+        <span class='type'>(<tt>Float</tt>, <tt>Integer</tt>, <tt>String</tt>, <tt>Time</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a representation of a timestamp</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a html safe string with relative time information</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+115
+116
+117
+118
+119</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_safe_relative_time'>safe_relative_time</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_time'>time</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_time'>time</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Numeric</span><span class='rparen'>)</span>
-           <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
-         <span class='kw'>else</span>
-           <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
-         <span class='kw'>end</span>
+  <span class='id identifier rubyid_time'>time</span> <span class='op'>=</span> <span class='id identifier rubyid_parse_time'>parse_time</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_relative_time'>relative_time</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -349,26 +928,72 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="unique_template-instance_method">
+  <h3 class="signature " id="unique_template-class_method">
   
-    #<strong>unique_template</strong>(name)  &#x21d2; <tt>Object</tt> 
-  
-
+    .<strong>unique_template</strong>(name)  &#x21d2; <tt>String</tt> 
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Opens a template file contained within this gem</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the name of the template</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the file contents of the template</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-8
-9
-10</pre>
+23
+24
+25</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 8</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web/helpers.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#VIEW_PATH-constant" title="SidekiqUniqueJobs::Web::Helpers::VIEW_PATH (constant)">VIEW_PATH</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.erb</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span>
@@ -383,9 +1008,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:40 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

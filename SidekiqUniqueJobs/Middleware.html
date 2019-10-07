@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Middleware
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -71,6 +71,11 @@
   
   
   
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="JSON.html" title="SidekiqUniqueJobs::JSON (module)">JSON</a></span>, <span class='object_link'><a href="Logging/Middleware.html" title="SidekiqUniqueJobs::Logging::Middleware (module)">Logging::Middleware</a></span>, <span class='object_link'><a href="OptionsWithFallback.html" title="SidekiqUniqueJobs::OptionsWithFallback (module)">OptionsWithFallback</a></span></dd>
+  </dl>
+  
   
 
   
@@ -78,7 +83,9 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/sidekiq_unique_jobs/middleware.rb</dd>
+    <dd>lib/sidekiq_unique_jobs/middleware.rb<span class="defines">,<br />
+  lib/sidekiq_unique_jobs/middleware/client.rb,<br /> lib/sidekiq_unique_jobs/middleware/server.rb</span>
+</dd>
   </dl>
   
 </div>
@@ -108,13 +115,134 @@
   
 </ul>
 
-</div>
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span>, <span class='object_link'><a href="Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span>
+    
+  
+</p>
 
 
 
 
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#item-instance_method" title="#item (instance method)">#<strong>item</strong>  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The sidekiq job hash.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
 
 
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure-class_method" title="configure (class method)">.<strong>configure</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Configure both server and client.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure_client-class_method" title="configure_client (class method)">.<strong>configure_client</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Configures the Sidekiq client.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure_server-class_method" title="configure_server (class method)">.<strong>configure_server</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Configures the Sidekiq server.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
   
     <h2>
       Instance Method Summary
@@ -126,7 +254,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#configure_client_middleware-instance_method" title="#configure_client_middleware (instance method)">#<strong>configure_client_middleware</strong>  &#x21d2; Object </a>
+      <a href="#call-instance_method" title="#call (instance method)">#<strong>call</strong>(worker_class, item, queue, redis_pool = nil) {|if| ... } &#x21d2; yield&lt;super&gt; </a>
     
 
     
@@ -140,7 +268,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>This method runs before (prepended) the actual middleware implementation.</p>
+</div></span>
   
 </li>
 
@@ -148,12 +277,17 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#configure_middleware-instance_method" title="#configure_middleware (instance method)">#<strong>configure_middleware</strong>  &#x21d2; Object </a>
+      <a href="#lock_class-instance_method" title="#lock_class (instance method)">#<strong>lock_class</strong>  &#x21d2; Class </a>
     
 
     
   </span>
   
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#lock_class-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_class (method)">OptionsWithFallback</a></span>
+    </span>
+  
   
   
   
@@ -162,7 +296,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the corresponding class for the lock_type.</p>
+</div></span>
   
 </li>
 
@@ -170,12 +305,17 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#configure_server_middleware-instance_method" title="#configure_server_middleware (instance method)">#<strong>configure_server_middleware</strong>  &#x21d2; Object </a>
+      <a href="#lock_instance-instance_method" title="#lock_instance (instance method)">#<strong>lock_instance</strong>  &#x21d2; Lock::BaseLock </a>
     
 
     
   </span>
   
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#lock_instance-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_instance (method)">OptionsWithFallback</a></span>
+    </span>
+  
   
   
   
@@ -184,7 +324,456 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>A new lock for this Sidekiq Job.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The type of lock for this worker.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#locks-instance_method" title="#locks (instance method)">#<strong>locks</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#locks-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#locks (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A convenience method for using the configured locks.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_debug-instance_method" title="#log_debug (instance method)">#<strong>log_debug</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at debug level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_duplicate%3F-instance_method" title="#log_duplicate? (instance method)">#<strong>log_duplicate?</strong>  &#x21d2; true, ... </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#log_duplicate%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#log_duplicate? (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Should duplicate payloads be logged?.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_error-instance_method" title="#log_error (instance method)">#<strong>log_error</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at error level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_fatal-instance_method" title="#log_fatal (instance method)">#<strong>log_fatal</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at fatal level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_info-instance_method" title="#log_info (instance method)">#<strong>log_info</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at info level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_warn-instance_method" title="#log_warn (instance method)">#<strong>log_warn</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at warn level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logger-instance_method" title="#logger (instance method)">#<strong>logger</strong>  &#x21d2; Logger </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A convenience method for using the configured gem logger.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logging_context-instance_method" title="#logging_context (instance method)">#<strong>logging_context</strong>  &#x21d2; Hash, String </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging/Middleware.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging::Middleware#logging_context (method)">Logging::Middleware</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Provides a logging context for Sidekiq Middlewares.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Hash&lt;String, Object&gt; </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#options-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#options (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The default options with any matching keys overridden from worker options.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unique_disabled%3F-instance_method" title="#unique_disabled? (instance method)">#<strong>unique_disabled?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#unique_disabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_disabled? (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Check if unique has been disabled.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unique_enabled%3F-instance_method" title="#unique_enabled? (instance method)">#<strong>unique_enabled?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#unique_enabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_enabled? (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Check if unique has been enabled.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public deprecated">
+  <span class="summary_signature">
+    
+      <a href="#unique_type-instance_method" title="#unique_type (instance method)">#<strong>unique_type</strong>  &#x21d2; Symbol </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="OptionsWithFallback.html#unique_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_type (method)">OptionsWithFallback</a></span>
+    </span>
+  
+  
+  
+  
+  
+  <span class="deprecated note title">deprecated</span>
+  
+
+  
+    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">OptionsWithFallback#lock_type</a></span></p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#with_configured_loggers_context-instance_method" title="#with_configured_loggers_context (instance method)">#<strong>with_configured_loggers_context</strong> { ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#with_configured_loggers_context-instance_method" title="SidekiqUniqueJobs::Logging#with_configured_loggers_context (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Attempt to setup context aware logging for the given logger.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#with_logging_context-instance_method" title="#with_logging_context (instance method)">#<strong>with_logging_context</strong>  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Logging.html#with_logging_context-instance_method" title="SidekiqUniqueJobs::Logging#with_logging_context (method)">Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Wraps the middleware logic with context aware logging.</p>
+</div></span>
   
 </li>
 
@@ -193,43 +782,165 @@
   
 
 
-
-  <div id="instance_method_details" class="method_details_list">
-    <h2>Instance Method Details</h2>
-
+  
+  
+  
+  
+  
+  
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
     
+      
+      <span id=""></span>
       <div class="method_details first">
-  <h3 class="signature first" id="configure_client_middleware-instance_method">
+  <h3 class="signature first" id="item-instance_method">
   
-    #<strong>configure_client_middleware</strong>  &#x21d2; <tt>Object</tt> 
-  
-
+    #<strong>item</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>  <span class="extras">(readonly)</span>
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The sidekiq job hash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the Sidekiq job hash</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42
-43
-44</pre>
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 61</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_configure_client_middleware'>configure_client_middleware</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_item'>item</span>
+  <span class='ivar'>@item</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="configure-class_method">
+  
+    .<strong>configure</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Configure both server and client</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+17
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 17</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span>
+  <span class='id identifier rubyid_configure_server'>configure_server</span>
+  <span class='id identifier rubyid_configure_client'>configure_client</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="configure_client-class_method">
+  
+    .<strong>configure_client</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Configures the Sidekiq client</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+51
+52
+53
+54
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 51</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure_client'>configure_client</span>
   <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_client'>configure_client</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
     <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
-      <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>sidekiq_unique_jobs/client/middleware</span><span class='tstring_end'>&quot;</span></span>
-      <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="SidekiqUniqueJobs::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/Middleware.html" title="SidekiqUniqueJobs::Client::Middleware (class)">Middleware</a></span></span>
+      <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -239,54 +950,30 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="configure_middleware-instance_method">
+  <h3 class="signature " id="configure_server-class_method">
   
-    #<strong>configure_middleware</strong>  &#x21d2; <tt>Object</tt> 
-  
-
+    .<strong>configure_server</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Configures the Sidekiq server</p>
 
 
-18
-19
-20
-21</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 18</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_configure_middleware'>configure_middleware</span>
-  <span class='id identifier rubyid_configure_server_middleware'>configure_server_middleware</span>
-  <span class='id identifier rubyid_configure_client_middleware'>configure_client_middleware</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
+  </div>
 </div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="configure_server_middleware-instance_method">
-  
-    #<strong>configure_server_middleware</strong>  &#x21d2; <tt>Object</tt> 
+<div class="tags">
   
 
-  
-
-  
-</h3><table class="source_code">
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-23
-24
 25
 26
 27
@@ -297,21 +984,41 @@
 32
 33
 34
-35</pre>
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 25</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_configure_server_middleware'>configure_server_middleware</span>
-  <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='comment'># rubocop:disable Metrics/MethodLength
+</span>  <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
     <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
-      <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>sidekiq_unique_jobs/client/middleware</span><span class='tstring_end'>&quot;</span></span>
-      <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="SidekiqUniqueJobs::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/Middleware.html" title="SidekiqUniqueJobs::Client::Middleware (class)">Middleware</a></span></span>
+      <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
     <span class='kw'>end</span>
 
     <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_server_middleware'>server_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
-      <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>sidekiq_unique_jobs/server/middleware</span><span class='tstring_end'>&quot;</span></span>
-      <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Server.html" title="SidekiqUniqueJobs::Server (module)">Server</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Server/Middleware.html" title="SidekiqUniqueJobs::Server::Middleware (class)">Middleware</a></span></span>
+      <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='symbol'>:startup</span><span class='rparen'>)</span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="UpdateVersion.html" title="SidekiqUniqueJobs::UpdateVersion (class)">UpdateVersion</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="UpdateVersion.html#call-class_method" title="SidekiqUniqueJobs::UpdateVersion.call (method)">call</a></span></span>
+      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="UpgradeLocks.html" title="SidekiqUniqueJobs::UpgradeLocks (class)">UpgradeLocks</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="UpgradeLocks.html#call-class_method" title="SidekiqUniqueJobs::UpgradeLocks.call (method)">call</a></span></span>
+
+      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans/Manager.html" title="SidekiqUniqueJobs::Orphans::Manager (class)">Manager</a></span></span><span class='period'>.</span><span class='id identifier rubyid_start'><span class='object_link'><a href="Orphans/Manager.html#start-class_method" title="SidekiqUniqueJobs::Orphans::Manager.start (method)">start</a></span></span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='symbol'>:shutdown</span><span class='rparen'>)</span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans/Manager.html" title="SidekiqUniqueJobs::Orphans::Manager (class)">Manager</a></span></span><span class='period'>.</span><span class='id identifier rubyid_stop'><span class='object_link'><a href="Orphans/Manager.html#stop-class_method" title="SidekiqUniqueJobs::Orphans::Manager.stop (method)">stop</a></span></span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -322,12 +1029,1063 @@
     
   </div>
 
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="call-instance_method">
+  
+    #<strong>call</strong>(worker_class, item, queue, redis_pool = nil) {|if| ... } &#x21d2; <tt>yield&lt;super&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>This method runs before (prepended) the actual middleware implementation.
+  This is done to reduce duplication</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>worker_class</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a sidekiq job hash</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>queue</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>name of the queue</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>redis_pool</span>
+      
+      
+        <span class='type'>(<tt>ConnectionPool</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>only used for compatility reasons</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>if</span>
+      
+      
+        <span class='type'>(<tt>&lt;type&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p><description></p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Yield Returns:</p>
+<ul class="yieldreturn">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>&lt;type&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p><describe what yield should return></p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>yield&lt;super&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p><description></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 76</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_worker_class'>worker_class</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_queue'>queue</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@worker_class</span> <span class='op'>=</span> <span class='id identifier rubyid_worker_class'>worker_class</span>
+  <span class='ivar'>@item</span>         <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span>
+  <span class='ivar'>@queue</span>        <span class='op'>=</span> <span class='id identifier rubyid_queue'>queue</span>
+  <span class='ivar'>@redis_pool</span>   <span class='op'>=</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span>
+  <span class='kw'>return</span> <span class='kw'>yield</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_disabled?'>unique_disabled?</span>
+
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_uniqueness'><span class='object_link'><a href="Job.html#add_uniqueness-instance_method" title="SidekiqUniqueJobs::Job#add_uniqueness (method)">add_uniqueness</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
+    <span class='kw'>super</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock_class-instance_method">
+  
+    #<strong>lock_class</strong>  &#x21d2; <tt>Class</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#lock_class-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_class (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the corresponding class for the lock_type</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock_instance-instance_method">
+  
+    #<strong>lock_instance</strong>  &#x21d2; <tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">Lock::BaseLock</a></span></tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#lock_instance-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_instance (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A new lock for this Sidekiq Job</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Lock/BaseLock.html" title="SidekiqUniqueJobs::Lock::BaseLock (class)">Lock::BaseLock</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>an instance of a lock implementation</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock_type-instance_method">
+  
+    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The type of lock for this worker</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="locks-instance_method">
+  
+    #<strong>locks</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#locks-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#locks (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A convenience method for using the configured locks</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_debug-instance_method">
+  
+    #<strong>log_debug</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at debug level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_duplicate?-instance_method">
+  
+    #<strong>log_duplicate?</strong>  &#x21d2; <tt>true</tt>, ... 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#log_duplicate%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#log_duplicate? (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Should duplicate payloads be logged?</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_error-instance_method">
+  
+    #<strong>log_error</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at error level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_fatal-instance_method">
+  
+    #<strong>log_fatal</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at fatal level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_info-instance_method">
+  
+    #<strong>log_info</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at info level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_warn-instance_method">
+  
+    #<strong>log_warn</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at warn level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="logger-instance_method">
+  
+    #<strong>logger</strong>  &#x21d2; <tt>Logger</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A convenience method for using the configured gem logger</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Logger</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>SidekiqUniqueJobs#.logger</li>
+    
+  </ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="logging_context-instance_method">
+  
+    #<strong>logging_context</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>, <tt>String</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging/Middleware.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging::Middleware#logging_context (method)">Logging::Middleware</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Provides a logging context for Sidekiq Middlewares</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when logger responds to <code>:with_context</code></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when logger does not responds to <code>:with_context</code></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="options-instance_method">
+  
+    #<strong>options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String, Object&gt;</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#options-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#options (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The default options with any matching keys overridden from worker options</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String, Object&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unique_disabled?-instance_method">
+  
+    #<strong>unique_disabled?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#unique_disabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_disabled? (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Check if unique has been disabled</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unique_enabled?-instance_method">
+  
+    #<strong>unique_enabled?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#unique_enabled%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_enabled? (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Check if unique has been enabled</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>indicate if the gem has been enabled</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unique_type-instance_method">
+  
+    #<strong>unique_type</strong>  &#x21d2; <tt>Symbol</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="OptionsWithFallback.html#unique_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_type (method)">OptionsWithFallback</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span></p>
+</div></div>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="with_configured_loggers_context-instance_method">
+  
+    #<strong>with_configured_loggers_context</strong> { ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#with_configured_loggers_context-instance_method" title="SidekiqUniqueJobs::Logging#with_configured_loggers_context (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Attempt to setup context aware logging for the given logger</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="with_logging_context-instance_method">
+  
+    #<strong>with_logging_context</strong>  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Logging.html#with_logging_context-instance_method" title="SidekiqUniqueJobs::Logging#with_logging_context (method)">Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Wraps the middleware logic with context aware logging</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yield Returns:</p>
+<ul class="yieldreturn">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>void</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>yield to the middleware instance</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+  </div>
+
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:39 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

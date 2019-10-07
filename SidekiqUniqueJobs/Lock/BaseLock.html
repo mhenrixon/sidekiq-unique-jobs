@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::BaseLock
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -135,7 +135,7 @@
 
 </div><div id="subclasses">
   <h2>Direct Known Subclasses</h2>
-  <p class="children"><span class='object_link'><a href="UntilAndWhileExecuting.html" title="SidekiqUniqueJobs::Lock::UntilAndWhileExecuting (class)">UntilAndWhileExecuting</a></span>, <span class='object_link'><a href="UntilExecuted.html" title="SidekiqUniqueJobs::Lock::UntilExecuted (class)">UntilExecuted</a></span>, <span class='object_link'><a href="UntilExecuting.html" title="SidekiqUniqueJobs::Lock::UntilExecuting (class)">UntilExecuting</a></span>, <span class='object_link'><a href="UntilExpired.html" title="SidekiqUniqueJobs::Lock::UntilExpired (class)">UntilExpired</a></span>, <span class='object_link'><a href="WhileExecuting.html" title="SidekiqUniqueJobs::Lock::WhileExecuting (class)">WhileExecuting</a></span></p>
+  <p class="children"><span class='object_link'><a href="UntilAndWhileExecuting.html" title="SidekiqUniqueJobs::Lock::UntilAndWhileExecuting (class)">UntilAndWhileExecuting</a></span>, <span class='object_link'><a href="UntilExecuted.html" title="SidekiqUniqueJobs::Lock::UntilExecuted (class)">UntilExecuted</a></span>, <span class='object_link'><a href="UntilExecuting.html" title="SidekiqUniqueJobs::Lock::UntilExecuting (class)">UntilExecuting</a></span>, <span class='object_link'><a href="WhileExecuting.html" title="SidekiqUniqueJobs::Lock::WhileExecuting (class)">WhileExecuting</a></span></p>
 </div>
 
 
@@ -144,6 +144,38 @@
 
 
 
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate_options-class_method" title="validate_options (class method)">.<strong>validate_options</strong>(options = {})  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Validates that the sidekiq_options for the worker is valid.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
   
     <h2>
       Instance Method Summary
@@ -249,7 +281,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong>  &#x21d2; String </a>
+      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong> { ... } &#x21d2; String<sup>?</sup> </a>
     
 
     
@@ -263,7 +295,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Handles locking of sidekiq jobs.</p>
+    <span class="summary_desc"><div class='inline'><p>Locks a sidekiq job.</p>
 </div></span>
   
 </li>
@@ -295,6 +327,225 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#locksmith-instance_method" title="#locksmith (instance method)">#<strong>locksmith</strong>  &#x21d2; SidekiqUniqueJobs::Locksmith </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  <span class="private note title">private</span>
+
+  
+    <span class="summary_desc"><div class='inline'><p>The lock manager/client.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_debug-instance_method" title="#log_debug (instance method)">#<strong>log_debug</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at debug level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_error-instance_method" title="#log_error (instance method)">#<strong>log_error</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at error level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_fatal-instance_method" title="#log_fatal (instance method)">#<strong>log_fatal</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at fatal level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_info-instance_method" title="#log_info (instance method)">#<strong>log_info</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at info level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_warn-instance_method" title="#log_warn (instance method)">#<strong>log_warn</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs a message at warn level.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logger-instance_method" title="#logger (instance method)">#<strong>logger</strong>  &#x21d2; Logger </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A convenience method for using the configured gem logger.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logging_context-instance_method" title="#logging_context (instance method)">#<strong>logging_context</strong>  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging#logging_context (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Setup some variables to add to each log line.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#unlock-instance_method" title="#unlock (instance method)">#<strong>unlock</strong>  &#x21d2; String, false </a>
     
 
@@ -315,21 +566,68 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#with_configured_loggers_context-instance_method" title="#with_configured_loggers_context (instance method)">#<strong>with_configured_loggers_context</strong> { ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#with_configured_loggers_context-instance_method" title="SidekiqUniqueJobs::Logging#with_configured_loggers_context (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Attempt to setup context aware logging for the given logger.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#with_logging_context-instance_method" title="#with_logging_context (instance method)">#<strong>with_logging_context</strong>  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="../Logging.html#with_logging_context-instance_method" title="SidekiqUniqueJobs::Logging#with_logging_context (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Wraps the middleware logic with context aware logging.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
 
   
-  
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Logging.html" title="SidekiqUniqueJobs::Logging (module)">SidekiqUniqueJobs::Logging</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">#log_debug</a></span>, <span class='object_link'><a href="../Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">#log_error</a></span>, <span class='object_link'><a href="../Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">#log_fatal</a></span>, <span class='object_link'><a href="../Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">#log_info</a></span>, <span class='object_link'><a href="../Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">#log_warn</a></span>, <span class='object_link'><a href="../Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">#logger</a></span>, <span class='object_link'><a href="../Logging.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging#logging_context (method)">#logging_context</a></span></p>
-<div id="constructor_details" class="method_details_list">
+  <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
@@ -408,20 +706,22 @@
       <pre class="lines">
 
 
-15
-16
-17
-18
-19
-20</pre>
+26
+27
+28
+29
+30
+31
+32</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_callback'>callback</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@item</span>       <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span>
   <span class='ivar'>@callback</span>   <span class='op'>=</span> <span class='id identifier rubyid_callback'>callback</span>
   <span class='ivar'>@redis_pool</span> <span class='op'>=</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span>
+  <span class='ivar'>@attempt</span>    <span class='op'>=</span> <span class='int'>0</span>
   <span class='id identifier rubyid_add_uniqueness_when_missing'>add_uniqueness_when_missing</span> <span class='comment'># Used to ease testing
 </span><span class='kw'>end</span></pre>
     </td>
@@ -431,6 +731,73 @@
   
 </div>
 
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="validate_options-class_method">
+  
+    .<strong>validate_options</strong>(options = {})  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Validates that the sidekiq_options for the worker is valid</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the sidekiq_options given to the worker</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_validate_options'>validate_options</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Validator.html" title="SidekiqUniqueJobs::Lock::Validator (class)">Validator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate'><span class='object_link'><a href="Validator.html#validate-class_method" title="SidekiqUniqueJobs::Lock::Validator.validate (method)">validate</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
@@ -461,12 +828,12 @@
       <pre class="lines">
 
 
-50
-51
-52</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span> <span class='comment'># Soft delete (don&#39;t forcefully remove when expiration is set)
@@ -502,12 +869,12 @@
       <pre class="lines">
 
 
-56
-57
-58</pre>
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete!'>delete!</span>
   <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_delete!'>delete!</span> <span class='comment'># Force delete the lock
@@ -559,12 +926,12 @@
       <pre class="lines">
 
 
-38
-39
-40</pre>
+52
+53
+54</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 52</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotImplementedError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'> needs to be implemented in </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -577,7 +944,7 @@
       <div class="method_details ">
   <h3 class="signature " id="lock-instance_method">
   
-    #<strong>lock</strong>  &#x21d2; <tt>String</tt> 
+    #<strong>lock</strong> { ... } &#x21d2; <tt>String</tt><sup>?</sup> 
   
 
   
@@ -585,26 +952,49 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Handles locking of sidekiq jobs.
-  Will call a conflict strategy if lock can&#39;t be achieved.</p>
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Will call a conflict strategy if lock can&#39;t be achieved.</p>
+</div>
+  </div>
+
+<p>Locks a sidekiq job</p>
 
 
   </div>
 </div>
 <div class="tags">
   
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>to the caller when given a block</p>
+</div>
+      
+    </li>
+  
+</ul>
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
     <li>
       
       
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>the sidekiq job id</p>
+        <div class='inline'><p>the locked jid when properly locked, else nil.</p>
 </div>
       
     </li>
@@ -617,29 +1007,21 @@
       <pre class="lines">
 
 
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34</pre>
+43
+44
+45
+46
+47
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 43</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span>
-  <span class='ivar'>@attempt</span> <span class='op'>=</span> <span class='int'>0</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID_KEY</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_locked?'>locked?</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='comment'># TODO: only use replace strategy when server is executing the lock
+</span>  <span class='kw'>return</span> <span class='id identifier rubyid_call_strategy'>call_strategy</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_locked_token'>locked_token</span> <span class='op'>=</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span><span class='rparen'>)</span>
 
-  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_TIMEOUT_KEY</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_token'>token</span>
-  <span class='kw'>else</span>
-    <span class='id identifier rubyid_call_strategy'>call_strategy</span>
-  <span class='kw'>end</span>
+  <span class='id identifier rubyid_locked_token'>locked_token</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -701,19 +1083,509 @@
       <pre class="lines">
 
 
-63
-64
-65</pre>
+77
+78
+79</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_locked?'>locked?</span>
-  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_locked?'>locked?</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID_KEY</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_locked?'>locked?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="locksmith-instance_method">
+  
+    #<strong>locksmith</strong>  &#x21d2; <tt><span class='object_link'><a href="../Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">SidekiqUniqueJobs::Locksmith</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This method is part of a private API.</strong>
+  You should avoid using this method if possible, as it may be removed or be changed in the future.
+</p>
+<p>The lock manager/client</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">SidekiqUniqueJobs::Locksmith</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the locksmith for this sidekiq job</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+87
+88
+89</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 87</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_locksmith'>locksmith</span>
+  <span class='ivar'>@locksmith</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">Locksmith</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Locksmith.html#initialize-instance_method" title="SidekiqUniqueJobs::Locksmith#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_debug-instance_method">
+  
+    #<strong>log_debug</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at debug level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_error-instance_method">
+  
+    #<strong>log_error</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at error level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_fatal-instance_method">
+  
+    #<strong>log_fatal</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at fatal level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_info-instance_method">
+  
+    #<strong>log_info</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at info level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_warn-instance_method">
+  
+    #<strong>log_warn</strong>(message_or_exception = nil) {|String, Exception| ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Logs a message at warn level</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message_or_exception</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to log</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message or exception to use for log message</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="logger-instance_method">
+  
+    #<strong>logger</strong>  &#x21d2; <tt>Logger</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A convenience method for using the configured gem logger</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Logger</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>SidekiqUniqueJobs#.logger</li>
+    
+  </ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="logging_context-instance_method">
+  
+    #<strong>logging_context</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Hash.html" title="Hash (class)">Hash</a></span></tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging#logging_context (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Setup some variables to add to each log line</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the context to use for each log line</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>NotImplementedError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
 </div>
     
       <div class="method_details ">
@@ -771,19 +1643,103 @@
       <pre class="lines">
 
 
-45
-46
-47</pre>
+59
+60
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/base_lock.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unlock'>unlock</span>
-  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID_KEY</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='comment'># Only signal to release the lock
+  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span> <span class='comment'># Only signal to release the lock
 </span><span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="with_configured_loggers_context-instance_method">
+  
+    #<strong>with_configured_loggers_context</strong> { ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#with_configured_loggers_context-instance_method" title="SidekiqUniqueJobs::Logging#with_configured_loggers_context (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Attempt to setup context aware logging for the given logger</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="with_logging_context-instance_method">
+  
+    #<strong>with_logging_context</strong>  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="../Logging.html#with_logging_context-instance_method" title="SidekiqUniqueJobs::Logging#with_logging_context (method)">SidekiqUniqueJobs::Logging</a></span>
+    </span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Wraps the middleware logic with context aware logging</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yield Returns:</p>
+<ul class="yieldreturn">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>void</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>yield to the middleware instance</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
 </div>
     
   </div>
@@ -791,9 +1747,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:45 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

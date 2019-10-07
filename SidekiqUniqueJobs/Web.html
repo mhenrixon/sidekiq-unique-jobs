@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Web
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -153,7 +153,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/MethodLength.</p>
+    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/MethodLength, Metrics/AbcSize.</p>
 </div></span>
   
 </li>
@@ -179,7 +179,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>rubocop:disable Metrics/MethodLength</p>
+    <p>rubocop:disable Metrics/MethodLength, Metrics/AbcSize</p>
 
 
   </div>
@@ -226,43 +226,59 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 47
 48
 49
-50</pre>
+50
+51
+52
+53
+54
+55
+56
+57
+58</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web.rb', line 17</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_registered'>registered</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_registered'>registered</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 </span>  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_helpers'>helpers</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Web (module)">Web</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Helpers.html" title="SidekiqUniqueJobs::Web::Helpers (module)">Helpers</a></span></span>
   <span class='kw'>end</span>
 
-  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/unique_digests</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
     <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:filter</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span>
     <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='ivar'>@filter</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
     <span class='ivar'>@count</span>          <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>100</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
     <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span>
     <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span>
-    <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@unique_digests</span> <span class='op'>=</span>
-      <span class='const'><span class='object_link'><a href="Digests.html" title="SidekiqUniqueJobs::Digests (module)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_page'><span class='object_link'><a href="Digests.html#page-instance_method" title="SidekiqUniqueJobs::Digests#page (method)">page</a></span></span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='ivar'>@filter</span><span class='comma'>,</span> <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span> <span class='label'>page_size:</span> <span class='ivar'>@count</span><span class='rparen'>)</span>
+    <span class='ivar'>@pagination</span>     <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>pattern:</span> <span class='ivar'>@filter</span><span class='comma'>,</span> <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span> <span class='label'>page_size:</span> <span class='ivar'>@count</span> <span class='rbrace'>}</span>
+    <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@locks</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span><span class='ivar'>@pagination</span><span class='rparen'>)</span>
 
-    <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:unique_digests</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:locks</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/unique_digests/delete_all</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
-    <span class='const'><span class='object_link'><a href="Digests.html" title="SidekiqUniqueJobs::Digests (module)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_del'><span class='object_link'><a href="Digests.html#del-instance_method" title="SidekiqUniqueJobs::Digests#del (method)">del</a></span></span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='const'><span class='object_link'><a href="Digests.html" title="SidekiqUniqueJobs::Digests (module)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_count'><span class='object_link'><a href="Digests.html#count-instance_method" title="SidekiqUniqueJobs::Digests#count (method)">count</a></span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:unique_digests</span>
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks/delete_all</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:locks</span>
   <span class='kw'>end</span>
 
-  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/unique_digests/:digest</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks/:digest</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
     <span class='ivar'>@digest</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:digest</span><span class='rbracket'>]</span>
-    <span class='ivar'>@unique_keys</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Util.html" title="SidekiqUniqueJobs::Util (module)">Util</a></span></span><span class='period'>.</span><span class='id identifier rubyid_keys'><span class='object_link'><a href="Util.html#keys-instance_method" title="SidekiqUniqueJobs::Util#keys (method)">keys</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='int'>1000</span><span class='rparen'>)</span>
+    <span class='ivar'>@lock</span>   <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Lock.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@digest</span><span class='rparen'>)</span>
 
-    <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:unique_digest</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:lock</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/unique_digests/:digest/delete</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
-    <span class='const'><span class='object_link'><a href="Digests.html" title="SidekiqUniqueJobs::Digests (module)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_del'><span class='object_link'><a href="Digests.html#del-instance_method" title="SidekiqUniqueJobs::Digests#del (method)">del</a></span></span><span class='lparen'>(</span><span class='label'>digest:</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:digest</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:unique_digests</span>
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks/:digest/delete</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='label'>digest:</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:digest</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:locks</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks/:digest/jobs/:job_id/delete</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='ivar'>@digest</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:digest</span><span class='rbracket'>]</span>
+    <span class='ivar'>@lock</span>   <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Lock.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@digest</span><span class='rparen'>)</span>
+    <span class='ivar'>@lock</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:job_id</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>locks/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@lock</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -275,9 +291,9 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:38 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

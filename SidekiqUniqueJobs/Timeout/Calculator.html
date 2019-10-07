@@ -202,6 +202,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#default_lock_ttl-instance_method" title="#default_lock_ttl (instance method)">#<strong>default_lock_ttl</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(item)  &#x21d2; Calculator </a>
     
 
@@ -227,29 +249,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock_expiration-instance_method" title="#lock_expiration (instance method)">#<strong>lock_expiration</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The configured lock_expiration.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#lock_timeout-instance_method" title="#lock_timeout (instance method)">#<strong>lock_timeout</strong>  &#x21d2; Object </a>
     
 
@@ -265,6 +264,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>The configured lock_timeout.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock_ttl-instance_method" title="#lock_ttl (instance method)">#<strong>lock_ttl</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The configured lock_ttl.</p>
 </div></span>
   
 </li>
@@ -377,7 +399,7 @@
     <ul class="option">
       
         <li>
-          <span class="name">:lock_expiration</span>
+          <span class="name">:lock_ttl</span>
           <span class="type">(<tt>Integer</tt>, <tt>nil</tt>)</span>
           <span class="default">
             
@@ -444,7 +466,7 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='ivar'>@item</span>         <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span>
-  <span class='ivar'>@worker_class</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>CLASS_KEY</span><span class='rbracket'>]</span>
+  <span class='ivar'>@worker_class</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>CLASS</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -520,12 +542,12 @@
       <pre class="lines">
 
 
-58
-59
-60</pre>
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_timeout'>default_lock_timeout</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_lock_timeout'>default_lock_timeout</span>
@@ -536,47 +558,29 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="lock_expiration-instance_method">
+  <h3 class="signature " id="default_lock_ttl-instance_method">
   
-    #<strong>lock_expiration</strong>  &#x21d2; <tt>Object</tt> 
-  
-
+    #<strong>default_lock_ttl</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The configured lock_expiration</p>
 
-
-  </div>
-</div>
-<div class="tags">
   
-
-</div><table class="source_code">
+</h3><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-39
-40
-41
-42
-43
-44
-45</pre>
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 65</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_lock_expiration'>lock_expiration</span>
-  <span class='ivar'>@lock_expiration</span> <span class='op'>||=</span> <span class='kw'>begin</span>
-    <span class='id identifier rubyid_expiration'>expiration</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_EXPIRATION_KEY</span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_expiration'>expiration</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_EXPIRATION_KEY</span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_expiration'>expiration</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_expiration'>expiration</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>+</span> <span class='id identifier rubyid_time_until_scheduled'>time_until_scheduled</span>
-  <span class='kw'>end</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
+  <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -608,24 +612,78 @@
       <pre class="lines">
 
 
-48
-49
-50
 51
 52
 53
 54
-55</pre>
+55
+56
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_timeout'>lock_timeout</span>
   <span class='ivar'>@lock_timeout</span> <span class='op'>=</span> <span class='kw'>begin</span>
-    <span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>=</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_TIMEOUT_KEY</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>=</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_TIMEOUT</span><span class='rbracket'>]</span>
     <span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>=</span> <span class='id identifier rubyid_default_lock_timeout'>default_lock_timeout</span> <span class='kw'>if</span> <span class='id identifier rubyid_default_lock_timeout'>default_lock_timeout</span>
-    <span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_TIMEOUT_KEY</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='const'>LOCK_TIMEOUT_KEY</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_TIMEOUT</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='const'>LOCK_TIMEOUT</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_timeout'>timeout</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock_ttl-instance_method">
+  
+    #<strong>lock_ttl</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The configured lock_ttl</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_ttl'>lock_ttl</span>
+  <span class='ivar'>@lock_ttl</span> <span class='op'>||=</span> <span class='kw'>begin</span>
+    <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_TTL</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_TTL</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_EXPIRATION</span><span class='rbracket'>]</span> <span class='comment'># TODO: Deprecate at some point
+</span>    <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_EXPIRATION</span><span class='rbracket'>]</span> <span class='comment'># TODO: Deprecate at some point
+</span>    <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
+    <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_ttl'>ttl</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>+</span> <span class='id identifier rubyid_time_until_scheduled'>time_until_scheduled</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -683,7 +741,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/timeout/calculator.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_scheduled_at'>scheduled_at</span>
-  <span class='ivar'>@scheduled_at</span> <span class='op'>||=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>AT_KEY</span><span class='rbracket'>]</span>
+  <span class='ivar'>@scheduled_at</span> <span class='op'>||=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>AT</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -756,7 +814,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:07 2019 by
+  Generated on Tue May 21 20:36:03 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.19 (ruby-2.5.5).
 </div>

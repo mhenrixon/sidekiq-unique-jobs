@@ -6,7 +6,7 @@
 <title>
   Class: Array
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -99,7 +99,17 @@
   
 </div>
 
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Monkey patches for the ruby Array</p>
 
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
 
 
 
@@ -117,7 +127,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#extract_options!-instance_method" title="#extract_options! (instance method)">#<strong>extract_options!</strong>  &#x21d2; Object </a>
+      <a href="#extract_options!-instance_method" title="#extract_options! (instance method)">#<strong>extract_options!</strong>  &#x21d2; Hash </a>
     
 
     
@@ -131,7 +141,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Extract the last argument if it is a hash.</p>
+</div></span>
   
 </li>
 
@@ -148,28 +159,51 @@
       <div class="method_details first">
   <h3 class="signature first" id="extract_options!-instance_method">
   
-    #<strong>extract_options!</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>extract_options!</strong>  &#x21d2; <tt><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span></tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Extract the last argument if it is a hash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-44
-45
-46
-47
-48
-49
-50</pre>
+82
+83
+84
+85
+86
+87
+88</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 82</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_extract_options!'>extract_options!</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_last'>last</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_last'>last</span><span class='period'>.</span><span class='id identifier rubyid_instance_of?'>instance_of?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
@@ -188,9 +222,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:42 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

@@ -6,7 +6,7 @@
 <title>
   Exception: SidekiqUniqueJobs::Conflict
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -69,12 +69,14 @@
   <dl>
     <dt>Inherits:</dt>
     <dd>
-      <span class="inheritName">StandardError</span>
+      <span class="inheritName"><span class='object_link'><a href="UniqueJobsError.html" title="SidekiqUniqueJobs::UniqueJobsError (class)">UniqueJobsError</a></span></span>
       
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">StandardError</li>
+            <li class="next">RuntimeError</li>
+          
+            <li class="next"><span class='object_link'><a href="UniqueJobsError.html" title="SidekiqUniqueJobs::UniqueJobsError (class)">UniqueJobsError</a></span></li>
           
             <li class="next">SidekiqUniqueJobs::Conflict</li>
           
@@ -170,6 +172,8 @@
   
 
 
+  
+  
   <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
@@ -198,15 +202,15 @@
       <pre class="lines">
 
 
-8
-9
-10</pre>
+16
+17
+18</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 8</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
-  <span class='kw'>super</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Item with the key: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST_KEY</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> is already scheduled or processing</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Item with the key: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> is already scheduled or processing</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -219,9 +223,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:06 2019 by
+  Generated on Mon Oct  7 15:39:43 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>

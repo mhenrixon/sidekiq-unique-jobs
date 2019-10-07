@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::OnConflict::Replace
   
-    &mdash; Documentation by YARD 0.9.19
+    &mdash; Documentation by YARD 0.9.20
   
 </title>
 
@@ -193,11 +193,6 @@
 
 
 
-  
-  
-  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="Strategy.html" title="SidekiqUniqueJobs::OnConflict::Strategy (class)">Strategy</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Strategy.html#item-instance_method" title="SidekiqUniqueJobs::OnConflict::Strategy#item (method)">#item</a></span></p>
-
 
   
     <h2>
@@ -210,7 +205,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#call-instance_method" title="#call (instance method)">#<strong>call</strong> { ... } &#x21d2; Object </a>
+      <a href="#call-instance_method" title="#call (instance method)">#<strong>call</strong> { ... } &#x21d2; void </a>
     
 
     
@@ -233,7 +228,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#delete_job_by_digest-instance_method" title="#delete_job_by_digest (instance method)">#<strong>delete_job_by_digest</strong>  &#x21d2; Object </a>
+      <a href="#delete_job_by_digest-instance_method" title="#delete_job_by_digest (instance method)">#<strong>delete_job_by_digest</strong>  &#x21d2; String<sup>?</sup> </a>
     
 
     
@@ -256,7 +251,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#delete_lock-instance_method" title="#delete_lock (instance method)">#<strong>delete_lock</strong>  &#x21d2; Object </a>
+      <a href="#delete_lock-instance_method" title="#delete_lock (instance method)">#<strong>delete_lock</strong>  &#x21d2; Integer </a>
     
 
     
@@ -279,7 +274,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(item)  &#x21d2; Replace </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(item, redis_pool = nil)  &#x21d2; Replace </a>
     
 
     
@@ -295,7 +290,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>A new instance of Replace.</p>
+    <span class="summary_desc"><div class='inline'><p>Initialize a new Replace strategy.</p>
 </div></span>
   
 </li>
@@ -313,26 +308,14 @@
   
   
   
-  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="Strategy.html" title="SidekiqUniqueJobs::OnConflict::Strategy (class)">Strategy</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Strategy.html#replace%3F-instance_method" title="SidekiqUniqueJobs::OnConflict::Strategy#replace? (method)">#replace?</a></span></p>
-
   
-  
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Logging.html" title="SidekiqUniqueJobs::Logging (module)">Logging</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Logging.html#log_debug-instance_method" title="SidekiqUniqueJobs::Logging#log_debug (method)">#log_debug</a></span>, <span class='object_link'><a href="../Logging.html#log_error-instance_method" title="SidekiqUniqueJobs::Logging#log_error (method)">#log_error</a></span>, <span class='object_link'><a href="../Logging.html#log_fatal-instance_method" title="SidekiqUniqueJobs::Logging#log_fatal (method)">#log_fatal</a></span>, <span class='object_link'><a href="../Logging.html#log_info-instance_method" title="SidekiqUniqueJobs::Logging#log_info (method)">#log_info</a></span>, <span class='object_link'><a href="../Logging.html#log_warn-instance_method" title="SidekiqUniqueJobs::Logging#log_warn (method)">#log_warn</a></span>, <span class='object_link'><a href="../Logging.html#logger-instance_method" title="SidekiqUniqueJobs::Logging#logger (method)">#logger</a></span>, <span class='object_link'><a href="../Logging.html#logging_context-instance_method" title="SidekiqUniqueJobs::Logging#logging_context (method)">#logging_context</a></span></p>
-<div id="constructor_details" class="method_details_list">
+  <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(item)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::OnConflict::Replace (class)">Replace</a></span></tt> 
+    #<strong>initialize</strong>(item, redis_pool = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::OnConflict::Replace (class)">Replace</a></span></tt> 
   
 
   
@@ -340,7 +323,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns a new instance of Replace</p>
+    <p>Initialize a new Replace strategy</p>
 
 
   </div>
@@ -373,19 +356,19 @@
       <pre class="lines">
 
 
-12
-13
-14
-15
-16</pre>
+23
+24
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 12</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 23</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
-  <span class='kw'>super</span>
-  <span class='ivar'>@queue</span>         <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>QUEUE_KEY</span><span class='rbracket'>]</span>
-  <span class='ivar'>@unique_digest</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST_KEY</span><span class='rbracket'>]</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span>
+  <span class='ivar'>@queue</span>         <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>QUEUE</span><span class='rbracket'>]</span>
+  <span class='ivar'>@unique_digest</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -424,12 +407,12 @@
       <pre class="lines">
 
 
-9
-10
-11</pre>
+12
+13
+14</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_queue'>queue</span>
   <span class='ivar'>@queue</span>
@@ -466,12 +449,12 @@
       <pre class="lines">
 
 
-9
-10
-11</pre>
+16
+17
+18</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unique_digest'>unique_digest</span>
   <span class='ivar'>@unique_digest</span>
@@ -491,7 +474,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="call-instance_method">
   
-    #<strong>call</strong> { ... } &#x21d2; <tt>Object</tt> 
+    #<strong>call</strong> { ... } &#x21d2; <tt>void</tt> 
   
 
   
@@ -499,7 +482,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Replace the old job in the queue</p>
+    <p class="note returns_void">This method returns an undefined value.</p><p>Replace the old job in the queue</p>
 
 
   </div>
@@ -530,20 +513,26 @@
       <pre class="lines">
 
 
-20
-21
-22
-23
-24
-25</pre>
+37
+38
+39
+40
+41
+42
+43
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_delete_job_by_digest'>delete_job_by_digest</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_deleted_job'>deleted_job</span> <span class='op'>=</span> <span class='id identifier rubyid_delete_job_by_digest'>delete_job_by_digest</span><span class='rparen'>)</span>
 
-  <span class='id identifier rubyid_delete_lock'>delete_lock</span>
+  <span class='id identifier rubyid_log_info'>log_info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Deleting job: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_deleted_job'>deleted_job</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_del_count'>del_count</span> <span class='op'>=</span> <span class='id identifier rubyid_delete_lock'>delete_lock</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_log_info'>log_info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Deleted `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_del_count'>del_count</span><span class='embexpr_end'>}</span><span class='tstring_content'>` keys for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_unique_digest'>unique_digest</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
   <span class='id identifier rubyid_block'>block</span><span class='op'>&amp;.</span><span class='id identifier rubyid_call'>call</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -554,7 +543,7 @@
       <div class="method_details ">
   <h3 class="signature " id="delete_job_by_digest-instance_method">
   
-    #<strong>delete_job_by_digest</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>delete_job_by_digest</strong>  &#x21d2; <tt>String</tt><sup>?</sup> 
   
 
   
@@ -569,6 +558,36 @@
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the deleted job hash</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>when deleting nothing</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -576,23 +595,19 @@
       <pre class="lines">
 
 
-28
-29
-30
-31
-32
-33
-34</pre>
+54
+55
+56
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 28</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_job_by_digest'>delete_job_by_digest</span>
-  <span class='const'><span class='object_link'><a href="../Scripts.html" title="SidekiqUniqueJobs::Scripts (module)">Scripts</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="../Scripts.html#call-class_method" title="SidekiqUniqueJobs::Scripts.call (method)">call</a></span></span><span class='lparen'>(</span>
-    <span class='symbol'>:delete_job_by_digest</span><span class='comma'>,</span>
-    <span class='kw'>nil</span><span class='comma'>,</span>
-    <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'>QUEUE_KEY</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_queue'>queue</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='const'>SCHEDULE_SET</span><span class='comma'>,</span> <span class='const'>RETRY_SET</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>argv:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_unique_digest'>unique_digest</span><span class='rbracket'>]</span><span class='comma'>,</span>
-  <span class='rparen'>)</span>
+  <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span><span class='symbol'>:delete_job_by_digest</span><span class='comma'>,</span>
+              <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'>QUEUE</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_queue'>queue</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='const'>SCHEDULE</span><span class='comma'>,</span> <span class='const'>RETRY</span><span class='rbracket'>]</span><span class='comma'>,</span>
+              <span class='label'>argv:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_unique_digest'>unique_digest</span><span class='rbracket'>]</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -602,7 +617,7 @@
       <div class="method_details ">
   <h3 class="signature " id="delete_lock-instance_method">
   
-    #<strong>delete_lock</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>delete_lock</strong>  &#x21d2; <tt>Integer</tt> 
   
 
   
@@ -617,6 +632,23 @@
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the number of keys deleted</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -624,15 +656,15 @@
       <pre class="lines">
 
 
-37
-38
-39</pre>
+66
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_lock'>delete_lock</span>
-  <span class='const'><span class='object_link'><a href="../Scripts.html" title="SidekiqUniqueJobs::Scripts (module)">Scripts</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="../Scripts.html#call-class_method" title="SidekiqUniqueJobs::Scripts.call (method)">call</a></span></span><span class='lparen'>(</span><span class='symbol'>:delete_by_digest</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='const'>UNIQUE_SET</span><span class='comma'>,</span> <span class='id identifier rubyid_unique_digest'>unique_digest</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span><span class='symbol'>:delete_by_digest</span><span class='comma'>,</span> <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_unique_digest'>unique_digest</span><span class='comma'>,</span> <span class='const'>DIGESTS</span><span class='rbracket'>]</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -644,9 +676,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 15 17:04:07 2019 by
+  Generated on Mon Oct  7 15:39:47 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.19 (ruby-2.5.5).
+  0.9.20 (ruby-2.6.5).
 </div>
 
     </div>
