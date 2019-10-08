@@ -15,6 +15,7 @@ local current_time = tonumber(ARGV[2])
 local debug_lua    = ARGV[3] == "true"
 local max_history  = tonumber(ARGV[4])
 local script_name  = ARGV[5] .. ".lua"
+local redisversion = ARGV[6]
 ---------  END injected arguments ---------
 
 
@@ -32,7 +33,7 @@ local per       = 50
 local total     = redis.call("ZCARD", digests_set)
 local index     = 0
 local del_count = 0
-local redis_ver = redis_version()
+local redis_ver = toversion(redisversion)
 local del_cmd   = "DEL"
 
 if tonumber(redis_ver["major"]) >= 4 then del_cmd = "UNLINK"; end

@@ -110,8 +110,8 @@ RSpec.describe SidekiqUniqueJobs do
     end
   end
 
-  describe ".redis_version" do
-    subject(:redis_version) { described_class.redis_version }
+  describe ".fetch_redis_version" do
+    subject(:fetch_redis_version) { described_class.fetch_redis_version }
 
     it { is_expected.to be_a(String) }
     it { is_expected.to match(/(\d+\.?)+/) }

@@ -75,7 +75,7 @@ module SidekiqUniqueJobs
     # Deletes the lock regardless of if it has a pttl set
     #
     def delete!
-      call_script(:delete, key.to_a, [job_id]).positive?
+      call_script(:delete, key.to_a, [job_id, config.pttl, config.type, config.limit]).positive?
     end
 
     #

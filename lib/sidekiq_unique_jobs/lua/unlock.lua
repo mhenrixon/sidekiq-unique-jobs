@@ -20,6 +20,7 @@ local current_time = tonumber(ARGV[5])
 local debug_lua    = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
+local redisversion = ARGV[9]
 ---------  END injected arguments ---------
 
 --------  BEGIN Variables --------
@@ -74,7 +75,7 @@ if pttl and pttl > 0 then
   log_debug("PEXPIRE", info, pttl)
   redis.call("PEXPIRE", info, pttl)
 else
-  local redis_version = redis_version()
+  local redis_version = toversion(redisversion)
   local del_cmd       = "DEL"
 
   if tonumber(redis_version["major"]) >= 4 then del_cmd =  "UNLINK"; end

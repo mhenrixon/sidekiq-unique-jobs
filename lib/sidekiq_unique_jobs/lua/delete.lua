@@ -17,9 +17,10 @@ local limit        = tonumber(ARGV[4])
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
-local debug_lua    = ARGV[6] == "true"
+local debug_lua    = tostring(ARGV[6]) == "true"
 local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
+local redisversion = tostring(ARGV[9])
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
@@ -30,7 +31,7 @@ local script_name  = tostring(ARGV[8]) .. ".lua"
 --------  BEGIN delete.lua --------
 log_debug("BEGIN delete", digest)
 
-local redis_version = redis_version()
+local redis_version  = toversion(redisversion)
 local count          = 0
 local del_cmd        = "DEL"
 
