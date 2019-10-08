@@ -115,7 +115,7 @@ module SidekiqUniqueJobs
     end
 
     def redis_version
-      @redis_version ||= SidekiqUniqueJobs.redis_version
+      @redis_version ||= SidekiqUniqueJobs.config.redis_version
     end
   end
 end

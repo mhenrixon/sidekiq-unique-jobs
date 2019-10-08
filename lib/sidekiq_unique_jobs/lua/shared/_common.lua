@@ -1,8 +1,8 @@
-local function redis_version()
-  local serverinfo = redis.call("INFO", "SERVER")
-  local _, _, maj, min, pat = string.find(serverinfo, "redis_version%:(%d+)%.(%d+)%.(%d+)")
+local function toversion(version)
+  local _, _, maj, min, pat = string.find(version, "(%d+)%.(%d+)%.(%d+)")
+
   return {
-    ["version"] = maj .. "." .. min .. "." .. pat,
+    ["version"] = version,
     ["major"]   = tonumber(maj),
     ["minor"]   = tonumber(min),
     ["patch"]   = tonumber(pat)

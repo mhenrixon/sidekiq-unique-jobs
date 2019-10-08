@@ -17,7 +17,8 @@ module SidekiqUniqueJobs
                                                    :reaper_interval,
                                                    :reaper_timeout,
                                                    :lock_info,
-                                                   :raise_on_config_error)
+                                                   :raise_on_config_error,
+                                                   :current_redis_version)
 
   #
   # Shared class for dealing with gem configuration
@@ -65,18 +66,19 @@ module SidekiqUniqueJobs
       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
     }.freeze
 
-    PREFIX          = "uniquejobs"
-    LOCK_TIMEOUT    = 0
-    LOCK_TTL        = nil
-    ENABLED         = true
-    DEBUG_LUA       = false
-    MAX_HISTORY     = 1_000
-    REAPER          = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
-    REAPER_COUNT    = 1_000
-    REAPER_INTERVAL = 600 # Every 10 minutes
-    REAPER_TIMEOUT  = 10 # 10 seconds
-    USE_LOCK_INFO   = false
+    PREFIX                = "uniquejobs"
+    LOCK_TIMEOUT          = 0
+    LOCK_TTL              = nil
+    ENABLED               = true
+    DEBUG_LUA             = false
+    MAX_HISTORY           = 1_000
+    REAPER                = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
+    REAPER_COUNT          = 1_000
+    REAPER_INTERVAL       = 600 # Every 10 minutes
+    REAPER_TIMEOUT        = 10 # 10 seconds
+    USE_LOCK_INFO         = false
     RAISE_ON_CONFIG_ERROR = false
+    REDIS_VERSION         = "0.0.0"
 
     #
     # Returns a default configuration
@@ -139,6 +141,7 @@ module SidekiqUniqueJobs
         REAPER_TIMEOUT,
         USE_LOCK_INFO,
         RAISE_ON_CONFIG_ERROR,
+        REDIS_VERSION,
       )
     end
 
@@ -180,6 +183,11 @@ module SidekiqUniqueJobs
 
       new_strategies = strategies.dup.merge(strategy_sym => klass).freeze
       self.strategies = new_strategies
+    end
+
+    def redis_version
+      self.current_redis_version = SidekiqUniqueJobs.fetch_redis_version if current_redis_version == REDIS_VERSION
+      current_redis_version
     end
   end
 end

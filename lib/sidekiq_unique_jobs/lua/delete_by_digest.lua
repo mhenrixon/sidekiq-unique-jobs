@@ -8,6 +8,7 @@ local current_time = tonumber(ARGV[1])
 local debug_lua    = ARGV[2] == "true"
 local max_history  = tonumber(ARGV[3])
 local script_name  = tostring(ARGV[4]) .. ".lua"
+local redisversion = tostring(ARGV[5])
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
@@ -27,7 +28,7 @@ local run_locked = digest .. ":RUN:LOCKED"
 
 --------  BEGIN delete_by_digest.lua --------
 local counter       = 0
-local redis_version = redis_version()
+local redis_version = toversion(redisversion)
 local del_cmd   = "DEL"
 
 log_debug("BEGIN delete_by_digest:", digest)

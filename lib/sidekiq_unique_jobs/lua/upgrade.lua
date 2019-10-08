@@ -9,6 +9,7 @@ local current_time = tonumber(ARGV[5])
 local debug_lua    = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
+local redisversion = ARGV[9]
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
@@ -19,7 +20,7 @@ local script_name  = tostring(ARGV[8]) .. ".lua"
 
 local new_version   = redis.call("GET", live_version)
 local old_version   = redis.call("GET", dead_version)
-local redis_version = redis_version()
+local redis_version = toversion(redisversion)
 local upgraded      = 0
 local del_cmd       = "DEL"
 

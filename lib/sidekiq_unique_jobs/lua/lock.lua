@@ -20,6 +20,7 @@ local current_time = tonumber(ARGV[5])
 local debug_lua    = ARGV[6] == "true"
 local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
+local redisversion = ARGV[9]
 ---------  END injected arguments ---------
 
 --------  BEGIN local functions --------
