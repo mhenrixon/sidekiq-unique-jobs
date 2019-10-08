@@ -1,5 +1,17 @@
 # Changelog
 
+## [v7.0.0.beta2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta2) (2019-10-08)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta1...v7.0.0.beta2)
+
+**Fixed bugs:**
+
+- Pass redis\_version into scripts [\#431](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/431) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- incorrect `:until\_and\_while\_executing` behavior [\#424](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/424)
+
 ## [v7.0.0.beta1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta1) (2019-10-07)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.15...v7.0.0.beta1)
