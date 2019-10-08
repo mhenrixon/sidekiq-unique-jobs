@@ -263,6 +263,28 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#redis_version-class_method" title="redis_version (class method)">.<strong>redis_version</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -539,12 +561,12 @@
       <pre class="lines">
 
 
-100
-101
-102</pre>
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 100</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 106</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_debug_lua'>debug_lua</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug_lua'>debug_lua</span>
@@ -589,13 +611,25 @@
 54
 55
 56
-57</pre>
+57
+58
+59
+60
+61
+62
+63</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_do_call'>do_call</span><span class='lparen'>(</span><span class='id identifier rubyid_file_name'>file_name</span><span class='comma'>,</span> <span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_keys'>keys</span><span class='comma'>,</span> <span class='id identifier rubyid_argv'>argv</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_argv'>argv</span> <span class='op'>=</span> <span class='id identifier rubyid_argv'>argv</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_now_f'>now_f</span><span class='comma'>,</span> <span class='id identifier rubyid_debug_lua'>debug_lua</span><span class='comma'>,</span> <span class='id identifier rubyid_max_history'>max_history</span><span class='comma'>,</span> <span class='id identifier rubyid_file_name'>file_name</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_argv'>argv</span> <span class='op'>=</span> <span class='id identifier rubyid_argv'>argv</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='lbracket'>[</span>
+                           <span class='id identifier rubyid_now_f'>now_f</span><span class='comma'>,</span>
+                           <span class='id identifier rubyid_debug_lua'>debug_lua</span><span class='comma'>,</span>
+                           <span class='id identifier rubyid_max_history'>max_history</span><span class='comma'>,</span>
+                           <span class='id identifier rubyid_file_name'>file_name</span><span class='comma'>,</span>
+                           <span class='id identifier rubyid_redis_version'>redis_version</span><span class='comma'>,</span>
+                         <span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Script.html" title="SidekiqUniqueJobs::Script (module)">Script</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="../Script.html#call-class_method" title="SidekiqUniqueJobs::Script.call (method)">call</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_file_name'>file_name</span><span class='comma'>,</span> <span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='label'>keys:</span> <span class='id identifier rubyid_keys'>keys</span><span class='comma'>,</span> <span class='label'>argv:</span> <span class='id identifier rubyid_argv'>argv</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -809,20 +843,20 @@
       <pre class="lines">
 
 
-78
-79
-80
-81
-82
-83
 84
 85
 86
 87
-88</pre>
+88
+89
+90
+91
+92
+93
+94</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 78</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_extract_args'>extract_args</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span>
@@ -871,12 +905,12 @@
       <pre class="lines">
 
 
-107
-108
-109</pre>
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 107</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_history'>max_history</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max_history'>max_history</span>
@@ -917,15 +951,61 @@
       <pre class="lines">
 
 
-93
-94
-95</pre>
+99
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 99</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_now_f'>now_f</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_now_f'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#now_f-class_method" title="SidekiqUniqueJobs.now_f (method)">now_f</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="redis_version-class_method">
+  
+    .<strong>redis_version</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Config#max_history</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+120
+121
+122</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 120</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_redis_version'>redis_version</span>
+  <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_redis_version'><span class='object_link'><a href="../Config.html#redis_version-instance_method" title="SidekiqUniqueJobs::Config#redis_version (method)">redis_version</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -937,7 +1017,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Oct  7 15:39:40 2019 by
+  Generated on Tue Oct  8 20:00:36 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>
