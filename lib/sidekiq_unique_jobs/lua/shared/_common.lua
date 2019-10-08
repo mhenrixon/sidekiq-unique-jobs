@@ -1,8 +1,5 @@
 local function toversion(version)
-
-  redis.log(redis.LOG_DEBUG, "received ver: " .. version)
   local _, _, maj, min, pat = string.find(version, "(%d+)%.(%d+)%.(%d+)")
-  redis.log(redis.LOG_DEBUG, "maj: " .. tostring(maj) .. " min: " .. tostring(min) .. " pat: " .. tostring(pat))
 
   return {
     ["version"] = version,
