@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "brpoplpush/redis_script"
 require "concurrent/future"
 require "concurrent/promises"
 require "concurrent/timer_task"
