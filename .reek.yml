@@ -24,7 +24,6 @@ detectors:
     exclude:
       - SidekiqUniqueJobs::DeleteOrphan
       - SidekiqUniqueJobs::Redis
-      - SidekiqUniqueJobs::Script
   DuplicateMethodCall:
     exclude:
       - Sidekiq#self.use_options
@@ -49,13 +48,9 @@ detectors:
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::NotUniqueWorker#initialize
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
-      - SidekiqUniqueJobs::ScriptError#generate_error_context
       - SidekiqUniqueJobs::Web::Helpers#cparams
-  InstanceVariableAssumption:
-    exclude:
-      - SidekiqUniqueJobs::Script::Template
   IrresponsibleModule:
-    enabled: false
+    enabled: true
   LongParameterList:
     enabled: true
     exclude:
@@ -64,8 +59,6 @@ detectors:
       - SidekiqUniqueJobs::Changelog#add
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Redis
-      - SidekiqUniqueJobs::Script#call
-      - SidekiqUniqueJobs::Script#execute
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#do_call
   ManualDispatch:
@@ -124,11 +117,8 @@ detectors:
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Profiler#self.stop
-      - SidekiqUniqueJobs::Script#call
-      - SidekiqUniqueJobs::Script#handle_error
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
-      - SidekiqUniqueJobs::ScriptError#generate_error_context
       - SidekiqUniqueJobs::TimeCalculator#lock_ttl
       - SidekiqUniqueJobs::UniqueArgs#filtered_args
       - SidekiqUniqueJobs::UpgradeLocks#call

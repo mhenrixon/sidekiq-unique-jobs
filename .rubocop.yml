@@ -125,8 +125,6 @@ Style/Documentation:
     - "lib/sidekiq_unique_jobs/core_ext.rb"
     - "lib/sidekiq_unique_jobs/sidekiq_unique_ext.rb"
     - "lib/sidekiq_unique_jobs/web/**/*"
-    - "lib/sidekiq_unique_jobs/on_conflict.rb"
-    - "lib/sidekiq_unique_jobs/timeout.rb"
 
 Style/FrozenStringLiteralComment:
   Enabled: true
