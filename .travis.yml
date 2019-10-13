@@ -37,20 +37,12 @@ after_script:
   - if [[ "${COV}" = "true" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 
 rvm:
-  - 2.4.8
+  - 2.5.7
 
 matrix:
   fast_finish: true
 
-  exclude:
-    - rvm: 2.4.8
-      gemfile: gemfiles/sidekiq_6.0.gemfile
-    - rvm: 2.4.8
-      gemfile: gemfiles/sidekiq_develop.gemfile
-
   include:
-    - rvm: 2.5.7
-      gemfile: gemfiles/sidekiq_6.0.gemfile
     - rvm: jruby-9.2.8.0
       gemfile: gemfiles/sidekiq_6.0.gemfile
     - rvm: 2.6.5
