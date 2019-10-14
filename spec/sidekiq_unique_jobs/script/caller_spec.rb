@@ -22,14 +22,14 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller do
     let(:error_message)    { "Some interesting error" }
 
     before do
-      allow(SidekiqUniqueJobs::Script).to receive(:call)
+      allow(SidekiqUniqueJobs::Script).to receive(:execute)
         .with(script_name, kind_of(Redis), keys: keys, argv: kind_of(Array))
     end
 
     shared_examples "script gets called with the correct arguments" do
-      it "delegates to Script.call" do
+      it "delegates to Script.execute" do
         call_script
-        expect(SidekiqUniqueJobs::Script).to have_received(:call)
+        expect(SidekiqUniqueJobs::Script).to have_received(:execute)
           .with(script_name, kind_of(Redis), keys: keys, argv: a_collection_including(jid, max_lock_time))
       end
     end

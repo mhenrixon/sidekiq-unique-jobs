@@ -59,7 +59,7 @@ module SidekiqUniqueJobs
                                  file_name,
                                  redis_version,
                                ])
-        Script.call(file_name, conn, keys: keys, argv: argv)
+        Script.execute(file_name, conn, keys: keys, argv: argv)
       end
 
       #

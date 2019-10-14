@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "brpoplpush/redis_script"
 require "concurrent/future"
 require "concurrent/promises"
 require "concurrent/timer_task"
@@ -25,7 +26,6 @@ require "sidekiq_unique_jobs/connection"
 require "sidekiq_unique_jobs/exceptions"
 require "sidekiq_unique_jobs/script"
 require "sidekiq_unique_jobs/script/caller"
-require "sidekiq_unique_jobs/script/template"
 require "sidekiq_unique_jobs/json"
 require "sidekiq_unique_jobs/normalizer"
 require "sidekiq_unique_jobs/job"

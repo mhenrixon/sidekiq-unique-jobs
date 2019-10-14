@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
       #
       def self.start
         with_logging_context do
-          logger.info("Starting Reaper")
+          log_info("Starting Reaper")
           task.add_observer(Observer.new)
           task.execute
           task
@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
       #
       def self.stop
         with_logging_context do
-          logger.info("Stopping Reaper")
+          log_info("Stopping Reaper")
           task.shutdown
         end
       end
