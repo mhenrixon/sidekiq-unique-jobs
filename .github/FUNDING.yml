@@ -1,4 +1,4 @@
 # These are supported funding model platforms
 
-github: mhenrixon
+github: ["mhenrixon"]
 custom: ['https://paypal.me/mhenrixon1']
