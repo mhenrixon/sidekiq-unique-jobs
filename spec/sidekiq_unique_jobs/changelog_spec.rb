@@ -9,7 +9,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
   let(:job_id) { SecureRandom.hex(12) }
 
   describe "#add" do
-    subject(:add) { entity.add(entry) }
+    subject(:add) { entity.add(**entry) }
 
     let(:entry) do
       {
