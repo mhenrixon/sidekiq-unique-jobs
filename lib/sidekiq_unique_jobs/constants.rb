@@ -27,4 +27,5 @@ module SidekiqUniqueJobs
   UNIQUE_PREFIX_KEY         ||= "unique_prefix"
   RETRY_SET                 ||= "retry"
   SCHEDULE_SET              ||= "schedule"
+  UNLOCK_WITH_EXCEPTION     ||= "unlock_with_exception"
 end
