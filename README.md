@@ -188,6 +188,14 @@ Locks from when the client pushes the job to the queue. Will be unlocked when th
 sidekiq_options lock: :until_executed
 ```
 
+#### Unlock with Exception
+
+unlock the queue if error being raised while processing the job in until_executed mode.
+
+```ruby
+sidekiq_options unlock_with_exception: true # Default behavior is false
+```
+
 ### Until Timeout
 
 Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.
