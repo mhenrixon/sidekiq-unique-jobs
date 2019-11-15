@@ -19,6 +19,9 @@ module SidekiqUniqueJobs
           log_warn "the unique_key: #{item[UNIQUE_DIGEST_KEY]} is not locked, allowing job to silently complete"
           nil
         end
+      rescue Exception # rubocop:disable Lint/RescueException
+        delete! if item[UNLOCK_WITH_EXCEPTION] == true
+        raise
       end
     end
   end
