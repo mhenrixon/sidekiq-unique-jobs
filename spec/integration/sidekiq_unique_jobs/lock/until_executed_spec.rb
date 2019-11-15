@@ -45,6 +45,41 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted, redis: :redis do
       process_one.execute {}
       expect(process_one).not_to be_locked
     end
+
+    context "when worker raises error" do
+      let(:item_one) do
+        { "jid" => jid_one,
+          "class" => worker_class.to_s,
+          "queue" => queue,
+          "lock" => unique,
+          "unlock_with_exception" => unlock_with_exception,
+          "args" => args }
+      end
+
+      before do
+        process_one.lock
+      end
+
+      context "if unlock_with_exception is true" do
+        let(:unlock_with_exception) { true }
+
+        it "unlocked after raise" do
+          expect { process_one.execute { raise "Hell" } }
+            .to raise_error(RuntimeError, "Hell")
+          expect(process_one.locked?).to eq(false)
+        end
+      end
+
+      context "if unlock_with_exception is false" do
+        let(:unlock_with_exception) { false }
+
+        it "stay locked" do
+          expect { process_one.execute { raise "Hell" } }
+            .to raise_error(RuntimeError, "Hell")
+          expect(process_one.locked?).to eq(true)
+        end
+      end
+    end
   end
 
   describe "#delete" do
