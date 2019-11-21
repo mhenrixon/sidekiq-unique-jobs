@@ -418,7 +418,7 @@ The last one is log which can be be used with the lock `UntilExecuted` and `Unti
 ### log
 
 ```ruby
-sidekiq_options on_conflict: :log`
+sidekiq_options on_conflict: :log
 ```
 
 This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
@@ -426,7 +426,7 @@ This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It
 ### raise
 
 ```ruby
-sidekiq_options on_conflict: :raise`
+sidekiq_options on_conflict: :raise
 ```
 
 This strategy is intended to be used with `WhileExecuting`. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.
@@ -434,7 +434,7 @@ This strategy is intended to be used with `WhileExecuting`. Basically it will al
 ### reject
 
 ```ruby
-sidekiq_options on_conflict: :reject`
+sidekiq_options on_conflict: :reject
 ```
 
 This strategy is intended to be used with `WhileExecuting` and will push the job to the dead queue on conflict.
@@ -442,7 +442,7 @@ This strategy is intended to be used with `WhileExecuting` and will push the job
 ### replace
 
 ```ruby
-sidekiq_options on_conflict: :replace`
+sidekiq_options on_conflict: :replace
 ```
 
 This strategy is intended to be used with client locks like `UntilExecuted`.
@@ -455,7 +455,7 @@ always scheduled in the future. Currently only attempting to retry one time.
 ### Reschedule
 
 ```ruby
-sidekiq_options on_conflict: :reschedule`
+sidekiq_options on_conflict: :reschedule
 ```
 
 This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
@@ -475,7 +475,7 @@ module Strategies
 end
 ```
 
-You can refer on all the startegies defined in `lib/sidekiq_unique_jobs/on_conflict`.
+You can refer to all the strategies defined in `lib/sidekiq_unique_jobs/on_conflict`.
 
 In order to make it available, you should call in your project startup:
 
