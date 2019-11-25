@@ -1,5 +1,35 @@
 # Changelog
 
+## [v7.0.0.beta4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta4) (2019-11-25)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta3...v7.0.0.beta4)
+
+**Fixed bugs:**
+
+- Fix ruby reaper [\#444](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/444) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.0.0.beta3](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta3) (2019-11-24)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta2...v7.0.0.beta3)
+
+**Implemented enhancements:**
+
+- Brpoplpush redis script [\#434](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/434) ([mhenrixon](https://github.com/mhenrixon))
+- Drop support for almost EOL ruby 2.4 [\#433](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/433) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Redis is busy running script and script never terminates [\#441](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/441)
+- Make the ruby reaper plain ruby [\#443](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/443) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Some jobs seem to be treated as duplicate despite empty queue [\#440](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/440)
+
+**Merged pull requests:**
+
+- Fix typo and some formatting issues in README [\#442](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/442) ([ajkerr](https://github.com/ajkerr))
+
 ## [v7.0.0.beta2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta2) (2019-10-08)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta1...v7.0.0.beta2)
