@@ -12,7 +12,7 @@ gem "rspec-its",        require: false
 platforms :mri do
   gem "fasterer"
   gem "fuubar"
-  gem "github_changelog_generator" #, git: "https://github.com/github-changelog-generator/github-changelog-generator.git"
+  gem "github_changelog_generator"
   gem "guard"
   gem "guard-bundler"
   gem "guard-reek"
