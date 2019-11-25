@@ -16,14 +16,30 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        return unless locked?
-
-        unlock
-        runtime_lock.execute { yield }
+        if unlock
+          lock_on_failure do
+            runtime_lock.execute { return yield }
+          end
+        else
+          log_warn "couldn't unlock digest: #{item[UNIQUE_DIGEST_KEY]} #{item[JID_KEY]}"
+        end
+      ensure
+        runtime_lock.delete!
       end
 
       def runtime_lock
         @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, callback, redis_pool)
+      end
+
+      private
+
+      def lock_on_failure
+        yield
+        runtime_lock.delete!
+      rescue Exception # rubocop:disable Lint/RescueException
+        log_error("Failed to execute job, restoring lock")
+        lock
+        raise
       end
     end
   end

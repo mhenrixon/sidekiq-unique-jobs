@@ -57,9 +57,11 @@ RSpec.describe SidekiqUniqueJobs::Server::Middleware, "unique: :until_and_while_
         it "item_one can be executed by server" do
           expect(unique_keys).to match_array([grabbed_key, exists_key])
           server.call(worker_class, item_one, queue) {}
-          expect(unique_keys).to match_array([available_key, available_run_key])
+          expect(unique_keys).to match_array([available_key])
           expect(ttl(available_key)).to eq(5)
-          expect(ttl(available_run_key)).to eq(5)
+          expect(ttl(available_run_key)).to eq(-2)
+          expect(ttl(exists_run_key)).to eq(-2)
+          expect(ttl(grabbed_run_key)).to eq(-2)
         end
       end
     end
