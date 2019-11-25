@@ -29,6 +29,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
 
   context "when already locked" do
     before { locksmith_one.lock }
+
     after { locksmith_one.delete! }
 
     it "locks in under 2 ms" do

@@ -98,6 +98,7 @@ RSpec/FilePath:
   Enabled: true
   Exclude:
     - spec/performance/locksmith_spec.rb
+    - spec/performance/unique_args_spec.rb
 
 RSpec/InstanceVariable:
   Exclude:
