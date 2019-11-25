@@ -178,14 +178,10 @@ module SidekiqUniqueJobs
         Sidekiq.redis do |conn|
           queues(conn) do |queue|
             entries(conn, queue) do |entry|
-              if entry.include?(digest)
-                log_info("#{digest} found in #{queue}")
-                return true
-              end
+              return true if entry.include?(digest)
             end
           end
 
-          log_info("#{digest} not enqueued")
           false
         end
       end
@@ -211,7 +207,7 @@ module SidekiqUniqueJobs
             yield entry
           end
 
-          deleted_size = initial_size - size
+          deleted_size = initial_size - conn.llen(queue_key)
         end
       end
 
