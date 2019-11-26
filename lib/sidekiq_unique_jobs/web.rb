@@ -32,7 +32,7 @@ module SidekiqUniqueJobs
       end
 
       app.get "/unique_digests/delete_all" do
-        SidekiqUniqueJobs::Digests.del(pattern: "*", count: SidekiqUniqueJobs::Digests.count)
+        SidekiqUniqueJobs::Digests.delete_by_pattern("*", count: SidekiqUniqueJobs::Digests.count)
         redirect_to :unique_digests
       end
 

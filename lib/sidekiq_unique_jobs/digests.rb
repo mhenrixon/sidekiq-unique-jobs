@@ -55,6 +55,8 @@ module SidekiqUniqueJobs
     # @raise [ArgumentError] when both pattern and digest are nil
     # @return [Array<String>] with unique digests
     def del(digest: nil, pattern: nil, count: DEFAULT_COUNT)
+      warn("#{self}.#{__method__} has been deprecated and will be removed in a future version")
+
       return delete_by_pattern(pattern, count: count) if pattern
       return delete_by_digest(digest) if digest
 
@@ -87,8 +89,6 @@ module SidekiqUniqueJobs
       result
     end
 
-    private
-
     # Deletes unique digests by pattern
     #
     # @param [String] pattern a key pattern to match with
@@ -105,6 +105,8 @@ module SidekiqUniqueJobs
 
       result
     end
+
+    private
 
     def batch_delete(digests) # rubocop:disable Metrics/MethodLength
       redis do |conn|
