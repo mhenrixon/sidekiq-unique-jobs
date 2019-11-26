@@ -10,7 +10,8 @@ Sidekiq.configure_server do |config|
   config.error_handlers << Proc.new {|ex,ctx_hash| p ex, ctx_hash }
 
   config.death_handlers << ->(job, _ex) do
-    SidekiqUniqueJobs::Digests.del(digest: job['unique_digest']) if job['unique_digest']
+    digest = job['unique_digest']
+    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 
   # # accepts :expiration (optional)
