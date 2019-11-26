@@ -8,13 +8,13 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  database: my_app_dev
+  database: myapp_dev
 
 test:
   <<: *defaults
-  database: my_app_test
+  database: myapp_test
 
 production:
   <<: *defaults
-  database: my_app_prod
+  database: myapp_prod
 

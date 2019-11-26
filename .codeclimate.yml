@@ -59,7 +59,7 @@ exclude_patterns:
   - "*.gemspec"
   - "Appraisals"
   - "gemfiles/"
-  - "my_app/"
+  - "myapp/"
   - "tmp/"
   - "spec/"
   - "assets/"

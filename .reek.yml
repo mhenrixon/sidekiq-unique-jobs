@@ -4,7 +4,7 @@ exclude_paths:
   - gemfiles
   - lib/sidekiq
   - lib/sidekiq_unique_jobs/lua
-  - my_app
+  - myapp
   - spec
   - tmp
   - vendor/bundle

@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.6.3"
+ruby "2.6.5"
 
 gem "bigdecimal"
 gem "hiredis"
@@ -12,7 +12,7 @@ gem "puma"
 gem "rack-protection"
 gem "rails", ">= 5.2"
 gem "redis"
-gem "sidekiq", ">= 6.0.0.pre1"
+gem "sidekiq", ">= 6.0.0"
 # gem "sidekiq-cron"
 # gem "sidekiq-status"
 gem "sidekiq-unique-jobs", path: ".."
@@ -24,11 +24,13 @@ group :development, :test do
   gem "dotenv-rails"
   gem "factory_bot_rails"
   gem "fuubar"
+  gem "listen"
   gem "pry-byebug"
   gem "pry-rails"
   gem "rspec-eventually"
   gem "rspec-rails"
   gem "rubocop"
   gem "rubocop-performance"
+  gem "rubocop-rails"
   gem "rubocop-rspec"
 end
