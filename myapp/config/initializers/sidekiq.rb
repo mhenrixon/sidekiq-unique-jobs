@@ -5,20 +5,30 @@ Sidekiq.default_worker_options = {
   retry: false,
 }
 
-Sidekiq.configure_server do |config|
-  config.redis = { url: ENV['REDIS_URL'], driver: :hiredis }
-  config.error_handlers << Proc.new {|ex,ctx_hash| p ex, ctx_hash }
+Sidekiq.client_middleware do |chain|
+  chain.add Sidekiq::GlobalId::ClientMiddleware
+  chain.add SidekiqUniqueJobs::Middleware::Client
+end
 
-  config.death_handlers << ->(job, _ex) do
-    digest = job['unique_digest']
+Sidekiq.server_middleware do |chain|
+  chain.add SidekiqUniqueJobs::Middleware::Server
+  chain.add Sidekiq::GlobalId::ServerMiddleware
+end
+
+Sidekiq.configure_server do |config|
+  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+  config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
+
+  config.death_handlers << lambda do |job, _ex|
+    digest = job["unique_digest"]
     SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 
   # # accepts :expiration (optional)
-  # Sidekiq::Status.configure_server_middleware config, expiration: 30.minutes
+  Sidekiq::Status.configure_server_middleware config, expiration: 30.minutes
 
   # # accepts :expiration (optional)
-  # Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
+  Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
 
   # schedule_file = "config/schedule.yml"
 
@@ -28,9 +38,9 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV['REDIS_URL'], driver: :hiredis }
+  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
   # accepts :expiration (optional)
-  # Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
+  Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
 end
 
 Sidekiq.logger       = Sidekiq::Logger.new(STDOUT)
