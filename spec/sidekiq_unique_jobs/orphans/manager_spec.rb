@@ -19,24 +19,38 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       allow(described_class).to receive(:log_info).and_return(nil)
     end
 
-    it { is_expected.to eq(task) }
+    context "when registered?" do
+      before { redis { |conn| conn.set(SidekiqUniqueJobs::UNIQUE_REAPER, 1) } }
 
-    it "logs a start message" do
-      start
-
-      expect(described_class).to have_received(:log_info).with("Starting Reaper")
+      it { is_expected.to eq(nil) }
     end
 
-    it "observes the task execution" do
-      start
+    context "when NOT registered?" do
+      it { is_expected.to eq(task) }
 
-      expect(task).to have_received(:add_observer).with(observer)
-    end
+      it "sets a mutex" do
+        start
 
-    it "executes the task" do
-      start
+        expect(get(SidekiqUniqueJobs::UNIQUE_REAPER)).to eq("1")
+      end
 
-      expect(task).to have_received(:execute)
+      it "logs a start message" do
+        start
+
+        expect(described_class).to have_received(:log_info).with("Starting Reaper")
+      end
+
+      it "observes the task execution" do
+        start
+
+        expect(task).to have_received(:add_observer).with(observer)
+      end
+
+      it "executes the task" do
+        start
+
+        expect(task).to have_received(:execute)
+      end
     end
   end
 
@@ -51,9 +65,16 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       allow(task).to receive(:execute)
 
       allow(described_class).to receive(:log_info).and_return(nil)
+      described_class.register_reaper_process
     end
 
     it { is_expected.to eq(task) }
+
+    it "removes the mutex" do
+      stop
+
+      expect(get(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_nil
+    end
 
     it "logs a stop message" do
       stop

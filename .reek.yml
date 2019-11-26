@@ -120,6 +120,7 @@ detectors:
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
       - SidekiqUniqueJobs::Orphans::Reaper#entries
       - SidekiqUniqueJobs::Script::Caller#call_script
