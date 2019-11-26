@@ -18,6 +18,14 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   describe "#unique_digest" do
     subject(:unique_digest) { unique_args.unique_digest }
 
+    context "when given class is an Object" do
+      let(:another_item) do
+        item.dup.merge("class" => worker_class)
+      end
+
+      it { is_expected.to eq(described_class.digest(another_item)) }
+    end
+
     context "when args are empty" do
       let(:another_unique_args) { described_class.new(item) }
       let(:worker_class)        { WithoutArgumentJob }
