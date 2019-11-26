@@ -630,14 +630,16 @@ It was reported in [#235](https://github.com/mhenrixon/sidekiq-unique-jobs/issue
 ```ruby
 Sidekiq.client_middleware do |chain|
   chain.add Sidekiq::GlobalId::ClientMiddleware
-  chain.add SidekiqUniqueJobs::Client::Middleware
+  chain.add SidekiqUniqueJobs::Middleware::Client
 end
 
 Sidekiq.server_middleware do |chain|
-  chain.add SidekiqUniqueJobs::Server::Middleware
+  chain.add SidekiqUniqueJobs::Middleware::Server
   chain.add Sidekiq::GlobalId::ServerMiddleware
 end
 ```
+
+For a working setup check the following [file](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/945c4c4c517168d49e3f8ee952fcc9c430865635/myapp/config/initializers/sidekiq.rb#L8)
 
 ## Debugging
 
