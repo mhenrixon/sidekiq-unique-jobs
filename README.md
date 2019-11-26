@@ -44,6 +44,8 @@
   - [After Unlock Callback](#after-unlock-callback)
   - [Logging](#logging)
   - [Cleanup Dead Locks](#cleanup-dead-locks)
+  - [Other Sidekiq gems](#other-sidekiq-gems)
+    - [sidekiq-global_id](#sidekiq-global_id)
 - [Debugging](#debugging)
   - [Sidekiq Web](#sidekiq-web)
     - [Show Locks](#show-locks)
@@ -616,6 +618,24 @@ Sidekiq.configure_server do |config|
     digest = msg['unique_digest']
     SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
+end
+```
+
+### Other Sidekiq gems
+
+#### sidekiq-global_id
+
+It was reported in [#235](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235) that the order of the Sidekiq middleware needs to be as follows.
+
+```ruby
+Sidekiq.client_middleware do |chain|
+  chain.add Sidekiq::GlobalId::ClientMiddleware
+  chain.add SidekiqUniqueJobs::Client::Middleware
+end
+
+Sidekiq.server_middleware do |chain|
+  chain.add SidekiqUniqueJobs::Server::Middleware
+  chain.add Sidekiq::GlobalId::ServerMiddleware
 end
 ```
 
