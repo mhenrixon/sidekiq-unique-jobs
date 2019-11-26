@@ -15,7 +15,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_ex
   let(:callback)     { -> {} }
   let(:item_one) do
     { "jid" => jid_one,
-      "class" => worker_class.to_s,
+      "class" => worker_class,
       "queue" => queue,
       "lock" => unique,
       "args" => args,
@@ -39,6 +39,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_ex
       context "when processing takes 0 seconds" do
         it "item_one can be executed by server" do
           set = false
+          item_one["class"] = worker_class.to_s
           server.call(worker_class, item_one, queue) { set = true }
           expect(set).to eq(true)
         end
