@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
       #
       # @return [Concurrent::TimerTask] the task that was started
       #
-      def start
+      def start # rubocop:disable
         return if registered?
 
         with_logging_context do
@@ -102,14 +102,32 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Checks if a reaper is already registered
+      #
+      #
+      # @return [true, false]
+      #
       def registered?
         redis { |conn| conn.get(UNIQUE_REAPER) }.to_i == 1
       end
 
+      #
+      # Writes a mutex key to redis
+      #
+      #
+      # @return [void]
+      #
       def register_reaper_process
         redis { |conn| conn.set(UNIQUE_REAPER, 1) }
       end
 
+      #
+      # Removes mutex key from redis
+      #
+      #
+      # @return [void]
+      #
       def unregister_reaper_process
         redis { |conn| conn.del(UNIQUE_REAPER) }
       end
