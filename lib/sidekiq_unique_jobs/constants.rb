@@ -41,5 +41,6 @@ module SidekiqUniqueJobs
   UNIQUE_ARGS           ||= "unique_args"
   UNIQUE_DIGEST         ||= "unique_digest"
   UNIQUE_PREFIX         ||= "unique_prefix"
+  UNIQUE_REAPER         ||= "uniquejobs:reaper"
   WORKER                ||= "worker"
 end

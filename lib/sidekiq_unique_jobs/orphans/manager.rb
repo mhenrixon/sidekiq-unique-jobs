@@ -7,7 +7,9 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
-    class Manager
+    module Manager
+      module_function
+
       include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Logging
 
@@ -17,8 +19,11 @@ module SidekiqUniqueJobs
       #
       # @return [Concurrent::TimerTask] the task that was started
       #
-      def self.start
+      def start
+        return if registered?
+
         with_logging_context do
+          register_reaper_process
           log_info("Starting Reaper")
           task.add_observer(Observer.new)
           task.execute
@@ -32,9 +37,10 @@ module SidekiqUniqueJobs
       #
       # @return [Boolean]
       #
-      def self.stop
+      def stop
         with_logging_context do
           log_info("Stopping Reaper")
+          unregister_reaper_process
           task.shutdown
         end
       end
@@ -45,7 +51,7 @@ module SidekiqUniqueJobs
       #
       # @return [<type>] <description>
       #
-      def self.task
+      def task
         @task ||= Concurrent::TimerTask.new(timer_task_options) do
           with_logging_context do
             redis do |conn|
@@ -61,7 +67,7 @@ module SidekiqUniqueJobs
       #
       # @return [Hash]
       #
-      def self.timer_task_options
+      def timer_task_options
         { run_now: true,
           execution_interval: reaper_interval,
           timeout_interval: reaper_timeout }
@@ -70,14 +76,14 @@ module SidekiqUniqueJobs
       #
       # @see SidekiqUniqueJobs::Config#reaper_interval
       #
-      def self.reaper_interval
+      def reaper_interval
         SidekiqUniqueJobs.config.reaper_interval
       end
 
       #
       # @see SidekiqUniqueJobs::Config#reaper_timeout
       #
-      def self.reaper_timeout
+      def reaper_timeout
         SidekiqUniqueJobs.config.reaper_timeout
       end
 
@@ -88,12 +94,24 @@ module SidekiqUniqueJobs
       # @return [Hash] when logger responds to `:with_context`
       # @return [String] when logger does not responds to `:with_context`
       #
-      def self.logging_context
+      def logging_context
         if logger_context_hash?
           { "uniquejobs" => "reaper" }
         else
           "uniquejobs=orphan-reaper"
         end
+      end
+
+      def registered?
+        redis { |conn| conn.get(UNIQUE_REAPER) }.to_i == 1
+      end
+
+      def register_reaper_process
+        redis { |conn| conn.set(UNIQUE_REAPER, 1) }
+      end
+
+      def unregister_reaper_process
+        redis { |conn| conn.del(UNIQUE_REAPER) }
       end
     end
   end
