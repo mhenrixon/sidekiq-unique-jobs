@@ -61,6 +61,32 @@ module SidekiqUniqueJobs
       raise ArgumentError, "either digest or pattern need to be provided"
     end
 
+    # Deletes unique digest either by a digest or pattern
+    #
+    # @param [String] digest the full digest to delete
+    def delete_by_digest(digest)
+      result, elapsed = timed do
+        Scripts.call(:delete_by_digest, nil, keys: [
+                       UNIQUE_SET,
+                       digest,
+                       "#{digest}:EXISTS",
+                       "#{digest}:GRABBED",
+                       "#{digest}:AVAILABLE",
+                       "#{digest}:VERSION",
+                       "#{digest}:RUN:EXISTS",
+                       "#{digest}:RUN:GRABBED",
+                       "#{digest}:RUN:AVAILABLE",
+                       "#{digest}:RUN:VERSION",
+                     ])
+
+        count
+      end
+
+      log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
+
+      result
+    end
+
     private
 
     # Deletes unique digests by pattern
@@ -76,20 +102,6 @@ module SidekiqUniqueJobs
       end
 
       log_info("#{__method__}(#{pattern}, count: #{count}) completed in #{elapsed}ms")
-
-      result
-    end
-
-    # Get a total count of unique digests
-    #
-    # @param [String] digest a key pattern to match with
-    def delete_by_digest(digest)
-      result, elapsed = timed do
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])
-        count
-      end
-
-      log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
 
       result
     end
