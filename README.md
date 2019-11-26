@@ -355,7 +355,7 @@ With this lock type it is possible to put any number of these jobs on the queue,
 
 **NOTE** Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
 
-There is an example of this to try it out in the `my_app` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
+There is an example of this to try it out in the `myapp` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
 
 In the console you should see something like:
 
