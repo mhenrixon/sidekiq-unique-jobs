@@ -1,5 +1,45 @@
 # Changelog
 
+## [v7.0.0.beta5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta5) (2019-11-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.17...v7.0.0.beta5)
+
+**Implemented enhancements:**
+
+- Bump rails [\#450](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450) ([mhenrixon](https://github.com/mhenrixon))
+- Rename myapp [\#449](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/449) ([mhenrixon](https://github.com/mhenrixon))
+- Just to keep track of this [\#445](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/445) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Prevent multiple reapers [\#453](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/453) ([mhenrixon](https://github.com/mhenrixon))
+- Make deletion compatible with redis-namespace [\#452](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/452) ([mhenrixon](https://github.com/mhenrixon))
+- Make sure server process stays locked [\#448](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/448) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Deletion of digest doesn't work from admin UI [\#438](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/438)
+
+**Merged pull requests:**
+
+- Bump gems [\#446](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/446) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v6.0.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.17) (2019-11-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.16...v6.0.17)
+
+**Fixed bugs:**
+
+- Allow redis namespace to work with deletion [\#451](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/451) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v6.0.16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.16) (2019-11-25)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta4...v6.0.16)
+
+**Fixed bugs:**
+
+- Ensure runtime locks are removed [\#447](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/447) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta4) (2019-11-25)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta3...v7.0.0.beta4)
