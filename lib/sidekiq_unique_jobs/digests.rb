@@ -55,13 +55,39 @@ module SidekiqUniqueJobs
     # @raise [ArgumentError] when both pattern and digest are nil
     # @return [Array<String>] with unique digests
     def del(digest: nil, pattern: nil, count: DEFAULT_COUNT)
+      warn("#{self}.#{__method__} has been deprecated and will be removed in a future version")
+
       return delete_by_pattern(pattern, count: count) if pattern
       return delete_by_digest(digest) if digest
 
       raise ArgumentError, "either digest or pattern need to be provided"
     end
 
-    private
+    # Deletes unique digest either by a digest or pattern
+    #
+    # @param [String] digest the full digest to delete
+    def delete_by_digest(digest) # rubocop:disable Metrics/MethodLength
+      result, elapsed = timed do
+        Scripts.call(:delete_by_digest, nil, keys: [
+                       UNIQUE_SET,
+                       digest,
+                       "#{digest}:EXISTS",
+                       "#{digest}:GRABBED",
+                       "#{digest}:AVAILABLE",
+                       "#{digest}:VERSION",
+                       "#{digest}:RUN:EXISTS",
+                       "#{digest}:RUN:GRABBED",
+                       "#{digest}:RUN:AVAILABLE",
+                       "#{digest}:RUN:VERSION",
+                     ])
+
+        count
+      end
+
+      log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
+
+      result
+    end
 
     # Deletes unique digests by pattern
     #
@@ -80,19 +106,7 @@ module SidekiqUniqueJobs
       result
     end
 
-    # Get a total count of unique digests
-    #
-    # @param [String] digest a key pattern to match with
-    def delete_by_digest(digest)
-      result, elapsed = timed do
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, digest])
-        count
-      end
-
-      log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
-
-      result
-    end
+    private
 
     def batch_delete(digests) # rubocop:disable Metrics/MethodLength
       redis do |conn|

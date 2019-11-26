@@ -76,4 +76,53 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
       end
     end
   end
+
+  describe ".delete_by_digest" do
+    subject(:delete_by_digest) { described_class.delete_by_digest(digest) }
+
+    let(:digest) { expected_keys.last }
+
+    before do
+      allow(described_class).to receive(:log_info)
+    end
+
+    it "deletes just the specific digest" do
+      expect(delete_by_digest).to eq(9)
+      expect(described_class.all).to match_array(expected_keys - [digest])
+    end
+
+    it "logs performance info" do
+      delete_by_digest
+      expect(described_class).to have_received(:log_info)
+        .with(
+          a_string_starting_with("delete_by_digest(#{digest})")
+          .and(matching(/completed in (\d\.\d+)ms/)),
+        )
+    end
+  end
+
+  describe ".delete_by_pattern" do
+    subject(:delete_by_pattern) { described_class.delete_by_pattern(pattern, count: count) }
+
+    let(:pattern) { "*" }
+    let(:count)   { 1000 }
+
+    before do
+      allow(described_class).to receive(:log_info)
+    end
+
+    it "deletes all matching digests" do
+      expect(delete_by_pattern).to eq(10)
+      expect(described_class.all).to match_array([])
+    end
+
+    it "logs performance info" do
+      delete_by_pattern
+      expect(described_class)
+        .to have_received(:log_info).with(
+          a_string_starting_with("delete_by_pattern(*, count: 1000)")
+          .and(matching(/completed in (\d\.\d+)ms/)),
+        )
+    end
+  end
 end

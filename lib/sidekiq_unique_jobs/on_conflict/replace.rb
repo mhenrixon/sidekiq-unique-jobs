@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
 
       # Delete the keys belonging to the job
       def delete_lock
-        Scripts.call(:delete_by_digest, nil, keys: [UNIQUE_SET, unique_digest])
+        SidekiqUniqueJobs::Digests.delete_by_digest(unique_digest)
       end
     end
   end
