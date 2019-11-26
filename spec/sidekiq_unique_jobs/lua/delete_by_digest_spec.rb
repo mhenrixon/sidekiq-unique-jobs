@@ -3,8 +3,21 @@
 require "spec_helper"
 
 RSpec.describe "delete_by_digest.lua" do
-  subject(:delete_by_digest) { call_script(:delete_by_digest, [digest, SidekiqUniqueJobs::DIGESTS]) }
+  subject(:delete_by_digest) { call_script(:delete_by_digest, keys) }
 
+  let(:keys) do
+    [
+      key.digest,
+      key.queued,
+      key.primed,
+      key.locked,
+      run_key.digest,
+      run_key.queued,
+      run_key.primed,
+      run_key.locked,
+      SidekiqUniqueJobs::DIGESTS,
+    ]
+  end
   let(:job_id)      { "jobid" }
   let(:digest)      { "uniquejobs:digest" }
   let(:key)         { SidekiqUniqueJobs::Key.new(digest) }
@@ -14,9 +27,9 @@ RSpec.describe "delete_by_digest.lua" do
   let(:locked)      { redlock.locked }
   let(:run_key)     { SidekiqUniqueJobs::Key.new("#{digest}:RUN") }
   let(:run_redlock) { SidekiqUniqueJobs::Lock.new(run_key) }
-  let(:run_queued)  { redlock.queued }
-  let(:run_primed)  { redlock.primed }
-  let(:run_locked)  { redlock.locked }
+  let(:run_queued)  { run_redlock.queued }
+  let(:run_primed)  { run_redlock.primed }
+  let(:run_locked)  { run_redlock.locked }
   let(:lock_ttl)    { nil }
   let(:lock_type)   { :until_executed }
   let(:lock_limit)  { 1 }

@@ -1,6 +1,13 @@
 -------- BEGIN keys ---------
-local digest  = KEYS[1]
-local digests = KEYS[2]
+local digest     = KEYS[1]
+local queued     = KEYS[2]
+local primed     = KEYS[3]
+local locked     = KEYS[4]
+local run_digest = KEYS[5]
+local run_queued = KEYS[6]
+local run_primed = KEYS[7]
+local run_locked = KEYS[8]
+local digests    = KEYS[9]
 --------  END keys  ---------
 
 --------  BEGIN injected arguments --------
@@ -14,17 +21,6 @@ local redisversion = tostring(ARGV[5])
 --------  BEGIN local functions --------
 <%= include_partial "shared/_common.lua" %>
 ----------  END local functions ----------
-
---------  BEGIN Variables  --------
-local queued     = digest .. ":QUEUED"
-local primed     = digest .. ":PRIMED"
-local locked     = digest .. ":LOCKED"
-local run_digest = digest .. ":RUN"
-local run_queued = digest .. ":RUN:QUEUED"
-local run_primed = digest .. ":RUN:PRIMED"
-local run_locked = digest .. ":RUN:LOCKED"
---------   END Variables   --------
-
 
 --------  BEGIN delete_by_digest.lua --------
 local counter       = 0

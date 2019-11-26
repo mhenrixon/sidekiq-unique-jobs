@@ -601,7 +601,8 @@ For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required 
 ```ruby
 class MyWorker
   sidekiq_retries_exhausted do |msg, _ex|
-    SidekiqUniqueJobs::Digests.del(digest: msg['unique_digest']) if msg['unique_digest']
+    digest = msg['unique_digest']
+    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 end
 ```
@@ -612,7 +613,8 @@ Starting in v5.1, Sidekiq can also fire a global callback when a job dies:
 # this goes in your initializer
 Sidekiq.configure_server do |config|
   config.death_handlers << ->(job, _ex) do
-    SidekiqUniqueJobs::Digests.del(digest: job['unique_digest']) if job['unique_digest']
+    digest = msg['unique_digest']
+    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 end
 ```
