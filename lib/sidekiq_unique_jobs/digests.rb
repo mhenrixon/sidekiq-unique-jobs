@@ -27,26 +27,44 @@ module SidekiqUniqueJobs
       redis { |conn| conn.zadd(key, now_f, digest) }
     end
 
+    # Deletes unique digests by pattern
     #
-    # Deletes unique digest either by a digest or pattern
-    #
-    # @overload call_script(digest: "abcdefab")
-    #   Call script with digest
-    #   @param [String] digest: a digest to delete
-    # @overload call_script(pattern: "*", count: 1_000)
-    #   Call script with pattern
-    #   @param [String] pattern: "*" a pattern to match
-    #   @param [String] count: DEFAULT_COUNT the number of keys to delete
-    #
-    # @raise [ArgumentError] when given neither pattern nor digest
-    #
+    # @param [String] pattern a key pattern to match with
+    # @param [Integer] count the maximum number
     # @return [Array<String>] with unique digests
-    #
-    def del(digest: nil, pattern: nil, count: DEFAULT_COUNT)
-      return delete_by_pattern(pattern, count: count) if pattern
-      return delete_by_digest(digest) if digest
+    def delete_by_pattern(pattern, count: DEFAULT_COUNT)
+      result, elapsed = timed do
+        digests = entries(pattern: pattern, count: count).keys
+        redis { |conn| BatchDelete.call(digests, conn) }
+      end
 
-      raise ArgumentError, "##{__method__} requires either a :digest or a :pattern"
+      log_info("#{__method__}(#{pattern}, count: #{count}) completed in #{elapsed}ms")
+
+      result
+    end
+
+    # Delete unique digests by digest
+    #   Also deletes the :AVAILABLE, :EXPIRED etc keys
+    #
+    # @param [String] digest a unique digest to delete
+    def delete_by_digest(digest) # rubocop:disable Metrics/MethodLength
+      result, elapsed = timed do
+        call_script(:delete_by_digest, [
+                      digest,
+                      "#{digest}:QUEUED",
+                      "#{digest}:PRIMED",
+                      "#{digest}:LOCKED",
+                      "#{digest}:RUN",
+                      "#{digest}:RUN:QUEUED",
+                      "#{digest}:RUN:PRIMED",
+                      "#{digest}:RUN:LOCKED",
+                      key,
+                    ])
+      end
+
+      log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
+
+      result
     end
 
     #
@@ -91,38 +109,6 @@ module SidekiqUniqueJobs
           digests[1].map { |digest, score| Lock.new(digest, time: score) }, # entries
         ]
       end
-    end
-
-    private
-
-    # Deletes unique digests by pattern
-    #
-    # @param [String] pattern a key pattern to match with
-    # @param [Integer] count the maximum number
-    # @return [Array<String>] with unique digests
-    def delete_by_pattern(pattern, count: DEFAULT_COUNT)
-      result, elapsed = timed do
-        digests = entries(pattern: pattern, count: count).keys
-        redis { |conn| BatchDelete.call(digests, conn) }
-      end
-
-      log_info("#{__method__}(#{pattern}, count: #{count}) completed in #{elapsed}ms")
-
-      result
-    end
-
-    # Delete unique digests by digest
-    #   Also deletes the :AVAILABLE, :EXPIRED etc keys
-    #
-    # @param [String] digest a unique digest to delete
-    def delete_by_digest(digest)
-      result, elapsed = timed do
-        call_script(:delete_by_digest, [digest, key])
-      end
-
-      log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
-
-      result
     end
   end
 end

@@ -30,57 +30,52 @@ RSpec.describe SidekiqUniqueJobs::Digests do
     it { is_expected.to match_array(expected_keys) }
   end
 
-  describe "#del" do
-    subject(:del) { digests.del(digest: digest, pattern: pattern, count: count) }
+  describe "#delete_by_digest" do
+    subject(:delete_by_digest) { digests.delete_by_digest(digest) }
 
-    let(:digest)  { nil }
-    let(:pattern) { nil }
+    let(:digest) { "uniquejobs:62c11d32fd69c691802579682409a483" }
+
+    before do
+      allow(digests).to receive(:log_info)
+    end
+
+    it "deletes just the specific digest" do
+      expect { delete_by_digest }.to change { digests.entries.size }.by(-1)
+    end
+
+    it "logs performance info" do
+      delete_by_digest
+
+      expect(digests).to have_received(:log_info)
+        .with(
+          a_string_starting_with("delete_by_digest(#{digest})")
+          .and(matching(/completed in (\d+(\.\d+)?)ms/)),
+        )
+    end
+  end
+
+  describe "#delete_by_pattern" do
+    subject(:delete_by_pattern) { digests.delete_by_pattern(pattern, count: count) }
+
+    let(:pattern) { "*" }
     let(:count)   { 1000 }
 
     before do
       allow(digests).to receive(:log_info)
     end
 
-    context "when given nothing" do
-      let(:digest) { nil }
-      let(:pattern) { nil }
-
-      it { expect { del }.to raise_error(ArgumentError, "#del requires either a :digest or a :pattern") }
+    it "deletes all matching digests" do
+      expect(delete_by_pattern).to be_a(Integer)
+      expect(digests.entries).to match_array([])
     end
 
-    context "when given a pattern" do
-      let(:pattern) { "*" }
-
-      it "deletes all matching digests" do
-        expect(del).to be_a(Integer)
-        expect(digests.entries).to match_array([])
-      end
-
-      it "logs performance info" do
-        del
-        expect(digests)
-          .to have_received(:log_info).with(
-            a_string_starting_with("delete_by_pattern(*, count: 1000)")
-            .and(matching(/completed in (\d+(\.\d+)?)ms/)),
-          )
-      end
-    end
-
-    context "when given a digest" do
-      let(:digest) { "uniquejobs:62c11d32fd69c691802579682409a483" }
-
-      it "deletes just the specific digest" do
-        expect { del }.to change { digests.entries.size }.by(-1)
-      end
-
-      it "logs performance info" do
-        del
-        expect(digests).to have_received(:log_info)
-          .with(
-            a_string_starting_with("delete_by_digest(#{digest})")
-            .and(matching(/completed in (\d+(\.\d+)?)ms/)),
-          )
-      end
+    it "logs performance info" do
+      delete_by_pattern
+      expect(digests)
+        .to have_received(:log_info).with(
+          a_string_starting_with("delete_by_pattern(*, count: 1000)")
+          .and(matching(/completed in (\d+(\.\d+)?)ms/)),
+        )
     end
   end
 end
