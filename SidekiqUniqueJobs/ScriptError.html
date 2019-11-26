@@ -69,14 +69,12 @@
   <dl>
     <dt>Inherits:</dt>
     <dd>
-      <span class="inheritName"><span class='object_link'><a href="UniqueJobsError.html" title="SidekiqUniqueJobs::UniqueJobsError (class)">UniqueJobsError</a></span></span>
+      <span class="inheritName">StandardError</span>
       
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">RuntimeError</li>
-          
-            <li class="next"><span class='object_link'><a href="UniqueJobsError.html" title="SidekiqUniqueJobs::UniqueJobsError (class)">UniqueJobsError</a></span></li>
+            <li class="next">StandardError</li>
           
             <li class="next">SidekiqUniqueJobs::ScriptError</li>
           
@@ -129,173 +127,12 @@
 </ul>
 
 </div>
-  
-    <h2>
-      Constant Summary
-      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
-    </h2>
-
-    <dl class="constants">
-      
-        <dt id="PATTERN-constant" class="">PATTERN =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Reformats errors raised by redis representing failures while executing
-a lua script. The default errors have confusing messages and backtraces,
-and a type of +RuntimeError+. This class improves the message and
-modifies the backtrace to include the lua script itself in a reasonable
-way.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>ERR Error (compiling|running) script \(.*?\): .*?:(\d+): (.*)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
-      
-        <dt id="LIB_PATH-constant" class="">LIB_PATH =
-          
-        </dt>
-        <dd><pre class="code"><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>..</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid___dir__'>__dir__</span><span class='rparen'>)</span></pre></dd>
-      
-        <dt id="CONTEXT_LINE_NUMBER-constant" class="">CONTEXT_LINE_NUMBER =
-          
-        </dt>
-        <dd><pre class="code"><span class='int'>3</span></pre></dd>
-      
-    </dl>
-  
 
 
 
 
-  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
-  <ul class="summary">
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#content-instance_method" title="#content (instance method)">#<strong>content</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute content.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#error-instance_method" title="#error (instance method)">#<strong>error</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute error.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#file-instance_method" title="#file (instance method)">#<strong>file</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute file.</p>
-</div></span>
-  
-</li>
-
-    
-  </ul>
 
 
-
-
-  
-    <h2>
-      Class Method Summary
-      <small><a href="#" class="summary_toggle">collapse</a></small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#intercepts%3F-class_method" title="intercepts? (class method)">.<strong>intercepts?</strong>(error)  &#x21d2; Boolean </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Is this error one that should be reformatted?.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
   
     <h2>
       Instance Method Summary
@@ -307,7 +144,7 @@ way.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(error, file, content)  &#x21d2; ScriptError </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(file_name:, source_exception:)  &#x21d2; ScriptError </a>
     
 
     
@@ -323,7 +160,7 @@ way.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Initialize a new <span class='object_link'><a href="" title="SidekiqUniqueJobs::ScriptError (class)">ScriptError</a></span> from an existing redis error, adjusting the message and backtrace in the process.</p>
+    <span class="summary_desc"><div class='inline'><p>A new instance of ScriptError.</p>
 </div></span>
   
 </li>
@@ -333,15 +170,13 @@ way.</p>
   
 
 
-  
-  
   <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(error, file, content)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::ScriptError (class)">ScriptError</a></span></tt> 
+    #<strong>initialize</strong>(file_name:, source_exception:)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::ScriptError (class)">ScriptError</a></span></tt> 
   
 
   
@@ -349,10 +184,7 @@ way.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Initialize a new <span class='object_link'><a href="" title="SidekiqUniqueJobs::ScriptError (class)">SidekiqUniqueJobs::ScriptError</a></span> from an existing redis error, adjusting
-the message and backtrace in the process.</p>
-
-<p>:nocov:</p>
+    <p>Returns a new instance of ScriptError</p>
 
 
   </div>
@@ -363,45 +195,30 @@ the message and backtrace in the process.</p>
   
     <li>
       
-        <span class='name'>error</span>
+        <span class='name'>file_name</span>
       
       
-        <span class='type'>(<tt>StandardError</tt>)</span>
+        <span class='type'>(<tt>Symbol</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>the original error raised by redis</p>
+        <div class='inline'><p>the name of the lua script</p>
 </div>
       
     </li>
   
     <li>
       
-        <span class='name'>file</span>
+        <span class='name'>source_exception</span>
       
       
-        <span class='type'>(<tt>Pathname</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>full path to the lua file the error ocurred in</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>content</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt>Redis::CommandError</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>lua file content the error ocurred in</p>
+        <div class='inline'><p>exception to handle</p>
 </div>
       
     </li>
@@ -415,39 +232,15 @@ the message and backtrace in the process.</p>
       <pre class="lines">
 
 
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130</pre>
+19
+20
+21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 116</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 19</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_error'>error</span><span class='comma'>,</span> <span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
-  <span class='ivar'>@error</span>        <span class='op'>=</span> <span class='id identifier rubyid_error'>error</span>
-  <span class='ivar'>@file</span>         <span class='op'>=</span> <span class='id identifier rubyid_file'>file</span>
-  <span class='ivar'>@content</span>      <span class='op'>=</span> <span class='id identifier rubyid_content'>content</span>
-  <span class='ivar'>@backtrace</span>    <span class='op'>=</span> <span class='ivar'>@error</span><span class='period'>.</span><span class='id identifier rubyid_backtrace'>backtrace</span>
-
-  <span class='ivar'>@error</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#PATTERN-constant" title="SidekiqUniqueJobs::ScriptError::PATTERN (constant)">PATTERN</a></span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_regexp_match'>regexp_match</span><span class='op'>|</span>
-    <span class='id identifier rubyid_line_number'>line_number</span>   <span class='op'>=</span> <span class='id identifier rubyid_regexp_match'>regexp_match</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
-    <span class='id identifier rubyid_message'>message</span>       <span class='op'>=</span> <span class='id identifier rubyid_regexp_match'>regexp_match</span><span class='lbracket'>[</span><span class='int'>3</span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_error_context'>error_context</span> <span class='op'>=</span> <span class='id identifier rubyid_generate_error_context'>generate_error_context</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_line_number'>line_number</span><span class='rparen'>)</span>
-
-    <span class='kw'>super</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error_context'>error_context</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_set_backtrace'>set_backtrace</span><span class='lparen'>(</span><span class='id identifier rubyid_generate_backtrace'>generate_backtrace</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='id identifier rubyid_line_number'>line_number</span><span class='rparen'>)</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>file_name:</span><span class='comma'>,</span> <span class='label'>source_exception:</span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Problem compiling </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_file_name'>file_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>. Message: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_source_exception'>source_exception</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -456,224 +249,11 @@ the message and backtrace in the process.</p>
   
 </div>
 
-  <div id="instance_attr_details" class="attr_details">
-    <h2>Instance Attribute Details</h2>
-    
-      
-      <span id=""></span>
-      <div class="method_details first">
-  <h3 class="signature first" id="content-instance_method">
-  
-    #<strong>content</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute content</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-99
-100
-101</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 99</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_content'>content</span>
-  <span class='ivar'>@content</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="error-instance_method">
-  
-    #<strong>error</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute error</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-99
-100
-101</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 99</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_error'>error</span>
-  <span class='ivar'>@error</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="file-instance_method">
-  
-    #<strong>file</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute file</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-99
-100
-101</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 99</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_file'>file</span>
-  <span class='ivar'>@file</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
-
-
-  <div id="class_method_details" class="method_details_list">
-    <h2>Class Method Details</h2>
-
-    
-      <div class="method_details first">
-  <h3 class="signature first" id="intercepts?-class_method">
-  
-    .<strong>intercepts?</strong>(error)  &#x21d2; <tt>Boolean</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Is this error one that should be reformatted?</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>error</span>
-      
-      
-        <span class='type'>(<tt>StandardError</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the original error raised by redis</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>is this an error that should be reformatted?</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-105
-106
-107</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/exceptions.rb', line 105</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_intercepts?'>intercepts?</span><span class='lparen'>(</span><span class='id identifier rubyid_error'>error</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=~</span> <span class='const'><span class='object_link'><a href="#PATTERN-constant" title="SidekiqUniqueJobs::ScriptError::PATTERN (constant)">PATTERN</a></span></span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
 
 </div>
 
       <div id="footer">
-  Generated on Tue Oct  8 20:00:37 2019 by
+  Generated on Tue Nov 26 12:07:00 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>

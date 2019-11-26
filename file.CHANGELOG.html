@@ -59,6 +59,46 @@
 
       <div id="content"><div id='filecontents'><h1>Changelog</h1>
 
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta4">v7.0.0.beta4</a> (2019-11-25)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta3...v7.0.0.beta4">Full Changelog</a></p>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>Fix ruby reaper <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/444">#444</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta3">v7.0.0.beta3</a> (2019-11-24)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta2...v7.0.0.beta3">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Brpoplpush redis script <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/434">#434</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Drop support for almost EOL ruby 2.4 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/433">#433</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>Redis is busy running script and script never terminates <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/441">#441</a></li>
+<li>Make the ruby reaper plain ruby <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/443">#443</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<p><strong>Closed issues:</strong></p>
+
+<ul>
+<li>Some jobs seem to be treated as duplicate despite empty queue <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/440">#440</a></li>
+</ul>
+
+<p><strong>Merged pull requests:</strong></p>
+
+<ul>
+<li>Fix typo and some formatting issues in README <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/442">#442</a> (<a href="https://github.com/ajkerr">ajkerr</a>)</li>
+</ul>
+
 <h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta2">v7.0.0.beta2</a> (2019-10-08)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta1...v7.0.0.beta2">Full Changelog</a></p>
@@ -1289,7 +1329,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Tue Oct  8 20:00:35 2019 by
+  Generated on Tue Nov 26 13:54:03 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>
