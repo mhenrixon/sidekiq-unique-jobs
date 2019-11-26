@@ -64,7 +64,7 @@ module SidekiqUniqueJobs
     # Deletes unique digest either by a digest or pattern
     #
     # @param [String] digest the full digest to delete
-    def delete_by_digest(digest)
+    def delete_by_digest(digest) # rubocop:disable Metrics/MethodLength
       result, elapsed = timed do
         Scripts.call(:delete_by_digest, nil, keys: [
                        UNIQUE_SET,
