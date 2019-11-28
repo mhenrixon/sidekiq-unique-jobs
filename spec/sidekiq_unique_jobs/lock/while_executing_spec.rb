@@ -72,8 +72,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       let(:callback_one) { -> { true } }
       let(:callback_two) { nil }
 
-      let(:strategy_one) { process_one.send(:strategy) }
-      let(:strategy_two) { process_two.send(:strategy) }
+      let(:strategy_one) { process_one.send(:server_strategy) }
+      let(:strategy_two) { process_two.send(:server_strategy) }
 
       before do
         allow(strategy_one).to receive(:call).and_call_original

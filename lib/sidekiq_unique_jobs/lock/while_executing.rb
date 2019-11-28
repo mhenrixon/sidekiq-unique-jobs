@@ -37,7 +37,7 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         with_logging_context do
-          strategy.call unless locksmith.lock do
+          server_strategy&.call unless locksmith.lock do
             yield
             callback_safely
           end
