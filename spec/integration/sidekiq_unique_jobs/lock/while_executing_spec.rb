@@ -4,8 +4,10 @@ require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   include SidekiqHelpers
 
-  let(:process_one) { described_class.new(item_one, callback) }
-  let(:process_two) { described_class.new(item_two, callback) }
+  let(:process_one) { described_class.new(item_one, callback_one) }
+  let(:process_two) { described_class.new(item_two, callback_two) }
+  let(:strategy_one) { nil }
+  let(:strategy_two) { nil }
 
   let(:jid_one)      { "jid one" }
   let(:jid_two)      { "jid two" }
@@ -13,7 +15,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   let(:unique)       { :while_executing }
   let(:queue)        { :while_executing }
   let(:args)         { %w[array of arguments] }
-  let(:callback)     { -> {} }
+  let(:callback_one) { -> {} }
+  let(:callback_two) { -> {} }
   let(:item_one) do
     { "jid" => jid_one,
       "class" => worker_class.to_s,
@@ -30,7 +33,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   end
 
   before do
-    allow(callback).to receive(:call).and_call_original
+    allow(callback_one).to receive(:call).and_call_original if callback_one
+    allow(callback_two).to receive(:call).and_call_original if callback_two
+    allow(process_one).to receive(:strategy).and_return(strategy_one)
+    allow(process_two).to receive(:strategy).and_return(strategy_two)
   end
 
   describe "#lock" do
@@ -52,7 +58,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
 
     it "calls back" do
       process_one.execute {}
-      expect(callback).to have_received(:call)
+      expect(callback_one).to have_received(:call)
     end
 
     it "prevents other processes from executing" do
@@ -62,7 +68,31 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
         expect(unset).to eq(true)
       end
 
-      expect(callback).to have_received(:call).once
+      expect(callback_one).to have_received(:call).once
+      expect(callback_two).not_to have_received(:call)
+    end
+
+    context "when no callback is defined" do
+      let(:callback_one) { -> { true } }
+      let(:callback_two) { nil }
+
+      let(:strategy_one) { SidekiqUniqueJobs::OnConflict::Reschedule.new(item_one) }
+      let(:strategy_two) { SidekiqUniqueJobs::OnConflict::Reschedule.new(item_two) }
+
+      before do
+        allow(strategy_one).to receive(:call).and_call_original
+        allow(strategy_two).to receive(:call).and_call_original
+      end
+
+      it "works" do
+        process_one.execute do
+          process_two.execute { puts "BOGUS!" }
+        end
+
+        expect(callback_one).to have_received(:call).once
+        expect(strategy_one).not_to have_received(:call)
+        expect(strategy_two).to have_received(:call).once
+      end
     end
 
     context "when worker raises error" do
