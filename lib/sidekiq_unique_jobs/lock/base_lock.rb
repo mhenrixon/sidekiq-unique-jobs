@@ -118,11 +118,11 @@ module SidekiqUniqueJobs
         return log_warn("might need to be unlocked manually") unless unlock
 
         callback_safely
-        item[JID_KEY]
       end
 
       def callback_safely
         callback&.call
+        item[JID_KEY]
       rescue StandardError
         log_warn("unlocked successfully but the #after_unlock callback failed!")
         raise
