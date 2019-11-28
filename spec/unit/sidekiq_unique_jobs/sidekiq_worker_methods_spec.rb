@@ -18,7 +18,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
   let(:worker) { WorkerWithSidekiqMethods.new(worker_class) }
 
   describe "#worker_class_constantize" do
-    subject(:worker_class_constantize) { worker.worker_class_constantize }
+    subject(:worker_class_constantize) { worker.worker_class_constantize(worker_class) }
 
     context "when worker_class is nil" do
       let(:worker_class) { nil }
