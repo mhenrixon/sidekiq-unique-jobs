@@ -1,5 +1,24 @@
 # Changelog
 
+## [v7.0.0.beta8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta7...v7.0.0.beta8)
+
+**Implemented enhancements:**
+
+- Allow worker to configure client and server strategies separately [\#402](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/402)
+- Separate client and server on\_conflict [\#462](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/462) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- `while\_executing` has problems at low concurrency [\#384](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/384)
+- lock: :until\_and\_while\_executing not working for scheduled jobs [\#334](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/334)
+
+**Closed issues:**
+
+- Custom Locks with error [\#392](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/392)
+- :until\_executed jobs get stuck every now and then [\#379](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/379)
+
 ## [v7.0.0.beta7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7) (2019-11-28)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta6...v7.0.0.beta7)
