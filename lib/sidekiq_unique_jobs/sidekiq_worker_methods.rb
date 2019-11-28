@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
     # The Sidekiq::Worker implementation
     # @return [Sidekiq::Worker]
     def worker_class
-      @_worker_class ||= worker_class_constantize # rubocop:disable Naming/MemoizedInstanceVariableName
+      @_worker_class ||= worker_class_constantize(@worker_class) # rubocop:disable Naming/MemoizedInstanceVariableName
     end
 
     # The hook to call after a successful unlock
@@ -42,10 +42,9 @@ module SidekiqUniqueJobs
     # failing back to the original argument when the constant can't be found
     #
     # @return [Sidekiq::Worker]
-    def worker_class_constantize(klazz = nil)
-      klazz ||= @worker_class
-      klazz = klazz.class if klazz.is_a?(Sidekiq::Worker)
-      return klazz unless klazz.is_a?(String)
+    def worker_class_constantize(klazz)
+      return klazz.class if klazz.is_a?(Sidekiq::Worker) # sidekiq v6.x
+      return klazz       unless klazz.is_a?(String)
 
       Object.const_get(klazz)
     rescue NameError => ex

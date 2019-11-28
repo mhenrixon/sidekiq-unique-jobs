@@ -27,14 +27,15 @@ detectors:
     - initialize
     - Hash#slice
     - SidekiqUniqueJobs#with_context
+    - SidekiqUniqueJobs::Digests#batch_delete
+    - SidekiqUniqueJobs::Digests#delete_by_pattern
     - SidekiqUniqueJobs::Locksmith#create_lock
     - SidekiqUniqueJobs::Locksmith#expire_when_necessary
     - SidekiqUniqueJobs::Middleware#configure_server_middleware
     - SidekiqUniqueJobs::Server::Middleware#call
+    - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
     - SidekiqUniqueJobs::UniqueArgs#filtered_args
     - SidekiqUniqueJobs::Util#del
-    - SidekiqUniqueJobs::Digests#batch_delete
-    - SidekiqUniqueJobs::Digests#delete_by_pattern
     - SidekiqUniqueJobs::Web#self.registered
   UncommunicativeVariableName:
     exclude:
@@ -70,6 +71,7 @@ detectors:
     - SidekiqUniqueJobs::Digests#page
     - SidekiqUniqueJobs::Logging#debug_item
     - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
+    - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
     - SidekiqUniqueJobs::Util#batch_delete
     - SidekiqUniqueJobs::Web::Helpers#cparams
   NestedIterators:
