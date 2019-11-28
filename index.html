@@ -118,6 +118,8 @@
 <li><a href="#after-unlock-callback">After Unlock Callback</a></li>
 <li><a href="#logging">Logging</a></li>
 <li><a href="#cleanup-dead-locks">Cleanup Dead Locks</a></li>
+<li><a href="#other-sidekiq-gems">Other Sidekiq gems</a></li>
+<li><a href="#sidekiq-global_id">sidekiq-global_id</a></li>
 </ul></li>
 <li><a href="#debugging">Debugging</a>
 
@@ -661,11 +663,30 @@ end
 <pre class="code ruby"><code class="ruby"><span class='comment'># this goes in your initializer
 </span><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_death_handlers'>death_handlers</span> <span class='op'>&lt;&lt;</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='comma'>,</span> <span class='id identifier rubyid__ex'>_ex</span><span class='rparen'>)</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_msg'>msg</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unique_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unique_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
     <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span>
 </code></pre>
+
+<h3>Other Sidekiq gems</h3>
+
+<h4>sidekiq-global_id</h4>
+
+<p>It was reported in <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235">#235</a> that the order of the Sidekiq middleware needs to be as follows.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>GlobalId</span><span class='op'>::</span><span class='const'>ClientMiddleware</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
+<span class='kw'>end</span>
+
+<span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_server_middleware'>server_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>GlobalId</span><span class='op'>::</span><span class='const'>ServerMiddleware</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>For a working setup check the following <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/945c4c4c517168d49e3f8ee952fcc9c430865635/myapp/config/initializers/sidekiq.rb#L8">file</a></p>
 
 <h2>Debugging</h2>
 
@@ -798,7 +819,7 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Tue Nov 26 13:54:03 2019 by
+  Generated on Thu Nov 28 13:48:06 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>

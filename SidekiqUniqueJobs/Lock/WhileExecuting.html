@@ -906,7 +906,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
-    <span class='kw'>return</span> <span class='id identifier rubyid_strategy'>strategy</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_strategy'>strategy</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span> <span class='kw'>do</span>
       <span class='kw'>yield</span>
       <span class='id identifier rubyid_callback_safely'>callback_safely</span>
     <span class='kw'>end</span>
@@ -1851,7 +1851,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Tue Nov 26 13:54:06 2019 by
+  Generated on Thu Nov 28 13:48:09 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>
