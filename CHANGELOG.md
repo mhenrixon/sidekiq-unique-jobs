@@ -1,5 +1,31 @@
 # Changelog
 
+## [v7.0.0.beta6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta6) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6)
+
+**Implemented enhancements:**
+
+- Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- Fix that Sidekiq now sends instance of worker [\#459](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/459) ([mhenrixon](https://github.com/mhenrixon))
+- Fix typo in readme [\#456](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/456) ([sheerun](https://github.com/sheerun))
+
+## [v6.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.18) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta5...v6.0.18)
+
+**Fixed bugs:**
+
+- Jobs not pushed when using sidekiq-status [\#412](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/412)
+- Fix sidekiq options [\#458](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/458) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Unique jobs only executed once when used with sidekiq-global\_id [\#235](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235)
+
 ## [v7.0.0.beta5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta5) (2019-11-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.17...v7.0.0.beta5)
@@ -734,6 +760,7 @@
 
 - Seeing this error with latest version 4.0.12 [\#154](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/154)
 - Unique job showing weird behavior [\#153](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/153)
+- perform\_in not working in version 4.0.9 [\#150](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/150)
 
 ## [v4.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.12) (2015-12-15)
 
@@ -742,7 +769,6 @@
 **Closed issues:**
 
 - Can't schedule a job from another job [\#151](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/151)
-- perform\_in not working in version 4.0.9 [\#150](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/150)
 - `unique: until\_and\_while\_executing` not working as expected [\#146](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/146)
 - while\_executing still runs duplicate tasks [\#136](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/136)
 - Version 4 Upgrade [\#133](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/133)
