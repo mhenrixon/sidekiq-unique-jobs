@@ -50,6 +50,7 @@ detectors:
       - SidekiqUniqueJobs::NotUniqueWorker#initialize
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
       - SidekiqUniqueJobs::Orphans::Reaper#entries
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
   IrresponsibleModule:
     enabled: true
@@ -113,9 +114,6 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#lock
       - SidekiqUniqueJobs::Locksmith#lock_async
       - SidekiqUniqueJobs::Locksmith#lock_sync
-      - SidekiqUniqueJobs::Locksmith#set_lock_info
-      - SidekiqUniqueJobs::Locksmith#try_lock
-      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
       - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
@@ -123,6 +121,7 @@ detectors:
       - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
       - SidekiqUniqueJobs::Orphans::Reaper#entries
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::TimeCalculator#lock_ttl
