@@ -101,40 +101,16 @@
 <li><a href="#while-executing">While Executing</a></li>
 <li><a href="#custom-locks">Custom Locks</a></li>
 </ul></li>
-<li><a href="#conflict-strategy">Conflict Strategy</a>
-
-<ul>
-<li><a href="#log">log</a></li>
-<li><a href="#raise">raise</a></li>
-<li><a href="#reject">reject</a></li>
-<li><a href="#replace">replace</a></li>
-<li><a href="#reschedule">Reschedule</a></li>
-<li><a href="#custom-strategies">Custom Strategies</a></li>
-</ul></li>
-<li><a href="#usage">Usage</a>
-
-<ul>
-<li><a href="#finer-control-over-uniqueness">Finer Control over Uniqueness</a></li>
-<li><a href="#after-unlock-callback">After Unlock Callback</a></li>
-<li><a href="#logging">Logging</a></li>
-<li><a href="#cleanup-dead-locks">Cleanup Dead Locks</a></li>
-<li><a href="#other-sidekiq-gems">Other Sidekiq gems</a></li>
-<li><a href="#sidekiq-global_id">sidekiq-global_id</a></li>
-</ul></li>
-<li><a href="#debugging">Debugging</a>
-
-<ul>
-<li><a href="#sidekiq-web">Sidekiq Web</a></li>
-<li><a href="#show-locks">Show Locks</a></li>
-<li><a href="#show-lock">Show Lock</a></li>
-</ul></li>
-<li><a href="#communication">Communication</a></li>
-<li><a href="#testing">Testing</a>
-
-<ul>
-<li><a href="#unique-sidekiq-configuration">Unique Sidekiq Configuration</a></li>
-<li><a href="#uniqueness">Uniqueness</a></li>
-</ul></li>
+<li><a href="#conflict-strategy">Conflict Strategy</a></li>
+<li><a href="#libstrategiesmycustomstrategyrb">lib/strategies/my_custom_strategy.rb</a></li>
+<li><a href="#for-rails-application">For rails application</a></li>
+<li><a href="#configinitializerssidekiquniquejobsrb">config/initializers/sidekiq_unique_jobs.rb</a></li>
+<li><a href="#for-other-projects-whenever-you-prefer">For other projects, whenever you prefer</a></li>
+<li><a href="#this-goes-in-your-initializer">this goes in your initializer</a></li>
+<li><a href="#appconfigroutesrb">app/config/routes.rb</a></li>
+<li><a href="#appworkersbad_workerrb">app/workers/bad_worker.rb</a></li>
+<li><a href="#specworkersbadworkerspecrb">spec/workers/bad_worker_spec.rb</a></li>
+<li><a href="#or">OR</a></li>
 <li><a href="#contributing">Contributing</a></li>
 <li><a href="#contributors">Contributors</a></li>
 </ul>
@@ -478,11 +454,16 @@
 
 <p>Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock <code>WhileExecuting</code> that is used only by the sidekiq server process.</p>
 
-<p>The last one is log which can be be used with the lock <code>UntilExecuted</code> and <code>UntilExpired</code>. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments</p>
+<p>The last one is log which can be be used with the lock <code>UntilExecuted</code> and <code>UntilExpired</code>. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.</p>
 
-<h3>log</h3>
+<p>It is possible for locks to have different conflict strategy for the client and server. This is useful for <code>:until_and_while_executing</code>.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:log</span>
+<pre class="code ruby"><code class="ruby">sidekiq_options lock: :until_and_while_executing, on_conflict: { client: :log, server: :reject }
+
+### log
+
+```ruby
+sidekiq_options on_conflict: :log
 </code></pre>
 
 <p>This strategy is intended to be used with <code>UntilExecuted</code> and <code>UntilExpired</code>. It will log a line about that this is job is a duplicate of another.</p>
@@ -755,7 +736,7 @@ already does this.</p>
 
 <h3>Uniqueness</h3>
 
-<p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: <a href="https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs">Enterprise unique jobs</a></p>
+<p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][]</p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='op'>!</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_test?'>test?</span>
@@ -815,11 +796,17 @@ already does this.</p>
 
 <h2>Contributors</h2>
 
-<p>You can find a list of contributors over on <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors">Contributors</a></p>
+<p>You can find a list of contributors over on [Contributors][]</p>
+
+<p>[v5.0.10]: <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10">https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10</a>.
+[v4.0.18]: <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18</a>
+[Sidekiq requirements]: <a href="https://github.com/mperham/sidekiq#requirements">https://github.com/mperham/sidekiq#requirements</a>
+[Enterprise unique jobs]: <a href="https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs">https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs</a>
+[Contributors]: <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors">https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors</a></p>
 </div></div>
 
       <div id="footer">
-  Generated on Thu Nov 28 13:48:06 2019 by
+  Generated on Thu Nov 28 17:41:33 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>

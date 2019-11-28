@@ -59,6 +59,17 @@
 
       <div id="content"><div id='filecontents'><h1>Changelog</h1>
 
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7">v7.0.0.beta7</a> (2019-11-28)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta6...v7.0.0.beta7">Full Changelog</a></p>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>A worker with &quot;While Executing&quot; lock and &quot;Reschedule&quot; strategy is rescheduled forever <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/457">#457</a></li>
+<li>Prevent callbacks from preventing locks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/460">#460</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
 <h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta6">v7.0.0.beta6</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6">Full Changelog</a></p>
@@ -1014,7 +1025,6 @@
 <ul>
 <li>Seeing this error with latest version 4.0.12 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/154">#154</a></li>
 <li>Unique job showing weird behavior <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/153">#153</a></li>
-<li>perform_in not working in version 4.0.9 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/150">#150</a></li>
 </ul>
 
 <h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.12">v4.0.12</a> (2015-12-15)</h2>
@@ -1025,6 +1035,7 @@
 
 <ul>
 <li>Can&#39;t schedule a job from another job <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/151">#151</a></li>
+<li>perform_in not working in version 4.0.9 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/150">#150</a></li>
 <li><code>unique: until\_and\_while\_executing</code> not working as expected <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/146">#146</a></li>
 <li>while_executing still runs duplicate tasks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/136">#136</a></li>
 <li>Version 4 Upgrade <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/133">#133</a></li>
@@ -1415,7 +1426,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Thu Nov 28 13:48:06 2019 by
+  Generated on Thu Nov 28 17:41:33 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>

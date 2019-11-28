@@ -151,7 +151,7 @@ See <span class='object_link'><a href="WhileExecuting.html#execute-instance_meth
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#strategy-instance_method" title="#strategy (instance method)">#<strong>strategy</strong>  &#x21d2; OnConflict::Reject </a>
+      <a href="#server_strategy-instance_method" title="#server_strategy (instance method)">#<strong>server_strategy</strong>  &#x21d2; OnConflict::Reject </a>
     
 
     
@@ -197,9 +197,9 @@ See <span class='object_link'><a href="WhileExecuting.html#execute-instance_meth
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="strategy-instance_method">
+  <h3 class="signature first" id="server_strategy-instance_method">
   
-    #<strong>strategy</strong>  &#x21d2; <tt><span class='object_link'><a href="../OnConflict/Reject.html" title="SidekiqUniqueJobs::OnConflict::Reject (class)">OnConflict::Reject</a></span></tt> 
+    #<strong>server_strategy</strong>  &#x21d2; <tt><span class='object_link'><a href="../OnConflict/Reject.html" title="SidekiqUniqueJobs::OnConflict::Reject (class)">OnConflict::Reject</a></span></tt> 
   
 
   
@@ -245,8 +245,8 @@ See <span class='object_link'><a href="WhileExecuting.html#execute-instance_meth
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing_reject.rb', line 16</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_strategy'>strategy</span>
-  <span class='ivar'>@strategy</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../OnConflict.html" title="SidekiqUniqueJobs::OnConflict (module)">OnConflict</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_strategy'><span class='object_link'><a href="../OnConflict.html#find_strategy-class_method" title="SidekiqUniqueJobs::OnConflict.find_strategy (method)">find_strategy</a></span></span><span class='lparen'>(</span><span class='symbol'>:reject</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_server_strategy'>server_strategy</span>
+  <span class='ivar'>@server_strategy</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../OnConflict.html" title="SidekiqUniqueJobs::OnConflict (module)">OnConflict</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_strategy'><span class='object_link'><a href="../OnConflict.html#find_strategy-class_method" title="SidekiqUniqueJobs::OnConflict.find_strategy (method)">find_strategy</a></span></span><span class='lparen'>(</span><span class='symbol'>:reject</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -258,7 +258,7 @@ See <span class='object_link'><a href="WhileExecuting.html#execute-instance_meth
 </div>
 
       <div id="footer">
-  Generated on Thu Nov 28 13:48:09 2019 by
+  Generated on Thu Nov 28 17:41:36 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>
