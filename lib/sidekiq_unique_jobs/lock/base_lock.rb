@@ -129,6 +129,7 @@ module SidekiqUniqueJobs
 
       def callback_safely
         callback&.call
+        item[JID]
       rescue StandardError
         log_warn("unlocked successfully but the #after_unlock callback failed!")
         raise
