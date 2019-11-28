@@ -33,27 +33,15 @@
   - [While Executing](#while-executing)
   - [Custom Locks](#custom-locks)
 - [Conflict Strategy](#conflict-strategy)
-  - [log](#log)
-  - [raise](#raise)
-  - [reject](#reject)
-  - [replace](#replace)
-  - [Reschedule](#reschedule)
-  - [Custom Strategies](#custom-strategies)
-- [Usage](#usage)
-  - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
-  - [After Unlock Callback](#after-unlock-callback)
-  - [Logging](#logging)
-  - [Cleanup Dead Locks](#cleanup-dead-locks)
-  - [Other Sidekiq gems](#other-sidekiq-gems)
-    - [sidekiq-global_id](#sidekiq-global_id)
-- [Debugging](#debugging)
-  - [Sidekiq Web](#sidekiq-web)
-    - [Show Locks](#show-locks)
-    - [Show Lock](#show-lock)
-- [Communication](#communication)
-- [Testing](#testing)
-  - [Unique Sidekiq Configuration](#unique-sidekiq-configuration)
-  - [Uniqueness](#uniqueness)
+- [lib/strategies/my_custom_strategy.rb](#libstrategiesmycustomstrategyrb)
+- [For rails application](#for-rails-application)
+- [config/initializers/sidekiq_unique_jobs.rb](#configinitializerssidekiquniquejobsrb)
+- [For other projects, whenever you prefer](#for-other-projects-whenever-you-prefer)
+- [this goes in your initializer](#this-goes-in-your-initializer)
+- [app/config/routes.rb](#appconfigroutesrb)
+- [app/workers/bad_worker.rb](#appworkersbad_workerrb)
+- [spec/workers/bad_worker_spec.rb](#specworkersbadworkerspecrb)
+- [OR](#or)
 - [Contributing](#contributing)
 - [Contributors](#contributors)
 
@@ -415,7 +403,12 @@ Please not that if you try to override a default lock, an `ArgumentError` will b
 
 Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
-The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
+The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
+
+It is possible for locks to have different conflict strategy for the client and server. This is useful for `:until_and_while_executing`.
+
+```ruby
+sidekiq_options lock: :until_and_while_executing, on_conflict: { client: :log, server: :reject }
 
 ### log
 

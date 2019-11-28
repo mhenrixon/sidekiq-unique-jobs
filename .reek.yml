@@ -134,6 +134,7 @@ detectors:
       - SidekiqUniqueJobs::Key
       - SidekiqUniqueJobs::LockConfig
       - SidekiqUniqueJobs::Locksmith
+      - SidekiqUniqueJobs::Lock::BaseLock
   TooManyMethods:
     exclude:
       - SidekiqUniqueJobs::Lock::BaseLock
