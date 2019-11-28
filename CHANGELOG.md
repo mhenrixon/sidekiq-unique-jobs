@@ -1,5 +1,14 @@
 # Changelog
 
+## [v7.0.0.beta7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta6...v7.0.0.beta7)
+
+**Fixed bugs:**
+
+- A worker with "While Executing" lock and "Reschedule" strategy is rescheduled forever [\#457](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/457)
+- Prevent callbacks from preventing locks [\#460](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/460) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta6) (2019-11-28)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6)
@@ -760,7 +769,6 @@
 
 - Seeing this error with latest version 4.0.12 [\#154](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/154)
 - Unique job showing weird behavior [\#153](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/153)
-- perform\_in not working in version 4.0.9 [\#150](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/150)
 
 ## [v4.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.12) (2015-12-15)
 
@@ -769,6 +777,7 @@
 **Closed issues:**
 
 - Can't schedule a job from another job [\#151](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/151)
+- perform\_in not working in version 4.0.9 [\#150](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/150)
 - `unique: until\_and\_while\_executing` not working as expected [\#146](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/146)
 - while\_executing still runs duplicate tasks [\#136](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/136)
 - Version 4 Upgrade [\#133](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/133)
