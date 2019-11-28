@@ -615,7 +615,7 @@ Starting in v5.1, Sidekiq can also fire a global callback when a job dies:
 # this goes in your initializer
 Sidekiq.configure_server do |config|
   config.death_handlers << ->(job, _ex) do
-    digest = msg['unique_digest']
+    digest = job['unique_digest']
     SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 end
