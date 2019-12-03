@@ -8,8 +8,8 @@ class WhileBusyJob
                   on_conflict: :reschedule
 
   def perform
-    SidekiqUniqueJobs.logger.info('hello')
+    logger.info('hello')
     sleep 1
-    SidekiqUniqueJobs.logger.info('bye')
+    logger.info('bye')
   end
 end

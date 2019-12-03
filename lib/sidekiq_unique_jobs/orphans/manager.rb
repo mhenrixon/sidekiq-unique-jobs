@@ -21,6 +21,7 @@ module SidekiqUniqueJobs
       #
       def start # rubocop:disable
         return if registered?
+        return if disabled?
 
         with_logging_context do
           register_reaper_process
@@ -74,6 +75,13 @@ module SidekiqUniqueJobs
       end
 
       #
+      # @see SidekiqUniqueJobs::Config#reaper
+      #
+      def reaper
+        SidekiqUniqueJobs.config.reaper
+      end
+
+      #
       # @see SidekiqUniqueJobs::Config#reaper_interval
       #
       def reaper_interval
@@ -110,6 +118,10 @@ module SidekiqUniqueJobs
       #
       def registered?
         redis { |conn| conn.get(UNIQUE_REAPER) }.to_i == 1
+      end
+
+      def disabled?
+        reaper == :none
       end
 
       #

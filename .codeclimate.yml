@@ -50,7 +50,7 @@ plugins:
       file: .reek.yml
   rubocop:
     enabled: true
-    channel: rubocop-0-74
+    channel: rubocop-0-76
     config:
       file: .rubocop.yml
 
