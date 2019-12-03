@@ -35,8 +35,9 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#set_lock_info
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
-      - SidekiqUniqueJobs::Profiler#self.stop
+      - SidekiqUniqueJobs::OnConflict::Reschedule#call
       - SidekiqUniqueJobs::Orphans::Reaper#entries
+      - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::Timing#timed
       - SidekiqUniqueJobs::Web#self.registered

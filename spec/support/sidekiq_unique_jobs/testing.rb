@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
-    # rubocop:disable Naming/UncommunicativeMethodParamName, Metrics/ModuleLength
+    # rubocop:disable Naming/MethodParameterName, Metrics/ModuleLength
     # :nodoc:
     # :nocov:
     module Redis
@@ -771,7 +771,7 @@ module SidekiqUniqueJobs
         redis(&:connection)
       end
     end
-    # rubocop:enable Naming/UncommunicativeMethodParamName, Metrics/ModuleLength
+    # rubocop:enable Naming/MethodParameterName, Metrics/ModuleLength
 
     module Sidekiq
       def push_item(item = {})
@@ -800,7 +800,7 @@ module SidekiqUniqueJobs
 
       def flush_redis
         redis(&:flushdb)
-      rescue StandardError # rubocop:disable Lint/HandleExceptions
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
     end
 

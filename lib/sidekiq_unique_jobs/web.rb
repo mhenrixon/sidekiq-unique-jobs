@@ -2,7 +2,7 @@
 
 begin
   require "sidekiq/web"
-rescue LoadError # rubocop:disable Lint/HandleExceptions
+rescue LoadError # rubocop:disable Lint/SuppressedException
   # client-only usage
 end
 

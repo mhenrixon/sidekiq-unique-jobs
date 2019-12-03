@@ -29,7 +29,7 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - "spec/**/*"
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: true
 
 Lint/UselessAssignment:
@@ -72,7 +72,7 @@ Naming/FileName:
 Naming/RescuedExceptionsVariableName:
   PreferredName: ex
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   AllowedNames:
     - ex
 
