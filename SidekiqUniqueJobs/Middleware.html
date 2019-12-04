@@ -1198,7 +1198,7 @@
   <span class='ivar'>@redis_pool</span>   <span class='op'>=</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span>
   <span class='kw'>return</span> <span class='kw'>yield</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_disabled?'>unique_disabled?</span>
 
-  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_uniqueness'><span class='object_link'><a href="Job.html#add_uniqueness-instance_method" title="SidekiqUniqueJobs::Job#add_uniqueness (method)">add_uniqueness</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_uniqueness'><span class='object_link'><a href="Job.html#add_uniqueness-instance_method" title="SidekiqUniqueJobs::Job#add_uniqueness (method)">add_uniqueness</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='const'>UNIQUE_DIGEST</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
     <span class='kw'>super</span>
@@ -2083,7 +2083,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Nov 28 17:41:33 2019 by
+  Generated on Wed Dec  4 04:15:02 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>

@@ -59,6 +59,31 @@
 
       <div id="content"><div id='filecontents'><h1>Changelog</h1>
 
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8">v7.0.0.beta8</a> (2019-11-28)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta7...v7.0.0.beta8">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Allow worker to configure client and server strategies separately <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/402">#402</a></li>
+<li>Separate client and server on_conflict <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/462">#462</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li><code>while\_executing</code> has problems at low concurrency <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/384">#384</a></li>
+<li>lock: :until_and_while_executing not working for scheduled jobs <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/334">#334</a></li>
+</ul>
+
+<p><strong>Closed issues:</strong></p>
+
+<ul>
+<li>Custom Locks with error <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/392">#392</a></li>
+<li>:until_executed jobs get stuck every now and then <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/379">#379</a></li>
+</ul>
+
 <h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7">v7.0.0.beta7</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta6...v7.0.0.beta7">Full Changelog</a></p>
@@ -1426,7 +1451,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Thu Nov 28 17:41:33 2019 by
+  Generated on Wed Dec  4 04:15:02 2019 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.20 (ruby-2.6.5).
 </div>
