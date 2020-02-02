@@ -15,7 +15,7 @@ services:
   - redis-server
 
 before_install:
-  - gem install bundler -v 2.0.2
+  - gem install bundler rubocop-mhenrixon
   - >
     if [[ "${COV}" = "true" ]]; then
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter;
