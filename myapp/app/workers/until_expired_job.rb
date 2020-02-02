@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UntilExpiredJob
   include Sidekiq::Worker
 
@@ -8,8 +10,8 @@ class UntilExpiredJob
                   on_conflict: :log
 
   def perform
-    SidekiqUniqueJobs.logger.info('hello')
+    SidekiqUniqueJobs.logger.info("hello")
     sleep 1
-    SidekiqUniqueJobs.logger.info('bye')
+    SidekiqUniqueJobs.logger.info("bye")
   end
 end

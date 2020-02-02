@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CronWorker
   include Sidekiq::Worker
 
@@ -6,8 +8,8 @@ class CronWorker
                   on_conflict: :reschedule
 
   def perform
-    puts 'hello'
+    puts "hello"
     sleep 1
-    puts 'bye'
+    puts "bye"
   end
 end

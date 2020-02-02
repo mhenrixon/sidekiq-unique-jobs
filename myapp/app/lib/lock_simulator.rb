@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module LockSimulator
   module_function
 
   UNIQUE_ARGS = (1..2000).to_a
 
-  def create_v6_locks(num = 20)
+  def create_v6_locks(num = 20) # rubocop:disable Metrics/MethodLength
     old_digests = Array.new(num) { |n| "uniquejobs:v6-#{n}" }
     Sidekiq.redis do |conn|
       old_digests.each_slice(100) do |chunk|
@@ -20,9 +22,9 @@ module LockSimulator
     end
   end
 
-  def create_v7_locks(num = 20)
+  def create_v7_locks(num = 20) # rubocop:disable Metrics/MethodLength
     old_digests = Array.new(num) { |n| "uniquejobs:v7-#{n}" }
-    Sidekiq.redis do |conn|
+    Sidekiq.redis do |conn| # rubocop:disable Metrics/BlockLength
       old_digests.each_slice(100) do |chunk|
         conn.pipelined do
           chunk.each do |digest|

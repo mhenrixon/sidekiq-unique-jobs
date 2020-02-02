@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WhileEnqueuedAndBusyJob
   include Sidekiq::Worker
 
@@ -8,12 +10,11 @@ class WhileEnqueuedAndBusyJob
                   on_conflict: :log
 
   def perform
-    SidekiqUniqueJobs.logger.info('jesus')
+    SidekiqUniqueJobs.logger.info("jesus")
     sleep 1
-    SidekiqUniqueJobs.logger.info('christ')
+    SidekiqUniqueJobs.logger.info("christ")
   end
 end
-
 
 # sidekiq_lock :while_enqueued, ttl: 10, wait: 5, on_conflict: :reschedule
 

@@ -55,4 +55,4 @@ SidekiqUniqueJobs.configure do |config|
   config.reaper_interval = 10
   config.reaper_timeout  = 5
 end
-Dir[Rails.root.join("app", "workers", "**", "*.rb")].each { |worker| require worker }
+Dir[Rails.root.join("app", "workers", "**", "*.rb")].sort.each { |worker| require worker }

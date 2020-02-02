@@ -62,7 +62,7 @@ gemfile:
 notifications:
   email:
     recipients:
-      - mikael@zoolutions.se
+      - mikael@mhenrixon.com
   slack:
     rooms:
       secure: B05ZUPdHrhxVnz7Mlpd5KhFH2bdE9ykFRgqLFHV3EcdyWKm85PPgbfl4cNPTFXHHhzk/5E9h5hwEXpicJYSsq6lhU8i3WesidrA+GHzrpesowTHpvtJMxIjsE1Tavug0xQs/bca72yN2t51m8UiD1scOSIuvSOCNkuKkn3+rSIo=

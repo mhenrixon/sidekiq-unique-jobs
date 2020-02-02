@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
   #
   class Cli < Thor
     def self.banner(command, _namespace = nil, _subcommand = false)
-      "jobs #{@package_name} #{command.usage}"
+      "jobs #{@package_name} #{command.usage}" # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     end
 
     desc "list PATTERN", "list all unique digests and their expiry time"

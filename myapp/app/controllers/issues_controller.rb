@@ -14,7 +14,7 @@ class IssuesController < ApplicationController
       end
     end
 
-    redirect_to '/sidekiq'
+    redirect_to "/sidekiq"
   end
 
   private
