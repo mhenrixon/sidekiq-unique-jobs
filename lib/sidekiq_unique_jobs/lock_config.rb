@@ -75,7 +75,7 @@ module SidekiqUniqueJobs
     def errors_as_string
       @errors_as_string ||= begin
         error_msg = +"\t"
-        error_msg << lock_config.errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
+        error_msg << errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
         error_msg
       end
     end
