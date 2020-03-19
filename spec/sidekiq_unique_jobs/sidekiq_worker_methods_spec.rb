@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
   let(:custom_worker_class) do
     Class.new do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe "delete_job_by_digest.lua" do
   subject(:delete_job_by_digest) do
     call_script(:delete_job_by_digest, options)

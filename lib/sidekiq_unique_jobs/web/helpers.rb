@@ -43,9 +43,7 @@ module SidekiqUniqueJobs
       #
       def cparams(options)
         # stringify
-        options.keys.each do |key|
-          options[key.to_s] = options.delete(key)
-        end
+        options.transform_keys(&:to_s)
 
         params.merge(options).map do |key, value|
           next unless SAFE_CPARAMS.include?(key)

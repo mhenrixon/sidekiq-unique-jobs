@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OnConflict do
   it { expect(described_class.strategies).to eq(SidekiqUniqueJobs.strategies) }
 

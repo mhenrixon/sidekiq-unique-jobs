@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe "update_version.lua" do
   subject(:update_version) { call_script(:update_version, keys, argv) }
 

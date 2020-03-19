@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Lock::Validator do
   let(:validator) { described_class.new(options) }
   let(:options) do

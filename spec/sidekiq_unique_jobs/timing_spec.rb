@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Timing do
   let(:locked_time) { Time.new(2017, 8, 28, 3, 30) }
 

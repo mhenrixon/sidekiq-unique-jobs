@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Digests do
   let(:digests) { described_class.new }
   let(:expected_keys) do

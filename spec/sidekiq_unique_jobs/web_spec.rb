@@ -46,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
   end
 
   it "can paginate digests" do
-    110.times do |idx|
+    Array.new(110) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
     end
 

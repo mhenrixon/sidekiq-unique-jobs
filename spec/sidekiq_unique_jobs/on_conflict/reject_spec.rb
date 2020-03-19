@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
   include_context "with a stubbed locksmith"
   let(:strategy) { described_class.new(item) }

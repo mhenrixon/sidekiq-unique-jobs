@@ -206,7 +206,7 @@ module SidekiqUniqueJobs
   # @return [Boolean]
   #
   def validate_worker(options)
-    raise NotUniqueWorker, options: options unless (lock_type = options[LOCK])
+    raise NotUniqueWorker, options unless (lock_type = options[LOCK])
 
     lock_class = locks[lock_type]
     lock_class.validate_options(options)

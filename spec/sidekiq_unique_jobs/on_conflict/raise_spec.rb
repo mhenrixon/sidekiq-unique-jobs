@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OnConflict::Raise do
   let(:strategy)      { described_class.new(item) }
   let(:unique_digest) { "uniquejobs:random-digest-value" }

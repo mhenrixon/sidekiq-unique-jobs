@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   describe "when a job is already scheduled" do
     it "processes jobs properly" do
@@ -47,13 +46,13 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   end
 
   it "does not push duplicate messages when unique_args are filtered with a proc" do
-    10.times { MyUniqueJobWithFilterProc.perform_async(1) }
+    Array.new(10) { MyUniqueJobWithFilterProc.perform_async(1) }
     expect(queue_count("customqueue")).to eq(1)
 
     flush_redis
     expect(queue_count("customqueue")).to eq(0)
 
-    10.times do
+    Array.new(10) do
       push_item(
         "class" => MyUniqueJobWithFilterProc,
         "queue" => "customqueue",
@@ -65,13 +64,13 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   end
 
   it "does not push duplicate messages when unique_args are filtered with a method" do
-    10.times { MyUniqueJobWithFilterMethod.perform_async(1) }
+    Array.new(10) { MyUniqueJobWithFilterMethod.perform_async(1) }
 
     expect(queue_count("customqueue")).to eq(1)
     flush_redis
     expect(queue_count("customqueue")).to eq(0)
 
-    10.times do
+    Array.new(10) do
       push_item(
         "class" => MyUniqueJobWithFilterMethod,
         "queue" => "customqueue",
@@ -83,14 +82,14 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   end
 
   it "does not queue duplicates when when calling delay" do
-    10.times { PlainClass.delay(unique: :until_executed, queue: "customqueue").run(1) }
+    Array.new(10) { PlainClass.delay(unique: :until_executed, queue: "customqueue").run(1) }
 
     expect(queue_count("customqueue")).to eq(1)
   end
 
   context "when class is not unique" do
     it "pushes duplicate messages" do
-      10.times do
+      Array.new(10) do
         push_item("class" => CustomQueueJob, "queue" => "customqueue", "args" => [1, 2])
       end
 
@@ -104,7 +103,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
         expect(CustomQueueJobWithFilterMethod).to respond_to(:args_filter)
         expect(CustomQueueJobWithFilterMethod.get_sidekiq_options["unique_args"]).to eq :args_filter
 
-        (0..10).each do |i|
+        Array.new(10) do |i|
           push_item(
             "class" => CustomQueueJobWithFilterMethod,
             "queue" => "customqueue",
@@ -120,7 +119,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       let(:args) { [1, { random: rand, name: "foobar" }] }
 
       it "pushes no duplicate messsages" do
-        100.times { CustomQueueJobWithFilterProc.perform_async(args) }
+        Array.new(100) { CustomQueueJobWithFilterProc.perform_async(args) }
 
         expect(queue_count("customqueue")).to eq(1)
       end
@@ -185,7 +184,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   it "does not log duplicate payload when config turned off" do
     allow(SidekiqUniqueJobs.logger).to receive(:warn)
     with_sidekiq_options_for(UntilExecutedJob, log_duplicate: false) do
-      2.times do
+      Array.new(2) do
         push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
       end
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Middleware::Server, redis_db: 9 do
   let(:middleware) { described_class.new }
 

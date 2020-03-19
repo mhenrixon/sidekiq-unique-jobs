@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Redis::String do
   let(:entity) { described_class.new(key) }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
