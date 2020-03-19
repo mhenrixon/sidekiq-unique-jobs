@@ -38,7 +38,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
 
     it "schedules allows jobs to be scheduled " do
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-        PlainClass.delay_for(x, unique: :while_executing).run(1)
+        PlainClass.delay_for(x, queue: "default", unique: :while_executing).run(1)
       end
 
       expect(schedule_count).to eq(20)
