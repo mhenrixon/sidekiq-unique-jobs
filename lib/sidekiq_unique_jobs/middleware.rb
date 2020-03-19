@@ -80,7 +80,7 @@ module SidekiqUniqueJobs
       @redis_pool   = redis_pool
       return yield if unique_disabled?
 
-      SidekiqUniqueJobs::Job.add_uniqueness(item) unless item.key?(UNIQUE_DIGEST)
+      SidekiqUniqueJobs::Job.prepare(item) unless item[UNIQUE_DIGEST]
 
       with_logging_context do
         super

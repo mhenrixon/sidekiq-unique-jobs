@@ -32,7 +32,7 @@ module SidekiqUniqueJobs
     # @param [String] pattern a key pattern to match with
     # @param [Integer] count the maximum number
     # @return [Array<String>] with unique digests
-    def delete_by_pattern(pattern, count: DEFAULT_COUNT, **)
+    def delete_by_pattern(pattern, count: DEFAULT_COUNT)
       result, elapsed = timed do
         digests = entries(pattern: pattern, count: count).keys
         redis { |conn| BatchDelete.call(digests, conn) }
@@ -75,7 +75,7 @@ module SidekiqUniqueJobs
     #
     # @return [Array<String>] an array of digests matching the given pattern
     #
-    def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT, **)
+    def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
       options = {}
       options[:match] = pattern
       options[:count] = count if count
@@ -96,7 +96,7 @@ module SidekiqUniqueJobs
     #
     # @return [Array<Integer, Integer, Array<Lock>>] total_size, next_cursor, locks
     #
-    def page(cursor: 0, pattern: SCAN_PATTERN, page_size: 100, **)
+    def page(cursor: 0, pattern: SCAN_PATTERN, page_size: 100)
       redis do |conn|
         total_size, digests = conn.multi do
           conn.zcard(key)

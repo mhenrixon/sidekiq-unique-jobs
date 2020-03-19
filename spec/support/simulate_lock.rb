@@ -88,11 +88,11 @@ module SimulateLock
   end
 
   def lock(item)
-    Locksmith.new(item).lock
+    SidekiqUniqueJobs::Locksmith.new(item).lock
   end
 
   def unlock(item)
-    Locksmith.new(item).unlock
+    SidekiqUniqueJobs::Locksmith.new(item).unlock
   end
 
   def parse_item(digest: "randomdigest", jid: "randomjid", lock_type: :until_executed, ttl: nil, **)

@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
     # Unlocks a job.
     # @param [Hash] item a Sidekiq job hash
     def unlock(item)
-      SidekiqUniqueJobs::UniqueArgs.digest(item)
+      SidekiqUniqueJobs::Job.add_digest(item)
       SidekiqUniqueJobs::Locksmith.new(item).unlock!
     end
 
@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
     # This is good for situations when a job is locked by another item
     # @param [Hash] item a Sidekiq job hash
     def delete(item)
-      SidekiqUniqueJobs::UniqueArgs.digest(item)
+      SidekiqUniqueJobs::Job.add_digest(item)
       SidekiqUniqueJobs::Locksmith.new(item).delete
     end
 
@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
     # This is good for situations when a job is locked by another item
     # @param [Hash] item a Sidekiq job hash
     def delete!(item)
-      SidekiqUniqueJobs::UniqueArgs.digest(item)
+      SidekiqUniqueJobs::Job.add_digest(item)
       SidekiqUniqueJobs::Locksmith.new(item).delete!
     end
   end

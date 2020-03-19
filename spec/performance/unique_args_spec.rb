@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-RSpec.describe SidekiqUniqueJobs::UniqueArgs, perf: true do
+RSpec.describe SidekiqUniqueJobs::UniqueDigest, perf: true do
   let(:unique_args)  { described_class.new(item) }
   let(:worker_class) { UntilExecutedJob }
   let(:class_name)   { worker_class.to_s }
