@@ -12,82 +12,49 @@ module SidekiqUniqueJobs
     # Convenience method for returning a digest
     # @param [Hash] item a Sidekiq job hash
     # @return [String] a unique digest
-    def self.digest(item)
-      new(item).unique_digest
+    def self.call(item)
+      new(item).unique_args
     end
 
     # The sidekiq job hash
     # @return [Hash] the Sidekiq job hash
     attr_reader :item
+    #
+    # @!attribute [r] args
+    #   @return [Array<Objet>] the arguments passed to `perform_async`
+    attr_reader :args
 
     # @param [Hash] item a Sidekiq job hash
     def initialize(item)
       @item         = item
       @worker_class = item[CLASS]
-
-      add_uniqueness_to_item
-    end
-
-    # Appends the keys unique_prefix, unique_args and {#unique_digest} to the sidekiq job hash {#item}
-    # @return [void]
-    def add_uniqueness_to_item
-      item[UNIQUE_PREFIX] ||= unique_prefix
-      item[UNIQUE_ARGS]     = unique_args(item[ARGS])
-      item[UNIQUE_DIGEST]   = unique_digest
-    end
-
-    # Memoized unique_digest
-    # @return [String] a unique digest
-    def unique_digest
-      @unique_digest ||= create_digest
-    end
-
-    # Creates a namespaced unique digest based on the {#digestable_hash} and the {#unique_prefix}
-    # @return [String] a unique digest
-    def create_digest
-      digest = Digest::MD5.hexdigest(dump_json(digestable_hash))
-      "#{unique_prefix}:#{digest}"
-    end
-
-    # A prefix to use as namespace for the {#unique_digest}
-    # @return [String] a unique digest
-    def unique_prefix
-      worker_options[UNIQUE_PREFIX] || SidekiqUniqueJobs.config.unique_prefix
-    end
-
-    # Filter a hash to use for digest
-    # @return [Hash] to use for digest
-    def digestable_hash
-      @item.slice(CLASS, QUEUE, UNIQUE_ARGS).tap do |hash|
-        hash.delete(QUEUE) if unique_across_queues?
-        hash.delete(CLASS) if unique_across_workers?
-      end
+      @args         = item[ARGS]
     end
 
     # The unique arguments to use for creating a lock
     # @return [Array] the arguments filters by the {#filtered_args} method if {#unique_args_enabled?}
-    def unique_args(args)
-      return filtered_args(args) if unique_args_enabled?
-
-      args
+    def unique_args
+      @unique_args ||= filtered_args
     end
 
-    # Checks if we should disregard the queue when creating the unique digest
-    # @return [true, false]
-    def unique_across_queues?
-      item[UNIQUE_ACROSS_QUEUES] || worker_options[UNIQUE_ACROSS_QUEUES]
-    end
-
-    # Checks if we should disregard the worker when creating the unique digest
-    # @return [true, false]
-    def unique_across_workers?
-      item[UNIQUE_ACROSS_WORKERS] || worker_options[UNIQUE_ACROSS_WORKERS]
-    end
-
-    # Checks if the worker class has been enabled for unique_args?
+    # Checks if the worker class has enabled unique_args
     # @return [true, false]
     def unique_args_enabled?
-      unique_args_method # && !unique_args_method.is_a?(Boolean)
+      # return false unless unique_args_method_valid?
+
+      unique_args_method
+    end
+
+    # Validate that the unique_args_method is acceptable
+    # @return [true, false]
+    def unique_args_method_valid?
+      [NilClass, TrueClass, FalseClass].none? { |klass| unique_args_method.is_a?(klass) }
+    end
+
+    # Checks if the worker class has disabled unique_args
+    # @return [true, false]
+    def unique_args_disabled?
+      !unique_args_method
     end
 
     # Filters unique arguments by proc or symbol
@@ -95,7 +62,8 @@ module SidekiqUniqueJobs
     # @return [Array] {#filter_by_proc} when {#unique_args_method} is a Proc
     # @return [Array] {#filter_by_symbol} when {#unique_args_method} is a Symbol
     # @return [Array] args unfiltered when neither of the above
-    def filtered_args(args)
+    def filtered_args
+      return args if unique_args_disabled?
       return args if args.empty?
 
       json_args = Normalizer.jsonify(args)
@@ -105,9 +73,6 @@ module SidekiqUniqueJobs
         filter_by_proc(json_args)
       when Symbol
         filter_by_symbol(json_args)
-      else
-        log_debug("#{__method__} arguments not filtered (using all arguments for uniqueness)")
-        json_args
       end
     end
 

@@ -13,8 +13,8 @@ task :changelog do
     sidekiq-unique-jobs
     --token
   ]
-  ADD_CHANGELOG_CMD      ||= "git add --all"
-  COMMIT_CHANGELOG_CMD   ||= "git commit -a -m 'Update changelog'"
+  ADD_CHANGELOG_CMD ||= "git add --all"
+  COMMIT_CHANGELOG_CMD ||= "git commit -a -m 'Update changelog'"
   # rubocop:enable Style/MutableConstant
 
   sh("git checkout master")

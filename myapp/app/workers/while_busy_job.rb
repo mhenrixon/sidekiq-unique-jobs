@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WhileBusyJob
   include Sidekiq::Worker
 
@@ -8,8 +10,8 @@ class WhileBusyJob
                   on_conflict: :reschedule
 
   def perform
-    logger.info('hello')
+    logger.info("hello")
     sleep 1
-    logger.info('bye')
+    logger.info("bye")
   end
 end

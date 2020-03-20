@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::RSpec::Matchers::HaveValidSidekiqOptions do
   describe "#matches?" do
     context "when sidekiq options are valid" do

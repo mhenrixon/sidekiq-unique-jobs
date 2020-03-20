@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs do
   describe "define custom lock strategies" do
     subject(:middleware_call) do

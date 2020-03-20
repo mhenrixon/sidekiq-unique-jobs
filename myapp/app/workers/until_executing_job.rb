@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WhileEnqueuedJob
   include Sidekiq::Worker
 
@@ -7,8 +9,8 @@ class WhileEnqueuedJob
                   lock_limit: 1
 
   def perform
-    SidekiqUniqueJobs.logger.info('hello')
+    SidekiqUniqueJobs.logger.info("hello")
     sleep 1
-    SidekiqUniqueJobs.logger.info('bye')
+    SidekiqUniqueJobs.logger.info("bye")
   end
 end

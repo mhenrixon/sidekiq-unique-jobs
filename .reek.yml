@@ -46,6 +46,7 @@ detectors:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::InvalidUniqueArguments#initialize
       - SidekiqUniqueJobs::InvalidWorker#initialize
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::NotUniqueWorker#initialize

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
   let(:service)  { redis { |conn| described_class.new(conn) } }
   let(:digest)   { "uniquejobs:digest" }

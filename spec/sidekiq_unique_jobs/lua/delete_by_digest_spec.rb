@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe "delete_by_digest.lua" do
   subject(:delete_by_digest) { call_script(:delete_by_digest, keys) }
 

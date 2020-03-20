@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StatusWorker
   include Sidekiq::Worker
   include Sidekiq::Status::Worker

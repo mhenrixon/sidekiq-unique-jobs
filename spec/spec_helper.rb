@@ -2,7 +2,7 @@
 
 require "bundler/setup"
 
-if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6" && RUBY_VERSION < "2.7"
+if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6"
   require "simplecov" unless %w[false 0].include?(ENV["COV"])
 
   begin
@@ -35,8 +35,8 @@ end
 
 require "sidekiq/redis_connection"
 
-Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].each { |f| require f }
-Dir[File.join(File.dirname(__FILE__), "..", "examples", "**", "*.rb")].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].sort.each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), "..", "examples", "**", "*.rb")].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.define_derived_metadata do |meta|

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Changelog do
   let(:entity) { described_class.new }
   let(:digest) { "uniquejobs:#{SecureRandom.hex(12)}" }
@@ -9,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
   let(:job_id) { SecureRandom.hex(12) }
 
   describe "#add" do
-    subject(:add) { entity.add(entry) }
+    subject(:add) { entity.add(**entry) }
 
     let(:entry) do
       {

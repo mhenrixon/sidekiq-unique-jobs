@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::UpgradeLocks do
   let(:old_digests) { Array.new(20) { |n| "uniquejobs:digest-#{n}" } }
 

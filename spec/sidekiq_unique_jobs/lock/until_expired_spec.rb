@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   let(:process_one) { described_class.new(item_one, callback) }
   let(:process_two) { described_class.new(item_two, callback) }

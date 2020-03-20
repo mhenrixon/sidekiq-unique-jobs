@@ -11,7 +11,6 @@ gem "rspec-its",        require: false
 
 platforms :mri do
   gem "fasterer"
-  gem "fuubar"
   gem "github_changelog_generator"
   gem "guard"
   gem "guard-bundler"
@@ -19,15 +18,21 @@ platforms :mri do
   gem "guard-rspec"
   gem "guard-rubocop"
   gem "hiredis"
-  gem "pry"
   gem "redcarpet", "~> 3.4"
   gem "reek", ">= 5.3"
   gem "rspec-benchmark"
-  gem "rubocop"
-  gem "rubocop-performance"
-  gem "rubocop-rspec"
-  gem "simplecov-json"
+  gem "rubocop-mhenrixon"
+  gem "simplecov-material"
+  gem "simplecov-oj"
   gem "travis"
+end
+
+if respond_to?(:install_if)
+  install_if -> { RUBY_PLATFORM =~ /darwin/ } do
+    gem "fuubar"
+    gem "pry"
+    gem "rspec-nc"
+  end
 end
 
 eval(File.read(LOCAL_GEMS)) if File.exist?(LOCAL_GEMS) # rubocop:disable Security/Eval

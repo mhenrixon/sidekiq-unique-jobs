@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
   let(:task)     { instance_spy(Concurrent::TimerTask) }
   let(:observer) { instance_spy(SidekiqUniqueJobs::Orphans::Observer) }

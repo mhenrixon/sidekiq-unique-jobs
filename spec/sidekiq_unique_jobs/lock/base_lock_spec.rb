@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   let(:lock)     { described_class.new(item, callback) }
   let(:callback) { -> { p "debug" } }

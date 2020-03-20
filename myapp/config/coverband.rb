@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Coverband.configure do |config|
 #   config.store = Coverband::Adapters::RedisStore.new(Redis.new(url: ENV['MY_REDIS_URL']))
 #   config.logger = Logger.new(STDOUT)

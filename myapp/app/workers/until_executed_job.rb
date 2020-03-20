@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UntilExecutedJob
   include Sidekiq::Worker
 
@@ -7,8 +9,8 @@ class UntilExecutedJob
                   lock_limit: 5
 
   def perform
-    logger.info('cowboy')
+    logger.info("cowboy")
     sleep(1)
-    logger.info('beebop')
+    logger.info("beebop")
   end
 end

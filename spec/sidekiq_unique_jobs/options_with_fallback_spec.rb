@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   let(:options_with_fallback) { class_with_options.new(item, options, worker_class) }
   let(:options)               { nil }
