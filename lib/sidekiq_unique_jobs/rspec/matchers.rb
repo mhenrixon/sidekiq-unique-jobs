@@ -17,8 +17,10 @@ module SidekiqUniqueJobs
   end
 end
 
-require_relative "matchers/have_valid_sidekiq_options"
+if defined?(RSpec)
+  require_relative "matchers/have_valid_sidekiq_options"
 
-RSpec.configure do |config|
-  config.include SidekiqUniqueJobs::RSpec::Matchers
+  RSpec.configure do |config|
+    config.include SidekiqUniqueJobs::RSpec::Matchers
+  end
 end
