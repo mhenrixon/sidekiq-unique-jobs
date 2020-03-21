@@ -59,6 +59,61 @@
 
       <div id="content"><div id='filecontents'><h1>Changelog</h1>
 
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta10">v7.0.0.beta10</a> (2020-03-21)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.19...v7.0.0.beta10">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Rename remaining unique_* keys to lock_* <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/475">#475</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Split calculator into two separate <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/474">#474</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Prepare for improving tests <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/473">#473</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Update gemspec: thor <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/465">#465</a> (<a href="https://github.com/masawo">masawo</a>)</li>
+</ul>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>With v6.0.18, Sidekiq doesn&#39;t run at all <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/471">#471</a></li>
+<li>Fix errors_as_string on lock_config.rb <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/469">#469</a> (<a href="https://github.com/donaldpiret">donaldpiret</a>)</li>
+</ul>
+
+<p><strong>Merged pull requests:</strong></p>
+
+<ul>
+<li>README: Use SVG badges ✨ <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/470">#470</a> (<a href="https://github.com/olleolleolle">olleolleolle</a>)</li>
+<li>remove deprecated/broken OptionsWithFallback#unique_type <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/435">#435</a> (<a href="https://github.com/zvkemp">zvkemp</a>)</li>
+</ul>
+
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.19">v6.0.19</a> (2020-03-21)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta9...v6.0.19">Full Changelog</a></p>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>Fix access to lock <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/476">#476</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Backport v7 fix for conflicts <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/461">#461</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta9">v7.0.0.beta9</a> (2019-12-04)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta8...v7.0.0.beta9">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Keys without TTL <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/417">#417</a></li>
+<li>Various changes to test and verify reliability <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/463">#463</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<p><strong>Closed issues:</strong></p>
+
+<ul>
+<li>until_and_while_executing with sidekiq pro <code>reliable\_scheduler!</code> <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/411">#411</a></li>
+</ul>
+
 <h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8">v7.0.0.beta8</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta7...v7.0.0.beta8">Full Changelog</a></p>
@@ -147,12 +202,6 @@
 <li>Prevent multiple reapers <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/453">#453</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Make deletion compatible with redis-namespace <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/452">#452</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Make sure server process stays locked <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/448">#448</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
-</ul>
-
-<p><strong>Closed issues:</strong></p>
-
-<ul>
-<li>Deletion of digest doesn&#39;t work from admin UI <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/438">#438</a></li>
 </ul>
 
 <p><strong>Merged pull requests:</strong></p>
@@ -1451,7 +1500,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Sat Mar 21 20:33:38 2020 by
+  Generated on Sat Mar 21 20:54:56 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.24 (ruby-2.6.5).
 </div>
