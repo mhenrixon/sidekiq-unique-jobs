@@ -8,6 +8,12 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
     class Validator
+      DEPRECATED_KEYS = {
+        UNIQUE.to_sym => LOCK.to_sym,
+        UNIQUE_ARGS.to_sym => LOCK_ARGS.to_sym,
+        UNIQUE_PREFIX.to_sym => LOCK_PREFIX.to_sym
+      }.freeze
+
       #
       # Shorthand for `new(options).validate`
       #
@@ -30,6 +36,7 @@ module SidekiqUniqueJobs
       # @param [Hash] options the sidekiq_options for the worker being validated
       #
       def initialize(options)
+        @options     = options.transform_keys(&:to_sym)
         @lock_config = LockConfig.new(options)
       end
 
@@ -40,6 +47,8 @@ module SidekiqUniqueJobs
       # @return [LockConfig] the lock configuration with errors if any
       #
       def validate
+        handle_deprecations
+
         case lock_config.type
         when :while_executing
           validate_server
@@ -51,6 +60,14 @@ module SidekiqUniqueJobs
         end
 
         lock_config
+      end
+
+      def handle_deprecations
+        DEPRECATED_KEYS.each do |old, new|
+          next unless @options.key?(old)
+
+          lock_config.errors[old] = "is deprecated, use `#{new}: #{@options[old]}` instead."
+        end
       end
 
       #
