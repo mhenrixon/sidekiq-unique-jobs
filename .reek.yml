@@ -4,7 +4,7 @@ exclude_paths:
   - gemfiles
   - lib/sidekiq
   - lib/sidekiq_unique_jobs/lua
-  - my_app
+  - myapp
   - spec
   - tmp
   - vendor/bundle
@@ -35,6 +35,8 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#set_lock_info
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
+      - SidekiqUniqueJobs::OnConflict::Reschedule#call
+      - SidekiqUniqueJobs::Orphans::Reaper#entries
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::Timing#timed
@@ -44,10 +46,13 @@ detectors:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::InvalidUniqueArguments#initialize
       - SidekiqUniqueJobs::InvalidWorker#initialize
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::NotUniqueWorker#initialize
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
+      - SidekiqUniqueJobs::Orphans::Reaper#entries
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
   IrresponsibleModule:
     enabled: true
@@ -85,6 +90,7 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
       - SidekiqUniqueJobs::UpgradeLocks#keys_for_digest
   RepeatedConditional:
     exclude:
@@ -96,6 +102,8 @@ detectors:
     exclude:
       - Hash#slice
       - initialize
+      - Sidekiq#self.use_options
+      - SidekiqUniqueJobs#use_config
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
@@ -104,23 +112,24 @@ detectors:
       - SidekiqUniqueJobs::Digests#entries
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Lock#lock
-      - SidekiqUniqueJobs::LockInfo#set
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::LockArgs#filtered_args
+      - SidekiqUniqueJobs::LockInfo#set
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock
       - SidekiqUniqueJobs::Locksmith#lock_async
       - SidekiqUniqueJobs::Locksmith#lock_sync
-      - SidekiqUniqueJobs::Locksmith#set_lock_info
-      - SidekiqUniqueJobs::Locksmith#try_lock
-      - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
+      - SidekiqUniqueJobs::LockTTL#calculate
       - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::Orphans::Manager#start
+      - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
+      - SidekiqUniqueJobs::Orphans::Reaper#entries
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
-      - SidekiqUniqueJobs::TimeCalculator#lock_ttl
-      - SidekiqUniqueJobs::UniqueArgs#filtered_args
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::UpgradeLocks#call
       - SidekiqUniqueJobs::UpgradeLocks#upgrade_v6_lock
       - SidekiqUniqueJobs::Web#self.registered
@@ -129,6 +138,7 @@ detectors:
       - SidekiqUniqueJobs::Key
       - SidekiqUniqueJobs::LockConfig
       - SidekiqUniqueJobs::Locksmith
+      - SidekiqUniqueJobs::Lock::BaseLock
   TooManyMethods:
     exclude:
       - SidekiqUniqueJobs::Lock::BaseLock

@@ -45,6 +45,13 @@ module SidekiqUniqueJobs
     #   @return [Array<Hash<Symbol, Array<String>] a collection of configuration errors
     attr_reader :errors
 
+    #
+    # Instantiate a new lock_config based on sidekiq options in worker
+    #
+    # @param [Hash] options sidekiq_options for worker
+    #
+    # @return [LockConfig]
+    #
     def self.from_worker(options)
       new(options.stringify_keys)
     end
@@ -64,18 +71,36 @@ module SidekiqUniqueJobs
       @on_server_conflict = job_hash[ON_SERVER_CONFLICT]
     end
 
+    #
+    # Indicate if timeout was set
+    #
+    #
+    # @return [true,fakse]
+    #
     def wait_for_lock?
       timeout.nil? || timeout.positive?
     end
 
+    #
+    # Is the configuration valid?
+    #
+    #
+    # @return [true,false]
+    #
     def valid?
       errors.empty?
     end
 
+    #
+    # Return a nice descriptive message with all validation errors
+    #
+    #
+    # @return [String]
+    #
     def errors_as_string
       @errors_as_string ||= begin
         error_msg = +"\t"
-        error_msg << lock_config.errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
+        error_msg << errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")
         error_msg
       end
     end

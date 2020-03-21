@@ -17,8 +17,7 @@ module SidekiqUniqueJobs
   # @return [SidekiqUniqueJobs::Config] the gem configuration
   #
   def config
-    # Arguments here need to match the definition of the new class (see above)
-    @config ||= SidekiqUniqueJobs::Config.default
+    @config ||= reset!
   end
 
   #
@@ -80,13 +79,26 @@ module SidekiqUniqueJobs
   # @return [void]
   #
   # @yield control to the caller
-  def use_config(tmp_config)
+  def use_config(tmp_config = {})
     raise ::ArgumentError, "#{name}.#{__method__} needs a block" unless block_given?
 
     old_config = config.to_h
+    reset!
     configure(tmp_config)
     yield
-    configure(old_config)
+  ensure
+    reset!
+    configure(old_config.to_h)
+  end
+
+  #
+  # Resets configuration to deafult
+  #
+  #
+  # @return [SidekiqUniqueJobs::Config] a default gem configuration
+  #
+  def reset!
+    @config = SidekiqUniqueJobs::Config.default
   end
 
   #
@@ -206,7 +218,7 @@ module SidekiqUniqueJobs
   # @return [Boolean]
   #
   def validate_worker(options)
-    raise NotUniqueWorker, options: options unless (lock_type = options[LOCK])
+    raise NotUniqueWorker, options unless (lock_type = options[LOCK])
 
     lock_class = locks[lock_type]
     lock_class.validate_options(options)

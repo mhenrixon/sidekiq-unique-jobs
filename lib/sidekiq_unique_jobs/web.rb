@@ -2,7 +2,7 @@
 
 begin
   require "sidekiq/web"
-rescue LoadError # rubocop:disable Lint/HandleExceptions
+rescue LoadError # rubocop:disable Lint/SuppressedException
   # client-only usage
 end
 
@@ -26,13 +26,13 @@ module SidekiqUniqueJobs
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
         @pagination     = { pattern: @filter, cursor: @current_cursor, page_size: @count }
-        @total_size, @next_cursor, @locks = digests.page(@pagination)
+        @total_size, @next_cursor, @locks = digests.page(**@pagination)
 
         erb(unique_template(:locks))
       end
 
       app.get "/locks/delete_all" do
-        digests.del(pattern: "*", count: digests.count)
+        digests.delete_by_pattern("*", count: digests.count)
         redirect_to :locks
       end
 
@@ -44,7 +44,7 @@ module SidekiqUniqueJobs
       end
 
       app.get "/locks/:digest/delete" do
-        digests.del(digest: params[:digest])
+        digests.delete_by_digest(params[:digest])
         redirect_to :locks
       end
 

@@ -25,6 +25,8 @@ module SidekiqUniqueJobs
     # @!parse include SidekiqUniqueJobs::JSON
     include SidekiqUniqueJobs::JSON
 
+    #
+    # @return [Float] used to take into consideration the inaccuracy of redis timestamps
     CLOCK_DRIFT_FACTOR = 0.01
 
     #
@@ -50,7 +52,7 @@ module SidekiqUniqueJobs
     # @param [Hash] item a Sidekiq job hash
     # @option item [Integer] :lock_ttl the configured expiration
     # @option item [String] :jid the sidekiq job id
-    # @option item [String] :unique_digest the unique digest (See: {UniqueArgs#unique_digest})
+    # @option item [String] :unique_digest the unique digest (See: {LockDigest#unique_digest})
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)
@@ -177,7 +179,7 @@ module SidekiqUniqueJobs
       enqueue(conn) do
         primed_async(conn) do
           locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield job_id if locked_token == job_id
+          return yield if locked_token == job_id
         end
       end
     ensure
@@ -195,7 +197,9 @@ module SidekiqUniqueJobs
     # @return [Object] whatever the block returns when lock was acquired
     #
     def primed_async(conn)
-      return yield if Concurrent::Promises.future(conn) { |red_con| pop_queued(red_con) }.value
+      return yield if Concurrent::Promises
+                      .future(conn) { |red_con| pop_queued(red_con) }
+                      .value(drift(config.ttl))
 
       warn_about_timeout
     end
@@ -211,12 +215,12 @@ module SidekiqUniqueJobs
     # @yieldparam [String] job_id a Sidekiq JID
     #
     def lock_sync(conn)
-      return yield job_id if locked?(conn)
+      return yield if locked?(conn)
 
       enqueue(conn) do
         primed_sync(conn) do
           locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield job_id if locked_token == job_id
+          return yield if locked_token
         end
       end
     end
@@ -284,7 +288,7 @@ module SidekiqUniqueJobs
       return unless queued_token && (validity >= 0 || config.pttl.zero?)
 
       write_lock_info(conn)
-      yield queued_token
+      yield
     end
 
     #

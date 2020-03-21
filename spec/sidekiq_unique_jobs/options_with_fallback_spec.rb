@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   let(:options_with_fallback) { class_with_options.new(item, options, worker_class) }
   let(:options)               { nil }
@@ -50,9 +49,9 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       it { is_expected.to eq("while_executing") }
 
       context "when SidekiqUniqueJobs.config.enabled = false" do
-        before { SidekiqUniqueJobs.config.enabled = false }
-
-        after  { SidekiqUniqueJobs.config.enabled = true }
+        around do |example|
+          SidekiqUniqueJobs.disable!(&example)
+        end
 
         it { is_expected.to eq(false) }
       end
@@ -64,9 +63,9 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       it { is_expected.to eq("until_executed") }
 
       context "when SidekiqUniqueJobs.config.enabled = false" do
-        before { SidekiqUniqueJobs.config.enabled = false }
-
-        after  { SidekiqUniqueJobs.config.enabled = true }
+        around do |example|
+          SidekiqUniqueJobs.disable!(&example)
+        end
 
         it { is_expected.to eq(false) }
       end
@@ -186,7 +185,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       let(:default_worker_options) { { "lock" => :while_executing } }
 
       it do
-        with_default_worker_options(default_worker_options) do
+        Sidekiq.use_options(default_worker_options) do
           expect(class_options).to include(default_worker_options)
         end
       end

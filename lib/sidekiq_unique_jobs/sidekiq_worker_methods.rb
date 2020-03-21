@@ -43,7 +43,8 @@ module SidekiqUniqueJobs
     #
     # @return [Sidekiq::Worker]
     def worker_class_constantize(klazz = @worker_class)
-      return klazz unless klazz.is_a?(String)
+      return klazz.class if klazz.is_a?(Sidekiq::Worker) # sidekiq v6.x
+      return klazz       unless klazz.is_a?(String)
 
       Object.const_get(klazz)
     rescue NameError => ex

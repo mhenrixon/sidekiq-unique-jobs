@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Lock::ServerValidator do
   let(:lock_config) do
     SidekiqUniqueJobs::LockConfig.new(

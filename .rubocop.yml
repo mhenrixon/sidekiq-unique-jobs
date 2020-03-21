@@ -1,25 +1,14 @@
-require:
-  - rubocop-performance
-  - rubocop-rspec
-
-inherit_mode:
-  merge:
-    - Exclude
+inherit_gem:
+  rubocop-mhenrixon:
+    - config/default.yml
 
 AllCops:
   TargetRubyVersion: 2.5
   Include:
-    - "**/Rakefile"
-    - "**/Gemfile"
-    - "*.gemspec"
-    - "lib/**/*.rb"
-    - "bin/**/*.rb"
-    - "spec/**/*.rb"
     - "examples/**/*.rb"
   Exclude:
-    - "Gemfile.lock"
     - "**/*.erb"
-    - "gemfiles/**/*"
+    - "**/*.lua"
     - "bin/bench"
 
 Layout/EndAlignment:
@@ -29,7 +18,7 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - "spec/**/*"
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: true
 
 Lint/UselessAssignment:
@@ -40,9 +29,6 @@ Metrics/AbcSize:
 
 Metrics/CyclomaticComplexity:
   Max: 7
-
-Metrics/LineLength:
-  Max: 125
 
 Metrics/MethodLength:
   Max: 13
@@ -72,12 +58,9 @@ Naming/FileName:
 Naming/RescuedExceptionsVariableName:
   PreferredName: ex
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   AllowedNames:
     - ex
-
-RSpec/AlignLeftLetBrace:
-  Enabled: true
 
 RSpec/DescribeClass:
   Exclude:
@@ -98,6 +81,7 @@ RSpec/FilePath:
   Enabled: true
   Exclude:
     - spec/performance/locksmith_spec.rb
+    - spec/performance/lock_digest_spec.rb
 
 RSpec/InstanceVariable:
   Exclude:
@@ -119,7 +103,7 @@ Style/Documentation:
   Enabled: true
   Exclude:
     - "examples/**/*.rb"
-    - "my_app/**/*.rb"
+    - "myapp/**/*.rb"
     - "bin/**/*.rb"
     - "lib/sidekiq_unique_jobs/testing.rb"
     - "lib/sidekiq_unique_jobs/core_ext.rb"
@@ -128,12 +112,6 @@ Style/Documentation:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
-
-Style/GlobalVars:
-  Enabled: true
-
-Style/ModuleFunction:
-  Enabled: false
 
 Style/StringLiterals:
   Enabled: true
@@ -163,3 +141,14 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: comma
+
+Style/GlobalVars:
+  Enabled: true
+
+Style/ModuleFunction:
+  Enabled: false
+
+ThreadSafety/InstanceVariableInClassMethod:
+  Exclude:
+    - lib/sidekiq_unique_jobs/web.rb
+

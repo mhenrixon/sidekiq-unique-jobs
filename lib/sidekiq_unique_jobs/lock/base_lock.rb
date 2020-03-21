@@ -28,7 +28,8 @@ module SidekiqUniqueJobs
         @callback   = callback
         @redis_pool = redis_pool
         @attempt    = 0
-        add_uniqueness_when_missing # Used to ease testing
+        prepare_item # Used to ease testing
+        @lock_config = LockConfig.new(item)
       end
 
       #
@@ -41,7 +42,6 @@ module SidekiqUniqueJobs
       # @yield to the caller when given a block
       #
       def lock(&block)
-        # TODO: only use replace strategy when server is executing the lock
         return call_strategy unless (locked_token = locksmith.lock(&block))
 
         locked_token
@@ -90,26 +90,29 @@ module SidekiqUniqueJobs
 
       private
 
-      def add_uniqueness_when_missing
+      def prepare_item
         return if item.key?(UNIQUE_DIGEST)
 
         # The below should only be done to ease testing
         # in production this will be done by the middleware
-        SidekiqUniqueJobs::Job.add_uniqueness(item)
+        SidekiqUniqueJobs::Job.prepare(item)
       end
 
       def call_strategy
         @attempt += 1
-        strategy.call { lock if replace? }
+        client_strategy.call { lock if replace? }
       end
 
       def replace?
-        strategy.replace? && attempt < 2
+        client_strategy.replace? && attempt < 2
       end
 
       # @!attribute [r] item
       #   @return [Hash<String, Object>] the Sidekiq job hash
       attr_reader :item
+      # @!attribute [r] lock_config
+      #   @return [LockConfig] a lock configuration
+      attr_reader :lock_config
       # @!attribute [r] redis_pool
       #   @return [Sidekiq::RedisConnection, ConnectionPool, NilClass] the redis connection
       attr_reader :redis_pool
@@ -129,13 +132,20 @@ module SidekiqUniqueJobs
 
       def callback_safely
         callback&.call
+        item[JID]
       rescue StandardError
         log_warn("unlocked successfully but the #after_unlock callback failed!")
         raise
       end
 
-      def strategy
-        @strategy ||= OnConflict.find_strategy(item[ON_CONFLICT]).new(item, redis_pool)
+      def client_strategy
+        @client_strategy ||=
+          OnConflict.find_strategy(lock_config.on_client_conflict).new(item, redis_pool)
+      end
+
+      def server_strategy
+        @server_strategy ||=
+          OnConflict.find_strategy(lock_config.on_server_conflict).new(item, redis_pool)
       end
     end
   end

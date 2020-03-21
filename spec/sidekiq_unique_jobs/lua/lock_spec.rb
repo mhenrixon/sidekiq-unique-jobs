@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 RSpec.describe "lock.lua" do
   subject(:lock) { call_script(:lock, key.to_a, argv_one) }
 

@@ -34,18 +34,22 @@ module SidekiqUniqueJobs
 
     def self.start
       Thread.current[:_method_profiler] = {
-        __start: Process.clock_gettime(Process::CLOCK_MONOTONIC),
+        __start: current_timestamp,
       }
     end
 
     def self.stop
-      finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      finish = current_timestamp
       return unless (data = Thread.current[:_method_profiler])
 
       Thread.current[:_method_profiler] = nil
       start = data.delete(:__start)
       data[:total_duration] = finish - start
       data
+    end
+
+    def self.current_timestamp
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
   end
 end

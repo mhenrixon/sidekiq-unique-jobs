@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Logging do
   let(:logger)  { SidekiqUniqueJobs.logger }
   let(:message) { "A log message" }

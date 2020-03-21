@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Orphans::Observer do
   let(:observer) { described_class.new }
 

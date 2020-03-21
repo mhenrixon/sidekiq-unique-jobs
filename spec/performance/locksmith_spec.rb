@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
   let(:locksmith_one)   { described_class.new(item_one) }
   let(:locksmith_two)   { described_class.new(item_two) }
@@ -27,6 +25,27 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
   end
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
-  specify { expect { locksmith_one.lock {} }.to perform_under(3).ms }
-  specify { expect { locksmith_one.lock {} }.to perform_allocation(Array => 11_048, Hash => 6_184).bytes }
+  context "when already locked" do
+    before { locksmith_one.lock }
+
+    after { locksmith_one.delete! }
+
+    it "locks in under 2 ms" do
+      expect { locksmith_two.lock {} }.to perform_under(2).ms
+    end
+  end
+
+  it "locks in under 2 ms" do
+    expect { locksmith_one.lock {} }.to perform_under(2).ms
+  end
+
+  it "unlocks in under 1 ms" do
+    locksmith_one.lock
+
+    expect { locksmith_one.unlock }.to perform_under(1).ms
+  end
+
+  it "locks with expected allocations" do
+    expect { locksmith_one.lock {} }.to perform_allocation(Array => 12_640, Hash => 13_888).bytes
+  end
 end

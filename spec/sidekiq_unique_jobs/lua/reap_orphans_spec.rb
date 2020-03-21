@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe "reap_orphans.lua" do
   subject(:reap_orphans) do
     call_script(
@@ -23,7 +21,7 @@ RSpec.describe "reap_orphans.lua" do
   let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
   let(:job_id)   { "job_id" }
   let(:item)     { raw_item }
-  let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
+  let(:raw_item) { { "class" => MyUniqueJob, "args" => [1, 2], "jid" => job_id, "unique_digest" => digest } }
   let(:lock_info) do
     {
       "job_id" => job_id,
@@ -32,7 +30,7 @@ RSpec.describe "reap_orphans.lua" do
       "time" => now_f,
       "timeout" => nil,
       "ttl" => nil,
-      "unique_args" => [],
+      "unique_args" => [1, 2],
       "worker" => "MyUniqueJob",
     }
   end

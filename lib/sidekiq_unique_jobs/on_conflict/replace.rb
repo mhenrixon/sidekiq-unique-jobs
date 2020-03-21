@@ -64,7 +64,17 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of keys deleted
       #
       def delete_lock
-        call_script(:delete_by_digest, keys: [unique_digest, DIGESTS])
+        digests.delete_by_digest(unique_digest)
+      end
+
+      #
+      # Access to the {Digests}
+      #
+      #
+      # @return [Digests] and instance with digests
+      #
+      def digests
+        @digests ||= SidekiqUniqueJobs::Digests.new
       end
     end
   end

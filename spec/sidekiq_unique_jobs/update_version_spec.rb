@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::UpdateVersion do
   describe ".call" do
     subject(:call) { described_class.call }

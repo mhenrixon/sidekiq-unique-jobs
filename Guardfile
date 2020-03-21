@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 REEK_ARGS = %w[
   --line-numbers
   --color
@@ -16,12 +18,14 @@ RSPEC_OPTIONS = {
   cmd: "env COV=true bundle exec rspec",
   # cmd_additional_args: "--format documentation",
   failed_mode: :focus,
-  all_on_start: false
-}
+  all_on_start: false,
+}.freeze
 
 scope group: :tdd
 clearing :on
-notification :terminal_notifier, app_name: "sidekiq-unique-jobs ::", activate: "com.googlecode.iTerm2" if `uname` =~ /Darwin/
+if /Darwin/.match?(`uname`)
+  notification :terminal_notifier, app_name: "sidekiq-unique-jobs ::", activate: "com.googlecode.iTerm2"
+end
 
 group :tdd, halt_on_fail: true do
   guard :rspec, RSPEC_OPTIONS do
@@ -42,16 +46,16 @@ group :tdd, halt_on_fail: true do
   end
 
   guard :rubocop, all_on_start: false, cli: RUBOCOP_ARGS do
-    watch(%r{.+\.rb$})
+    watch(/.+\.rb$/)
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
   end
 
   guard :reek, all_on_start: false, cli: REEK_ARGS do
-    watch(%r{.+\.rb$})
-    watch('.reek')
+    watch(/.+\.rb$/)
+    watch(".reek")
   end
 end
 
 guard :bundler do
-  watch('Gemfile')
+  watch("Gemfile")
 end

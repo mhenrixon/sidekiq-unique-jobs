@@ -8,7 +8,11 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
     module Helpers
+      #
+      # @return [String] the path to gem specific views
       VIEW_PATH    = File.expand_path("../web/views", __dir__)
+      #
+      # @return [Array<String>] safe params
       SAFE_CPARAMS = %w[cursor prev_cursor].freeze
 
       module_function
@@ -43,9 +47,7 @@ module SidekiqUniqueJobs
       #
       def cparams(options)
         # stringify
-        options.keys.each do |key|
-          options[key.to_s] = options.delete(key)
-        end
+        options.transform_keys(&:to_s)
 
         params.merge(options).map do |key, value|
           next unless SAFE_CPARAMS.include?(key)

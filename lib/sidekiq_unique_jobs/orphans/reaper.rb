@@ -173,13 +173,49 @@ module SidekiqUniqueJobs
       #
       # @return [true] when digest exists in any queue
       #
-      #
       def enqueued?(digest)
-        if (result = call_script(:find_digest_in_queues, conn, keys: [digest]))
-          log_debug("#{digest} found in #{result}")
-          true
-        else
-          log_debug("#{digest} NOT found in any queues")
+        Sidekiq.redis do |conn|
+          queues(conn) do |queue|
+            entries(conn, queue) do |entry|
+              return true if entry.include?(digest)
+            end
+          end
+
+          false
+        end
+      end
+
+      #
+      # Loops through all the redis queues and yields them one by one
+      #
+      # @param [Redis] conn the connection to use for fetching queues
+      #
+      # @return [void]
+      #
+      # @yield queues one at a time
+      #
+      def queues(conn, &block)
+        conn.sscan_each("queues", &block)
+      end
+
+      def entries(conn, queue) # rubocop:disable Metrics/MethodLength
+        queue_key    = "queue:#{queue}"
+        initial_size = conn.llen(queue_key)
+        deleted_size = 0
+        page         = 0
+        page_size    = 50
+
+        loop do
+          range_start = page * page_size - deleted_size
+          range_end   = range_start + page_size - 1
+          entries     = conn.lrange(queue_key, range_start, range_end)
+          page       += 1
+
+          entries.each do |entry|
+            yield entry
+          end
+
+          deleted_size = initial_size - conn.llen(queue_key)
         end
       end
 

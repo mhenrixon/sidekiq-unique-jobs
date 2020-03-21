@@ -60,9 +60,12 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class InvalidUniqueArguments < UniqueJobsError
-    def initialize(given:, worker_class:, unique_args_method:)
-      uniq_args_meth  = worker_class.method(unique_args_method)
-      num_args        = uniq_args_meth.arity
+    def initialize(options)
+      given              = options[:given]
+      worker_class       = options[:worker_class]
+      unique_args_method = options[:unique_args_method]
+      uniq_args_meth     = worker_class.method(unique_args_method)
+      num_args           = uniq_args_meth.arity
       # source_location = uniq_args_meth.source_location
 
       super(
@@ -77,7 +80,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   class NotUniqueWorker < UniqueJobsError
-    def initialize(options: {})
+    def initialize(options)
       super("#{options[:class]} is not configured for uniqueness. Missing the key `:lock` in #{options.inspect}")
     end
   end

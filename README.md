@@ -1,4 +1,4 @@
-# SidekiqUniqueJobs [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg)](https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.png?branch=master)](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs) [![Code Climate](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.png)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs) [![Test Coverage](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage)
+# SidekiqUniqueJobs [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg)](https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.svg?branch=master)](https://travis-ci.org/mhenrixon/sidekiq-unique-jobs) [![Code Climate](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.svg)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs) [![Test Coverage](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg)](https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage)
 
 <!-- MarkdownTOC -->
 
@@ -33,25 +33,15 @@
   - [While Executing](#while-executing)
   - [Custom Locks](#custom-locks)
 - [Conflict Strategy](#conflict-strategy)
-  - [log](#log)
-  - [raise](#raise)
-  - [reject](#reject)
-  - [replace](#replace)
-  - [Reschedule](#reschedule)
-  - [Custom Strategies](#custom-strategies)
-- [Usage](#usage)
-  - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
-  - [After Unlock Callback](#after-unlock-callback)
-  - [Logging](#logging)
-  - [Cleanup Dead Locks](#cleanup-dead-locks)
-- [Debugging](#debugging)
-  - [Sidekiq Web](#sidekiq-web)
-    - [Show Locks](#show-locks)
-    - [Show Lock](#show-lock)
-- [Communication](#communication)
-- [Testing](#testing)
-  - [Unique Sidekiq Configuration](#unique-sidekiq-configuration)
-  - [Uniqueness](#uniqueness)
+- [lib/strategies/my_custom_strategy.rb](#libstrategiesmycustomstrategyrb)
+- [For rails application](#for-rails-application)
+- [config/initializers/sidekiq_unique_jobs.rb](#configinitializerssidekiquniquejobsrb)
+- [For other projects, whenever you prefer](#for-other-projects-whenever-you-prefer)
+- [this goes in your initializer](#this-goes-in-your-initializer)
+- [app/config/routes.rb](#appconfigroutesrb)
+- [app/workers/bad_worker.rb](#appworkersbad_workerrb)
+- [spec/workers/bad_worker_spec.rb](#specworkersbadworkerspecrb)
+- [OR](#or)
 - [Contributing](#contributing)
 - [Contributors](#contributors)
 
@@ -355,7 +345,7 @@ With this lock type it is possible to put any number of these jobs on the queue,
 
 **NOTE** Unless this job is configured with a `lock_timeout: nil` or `lock_timeout: > 0` then all jobs that are attempted to be executed will just be dropped without waiting.
 
-There is an example of this to try it out in the `my_app` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
+There is an example of this to try it out in the `myapp` application. Run `foreman start` in the root of the directory and open the url: `localhost:5000/work/duplicate_while_executing`.
 
 In the console you should see something like:
 
@@ -413,12 +403,17 @@ Please not that if you try to override a default lock, an `ArgumentError` will b
 
 Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
-The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments
+The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
+
+It is possible for locks to have different conflict strategy for the client and server. This is useful for `:until_and_while_executing`.
+
+```ruby
+sidekiq_options lock: :until_and_while_executing, on_conflict: { client: :log, server: :reject }
 
 ### log
 
 ```ruby
-sidekiq_options on_conflict: :log`
+sidekiq_options on_conflict: :log
 ```
 
 This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
@@ -426,7 +421,7 @@ This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It
 ### raise
 
 ```ruby
-sidekiq_options on_conflict: :raise`
+sidekiq_options on_conflict: :raise
 ```
 
 This strategy is intended to be used with `WhileExecuting`. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.
@@ -434,7 +429,7 @@ This strategy is intended to be used with `WhileExecuting`. Basically it will al
 ### reject
 
 ```ruby
-sidekiq_options on_conflict: :reject`
+sidekiq_options on_conflict: :reject
 ```
 
 This strategy is intended to be used with `WhileExecuting` and will push the job to the dead queue on conflict.
@@ -442,7 +437,7 @@ This strategy is intended to be used with `WhileExecuting` and will push the job
 ### replace
 
 ```ruby
-sidekiq_options on_conflict: :replace`
+sidekiq_options on_conflict: :replace
 ```
 
 This strategy is intended to be used with client locks like `UntilExecuted`.
@@ -455,7 +450,7 @@ always scheduled in the future. Currently only attempting to retry one time.
 ### Reschedule
 
 ```ruby
-sidekiq_options on_conflict: :reschedule`
+sidekiq_options on_conflict: :reschedule
 ```
 
 This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
@@ -475,7 +470,7 @@ module Strategies
 end
 ```
 
-You can refer on all the startegies defined in `lib/sidekiq_unique_jobs/on_conflict`.
+You can refer to all the strategies defined in `lib/sidekiq_unique_jobs/on_conflict`.
 
 In order to make it available, you should call in your project startup:
 
@@ -601,7 +596,8 @@ For sidekiq versions before 5.1 a `sidekiq_retries_exhausted` block is required 
 ```ruby
 class MyWorker
   sidekiq_retries_exhausted do |msg, _ex|
-    SidekiqUniqueJobs::Digests.del(digest: msg['unique_digest']) if msg['unique_digest']
+    digest = msg['unique_digest']
+    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 end
 ```
@@ -612,10 +608,31 @@ Starting in v5.1, Sidekiq can also fire a global callback when a job dies:
 # this goes in your initializer
 Sidekiq.configure_server do |config|
   config.death_handlers << ->(job, _ex) do
-    SidekiqUniqueJobs::Digests.del(digest: job['unique_digest']) if job['unique_digest']
+    digest = job['unique_digest']
+    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
   end
 end
 ```
+
+### Other Sidekiq gems
+
+#### sidekiq-global_id
+
+It was reported in [#235](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235) that the order of the Sidekiq middleware needs to be as follows.
+
+```ruby
+Sidekiq.client_middleware do |chain|
+  chain.add Sidekiq::GlobalId::ClientMiddleware
+  chain.add SidekiqUniqueJobs::Middleware::Client
+end
+
+Sidekiq.server_middleware do |chain|
+  chain.add SidekiqUniqueJobs::Middleware::Server
+  chain.add Sidekiq::GlobalId::ServerMiddleware
+end
+```
+
+For a working setup check the following [file](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/945c4c4c517168d49e3f8ee952fcc9c430865635/myapp/config/initializers/sidekiq.rb#L8)
 
 ## Debugging
 

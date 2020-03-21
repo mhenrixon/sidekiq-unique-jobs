@@ -59,6 +59,7 @@ RSpec::Matchers.define :have_ttl do |seconds|
       @ttl == seconds
     end
   end
+
   chain :within do |within|
     @within = within
   end

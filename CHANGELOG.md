@@ -1,5 +1,129 @@
 # Changelog
 
+## [v7.0.0.beta8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta7...v7.0.0.beta8)
+
+**Implemented enhancements:**
+
+- Allow worker to configure client and server strategies separately [\#402](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/402)
+- Separate client and server on\_conflict [\#462](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/462) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- `while\_executing` has problems at low concurrency [\#384](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/384)
+- lock: :until\_and\_while\_executing not working for scheduled jobs [\#334](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/334)
+
+**Closed issues:**
+
+- Custom Locks with error [\#392](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/392)
+- :until\_executed jobs get stuck every now and then [\#379](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/379)
+
+## [v7.0.0.beta7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta6...v7.0.0.beta7)
+
+**Fixed bugs:**
+
+- A worker with "While Executing" lock and "Reschedule" strategy is rescheduled forever [\#457](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/457)
+- Prevent callbacks from preventing locks [\#460](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/460) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.0.0.beta6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta6) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6)
+
+**Implemented enhancements:**
+
+- Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- Fix that Sidekiq now sends instance of worker [\#459](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/459) ([mhenrixon](https://github.com/mhenrixon))
+- Fix typo in readme [\#456](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/456) ([sheerun](https://github.com/sheerun))
+
+## [v6.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.18) (2019-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta5...v6.0.18)
+
+**Fixed bugs:**
+
+- Jobs not pushed when using sidekiq-status [\#412](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/412)
+- Fix sidekiq options [\#458](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/458) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Unique jobs only executed once when used with sidekiq-global\_id [\#235](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235)
+
+## [v7.0.0.beta5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta5) (2019-11-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.17...v7.0.0.beta5)
+
+**Implemented enhancements:**
+
+- Bump rails [\#450](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450) ([mhenrixon](https://github.com/mhenrixon))
+- Rename myapp [\#449](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/449) ([mhenrixon](https://github.com/mhenrixon))
+- Just to keep track of this [\#445](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/445) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Prevent multiple reapers [\#453](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/453) ([mhenrixon](https://github.com/mhenrixon))
+- Make deletion compatible with redis-namespace [\#452](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/452) ([mhenrixon](https://github.com/mhenrixon))
+- Make sure server process stays locked [\#448](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/448) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Deletion of digest doesn't work from admin UI [\#438](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/438)
+
+**Merged pull requests:**
+
+- Bump gems [\#446](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/446) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v6.0.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.17) (2019-11-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.16...v6.0.17)
+
+**Fixed bugs:**
+
+- Allow redis namespace to work with deletion [\#451](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/451) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v6.0.16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.16) (2019-11-25)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta4...v6.0.16)
+
+**Fixed bugs:**
+
+- Ensure runtime locks are removed [\#447](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/447) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.0.0.beta4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta4) (2019-11-25)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta3...v7.0.0.beta4)
+
+**Fixed bugs:**
+
+- Fix ruby reaper [\#444](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/444) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.0.0.beta3](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta3) (2019-11-24)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta2...v7.0.0.beta3)
+
+**Implemented enhancements:**
+
+- Brpoplpush redis script [\#434](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/434) ([mhenrixon](https://github.com/mhenrixon))
+- Drop support for almost EOL ruby 2.4 [\#433](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/433) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Redis is busy running script and script never terminates [\#441](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/441)
+- Make the ruby reaper plain ruby [\#443](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/443) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Some jobs seem to be treated as duplicate despite empty queue [\#440](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/440)
+
+**Merged pull requests:**
+
+- Fix typo and some formatting issues in README [\#442](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/442) ([ajkerr](https://github.com/ajkerr))
+
 ## [v7.0.0.beta2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta2) (2019-10-08)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta1...v7.0.0.beta2)

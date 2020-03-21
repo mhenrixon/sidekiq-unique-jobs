@@ -49,8 +49,8 @@ plugins:
     config:
       file: .reek.yml
   rubocop:
-    enabled: true
-    channel: rubocop-0-74
+    enabled: false
+    channel: rubocop-0-76
     config:
       file: .rubocop.yml
 
@@ -59,7 +59,7 @@ exclude_patterns:
   - "*.gemspec"
   - "Appraisals"
   - "gemfiles/"
-  - "my_app/"
+  - "myapp/"
   - "tmp/"
   - "spec/"
   - "assets/"

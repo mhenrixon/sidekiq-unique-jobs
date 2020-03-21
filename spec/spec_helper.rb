@@ -2,7 +2,7 @@
 
 require "bundler/setup"
 
-if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6" && RUBY_VERSION < "2.7"
+if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6"
   require "simplecov" unless %w[false 0].include?(ENV["COV"])
 
   begin
@@ -25,6 +25,7 @@ require "sidekiq_unique_jobs/testing"
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 
 LOGLEVEL = ENV.fetch("LOGLEVEL") { "ERROR" }.upcase
+ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_worker_options
 
 SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get(LOGLEVEL)
@@ -35,8 +36,8 @@ end
 
 require "sidekiq/redis_connection"
 
-Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].each { |f| require f }
-Dir[File.join(File.dirname(__FILE__), "..", "examples", "**", "*.rb")].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].sort.each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), "..", "examples", "**", "*.rb")].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.define_derived_metadata do |meta|

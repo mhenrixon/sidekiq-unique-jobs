@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe SidekiqUniqueJobs::LockInfo do
   subject(:entity) { described_class.new(key) }
 
