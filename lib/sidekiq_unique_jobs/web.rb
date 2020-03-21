@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 begin
+  require "delegate"
+  require "rack"
   require "sidekiq/web"
 rescue LoadError # rubocop:disable Lint/SuppressedException
   # client-only usage
