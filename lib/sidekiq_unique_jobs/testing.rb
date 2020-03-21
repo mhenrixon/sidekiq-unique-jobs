@@ -22,14 +22,15 @@ module Sidekiq
   # @param [Hash<Symbol, Object>] tmp_config the temporary config to use
   #
   def self.use_options(tmp_config = {})
-    old_config = default_worker_options
+    old_options = default_worker_options.dup
+
     default_worker_options.clear
     self.default_worker_options = tmp_config
-
     yield
   ensure
     default_worker_options.clear
-    self.default_worker_options = old_config
+    self.default_worker_options = DEFAULT_WORKER_OPTIONS
+    self.default_worker_options = old_options
   end
 
   #
@@ -48,13 +49,13 @@ module Sidekiq
       # @param [Hash<Symbol, Object>] tmp_config the temporary config to use
       #
       def use_options(tmp_config = {})
-        old_config = get_sidekiq_options
-        sidekiq_options(tmp_config)
+        old_options = sidekiq_options_hash.dup
+        sidekiq_options(old_options.merge(tmp_config))
 
         yield
       ensure
-        self.sidekiq_options_hash = Sidekiq.default_worker_options
-        sidekiq_options(old_config)
+        self.sidekiq_options_hash = Sidekiq::DEFAULT_WORKER_OPTIONS
+        sidekiq_options(old_options)
       end
 
       #
@@ -74,6 +75,13 @@ module Sidekiq
     # Prepends deletion of locks to clear_all
     #
     module Overrides
+      #
+      # Overrides sidekiq_options on the worker class to prepend validation
+      #
+      # @param [Hash] options worker options
+      #
+      # @return [void]
+      #
       def sidekiq_options(options = {})
         SidekiqUniqueJobs.validate_worker!(options) if SidekiqUniqueJobs.config.raise_on_config_error
 

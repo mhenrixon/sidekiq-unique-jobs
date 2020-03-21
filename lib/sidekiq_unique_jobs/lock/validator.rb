@@ -53,10 +53,16 @@ module SidekiqUniqueJobs
         lock_config
       end
 
+      #
+      # Validates the client configuration
+      #
       def validate_client
         ClientValidator.validate(lock_config)
       end
 
+      #
+      # Validates the server configuration
+      #
       def validate_server
         ServerValidator.validate(lock_config)
       end

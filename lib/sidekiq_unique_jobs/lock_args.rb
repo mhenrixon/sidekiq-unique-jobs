@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   # Handles uniqueness of sidekiq arguments
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class UniqueArgs
+  class LockArgs
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::SidekiqWorkerMethods
     include SidekiqUniqueJobs::JSON
@@ -58,7 +58,6 @@ module SidekiqUniqueJobs
     end
 
     # Filters unique arguments by proc or symbol
-    # @param [Array] args the arguments passed to the sidekiq worker
     # @return [Array] {#filter_by_proc} when {#unique_args_method} is a Proc
     # @return [Array] {#filter_by_symbol} when {#unique_args_method} is a Symbol
     # @return [Array] args unfiltered when neither of the above

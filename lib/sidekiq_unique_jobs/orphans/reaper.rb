@@ -173,7 +173,6 @@ module SidekiqUniqueJobs
       #
       # @return [true] when digest exists in any queue
       #
-      #
       def enqueued?(digest)
         Sidekiq.redis do |conn|
           queues(conn) do |queue|
@@ -186,6 +185,15 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Loops through all the redis queues and yields them one by one
+      #
+      # @param [Redis] conn the connection to use for fetching queues
+      #
+      # @return [void]
+      #
+      # @yield queues one at a time
+      #
       def queues(conn, &block)
         conn.sscan_each("queues", &block)
       end

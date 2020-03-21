@@ -33,7 +33,7 @@ RSpec.describe ExpiringJob do
 
       it "allows duplicate messages to different queues" do
         expect(1).to be_enqueued_in("customqueue2")
-        with_sidekiq_options_for(described_class, queue: "customqueue2") do
+        described_class.use_options(queue: "customqueue2") do
           described_class.perform_async(1, 2)
           expect(1).to be_enqueued_in("customqueue2")
         end
@@ -59,7 +59,7 @@ RSpec.describe ExpiringJob do
       it "allows duplicate messages to different queues" do
         expect(1).to be_enqueued_in("customqueue")
         expect(0).to be_enqueued_in("customqueue2")
-        with_sidekiq_options_for(described_class, queue: "customqueue2") do
+        described_class.use_options(queue: "customqueue2") do
           described_class.perform_async(1, 2)
           expect(1).to be_enqueued_in("customqueue2")
         end

@@ -25,11 +25,15 @@ module SidekiqUniqueJobs
   #
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
   class Config < ThreadSafeConfig
+    #
+    # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available queued locks
     LOCKS_WHILE_ENQUEUED = {
       until_executing: SidekiqUniqueJobs::Lock::UntilExecuting,
       while_enqueued: SidekiqUniqueJobs::Lock::UntilExecuting,
     }.freeze
 
+    #
+    # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available fulltime locks
     LOCKS_FROM_PUSH_TO_PROCESSED = {
       until_completed: SidekiqUniqueJobs::Lock::UntilExecuted,
       until_executed: SidekiqUniqueJobs::Lock::UntilExecuted,
@@ -39,10 +43,14 @@ module SidekiqUniqueJobs
       until_successfully_completed: SidekiqUniqueJobs::Lock::UntilExecuted,
     }.freeze
 
+    #
+    # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available locks without unlock
     LOCKS_WITHOUT_UNLOCK = {
       until_expired: SidekiqUniqueJobs::Lock::UntilExpired,
     }.freeze
 
+    #
+    # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available runtime/client locks
     LOCKS_WHEN_BUSY = {
       around_perform: SidekiqUniqueJobs::Lock::WhileExecuting,
       while_busy: SidekiqUniqueJobs::Lock::WhileExecuting,
@@ -51,6 +59,8 @@ module SidekiqUniqueJobs
       while_executing_reject: SidekiqUniqueJobs::Lock::WhileExecutingReject,
     }.freeze
 
+    #
+    # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available default locks
     LOCKS =
       LOCKS_WHEN_BUSY.dup
                      .merge(LOCKS_WHILE_ENQUEUED.dup)
@@ -58,6 +68,8 @@ module SidekiqUniqueJobs
                      .merge(LOCKS_FROM_PUSH_TO_PROCESSED.dup)
                      .freeze
 
+    #
+    # @return [Hash<Symbol, SidekiqUniqueJobs::OnConflict::Strategy] all available default strategies
     STRATEGIES = {
       log: SidekiqUniqueJobs::OnConflict::Log,
       raise: SidekiqUniqueJobs::OnConflict::Raise,
@@ -66,18 +78,44 @@ module SidekiqUniqueJobs
       reschedule: SidekiqUniqueJobs::OnConflict::Reschedule,
     }.freeze
 
+    #
+    # @return ['uniquejobs'] by default we use this prefix
     PREFIX                = "uniquejobs"
+    #
+    # @return [0] by default don't wait for locks
     LOCK_TIMEOUT          = 0
+    #
+    # @return [nil]
     LOCK_TTL              = nil
+    #
+    # @return [true] by default the gem is enabled
     ENABLED               = true
+    #
+    # @return [false] by default we don't debug the lua scripts because it is slow
     DEBUG_LUA             = false
+    #
+    # @return [1_000] use a changelog history of 1_000 entries by default
     MAX_HISTORY           = 1_000
-    REAPER                = :ruby # The type of cleanup to run. Possible values are [:ruby, :lua]
+    #
+    # @return [:ruby] prefer the ruby reaper by default since the lua reaper still has problems
+    REAPER                = :ruby
+    #
+    # @return [1_000] reap 1_000 orphaned locks at a time by default
     REAPER_COUNT          = 1_000
-    REAPER_INTERVAL       = 600 # Every 10 minutes
-    REAPER_TIMEOUT        = 10 # 10 seconds
+    #
+    # @return [600] reap locks every 10 minutes
+    REAPER_INTERVAL       = 600
+    #
+    # @return [10] stop reaper after 10 seconds
+    REAPER_TIMEOUT        = 10
+    #
+    # @return [false] while useful it also adds overhead so disable lock_info by default
     USE_LOCK_INFO         = false
+    #
+    # @return [false] by default we don't raise validation errors for workers
     RAISE_ON_CONFIG_ERROR = false
+    #
+    # @return [0.0.0] default redis version is only to avoid NoMethodError on nil
     REDIS_VERSION         = "0.0.0"
 
     #
@@ -185,6 +223,12 @@ module SidekiqUniqueJobs
       self.strategies = new_strategies
     end
 
+    #
+    # The current version of redis
+    #
+    #
+    # @return [String] a version string eg. `5.0.1`
+    #
     def redis_version
       self.current_redis_version = SidekiqUniqueJobs.fetch_redis_version if current_redis_version == REDIS_VERSION
       current_redis_version

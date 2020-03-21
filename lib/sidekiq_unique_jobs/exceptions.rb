@@ -60,7 +60,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class InvalidUniqueArguments < UniqueJobsError
-    def initialize(**options)
+    def initialize(options)
       given              = options[:given]
       worker_class       = options[:worker_class]
       unique_args_method = options[:unique_args_method]

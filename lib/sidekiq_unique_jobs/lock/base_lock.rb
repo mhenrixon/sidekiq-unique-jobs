@@ -28,7 +28,7 @@ module SidekiqUniqueJobs
         @callback   = callback
         @redis_pool = redis_pool
         @attempt    = 0
-        add_uniqueness_when_missing # Used to ease testing
+        prepare_item # Used to ease testing
         @lock_config = LockConfig.new(item)
       end
 
@@ -90,12 +90,12 @@ module SidekiqUniqueJobs
 
       private
 
-      def add_uniqueness_when_missing
+      def prepare_item
         return if item.key?(UNIQUE_DIGEST)
 
         # The below should only be done to ease testing
         # in production this will be done by the middleware
-        SidekiqUniqueJobs::Job.add_uniqueness(item)
+        SidekiqUniqueJobs::Job.prepare(item)
       end
 
       def call_strategy

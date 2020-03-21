@@ -4,11 +4,18 @@ module SidekiqUniqueJobs
   # Handles uniqueness of sidekiq arguments
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class UniqueDigest
+  class LockDigest
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::JSON
     include SidekiqUniqueJobs::SidekiqWorkerMethods
 
+    #
+    # Generates a new digest
+    #
+    # @param [Hash] item a sidekiq job hash
+    #
+    # @return [String] a unique digest for the given arguments
+    #
     def self.call(item)
       new(item).unique_digest
     end

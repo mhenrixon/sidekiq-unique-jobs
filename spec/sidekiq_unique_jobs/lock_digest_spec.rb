@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::UniqueDigest do
+RSpec.describe SidekiqUniqueJobs::LockDigest do
   let(:digest)       { described_class.new(item) }
   let(:worker_class) { UntilExecutedJob }
   let(:class_name)   { worker_class.to_s }
@@ -66,54 +66,54 @@ RSpec.describe SidekiqUniqueJobs::UniqueDigest do
     end
   end
 
-  describe "#digestable_hash", :with_sidekiq_options do
+  describe "#digestable_hash" do
     subject(:digestable_hash) { digest.digestable_hash }
 
     it { is_expected.to eq("class" => "UntilExecutedJob", "queue" => "myqueue", "unique_args" => [[1, 2]]) }
 
-    context "when unique_across_queues" do
+    context "when unique_across_queues", :with_worker_options do
       let(:worker_options) { { unique_across_queues: true } }
 
       it { is_expected.to eq("class" => "UntilExecutedJob", "unique_args" => [[1, 2]]) }
     end
 
-    context "when unique_across_workers" do
+    context "when unique_across_workers", :with_worker_options do
       let(:worker_options) { { unique_across_workers: true } }
 
       it { is_expected.to eq("queue" => "myqueue", "unique_args" => [[1, 2]]) }
     end
   end
 
-  describe "#unique_across_queues?", :with_sidekiq_options do
+  describe "#unique_across_queues?" do
     subject(:unique_across_queues?) { digest.unique_across_queues? }
 
     it { is_expected.to eq(nil) }
 
-    context "when unique_across_queues: true" do
+    context "when unique_across_queues: true", :with_worker_options do
       let(:worker_options) { { unique_across_queues: true } }
 
       it { is_expected.to eq(true) }
     end
 
-    context "when unique_across_queues: false" do
+    context "when unique_across_queues: false", :with_worker_options do
       let(:worker_options) { { unique_across_queues: false } }
 
       it { is_expected.to eq(false) }
     end
   end
 
-  describe "#unique_across_workers?", :with_sidekiq_options do
+  describe "#unique_across_workers?" do
     subject(:unique_across_workers?) { digest.unique_across_workers? }
 
     it { is_expected.to eq(nil) }
 
-    context "when unique_across_workers: true" do
+    context "when unique_across_workers: true", :with_worker_options do
       let(:worker_options) { { unique_across_workers: true } }
 
       it { is_expected.to eq(true) }
     end
 
-    context "when unique_across_workers: false" do
+    context "when unique_across_workers: false", :with_worker_options do
       let(:worker_options) { { unique_across_workers: false } }
 
       it { is_expected.to eq(false) }

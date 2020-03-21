@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     #
     module Matchers
       #
-      # Class BeLockable validates the unique/lock configuration for your worker.
+      # Class HaveValidSidekiqOptions validates the unique/lock configuration for a worker.
       #
       # @author Mikael Henriksson <mikael@zoolutions.se>
       #
@@ -23,6 +23,7 @@ module SidekiqUniqueJobs
           lock_config.valid?
         end
 
+        # :nodoc:
         def failure_message
           <<~FAILURE_MESSAGE
             Expected #{worker} to have valid sidekiq options but found the following problems:
@@ -30,11 +31,18 @@ module SidekiqUniqueJobs
           FAILURE_MESSAGE
         end
 
+        # :nodoc:
         def description
           "have valid sidekiq options"
         end
       end
 
+      #
+      # RSpec matcher method for validating that a sidekiq worker has valid unique/lock configuration
+      #
+      #
+      # @return [HaveValidSidekiqOptions] an RSpec matcher
+      #
       def have_valid_sidekiq_options(*args) # rubocop:disable Naming/PredicateName
         HaveValidSidekiqOptions.new(*args)
       end
