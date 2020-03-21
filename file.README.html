@@ -6,15 +6,15 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "README";
   relpath = '';
 </script>
@@ -57,7 +57,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><div id='filecontents'><h1>SidekiqUniqueJobs <a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> <a href="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs"><img src="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.png?branch=master" alt="Build Status"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.png" alt="Code Climate"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg" alt="Test Coverage"></a></h1>
+      <div id="content"><div id='filecontents'><h1>SidekiqUniqueJobs <a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> <a href="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs"><img src="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.svg?branch=master" alt="Build Status"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.svg" alt="Code Climate"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg" alt="Test Coverage"></a></h1>
 
 <!-- MarkdownTOC -->
 
@@ -88,8 +88,8 @@
 <ul>
 <li><a href="#lock_ttl-1">lock_ttl</a></li>
 <li><a href="#lock_timeout-1">lock_timeout</a></li>
-<li><a href="#uniqueacrossqueues">unique_across_queues</a></li>
-<li><a href="#uniqueacrossworkers">unique_across_workers</a></li>
+<li><a href="#unique_across_queues">unique_across_queues</a></li>
+<li><a href="#unique_across_workers">unique_across_workers</a></li>
 </ul></li>
 <li><a href="#locks">Locks</a>
 
@@ -102,14 +102,14 @@
 <li><a href="#custom-locks">Custom Locks</a></li>
 </ul></li>
 <li><a href="#conflict-strategy">Conflict Strategy</a></li>
-<li><a href="#libstrategiesmycustomstrategyrb">lib/strategies/my_custom_strategy.rb</a></li>
+<li><a href="#libstrategiesmy_custom_strategyrb">lib/strategies/my_custom_strategy.rb</a></li>
 <li><a href="#for-rails-application">For rails application</a></li>
-<li><a href="#configinitializerssidekiquniquejobsrb">config/initializers/sidekiq_unique_jobs.rb</a></li>
+<li><a href="#configinitializerssidekiq_unique_jobsrb">config/initializers/sidekiq_unique_jobs.rb</a></li>
 <li><a href="#for-other-projects-whenever-you-prefer">For other projects, whenever you prefer</a></li>
 <li><a href="#this-goes-in-your-initializer">this goes in your initializer</a></li>
 <li><a href="#appconfigroutesrb">app/config/routes.rb</a></li>
 <li><a href="#appworkersbad_workerrb">app/workers/bad_worker.rb</a></li>
-<li><a href="#specworkersbadworkerspecrb">spec/workers/bad_worker_spec.rb</a></li>
+<li><a href="#specworkersbad_worker_specrb">spec/workers/bad_worker_spec.rb</a></li>
 <li><a href="#or">OR</a></li>
 <li><a href="#contributing">Contributing</a></li>
 <li><a href="#contributors">Contributors</a></li>
@@ -546,9 +546,9 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 
 <h3>Finer Control over Uniqueness</h3>
 
-<p>Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be <em>transient</em>. For this use-case, you need to define either a <code>unique_args</code> method, or a ruby proc.</p>
+<p>Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be <em>transient</em>. For this use-case, you need to define either a <code>lock_args</code> method, or a ruby proc.</p>
 
-<p><em>NOTE:</em> The unique_args method need to return an array of values to use for uniqueness check.</p>
+<p><em>NOTE:</em> The lock_args method need to return an array of values to use for uniqueness check.</p>
 
 <p><em>NOTE:</em> The arguments passed to the proc or the method is always an array. If your method takes a single array as argument the value of args will be <code>[[...]]</code>.</p>
 
@@ -557,9 +557,9 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 <pre class="code ruby"><code class="ruby">class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :until_and_while_executing,
-                  unique_args: :unique_args # this is default and will be used if such a method is defined
+                  lock_args: :lock_args # this is default and will be used if such a method is defined
 
-  def self.unique_args(args)
+  def self.lock_args(args)
     [ args[0], args[2][:type] ]
   end
 
@@ -570,7 +570,7 @@ end
 class UniqueJobWithFilterProc
   include Sidekiq::Worker
   sidekiq_options lock: :until_executed,
-                  unique_args: -&gt;(args) { [ args.first ] }
+                  lock_args: -&gt;(args) { [ args.first ] }
 
   ...
 
@@ -581,9 +581,9 @@ end
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>UniqueJobWithFilterMethod</span>
   <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span>
-  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_and_while_executing</span><span class='comma'>,</span> <span class='label'>unique_args:</span> <span class='symbol'>:unique_args</span>
+  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_and_while_executing</span><span class='comma'>,</span> <span class='label'>lock_args:</span> <span class='symbol'>:lock_args</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_unique_args'>unique_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_lock_args'>lock_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>ProcessSet</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>1</span>
       <span class='comment'># sidekiq runtime; uniqueness for the object (first arg)
 </span>      <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -806,9 +806,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:02 2019 by
+  Generated on Sat Mar 21 20:13:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

@@ -6,15 +6,15 @@
 <title>
   Class: SidekiqUniqueJobs::Locksmith
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::Locksmith";
   relpath = '../';
 </script>
@@ -139,7 +139,34 @@
     <dl class="constants">
       
         <dt id="CLOCK_DRIFT_FACTOR-constant" class="">CLOCK_DRIFT_FACTOR =
-          
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns used to take into consideration the inaccuracy of redis timestamps.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Float</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>used to take into consideration the inaccuracy of redis timestamps</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
         </dt>
         <dd><pre class="code"><span class='float'>0.01</span></pre></dd>
       
@@ -895,7 +922,7 @@
             
           </span>
           
-            &mdash; <div class='inline'><p>the unique digest (See: <span class='object_link'><a href="UniqueArgs.html#unique_digest-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_digest (method)">UniqueArgs#unique_digest</a></span>)</p>
+            &mdash; <div class='inline'><p>the unique digest (See: LockDigest#unique_digest)</p>
 </div>
           
         </li>
@@ -912,21 +939,21 @@
       <pre class="lines">
 
 
-56
-57
 58
 59
 60
 61
-62</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@item</span>        <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span>
-  <span class='ivar'>@key</span>         <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Key.html" title="SidekiqUniqueJobs::Key (class)">Key</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Key.html#initialize-instance_method" title="SidekiqUniqueJobs::Key#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-  <span class='ivar'>@job_id</span>      <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span>
+  <span class='ivar'>@key</span>         <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Key.html" title="SidekiqUniqueJobs::Key (class)">Key</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Key.html#initialize-instance_method" title="SidekiqUniqueJobs::Key#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='comment'># fallback until can be removed
+</span>  <span class='ivar'>@job_id</span>      <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span>
   <span class='ivar'>@config</span>      <span class='op'>=</span> <span class='const'><span class='object_link'><a href="LockConfig.html" title="SidekiqUniqueJobs::LockConfig (class)">LockConfig</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="LockConfig.html#initialize-instance_method" title="SidekiqUniqueJobs::LockConfig#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='ivar'>@redis_pool</span>  <span class='op'>=</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span>
 <span class='kw'>end</span></pre>
@@ -953,7 +980,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute config</p>
+    <p>Returns the value of attribute config.</p>
 
 
   </div>
@@ -967,12 +994,12 @@
       <pre class="lines">
 
 
-41
-42
-43</pre>
+43
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 43</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_config'>config</span>
   <span class='ivar'>@config</span>
@@ -995,7 +1022,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute item</p>
+    <p>Returns the value of attribute item.</p>
 
 
   </div>
@@ -1009,12 +1036,12 @@
       <pre class="lines">
 
 
-45
-46
-47</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_item'>item</span>
   <span class='ivar'>@item</span>
@@ -1037,7 +1064,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute job_id</p>
+    <p>Returns the value of attribute job_id.</p>
 
 
   </div>
@@ -1051,12 +1078,12 @@
       <pre class="lines">
 
 
-37
-38
-39</pre>
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_job_id'>job_id</span>
   <span class='ivar'>@job_id</span>
@@ -1079,7 +1106,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute key</p>
+    <p>Returns the value of attribute key.</p>
 
 
   </div>
@@ -1093,12 +1120,12 @@
       <pre class="lines">
 
 
-33
-34
-35</pre>
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_key'>key</span>
   <span class='ivar'>@key</span>
@@ -1172,12 +1199,12 @@
       <pre class="lines">
 
 
-152
-153
-154</pre>
+154
+155
+156</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 152</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 154</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_key'>key</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_job_id'>job_id</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_job_id'>job_id</span>
@@ -1212,14 +1239,14 @@
       <pre class="lines">
 
 
-68
-69
 70
 71
-72</pre>
+72
+73
+74</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_pttl'>pttl</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
@@ -1256,12 +1283,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete!'>delete!</span>
   <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span><span class='symbol'>:delete</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='id identifier rubyid_job_id'>job_id</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_pttl'>pttl</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_limit'>limit</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
@@ -1302,12 +1329,12 @@
       <pre class="lines">
 
 
-141
-142
-143</pre>
+143
+144
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 143</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1359,18 +1386,18 @@
       <pre class="lines">
 
 
-86
-87
 88
 89
 90
 91
 92
 93
-94</pre>
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 86</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span><span class='lparen'>(</span><span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
@@ -1428,14 +1455,14 @@
       <pre class="lines">
 
 
-122
-123
 124
 125
-126</pre>
+126
+127
+128</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_locked?'>locked?</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_taken?'>taken?</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_conn'>conn</span>
@@ -1958,12 +1985,12 @@
       <pre class="lines">
 
 
-134
-135
-136</pre>
+136
+137
+138</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 136</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Locksmith#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_object_id'>object_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>(digest=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'> job_id=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_job_id'>job_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>, locked=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_locked?'>locked?</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span>
@@ -2028,14 +2055,14 @@
       <pre class="lines">
 
 
-102
-103
 104
 105
-106</pre>
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 102</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 104</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unlock'>unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locked?'>locked?</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
@@ -2102,12 +2129,12 @@
       <pre class="lines">
 
 
-114
-115
-116</pre>
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 114</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/locksmith.rb', line 116</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unlock!'>unlock!</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span><span class='symbol'>:unlock</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='comma'>,</span> <span class='id identifier rubyid_argv'>argv</span><span class='comma'>,</span> <span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
@@ -2206,9 +2233,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:04 2019 by
+  Generated on Sat Mar 21 20:13:45 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

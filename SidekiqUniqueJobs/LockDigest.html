@@ -4,18 +4,18 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Class: SidekiqUniqueJobs::UniqueArgs
+  Class: SidekiqUniqueJobs::LockDigest
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
-  pathId = "SidekiqUniqueJobs::UniqueArgs";
+<script type="text/javascript">
+  pathId = "SidekiqUniqueJobs::LockDigest";
   relpath = '../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../_index.html">Index (U)</a> &raquo;
+    <a href="../_index.html">Index (L)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span>
      &raquo; 
-    <span class="title">UniqueArgs</span>
+    <span class="title">LockDigest</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Class: SidekiqUniqueJobs::UniqueArgs
+      <div id="content"><h1>Class: SidekiqUniqueJobs::LockDigest
   
   
   
@@ -74,7 +74,7 @@
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">SidekiqUniqueJobs::UniqueArgs</li>
+            <li class="next">SidekiqUniqueJobs::LockDigest</li>
           
         </ul>
         <a href="#" class="inheritanceTree">show all</a>
@@ -99,7 +99,7 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/sidekiq_unique_jobs/unique_args.rb</dd>
+    <dd>lib/sidekiq_unique_jobs/lock_digest.rb</dd>
   </dl>
   
 </div>
@@ -139,6 +139,34 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#args-instance_method" title="#args (instance method)">#<strong>args</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The prefix for the unique key.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#item-instance_method" title="#item (instance method)">#<strong>item</strong>  &#x21d2; Hash </a>
     
 
@@ -164,6 +192,62 @@
 </li>
 
     
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock_args-instance_method" title="#lock_args (instance method)">#<strong>lock_args</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute lock_args.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock_prefix-instance_method" title="#lock_prefix (instance method)">#<strong>lock_prefix</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute lock_prefix.</p>
+</div></span>
+  
+</li>
+
+    
   </ul>
 
 
@@ -180,7 +264,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#digest-class_method" title="digest (class method)">.<strong>digest</strong>(item)  &#x21d2; String </a>
+      <a href="#call-class_method" title="call (class method)">.<strong>call</strong>(item)  &#x21d2; String </a>
     
 
     
@@ -194,7 +278,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Convenience method for returning a digest.</p>
+    <span class="summary_desc"><div class='inline'><p>Generates a new digest.</p>
 </div></span>
   
 </li>
@@ -208,29 +292,6 @@
     </h2>
 
     <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#add_uniqueness_to_item-instance_method" title="#add_uniqueness_to_item (instance method)">#<strong>add_uniqueness_to_item</strong>  &#x21d2; void </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Appends the keys unique_prefix, unique_args and <span class='object_link'><a href="#unique_digest-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_digest (method)">#unique_digest</a></span> to the sidekiq job hash <span class='object_link'><a href="#item-instance_method" title="SidekiqUniqueJobs::UniqueArgs#item (method)">#item</a></span>.</p>
-</div></span>
-  
-</li>
-
       
         <li class="public ">
   <span class="summary_signature">
@@ -277,30 +338,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Creates a namespaced unique digest based on the <span class='object_link'><a href="#digestable_hash-instance_method" title="SidekiqUniqueJobs::UniqueArgs#digestable_hash (method)">#digestable_hash</a></span> and the <span class='object_link'><a href="#unique_prefix-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_prefix (method)">#unique_prefix</a></span>.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#default_unique_args_method-instance_method" title="#default_unique_args_method (instance method)">#<strong>default_unique_args_method</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The global worker options defined in Sidekiq directly.</p>
+    <span class="summary_desc"><div class='inline'><p>Creates a namespaced unique digest based on the <span class='object_link'><a href="#digestable_hash-instance_method" title="SidekiqUniqueJobs::LockDigest#digestable_hash (method)">#digestable_hash</a></span> and the <span class='object_link'><a href="#lock_prefix-instance_method" title="SidekiqUniqueJobs::LockDigest#lock_prefix (method)">#lock_prefix</a></span>.</p>
 </div></span>
   
 </li>
@@ -360,76 +398,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#filter_by_proc-instance_method" title="#filter_by_proc (instance method)">#<strong>filter_by_proc</strong>(args)  &#x21d2; Array </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Filters unique arguments by proc configured in the sidekiq worker.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#filter_by_symbol-instance_method" title="#filter_by_symbol (instance method)">#<strong>filter_by_symbol</strong>(args)  &#x21d2; Array </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Filters unique arguments by method configured in the sidekiq worker.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#filtered_args-instance_method" title="#filtered_args (instance method)">#<strong>filtered_args</strong>(args)  &#x21d2; Array </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Filters unique arguments by proc or symbol.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(item)  &#x21d2; UniqueArgs </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(item)  &#x21d2; LockDigest </a>
     
 
     
@@ -445,7 +414,30 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>A new instance of UniqueArgs.</p>
+    <span class="summary_desc"><div class='inline'><p>A new instance of LockDigest.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock_digest-instance_method" title="#lock_digest (instance method)">#<strong>lock_digest</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Memoized lock_digest.</p>
 </div></span>
   
 </li>
@@ -724,121 +716,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#unique_args-instance_method" title="#unique_args (instance method)">#<strong>unique_args</strong>(args)  &#x21d2; Array </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The unique arguments to use for creating a lock.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#unique_args_enabled%3F-instance_method" title="#unique_args_enabled? (instance method)">#<strong>unique_args_enabled?</strong>  &#x21d2; true, false </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Checks if the worker class has been enabled for unique_args?.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#unique_args_method-instance_method" title="#unique_args_method (instance method)">#<strong>unique_args_method</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The method to use for filtering unique arguments.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#unique_digest-instance_method" title="#unique_digest (instance method)">#<strong>unique_digest</strong>  &#x21d2; String </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Memoized unique_digest.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#unique_prefix-instance_method" title="#unique_prefix (instance method)">#<strong>unique_prefix</strong>  &#x21d2; String </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>A prefix to use as namespace for the <span class='object_link'><a href="#unique_digest-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_digest (method)">#unique_digest</a></span>.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#with_configured_loggers_context-instance_method" title="#with_configured_loggers_context (instance method)">#<strong>with_configured_loggers_context</strong> { ... } &#x21d2; void </a>
     
 
@@ -1019,7 +896,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(item)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::UniqueArgs (class)">UniqueArgs</a></span></tt> 
+    #<strong>initialize</strong>(item)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::LockDigest (class)">LockDigest</a></span></tt> 
   
 
   
@@ -1027,7 +904,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns a new instance of UniqueArgs</p>
+    <p>Returns a new instance of LockDigest.</p>
 
 
   </div>
@@ -1060,22 +937,22 @@
       <pre class="lines">
 
 
-24
-25
-26
-27
-28
-29</pre>
+36
+37
+38
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 36</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='ivar'>@item</span>         <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span>
   <span class='ivar'>@worker_class</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>CLASS</span><span class='rbracket'>]</span>
-
-  <span class='id identifier rubyid_add_uniqueness_to_item'>add_uniqueness_to_item</span>
-<span class='kw'>end</span></pre>
+  <span class='ivar'>@lock_args</span>    <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='const'>LOCK_ARGS</span><span class='comma'>,</span> <span class='const'>UNIQUE_ARGS</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='comment'># TODO: Deprecate UNIQUE_ARGS
+</span>  <span class='ivar'>@lock_prefix</span>  <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='const'>LOCK_PREFIX</span><span class='comma'>,</span> <span class='const'>UNIQUE_PREFIX</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='comment'># TODO: Deprecate UNIQUE_PREFIX
+</span><span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -1089,7 +966,62 @@
       
       <span id=""></span>
       <div class="method_details first">
-  <h3 class="signature first" id="item-instance_method">
+  <h3 class="signature first" id="args-instance_method">
+  
+    #<strong>args</strong>  &#x21d2; <tt>String</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the prefix for the unique key.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the prefix for the unique key</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 29</span>
+
+<span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:lock_args</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="item-instance_method">
   
     #<strong>item</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>  <span class="extras">(readonly)</span>
   
@@ -1130,15 +1062,99 @@
       <pre class="lines">
 
 
-21
-22
-23</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 21</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_item'>item</span>
   <span class='ivar'>@item</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="lock_args-instance_method">
+  
+    #<strong>lock_args</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute lock_args.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_args'>lock_args</span>
+  <span class='ivar'>@lock_args</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="lock_prefix-instance_method">
+  
+    #<strong>lock_prefix</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute lock_prefix.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_prefix'>lock_prefix</span>
+  <span class='ivar'>@lock_prefix</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1153,9 +1169,9 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="digest-class_method">
+  <h3 class="signature first" id="call-class_method">
   
-    .<strong>digest</strong>(item)  &#x21d2; <tt>String</tt> 
+    .<strong>call</strong>(item)  &#x21d2; <tt>String</tt> 
   
 
   
@@ -1163,7 +1179,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Convenience method for returning a digest</p>
+    <p>Generates a new digest</p>
 
 
   </div>
@@ -1182,7 +1198,7 @@
       
       
         &mdash;
-        <div class='inline'><p>a Sidekiq job hash</p>
+        <div class='inline'><p>a sidekiq job hash</p>
 </div>
       
     </li>
@@ -1200,7 +1216,7 @@
       
       
         &mdash;
-        <div class='inline'><p>a unique digest</p>
+        <div class='inline'><p>a unique digest for the given arguments</p>
 </div>
       
     </li>
@@ -1213,15 +1229,15 @@
       <pre class="lines">
 
 
-15
-16
-17</pre>
+19
+20
+21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 19</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_digest'>digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_unique_digest'>unique_digest</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_lock_digest'>lock_digest</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1235,51 +1251,7 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="add_uniqueness_to_item-instance_method">
-  
-    #<strong>add_uniqueness_to_item</strong>  &#x21d2; <tt>void</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p class="note returns_void">This method returns an undefined value.</p><p>Appends the keys unique_prefix, unique_args and <span class='object_link'><a href="#unique_digest-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_digest (method)">#unique_digest</a></span> to the sidekiq job hash <span class='object_link'><a href="#item-instance_method" title="SidekiqUniqueJobs::UniqueArgs#item (method)">#item</a></span></p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-33
-34
-35
-36
-37</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 33</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_add_uniqueness_to_item'>add_uniqueness_to_item</span>
-  <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_PREFIX</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_unique_prefix'>unique_prefix</span>
-  <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ARGS</span><span class='rbracket'>]</span>     <span class='op'>=</span> <span class='id identifier rubyid_unique_args'>unique_args</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>ARGS</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span>   <span class='op'>=</span> <span class='id identifier rubyid_unique_digest'>unique_digest</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="after_unlock_hook-instance_method">
+  <h3 class="signature first" id="after_unlock_hook-instance_method">
   
     #<strong>after_unlock_hook</strong>  &#x21d2; <tt>Proc</tt> 
   
@@ -1329,7 +1301,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Creates a namespaced unique digest based on the <span class='object_link'><a href="#digestable_hash-instance_method" title="SidekiqUniqueJobs::UniqueArgs#digestable_hash (method)">#digestable_hash</a></span> and the <span class='object_link'><a href="#unique_prefix-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_prefix (method)">#unique_prefix</a></span></p>
+    <p>Creates a namespaced unique digest based on the <span class='object_link'><a href="#digestable_hash-instance_method" title="SidekiqUniqueJobs::LockDigest#digestable_hash (method)">#digestable_hash</a></span> and the <span class='object_link'><a href="#lock_prefix-instance_method" title="SidekiqUniqueJobs::LockDigest#lock_prefix (method)">#lock_prefix</a></span></p>
 
 
   </div>
@@ -1360,57 +1332,17 @@
       <pre class="lines">
 
 
-47
-48
-49
-50</pre>
+51
+52
+53
+54</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_digest'>create_digest</span>
-  <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='const'>Digest</span><span class='op'>::</span><span class='const'>MD5</span><span class='period'>.</span><span class='id identifier rubyid_hexdigest'>hexdigest</span><span class='lparen'>(</span><span class='id identifier rubyid_dump_json'>dump_json</span><span class='lparen'>(</span><span class='id identifier rubyid_digestable_hash'>digestable_hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
-  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_unique_prefix'>unique_prefix</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="default_unique_args_method-instance_method">
-  
-    #<strong>default_unique_args_method</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The global worker options defined in Sidekiq directly</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-144
-145
-146</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 144</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_default_unique_args_method'>default_unique_args_method</span>
-  <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ARGS</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>Digest</span><span class='op'>::</span><span class='const'>MD5</span><span class='period'>.</span><span class='id identifier rubyid_hexdigest'>hexdigest</span><span class='lparen'>(</span><span class='id identifier rubyid_dump_json'>dump_json</span><span class='lparen'>(</span><span class='id identifier rubyid_digestable_hash'>digestable_hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_lock_prefix'>lock_prefix</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1499,18 +1431,18 @@
       <pre class="lines">
 
 
+58
+59
 60
 61
 62
-63
-64
-65</pre>
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_digestable_hash'>digestable_hash</span>
-  <span class='ivar'>@item</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='const'>CLASS</span><span class='comma'>,</span> <span class='const'>QUEUE</span><span class='comma'>,</span> <span class='const'>UNIQUE_ARGS</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+  <span class='ivar'>@item</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='const'>CLASS</span><span class='comma'>,</span> <span class='const'>QUEUE</span><span class='comma'>,</span> <span class='const'>LOCK_ARGS</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
     <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='const'>QUEUE</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_across_queues?'>unique_across_queues?</span>
     <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='const'>CLASS</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_across_workers?'>unique_across_workers?</span>
   <span class='kw'>end</span>
@@ -1521,9 +1453,9 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="filter_by_proc-instance_method">
+  <h3 class="signature " id="lock_digest-instance_method">
   
-    #<strong>filter_by_proc</strong>(args)  &#x21d2; <tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt> 
+    #<strong>lock_digest</strong>  &#x21d2; <tt>String</tt> 
   
 
   
@@ -1531,44 +1463,25 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Filters unique arguments by proc configured in the sidekiq worker</p>
+    <p>Memoized lock_digest</p>
 
 
   </div>
 </div>
 <div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
   
-    <li>
-      
-        <span class='name'>args</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the arguments passed to the sidekiq worker</p>
-</div>
-      
-    </li>
-  
-</ul>
-
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
+        <span class='type'>(<tt>String</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>with the filtered arguments</p>
+        <div class='inline'><p>a unique digest</p>
 </div>
       
     </li>
@@ -1581,244 +1494,15 @@
       <pre class="lines">
 
 
-117
-118
-119</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 45</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_filter_by_proc'>filter_by_proc</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_unique_args_method'>unique_args_method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="filter_by_symbol-instance_method">
-  
-    #<strong>filter_by_symbol</strong>(args)  &#x21d2; <tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Filters unique arguments by method configured in the sidekiq worker</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>args</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the arguments passed to the sidekiq worker</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>unfiltered unless <span class='object_link'><a href="SidekiqWorkerMethods.html#worker_method_defined%3F-instance_method" title="SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined? (method)">SidekiqWorkerMethods#worker_method_defined?</a></span></p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>with the filtered arguments</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 125</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_filter_by_symbol'>filter_by_symbol</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_args'>args</span> <span class='kw'>unless</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_args_method'>unique_args_method</span><span class='rparen'>)</span>
-
-  <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_args_method'>unique_args_method</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-<span class='kw'>rescue</span> <span class='const'>ArgumentError</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InvalidUniqueArguments.html" title="SidekiqUniqueJobs::InvalidUniqueArguments (class)">InvalidUniqueArguments</a></span></span><span class='comma'>,</span>
-        <span class='label'>given:</span> <span class='id identifier rubyid_args'>args</span><span class='comma'>,</span>
-        <span class='label'>worker_class:</span> <span class='id identifier rubyid_worker_class'>worker_class</span><span class='comma'>,</span>
-        <span class='label'>unique_args_method:</span> <span class='id identifier rubyid_unique_args_method'>unique_args_method</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="filtered_args-instance_method">
-  
-    #<strong>filtered_args</strong>(args)  &#x21d2; <tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Filters unique arguments by proc or symbol</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>args</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the arguments passed to the sidekiq worker</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p><span class='object_link'><a href="#filter_by_proc-instance_method" title="SidekiqUniqueJobs::UniqueArgs#filter_by_proc (method)">#filter_by_proc</a></span> when <span class='object_link'><a href="#unique_args_method-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_args_method (method)">#unique_args_method</a></span> is a Proc</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p><span class='object_link'><a href="#filter_by_symbol-instance_method" title="SidekiqUniqueJobs::UniqueArgs#filter_by_symbol (method)">#filter_by_symbol</a></span> when <span class='object_link'><a href="#unique_args_method-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_args_method (method)">#unique_args_method</a></span> is a Symbol</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>args unfiltered when neither of the above</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 98</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_filtered_args'>filtered_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_args'>args</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
-
-  <span class='id identifier rubyid_json_args'>json_args</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Normalizer.html" title="SidekiqUniqueJobs::Normalizer (module)">Normalizer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_jsonify'><span class='object_link'><a href="Normalizer.html#jsonify-class_method" title="SidekiqUniqueJobs::Normalizer.jsonify (method)">jsonify</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-
-  <span class='kw'>case</span> <span class='id identifier rubyid_unique_args_method'>unique_args_method</span>
-  <span class='kw'>when</span> <span class='const'>Proc</span>
-    <span class='id identifier rubyid_filter_by_proc'>filter_by_proc</span><span class='lparen'>(</span><span class='id identifier rubyid_json_args'>json_args</span><span class='rparen'>)</span>
-  <span class='kw'>when</span> <span class='const'>Symbol</span>
-    <span class='id identifier rubyid_filter_by_symbol'>filter_by_symbol</span><span class='lparen'>(</span><span class='id identifier rubyid_json_args'>json_args</span><span class='rparen'>)</span>
-  <span class='kw'>else</span>
-    <span class='id identifier rubyid_log_debug'>log_debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'> arguments not filtered (using all arguments for uniqueness)</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_json_args'>json_args</span>
-  <span class='kw'>end</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_digest'>lock_digest</span>
+  <span class='ivar'>@lock_digest</span> <span class='op'>||=</span> <span class='id identifier rubyid_create_digest'>create_digest</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2349,12 +2033,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unique_across_queues?'>unique_across_queues?</span>
   <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ACROSS_QUEUES</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ACROSS_QUEUES</span><span class='rbracket'>]</span>
@@ -2402,287 +2086,15 @@
       <pre class="lines">
 
 
-83
-84
-85</pre>
+73
+74
+75</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 73</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unique_across_workers?'>unique_across_workers?</span>
   <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ACROSS_WORKERS</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ACROSS_WORKERS</span><span class='rbracket'>]</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="unique_args-instance_method">
-  
-    #<strong>unique_args</strong>(args)  &#x21d2; <tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The unique arguments to use for creating a lock</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the arguments filters by the <span class='object_link'><a href="#filtered_args-instance_method" title="SidekiqUniqueJobs::UniqueArgs#filtered_args (method)">#filtered_args</a></span> method if <span class='object_link'><a href="#unique_args_enabled%3F-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_args_enabled? (method)">#unique_args_enabled?</a></span></p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-69
-70
-71
-72
-73</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 69</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_unique_args'>unique_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_filtered_args'>filtered_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_args_enabled?'>unique_args_enabled?</span>
-
-  <span class='id identifier rubyid_args'>args</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="unique_args_enabled?-instance_method">
-  
-    #<strong>unique_args_enabled?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Checks if the worker class has been enabled for unique_args?</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-89
-90
-91</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 89</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_unique_args_enabled?'>unique_args_enabled?</span>
-  <span class='id identifier rubyid_unique_args_method'>unique_args_method</span> <span class='comment'># &amp;&amp; !unique_args_method.is_a?(Boolean)
-</span><span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="unique_args_method-instance_method">
-  
-    #<strong>unique_args_method</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The method to use for filtering unique arguments</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-137
-138
-139
-140
-141</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 137</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_unique_args_method'>unique_args_method</span>
-  <span class='ivar'>@unique_args_method</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ARGS</span><span class='rbracket'>]</span>
-  <span class='ivar'>@unique_args_method</span> <span class='op'>||=</span> <span class='symbol'>:unique_args</span> <span class='kw'>if</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='symbol'>:unique_args</span><span class='rparen'>)</span>
-  <span class='ivar'>@unique_args_method</span> <span class='op'>||=</span> <span class='id identifier rubyid_default_unique_args_method'>default_unique_args_method</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="unique_digest-instance_method">
-  
-    #<strong>unique_digest</strong>  &#x21d2; <tt>String</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Memoized unique_digest</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>a unique digest</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-41
-42
-43</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 41</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_unique_digest'>unique_digest</span>
-  <span class='ivar'>@unique_digest</span> <span class='op'>||=</span> <span class='id identifier rubyid_create_digest'>create_digest</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="unique_prefix-instance_method">
-  
-    #<strong>unique_prefix</strong>  &#x21d2; <tt>String</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>A prefix to use as namespace for the <span class='object_link'><a href="#unique_digest-instance_method" title="SidekiqUniqueJobs::UniqueArgs#unique_digest (method)">#unique_digest</a></span></p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>a unique digest</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-54
-55
-56</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unique_args.rb', line 54</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_unique_prefix'>unique_prefix</span>
-  <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_PREFIX</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_unique_prefix'>unique_prefix</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2943,9 +2355,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:04 2019 by
+  Generated on Sat Mar 21 20:13:45 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

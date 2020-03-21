@@ -6,15 +6,15 @@
 <title>
   Module: SidekiqUniqueJobs
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs";
   relpath = '';
 </script>
@@ -89,7 +89,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/sidekiq_unique_jobs/constants.rb<span class="defines">,<br />
-  lib/sidekiq_unique_jobs/cli.rb,<br /> lib/sidekiq_unique_jobs/job.rb,<br /> lib/sidekiq_unique_jobs/key.rb,<br /> lib/sidekiq_unique_jobs/web.rb,<br /> lib/sidekiq_unique_jobs/json.rb,<br /> lib/sidekiq_unique_jobs/lock.rb,<br /> lib/sidekiq_unique_jobs/redis.rb,<br /> lib/sidekiq_unique_jobs/config.rb,<br /> lib/sidekiq_unique_jobs/script.rb,<br /> lib/sidekiq_unique_jobs/timing.rb,<br /> lib/sidekiq_unique_jobs/digests.rb,<br /> lib/sidekiq_unique_jobs/logging.rb,<br /> lib/sidekiq_unique_jobs/version.rb,<br /> lib/sidekiq_unique_jobs/profiler.rb,<br /> lib/sidekiq_unique_jobs/changelog.rb,<br /> lib/sidekiq_unique_jobs/lock_info.rb,<br /> lib/sidekiq_unique_jobs/locksmith.rb,<br /> lib/sidekiq_unique_jobs/redis/set.rb,<br /> lib/sidekiq_unique_jobs/connection.rb,<br /> lib/sidekiq_unique_jobs/exceptions.rb,<br /> lib/sidekiq_unique_jobs/middleware.rb,<br /> lib/sidekiq_unique_jobs/normalizer.rb,<br /> lib/sidekiq_unique_jobs/redis/hash.rb,<br /> lib/sidekiq_unique_jobs/redis/list.rb,<br /> lib/sidekiq_unique_jobs/unlockable.rb,<br /> lib/sidekiq_unique_jobs/lock_config.rb,<br /> lib/sidekiq_unique_jobs/on_conflict.rb,<br /> lib/sidekiq_unique_jobs/unique_args.rb,<br /> lib/sidekiq_unique_jobs/web/helpers.rb,<br /> lib/sidekiq_unique_jobs/batch_delete.rb,<br /> lib/sidekiq_unique_jobs/redis/entity.rb,<br /> lib/sidekiq_unique_jobs/redis/string.rb,<br /> lib/sidekiq_unique_jobs/script/caller.rb,<br /> lib/sidekiq_unique_jobs/upgrade_locks.rb,<br /> lib/sidekiq_unique_jobs/version_check.rb,<br /> lib/sidekiq_unique_jobs/lock/base_lock.rb,<br /> lib/sidekiq_unique_jobs/lock/validator.rb,<br /> lib/sidekiq_unique_jobs/orphans/reaper.rb,<br /> lib/sidekiq_unique_jobs/rspec/matchers.rb,<br /> lib/sidekiq_unique_jobs/update_version.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/log.rb,<br /> lib/sidekiq_unique_jobs/orphans/manager.rb,<br /> lib/sidekiq_unique_jobs/time_calculator.rb,<br /> lib/sidekiq_unique_jobs/orphans/observer.rb,<br /> lib/sidekiq_unique_jobs/redis/sorted_set.rb,<br /> lib/sidekiq_unique_jobs/middleware/client.rb,<br /> lib/sidekiq_unique_jobs/middleware/server.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/raise.rb,<br /> lib/sidekiq_unique_jobs/lock/until_expired.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/reject.rb,<br /> lib/sidekiq_unique_jobs/lock/until_executed.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/replace.rb,<br /> lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb,<br /> lib/sidekiq_unique_jobs/lock/until_executing.rb,<br /> lib/sidekiq_unique_jobs/lock/while_executing.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/strategy.rb,<br /> lib/sidekiq_unique_jobs/lock/client_validator.rb,<br /> lib/sidekiq_unique_jobs/lock/server_validator.rb,<br /> lib/sidekiq_unique_jobs/options_with_fallback.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/reschedule.rb,<br /> lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/null_strategy.rb,<br /> lib/sidekiq_unique_jobs/logging/middleware_context.rb,<br /> lib/sidekiq_unique_jobs/lock/while_executing_reject.rb,<br /> lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb,<br /> lib/sidekiq_unique_jobs/rspec/matchers/have_valid_sidekiq_options.rb</span>
+  lib/sidekiq_unique_jobs/cli.rb,<br /> lib/sidekiq_unique_jobs/job.rb,<br /> lib/sidekiq_unique_jobs/key.rb,<br /> lib/sidekiq_unique_jobs/web.rb,<br /> lib/sidekiq_unique_jobs/json.rb,<br /> lib/sidekiq_unique_jobs/lock.rb,<br /> lib/sidekiq_unique_jobs/redis.rb,<br /> lib/sidekiq_unique_jobs/config.rb,<br /> lib/sidekiq_unique_jobs/script.rb,<br /> lib/sidekiq_unique_jobs/timing.rb,<br /> lib/sidekiq_unique_jobs/digests.rb,<br /> lib/sidekiq_unique_jobs/logging.rb,<br /> lib/sidekiq_unique_jobs/version.rb,<br /> lib/sidekiq_unique_jobs/lock_ttl.rb,<br /> lib/sidekiq_unique_jobs/profiler.rb,<br /> lib/sidekiq_unique_jobs/changelog.rb,<br /> lib/sidekiq_unique_jobs/lock_args.rb,<br /> lib/sidekiq_unique_jobs/lock_info.rb,<br /> lib/sidekiq_unique_jobs/locksmith.rb,<br /> lib/sidekiq_unique_jobs/redis/set.rb,<br /> lib/sidekiq_unique_jobs/connection.rb,<br /> lib/sidekiq_unique_jobs/exceptions.rb,<br /> lib/sidekiq_unique_jobs/middleware.rb,<br /> lib/sidekiq_unique_jobs/normalizer.rb,<br /> lib/sidekiq_unique_jobs/redis/hash.rb,<br /> lib/sidekiq_unique_jobs/redis/list.rb,<br /> lib/sidekiq_unique_jobs/unlockable.rb,<br /> lib/sidekiq_unique_jobs/lock_config.rb,<br /> lib/sidekiq_unique_jobs/lock_digest.rb,<br /> lib/sidekiq_unique_jobs/on_conflict.rb,<br /> lib/sidekiq_unique_jobs/web/helpers.rb,<br /> lib/sidekiq_unique_jobs/batch_delete.rb,<br /> lib/sidekiq_unique_jobs/lock_timeout.rb,<br /> lib/sidekiq_unique_jobs/redis/entity.rb,<br /> lib/sidekiq_unique_jobs/redis/string.rb,<br /> lib/sidekiq_unique_jobs/script/caller.rb,<br /> lib/sidekiq_unique_jobs/upgrade_locks.rb,<br /> lib/sidekiq_unique_jobs/version_check.rb,<br /> lib/sidekiq_unique_jobs/lock/base_lock.rb,<br /> lib/sidekiq_unique_jobs/lock/validator.rb,<br /> lib/sidekiq_unique_jobs/orphans/reaper.rb,<br /> lib/sidekiq_unique_jobs/rspec/matchers.rb,<br /> lib/sidekiq_unique_jobs/update_version.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/log.rb,<br /> lib/sidekiq_unique_jobs/orphans/manager.rb,<br /> lib/sidekiq_unique_jobs/orphans/observer.rb,<br /> lib/sidekiq_unique_jobs/redis/sorted_set.rb,<br /> lib/sidekiq_unique_jobs/middleware/client.rb,<br /> lib/sidekiq_unique_jobs/middleware/server.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/raise.rb,<br /> lib/sidekiq_unique_jobs/lock/until_expired.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/reject.rb,<br /> lib/sidekiq_unique_jobs/lock/until_executed.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/replace.rb,<br /> lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb,<br /> lib/sidekiq_unique_jobs/lock/until_executing.rb,<br /> lib/sidekiq_unique_jobs/lock/while_executing.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/strategy.rb,<br /> lib/sidekiq_unique_jobs/lock/client_validator.rb,<br /> lib/sidekiq_unique_jobs/lock/server_validator.rb,<br /> lib/sidekiq_unique_jobs/options_with_fallback.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/reschedule.rb,<br /> lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb,<br /> lib/sidekiq_unique_jobs/on_conflict/null_strategy.rb,<br /> lib/sidekiq_unique_jobs/logging/middleware_context.rb,<br /> lib/sidekiq_unique_jobs/lock/while_executing_reject.rb,<br /> lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb,<br /> lib/sidekiq_unique_jobs/rspec/matchers/have_valid_sidekiq_options.rb</span>
 </dd>
   </dl>
   
@@ -128,7 +128,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="SidekiqUniqueJobs/BatchDelete.html" title="SidekiqUniqueJobs::BatchDelete (class)">BatchDelete</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Changelog.html" title="SidekiqUniqueJobs::Changelog (class)">Changelog</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Cli.html" title="SidekiqUniqueJobs::Cli (class)">Cli</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Config.html" title="SidekiqUniqueJobs::Config (class)">Config</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Conflict.html" title="SidekiqUniqueJobs::Conflict (class)">Conflict</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/DuplicateLock.html" title="SidekiqUniqueJobs::DuplicateLock (class)">DuplicateLock</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/DuplicateStrategy.html" title="SidekiqUniqueJobs::DuplicateStrategy (class)">DuplicateStrategy</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/InvalidArgument.html" title="SidekiqUniqueJobs::InvalidArgument (class)">InvalidArgument</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/InvalidUniqueArguments.html" title="SidekiqUniqueJobs::InvalidUniqueArguments (class)">InvalidUniqueArguments</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/InvalidWorker.html" title="SidekiqUniqueJobs::InvalidWorker (class)">InvalidWorker</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Key.html" title="SidekiqUniqueJobs::Key (class)">Key</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockConfig.html" title="SidekiqUniqueJobs::LockConfig (class)">LockConfig</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockInfo.html" title="SidekiqUniqueJobs::LockInfo (class)">LockInfo</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">Locksmith</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/NotUniqueWorker.html" title="SidekiqUniqueJobs::NotUniqueWorker (class)">NotUniqueWorker</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Profiler.html" title="SidekiqUniqueJobs::Profiler (class)">Profiler</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/TimeCalculator.html" title="SidekiqUniqueJobs::TimeCalculator (class)">TimeCalculator</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UniqueArgs.html" title="SidekiqUniqueJobs::UniqueArgs (class)">UniqueArgs</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UniqueJobsError.html" title="SidekiqUniqueJobs::UniqueJobsError (class)">UniqueJobsError</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UnknownLock.html" title="SidekiqUniqueJobs::UnknownLock (class)">UnknownLock</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UpdateVersion.html" title="SidekiqUniqueJobs::UpdateVersion (class)">UpdateVersion</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UpgradeLocks.html" title="SidekiqUniqueJobs::UpgradeLocks (class)">UpgradeLocks</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/VersionCheck.html" title="SidekiqUniqueJobs::VersionCheck (class)">VersionCheck</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="SidekiqUniqueJobs/BatchDelete.html" title="SidekiqUniqueJobs::BatchDelete (class)">BatchDelete</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Changelog.html" title="SidekiqUniqueJobs::Changelog (class)">Changelog</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Cli.html" title="SidekiqUniqueJobs::Cli (class)">Cli</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Config.html" title="SidekiqUniqueJobs::Config (class)">Config</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Conflict.html" title="SidekiqUniqueJobs::Conflict (class)">Conflict</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/DuplicateLock.html" title="SidekiqUniqueJobs::DuplicateLock (class)">DuplicateLock</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/DuplicateStrategy.html" title="SidekiqUniqueJobs::DuplicateStrategy (class)">DuplicateStrategy</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/InvalidArgument.html" title="SidekiqUniqueJobs::InvalidArgument (class)">InvalidArgument</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/InvalidUniqueArguments.html" title="SidekiqUniqueJobs::InvalidUniqueArguments (class)">InvalidUniqueArguments</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/InvalidWorker.html" title="SidekiqUniqueJobs::InvalidWorker (class)">InvalidWorker</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Key.html" title="SidekiqUniqueJobs::Key (class)">Key</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockArgs.html" title="SidekiqUniqueJobs::LockArgs (class)">LockArgs</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockConfig.html" title="SidekiqUniqueJobs::LockConfig (class)">LockConfig</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockDigest.html" title="SidekiqUniqueJobs::LockDigest (class)">LockDigest</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockInfo.html" title="SidekiqUniqueJobs::LockInfo (class)">LockInfo</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockTTL.html" title="SidekiqUniqueJobs::LockTTL (class)">LockTTL</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/LockTimeout.html" title="SidekiqUniqueJobs::LockTimeout (class)">LockTimeout</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">Locksmith</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/NotUniqueWorker.html" title="SidekiqUniqueJobs::NotUniqueWorker (class)">NotUniqueWorker</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/Profiler.html" title="SidekiqUniqueJobs::Profiler (class)">Profiler</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UniqueJobsError.html" title="SidekiqUniqueJobs::UniqueJobsError (class)">UniqueJobsError</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UnknownLock.html" title="SidekiqUniqueJobs::UnknownLock (class)">UnknownLock</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UpdateVersion.html" title="SidekiqUniqueJobs::UpdateVersion (class)">UpdateVersion</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/UpgradeLocks.html" title="SidekiqUniqueJobs::UpgradeLocks (class)">UpgradeLocks</a></span>, <span class='object_link'><a href="SidekiqUniqueJobs/VersionCheck.html" title="SidekiqUniqueJobs::VersionCheck (class)">VersionCheck</a></span>
     
   
 </p>
@@ -175,7 +175,7 @@
         <dt id="VERSION-constant" class="">VERSION =
           <div class="docstring">
   <div class="discussion">
-    <p>Returns the current SidekiqUniqueJobs version</p>
+    <p>Returns the current SidekiqUniqueJobs version.</p>
 
 
   </div>
@@ -500,6 +500,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#reset!-class_method" title="reset! (class method)">.<strong>reset!</strong>  &#x21d2; SidekiqUniqueJobs::Config </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Resets configuration to deafult.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#strategies-class_method" title="strategies (class method)">.<strong>strategies</strong>  &#x21d2; Hash&lt;Symbol, SidekiqUniqueJobs::Strategy&gt; </a>
     
 
@@ -546,7 +569,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#use_config-class_method" title="use_config (class method)">.<strong>use_config</strong>(tmp_config) { ... } &#x21d2; void </a>
+      <a href="#use_config-class_method" title="use_config (class method)">.<strong>use_config</strong>(tmp_config = {}) { ... } &#x21d2; void </a>
     
 
     
@@ -729,15 +752,13 @@
 
 19
 20
-21
-22</pre>
+21</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 19</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_config'>config</span>
-  <span class='comment'># Arguments here need to match the definition of the new class (see above)
-</span>  <span class='ivar'>@config</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Config.html" title="SidekiqUniqueJobs::Config (class)">Config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default'><span class='object_link'><a href="SidekiqUniqueJobs/Config.html#default-class_method" title="SidekiqUniqueJobs::Config.default (method)">default</a></span></span>
+  <span class='ivar'>@config</span> <span class='op'>||=</span> <span class='id identifier rubyid_reset!'>reset!</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -866,18 +887,18 @@
       <pre class="lines">
 
 
-161
-162
-163
-164
-165
-166
-167
-168
-169</pre>
+173
+174
+175
+176
+177
+178
+179
+180
+181</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 161</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_configure'>configure</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -965,12 +986,12 @@
       <pre class="lines">
 
 
-112
-113
-114</pre>
+124
+125
+126</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 112</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disable!'>disable!</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_toggle'>toggle</span><span class='lparen'>(</span><span class='kw'>false</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1035,12 +1056,12 @@
       <pre class="lines">
 
 
-132
-133
-134</pre>
+144
+145
+146</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 132</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 144</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disabled?'>disabled?</span>
   <span class='op'>!</span><span class='id identifier rubyid_enabled?'>enabled?</span>
@@ -1122,12 +1143,12 @@
       <pre class="lines">
 
 
-100
-101
-102</pre>
+112
+113
+114</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 100</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 112</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_enable!'>enable!</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_toggle'>toggle</span><span class='lparen'>(</span><span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1192,12 +1213,12 @@
       <pre class="lines">
 
 
-122
-123
-124</pre>
+134
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 134</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_enabled?'>enabled?</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span>
@@ -1249,12 +1270,12 @@
       <pre class="lines">
 
 
-177
-178
-179</pre>
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 177</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 189</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_fetch_redis_version'>fetch_redis_version</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>server</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>redis_version</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
@@ -1306,12 +1327,12 @@
       <pre class="lines">
 
 
+39
 40
-41
-42</pre>
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_locks'>locks</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_locks'>locks</span>
@@ -1363,12 +1384,12 @@
       <pre class="lines">
 
 
+49
 50
-51
-52</pre>
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 49</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logger'>logger</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span>
@@ -1439,12 +1460,12 @@
       <pre class="lines">
 
 
+70
 71
-72
-73</pre>
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logger='>logger=</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span> <span class='op'>=</span> <span class='id identifier rubyid_other'>other</span>
@@ -1492,12 +1513,12 @@
       <pre class="lines">
 
 
-197
-198
-199</pre>
+209
+210
+211</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 197</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 209</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_now'>now</span>
   <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
@@ -1545,15 +1566,72 @@
       <pre class="lines">
 
 
-187
-188
-189</pre>
+199
+200
+201</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 187</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 199</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_now_f'>now_f</span>
   <span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reset!-class_method">
+  
+    .<strong>reset!</strong>  &#x21d2; <tt><span class='object_link'><a href="SidekiqUniqueJobs/Config.html" title="SidekiqUniqueJobs::Config (class)">SidekiqUniqueJobs::Config</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Resets configuration to deafult</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="SidekiqUniqueJobs/Config.html" title="SidekiqUniqueJobs::Config (class)">SidekiqUniqueJobs::Config</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a default gem configuration</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+100
+101
+102</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 100</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reset!'>reset!</span>
+  <span class='ivar'>@config</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Config.html" title="SidekiqUniqueJobs::Config (class)">Config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default'><span class='object_link'><a href="SidekiqUniqueJobs/Config.html#default-class_method" title="SidekiqUniqueJobs::Config.default (method)">default</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1602,12 +1680,12 @@
       <pre class="lines">
 
 
+29
 30
-31
-32</pre>
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_strategies'>strategies</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_strategies'>strategies</span>
@@ -1648,19 +1726,19 @@
       <pre class="lines">
 
 
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150</pre>
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_toggle'>toggle</span><span class='lparen'>(</span><span class='id identifier rubyid_enabled'>enabled</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -1680,7 +1758,7 @@
       <div class="method_details ">
   <h3 class="signature " id="use_config-class_method">
   
-    .<strong>use_config</strong>(tmp_config) { ... } &#x21d2; <tt>void</tt> 
+    .<strong>use_config</strong>(tmp_config = {}) { ... } &#x21d2; <tt>void</tt> 
   
 
   
@@ -1704,6 +1782,8 @@
       
         <span class='type'>(<tt><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
       
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
       
       
         &mdash;
@@ -1731,19 +1811,6 @@
     </li>
   
 </ul>
-<p class="tag_title">Raises:</p>
-<ul class="raise">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>::ArgumentError</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1751,6 +1818,7 @@
       <pre class="lines">
 
 
+82
 83
 84
 85
@@ -1758,18 +1826,23 @@
 87
 88
 89
-90</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 82</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_use_config'>use_config</span><span class='lparen'>(</span><span class='id identifier rubyid_tmp_config'>tmp_config</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_use_config'>use_config</span><span class='lparen'>(</span><span class='id identifier rubyid_tmp_config'>tmp_config</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='op'>::</span><span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'> needs a block</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
 
   <span class='id identifier rubyid_old_config'>old_config</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+  <span class='id identifier rubyid_reset!'>reset!</span>
   <span class='id identifier rubyid_configure'>configure</span><span class='lparen'>(</span><span class='id identifier rubyid_tmp_config'>tmp_config</span><span class='rparen'>)</span>
   <span class='kw'>yield</span>
-  <span class='id identifier rubyid_configure'>configure</span><span class='lparen'>(</span><span class='id identifier rubyid_old_config'>old_config</span><span class='rparen'>)</span>
+<span class='kw'>ensure</span>
+  <span class='id identifier rubyid_reset!'>reset!</span>
+  <span class='id identifier rubyid_configure'>configure</span><span class='lparen'>(</span><span class='id identifier rubyid_old_config'>old_config</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1846,18 +1919,18 @@
       <pre class="lines">
 
 
-208
-209
-210
-211
-212
-213</pre>
+220
+221
+222
+223
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 208</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 220</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_worker'>validate_worker</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/NotUniqueWorker.html" title="SidekiqUniqueJobs::NotUniqueWorker (class)">NotUniqueWorker</a></span></span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_lock_type'>lock_type</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/NotUniqueWorker.html" title="SidekiqUniqueJobs::NotUniqueWorker (class)">NotUniqueWorker</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_lock_type'>lock_type</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_lock_class'>lock_class</span> <span class='op'>=</span> <span class='id identifier rubyid_locks'>locks</span><span class='lbracket'>[</span><span class='id identifier rubyid_lock_type'>lock_type</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_lock_class'>lock_class</span><span class='period'>.</span><span class='id identifier rubyid_validate_options'>validate_options</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
@@ -1928,13 +2001,13 @@
       <pre class="lines">
 
 
-222
-223
-224
-225</pre>
+234
+235
+236
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 222</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 234</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_worker!'>validate_worker!</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_lock_config'>lock_config</span> <span class='op'>=</span> <span class='id identifier rubyid_validate_worker'>validate_worker</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
@@ -1987,12 +2060,12 @@
       <pre class="lines">
 
 
+59
 60
-61
-62</pre>
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_version'>version</span>
   <span class='const'><span class='object_link'><a href="#VERSION-constant" title="SidekiqUniqueJobs::VERSION (constant)">VERSION</a></span></span>
@@ -2057,9 +2130,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:02 2019 by
+  Generated on Sat Mar 21 20:13:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

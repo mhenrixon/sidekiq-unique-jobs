@@ -6,15 +6,15 @@
 <title>
   Module: SidekiqUniqueJobs::Web
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::Web";
   relpath = '../';
 </script>
@@ -251,7 +251,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
     <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span>
     <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span>
     <span class='ivar'>@pagination</span>     <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>pattern:</span> <span class='ivar'>@filter</span><span class='comma'>,</span> <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span> <span class='label'>page_size:</span> <span class='ivar'>@count</span> <span class='rbrace'>}</span>
-    <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@locks</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span><span class='ivar'>@pagination</span><span class='rparen'>)</span>
+    <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@locks</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span><span class='op'>**</span><span class='ivar'>@pagination</span><span class='rparen'>)</span>
 
     <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:locks</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
@@ -291,9 +291,9 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:02 2019 by
+  Generated on Sat Mar 21 20:13:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

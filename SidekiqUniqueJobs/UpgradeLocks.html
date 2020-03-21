@@ -6,15 +6,15 @@
 <title>
   Class: SidekiqUniqueJobs::UpgradeLocks
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::UpgradeLocks";
   relpath = '../';
 </script>
@@ -139,12 +139,66 @@
     <dl class="constants">
       
         <dt id="BATCH_SIZE-constant" class="">BATCH_SIZE =
-          
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns the number of keys to batch upgrade.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the number of keys to batch upgrade</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
         </dt>
         <dd><pre class="code"><span class='int'>100</span></pre></dd>
       
         <dt id="OLD_SUFFIXES-constant" class="">OLD_SUFFIXES =
-          
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns suffixes for old version.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span>&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>suffixes for old version</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
         </dt>
         <dd><pre class="code"><span class='qwords_beg'>%w[</span><span class='words_sep'>
   </span><span class='tstring_content'>GRABBED</span><span class='words_sep'>
@@ -556,7 +610,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns a new instance of UpgradeLocks</p>
+    <p>Returns a new instance of UpgradeLocks.</p>
 
 
   </div>
@@ -570,14 +624,14 @@
       <pre class="lines">
 
 
-35
-36
-37
-38
-39</pre>
+39
+40
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
   <span class='ivar'>@count</span>         <span class='op'>=</span> <span class='int'>0</span>
@@ -607,7 +661,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute conn</p>
+    <p>Returns the value of attribute conn.</p>
 
 
   </div>
@@ -621,12 +675,12 @@
       <pre class="lines">
 
 
-33
-34
-35</pre>
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_conn'>conn</span>
   <span class='ivar'>@conn</span>
@@ -685,14 +739,14 @@
       <pre class="lines">
 
 
-27
-28
-29
-30
-31</pre>
+31
+32
+33
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
@@ -752,10 +806,6 @@
       <pre class="lines">
 
 
-47
-48
-49
-50
 51
 52
 53
@@ -769,10 +819,14 @@
 61
 62
 63
-64</pre>
+64
+65
+66
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/upgrade_locks.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
@@ -1302,9 +1356,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:04 2019 by
+  Generated on Sat Mar 21 20:13:46 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

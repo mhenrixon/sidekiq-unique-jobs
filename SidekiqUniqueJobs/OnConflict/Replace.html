@@ -6,15 +6,15 @@
 <title>
   Class: SidekiqUniqueJobs::OnConflict::Replace
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::OnConflict::Replace";
   relpath = '../../';
 </script>
@@ -274,7 +274,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#digests-instance_method" title="#digests (instance method)">#<strong>digests</strong>  &#x21d2; Object </a>
+      <a href="#digests-instance_method" title="#digests (instance method)">#<strong>digests</strong>  &#x21d2; Digests </a>
     
 
     
@@ -288,7 +288,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Access to the <span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span>.</p>
+</div></span>
   
 </li>
 
@@ -390,7 +391,7 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span>
   <span class='ivar'>@queue</span>         <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>QUEUE</span><span class='rbracket'>]</span>
-  <span class='ivar'>@unique_digest</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span>
+  <span class='ivar'>@unique_digest</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -415,7 +416,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute queue</p>
+    <p>Returns the value of attribute queue.</p>
 
 
   </div>
@@ -457,7 +458,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute unique_digest</p>
+    <p>Returns the value of attribute unique_digest.</p>
 
 
   </div>
@@ -696,24 +697,51 @@
       <div class="method_details ">
   <h3 class="signature " id="digests-instance_method">
   
-    #<strong>digests</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>digests</strong>  &#x21d2; <tt><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Access to the <span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>and instance with digests</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-70
-71
-72</pre>
+76
+77
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_digests'>digests</span>
   <span class='ivar'>@digests</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Digests.html#initialize-instance_method" title="SidekiqUniqueJobs::Digests#initialize (method)">new</a></span></span>
@@ -728,9 +756,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:05 2019 by
+  Generated on Sat Mar 21 20:13:46 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

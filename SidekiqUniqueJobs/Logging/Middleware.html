@@ -6,15 +6,15 @@
 <title>
   Module: SidekiqUniqueJobs::Logging::Middleware
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::Logging::Middleware";
   relpath = '../../';
 </script>
@@ -835,7 +835,7 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logging_context'>logging_context</span>
   <span class='id identifier rubyid_middleware'>middleware</span> <span class='op'>=</span> <span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='symbol'>:client</span> <span class='op'>:</span> <span class='symbol'>:server</span>
-  <span class='id identifier rubyid_digest'>digest</span>     <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_digest'>digest</span>     <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_lock_type'>lock_type</span>  <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span>
 
   <span class='kw'>if</span> <span class='id identifier rubyid_logger_context_hash?'>logger_context_hash?</span>
@@ -938,9 +938,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:03 2019 by
+  Generated on Sat Mar 21 20:13:45 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

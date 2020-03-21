@@ -6,15 +6,15 @@
 <title>
   Module: SidekiqUniqueJobs::Middleware
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::Middleware";
   relpath = '../';
 </script>
@@ -694,34 +694,6 @@
 </li>
 
       
-        <li class="public deprecated">
-  <span class="summary_signature">
-    
-      <a href="#unique_type-instance_method" title="#unique_type (instance method)">#<strong>unique_type</strong>  &#x21d2; Symbol </a>
-    
-
-    
-  </span>
-  
-    <span class="note title not_defined_here">
-      included
-      from <span class='object_link'><a href="OptionsWithFallback.html#unique_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_type (method)">OptionsWithFallback</a></span>
-    </span>
-  
-  
-  
-  
-  
-  <span class="deprecated note title">deprecated</span>
-  
-
-  
-    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">OptionsWithFallback#lock_type</a></span></p>
-</div></span>
-  
-</li>
-
-      
         <li class="public ">
   <span class="summary_signature">
     
@@ -1198,7 +1170,7 @@
   <span class='ivar'>@redis_pool</span>   <span class='op'>=</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span>
   <span class='kw'>return</span> <span class='kw'>yield</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_disabled?'>unique_disabled?</span>
 
-  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_uniqueness'><span class='object_link'><a href="Job.html#add_uniqueness-instance_method" title="SidekiqUniqueJobs::Job#add_uniqueness (method)">add_uniqueness</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='const'>UNIQUE_DIGEST</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_prepare'><span class='object_link'><a href="Job.html#prepare-instance_method" title="SidekiqUniqueJobs::Job#prepare (method)">prepare</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span>
 
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
     <span class='kw'>super</span>
@@ -1954,47 +1926,6 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="unique_type-instance_method">
-  
-    #<strong>unique_type</strong>  &#x21d2; <tt>Symbol</tt> 
-  
-
-  
-
-  
-    <span class="not_defined_here">
-      Originally defined in module
-        <span class='object_link'><a href="OptionsWithFallback.html#unique_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#unique_type (method)">OptionsWithFallback</a></span>
-    </span>
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="OptionsWithFallback.html#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span></p>
-</div></div>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Symbol</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div>
-</div>
-    
-      <div class="method_details ">
   <h3 class="signature " id="with_configured_loggers_context-instance_method">
   
     #<strong>with_configured_loggers_context</strong> { ... } &#x21d2; <tt>void</tt> 
@@ -2083,9 +2014,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:02 2019 by
+  Generated on Sat Mar 21 20:13:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

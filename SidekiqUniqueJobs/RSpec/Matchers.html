@@ -6,15 +6,15 @@
 <title>
   Module: SidekiqUniqueJobs::RSpec::Matchers
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::RSpec::Matchers";
   relpath = '../../';
 </script>
@@ -138,7 +138,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#have_valid_sidekiq_options-instance_method" title="#have_valid_sidekiq_options (instance method)">#<strong>have_valid_sidekiq_options</strong>(*args)  &#x21d2; Object </a>
+      <a href="#have_valid_sidekiq_options-instance_method" title="#have_valid_sidekiq_options (instance method)">#<strong>have_valid_sidekiq_options</strong>(*args)  &#x21d2; HaveValidSidekiqOptions </a>
     
 
     
@@ -152,7 +152,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>rubocop:disable Naming/PredicateName.</p>
+    <span class="summary_desc"><div class='inline'><p>RSpec matcher method for validating that a sidekiq worker has valid unique/lock configuration.</p>
 </div></span>
   
 </li>
@@ -170,7 +170,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="have_valid_sidekiq_options-instance_method">
   
-    #<strong>have_valid_sidekiq_options</strong>(*args)  &#x21d2; <tt>Object</tt> 
+    #<strong>have_valid_sidekiq_options</strong>(*args)  &#x21d2; <tt><span class='object_link'><a href="Matchers/HaveValidSidekiqOptions.html" title="SidekiqUniqueJobs::RSpec::Matchers::HaveValidSidekiqOptions (class)">HaveValidSidekiqOptions</a></span></tt> 
   
 
   
@@ -178,13 +178,30 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>rubocop:disable Naming/PredicateName</p>
+    <p>RSpec matcher method for validating that a sidekiq worker has valid unique/lock configuration</p>
 
 
   </div>
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Matchers/HaveValidSidekiqOptions.html" title="SidekiqUniqueJobs::RSpec::Matchers::HaveValidSidekiqOptions (class)">HaveValidSidekiqOptions</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>an RSpec matcher</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -192,12 +209,12 @@
       <pre class="lines">
 
 
-38
-39
-40</pre>
+46
+47
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/rspec/matchers/have_valid_sidekiq_options.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/rspec/matchers/have_valid_sidekiq_options.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_have_valid_sidekiq_options'>have_valid_sidekiq_options</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Naming/PredicateName
 </span>  <span class='const'><span class='object_link'><a href="Matchers/HaveValidSidekiqOptions.html" title="SidekiqUniqueJobs::RSpec::Matchers::HaveValidSidekiqOptions (class)">HaveValidSidekiqOptions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
@@ -212,9 +229,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:03 2019 by
+  Generated on Sat Mar 21 20:13:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

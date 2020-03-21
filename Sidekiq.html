@@ -6,15 +6,15 @@
 <title>
   Module: Sidekiq
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "Sidekiq";
   relpath = '';
 </script>
@@ -219,20 +219,22 @@
 30
 31
 32
-33</pre>
+33
+34</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_use_options'>use_options</span><span class='lparen'>(</span><span class='id identifier rubyid_tmp_config'>tmp_config</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_old_config'>old_config</span> <span class='op'>=</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
+  <span class='id identifier rubyid_old_options'>old_options</span> <span class='op'>=</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
+
   <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span> <span class='op'>=</span> <span class='id identifier rubyid_tmp_config'>tmp_config</span>
-
   <span class='kw'>yield</span>
 <span class='kw'>ensure</span>
   <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span> <span class='op'>=</span> <span class='id identifier rubyid_old_config'>old_config</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span> <span class='op'>=</span> <span class='const'>DEFAULT_WORKER_OPTIONS</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span> <span class='op'>=</span> <span class='id identifier rubyid_old_options'>old_options</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -244,9 +246,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:02 2019 by
+  Generated on Sat Mar 21 20:13:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

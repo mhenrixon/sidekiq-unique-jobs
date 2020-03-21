@@ -6,15 +6,15 @@
 <title>
   Module: SidekiqUniqueJobs::OptionsWithFallback
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::OptionsWithFallback";
   relpath = '../';
 </script>
@@ -320,29 +320,6 @@
 </li>
 
       
-        <li class="public deprecated">
-  <span class="summary_signature">
-    
-      <a href="#unique_type-instance_method" title="#unique_type (instance method)">#<strong>unique_type</strong>  &#x21d2; Symbol </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  <span class="deprecated note title">deprecated</span>
-  
-
-  
-    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span></p>
-</div></span>
-  
-</li>
-
-      
     </ul>
   
 
@@ -516,7 +493,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_type'>lock_type</span>
-  <span class='ivar'>@lock_type</span> <span class='op'>||=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_unique_type'>unique_type</span>
+  <span class='ivar'>@lock_type</span> <span class='op'>||=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -654,16 +631,16 @@
       <pre class="lines">
 
 
-91
-92
-93
-94
-95
-96
-97</pre>
+81
+82
+83
+84
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span> <span class='op'>||=</span> <span class='kw'>begin</span>
@@ -787,68 +764,14 @@
 </table>
 </div>
     
-      <div class="method_details ">
-  <h3 class="signature " id="unique_type-instance_method">
-  
-    #<strong>unique_type</strong>  &#x21d2; <tt>Symbol</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>in favour of <span class='object_link'><a href="#lock_type-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#lock_type (method)">#lock_type</a></span></p>
-</div></div>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Symbol</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-81
-82
-83</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 81</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_unique_type'>unique_type</span>
-  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>UNIQUE</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE</span><span class='rbracket'>]</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:03 2019 by
+  Generated on Sat Mar 21 20:13:45 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>

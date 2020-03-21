@@ -6,15 +6,15 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::UntilAndWhileExecuting
   
-    &mdash; Documentation by YARD 0.9.20
+    &mdash; Documentation by YARD 0.9.24
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting";
   relpath = '../../';
 </script>
@@ -254,7 +254,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <span class='id identifier rubyid_runtime_lock'>runtime_lock</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='lbrace'>{</span> <span class='kw'>return</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
     <span class='kw'>end</span>
   <span class='kw'>else</span>
-    <span class='id identifier rubyid_log_warn'>log_warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>couldn&#39;t unlock digest: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>UNIQUE_DIGEST</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_log_warn'>log_warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>couldn&#39;t unlock digest: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -267,9 +267,9 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  4 04:15:06 2019 by
+  Generated on Sat Mar 21 20:13:46 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.20 (ruby-2.6.5).
+  0.9.24 (ruby-2.6.5).
 </div>
 
     </div>
