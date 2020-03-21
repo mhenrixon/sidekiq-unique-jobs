@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
       DEPRECATED_KEYS = {
         UNIQUE.to_sym => LOCK.to_sym,
         UNIQUE_ARGS.to_sym => LOCK_ARGS.to_sym,
-        UNIQUE_PREFIX.to_sym => LOCK_PREFIX.to_sym
+        UNIQUE_PREFIX.to_sym => LOCK_PREFIX.to_sym,
       }.freeze
 
       #

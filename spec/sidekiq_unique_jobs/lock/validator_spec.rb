@@ -28,9 +28,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::Validator do
       end
 
       it "writes a helpful message about the deprecated key" do
-         expect(validate.errors[:unique]).to eq('is deprecated, use `lock: until_executed` instead.')
-         expect(validate.errors[:unique_args]).to eq('is deprecated, use `lock_args: hokus` instead.')
-         expect(validate.errors[:unique_prefix]).to eq('is deprecated, use `lock_prefix: pokus` instead.')
+        expect(validate.errors[:unique]).to eq("is deprecated, use `lock: until_executed` instead.")
+        expect(validate.errors[:unique_args]).to eq("is deprecated, use `lock_args: hokus` instead.")
+        expect(validate.errors[:unique_prefix]).to eq("is deprecated, use `lock_prefix: pokus` instead.")
       end
     end
   end
