@@ -6,8 +6,8 @@ RSpec.describe "Sidekiq::Api" do
       "queue" => "testqueue",
       "args" => [foo: "bar"] }
   end
-  let(:unique_digest) { "uniquejobs:863b7cb639bd71c828459b97788b2ada" }
-  let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
+  let(:lock_digest) { "uniquejobs:577db3c4fc72230bf2c256faa708a083" }
+  let(:key)         { SidekiqUniqueJobs::Key.new(lock_digest) }
 
   describe Sidekiq::SortedEntry::UniqueExtension do
     it "deletes uniqueness lock on delete" do
@@ -37,9 +37,9 @@ RSpec.describe "Sidekiq::Api" do
               "queue" => "testqueue",
               "retry" => true,
               "lock" => "until_executed",
-              "unique_args" => [{ "foo" => "bar" }],
-              "unique_digest" => key.digest,
-              "unique_prefix" => "uniquejobs",
+              "lock_args" => [{ "foo" => "bar" }],
+              "lock_digest" => key.digest,
+              "lock_prefix" => "uniquejobs",
             ),
           )
         end

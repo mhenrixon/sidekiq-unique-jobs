@@ -47,7 +47,7 @@ module LockSimulator
                        "timeout" => rand(20),
                        "ttl" => nil,
                        "lock" => SidekiqUniqueJobs.locks.keys.sample,
-                       "unique_args" => UNIQUE_ARGS.sample(2),
+                       "lock_args" => UNIQUE_ARGS.sample(2),
                        "time" => now_f,
                      ))
           end

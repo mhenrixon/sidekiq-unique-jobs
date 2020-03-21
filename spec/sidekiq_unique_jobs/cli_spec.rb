@@ -7,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.4" do
   let(:item) do
     {
       "jid" => jid,
-      "unique_digest" => digest,
+      "lock_digest" => digest,
     }
   end
   let(:jid)           { "abcdefab" }

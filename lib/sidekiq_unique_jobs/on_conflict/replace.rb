@@ -23,7 +23,7 @@ module SidekiqUniqueJobs
       def initialize(item, redis_pool = nil)
         super(item, redis_pool)
         @queue         = item[QUEUE]
-        @unique_digest = item[UNIQUE_DIGEST]
+        @unique_digest = item[LOCK_DIGEST]
       end
 
       #

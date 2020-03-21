@@ -29,7 +29,7 @@ RSpec.describe "delete_job_by_digest.lua" do
         "jid" => job_id,
         "retry_count" => 2,
         "failed_at" => Time.now.to_f,
-        "unique_digest" => digest,
+        "lock_digest" => digest,
       }
     end
 

@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:item_one) do
     {
       "jid" => jid_one,
-      "unique_digest" => digest,
+      "lock_digest" => digest,
       "lock_ttl" => lock_ttl,
       "lock" => lock_type,
       "lock_timeout" => lock_timeout,

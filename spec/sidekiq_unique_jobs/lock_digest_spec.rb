@@ -10,12 +10,12 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
     {
       "class" => class_name,
       "queue" => queue,
-      "unique_args" => args,
+      "lock_args" => args,
     }
   end
 
-  describe "#unique_digest" do
-    subject(:unique_digest) { digest.unique_digest }
+  describe "#lock_digest" do
+    subject(:lock_digest) { digest.lock_digest }
 
     context "when args are empty" do
       let(:digest_two)   { described_class.new(item) }
@@ -23,8 +23,8 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
       let(:args)         { [] }
 
       context "with the same unique args" do
-        it "equals to unique_digest for that item" do
-          expect(unique_digest).to eq(digest_two.unique_digest)
+        it "equals to lock_digest for that item" do
+          expect(lock_digest).to eq(digest_two.lock_digest)
         end
       end
     end
@@ -36,16 +36,16 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
         context "with the same unique args" do
           let(:another_item) { item }
 
-          it "equals to unique_digest for that item" do
-            expect(unique_digest).to eq(digest_two.unique_digest)
+          it "equals to lock_digest for that item" do
+            expect(lock_digest).to eq(digest_two.lock_digest)
           end
         end
 
         context "with different unique args" do
-          let(:another_item) { item.merge("unique_args" => [1, 3, "type" => "that"]) }
+          let(:another_item) { item.merge("lock_args" => [1, 3, "type" => "that"]) }
 
-          it "differs from unique_digest for that item" do
-            expect(unique_digest).not_to eq(digest_two.unique_digest)
+          it "differs from lock_digest for that item" do
+            expect(lock_digest).not_to eq(digest_two.lock_digest)
           end
         end
       end
@@ -69,18 +69,18 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
   describe "#digestable_hash" do
     subject(:digestable_hash) { digest.digestable_hash }
 
-    it { is_expected.to eq("class" => "UntilExecutedJob", "queue" => "myqueue", "unique_args" => [[1, 2]]) }
+    it { is_expected.to eq("class" => "UntilExecutedJob", "queue" => "myqueue", "lock_args" => [[1, 2]]) }
 
     context "when unique_across_queues", :with_worker_options do
       let(:worker_options) { { unique_across_queues: true } }
 
-      it { is_expected.to eq("class" => "UntilExecutedJob", "unique_args" => [[1, 2]]) }
+      it { is_expected.to eq("class" => "UntilExecutedJob", "lock_args" => [[1, 2]]) }
     end
 
     context "when unique_across_workers", :with_worker_options do
       let(:worker_options) { { unique_across_workers: true } }
 
-      it { is_expected.to eq("queue" => "myqueue", "unique_args" => [[1, 2]]) }
+      it { is_expected.to eq("queue" => "myqueue", "lock_args" => [[1, 2]]) }
     end
   end
 

@@ -31,7 +31,7 @@ def get_item(num)
     "args" => [num, num],
     "queue" => QUEUES.sample,
     "jid" => JOB_IDS[num],
-    "unique_digest" => DIGESTS[num] }
+    "lock_digest" => DIGESTS[num] }
 end
 
 Benchmark.ips do |ips|

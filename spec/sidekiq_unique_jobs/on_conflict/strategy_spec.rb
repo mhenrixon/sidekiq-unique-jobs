@@ -4,7 +4,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Strategy do
   let(:strategy)      { described_class.new(item) }
   let(:unique_digest) { "uniquejobs:56c68cab5038eb57959538866377560d" }
   let(:item) do
-    { "unique_digest" => unique_digest, "queue" => :customqueue }
+    { "lock_digest" => unique_digest, "queue" => :customqueue }
   end
 
   describe "#replace?" do

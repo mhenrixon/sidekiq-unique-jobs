@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
-  let(:strategy)      { described_class.new(item) }
-  let(:unique_digest) { "uniquejobs:56c68cab5038eb57959538866377560d" }
-  let(:block)         { -> { p "Hello" } }
-  let(:digest)        { digests.entries.first }
+  let(:strategy)    { described_class.new(item) }
+  let(:lock_digest) { "uniquejobs:0781b1f587a9a8d08773f21ed752caed" }
+  let(:block)       { -> { p "Hello" } }
+  let(:digest)      { digests.entries.first }
 
   let(:item) do
-    { "unique_digest" => unique_digest, "queue" => :customqueue }
+    { "lock_digest" => lock_digest, "queue" => :customqueue }
   end
 
   describe "#call" do
@@ -30,7 +30,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
           "jid" => jid,
           "retry_count" => 2,
           "failed_at" => Time.now.to_f,
-          "unique_digest" => unique_digest,
+          "lock_digest" => lock_digest,
         }
       end
 

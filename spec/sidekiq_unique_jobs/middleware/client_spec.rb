@@ -9,7 +9,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       expect(schedule_count).to eq(1)
 
       expected = %w[
-        uniquejobs:6e47d668ad22db2a3ba0afd331514ce2
+        uniquejobs:26a33855311a0a653c5e0b4af1d1458d
       ]
 
       expect(keys).to include(*expected)
@@ -101,7 +101,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     context "when filter method is defined" do
       it "pushes no duplicate messages" do
         expect(CustomQueueJobWithFilterMethod).to respond_to(:args_filter)
-        expect(CustomQueueJobWithFilterMethod.get_sidekiq_options["unique_args"]).to eq :args_filter
+        expect(CustomQueueJobWithFilterMethod.get_sidekiq_options["lock_args"]).to eq :args_filter
 
         Array.new(10) do |i|
           push_item(

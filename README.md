@@ -23,8 +23,8 @@
 - [Worker Configuration](#worker-configuration)
   - [lock_ttl](#lock_ttl-1)
   - [lock_timeout](#lock_timeout-1)
-  - [unique_across_queues](#uniqueacrossqueues)
-  - [unique_across_workers](#uniqueacrossworkers)
+  - [unique_across_queues](#unique_across_queues)
+  - [unique_across_workers](#unique_across_workers)
 - [Locks](#locks)
   - [Until Executing](#until-executing)
   - [Until Executed](#until-executed)
@@ -33,14 +33,14 @@
   - [While Executing](#while-executing)
   - [Custom Locks](#custom-locks)
 - [Conflict Strategy](#conflict-strategy)
-- [lib/strategies/my_custom_strategy.rb](#libstrategiesmycustomstrategyrb)
+- [lib/strategies/my_custom_strategy.rb](#libstrategiesmy_custom_strategyrb)
 - [For rails application](#for-rails-application)
-- [config/initializers/sidekiq_unique_jobs.rb](#configinitializerssidekiquniquejobsrb)
+- [config/initializers/sidekiq_unique_jobs.rb](#configinitializerssidekiq_unique_jobsrb)
 - [For other projects, whenever you prefer](#for-other-projects-whenever-you-prefer)
 - [this goes in your initializer](#this-goes-in-your-initializer)
 - [app/config/routes.rb](#appconfigroutesrb)
 - [app/workers/bad_worker.rb](#appworkersbad_workerrb)
-- [spec/workers/bad_worker_spec.rb](#specworkersbadworkerspecrb)
+- [spec/workers/bad_worker_spec.rb](#specworkersbad_worker_specrb)
 - [OR](#or)
 - [Contributing](#contributing)
 - [Contributors](#contributors)
@@ -504,9 +504,9 @@ Requiring the gem in your gemfile should be sufficient to enable unique jobs.
 
 ### Finer Control over Uniqueness
 
-Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to define either a `unique_args` method, or a ruby proc.
+Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be _transient_. For this use-case, you need to define either a `lock_args` method, or a ruby proc.
 
-*NOTE:* The unique_args method need to return an array of values to use for uniqueness check.
+*NOTE:* The lock_args method need to return an array of values to use for uniqueness check.
 
 *NOTE:* The arguments passed to the proc or the method is always an array. If your method takes a single array as argument the value of args will be `[[...]]`.
 
@@ -516,9 +516,9 @@ The method or the proc can return a modified version of args without the transie
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :until_and_while_executing,
-                  unique_args: :unique_args # this is default and will be used if such a method is defined
+                  lock_args: :lock_args # this is default and will be used if such a method is defined
 
-  def self.unique_args(args)
+  def self.lock_args(args)
     [ args[0], args[2][:type] ]
   end
 
@@ -529,7 +529,7 @@ end
 class UniqueJobWithFilterProc
   include Sidekiq::Worker
   sidekiq_options lock: :until_executed,
-                  unique_args: ->(args) { [ args.first ] }
+                  lock_args: ->(args) { [ args.first ] }
 
   ...
 
@@ -541,9 +541,9 @@ It is possible to ensure different types of unique args based on context. I can'
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options lock: :until_and_while_executing, unique_args: :unique_args
+  sidekiq_options lock: :until_and_while_executing, lock_args: :lock_args
 
-  def self.unique_args(args)
+  def self.lock_args(args)
     if Sidekiq::ProcessSet.new.size > 1
       # sidekiq runtime; uniqueness for the object (first arg)
       args.first

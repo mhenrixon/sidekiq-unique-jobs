@@ -16,7 +16,7 @@ module SidekiqUniqueJobs
       #
       def call
         log_info(<<~MESSAGE.chomp)
-          Skipping job with id (#{item[JID]}) because unique_digest: (#{item[UNIQUE_DIGEST]}) already exists
+          Skipping job with id (#{item[JID]}) because lock_digest: (#{item[LOCK_DIGEST]}) already exists
         MESSAGE
       end
     end

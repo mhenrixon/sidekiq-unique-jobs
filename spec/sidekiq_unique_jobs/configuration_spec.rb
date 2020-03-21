@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs do
     let(:ttl)       { nil }
     let(:item) do
       {
-        "unique_digest" => digest,
+        "lock_digest" => digest,
         "jid" => jid,
         "lock_expiration" => ttl,
         "lock" => lock_type,

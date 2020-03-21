@@ -13,7 +13,7 @@ module SidekiqUniqueJobs
     # @param [Hash] item a Sidekiq job hash
     # @return [String] a unique digest
     def self.call(item)
-      new(item).unique_args
+      new(item).lock_args
     end
 
     # The sidekiq job hash
@@ -32,42 +32,42 @@ module SidekiqUniqueJobs
     end
 
     # The unique arguments to use for creating a lock
-    # @return [Array] the arguments filters by the {#filtered_args} method if {#unique_args_enabled?}
-    def unique_args
-      @unique_args ||= filtered_args
+    # @return [Array] the arguments filters by the {#filtered_args} method if {#lock_args_enabled?}
+    def lock_args
+      @lock_args ||= filtered_args
     end
 
-    # Checks if the worker class has enabled unique_args
+    # Checks if the worker class has enabled lock_args
     # @return [true, false]
-    def unique_args_enabled?
-      # return false unless unique_args_method_valid?
+    def lock_args_enabled?
+      # return false unless lock_args_method_valid?
 
-      unique_args_method
+      lock_args_method
     end
 
-    # Validate that the unique_args_method is acceptable
+    # Validate that the lock_args_method is acceptable
     # @return [true, false]
-    def unique_args_method_valid?
-      [NilClass, TrueClass, FalseClass].none? { |klass| unique_args_method.is_a?(klass) }
+    def lock_args_method_valid?
+      [NilClass, TrueClass, FalseClass].none? { |klass| lock_args_method.is_a?(klass) }
     end
 
-    # Checks if the worker class has disabled unique_args
+    # Checks if the worker class has disabled lock_args
     # @return [true, false]
-    def unique_args_disabled?
-      !unique_args_method
+    def lock_args_disabled?
+      !lock_args_method
     end
 
     # Filters unique arguments by proc or symbol
-    # @return [Array] {#filter_by_proc} when {#unique_args_method} is a Proc
-    # @return [Array] {#filter_by_symbol} when {#unique_args_method} is a Symbol
+    # @return [Array] {#filter_by_proc} when {#lock_args_method} is a Proc
+    # @return [Array] {#filter_by_symbol} when {#lock_args_method} is a Symbol
     # @return [Array] args unfiltered when neither of the above
     def filtered_args
-      return args if unique_args_disabled?
+      return args if lock_args_disabled?
       return args if args.empty?
 
       json_args = Normalizer.jsonify(args)
 
-      case unique_args_method
+      case lock_args_method
       when Proc
         filter_by_proc(json_args)
       when Symbol
@@ -79,7 +79,7 @@ module SidekiqUniqueJobs
     # @param [Array] args the arguments passed to the sidekiq worker
     # @return [Array] with the filtered arguments
     def filter_by_proc(args)
-      unique_args_method.call(args)
+      lock_args_method.call(args)
     end
 
     # Filters unique arguments by method configured in the sidekiq worker
@@ -87,26 +87,28 @@ module SidekiqUniqueJobs
     # @return [Array] unfiltered unless {#worker_method_defined?}
     # @return [Array] with the filtered arguments
     def filter_by_symbol(args)
-      return args unless worker_method_defined?(unique_args_method)
+      return args unless worker_method_defined?(lock_args_method)
 
-      worker_class.send(unique_args_method, args)
+      worker_class.send(lock_args_method, args)
     rescue ArgumentError
       raise SidekiqUniqueJobs::InvalidUniqueArguments,
             given: args,
             worker_class: worker_class,
-            unique_args_method: unique_args_method
+            lock_args_method: lock_args_method
     end
 
     # The method to use for filtering unique arguments
-    def unique_args_method
-      @unique_args_method ||= worker_options[UNIQUE_ARGS]
-      @unique_args_method ||= :unique_args if worker_method_defined?(:unique_args)
-      @unique_args_method ||= default_unique_args_method
+    def lock_args_method
+      @lock_args_method ||= worker_options[LOCK_ARGS] || worker_options[UNIQUE_ARGS]
+      @lock_args_method ||= :lock_args if worker_method_defined?(:lock_args)
+      @lock_args_method ||= :unique_args if worker_method_defined?(:unique_args)
+      @lock_args_method ||= default_lock_args_method
     end
 
     # The global worker options defined in Sidekiq directly
-    def default_unique_args_method
-      Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS]
+    def default_lock_args_method
+      Sidekiq.default_worker_options.stringify_keys[LOCK_ARGS] ||
+        Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS]
     end
   end
 end

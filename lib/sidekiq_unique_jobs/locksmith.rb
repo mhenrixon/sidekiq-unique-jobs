@@ -57,7 +57,7 @@ module SidekiqUniqueJobs
     #
     def initialize(item, redis_pool = nil)
       @item        = item
-      @key         = Key.new(item[UNIQUE_DIGEST])
+      @key         = Key.new(item[LOCK_DIGEST] || item[UNIQUE_DIGEST]) # fallback until can be removed
       @job_id      = item[JID]
       @config      = LockConfig.new(item)
       @redis_pool  = redis_pool
@@ -341,7 +341,7 @@ module SidekiqUniqueJobs
         TIMEOUT => item[LOCK_TIMEOUT],
         TTL => item[LOCK_TTL],
         LOCK => config.type,
-        UNIQUE_ARGS => item[UNIQUE_ARGS],
+        LOCK_ARGS => item[LOCK_ARGS],
         TIME => now_f,
       )
     end

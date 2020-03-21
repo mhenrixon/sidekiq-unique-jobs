@@ -8,7 +8,7 @@ class UniqueJobWithFilterMethod
                   lock: :while_executing,
                   queue: :customqueue,
                   retry: 1,
-                  unique_args: :filtered_args
+                  lock_args: :filtered_args
 
   def perform(*)
     # NO-OP

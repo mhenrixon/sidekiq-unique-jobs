@@ -4,7 +4,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Raise do
   let(:strategy)      { described_class.new(item) }
   let(:unique_digest) { "uniquejobs:random-digest-value" }
   let(:item) do
-    { "unique_digest" => unique_digest }
+    { "lock_digest" => unique_digest }
   end
 
   describe "#call" do

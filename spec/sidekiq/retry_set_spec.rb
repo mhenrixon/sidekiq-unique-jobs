@@ -22,7 +22,7 @@ RSpec.describe Sidekiq::RetrySet do
       "queue" => queue,
       "retry_at" => retry_at,
       "retry_count" => 1,
-      "unique_digest" => unique_digest,
+      "lock_digest" => unique_digest,
     }
   end
 

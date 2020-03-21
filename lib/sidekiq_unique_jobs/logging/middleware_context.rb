@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
       #
       def logging_context
         middleware = is_a?(SidekiqUniqueJobs::Middleware::Client) ? :client : :server
-        digest     = item[UNIQUE_DIGEST]
+        digest     = item[LOCK_DIGEST]
         lock_type  = item[LOCK]
 
         if logger_context_hash?
