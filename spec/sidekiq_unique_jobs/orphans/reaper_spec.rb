@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
   let(:job_id)   { "job_id" }
   let(:item)     { raw_item }
   let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
-  let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "unique_digest" => digest } }
+  let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => digest } }
   let(:lock_info) do
     {
       "job_id" => job_id,
@@ -15,7 +15,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
       "time" => now_f,
       "timeout" => nil,
       "ttl" => nil,
-      "unique_args" => [],
+      "lock_args" => [],
       "worker" => "MyUniqueJob",
     }
   end

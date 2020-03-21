@@ -5,7 +5,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
   let(:unique_digest) { "uniquejobs:random-digest-value" }
   let(:item) do
     { "class" => UniqueJobOnConflictReschedule,
-      "unique_digest" => unique_digest,
+      "lock_digest" => unique_digest,
       "args" => [1, 2] }
   end
 

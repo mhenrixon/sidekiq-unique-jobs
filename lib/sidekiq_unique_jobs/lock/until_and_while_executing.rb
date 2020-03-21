@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
             runtime_lock.execute { return yield }
           end
         else
-          log_warn "couldn't unlock digest: #{item[UNIQUE_DIGEST]} #{item[JID]}"
+          log_warn "couldn't unlock digest: #{item[LOCK_DIGEST]} #{item[JID]}"
         end
       end
 

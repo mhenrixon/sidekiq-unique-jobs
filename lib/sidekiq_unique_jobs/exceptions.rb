@@ -14,7 +14,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class Conflict < UniqueJobsError
     def initialize(item)
-      super("Item with the key: #{item[UNIQUE_DIGEST]} is already scheduled or processing")
+      super("Item with the key: #{item[LOCK_DIGEST]} is already scheduled or processing")
     end
   end
 
@@ -61,15 +61,17 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   class InvalidUniqueArguments < UniqueJobsError
     def initialize(options)
-      given              = options[:given]
-      worker_class       = options[:worker_class]
-      unique_args_method = options[:unique_args_method]
-      uniq_args_meth     = worker_class.method(unique_args_method)
-      num_args           = uniq_args_meth.arity
-      # source_location = uniq_args_meth.source_location
+      given            = options[:given]
+      worker_class     = options[:worker_class]
+      lock_args_method = options[:lock_args_method]
+      lock_args_meth   = worker_class.method(lock_args_method)
+      num_args         = lock_args_meth.arity
+      source_location  = lock_args_meth.source_location
 
       super(
-        "#{worker_class}#unique_args takes #{num_args} arguments, received #{given.inspect}"
+        "#{worker_class}##{lock_args_method} takes #{num_args} arguments, received #{given.inspect}" \
+        "\n\n" \
+        "   #{source_location.join(':')}"
       )
     end
   end

@@ -17,6 +17,8 @@ module SidekiqUniqueJobs
   LIMIT                 ||= "limit"
   LIVE_VERSION          ||= "uniquejobs:live"
   LOCK                  ||= "lock"
+  LOCK_ARGS             ||= "lock_args"
+  LOCK_DIGEST           ||= "lock_digest"
   LOCK_EXPIRATION       ||= "lock_expiration"
   LOCK_INFO             ||= "lock_info"
   LOCK_LIMIT            ||= "lock_limit"

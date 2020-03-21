@@ -21,7 +21,7 @@ class MyWorker
   sidekiq_options lock: :until_executed, queue: :undefault
   def perform(args); end
 
-  def self.unique_args(args)
+  def self.lock_args(args)
     # the way you consider unique arguments
   end
 end

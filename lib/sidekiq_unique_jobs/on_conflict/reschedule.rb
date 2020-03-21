@@ -20,10 +20,10 @@ module SidekiqUniqueJobs
       #   This will mess up sidekiq stats because a new job is created
       def call
         if sidekiq_worker_class?
-          log_info("Rescheduling #{item[UNIQUE_DIGEST]}")
+          log_info("Rescheduling #{item[LOCK_DIGEST]}")
           worker_class&.perform_in(5, *item[ARGS])
         else
-          log_warn("Skip rescheduling of #{item[UNIQUE_DIGEST]} because #{worker_class} is not a Sidekiq::Worker")
+          log_warn("Skip rescheduling of #{item[LOCK_DIGEST]} because #{worker_class} is not a Sidekiq::Worker")
         end
       end
     end

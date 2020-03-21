@@ -4,16 +4,16 @@ RSpec.describe SidekiqUniqueJobs::Digests do
   let(:digests) { described_class.new }
   let(:expected_keys) do
     {
-      "uniquejobs:e739dadc23533773b920936336341d01" => kind_of(Float),
-      "uniquejobs:56c68cab5038eb57959538866377560d" => kind_of(Float),
-      "uniquejobs:8d9e83be14c033be4496295ec2740b91" => kind_of(Float),
-      "uniquejobs:23e8715233c2e8f7b578263fcb8ac657" => kind_of(Float),
-      "uniquejobs:6722965def15faf3c45cb9e66f994a49" => kind_of(Float),
-      "uniquejobs:5bdd20fbbdda2fc28d6461e0eb1f76ee" => kind_of(Float),
-      "uniquejobs:c658060a30b761bb12f2133cb7c3f294" => kind_of(Float),
-      "uniquejobs:b34294c4802ee2d61c9e3e8dd7f2bab4" => kind_of(Float),
-      "uniquejobs:06c3a5b63038c7b724b8603bb02ace99" => kind_of(Float),
-      "uniquejobs:62c11d32fd69c691802579682409a483" => kind_of(Float),
+      "uniquejobs:0781b1f587a9a8d08773f21ed752caed" => kind_of(Float),
+      "uniquejobs:09b3a42f77a75865bf27ac44e66bb4ef" => kind_of(Float),
+      "uniquejobs:1c4c0bf2a8a1006c7610e4ef1f965f34" => kind_of(Float),
+      "uniquejobs:236feda848cfbb1ae32d4d9af666349e" => kind_of(Float),
+      "uniquejobs:77d1e23f18943bc048b48a01b85af0b3" => kind_of(Float),
+      "uniquejobs:9fcaaf3e873f101a8d79e00e89bb3b36" => kind_of(Float),
+      "uniquejobs:a47040c19b3741eaf912a96cd8bee728" => kind_of(Float),
+      "uniquejobs:c85f45d715232cfff0505fb85ca92659" => kind_of(Float),
+      "uniquejobs:cb5be91a66b83435281c23fe489f22b5" => kind_of(Float),
+      "uniquejobs:e74bebbf569d620397688fded62c85d6" => kind_of(Float),
     }
   end
 
@@ -32,7 +32,7 @@ RSpec.describe SidekiqUniqueJobs::Digests do
   describe "#delete_by_digest" do
     subject(:delete_by_digest) { digests.delete_by_digest(digest) }
 
-    let(:digest) { "uniquejobs:62c11d32fd69c691802579682409a483" }
+    let(:digest) { "uniquejobs:e74bebbf569d620397688fded62c85d6" }
 
     before do
       allow(digests).to receive(:log_info)

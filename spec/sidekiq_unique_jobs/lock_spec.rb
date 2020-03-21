@@ -27,7 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
       timeout: 10,
       ttl: 2,
       lock: :until_executed,
-      unique_args: [1, 2],
+      lock_args: [1, 2],
       time: SidekiqUniqueJobs.now_f,
     }
   end

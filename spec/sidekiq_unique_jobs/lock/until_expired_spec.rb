@@ -41,7 +41,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
       process_one.lock
       process_one.execute {}
       expect(process_one).to be_locked
-      expect("uniquejobs:da6005926a8457526e998f0033901dfc").to have_ttl(1)
     end
   end
 

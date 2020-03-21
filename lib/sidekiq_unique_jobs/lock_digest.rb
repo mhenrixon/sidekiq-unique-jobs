@@ -17,7 +17,7 @@ module SidekiqUniqueJobs
     # @return [String] a unique digest for the given arguments
     #
     def self.call(item)
-      new(item).unique_digest
+      new(item).lock_digest
     end
 
     # The sidekiq job hash
@@ -26,37 +26,37 @@ module SidekiqUniqueJobs
     #
     # @!attribute [r] args
     #   @return [Array<Objet>] the arguments passed to `perform_async`
-    attr_reader :unique_args
+    attr_reader :lock_args
     #
     # @!attribute [r] args
     #   @return [String] the prefix for the unique key
-    attr_reader :unique_prefix
+    attr_reader :lock_prefix
 
     # @param [Hash] item a Sidekiq job hash
     def initialize(item)
-      @item          = item
-      @worker_class  = item[CLASS]
-      @unique_args   = item[UNIQUE_ARGS]
-      @unique_prefix = item[UNIQUE_PREFIX]
+      @item         = item
+      @worker_class = item[CLASS]
+      @lock_args    = item.slice(LOCK_ARGS, UNIQUE_ARGS).values.first # TODO: Deprecate UNIQUE_ARGS
+      @lock_prefix  = item.slice(LOCK_PREFIX, UNIQUE_PREFIX).values.first # TODO: Deprecate UNIQUE_PREFIX
     end
 
-    # Memoized unique_digest
+    # Memoized lock_digest
     # @return [String] a unique digest
-    def unique_digest
-      @unique_digest ||= create_digest
+    def lock_digest
+      @lock_digest ||= create_digest
     end
 
-    # Creates a namespaced unique digest based on the {#digestable_hash} and the {#unique_prefix}
+    # Creates a namespaced unique digest based on the {#digestable_hash} and the {#lock_prefix}
     # @return [String] a unique digest
     def create_digest
       digest = ::Digest::MD5.hexdigest(dump_json(digestable_hash))
-      "#{unique_prefix}:#{digest}"
+      "#{lock_prefix}:#{digest}"
     end
 
     # Filter a hash to use for digest
     # @return [Hash] to use for digest
     def digestable_hash
-      @item.slice(CLASS, QUEUE, UNIQUE_ARGS).tap do |hash|
+      @item.slice(CLASS, QUEUE, LOCK_ARGS).tap do |hash|
         hash.delete(QUEUE) if unique_across_queues?
         hash.delete(CLASS) if unique_across_workers?
       end

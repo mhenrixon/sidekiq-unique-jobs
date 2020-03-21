@@ -65,7 +65,7 @@ module SidekiqUniqueJobs
       #
       # @return [String] a string containing all non-truncated arguments
       #
-      def display_unique_args(args, truncate_after_chars = 2000)
+      def display_lock_args(args, truncate_after_chars = 2000)
         return "Invalid job payload, args is nil" if args.nil?
         return "Invalid job payload, args must be an Array, not #{args.class.name}" unless args.is_a?(Array)
 

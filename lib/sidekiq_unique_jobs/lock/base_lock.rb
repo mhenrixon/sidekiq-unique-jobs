@@ -91,7 +91,7 @@ module SidekiqUniqueJobs
       private
 
       def prepare_item
-        return if item.key?(UNIQUE_DIGEST)
+        return if item.key?(LOCK_DIGEST)
 
         # The below should only be done to ease testing
         # in production this will be done by the middleware
