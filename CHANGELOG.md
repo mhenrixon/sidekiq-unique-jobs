@@ -1,5 +1,48 @@
 # Changelog
 
+## [v7.0.0.beta10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta10) (2020-03-21)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.19...v7.0.0.beta10)
+
+**Implemented enhancements:**
+
+- Rename remaining unique\_\* keys to lock\_\* [\#475](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/475) ([mhenrixon](https://github.com/mhenrixon))
+- Split calculator into two separate [\#474](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/474) ([mhenrixon](https://github.com/mhenrixon))
+- Prepare for improving tests [\#473](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/473) ([mhenrixon](https://github.com/mhenrixon))
+- Update gemspec: thor [\#465](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/465) ([masawo](https://github.com/masawo))
+
+**Fixed bugs:**
+
+- With v6.0.18, Sidekiq doesn't run at all [\#471](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/471)
+- Fix errors\_as\_string on lock\_config.rb [\#469](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/469) ([donaldpiret](https://github.com/donaldpiret))
+
+**Merged pull requests:**
+
+- README: Use SVG badges ✨ [\#470](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/470) ([olleolleolle](https://github.com/olleolleolle))
+- remove deprecated/broken OptionsWithFallback\#unique\_type [\#435](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/435) ([zvkemp](https://github.com/zvkemp))
+
+## [v6.0.19](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.19) (2020-03-21)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta9...v6.0.19)
+
+**Fixed bugs:**
+
+- Fix access to lock [\#476](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/476) ([mhenrixon](https://github.com/mhenrixon))
+- Backport v7 fix for conflicts [\#461](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/461) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.0.0.beta9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta9) (2019-12-04)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta8...v7.0.0.beta9)
+
+**Implemented enhancements:**
+
+- Keys without TTL [\#417](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/417)
+- Various changes to test and verify reliability [\#463](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/463) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- until\_and\_while\_executing with sidekiq pro `reliable\_scheduler!` [\#411](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/411)
+
 ## [v7.0.0.beta8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8) (2019-11-28)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta7...v7.0.0.beta8)
@@ -69,10 +112,6 @@
 - Prevent multiple reapers [\#453](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/453) ([mhenrixon](https://github.com/mhenrixon))
 - Make deletion compatible with redis-namespace [\#452](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/452) ([mhenrixon](https://github.com/mhenrixon))
 - Make sure server process stays locked [\#448](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/448) ([mhenrixon](https://github.com/mhenrixon))
-
-**Closed issues:**
-
-- Deletion of digest doesn't work from admin UI [\#438](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/438)
 
 **Merged pull requests:**
 
