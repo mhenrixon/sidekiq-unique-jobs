@@ -69,17 +69,7 @@ module SidekiqUniqueJobs
     # @return [Symbol]
     #
     def lock_type
-      @lock_type ||= options[LOCK] || item[LOCK] || unique_type
-    end
-
-    #
-    # @deprecated in favour of {lock_type}
-    #
-    #
-    # @return [Symbol]
-    #
-    def unique_type
-      options[UNIQUE] || item[UNIQUE]
+      @lock_type ||= options[LOCK] || item[LOCK]
     end
 
     #

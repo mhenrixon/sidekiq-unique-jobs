@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
     it { is_expected.to eq(nil) }
 
-    context 'when options["unique"] is present' do
+    context 'when options["lock"] is present' do
       let(:options) { { "lock" => "while_executing" } }
       let(:item)    { { "lock" => "until_executed" } }
 
@@ -57,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       end
     end
 
-    context 'when item["unique"] is present' do
+    context 'when item["lock"] is present' do
       let(:item) { { "lock" => "until_executed" } }
 
       it { is_expected.to eq("until_executed") }
@@ -80,14 +80,14 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
     it { is_expected.to be_truthy }
 
-    context 'when options["unique"] is present' do
+    context 'when options["lock"] is present' do
       let(:options) { { "lock" => "while_executing" } }
       let(:item)    { { "lock" => "until_executed" } }
 
       it { is_expected.to be_falsey }
     end
 
-    context 'when item["unique"] is present' do
+    context 'when item["lock"] is present' do
       let(:options) { {} }
       let(:item)    { { "lock" => "until_executed" } }
 
@@ -114,12 +114,12 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   describe "#lock_instance" do
     subject(:lock) { options_with_fallback.lock_instance }
 
-    context 'when item["unique"] is present' do
+    context 'when item["lock"] is present' do
       let(:unique) { :until_executed }
 
       it { is_expected.to be_a(SidekiqUniqueJobs::Lock::UntilExecuted) }
 
-      context 'when options["unique"] is present' do
+      context 'when options["lock"] is present' do
         let(:options) { { "lock" => :while_executing } }
 
         it { is_expected.to be_a(SidekiqUniqueJobs::Lock::WhileExecuting) }
@@ -130,12 +130,12 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   describe "#lock_class" do
     subject(:lock_class) { options_with_fallback.lock_class }
 
-    context 'when item["unique"] is present' do
+    context 'when item["lock"] is present' do
       let(:item) { { "lock" => :until_executed } }
 
       it { is_expected.to eq(SidekiqUniqueJobs::Lock::UntilExecuted) }
 
-      context 'when options["unique"] is present' do
+      context 'when options["lock"] is present' do
         let(:options) { { "lock" => :while_executing } }
 
         it { is_expected.to eq(SidekiqUniqueJobs::Lock::WhileExecuting) }
@@ -156,14 +156,14 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   describe "#lock_type" do
     subject { options_with_fallback.lock_type }
 
-    context 'when options["unique"] is while_executing' do
+    context 'when options["lock"] is while_executing' do
       let(:options) { { "lock" => "while_executing" } }
       let(:item)    { { "lock" => "until_executed" } }
 
       it { is_expected.to eq("while_executing") }
     end
 
-    context 'when item["unique"] is until_executed' do
+    context 'when item["lock"] is until_executed' do
       let(:options) { {} }
       let(:item)    { { "lock" => "until_executed" } }
 
