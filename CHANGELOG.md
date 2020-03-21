@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta11...HEAD)
+
+**Closed issues:**
+
+- validate\_worker! throws error [\#466](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/466)
+
+## [v7.0.0.beta11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta11) (2020-03-21)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta10...v7.0.0.beta11)
+
+**Fixed bugs:**
+
+- Only configure RSpec when constant is defined [\#477](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/477) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta10) (2020-03-21)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.19...v7.0.0.beta10)
