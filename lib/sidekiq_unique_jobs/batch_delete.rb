@@ -11,6 +11,8 @@ module SidekiqUniqueJobs
     # @return [Integer] the default batch size
     BATCH_SIZE = 100
 
+    #
+    # @return [Array<String>] Supported key suffixes
     SUFFIXES = %w[
       QUEUED
       PRIMED

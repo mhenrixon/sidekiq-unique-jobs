@@ -9,6 +9,16 @@ module SidekiqUniqueJobs
     # @!parse include SidekiqUniqueJobs::SidekiqWorkerMethods
     include SidekiqUniqueJobs::SidekiqWorkerMethods
 
+    #
+    # Computes lock ttl from job arguments, sidekiq_options.
+    #   Falls back to {default_lock_ttl}
+    #
+    # @note this method takes into consideration the time
+    #   until a job is scheduled
+    #
+    #
+    # @return [Integer] the number of seconds to live
+    #
     def self.calculate(item)
       new(item).calculate
     end

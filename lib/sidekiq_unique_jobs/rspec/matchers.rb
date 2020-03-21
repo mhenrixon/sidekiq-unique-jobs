@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+  #
+  # We all know what the hell RSpec is no?
+  #
+  # @author Mikael Henriksson <mikael@zoolutions.se>
+  #
   module RSpec
     #
     # Module Matchers provides RSpec matcher for your workers

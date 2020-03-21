@@ -58,7 +58,6 @@ module SidekiqUniqueJobs
     end
 
     # Filters unique arguments by proc or symbol
-    # @param [Array] args the arguments passed to the sidekiq worker
     # @return [Array] {#filter_by_proc} when {#unique_args_method} is a Proc
     # @return [Array] {#filter_by_symbol} when {#unique_args_method} is a Symbol
     # @return [Array] args unfiltered when neither of the above

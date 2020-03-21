@@ -75,6 +75,13 @@ module Sidekiq
     # Prepends deletion of locks to clear_all
     #
     module Overrides
+      #
+      # Overrides sidekiq_options on the worker class to prepend validation
+      #
+      # @param [Hash] options worker options
+      #
+      # @return [void]
+      #
       def sidekiq_options(options = {})
         SidekiqUniqueJobs.validate_worker!(options) if SidekiqUniqueJobs.config.raise_on_config_error
 

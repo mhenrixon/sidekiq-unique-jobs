@@ -25,6 +25,8 @@ module SidekiqUniqueJobs
     # @!parse include SidekiqUniqueJobs::JSON
     include SidekiqUniqueJobs::JSON
 
+    #
+    # @return [Float] used to take into consideration the inaccuracy of redis timestamps
     CLOCK_DRIFT_FACTOR = 0.01
 
     #

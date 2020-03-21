@@ -67,6 +67,12 @@ module SidekiqUniqueJobs
         digests.delete_by_digest(unique_digest)
       end
 
+      #
+      # Access to the {Digests}
+      #
+      #
+      # @return [Digests] and instance with digests
+      #
       def digests
         @digests ||= SidekiqUniqueJobs::Digests.new
       end
