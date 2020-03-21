@@ -1,15 +1,25 @@
 # frozen_string_literal: true
 
-RSpec.shared_context "with sidekiq options", with_sidekiq_options: true do
-  let(:sidekiq_options) { {} }
-  let(:worker_options)  { {} }
-  let(:worker_class)    { UntilExecutedJob }
+RSpec.shared_context "with global config", with_global_config: true do
+  let(:global_config) { {} }
 
   around do |example|
-    Sidekiq.use_options(sidekiq_options) do
-      worker_class.use_options(worker_options) do
-        example.run
-      end
-    end
+    SidekiqUniqueJobs.use_config(global_config, &example)
+  end
+end
+
+RSpec.shared_context "with worker options", with_worker_options: true do
+  let(:worker_options) { {} }
+
+  around do |example|
+    worker_class.use_options(worker_options, &example)
+  end
+end
+
+RSpec.shared_context "with sidekiq options", with_sidekiq_options: true do |**_options|
+  let(:sidekiq_options) { {} }
+
+  around do |example|
+    Sidekiq.use_options(sidekiq_options, &example)
   end
 end

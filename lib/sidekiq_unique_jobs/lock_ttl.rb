@@ -4,10 +4,14 @@ module SidekiqUniqueJobs
   # Calculates timeout and expiration
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class TimeCalculator
+  class LockTTL
     # includes "SidekiqUniqueJobs::SidekiqWorkerMethods"
     # @!parse include SidekiqUniqueJobs::SidekiqWorkerMethods
     include SidekiqUniqueJobs::SidekiqWorkerMethods
+
+    def self.calculate(item)
+      new(item).calculate
+    end
 
     # @!attribute [r] item
     #   @return [Hash] the Sidekiq job hash
@@ -51,42 +55,13 @@ module SidekiqUniqueJobs
     #
     # @return [Integer] the number of seconds to live
     #
-    def lock_ttl
-      @lock_ttl ||= begin
-        ttl = item[LOCK_TTL]
-        ttl ||= worker_options[LOCK_TTL]
-        ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
-        ttl ||= worker_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
-        ttl ||= default_lock_ttl
-        ttl && ttl.to_i + time_until_scheduled
-      end
-    end
-
-    #
-    # Finds a lock timeout in either of
-    #  default worker options, {default_lock_timeout} or provided worker_options
-    #
-    #
-    # @return [Integer, nil]
-    #
-    def lock_timeout
-      @lock_timeout = begin
-        timeout = default_worker_options[LOCK_TIMEOUT]
-        timeout = default_lock_timeout if default_lock_timeout
-        timeout = worker_options[LOCK_TIMEOUT] if worker_options.key?(LOCK_TIMEOUT)
-        timeout
-      end
-    end
-
-    #
-    # The configured default_lock_timeout
-    # @see SidekiqUniqueJobs::Config#default_lock_timeout
-    #
-    #
-    # @return [Integer, nil]
-    #
-    def default_lock_timeout
-      SidekiqUniqueJobs.config.default_lock_timeout
+    def calculate
+      ttl = item[LOCK_TTL]
+      ttl ||= worker_options[LOCK_TTL]
+      ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
+      ttl ||= worker_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
+      ttl ||= default_lock_ttl
+      ttl && ttl.to_i + time_until_scheduled
     end
 
     #

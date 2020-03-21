@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::UniqueArgs do
+RSpec.describe SidekiqUniqueJobs::LockArgs do
   let(:unique_args)  { described_class.new(item) }
   let(:worker_class) { UntilExecutedJob }
   let(:class_name)   { worker_class.to_s }
@@ -17,30 +17,36 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   describe "#unique_args_enabled?" do
     subject(:unique_args_enabled?) { unique_args.unique_args_enabled? }
 
-    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]["test"] }) do
-      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
+    context "with default worker options", :with_sidekiq_options do
+      let(:sidekiq_options) { { unique: :until_executed, unique_args: ->(args) { args[1]["test"] } } }
+
+      context "when `unique_args: :unique_args` in worker", :with_worker_options do
+        let(:worker_options) { { unique_args: :unique_args } }
+
         it { is_expected.to eq(:unique_args) }
       end
 
-      with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
+      context "when `unique_args: false` in worker", :with_worker_options do
+        let(:worker_options) { { unique_args: false } }
+
         it { is_expected.to be_a(Proc) }
       end
     end
 
-    with_default_worker_options(unique: false, unique_args: nil) do
-      with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
+    context "when disabled in default_worker_options", :with_sidekiq_options do
+      let(:sidekiq_options) { { unique: false, unique_args: nil } }
+
+      context "when `unique_args: :unique_args` in worker", :with_worker_options do
+        let(:worker_options) { { unique_args: :unique_args } }
+
         it { is_expected.to eq(:unique_args) }
       end
 
-      with_sidekiq_options_for(UntilExecutedJob, unique_args: false) do
-        it { is_expected.to be_falsy }
-      end
+      context "when `unique_args: false` in worker", :with_worker_options do
+        let(:worker_options) { { unique_args: false } }
 
-      with_sidekiq_options_for("MissingWorker", unique_args: true) do
-        it { is_expected.to be_falsy }
+        it { is_expected.to eq(nil) }
       end
-
-      it { is_expected.to be_falsy }
     end
   end
 
@@ -71,8 +77,12 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
       it { is_expected.to eq("it") }
     end
 
-    with_default_worker_options(unique_args: ->(args) { args.first }) do
-      it { is_expected.to eq(1) }
+    context "when configured globally" do
+      it "uses global filter" do
+        Sidekiq.use_options(unique_args: ->(args) { args.first }) do
+          expect(filter_by_proc).to eq(1)
+        end
+      end
     end
   end
 

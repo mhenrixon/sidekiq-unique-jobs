@@ -8,39 +8,41 @@ module SidekiqUniqueJobs
     extend self
 
     # Adds timeout, expiration, unique_args, unique_prefix and unique_digest to the sidekiq job hash
-    # @return [void] nothing returned here matters
-    def add_uniqueness(item)
-      add_timeout_and_expiration(item)
-      add_digest(item)
-      item
-    end
-
+    # @return [Hash] the job hash
     def prepare(item)
-      add_uniqueness(item)
+      add_lock_timeout(item)
+      add_lock_ttl(item)
+      add_digest(item)
+
       item
     end
 
+    # Adds unique_args, unique_prefix and unique_digest to the sidekiq job hash
+    # @return [Hash] the job hash
     def add_digest(item)
       add_unique_prefix(item)
       add_unique_args(item)
       add_unique_digest(item)
+
       item
     end
 
     private
 
-    def add_timeout_and_expiration(item)
-      calculator = SidekiqUniqueJobs::TimeCalculator.new(item)
-      item[LOCK_TIMEOUT] = calculator.lock_timeout
-      item[LOCK_TTL]     = calculator.lock_ttl
+    def add_lock_ttl(item)
+      item[LOCK_TTL] = SidekiqUniqueJobs::LockTTL.calculate(item)
+    end
+
+    def add_lock_timeout(item)
+      item[LOCK_TIMEOUT] = SidekiqUniqueJobs::LockTimeout.calculate(item)
     end
 
     def add_unique_args(item)
-      item[UNIQUE_ARGS] = SidekiqUniqueJobs::UniqueArgs.call(item)
+      item[UNIQUE_ARGS] = SidekiqUniqueJobs::LockArgs.call(item)
     end
 
     def add_unique_digest(item)
-      item[UNIQUE_DIGEST] = SidekiqUniqueJobs::UniqueDigest.call(item)
+      item[UNIQUE_DIGEST] = SidekiqUniqueJobs::LockDigest.call(item)
     end
 
     def add_unique_prefix(item)

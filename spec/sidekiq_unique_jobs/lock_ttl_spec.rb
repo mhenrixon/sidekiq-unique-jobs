@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::TimeCalculator do
+RSpec.describe SidekiqUniqueJobs::LockTTL do
   let(:calculator)         { described_class.new("class" => worker_class_name, "at" => schedule_time) }
   let(:worker_class_name)  { "MyUniqueJob" }
   let(:schedule_time)      { nil }
@@ -10,8 +10,7 @@ RSpec.describe SidekiqUniqueJobs::TimeCalculator do
 
     it { is_expected.to respond_to(:time_until_scheduled) }
     it { is_expected.to respond_to(:worker_class) }
-    it { is_expected.to respond_to(:lock_ttl) }
-    it { is_expected.to respond_to(:lock_timeout) }
+    it { is_expected.to respond_to(:calculate) }
     it { is_expected.to respond_to(:worker_options) }
     it { is_expected.to respond_to(:default_worker_options) }
   end

@@ -102,6 +102,8 @@ detectors:
     exclude:
       - Hash#slice
       - initialize
+      - Sidekiq#self.use_options
+      - SidekiqUniqueJobs#use_config
       - SidekiqUniqueJobs::BatchDelete#batch_delete
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
@@ -110,24 +112,24 @@ detectors:
       - SidekiqUniqueJobs::Digests#entries
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Lock#lock
-      - SidekiqUniqueJobs::LockInfo#set
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::LockArgs#filtered_args
+      - SidekiqUniqueJobs::LockInfo#set
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock
       - SidekiqUniqueJobs::Locksmith#lock_async
       - SidekiqUniqueJobs::Locksmith#lock_sync
+      - SidekiqUniqueJobs::LockTTL#calculate
       - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
-      - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
       - SidekiqUniqueJobs::Orphans::Reaper#entries
-      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
+      - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
-      - SidekiqUniqueJobs::TimeCalculator#lock_ttl
-      - SidekiqUniqueJobs::UniqueArgs#filtered_args
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::UpgradeLocks#call
       - SidekiqUniqueJobs::UpgradeLocks#upgrade_v6_lock
       - SidekiqUniqueJobs::Web#self.registered

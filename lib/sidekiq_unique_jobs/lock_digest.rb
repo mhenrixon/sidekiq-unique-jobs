@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   # Handles uniqueness of sidekiq arguments
   #
   # @author Mikael Henriksson <mikael@zoolutions.se>
-  class UniqueDigest
+  class LockDigest
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::JSON
     include SidekiqUniqueJobs::SidekiqWorkerMethods
