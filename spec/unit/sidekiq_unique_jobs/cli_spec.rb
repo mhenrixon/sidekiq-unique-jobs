@@ -88,36 +88,37 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
   end
 
-  describe ".console", ruby_ver: ">= 2.6.5" do
-    subject(:console) { capture(:stdout) { exec(:console) } }
+  describe ".console" do
+    subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
 
-    let(:header) do
-      <<~HEADER
-        Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
-        Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
-        Use `del '*', 1000, false to delete the first 1000 keys matching '*'
-      HEADER
-    end
-
-    before do
-      allow(self).to receive(:require).with("pry").and_return(true)
-      allow(console_class).to receive(:start).and_return(true)
-    end
-
-    def stub_console(const)
-      stub_const(const, Class.new { def self.start; end })
+    shared_examples "start console" do
+      specify do
+        allow(console_class).to receive(:start).and_return(true)
+        expect(console).to include <<~HEADER
+          Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
+          Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
+          Use `del '*', 1000, false to delete the first 1000 keys matching '*'
+        HEADER
+      end
     end
 
     context "when Pry is available" do
-      let(:console_class) { stub_console("Pry") }
+      let(:console_class) { defined?(Pry) ? Pry : IRB }
 
-      it { is_expected.to include(header) }
+      before do
+        require "pry"
+      rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/SuppressedException, Lint/ShadowedException
+      end
+
+      it_behaves_like "start console"
     end
 
     context "when Pry is unavailable" do
-      let(:console_class) { stub_console("IRB") }
+      let(:console_class) { IRB }
 
-      it { is_expected.to include(header) }
+      before { hide_const("Pry") }
+
+      it_behaves_like "start console"
     end
   end
 end
