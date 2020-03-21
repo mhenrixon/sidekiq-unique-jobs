@@ -30,7 +30,7 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - "spec/**/*"
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: true
 
 Lint/UselessAssignment:
@@ -42,7 +42,7 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Max: 7
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:
@@ -54,6 +54,7 @@ Metrics/BlockLength:
     - "**/spec/**/*.rb"
     - "**/*.rake"
     - "Rakefile"
+    - "Gemfile"
     - "*.gemspec"
 
 Metrics/PerceivedComplexity:
@@ -73,7 +74,7 @@ Naming/FileName:
 Naming/RescuedExceptionsVariableName:
   PreferredName: ex
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   AllowedNames:
     - ex
 
@@ -133,6 +134,15 @@ Style/FrozenStringLiteralComment:
 
 Style/GlobalVars:
   Enabled: true
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false
 
 Style/ModuleFunction:
   Enabled: false

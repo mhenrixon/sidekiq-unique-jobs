@@ -32,7 +32,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
       it { is_expected.to eq(MyUniqueJob) }
     end
 
-    context "when worker_class is MyUniqueJob" do
+    context "when worker_class is UntilExecutedJob" do
       let(:worker_class) { "UntilExecutedJob" }
 
       it { is_expected.to eq(UntilExecutedJob) }

@@ -106,8 +106,10 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
       let(:console_class) { defined?(Pry) ? Pry : IRB }
 
       before do
-        require "pry"
-      rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/SuppressedException, Lint/ShadowedException
+        begin
+          require "pry"
+        rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/ShadowedException, Lint/SuppressedException
+        end
       end
 
       it_behaves_like "start console"

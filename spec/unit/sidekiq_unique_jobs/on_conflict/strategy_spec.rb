@@ -21,10 +21,4 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Strategy, redis: :redis do
       expect { call }.to raise_error(NotImplementedError, "needs to be implemented in child class")
     end
   end
-
-  describe "#replace?" do
-    subject { strategy.replace? }
-
-    it { is_expected.to eq(false) }
-  end
 end

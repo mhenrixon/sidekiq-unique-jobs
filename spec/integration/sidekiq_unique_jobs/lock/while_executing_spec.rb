@@ -4,8 +4,8 @@ require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting, redis: :redis do
   include SidekiqHelpers
 
-  let(:process_one) { described_class.new(item_one, callback_one) }
-  let(:process_two) { described_class.new(item_two, callback_two) }
+  let(:process_one)  { described_class.new(item_one, callback_one) }
+  let(:process_two)  { described_class.new(item_two, callback_two) }
   let(:strategy_one) { nil }
   let(:strategy_two) { nil }
 
