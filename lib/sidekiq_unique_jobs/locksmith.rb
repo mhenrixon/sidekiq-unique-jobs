@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
       @ttl           = item[LOCK_EXPIRATION_KEY]
       @jid           = item[JID_KEY]
       @unique_digest = item[UNIQUE_DIGEST_KEY]
-      @lock_type     = item[LOCK_KEY]
+      @lock_type     = item[LOCK_KEY] || item[UNIQUE_KEY]
       @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
     end

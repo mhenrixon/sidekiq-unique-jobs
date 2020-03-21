@@ -88,36 +88,41 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
   end
 
-  describe ".console", ruby_ver: ">= 2.6.5" do
-    subject(:console) { capture(:stdout) { exec(:console) } }
+  unless RUBY_PLATFORM == "JAVA"
+    describe ".console" do
+      subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
 
-    let(:header) do
-      <<~HEADER
-        Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
-        Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
-        Use `del '*', 1000, false to delete the first 1000 keys matching '*'
-      HEADER
-    end
+      shared_examples "start console" do
+        specify do
+          allow(console_class).to receive(:start).and_return(true)
+          expect(console).to include <<~HEADER
+            Use `keys '*', 1000 to display the first 1000 unique keys matching '*'
+            Use `del '*', 1000, true (default) to see how many keys would be deleted for the pattern '*'
+            Use `del '*', 1000, false to delete the first 1000 keys matching '*'
+          HEADER
+        end
+      end
 
-    before do
-      allow(self).to receive(:require).with("pry").and_return(true)
-      allow(console_class).to receive(:start).and_return(true)
-    end
+      context "when Pry is available" do
+        let(:console_class) { defined?(Pry) ? Pry : IRB }
 
-    def stub_console(const)
-      stub_const(const, Class.new { def self.start; end })
-    end
+        before do
+          begin
+            require "pry"
+          rescue NameError, LoadError, NoMethodError # rubocop:disable Lint/ShadowedException, Lint/SuppressedException
+          end
+        end
 
-    context "when Pry is available" do
-      let(:console_class) { stub_console("Pry") }
+        it_behaves_like "start console"
+      end
 
-      it { is_expected.to include(header) }
-    end
+      context "when Pry is unavailable" do
+        let(:console_class) { IRB }
 
-    context "when Pry is unavailable" do
-      let(:console_class) { stub_console("IRB") }
+        before { hide_const("Pry") }
 
-      it { is_expected.to include(header) }
+        it_behaves_like "start console"
+      end
     end
   end
 end
