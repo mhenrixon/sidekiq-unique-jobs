@@ -7,6 +7,10 @@ gem "rspec-eventually", require: false
 gem "rspec-its", require: false
 gem "sidekiq", "~> 4.1.0"
 
+platforms :jruby do
+  gem "pry-debugger-jruby"
+end
+
 platforms :mri do
   gem "benchmark-ips"
   gem "fasterer"
@@ -26,7 +30,9 @@ platforms :mri do
   gem "rubocop-performance"
   gem "rubocop-rspec"
   gem "ruby-prof"
-  gem "simplecov-json"
+  gem "simplecov", "< 0.18"
+  gem "simplecov-material"
+  gem "simplecov-oj"
   gem "stackprof"
   gem "terminal-notifier-guard"
   gem "test-prof"

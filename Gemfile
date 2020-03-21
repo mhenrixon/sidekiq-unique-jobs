@@ -32,7 +32,9 @@ platforms :mri do
   gem "rubocop-performance"
   gem "rubocop-rspec"
   gem "ruby-prof"
-  gem "simplecov-json"
+  gem "simplecov", '< 0.18'
+  gem "simplecov-material"
+  gem "simplecov-oj"
   gem "stackprof"
   gem "terminal-notifier-guard"
   gem "test-prof"
