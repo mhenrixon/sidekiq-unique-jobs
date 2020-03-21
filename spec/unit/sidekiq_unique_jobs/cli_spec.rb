@@ -88,7 +88,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, redis: :redis, ruby_ver: ">= 2.4" do
     end
   end
 
-  unless RUBY_PLATFORM == JAVA
+  unless RUBY_PLATFORM == "JAVA"
     describe ".console" do
       subject(:console) { capture(:stdout) { described_class.start(%w[console]) } }
 

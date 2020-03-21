@@ -46,7 +46,7 @@ module SidekiqUniqueJobs
 
     no_commands do
       def console_class
-        if RUBY_PLATFORM == JAVA
+        if RUBY_PLATFORM == "JAVA"
           require "irb"
           return IRB
         end
