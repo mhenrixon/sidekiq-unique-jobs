@@ -38,6 +38,7 @@ module SidekiqUniqueJobs
       def initialize(options)
         @options     = options.transform_keys(&:to_sym)
         @lock_config = LockConfig.new(options)
+        handle_deprecations
       end
 
       #
@@ -47,8 +48,6 @@ module SidekiqUniqueJobs
       # @return [LockConfig] the lock configuration with errors if any
       #
       def validate
-        handle_deprecations
-
         case lock_config.type
         when :while_executing
           validate_server

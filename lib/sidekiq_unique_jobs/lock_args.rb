@@ -107,8 +107,12 @@ module SidekiqUniqueJobs
 
     # The global worker options defined in Sidekiq directly
     def default_lock_args_method
-      Sidekiq.default_worker_options.stringify_keys[LOCK_ARGS] ||
-        Sidekiq.default_worker_options.stringify_keys[UNIQUE_ARGS]
+      default_worker_options[LOCK_ARGS] ||
+        default_worker_options[UNIQUE_ARGS]
+    end
+
+    def default_worker_options
+      @default_worker_options ||= Sidekiq.default_worker_options.stringify_keys
     end
   end
 end
