@@ -85,6 +85,7 @@ RSpec/DescribeClass:
   Exclude:
     - spec/unit/sidekiq_unique_jobs/sidekiq/api_spec.rb
     - spec/unit/sidekiq_unique_jobs/core_ext_spec.rb
+    - spec/regression/**/*.rb
 
 RSpec/ExampleLength:
   Enabled: false
