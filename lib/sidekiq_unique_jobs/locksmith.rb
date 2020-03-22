@@ -15,9 +15,9 @@ module SidekiqUniqueJobs
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     def initialize(item, redis_pool = nil)
       # @concurrency   = 1 # removed in a0cff5bc42edbe7190d6ede7e7f845074d2d7af6
-      @ttl           = item[LOCK_EXPIRATION_KEY]
+      @ttl           = item[LOCK_EXPIRATION_KEY] || item[LOCK_TTL_KEY]
       @jid           = item[JID_KEY]
-      @unique_digest = item[UNIQUE_DIGEST_KEY]
+      @unique_digest = item[UNIQUE_DIGEST_KEY] || item[LOCK_DIGEST_KEY]
       @lock_type     = item[LOCK_KEY] || item[UNIQUE_KEY]
       @lock_type   &&= @lock_type.to_sym
       @redis_pool    = redis_pool
