@@ -4,7 +4,7 @@ RSpec.describe "Issue 468" do
   before do
     stub_const("MyWorker", Class.new do
       include Sidekiq::Worker
-      sidekiq_options retry: 0, lock: :until_expired, lock_ttl: 5
+      sidekiq_options retry: 0, queue: :default, lock: :until_expired, lock_ttl: 5
     end)
   end
 
