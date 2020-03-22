@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Client::Middleware, redis: :redis, redis_db: 1
       )
 
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-        ShitClass.delay_for(x, queue: 'custom', unique: :while_executing).do_it(1)
+        ShitClass.delay_for(x, queue: "custom", unique: :while_executing).do_it(1)
       end
 
       expect(schedule_count).to eq(20)

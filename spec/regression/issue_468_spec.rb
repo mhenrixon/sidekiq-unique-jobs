@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 RSpec.describe "Issue 468" do
-  class MyWorker
-    include Sidekiq::Worker
-    sidekiq_options retry: 0, lock: :until_expired, lock_ttl: 5
+  before do
+    stub_const("MyWorker", Class.new do
+      include Sidekiq::Worker
+      sidekiq_options retry: 0, lock: :until_expired, lock_ttl: 5
+    end)
   end
 
   specify do
