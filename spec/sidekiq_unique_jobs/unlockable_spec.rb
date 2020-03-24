@@ -17,6 +17,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
       "class" => worker_class,
       "queue" => queue,
       "args" => args,
+      "lock_ttl" => lock_ttl,
       "jid" => jid,
     )
   end
@@ -27,10 +28,15 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     specify do
       expect { push_item(item) }.to change { unique_keys.size }.by(3)
       expect { unlock }.to change { unique_keys.size }.by(-2)
-      # TODO: Verify why these are failing
-      # expect(key.locked).to have_ttl(7_200)
-      # expect(key.info).to have_ttl(7_200)
-      # expect(key.digest).to have_ttl(7_200)
+    end
+  end
+
+  describe ".unlock!" do
+    subject(:unlock!) { described_class.unlock!(item) }
+
+    specify do
+      expect { push_item(item) }.to change { unique_keys.size }.by(3)
+      expect { unlock! }.to change { unique_keys.size }.by(-2)
     end
   end
 
@@ -40,11 +46,6 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     specify do
       expect { push_item(item) }.to change { unique_keys.size }.by(3)
       expect { delete }.to change { unique_keys.size }.by(0)
-
-      # TODO: Verify why these are failing
-      # expect(key.locked).to have_ttl(7_200)
-      # expect(key.info).to have_ttl(7_200)
-      # expect(key.digest).to have_ttl(7_200)
     end
   end
 
@@ -54,7 +55,6 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     specify do
       expect { push_item(item) }.to change { unique_keys.size }.by(3)
       expect { delete! }.to change { unique_keys.size }.by(-3)
-      expect(digest).to have_ttl(-2)
     end
   end
 end
