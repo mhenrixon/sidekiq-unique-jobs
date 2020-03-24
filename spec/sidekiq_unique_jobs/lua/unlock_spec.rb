@@ -18,6 +18,128 @@ RSpec.describe "unlock.lua" do
   let(:locked_jid) { job_id_one }
   let(:lock_limit) { 1 }
 
+  shared_context "with a lock", with_a_lock: true do
+    before do
+      call_script(:queue, key.to_a, argv_one)
+      rpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, argv_one)
+    end
+  end
+
+  shared_examples "unlock with ttl" do
+    it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
+    it { expect { unlock }.to change { ttl(key.digest) }.to(-2) }
+    it { expect { unlock }.to change { llen(key.queued) }.by(1) }
+    it { expect { unlock }.to change { llen(key.primed) }.by(0) }
+    it { expect { unlock }.to change { ttl(key.locked) }.to(-2) }
+    it { expect { unlock }.to change { hget(key.locked, job_id_one) }.to(nil) }
+    it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+  end
+
+  shared_examples "unlock without ttl" do
+    it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
+    it { expect { unlock }.to change { ttl(key.digest) }.from(-1).to(-2) }
+    it { expect { unlock }.to change { lrange(key.queued, -1, 0) }.to(["1"]) }
+    it { expect { unlock }.to change { llen(key.queued) }.by(1) }
+    it { expect { unlock }.to change { llen(key.primed) }.by(0) }
+    it { expect { unlock }.to change { ttl(key.locked) }.to(-2) }
+    it { expect { unlock }.to change { hget(key.locked, job_id_one) }.to(nil) }
+    it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+  end
+
+  context "with lock: :until_expired", :with_a_lock do
+    let(:lock_type) { :until_expired }
+
+    context "when given lock_ttl 50_000" do
+      let(:lock_ttl) { 50_000 }
+
+      it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
+      it { expect { unlock }.not_to change { ttl(key.digest) } }
+      it { expect { unlock }.to change { llen(key.queued) }.by(1) }
+      it { expect { unlock }.to change { llen(key.primed) }.by(0) }
+      it { expect { unlock }.not_to change { ttl(key.locked) } }
+      it { expect { unlock }.not_to change { hget(key.locked, job_id_one) } }
+      it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+    end
+
+    context "when given lock_ttl nil" do
+      let(:lock_ttl) { nil }
+
+      it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
+      it { expect { unlock }.not_to change { ttl(key.digest) } }
+      it { expect { unlock }.to change { lrange(key.queued, -1, 0) }.to(["1"]) }
+      it { expect { unlock }.to change { llen(key.queued) }.by(1) }
+      it { expect { unlock }.to change { llen(key.primed) }.by(0) }
+      it { expect { unlock }.not_to change { ttl(key.locked) } }
+      it { expect { unlock }.not_to change { hget(key.locked, job_id_one) } }
+      it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+    end
+  end
+
+  context "with lock: :until_executed", :with_a_lock do
+    let(:lock_type) { :until_executed }
+
+    context "when given lock_ttl 50_000" do
+      let(:lock_ttl) { 50_000 }
+
+      it_behaves_like "unlock with ttl"
+    end
+
+    context "when given lock_ttl nil" do
+      let(:lock_ttl) { nil }
+
+      it_behaves_like "unlock without ttl"
+    end
+  end
+
+  context "with lock: :until_executing", :with_a_lock do
+    let(:lock_type) { :until_executing }
+
+    context "when given lock_ttl 50_000" do
+      let(:lock_ttl) { 50_000 }
+
+      it_behaves_like "unlock with ttl"
+    end
+
+    context "when given lock_ttl nil" do
+      let(:lock_ttl) { nil }
+
+      it_behaves_like "unlock without ttl"
+    end
+  end
+
+  context "with lock: :until_and_while_executing", :with_a_lock do
+    let(:lock_type) { :until_and_while_executing }
+
+    context "when given lock_ttl 50_000" do
+      let(:lock_ttl) { 50_000 }
+
+      it_behaves_like "unlock with ttl"
+    end
+
+    context "when given lock_ttl nil" do
+      let(:lock_ttl) { nil }
+
+      it_behaves_like "unlock without ttl"
+    end
+  end
+
+  context "with lock: :while_executing", :with_a_lock do
+    let(:lock_type) { :while_executing }
+
+    context "when given lock_ttl 50_000" do
+      let(:lock_ttl) { 50_000 }
+
+      it_behaves_like "unlock with ttl"
+    end
+
+    context "when given lock_ttl nil" do
+      let(:lock_ttl) { nil }
+
+      it_behaves_like "unlock without ttl"
+    end
+  end
+
   context "when unlocked" do
     it "succeedes without crashing" do
       expect { unlock }.to change { zcard(key.changelog) }.by(1)
@@ -45,7 +167,7 @@ RSpec.describe "unlock.lua" do
       end
     end
 
-    context "with same job_id" do
+    context "with same job_id", :with_a_lock do
       before do
         call_script(:queue, key.to_a, argv_one)
         rpoplpush(key.queued, key.primed)
@@ -55,8 +177,8 @@ RSpec.describe "unlock.lua" do
       it "does unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
 
-        expect { queued.count }.to eventually be == 0
-        expect { queued.entries }.to eventually match_array([])
+        expect(queued.count).to eq(1)
+        expect(queued.entries).to match_array(["1"])
 
         expect(primed.count).to be == 0
 

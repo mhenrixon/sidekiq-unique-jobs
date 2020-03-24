@@ -192,10 +192,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
         locksmith_one.lock
         expect(locksmith_one).to be_locked
         locksmith_one.unlock
-        expect(locksmith_one).to be_locked
+        expect(locksmith_one).not_to be_locked
         expect(locksmith_one.delete).to eq(nil)
 
-        expect(locksmith_one).to be_locked
+        expect(locksmith_one).not_to be_locked
       end
     end
 
@@ -217,7 +217,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
         # noop
       end
       keys = unique_keys
-      expect { unique_keys }.to eventually_not include(keys)
+      expect(unique_keys).not_to include(keys)
     end
   end
 

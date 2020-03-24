@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
 
     specify do
       expect { push_item(item) }.to change { unique_keys.size }.by(3)
-      expect { unlock }.to change { unique_keys.size }.by(1)
+      expect { unlock }.to change { unique_keys.size }.by(-2)
       # TODO: Verify why these are failing
       # expect(key.locked).to have_ttl(7_200)
       # expect(key.info).to have_ttl(7_200)

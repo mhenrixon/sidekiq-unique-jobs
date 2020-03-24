@@ -12,6 +12,13 @@ module SidekiqUniqueJobs
     # @param [Hash] item a Sidekiq job hash
     def unlock(item)
       SidekiqUniqueJobs::Job.add_digest(item)
+      SidekiqUniqueJobs::Locksmith.new(item).unlock
+    end
+
+    # Unlocks a job.
+    # @param [Hash] item a Sidekiq job hash
+    def unlock!(item)
+      SidekiqUniqueJobs::Job.add_digest(item)
       SidekiqUniqueJobs::Locksmith.new(item).unlock!
     end
 

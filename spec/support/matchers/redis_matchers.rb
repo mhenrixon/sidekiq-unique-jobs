@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rspec/expectations"
-require "rspec/eventually"
 
 RSpec::Matchers.define :have_enqueued do |number_of_jobs|
   SidekiqUniqueJobs.redis do |_conn|

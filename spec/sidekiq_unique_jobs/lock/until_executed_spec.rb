@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
       process_one.execute do
         expect(process_one).to be_locked
       end
-      expect(process_one).to be_locked # Because we have expiration set to 5000
+      expect(process_one).not_to be_locked # Because we have expiration set to 5000
     end
   end
 
