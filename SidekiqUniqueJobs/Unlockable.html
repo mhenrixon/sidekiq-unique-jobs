@@ -193,6 +193,29 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unlock!-class_method" title="unlock! (class method)">.<strong>unlock!</strong>(item)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Unlocks a job.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -248,13 +271,13 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
       <pre class="lines">
 
 
-22
-23
-24
-25</pre>
+29
+30
+31
+32</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unlockable.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unlockable.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_digest'><span class='object_link'><a href="Job.html#add_digest-instance_method" title="SidekiqUniqueJobs::Job#add_digest (method)">add_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -311,13 +334,13 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
       <pre class="lines">
 
 
-31
-32
-33
-34</pre>
+38
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unlockable.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unlockable.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete!'>delete!</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_digest'><span class='object_link'><a href="Job.html#add_digest-instance_method" title="SidekiqUniqueJobs::Job#add_digest (method)">add_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -382,6 +405,67 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unlock'>unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_digest'><span class='object_link'><a href="Job.html#add_digest-instance_method" title="SidekiqUniqueJobs::Job#add_digest (method)">add_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">Locksmith</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Locksmith.html#initialize-instance_method" title="SidekiqUniqueJobs::Locksmith#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_unlock'><span class='object_link'><a href="Locksmith.html#unlock-instance_method" title="SidekiqUniqueJobs::Locksmith#unlock (method)">unlock</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unlock!-class_method">
+  
+    .<strong>unlock!</strong>(item)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Unlocks a job.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a Sidekiq job hash</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22
+23</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/unlockable.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_unlock!'>unlock!</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Job.html" title="SidekiqUniqueJobs::Job (module)">Job</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_digest'><span class='object_link'><a href="Job.html#add_digest-instance_method" title="SidekiqUniqueJobs::Job#add_digest (method)">add_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Locksmith.html" title="SidekiqUniqueJobs::Locksmith (class)">Locksmith</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Locksmith.html#initialize-instance_method" title="SidekiqUniqueJobs::Locksmith#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_unlock!'><span class='object_link'><a href="Locksmith.html#unlock!-instance_method" title="SidekiqUniqueJobs::Locksmith#unlock! (method)">unlock!</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
@@ -394,7 +478,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Mar 21 20:54:57 2020 by
+  Generated on Wed Mar 25 16:43:02 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.24 (ruby-2.6.5).
 </div>
