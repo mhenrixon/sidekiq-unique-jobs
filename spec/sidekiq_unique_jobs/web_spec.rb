@@ -100,7 +100,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
       follow_redirect!
     end
 
-    expect { lock_one.locked_jids }.to eventually_not include(jid_one)
+    expect(lock_one.locked_jids).not_to include(jid_one)
 
     expect(last_request.url).to end_with("/locks/#{digest_one}")
     expect(last_response.body).not_to match("/locks/#{digest_one}/jobs/#{jid_one}")
@@ -125,6 +125,6 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).not_to match("/locks/#{digest_one}")
     expect(last_response.body).not_to match("/locks/#{digest_two}")
 
-    expect { digests.entries }.to eventually be_empty
+    expect(digests.entries).to be_empty
   end
 end

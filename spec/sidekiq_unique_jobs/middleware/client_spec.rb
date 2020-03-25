@@ -165,7 +165,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
 
     MyUniqueJob.perform_in(expected_expires_at, "mika", "hel")
 
-    unique_keys.all? { |key| expect(key).to have_ttl(-1) }
+    unique_keys.all? { |key| expect(key).to have_ttl(8_100) }
   end
 
   it "logs duplicate payload when configured" do

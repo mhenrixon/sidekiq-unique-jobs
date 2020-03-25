@@ -8,12 +8,14 @@ local changelog = KEYS[6]
 local digests   = KEYS[7]
 -------- END keys ---------
 
+
 -------- BEGIN lock arguments ---------
 local job_id       = ARGV[1]
 local pttl         = tonumber(ARGV[2])
 local lock_type    = ARGV[3]
 local limit        = tonumber(ARGV[4])
 -------- END lock arguments -----------
+
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
@@ -22,6 +24,7 @@ local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
 local redisversion = ARGV[9]
 ---------  END injected arguments ---------
+
 
 --------  BEGIN local functions --------
 <%= include_partial "shared/_common.lua" %>
@@ -68,7 +71,7 @@ redis.call("LREM", primed, 1, job_id)
 
 -- The Sidekiq client should only set pttl for until_expired
 -- The Sidekiq server should set pttl for all other jobs
-if lock_type == "until_expired" and pttl and pttl > 0 then
+if pttl and pttl > 0 then
   log_debug("PEXPIRE", digest, pttl)
   redis.call("PEXPIRE", digest, pttl)
 

@@ -40,11 +40,13 @@ RSpec.describe "queue.lua" do
 
     context "when lock_type is :until_expired" do
       let(:lock_type) { :until_expired }
-      let(:lock_pttl) { 10 * 1000 }
+      let(:lock_pttl) { lock_ttl * 1000 }
+      let(:lock_ttl)  { 10 }
 
       it "stores digest with pexpiration in redis" do
         queue
-        expect(pttl(key.digest)).to be_within(100).of(lock_pttl)
+
+        expect(ttl(key.digest)).to eq(lock_ttl)
       end
     end
   end

@@ -8,12 +8,14 @@ local changelog = KEYS[6]
 local digests   = KEYS[7]
 -------- END keys ---------
 
+
 -------- BEGIN lock arguments ---------
-local job_id = ARGV[1]
-local pttl   = tonumber(ARGV[2])
-local type   = ARGV[3]
-local limit  = tonumber(ARGV[4])
+local job_id    = ARGV[1]
+local pttl      = tonumber(ARGV[2])
+local lock_type = ARGV[3]
+local limit     = tonumber(ARGV[4])
 -------- END lock arguments -----------
+
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
@@ -23,11 +25,13 @@ local script_name  = tostring(ARGV[8]) .. ".lua"
 local redisversion = ARGV[9]
 ---------  END injected arguments ---------
 
+
 --------  BEGIN Variables --------
 local queued_count = redis.call("LLEN", queued)
 local primed_count = redis.call("LLEN", primed)
 local locked_count = redis.call("HLEN", locked)
 ---------  END Variables ---------
+
 
 --------  BEGIN local functions --------
 <%= include_partial "shared/_common.lua" %>
@@ -65,21 +69,12 @@ redis.call("LREM", primed, -1, job_id)
 log_debug("ZREM", digests, digest)
 redis.call("ZREM", digests, digest)
 
-if pttl and pttl > 0 then
-  log_debug("PEXPIRE", digest, pttl)
-  redis.call("PEXPIRE", digest, pttl)
+local redis_version = toversion(redisversion)
+local del_cmd       = "DEL"
 
-  log_debug("PEXPIRE", locked, pttl)
-  redis.call("PEXPIRE", locked, pttl)
+if tonumber(redis_version["major"]) >= 4 then del_cmd =  "UNLINK"; end
 
-  log_debug("PEXPIRE", info, pttl)
-  redis.call("PEXPIRE", info, pttl)
-else
-  local redis_version = toversion(redisversion)
-  local del_cmd       = "DEL"
-
-  if tonumber(redis_version["major"]) >= 4 then del_cmd =  "UNLINK"; end
-
+if lock_type ~= "until_expired" then
   log_debug(del_cmd, digest, info)
   redis.call(del_cmd, digest, info)
 
@@ -90,8 +85,8 @@ end
 log_debug("LPUSH", queued, "1")
 redis.call("LPUSH", queued, "1")
 
-log_debug("PEXPIRE", queued, 500)
-redis.call("PEXPIRE", queued, 500)
+log_debug("PEXPIRE", queued, 5000)
+redis.call("PEXPIRE", queued, 5000)
 
 log("Unlocked")
 log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")

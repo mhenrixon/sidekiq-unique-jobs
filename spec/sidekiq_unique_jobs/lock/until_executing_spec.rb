@@ -60,7 +60,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
         it "does not delete the lock" do
           worker_class.use_options(lock_ttl: 1000) do
             process_one.lock
-            expect { unique_keys.size }.to eventually eq(3)
+            expect(unique_keys.size).to eq(3)
             expect { delete }.not_to change { unique_keys.size }
           end
 
