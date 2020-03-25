@@ -1,12 +1,13 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v7.0.0.beta12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta12) (2020-03-25)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.20...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.20...v7.0.0.beta12)
 
 **Fixed bugs:**
 
 - until\_expired is not setting TTL [\#468](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/468)
+- Fix bug where expiration wasn't set until unlock [\#481](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/481) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.20](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.20) (2020-03-22)
 
