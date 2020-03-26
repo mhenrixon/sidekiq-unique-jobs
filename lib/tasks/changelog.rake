@@ -6,7 +6,6 @@ task :changelog do
   CHANGELOG_CMD ||= %w[
     github_changelog_generator
     --no-verbose
-    --no-http-cache
     --user
     mhenrixon
     --project
