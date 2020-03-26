@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.0.0.beta13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13) (2020-03-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta12...v7.0.0.beta13)
+
+**Fixed bugs:**
+
+- Remove digest deletion for concurrent locks [\#482](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/482) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta12) (2020-03-25)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.20...v7.0.0.beta12)
@@ -466,6 +474,7 @@
 
 - Not unlocking automatically \(version 6.0.0rc5\) [\#293](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/293)
 - Bug fixes [\#310](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310) ([mhenrixon](https://github.com/mhenrixon))
+- Remove unused method [\#307](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.1) (2018-07-31)
 
@@ -474,7 +483,6 @@
 **Fixed bugs:**
 
 - :until\_executed is throwing errors and not requeuing the job. [\#256](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/256)
-- Remove unused method [\#307](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
