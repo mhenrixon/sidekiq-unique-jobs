@@ -65,9 +65,10 @@ redis.call("LREM", queued, -1, job_id)
 log_debug("LREM", primed, -1, job_id)
 redis.call("LREM", primed, -1, job_id)
 
--- TODO: Check if there are other locks before removing
-log_debug("ZREM", digests, digest)
-redis.call("ZREM", digests, digest)
+if limit and limit <= 1 and locked_count and locked_count <= 1 then
+  log_debug("ZREM", digests, digest)
+  redis.call("ZREM", digests, digest)
+end
 
 local redis_version = toversion(redisversion)
 local del_cmd       = "DEL"
