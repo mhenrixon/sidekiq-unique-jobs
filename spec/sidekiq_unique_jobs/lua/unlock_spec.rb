@@ -26,6 +26,14 @@ RSpec.describe "unlock.lua" do
     end
   end
 
+  shared_context "with another lock", :with_another_lock do
+    before do
+      call_script(:queue, key.to_a, argv_two)
+      rpoplpush(key.queued, key.primed)
+      call_script(:lock, key.to_a, argv_two)
+    end
+  end
+
   shared_examples "unlock with ttl" do
     it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
     it { expect { unlock }.to change { ttl(key.digest) }.to(-2) }
@@ -34,6 +42,7 @@ RSpec.describe "unlock.lua" do
     it { expect { unlock }.to change { ttl(key.locked) }.to(-2) }
     it { expect { unlock }.to change { hget(key.locked, job_id_one) }.to(nil) }
     it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+    it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(Float)).to({}) }
   end
 
   shared_examples "unlock without ttl" do
@@ -45,6 +54,7 @@ RSpec.describe "unlock.lua" do
     it { expect { unlock }.to change { ttl(key.locked) }.to(-2) }
     it { expect { unlock }.to change { hget(key.locked, job_id_one) }.to(nil) }
     it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+    it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(Float)).to({}) }
   end
 
   context "with lock: :until_expired", :with_a_lock do
@@ -148,13 +158,7 @@ RSpec.describe "unlock.lua" do
   end
 
   context "when locked" do
-    context "with another job_id" do
-      before do
-        call_script(:queue, key.to_a, argv_two)
-        rpoplpush(key.queued, key.primed)
-        call_script(:lock, key.to_a, argv_two)
-      end
-
+    context "with another job_id", :with_another_lock do
       it "does not unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
 
@@ -168,12 +172,6 @@ RSpec.describe "unlock.lua" do
     end
 
     context "with same job_id", :with_a_lock do
-      before do
-        call_script(:queue, key.to_a, argv_one)
-        rpoplpush(key.queued, key.primed)
-        call_script(:lock, key.to_a, argv_one)
-      end
-
       it "does unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
 
@@ -186,6 +184,14 @@ RSpec.describe "unlock.lua" do
         expect(locked.entries).to match_array([])
         expect(locked[job_id_one]).to be_nil
       end
+    end
+
+    context "when lock_limit > 1", :with_a_lock, :with_another_lock do
+      let(:lock_limit) { 2 }
+
+      it { expect { unlock }.not_to change { digests.entries }.from(key.digest => kind_of(Float)) }
+
+      # it { expect { unlock }.to change { unique_digests.entries }.from([key.digest]) }
     end
   end
 end
