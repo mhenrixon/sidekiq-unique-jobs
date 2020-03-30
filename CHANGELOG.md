@@ -1,5 +1,21 @@
 # Changelog
 
+## [v7.0.0.beta14](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta14) (2020-03-30)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.21...v7.0.0.beta14)
+
+**Fixed bugs:**
+
+- Use thread-safe digest creation mechanism [\#483](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/483) ([zormandi](https://github.com/zormandi))
+
+## [v6.0.21](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.21) (2020-03-30)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta13...v6.0.21)
+
+**Fixed bugs:**
+
+- Use thread-safe digest creation mechanism [\#484](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/484) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13) (2020-03-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta12...v7.0.0.beta13)
@@ -117,10 +133,6 @@
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6)
 
-**Implemented enhancements:**
-
-- Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
-
 **Merged pull requests:**
 
 - Fix that Sidekiq now sends instance of worker [\#459](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/459) ([mhenrixon](https://github.com/mhenrixon))
@@ -162,6 +174,10 @@
 ## [v6.0.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.17) (2019-11-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.16...v6.0.17)
+
+**Implemented enhancements:**
+
+- Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
 
 **Fixed bugs:**
 
@@ -457,6 +473,7 @@
 **Fixed bugs:**
 
 - Enable replace strategy [\#315](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/315) ([mhenrixon](https://github.com/mhenrixon))
+- Remove unused method [\#307](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -474,7 +491,6 @@
 
 - Not unlocking automatically \(version 6.0.0rc5\) [\#293](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/293)
 - Bug fixes [\#310](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310) ([mhenrixon](https://github.com/mhenrixon))
-- Remove unused method [\#307](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.1) (2018-07-31)
 
@@ -824,7 +840,6 @@
 - missed space [\#188](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/188) ([TheBigSadowski](https://github.com/TheBigSadowski))
 - Convert unless if to just 1 if [\#179](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/179) ([otzy007](https://github.com/otzy007))
 - fix for \#168. Handle the NOSCRIPT by sending the script again [\#178](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/178) ([otzy007](https://github.com/otzy007))
-- Fixed gitter badge link [\#176](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/176) ([andrew](https://github.com/andrew))
 
 ## [v4.0.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.17) (2016-03-02)
 
@@ -840,6 +855,7 @@
 
 **Merged pull requests:**
 
+- Fixed gitter badge link [\#176](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/176) ([andrew](https://github.com/andrew))
 - Fix for sidekiq delete failing for version 3.4.x  [\#167](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/167) ([theprogrammerin](https://github.com/theprogrammerin))
 - Run lock timeout configurable [\#164](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/164) ([Slania](https://github.com/Slania))
 
