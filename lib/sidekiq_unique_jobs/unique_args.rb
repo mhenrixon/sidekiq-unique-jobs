@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "digest"
+require "openssl"
 require "sidekiq_unique_jobs/normalizer"
 
 module SidekiqUniqueJobs
@@ -47,7 +48,7 @@ module SidekiqUniqueJobs
     # Creates a namespaced unique digest based on the {#digestable_hash} and the {#unique_prefix}
     # @return [String] a unique digest
     def create_digest
-      digest = Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
+      digest = OpenSSL::Digest::MD5.hexdigest(Sidekiq.dump_json(digestable_hash))
       "#{unique_prefix}:#{digest}"
     end
 
