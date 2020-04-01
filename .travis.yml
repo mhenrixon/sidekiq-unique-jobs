@@ -43,7 +43,7 @@ matrix:
   fast_finish: true
 
   include:
-    - rvm: jruby-9.2.8.0
+    - rvm: jruby-9.2.11.1
       gemfile: gemfiles/sidekiq_6.0.gemfile
     - rvm: 2.6.5
       gemfile: gemfiles/sidekiq_6.0.gemfile
