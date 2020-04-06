@@ -141,7 +141,7 @@ module SidekiqUniqueJobs
       # @return [false] when no job was found for this digest
       #
       def belongs_to_job?(digest)
-        scheduled?(digest) || retried?(digest) || enqueued?(digest)
+        scheduled?(digest) || retried?(digest) || enqueued?(digest) || active?(digest)
       end
 
       #
@@ -182,6 +182,20 @@ module SidekiqUniqueJobs
           end
 
           false
+        end
+      end
+
+      def active?(digest)
+        Sidekiq.redis do |conn|
+          procs = conn.sscan_each("processes").to_a.sort
+
+          result = conn.pipelined do
+            procs.each do |key|
+              conn.hscan(key, match: "*#{digest}*", count: 1).to_a
+            end
+          end
+
+          result.flatten.compact.any?
         end
       end
 

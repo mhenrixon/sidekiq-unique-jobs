@@ -61,6 +61,16 @@ repeat
       end
     end
 
+    -- TODO: Add check for jobs checked out by process
+    -- if found ~= true then
+    --   log_debug("Searching for digest:", digest, "in all queues")
+    --   local queue = find_digest_in_queues(digest)
+    --   if queue then
+    --     log_debug("found digest:", digest, "in queue:", queue)
+    --     found = true
+    --   end
+    -- end
+
     if found ~= true then
       local queued     = digest .. ":QUEUED"
       local primed     = digest .. ":PRIMED"
