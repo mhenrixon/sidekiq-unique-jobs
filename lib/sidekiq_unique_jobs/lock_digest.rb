@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'openssl'
+require "openssl"
 
 module SidekiqUniqueJobs
   # Handles uniqueness of sidekiq arguments

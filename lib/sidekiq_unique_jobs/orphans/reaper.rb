@@ -9,10 +9,12 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
+    # rubocop:disable Metrics/ClassLength
     class Reaper
       include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Script::Caller
       include SidekiqUniqueJobs::Logging
+      include SidekiqUniqueJobs::JSON
 
       #
       # Execute deletion of orphaned digests
@@ -190,12 +192,12 @@ module SidekiqUniqueJobs
           procs = conn.sscan_each("processes").to_a.sort
 
           result = conn.pipelined do
-            procs.each do |key|
-              conn.hscan(key, match: "*#{digest}*", count: 1).to_a
+            procs.map do |key|
+              conn.hget(key, "info")
             end
           end
 
-          result.flatten.compact.any?
+          result.flatten.compact.any? { |job| load_json(job)[LOCK_DIGEST] == digest }
         end
       end
 
@@ -247,5 +249,6 @@ module SidekiqUniqueJobs
         conn.zscan_each(key, match: "*#{digest}*", count: 1).to_a.any?
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
