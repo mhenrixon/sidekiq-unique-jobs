@@ -140,6 +140,35 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
           end
         end
       end
+
+      context "when processing" do
+        context "without job in process" do
+          it "deletes the digest" do
+            expect { call }.to change { digests.count }.by(-1)
+            expect(unique_keys).to match_array([])
+          end
+        end
+
+        context "with job in process" do
+          let(:process_key) { "worker-id" }
+
+          before do
+            SidekiqUniqueJobs.redis do |conn|
+              conn.multi do
+                conn.sadd("processes", process_key)
+                conn.exists(process_key)
+                conn.hmset(process_key, "info", Sidekiq.dump_json(item), "busy", 1, "beat", Time.now.to_f, "quiet", false)
+                conn.expire(process_key, 60)
+              end
+            end
+          end
+
+          it "keeps the digest" do
+            expect { call }.not_to change { digests.count }.from(1)
+            expect(unique_keys).not_to match_array([])
+          end
+        end
+      end
     end
 
     context "when config.reaper = :ruby" do

@@ -23,6 +23,7 @@ local redisversion = ARGV[6]
 <%= include_partial "shared/_common.lua" %>
 <%= include_partial "shared/_find_digest_in_queues.lua" %>
 <%= include_partial "shared/_find_digest_in_sorted_set.lua" %>
+<%= include_partial "shared/_find_digest_in_process_set.lua" %>
 ----------  END local functions ----------
 
 
@@ -55,6 +56,16 @@ repeat
       log_debug("Searching for digest:", digest, "in all queues")
       local queue = find_digest_in_queues(digest)
 
+      if queue then
+        log_debug("found digest:", digest, "in queue:", queue)
+        found = true
+      end
+    end
+
+    -- TODO: Add check for jobs checked out by process
+    if found ~= true then
+      log_debug("Searching for digest:", digest, "in process sets")
+      local queue = find_digest_in_process_set(digest)
       if queue then
         log_debug("found digest:", digest, "in queue:", queue)
         found = true

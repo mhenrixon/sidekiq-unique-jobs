@@ -101,4 +101,33 @@ RSpec.describe "reap_orphans.lua" do
       end
     end
   end
+
+  context "when digest exists in a a process set" do
+    context "without job" do
+      it "keeps the digest" do
+        expect { reap_orphans }.to change { digests.count }.by(-1)
+        expect(unique_keys).to match_array([])
+      end
+    end
+
+    context "with job" do
+      let(:process_key) { "worker-id" }
+
+      before do
+        SidekiqUniqueJobs.redis do |conn|
+          conn.multi do
+            conn.sadd("processes", process_key)
+            conn.exists(process_key)
+            conn.hmset(process_key, "info", Sidekiq.dump_json(item), "busy", 1, "beat", Time.now.to_f, "quiet", false)
+            conn.expire(process_key, 60)
+          end
+        end
+      end
+
+      it "keeps the digest" do
+        expect { reap_orphans }.not_to change { digests.count }.from(1)
+        expect(unique_keys).not_to match_array([])
+      end
+    end
+  end
 end

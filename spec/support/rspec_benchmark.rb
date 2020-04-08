@@ -11,6 +11,6 @@ begin
   RSpec::Benchmark.configure do |config|
     config.samples = 10
   end
-rescue LoadError # rubocop:disable Lint/SuppressedException
+rescue LoadError
   # Do nothing, we don't have test_prof
 end
