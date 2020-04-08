@@ -51,6 +51,7 @@ detectors:
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::NotUniqueWorker#initialize
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
+      - SidekiqUniqueJobs::Orphans::Reaper#active?
       - SidekiqUniqueJobs::Orphans::Reaper#entries
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
@@ -90,6 +91,7 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
+      - SidekiqUniqueJobs::Orphans::Reaper#active?
       - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
       - SidekiqUniqueJobs::UpgradeLocks#keys_for_digest
   RepeatedConditional:
@@ -124,6 +126,7 @@ detectors:
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Orphans::Manager#start
+      - SidekiqUniqueJobs::Orphans::Reaper#active?
       - SidekiqUniqueJobs::Orphans::Reaper#enqueued?
       - SidekiqUniqueJobs::Orphans::Reaper#entries
       - SidekiqUniqueJobs::Profiler#self.stop
@@ -144,6 +147,7 @@ detectors:
       - SidekiqUniqueJobs::Lock::BaseLock
       - SidekiqUniqueJobs::Locksmith
       - SidekiqUniqueJobs::Lock
+      - SidekiqUniqueJobs::Orphans::Reaper
   UncommunicativeVariableName:
     exclude:
       - Hash#slice
