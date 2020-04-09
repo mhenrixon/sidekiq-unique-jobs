@@ -34,12 +34,9 @@ local function find_digest_in_queues(digest)
         end
         index = index + per
       end
-
-      cursor = next_cursor
-      if cursor == "0" then
-        log_debug("Looped through all queues, stopping iteration")
-      end
     end
+
+    cursor = next_cursor
   until found == true or cursor == "0"
 
   return result
