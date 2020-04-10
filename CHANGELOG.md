@@ -1,5 +1,24 @@
 # Changelog
 
+## [v7.0.0.beta15](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta15) (2020-04-10)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta14...v7.0.0.beta15)
+
+**Implemented enhancements:**
+
+- Duplicated scripts [\#492](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/492)
+- CI: Use jruby-9.2.11.1 [\#485](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/485) ([olleolleolle](https://github.com/olleolleolle))
+
+**Fixed bugs:**
+
+- V7 - `on\_conflict:` no longer accepts a Hash [\#495](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/495)
+- Brpoplpush::RedisScript::LuaError: WRONGTYPE Operation against a key holding the wrong kind of value [\#491](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/491)
+- Lua script bug [\#489](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/489)
+- Reaper will delete locks for running jobs [\#488](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/488)
+- Fix access to hash members [\#496](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/496) ([mhenrixon](https://github.com/mhenrixon))
+- Fix cursor assignment [\#494](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/494) ([mhenrixon](https://github.com/mhenrixon))
+- Prevent reaping of active jobs [\#493](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/493) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta14](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta14) (2020-03-30)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.21...v7.0.0.beta14)
@@ -133,6 +152,11 @@
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6)
 
+**Implemented enhancements:**
+
+- Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
+- Bump rails [\#450](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450) ([mhenrixon](https://github.com/mhenrixon))
+
 **Merged pull requests:**
 
 - Fix that Sidekiq now sends instance of worker [\#459](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/459) ([mhenrixon](https://github.com/mhenrixon))
@@ -157,7 +181,6 @@
 
 **Implemented enhancements:**
 
-- Bump rails [\#450](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450) ([mhenrixon](https://github.com/mhenrixon))
 - Rename myapp [\#449](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/449) ([mhenrixon](https://github.com/mhenrixon))
 - Just to keep track of this [\#445](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/445) ([mhenrixon](https://github.com/mhenrixon))
 
@@ -174,10 +197,6 @@
 ## [v6.0.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.17) (2019-11-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.16...v6.0.17)
-
-**Implemented enhancements:**
-
-- Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
 
 **Fixed bugs:**
 
@@ -473,7 +492,7 @@
 **Fixed bugs:**
 
 - Enable replace strategy [\#315](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/315) ([mhenrixon](https://github.com/mhenrixon))
-- Remove unused method [\#307](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307) ([mhenrixon](https://github.com/mhenrixon))
+- Bug fixes [\#310](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -490,7 +509,6 @@
 **Fixed bugs:**
 
 - Not unlocking automatically \(version 6.0.0rc5\) [\#293](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/293)
-- Bug fixes [\#310](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.1) (2018-07-31)
 
@@ -499,6 +517,7 @@
 **Fixed bugs:**
 
 - :until\_executed is throwing errors and not requeuing the job. [\#256](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/256)
+- Remove unused method [\#307](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -840,6 +859,7 @@
 - missed space [\#188](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/188) ([TheBigSadowski](https://github.com/TheBigSadowski))
 - Convert unless if to just 1 if [\#179](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/179) ([otzy007](https://github.com/otzy007))
 - fix for \#168. Handle the NOSCRIPT by sending the script again [\#178](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/178) ([otzy007](https://github.com/otzy007))
+- Fixed gitter badge link [\#176](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/176) ([andrew](https://github.com/andrew))
 
 ## [v4.0.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.17) (2016-03-02)
 
@@ -855,7 +875,6 @@
 
 **Merged pull requests:**
 
-- Fixed gitter badge link [\#176](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/176) ([andrew](https://github.com/andrew))
 - Fix for sidekiq delete failing for version 3.4.x  [\#167](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/167) ([theprogrammerin](https://github.com/theprogrammerin))
 - Run lock timeout configurable [\#164](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/164) ([Slania](https://github.com/Slania))
 
