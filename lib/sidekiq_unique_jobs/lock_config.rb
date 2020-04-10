@@ -107,13 +107,13 @@ module SidekiqUniqueJobs
 
     # the strategy to use as conflict resolution from sidekiq client
     def on_client_conflict
-      @on_client_conflict ||= on_conflict&.(:[], :client) if on_conflict.is_a?(Hash)
+      @on_client_conflict ||= on_conflict[:client] if on_conflict.is_a?(Hash)
       @on_client_conflict ||= on_conflict
     end
 
     # the strategy to use as conflict resolution from sidekiq server
     def on_server_conflict
-      @on_client_conflict ||= on_conflict&.(:[], :server) if on_conflict.is_a?(Hash)
+      @on_server_conflict ||= on_conflict[:server] if on_conflict.is_a?(Hash)
       @on_server_conflict ||= on_conflict
     end
   end
