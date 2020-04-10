@@ -89,7 +89,7 @@
   
   <dl>
       <dt>Includes:</dt>
-      <dd><span class='object_link'><a href="../Connection.html" title="SidekiqUniqueJobs::Connection (module)">Connection</a></span>, <span class='object_link'><a href="../Logging.html" title="SidekiqUniqueJobs::Logging (module)">Logging</a></span>, <span class='object_link'><a href="../Script/Caller.html" title="SidekiqUniqueJobs::Script::Caller (module)">Script::Caller</a></span></dd>
+      <dd><span class='object_link'><a href="../Connection.html" title="SidekiqUniqueJobs::Connection (module)">Connection</a></span>, <span class='object_link'><a href="../JSON.html" title="SidekiqUniqueJobs::JSON (module)">JSON</a></span>, <span class='object_link'><a href="../Logging.html" title="SidekiqUniqueJobs::Logging (module)">Logging</a></span>, <span class='object_link'><a href="../Script/Caller.html" title="SidekiqUniqueJobs::Script::Caller (module)">Script::Caller</a></span></dd>
   </dl>
   
   
@@ -136,7 +136,57 @@
   
 </ul>
 
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="LuaReaper.html" title="SidekiqUniqueJobs::Orphans::LuaReaper (class)">LuaReaper</a></span>, <span class='object_link'><a href="RubyReaper.html" title="SidekiqUniqueJobs::Orphans::RubyReaper (class)">RubyReaper</a></span></p>
 </div>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="REAPERS-constant" class="">REAPERS =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns Hash&lt;Symbol, SidekiqUniqueJobs::Orphans::Reaper] the current implementation of reapers.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, <span class='object_link'><a href="" title="SidekiqUniqueJobs::Orphans::Reaper (class)">SidekiqUniqueJobs::Orphans::Reaper</a></span>] the current implementation of reapers</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Hash&lt;Symbol, SidekiqUniqueJobs::Orphans::Reaper] the current implementation of reapers</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>lua:</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="LuaReaper.html" title="SidekiqUniqueJobs::Orphans::LuaReaper (class)">LuaReaper</a></span></span><span class='comma'>,</span>
+  <span class='label'>ruby:</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="RubyReaper.html" title="SidekiqUniqueJobs::Orphans::RubyReaper (class)">RubyReaper</a></span></span><span class='comma'>,</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
 
 
 
@@ -166,90 +216,6 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Returns the value of attribute conn.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#digests-instance_method" title="#digests (instance method)">#<strong>digests</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute digests.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#retried-instance_method" title="#retried (instance method)">#<strong>retried</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute retried.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#scheduled-instance_method" title="#scheduled (instance method)">#<strong>scheduled</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute scheduled.</p>
 </div></span>
   
 </li>
@@ -303,29 +269,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#belongs_to_job%3F-instance_method" title="#belongs_to_job? (instance method)">#<strong>belongs_to_job?</strong>(digest)  &#x21d2; true, false </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Checks if the digest has a matching job.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#call-instance_method" title="#call (instance method)">#<strong>call</strong>  &#x21d2; Integer </a>
     
 
@@ -364,121 +307,6 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Convenient access to the global configuration.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#enqueued%3F-instance_method" title="#enqueued? (instance method)">#<strong>enqueued?</strong>(digest)  &#x21d2; true </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Checks if the digest exists in a Sidekiq::Queue.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#entries-instance_method" title="#entries (instance method)">#<strong>entries</strong>(conn, queue)  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/MethodLength.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#execute_lua_reaper-instance_method" title="#execute_lua_reaper (instance method)">#<strong>execute_lua_reaper</strong>  &#x21d2; Integer </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Executes the lua reaper.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#execute_ruby_reaper-instance_method" title="#execute_ruby_reaper (instance method)">#<strong>execute_ruby_reaper</strong>  &#x21d2; Integer </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Executes the ruby reaper.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#in_sorted_set%3F-instance_method" title="#in_sorted_set? (instance method)">#<strong>in_sorted_set?</strong>(key, digest)  &#x21d2; true, false </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Checks a sorted set for the existance of this digest.</p>
 </div></span>
   
 </li>
@@ -708,52 +536,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#orphans-instance_method" title="#orphans (instance method)">#<strong>orphans</strong>  &#x21d2; Array&lt;String&gt; </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Find orphaned digests.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#queues-instance_method" title="#queues (instance method)">#<strong>queues</strong>(conn) { ... } &#x21d2; void </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Loops through all the redis queues and yields them one by one.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#reaper-instance_method" title="#reaper (instance method)">#<strong>reaper</strong>  &#x21d2; Symbol </a>
     
 
@@ -828,52 +610,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#retried%3F-instance_method" title="#retried? (instance method)">#<strong>retried?</strong>(digest)  &#x21d2; true </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Checks if the digest exists in the Sidekiq::RetrySet.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#scheduled%3F-instance_method" title="#scheduled? (instance method)">#<strong>scheduled?</strong>(digest)  &#x21d2; true </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Checks if the digest exists in the Sidekiq::ScheduledSet.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#with_configured_loggers_context-instance_method" title="#with_configured_loggers_context (instance method)">#<strong>with_configured_loggers_context</strong> { ... } &#x21d2; void </a>
     
 
@@ -936,6 +672,8 @@
   
   
   
+  
+  
   <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
@@ -983,21 +721,15 @@
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
-  <span class='ivar'>@conn</span>      <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span>
-  <span class='ivar'>@digests</span>   <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Digests.html#initialize-instance_method" title="SidekiqUniqueJobs::Digests#initialize (method)">new</a></span></span>
-  <span class='ivar'>@scheduled</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Redis.html" title="SidekiqUniqueJobs::Redis (module)">Redis</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Redis/SortedSet.html" title="SidekiqUniqueJobs::Redis::SortedSet (class)">SortedSet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Redis/Entity.html#initialize-instance_method" title="SidekiqUniqueJobs::Redis::Entity#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'>SCHEDULE</span><span class='rparen'>)</span>
-  <span class='ivar'>@retried</span>   <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Redis.html" title="SidekiqUniqueJobs::Redis (module)">Redis</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Redis/SortedSet.html" title="SidekiqUniqueJobs::Redis::SortedSet (class)">SortedSet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Redis/Entity.html#initialize-instance_method" title="SidekiqUniqueJobs::Redis::Entity#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'>RETRY</span><span class='rparen'>)</span>
+  <span class='ivar'>@conn</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1036,141 +768,15 @@
       <pre class="lines">
 
 
-30
-31
-32</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_conn'>conn</span>
   <span class='ivar'>@conn</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="digests-instance_method">
-  
-    #<strong>digests</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute digests.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-30
-31
-32</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 30</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_digests'>digests</span>
-  <span class='ivar'>@digests</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="retried-instance_method">
-  
-    #<strong>retried</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute retried.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-30
-31
-32</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 30</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_retried'>retried</span>
-  <span class='ivar'>@retried</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="scheduled-instance_method">
-  
-    #<strong>scheduled</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute scheduled.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-30
-31
-32</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 30</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_scheduled'>scheduled</span>
-  <span class='ivar'>@scheduled</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1230,14 +836,14 @@
       <pre class="lines">
 
 
-24
-25
-26
-27
-28</pre>
+35
+36
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span> <span class='kw'>if</span> <span class='id identifier rubyid_conn'>conn</span>
@@ -1256,102 +862,7 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="belongs_to_job?-instance_method">
-  
-    #<strong>belongs_to_job?</strong>(digest)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Checks if the digest has a matching job.</p>
-
-<ol>
-<li>It checks the scheduled set</li>
-<li>It checks the retry set</li>
-<li>It goes through all queues</li>
-</ol>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>digest</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the digest to search for</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when either of the checks return true</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>false</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when no job was found for this digest</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-143
-144
-145</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 143</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_belongs_to_job?'>belongs_to_job?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_scheduled?'>scheduled?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_retried?'>retried?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_enqueued?'>enqueued?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="call-instance_method">
+  <h3 class="signature first" id="call-instance_method">
   
     #<strong>call</strong>  &#x21d2; <tt>Integer</tt> 
   
@@ -1392,26 +903,20 @@
       <pre class="lines">
 
 
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89</pre>
+91
+92
+93
+94
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 91</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
-  <span class='kw'>case</span> <span class='id identifier rubyid_reaper'>reaper</span>
-  <span class='kw'>when</span> <span class='symbol'>:ruby</span>
-    <span class='id identifier rubyid_execute_ruby_reaper'>execute_ruby_reaper</span>
-  <span class='kw'>when</span> <span class='symbol'>:lua</span>
-    <span class='id identifier rubyid_execute_lua_reaper'>execute_lua_reaper</span>
+  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_implementation'>implementation</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#REAPERS-constant" title="SidekiqUniqueJobs::Orphans::Reaper::REAPERS (constant)">REAPERS</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_reaper'>reaper</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_implementation'>implementation</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
   <span class='kw'>else</span>
     <span class='id identifier rubyid_log_fatal'>log_fatal</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_reaper'>reaper</span><span class='embexpr_end'>}</span><span class='tstring_content'> is invalid for `SidekiqUnqiueJobs.config.reaper`</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
@@ -1459,409 +964,15 @@
       <pre class="lines">
 
 
-50
-51
-52</pre>
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_config'>config</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="enqueued?-instance_method">
-  
-    #<strong>enqueued?</strong>(digest)  &#x21d2; <tt>true</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Checks if the digest exists in a Sidekiq::Queue</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>digest</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the current digest</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when digest exists in any queue</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 176</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_enqueued?'>enqueued?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
-    <span class='id identifier rubyid_queues'>queues</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_queue'>queue</span><span class='op'>|</span>
-      <span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_queue'>queue</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='op'>|</span>
-        <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-      <span class='kw'>end</span>
-    <span class='kw'>end</span>
-
-    <span class='kw'>false</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="entries-instance_method">
-  
-    #<strong>entries</strong>(conn, queue)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>rubocop:disable Metrics/MethodLength</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-201
-202
-203
-204
-205
-206
-207
-208
-209
-210
-211
-212
-213
-214
-215
-216
-217
-218
-219
-220</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 201</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_queue'>queue</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength
-</span>  <span class='id identifier rubyid_queue_key'>queue_key</span>    <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>queue:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_queue'>queue</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-  <span class='id identifier rubyid_initial_size'>initial_size</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_llen'>llen</span><span class='lparen'>(</span><span class='id identifier rubyid_queue_key'>queue_key</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_deleted_size'>deleted_size</span> <span class='op'>=</span> <span class='int'>0</span>
-  <span class='id identifier rubyid_page'>page</span>         <span class='op'>=</span> <span class='int'>0</span>
-  <span class='id identifier rubyid_page_size'>page_size</span>    <span class='op'>=</span> <span class='int'>50</span>
-
-  <span class='id identifier rubyid_loop'>loop</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_range_start'>range_start</span> <span class='op'>=</span> <span class='id identifier rubyid_page'>page</span> <span class='op'>*</span> <span class='id identifier rubyid_page_size'>page_size</span> <span class='op'>-</span> <span class='id identifier rubyid_deleted_size'>deleted_size</span>
-    <span class='id identifier rubyid_range_end'>range_end</span>   <span class='op'>=</span> <span class='id identifier rubyid_range_start'>range_start</span> <span class='op'>+</span> <span class='id identifier rubyid_page_size'>page_size</span> <span class='op'>-</span> <span class='int'>1</span>
-    <span class='id identifier rubyid_entries'>entries</span>     <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_lrange'>lrange</span><span class='lparen'>(</span><span class='id identifier rubyid_queue_key'>queue_key</span><span class='comma'>,</span> <span class='id identifier rubyid_range_start'>range_start</span><span class='comma'>,</span> <span class='id identifier rubyid_range_end'>range_end</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_page'>page</span>       <span class='op'>+=</span> <span class='int'>1</span>
-
-    <span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='op'>|</span>
-      <span class='kw'>yield</span> <span class='id identifier rubyid_entry'>entry</span>
-    <span class='kw'>end</span>
-
-    <span class='id identifier rubyid_deleted_size'>deleted_size</span> <span class='op'>=</span> <span class='id identifier rubyid_initial_size'>initial_size</span> <span class='op'>-</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_llen'>llen</span><span class='lparen'>(</span><span class='id identifier rubyid_queue_key'>queue_key</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="execute_lua_reaper-instance_method">
-  
-    #<strong>execute_lua_reaper</strong>  &#x21d2; <tt>Integer</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Executes the lua reaper</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Integer</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the number of deleted locks</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-107
-108
-109
-110
-111
-112
-113
-114</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 107</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_execute_lua_reaper'>execute_lua_reaper</span>
-  <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span>
-    <span class='symbol'>:reap_orphans</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span>
-    <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'>DIGESTS</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'>SCHEDULE</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'>RETRY</span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='label'>argv:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_reaper_count'>reaper_count</span><span class='rbracket'>]</span><span class='comma'>,</span>
-  <span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="execute_ruby_reaper-instance_method">
-  
-    #<strong>execute_ruby_reaper</strong>  &#x21d2; <tt>Integer</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Executes the ruby reaper</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Integer</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the number of deleted locks</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-97
-98
-99</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 97</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_execute_ruby_reaper'>execute_ruby_reaper</span>
-  <span class='const'><span class='object_link'><a href="../BatchDelete.html" title="SidekiqUniqueJobs::BatchDelete (class)">BatchDelete</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="../BatchDelete.html#call-class_method" title="SidekiqUniqueJobs::BatchDelete.call (method)">call</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_orphans'>orphans</span><span class='comma'>,</span> <span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="in_sorted_set?-instance_method">
-  
-    #<strong>in_sorted_set?</strong>(key, digest)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Checks a sorted set for the existance of this digest</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>key</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the key for the sorted set</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>digest</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the digest to scan for</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when found</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>false</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when missing</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-232
-233
-234</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 232</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_in_sorted_set?'>in_sorted_set?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zscan_each'>zscan_each</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='label'>match:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2298,149 +1409,6 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="orphans-instance_method">
-  
-    #<strong>orphans</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Array.html" title="Array (class)">Array</a></span>&lt;String&gt;</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Find orphaned digests</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../Array.html" title="Array (class)">Array</a></span>&lt;String&gt;</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>an array of orphaned digests</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-122
-123
-124
-125
-126
-127
-128
-129</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 122</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_orphans'>orphans</span>
-  <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zrevrange'>zrevrange</span><span class='lparen'>(</span><span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='op'>-</span><span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='id identifier rubyid_result'>result</span><span class='op'>|</span>
-    <span class='kw'>next</span> <span class='kw'>if</span> <span class='id identifier rubyid_belongs_to_job?'>belongs_to_job?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-
-    <span class='id identifier rubyid_result'>result</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_digest'>digest</span>
-    <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;=</span> <span class='id identifier rubyid_reaper_count'>reaper_count</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="queues-instance_method">
-  
-    #<strong>queues</strong>(conn) { ... } &#x21d2; <tt>void</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p class="note returns_void">This method returns an undefined value.</p><p>Loops through all the redis queues and yields them one by one</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>conn</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Redis.html" title="SidekiqUniqueJobs::Redis (module)">Redis</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the connection to use for fetching queues</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Yields:</p>
-<ul class="yield">
-  
-    <li>
-      
-      
-        <span class='type'></span>
-      
-      
-      
-        
-        <div class='inline'><p>queues one at a time</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-197
-198
-199</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 197</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_queues'>queues</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_sscan_each'>sscan_each</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>queues</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
   <h3 class="signature " id="reaper-instance_method">
   
     #<strong>reaper</strong>  &#x21d2; <tt>Symbol</tt> 
@@ -2478,12 +1446,12 @@
       <pre class="lines">
 
 
-60
-61
-62</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper'>reaper</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span>
@@ -2531,12 +1499,12 @@
       <pre class="lines">
 
 
-70
-71
-72</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper_count'>reaper_count</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper_count'>reaper_count</span>
@@ -2588,158 +1556,6 @@
 </ul>
 
 </div>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="retried?-instance_method">
-  
-    #<strong>retried?</strong>(digest)  &#x21d2; <tt>true</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Checks if the digest exists in the Sidekiq::RetrySet</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>digest</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the current digest</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when digest exists in retry set</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-165
-166
-167</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 165</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_retried?'>retried?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_in_sorted_set?'>in_sorted_set?</span><span class='lparen'>(</span><span class='const'>RETRY</span><span class='comma'>,</span> <span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="scheduled?-instance_method">
-  
-    #<strong>scheduled?</strong>(digest)  &#x21d2; <tt>true</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Checks if the digest exists in the Sidekiq::ScheduledSet</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>digest</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the current digest</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>when digest exists in scheduled set</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-154
-155
-156</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 154</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_scheduled?'>scheduled?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_in_sorted_set?'>in_sorted_set?</span><span class='lparen'>(</span><span class='const'>SCHEDULE</span><span class='comma'>,</span> <span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
 </div>
     
       <div class="method_details ">
@@ -2831,7 +1647,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Mar 30 07:40:56 2020 by
+  Generated on Fri Apr 10 08:12:08 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.24 (ruby-2.6.5).
 </div>

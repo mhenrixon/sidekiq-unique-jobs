@@ -134,7 +134,34 @@
     <dl class="constants">
       
         <dt id="DEPRECATED_KEYS-constant" class="">DEPRECATED_KEYS =
-          
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns a hash mapping of deprecated keys and their new value.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a hash mapping of deprecated keys and their new value</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
         </dt>
         <dd><pre class="code"><span class='lbrace'>{</span>
   <span class='const'>UNIQUE</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='op'>=&gt;</span> <span class='const'>LOCK</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='comma'>,</span>
@@ -227,7 +254,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#handle_deprecations-instance_method" title="#handle_deprecations (instance method)">#<strong>handle_deprecations</strong>  &#x21d2; Object </a>
+      <a href="#handle_deprecations-instance_method" title="#handle_deprecations (instance method)">#<strong>handle_deprecations</strong>  &#x21d2; void </a>
     
 
     
@@ -241,7 +268,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Validate deprecated keys   adds useful information about how to proceed with fixing handle_deprecations.</p>
+</div></span>
   
 </li>
 
@@ -390,14 +418,14 @@
       <pre class="lines">
 
 
-38
-39
 40
 41
-42</pre>
+42
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 40</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='ivar'>@options</span>     <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_transform_keys'>transform_keys</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span>
@@ -441,12 +469,12 @@
       <pre class="lines">
 
 
-31
-32
-33</pre>
+33
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_config'>lock_config</span>
   <span class='ivar'>@lock_config</span>
@@ -524,12 +552,12 @@
       <pre class="lines">
 
 
-24
-25
-26</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_validate'>validate</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_validate'>validate</span>
@@ -548,28 +576,39 @@
       <div class="method_details first">
   <h3 class="signature first" id="handle_deprecations-instance_method">
   
-    #<strong>handle_deprecations</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>handle_deprecations</strong>  &#x21d2; <tt>void</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Validate deprecated keys
+  adds useful information about how to proceed with fixing handle_deprecations</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-64
-65
-66
-67
-68
-69
-70</pre>
+72
+73
+74
+75
+76
+77
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 72</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_handle_deprecations'>handle_deprecations</span>
   <span class='const'><span class='object_link'><a href="#DEPRECATED_KEYS-constant" title="SidekiqUniqueJobs::Lock::Validator::DEPRECATED_KEYS (constant)">DEPRECATED_KEYS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_old'>old</span><span class='comma'>,</span> <span class='id identifier rubyid_new'>new</span><span class='op'>|</span>
@@ -625,8 +664,6 @@
       <pre class="lines">
 
 
-50
-51
 52
 53
 54
@@ -637,10 +674,12 @@
 59
 60
 61
-62</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 52</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate'>validate</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_lock_config'>lock_config</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span>
@@ -685,12 +724,12 @@
       <pre class="lines">
 
 
-75
-76
-77</pre>
+83
+84
+85</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 75</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 83</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_client'>validate_client</span>
   <span class='const'><span class='object_link'><a href="ClientValidator.html" title="SidekiqUniqueJobs::Lock::ClientValidator (class)">ClientValidator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate'><span class='object_link'><a href="ClientValidator.html#validate-class_method" title="SidekiqUniqueJobs::Lock::ClientValidator.validate (method)">validate</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_lock_config'>lock_config</span><span class='rparen'>)</span>
@@ -725,12 +764,12 @@
       <pre class="lines">
 
 
-82
-83
-84</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 82</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/validator.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_server'>validate_server</span>
   <span class='const'><span class='object_link'><a href="ServerValidator.html" title="SidekiqUniqueJobs::Lock::ServerValidator (class)">ServerValidator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate'><span class='object_link'><a href="ServerValidator.html#validate-class_method" title="SidekiqUniqueJobs::Lock::ServerValidator.validate (method)">validate</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_lock_config'>lock_config</span><span class='rparen'>)</span>
@@ -745,7 +784,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Mar 30 07:40:55 2020 by
+  Generated on Fri Apr 10 08:12:08 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.24 (ruby-2.6.5).
 </div>
