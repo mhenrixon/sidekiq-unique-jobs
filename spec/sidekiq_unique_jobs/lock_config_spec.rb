@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::LockConfig do
+  subject { lock_config }
+
   let(:lock_config) { described_class.from_worker(item) }
 
   let(:item) do
@@ -24,8 +26,6 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   let(:lock_info)    { true }
   let(:on_conflict)  { :log }
   let(:errors)       { {} }
-
-  subject { lock_config }
 
   its(:type)        { is_expected.to eq(lock_type) }
   its(:worker)      { is_expected.to eq(worker_class) }
