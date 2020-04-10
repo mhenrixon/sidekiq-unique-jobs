@@ -18,6 +18,8 @@ module SidekiqUniqueJobs
       require_relative "lua_reaper"
       require_relative "ruby_reaper"
 
+      #
+      # @return [Hash<Symbol, SidekiqUniqueJobs::Orphans::Reaper] the current implementation of reapers
       REAPERS = {
         lua: SidekiqUniqueJobs::Orphans::LuaReaper,
         ruby: SidekiqUniqueJobs::Orphans::RubyReaper,

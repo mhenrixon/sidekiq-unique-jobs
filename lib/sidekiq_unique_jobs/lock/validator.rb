@@ -8,6 +8,8 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@zoolutions.se>
     #
     class Validator
+      #
+      # @return [Hash] a hash mapping of deprecated keys and their new value
       DEPRECATED_KEYS = {
         UNIQUE.to_sym => LOCK.to_sym,
         UNIQUE_ARGS.to_sym => LOCK_ARGS.to_sym,
@@ -61,6 +63,12 @@ module SidekiqUniqueJobs
         lock_config
       end
 
+      #
+      # Validate deprecated keys
+      #   adds useful information about how to proceed with fixing handle_deprecations
+      #
+      # @return [void]
+      #
       def handle_deprecations
         DEPRECATED_KEYS.each do |old, new|
           next unless @options.key?(old)

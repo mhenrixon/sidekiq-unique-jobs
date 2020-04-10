@@ -52,7 +52,7 @@ module SidekiqUniqueJobs
     # @param [Hash] item a Sidekiq job hash
     # @option item [Integer] :lock_ttl the configured expiration
     # @option item [String] :jid the sidekiq job id
-    # @option item [String] :unique_digest the unique digest (See: {LockDigest#unique_digest})
+    # @option item [String] :unique_digest the unique digest (See: {LockDigest#lock_digest})
     # @param [Sidekiq::RedisConnection, ConnectionPool] redis_pool the redis connection
     #
     def initialize(item, redis_pool = nil)

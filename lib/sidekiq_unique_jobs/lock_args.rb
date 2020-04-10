@@ -111,6 +111,12 @@ module SidekiqUniqueJobs
         default_worker_options[UNIQUE_ARGS]
     end
 
+    #
+    # The globally default worker options configured from Sidekiq
+    #
+    #
+    # @return [Hash<String, Object>]
+    #
     def default_worker_options
       @default_worker_options ||= Sidekiq.default_worker_options.stringify_keys
     end
