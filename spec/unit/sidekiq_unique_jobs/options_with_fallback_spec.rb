@@ -189,7 +189,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
     context 'when options["lock"] is until_executed' do
       let(:options) { { "lock" => "until_executed" } }
-      let(:item)    { }
+      let(:item)    { {} }
 
       it { is_expected.to eq("until_executed") }
     end

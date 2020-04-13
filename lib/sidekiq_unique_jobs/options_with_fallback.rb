@@ -57,7 +57,7 @@ module SidekiqUniqueJobs
 
     # @return [Symbol]
     def lock_type
-      @lock_type ||= item&.send(:[], LOCK_KEY) || options[LOCK_KEY] || unique_type
+      @lock_type ||= item[LOCK_KEY] || options[LOCK_KEY] || unique_type
     end
 
     def unique_type
