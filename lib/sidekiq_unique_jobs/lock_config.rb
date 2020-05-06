@@ -45,17 +45,6 @@ module SidekiqUniqueJobs
     #   @return [Array<Hash<Symbol, Array<String>] a collection of configuration errors
     attr_reader :errors
 
-    #
-    # Instantiate a new lock_config based on sidekiq options in worker
-    #
-    # @param [Hash] options sidekiq_options for worker
-    #
-    # @return [LockConfig]
-    #
-    def self.from_worker(options)
-      new(options.stringify_keys)
-    end
-
     def initialize(job_hash = {})
       @type        = job_hash[LOCK]&.to_sym
       @worker      = job_hash[CLASS]

@@ -3,7 +3,7 @@
 RSpec.describe SidekiqUniqueJobs::LockConfig do
   subject { lock_config }
 
-  let(:lock_config) { described_class.from_worker(item) }
+  let(:lock_config) { described_class.new(job_hash) }
 
   let(:item) do
     {
@@ -17,6 +17,8 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
       errors: errors,
     }
   end
+
+  let(:job_hash) { item.stringify_keys }
 
   let(:lock_type)    { :until_executed }
   let(:worker_class) { "UntilExecutedJob" }
@@ -83,7 +85,9 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   end
 
   describe "#on_server_conflict" do
-    subject(:on_server_conflict) { lock_config.on_server_conflict }
+    subject(:on_server_conflict) { lock_config.on_server_conflict.to_sym }
+
+    let(:job_hash) { ::JSON.parse(item.to_json) }
 
     it { is_expected.to eq(:log) }
 
