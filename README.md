@@ -9,8 +9,8 @@
 - [General Information](#general-information)
 - [Global Configuration](#global-configuration)
   - [debug_lua](#debug_lua)
-  - [lock_timeout](#lock_timeout)
-  - [lock_ttl](#lock_ttl)
+  - [default_lock_timeout](#default_lock_timeout)
+  - [default_lock_ttl](#default_lock_ttl)
   - [enabled](#enabled)
   - [logger](#logger)
   - [max_history](#max_history)
@@ -108,16 +108,16 @@ The gem supports a few different configuration options that might be of interest
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
-  config.debug_lua       = true
-  config.lock_info       = true
-  config.lock_ttl        = 10.minutes
-  config.lock_timeout    = 10.minutes
-  config.logger          = Sidekiq.logger
-  config.max_history     = 10_000
-  config.reaper          = :lua
-  config.reaper_count    = 100
-  config.reaper_interval = 10
-  config.reaper_timeout  = 5
+  config.debug_lua            = true
+  config.lock_info            = true
+  config.default_lock_ttl     = 10.minutes
+  config.default_lock_timeout = 10.minutes
+  config.logger               = Sidekiq.logger
+  config.max_history          = 10_000
+  config.reaper               = :lua
+  config.reaper_count         = 100
+  config.reaper_interval      = 10
+  config.reaper_timeout       = 5
 end
 ```
 
@@ -129,20 +129,20 @@ SidekiqUniqueJobs.config.debug_lua #=> false
 
 Turning on debug_lua will allow the lua scripts to output debug information about what the lua scripts do. It will log all redis commands that are executed and also some helpful messages about what is going on inside the lua script.
 
-### lock_timeout
+### default_lock_timeout
 
 ```ruby
-SidekiqUniqueJobs.config.lock_timeout #=> 0
+SidekiqUniqueJobs.config.default_lock_timeout #=> 0
 ```
 
 Set a global lock_timeout to use for all jobs that don't otherwise specify a lock_timeout.
 
 Lock timeout decides how long to wait for acquiring the lock. A value of nil means to wait indefinitely for a lock resource to become available.
 
-### lock_ttl
+### default_lock_ttl
 
 ```ruby
-SidekiqUniqueJobs.config.lock_ttl #=> nil
+SidekiqUniqueJobs.config.default_lock_ttl #=> nil
 ```
 
 Set a global lock_ttl to use for all jobs that don't otherwise specify a lock_ttl.
