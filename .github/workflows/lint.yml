@@ -1,0 +1,29 @@
+name: Lint
+on: [push]
+jobs:
+  default: &default
+  rubocop:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: bundle install
+      - run: bin/rubocop -P
+
+  reek:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: bundle install
+      - run: bin/reek .

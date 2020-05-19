@@ -102,7 +102,7 @@ class Hash
           result[yield(key)] = _deep_transform_keys_in_object(value, &block)
         end
       when Array
-        object.map { |e| _deep_transform_keys_in_object(e, &block) }
+        object.map { |element| _deep_transform_keys_in_object(element, &block) }
       else
         object
       end

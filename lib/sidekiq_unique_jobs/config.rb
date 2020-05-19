@@ -185,23 +185,27 @@ module SidekiqUniqueJobs
     end
 
     def default_lock_ttl=(obj)
-      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_ttl=` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_ttl=` instead."
       self.lock_ttl = obj
     end
 
     def default_lock_timeout=(obj)
-      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_timeout=` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_timeout=` instead."
       self.lock_timeout = obj
     end
 
     def default_lock_ttl
-      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_ttl` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_ttl` instead."
       lock_ttl
     end
 
     def default_lock_timeout
-      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_timeout` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_timeout` instead."
       lock_timeout
+    end
+
+    def class_name
+      @class_name ||= self.class.name
     end
 
     #
