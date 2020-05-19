@@ -2,7 +2,7 @@
 
 ## [v7.0.0.beta16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta16) (2020-05-19)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta15...v7.0.0.beta16)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.22...v7.0.0.beta16)
 
 **Fixed bugs:**
 
@@ -12,6 +12,14 @@
 **Closed issues:**
 
 - V7 Beta 15 `on\_conflict:` with Hash does not work on server [\#499](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/499)
+
+## [v6.0.22](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.22) (2020-04-13)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta15...v6.0.22)
+
+**Fixed bugs:**
+
+- \[LockType\] Allow overwriting default lock type at item level [\#497](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/497) ([EmmN](https://github.com/EmmN))
 
 ## [v7.0.0.beta15](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta15) (2020-04-10)
 
