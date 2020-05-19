@@ -165,7 +165,8 @@ module SidekiqUniqueJobs
   #
   # This is usually called once at startup of an application
   # @param [Hash] options global gem options
-  # @option options [Integer] :default_lock_timeout (default is 0)
+  # @option options [Integer] :lock_timeout (default is 0)
+  # @option options [Integer] :lock_ttl (default is 0)
   # @option options [true,false] :enabled (default is true)
   # @option options [String] :unique_prefix (default is 'uniquejobs')
   # @option options [Logger] :logger (default is Sidekiq.logger)

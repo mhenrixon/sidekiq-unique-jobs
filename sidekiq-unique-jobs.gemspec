@@ -28,6 +28,20 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/CHANGELOG.md"
 
+  spec.post_install_message = <<~POST_INSTALL
+    This version deprecated the configuration options:
+      - default_lock_ttl
+      - default_lock_ttl=
+      - default_lock_timeout
+      - default_lock_timeout=
+
+    The new methods to use are:
+      - lock_ttl
+      - lock_ttl=
+      - lock_timeout
+      - lock_timeout=
+  POST_INSTALL
+
   spec.bindir        = "bin"
   spec.executables   = %w[uniquejobs]
 

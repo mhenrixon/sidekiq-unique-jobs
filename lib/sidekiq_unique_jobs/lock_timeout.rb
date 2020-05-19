@@ -50,13 +50,13 @@ module SidekiqUniqueJobs
 
     #
     # The configured default_lock_timeout
-    # @see SidekiqUniqueJobs::Config#default_lock_timeout
+    # @see SidekiqUniqueJobs::Config#lock_timeout
     #
     #
     # @return [Integer, nil]
     #
     def default_lock_timeout
-      SidekiqUniqueJobs.config.default_lock_timeout
+      SidekiqUniqueJobs.config.lock_timeout
     end
   end
 end
