@@ -22,7 +22,7 @@ class Hash
 
   unless {}.respond_to?(:deep_stringify_keys)
     #
-    # Converts all keys to string
+    # Depp converts all keys to string
     #
     #
     # @return [Hash<String>]
@@ -34,7 +34,7 @@ class Hash
 
   unless {}.respond_to?(:deep_transform_keys)
     #
-    # Converts all keys to string
+    # Deep transfor all keys by yielding to the caller
     #
     #
     # @return [Hash<String>]
