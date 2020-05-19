@@ -1,0 +1,29 @@
+name: RSpec
+on: [push]
+jobs:
+  test:
+    env:
+      COV: false
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        # ruby: [2.6]
+        ruby: [2.5, 2.6, 2.7, jruby, truffleruby]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - run: bundle install
+      - run: bundle exec appraisal install
+      - run: bundle exec appraisal rspec
