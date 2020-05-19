@@ -26,4 +26,4 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - run: bundle install
       - run: bundle exec appraisal install
-      - run: bundle exec appraisal rspec
+      - run: bundle exec appraisal rspec --require spec_helper --tag ~perf
