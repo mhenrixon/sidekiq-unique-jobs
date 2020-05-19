@@ -1,0 +1,29 @@
+name: RSpec
+on: [push]
+jobs:
+  tests:
+    env:
+      COV: false
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        # ruby: [2.5, 2.6, 2.7, jruby, truffleruby]
+        ruby: [2.5, 2.6, 2.7]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - run: bundle install --jobs=$(nproc) --retry=$(nproc)
+      - run: bundle exec appraisal install  --jobs=$(nproc) --retry=$(nproc)
+      - run: bundle exec appraisal rspec --require spec_helper --tag ~perf
