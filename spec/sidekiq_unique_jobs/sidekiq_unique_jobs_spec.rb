@@ -4,10 +4,10 @@ RSpec.describe SidekiqUniqueJobs do
   describe ".config" do
     subject(:config) { described_class.config }
 
-    it { is_expected.to be_a(SidekiqUniqueJobs::Config) }
-    its(:default_lock_timeout)     { is_expected.to eq(0) }
-    its(:enabled)                  { is_expected.to eq(true) }
-    its(:unique_prefix)            { is_expected.to eq("uniquejobs") }
+    it                  { is_expected.to be_a(SidekiqUniqueJobs::Config) }
+    its(:lock_timeout)  { is_expected.to eq(0) }
+    its(:enabled)       { is_expected.to eq(true) }
+    its(:unique_prefix) { is_expected.to eq("uniquejobs") }
   end
 
   describe ".use_config" do

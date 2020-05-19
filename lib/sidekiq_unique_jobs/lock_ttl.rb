@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
 
     #
     # Computes lock ttl from job arguments, sidekiq_options.
-    #   Falls back to {default_lock_ttl}
+    #   Falls back to {SidekiqUniqueJobs::Config#lock_ttl}
     #
     # @note this method takes into consideration the time
     #   until a job is scheduled
@@ -57,7 +57,7 @@ module SidekiqUniqueJobs
 
     #
     # Computes lock ttl from job arguments, sidekiq_options.
-    #   Falls back to {default_lock_ttl}
+    #   Falls back to {SidekiqUniqueJobs::Config#lock_ttl}
     #
     # @note this method takes into consideration the time
     #   until a job is scheduled
@@ -70,19 +70,8 @@ module SidekiqUniqueJobs
       ttl ||= worker_options[LOCK_TTL]
       ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
       ttl ||= worker_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
-      ttl ||= default_lock_ttl
+      ttl ||= SidekiqUniqueJobs.config.lock_ttl
       ttl && ttl.to_i + time_until_scheduled
-    end
-
-    #
-    # The configured default_lock_ttl
-    # @see SidekiqUniqueJobs::Config#default_lock_ttl
-    #
-    #
-    # @return [Integer, nil]
-    #
-    def default_lock_ttl
-      SidekiqUniqueJobs.config.default_lock_ttl
     end
   end
 end

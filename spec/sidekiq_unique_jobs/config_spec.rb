@@ -1,9 +1,81 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Config do
-  describe ".locks" do
-    let(:config) { described_class.default }
+  let(:config) { described_class.default }
 
+  describe "#default_lock_ttl=" do
+    subject(:set_config) { config.default_lock_ttl = new_value }
+
+    let(:new_value) { 99 }
+
+    before do
+      allow(config).to receive(:warn)
+    end
+
+    it "warns about deprecation" do
+      set_config
+      expect(config).to have_received(:warn).with(
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_ttl=` is deprecated." \
+        " Please use `SidekiqUniqueJobs::Config#lock_ttl=` instead.",
+      )
+      expect(config.lock_ttl).to eq(new_value)
+    end
+  end
+
+  describe "#default_lock_timeout=" do
+    subject(:set_config) { config.default_lock_timeout = new_value }
+
+    let(:new_value) { 99 }
+
+    before do
+      allow(config).to receive(:warn)
+    end
+
+    it "warns about deprecation" do
+      set_config
+      expect(config).to have_received(:warn).with(
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_timeout=` is deprecated." \
+        " Please use `SidekiqUniqueJobs::Config#lock_timeout=` instead.",
+      )
+      expect(config.lock_timeout).to eq(new_value)
+    end
+  end
+
+  describe "#default_lock_ttl" do
+    subject(:get_config) { config.default_lock_ttl }
+
+    before do
+      allow(config).to receive(:warn)
+    end
+
+    it "warns about deprecation" do
+      get_config
+      expect(config).to have_received(:warn).with(
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_ttl` is deprecated." \
+        " Please use `SidekiqUniqueJobs::Config#lock_ttl` instead.",
+      )
+      expect(config.lock_ttl).to eq(get_config)
+    end
+  end
+
+  describe "#default_lock_timeout" do
+    subject(:get_config) { config.default_lock_timeout }
+
+    before do
+      allow(config).to receive(:warn)
+    end
+
+    it "warns about deprecation" do
+      get_config
+      expect(config).to have_received(:warn).with(
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_timeout` is deprecated." \
+        " Please use `SidekiqUniqueJobs::Config#lock_timeout` instead.",
+      )
+      expect(config.lock_timeout).to eq(get_config)
+    end
+  end
+
+  describe ".locks" do
     context "when using default config" do
       it "falls back on default option" do
         expect(config.locks).to eq(SidekiqUniqueJobs::Config::LOCKS)
@@ -49,8 +121,6 @@ RSpec.describe SidekiqUniqueJobs::Config do
   end
 
   describe ".strategies" do
-    let(:config) { described_class.default }
-
     context "when using default config" do
       it "falls back on default option" do
         expect(config.strategies).to eq(SidekiqUniqueJobs::Config::STRATEGIES)

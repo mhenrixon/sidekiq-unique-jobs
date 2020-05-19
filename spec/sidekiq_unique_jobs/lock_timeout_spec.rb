@@ -31,7 +31,7 @@ RSpec.describe SidekiqUniqueJobs::LockTimeout do
       let(:sidekiq_options) { { lock_timeout: 99 } }
 
       context "with global config", :with_global_config do
-        let(:global_config) { { default_lock_timeout: 66 } }
+        let(:global_config) { { lock_timeout: 66 } }
 
         # rubocop:disable RSpec/NestedGroups
         context "with worker options", :with_worker_options do

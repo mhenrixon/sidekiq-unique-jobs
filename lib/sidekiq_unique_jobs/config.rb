@@ -3,8 +3,8 @@
 module SidekiqUniqueJobs
   # ThreadSafe config exists to be able to document the config class without errors
   ThreadSafeConfig = Concurrent::MutableStruct.new("ThreadSafeConfig",
-                                                   :default_lock_timeout,
-                                                   :default_lock_ttl,
+                                                   :lock_timeout,
+                                                   :lock_ttl,
                                                    :enabled,
                                                    :unique_prefix,
                                                    :logger,
@@ -24,6 +24,7 @@ module SidekiqUniqueJobs
   # Shared class for dealing with gem configuration
   #
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
+  # rubocop:disable Metrics/ClassLength
   class Config < ThreadSafeConfig
     #
     # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available queued locks
@@ -183,6 +184,26 @@ module SidekiqUniqueJobs
       )
     end
 
+    def default_lock_ttl=(obj)
+      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_ttl=` instead."
+      self.lock_ttl = obj
+    end
+
+    def default_lock_timeout=(obj)
+      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_timeout=` instead."
+      self.lock_timeout = obj
+    end
+
+    def default_lock_ttl
+      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_ttl` instead."
+      lock_ttl
+    end
+
+    def default_lock_timeout
+      warn "[DEPRECATION] `#{self.class}##{__method__}` is deprecated. Please use `#{self.class}#lock_timeout` instead."
+      lock_timeout
+    end
+
     #
     # Adds a lock type to the configuration. It will raise if the lock exists already
     #
@@ -234,4 +255,5 @@ module SidekiqUniqueJobs
       current_redis_version
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
