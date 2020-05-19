@@ -25,6 +25,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
       - run: bundle install
-      - run: bundle exec appaisal install
+      - run: bundle exec appraisal install
       - run: bin/rubocop -P
-      - run: bundle exec appaisal rspec
+      - run: bundle exec appraisal rspec
