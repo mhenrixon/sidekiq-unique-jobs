@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::LockConfig
   
-    &mdash; Documentation by YARD 0.9.24
+    &mdash; Documentation by YARD 0.9.25
   
 </title>
 
@@ -1109,7 +1109,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 55</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_worker'>from_worker</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_deep_stringify_keys'>deep_stringify_keys</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1217,7 +1217,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 109</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_on_client_conflict'>on_client_conflict</span>
-  <span class='ivar'>@on_client_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='lbracket'>[</span><span class='symbol'>:client</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
+  <span class='ivar'>@on_client_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>client</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
   <span class='ivar'>@on_client_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1259,7 +1259,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_on_server_conflict'>on_server_conflict</span>
-  <span class='ivar'>@on_server_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='lbracket'>[</span><span class='symbol'>:server</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
+  <span class='ivar'>@on_server_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>server</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
   <span class='ivar'>@on_server_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1378,9 +1378,9 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr 10 08:12:07 2020 by
+  Generated on Tue May 19 08:51:09 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.24 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

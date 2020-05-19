@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.24
+    &mdash; Documentation by YARD 0.9.25
   
 </title>
 
@@ -57,7 +57,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><div id='filecontents'><h1>SidekiqUniqueJobs <a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> <a href="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs"><img src="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.svg?branch=master" alt="Build Status"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.svg" alt="Code Climate"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg" alt="Test Coverage"></a></h1>
+      <div id="content"><div id='filecontents'><h1 id="sidekiquniquejobs">SidekiqUniqueJobs <a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> <a href="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs"><img src="https://travis-ci.org/mhenrixon/sidekiq-unique-jobs.svg?branch=master" alt="Build Status"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.svg" alt="Code Climate"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg" alt="Test Coverage"></a></h1>
 
 <!-- MarkdownTOC -->
 
@@ -117,7 +117,7 @@
 
 <!-- /MarkdownTOC -->
 
-<h2>Introduction</h2>
+<h2 id="introduction">Introduction</h2>
 
 <p>The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.</p>
 
@@ -131,7 +131,7 @@
 <li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">v4.0.18</a></li>
 </ul>
 
-<h2>Requirements</h2>
+<h2 id="requirements">Requirements</h2>
 
 <ul>
 <li>Sidekiq <code>&gt;= 4.0</code> (<code>&gt;= 5.2</code> recommended)</li>
@@ -149,7 +149,7 @@
 
 <p>See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).</p>
 
-<h2>Installation</h2>
+<h2 id="installation">Installation</h2>
 
 <p>Add this line to your application&#39;s Gemfile:</p>
 
@@ -166,17 +166,17 @@
 <pre class="code bash"><code class="bash">gem install sidekiq-unique-jobs
 </code></pre>
 
-<h2>Support Me</h2>
+<h2 id="support-me">Support Me</h2>
 
 <p>Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link: <a href="https://paypal.me/mhenrixon1">https://paypal.me/mhenrixon1</a>. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.</p>
 
-<h2>General Information</h2>
+<h2 id="general-information">General Information</h2>
 
 <p>See <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/How-this-gem-interacts-with-Sidekiq">Interaction w/ Sidekiq</a> on how the gem interacts with Sidekiq.</p>
 
 <p>See <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking">Locking &amp; Unlocking</a> for an overview of the differences on when the various lock types are locked and unlocked.</p>
 
-<h2>Global Configuration</h2>
+<h2 id="global-configuration">Global Configuration</h2>
 
 <p>The gem supports a few different configuration options that might be of interest if you run into some weird issues.</p>
 
@@ -194,14 +194,14 @@
 <span class='kw'>end</span>
 </code></pre>
 
-<h3>debug_lua</h3>
+<h3 id="debug_lua">debug_lua</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug_lua'>debug_lua</span> <span class='comment'>#=&gt; false
 </span></code></pre>
 
 <p>Turning on debug_lua will allow the lua scripts to output debug information about what the lua scripts do. It will log all redis commands that are executed and also some helpful messages about what is going on inside the lua script.</p>
 
-<h3>lock_timeout</h3>
+<h3 id="lock_timeout">lock_timeout</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lock_timeout'>lock_timeout</span> <span class='comment'>#=&gt; 0
 </span></code></pre>
@@ -210,7 +210,7 @@
 
 <p>Lock timeout decides how long to wait for acquiring the lock. A value of nil means to wait indefinitely for a lock resource to become available.</p>
 
-<h3>lock_ttl</h3>
+<h3 id="lock_ttl">lock_ttl</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lock_ttl'>lock_ttl</span> <span class='comment'>#=&gt; nil
 </span></code></pre>
@@ -219,21 +219,21 @@
 
 <p>Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.</p>
 
-<h3>enabled</h3>
+<h3 id="enabled">enabled</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span> <span class='comment'>#=&gt; true
 </span></code></pre>
 
 <p>Globally turn the locking mechanism on or off.</p>
 
-<h3>logger</h3>
+<h3 id="logger">logger</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_logger'><span class='object_link'><a href="SidekiqUniqueJobs.html#logger-class_method" title="SidekiqUniqueJobs.logger (method)">logger</a></span></span> <span class='comment'>#=&gt; #&lt;Sidekiq::Logger:0x00007fdc1f96d180&gt;
 </span></code></pre>
 
 <p>By default this gem piggybacks on the Sidekiq logger. It is not recommended to change this as the gem uses some features in the Sidekiq logger and you might run into problems. If you need a different logger and you do run into problems then get in touch and we&#39;ll see what we can do about it.</p>
 
-<h3>max_history</h3>
+<h3 id="max_history">max_history</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max_history'>max_history</span> <span class='comment'>#=&gt; 1_000
 </span></code></pre>
@@ -242,7 +242,7 @@
 
 <p>This is a log that can be accessed by a lock to see what happened for that lock. Any items after the configured <code>max_history</code> will be automatically deleted as new items are added.</p>
 
-<h3>reaper</h3>
+<h3 id="reaper">reaper</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span> <span class='comment'>#=&gt; :ruby
 </span></code></pre>
@@ -257,44 +257,44 @@
 <p>BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)</p>
 </blockquote>
 
-<h3>reaper_count</h3>
+<h3 id="reaper_count">reaper_count</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper_count'>reaper_count</span> <span class='comment'>#=&gt; 1_000
 </span></code></pre>
 
 <p>The reaper_count setting configures how many orphans at a time will be cleaned up by the orphan cleanup job. This might have to be tweaked depending on which orphan job is running.</p>
 
-<h3>reaper_interval</h3>
+<h3 id="reaper_interval">reaper_interval</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper_interval'>reaper_interval</span> <span class='comment'>#=&gt; 600
 </span></code></pre>
 
 <p>The number of seconds between reaping.</p>
 
-<h3>reaper_timeout</h3>
+<h3 id="reaper_timeout">reaper_timeout</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper_timeout'>reaper_timeout</span> <span class='comment'>#=&gt; 10
 </span></code></pre>
 
 <p>The number of seconds to wait for the reaper to finish before raising a TimeoutError. This is done to ensure that the next time we reap isn&#39;t getting stuck due to the previous process already running.</p>
 
-<h3>unique_prefix</h3>
+<h3 id="unique_prefix">unique_prefix</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_unique_prefix'>unique_prefix</span> <span class='comment'>#=&gt; &quot;uniquejobs&quot;
 </span></code></pre>
 
 <p>Use if you want a different key prefix for the keys in redis.</p>
 
-<h3>lock_info</h3>
+<h3 id="lock_info">lock_info</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lock_info'>lock_info</span> <span class='comment'>#=&gt; false
 </span></code></pre>
 
 <p>Using lock info will create an additional key for the lock with a json object containing information about the lock. This will be presented in the web interface and might help track down why some jobs are getting stuck.</p>
 
-<h2>Worker Configuration</h2>
+<h2 id="worker-configuration">Worker Configuration</h2>
 
-<h3>lock_ttl</h3>
+<h3 id="lock_ttl">lock_ttl</h3>
 
 <p>Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.</p>
 
@@ -304,7 +304,7 @@
 </span><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_ttl:</span> <span class='int'>20</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='comment'># expire this lock in 20 days
 </span></code></pre>
 
-<h3>lock_timeout</h3>
+<h3 id="lock_timeout">lock_timeout</h3>
 
 <p>This is the timeout (how long to wait) when creating the lock. By default we don&#39;t use a timeout so we won&#39;t wait for the lock to be created. If you want it is possible to set this like below.</p>
 
@@ -313,7 +313,7 @@
 </span><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_timeout:</span> <span class='kw'>nil</span> <span class='comment'># lock indefinitely, this process won&#39;t continue until it gets a lock. VERY DANGEROUS!!
 </span></code></pre>
 
-<h3>unique_across_queues</h3>
+<h3 id="unique_across_queues">unique_across_queues</h3>
 
 <p>This configuration option is slightly misleading. It doesn&#39;t disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.</p>
 
@@ -328,7 +328,7 @@
 
 <p>Now if you push override the queue with <code>Worker.set(queue: &#39;another&#39;).perform_async(1)</code> it will still be considered unique when compared to <code>Worker.perform_async(1)</code> (that was actually pushed to the queue <code>default</code>).</p>
 
-<h3>unique_across_workers</h3>
+<h3 id="unique_across_workers">unique_across_workers</h3>
 
 <p>This configuration option is slightly misleading. It doesn&#39;t disregard the worker class on other jobs. Just on itself, this means  that the worker class won&#39;t be used for generating the unique digest. The only way this option really makes sense is when you want to have uniqueness between two different worker classes.</p>
 
@@ -356,9 +356,9 @@
 <span class='comment'># =&gt; nil because WorkerOne just stole the lock
 </span></code></pre>
 
-<h2>Locks</h2>
+<h2 id="locks">Locks</h2>
 
-<h3>Until Executing</h3>
+<h3 id="until-executing">Until Executing</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_executing</span>
 </code></pre>
@@ -369,28 +369,28 @@
 
 <p>The reason this type of lock exists is to fix the following problem: <a href="https://github.com/mperham/sidekiq/issues/3471#issuecomment-300866335">sidekiq/issues/3471</a></p>
 
-<h3>Until Executed</h3>
+<h3 id="until-executed">Until Executed</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_executed</span>
 </code></pre>
 
 <p>Locks from when the client pushes the job to the queue. Will be unlocked when the server has successfully processed the job.</p>
 
-<h3>Until Expired</h3>
+<h3 id="until-expired">Until Expired</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_expired</span>
 </code></pre>
 
 <p>Locks from when the client pushes the job to the queue. Will be unlocked when the specified timeout has been reached.</p>
 
-<h3>Until And While Executing</h3>
+<h3 id="until-and-while-executing">Until And While Executing</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_and_while_executing</span>
 </code></pre>
 
 <p>Locks when the client pushes the job to the queue. The queue will be unlocked when the server starts processing the job. The server then goes on to creating a runtime lock for the job to prevent simultaneous jobs from being executed. As soon as the server starts processing a job, the client can push the same job to the queue.</p>
 
-<h3>While Executing</h3>
+<h3 id="while-executing">While Executing</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:while_executing</span><span class='comma'>,</span> <span class='label'>lock_timeout:</span> <span class='int'>10</span>
 </code></pre>
@@ -417,7 +417,7 @@
 10:33:04 worker.1 | 2017-04-23T08:33:04.973Z 84404 TID-ougq8cs8s WhileExecutingWorker JID-9e197460c067b22eb1b5d07f INFO: done: 40.014 sec
 </code></pre>
 
-<h3>Custom Locks</h3>
+<h3 id="custom-locks">Custom Locks</h3>
 
 <p>You may need to define some custom lock. You can define it in one project folder:</p>
 
@@ -450,7 +450,7 @@
 
 <p>Please not that if you try to override a default lock, an <code>ArgumentError</code> will be raised.</p>
 
-<h2>Conflict Strategy</h2>
+<h2 id="conflict-strategy">Conflict Strategy</h2>
 
 <p>Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock <code>WhileExecuting</code> that is used only by the sidekiq server process.</p>
 
@@ -468,21 +468,21 @@ sidekiq_options on_conflict: :log
 
 <p>This strategy is intended to be used with <code>UntilExecuted</code> and <code>UntilExpired</code>. It will log a line about that this is job is a duplicate of another.</p>
 
-<h3>raise</h3>
+<h3 id="raise">raise</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:raise</span>
 </code></pre>
 
 <p>This strategy is intended to be used with <code>WhileExecuting</code>. Basically it will allow us to let the server process crash with a specific error message and be retried without messing up the Sidekiq stats.</p>
 
-<h3>reject</h3>
+<h3 id="reject">reject</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:reject</span>
 </code></pre>
 
 <p>This strategy is intended to be used with <code>WhileExecuting</code> and will push the job to the dead queue on conflict.</p>
 
-<h3>replace</h3>
+<h3 id="replace">replace</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:replace</span>
 </code></pre>
@@ -494,14 +494,14 @@ queue and retry the lock again.</p>
 <p>This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.</p>
 
-<h3>Reschedule</h3>
+<h3 id="reschedule">Reschedule</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:reschedule</span>
 </code></pre>
 
 <p>This strategy is intended to be used with <code>WhileExecuting</code> and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.</p>
 
-<h3>Custom Strategies</h3>
+<h3 id="custom-strategies">Custom Strategies</h3>
 
 <p>You may need to define some custom strategy. You can define it in one project folder:</p>
 
@@ -535,7 +535,7 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 
 <p>Please not that if you try to override a default lock, an <code>ArgumentError</code> will be raised.</p>
 
-<h2>Usage</h2>
+<h2 id="usage">Usage</h2>
 
 <p>All that is required is that you specifically set the sidekiq option for <em>unique</em> to a valid value like below:</p>
 
@@ -544,7 +544,7 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 
 <p>Requiring the gem in your gemfile should be sufficient to enable unique jobs.</p>
 
-<h3>Finer Control over Uniqueness</h3>
+<h3 id="finer-control-over-uniqueness">Finer Control over Uniqueness</h3>
 
 <p>Sometimes it is desired to have a finer control over which arguments are used in determining uniqueness of the job, and others may be <em>transient</em>. For this use-case, you need to define either a <code>lock_args</code> method, or a ruby proc.</p>
 
@@ -595,7 +595,7 @@ end
 <span class='kw'>end</span>
 </code></pre>
 
-<h3>After Unlock Callback</h3>
+<h3 id="after-unlock-callback">After Unlock Callback</h3>
 
 <p>If you need to perform any additional work after the lock has been released you can provide an <code>#after_unlock</code> instance method. The method will be called when the lock has been unlocked. Most times this means after yield but there are two exceptions to that.</p>
 
@@ -613,7 +613,7 @@ end
 end.
 </code></pre>
 
-<h3>Logging</h3>
+<h3 id="logging">Logging</h3>
 
 <p>To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false</p>
 
@@ -627,7 +627,7 @@ end.
 end
 </code></pre>
 
-<h3>Cleanup Dead Locks</h3>
+<h3 id="cleanup-dead-locks">Cleanup Dead Locks</h3>
 
 <p>For sidekiq versions before 5.1 a <code>sidekiq_retries_exhausted</code> block is required per worker class. This is deprecated in Sidekiq 6.0</p>
 
@@ -650,9 +650,9 @@ end
 <span class='kw'>end</span>
 </code></pre>
 
-<h3>Other Sidekiq gems</h3>
+<h3 id="other-sidekiq-gems">Other Sidekiq gems</h3>
 
-<h4>sidekiq-global_id</h4>
+<h4 id="sidekiq-global_id">sidekiq-global_id</h4>
 
 <p>It was reported in <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235">#235</a> that the order of the Sidekiq middleware needs to be as follows.</p>
 
@@ -669,11 +669,11 @@ end
 
 <p>For a working setup check the following <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/945c4c4c517168d49e3f8ee952fcc9c430865635/myapp/config/initializers/sidekiq.rb#L8">file</a></p>
 
-<h2>Debugging</h2>
+<h2 id="debugging">Debugging</h2>
 
 <p>There are several ways of removing keys that are stuck. The prefered way is by using the unique extension to <code>Sidekiq::Web</code>. The old console and command line versions still work but might be deprecated in the future. It is better to search for the digest itself and delete the keys matching that digest.</p>
 
-<h3>Sidekiq Web</h3>
+<h3 id="sidekiq-web">Sidekiq Web</h3>
 
 <p>To use the web extension you need to require it in your routes.</p>
 
@@ -687,21 +687,21 @@ already does this.</p>
 
 <p>To filter/search for keys we can use the wildcard <code>*</code>. If we have a unique digest <code>&#39;uniquejobs:9e9b5ce5d423d3ea470977004b50ff84</code> we can search for it by enter <code>*ff84</code> and it should return all digests that end with <code>ff84</code>.</p>
 
-<h4>Show Locks</h4>
+<h4 id="show-locks">Show Locks</h4>
 
 <p><img src="assets/unique_digests_1.png" alt="Locks"></p>
 
-<h4>Show Lock</h4>
+<h4 id="show-lock">Show Lock</h4>
 
 <p><img src="assets/unique_digests_2.png" alt="Lock"></p>
 
-<h2>Communication</h2>
+<h2 id="communication">Communication</h2>
 
 <p>There is a <a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> for praise or scorn. This would be a good place to have lengthy discuss or brilliant suggestions or simply just nudge me if I forget about anything.</p>
 
-<h2>Testing</h2>
+<h2 id="testing">Testing</h2>
 
-<h3>Unique Sidekiq Configuration</h3>
+<h3 id="unique-sidekiq-configuration">Unique Sidekiq Configuration</h3>
 
 <p>Since v7 it is possible to perform some simple validation against your workers sidekiq_options. What it does is scan for some issues that are known to cause problems in production.</p>
 
@@ -734,7 +734,7 @@ already does this.</p>
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_assert'>assert</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate_worker!'><span class='object_link'><a href="SidekiqUniqueJobs.html#validate_worker!-class_method" title="SidekiqUniqueJobs.validate_worker! (method)">validate_worker!</a></span></span><span class='lparen'>(</span><span class='const'>BadWorker</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='rparen'>)</span>
 </code></pre>
 
-<h3>Uniqueness</h3>
+<h3 id="uniqueness">Uniqueness</h3>
 
 <p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][]</p>
 
@@ -784,7 +784,7 @@ already does this.</p>
 <li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/while_executing_spec.rb">spec/integration/sidekiq_unique_jobs/lock/while_executing_spec.rb</a></li>
 </ul>
 
-<h2>Contributing</h2>
+<h2 id="contributing">Contributing</h2>
 
 <ol>
 <li>Fork it</li>
@@ -794,7 +794,7 @@ already does this.</p>
 <li>Create new Pull Request</li>
 </ol>
 
-<h2>Contributors</h2>
+<h2 id="contributors">Contributors</h2>
 
 <p>You can find a list of contributors over on [Contributors][]</p>
 
@@ -806,9 +806,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Fri Apr 10 08:12:06 2020 by
+  Generated on Tue May 19 08:51:08 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.24 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

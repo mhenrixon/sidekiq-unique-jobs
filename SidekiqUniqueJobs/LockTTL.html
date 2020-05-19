@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::LockTTL
   
-    &mdash; Documentation by YARD 0.9.24
+    &mdash; Documentation by YARD 0.9.25
   
 </title>
 
@@ -255,29 +255,6 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Computes lock ttl from job arguments, sidekiq_options.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#default_lock_ttl-instance_method" title="#default_lock_ttl (instance method)">#<strong>default_lock_ttl</strong>  &#x21d2; Integer<sup>?</sup> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The configured default_lock_ttl.</p>
 </div></span>
   
 </li>
@@ -722,7 +699,7 @@ until a job is scheduled</p>
   </div>
 
 <p>Computes lock ttl from job arguments, sidekiq_options.
-  Falls back to <span class='object_link'><a href="#default_lock_ttl-instance_method" title="SidekiqUniqueJobs::LockTTL#default_lock_ttl (method)">#default_lock_ttl</a></span></p>
+  Falls back to Config#lock_ttl</p>
 
 
   </div>
@@ -834,7 +811,7 @@ until a job is scheduled</p>
   </div>
 
 <p>Computes lock ttl from job arguments, sidekiq_options.
-  Falls back to <span class='object_link'><a href="#default_lock_ttl-instance_method" title="SidekiqUniqueJobs::LockTTL#default_lock_ttl (method)">#default_lock_ttl</a></span></p>
+  Falls back to Config#lock_ttl</p>
 
 
   </div>
@@ -882,68 +859,8 @@ until a job is scheduled</p>
   <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_TTL</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_EXPIRATION</span><span class='rbracket'>]</span> <span class='comment'># TODO: Deprecate at some point
 </span>  <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_EXPIRATION</span><span class='rbracket'>]</span> <span class='comment'># TODO: Deprecate at some point
-</span>  <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
+</span>  <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lock_ttl'>lock_ttl</span>
   <span class='id identifier rubyid_ttl'>ttl</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_ttl'>ttl</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>+</span> <span class='id identifier rubyid_time_until_scheduled'>time_until_scheduled</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="default_lock_ttl-instance_method">
-  
-    #<strong>default_lock_ttl</strong>  &#x21d2; <tt>Integer</tt><sup>?</sup> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The configured default_lock_ttl</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li>Config#default_lock_ttl</li>
-    
-  </ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-84
-85
-86</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_ttl.rb', line 84</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
-  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1335,9 +1252,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Apr 10 08:12:07 2020 by
+  Generated on Tue May 19 08:51:09 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.24 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

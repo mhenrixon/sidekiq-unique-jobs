@@ -6,7 +6,7 @@
 <title>
   Class: Hash
   
-    &mdash; Documentation by YARD 0.9.24
+    &mdash; Documentation by YARD 0.9.25
   
 </title>
 
@@ -127,6 +127,52 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#deep_stringify_keys-instance_method" title="#deep_stringify_keys (instance method)">#<strong>deep_stringify_keys</strong>  &#x21d2; Hash&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Depp converts all keys to string.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#deep_transform_keys-instance_method" title="#deep_transform_keys (instance method)">#<strong>deep_transform_keys</strong>(&amp;block)  &#x21d2; Hash&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Deep transfor all keys by yielding to the caller.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#slice-instance_method" title="#slice (instance method)">#<strong>slice</strong>(*keys)  &#x21d2; Hash </a>
     
 
@@ -226,7 +272,113 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="slice-instance_method">
+  <h3 class="signature first" id="deep_stringify_keys-instance_method">
+  
+    #<strong>deep_stringify_keys</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="Hash (class)">Hash</a></span>&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Depp converts all keys to string</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Hash (class)">Hash</a></span>&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deep_stringify_keys'>deep_stringify_keys</span>
+  <span class='id identifier rubyid_deep_transform_keys'>deep_transform_keys</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="deep_transform_keys-instance_method">
+  
+    #<strong>deep_transform_keys</strong>(&amp;block)  &#x21d2; <tt><span class='object_link'><a href="" title="Hash (class)">Hash</a></span>&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Deep transfor all keys by yielding to the caller</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Hash (class)">Hash</a></span>&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 42</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deep_transform_keys'>deep_transform_keys</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid__deep_transform_keys_in_object'>_deep_transform_keys_in_object</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="slice-instance_method">
   
     #<strong>slice</strong>(*keys)  &#x21d2; <tt><span class='object_link'><a href="" title="Hash (class)">Hash</a></span></tt> 
   
@@ -356,18 +508,18 @@
       <pre class="lines">
 
 
-59
-60
-61
-62
-63
-64
-65
-66
-67</pre>
+83
+84
+85
+86
+87
+88
+89
+90
+91</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 83</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_keys'>keys</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_map!'>map!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span> <span class='id identifier rubyid_convert_key'>convert_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:convert_key</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span>
@@ -421,12 +573,12 @@
       <pre class="lines">
 
 
-30
-31
-32</pre>
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stringify_keys'>stringify_keys</span>
   <span class='id identifier rubyid_transform_keys'>transform_keys</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span>
@@ -474,16 +626,16 @@
       <pre class="lines">
 
 
-42
-43
-44
-45
-46
-47
-48</pre>
+66
+67
+68
+69
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/core_ext.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transform_keys'>transform_keys</span>
   <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -502,9 +654,9 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr 10 08:12:07 2020 by
+  Generated on Tue May 19 08:51:09 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.24 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

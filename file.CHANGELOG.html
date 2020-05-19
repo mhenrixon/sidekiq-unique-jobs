@@ -6,7 +6,7 @@
 <title>
   File: CHANGELOG
   
-    &mdash; Documentation by YARD 0.9.24
+    &mdash; Documentation by YARD 0.9.25
   
 </title>
 
@@ -57,9 +57,32 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><div id='filecontents'><h1>Changelog</h1>
+      <div id="content"><div id='filecontents'><h1 id="changelog">Changelog</h1>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta14">v7.0.0.beta14</a> (2020-03-30)</h2>
+<h2 id="v7-0-0-beta15-2020-04-10"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta15">v7.0.0.beta15</a> (2020-04-10)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta14...v7.0.0.beta15">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Duplicated scripts <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/492">#492</a></li>
+<li>CI: Use jruby-9.2.11.1 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/485">#485</a> (<a href="https://github.com/olleolleolle">olleolleolle</a>)</li>
+</ul>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>V7 - <code>on\_conflict:</code> no longer accepts a Hash <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/495">#495</a></li>
+<li>Brpoplpush::RedisScript::LuaError: WRONGTYPE Operation against a key holding the wrong kind of value <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/491">#491</a></li>
+<li>Lua script bug <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/489">#489</a></li>
+<li>Reaper will delete locks for running jobs <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/488">#488</a></li>
+<li>Fix access to hash members <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/496">#496</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Fix cursor assignment <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/494">#494</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Prevent reaping of active jobs <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/493">#493</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<h2 id="v7-0-0-beta14-2020-03-30"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta14">v7.0.0.beta14</a> (2020-03-30)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.21...v7.0.0.beta14">Full Changelog</a></p>
 
@@ -69,7 +92,7 @@
 <li>Use thread-safe digest creation mechanism <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/483">#483</a> (<a href="https://github.com/zormandi">zormandi</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.21">v6.0.21</a> (2020-03-30)</h2>
+<h2 id="v6-0-21-2020-03-30"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.21">v6.0.21</a> (2020-03-30)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta13...v6.0.21">Full Changelog</a></p>
 
@@ -79,7 +102,7 @@
 <li>Use thread-safe digest creation mechanism <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/484">#484</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13">v7.0.0.beta13</a> (2020-03-26)</h2>
+<h2 id="v7-0-0-beta13-2020-03-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13">v7.0.0.beta13</a> (2020-03-26)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta12...v7.0.0.beta13">Full Changelog</a></p>
 
@@ -89,7 +112,7 @@
 <li>Remove digest deletion for concurrent locks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/482">#482</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta12">v7.0.0.beta12</a> (2020-03-25)</h2>
+<h2 id="v7-0-0-beta12-2020-03-25"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta12">v7.0.0.beta12</a> (2020-03-25)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.20...v7.0.0.beta12">Full Changelog</a></p>
 
@@ -100,7 +123,7 @@
 <li>Fix bug where expiration wasn&#39;t set until unlock <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/481">#481</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.20">v6.0.20</a> (2020-03-22)</h2>
+<h2 id="v6-0-20-2020-03-22"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.20">v6.0.20</a> (2020-03-22)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta11...v6.0.20">Full Changelog</a></p>
 
@@ -123,7 +146,7 @@
 <li>Allow v7 configuration to work <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/479">#479</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta11">v7.0.0.beta11</a> (2020-03-21)</h2>
+<h2 id="v7-0-0-beta11-2020-03-21"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta11">v7.0.0.beta11</a> (2020-03-21)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta10...v7.0.0.beta11">Full Changelog</a></p>
 
@@ -133,7 +156,7 @@
 <li>Only configure RSpec when constant is defined <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/477">#477</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta10">v7.0.0.beta10</a> (2020-03-21)</h2>
+<h2 id="v7-0-0-beta10-2020-03-21"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta10">v7.0.0.beta10</a> (2020-03-21)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.19...v7.0.0.beta10">Full Changelog</a></p>
 
@@ -160,7 +183,7 @@
 <li>remove deprecated/broken OptionsWithFallback#unique_type <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/435">#435</a> (<a href="https://github.com/zvkemp">zvkemp</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.19">v6.0.19</a> (2020-03-21)</h2>
+<h2 id="v6-0-19-2020-03-21"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.19">v6.0.19</a> (2020-03-21)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta9...v6.0.19">Full Changelog</a></p>
 
@@ -171,7 +194,7 @@
 <li>Backport v7 fix for conflicts <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/461">#461</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta9">v7.0.0.beta9</a> (2019-12-04)</h2>
+<h2 id="v7-0-0-beta9-2019-12-04"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta9">v7.0.0.beta9</a> (2019-12-04)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta8...v7.0.0.beta9">Full Changelog</a></p>
 
@@ -188,7 +211,7 @@
 <li>until_and_while_executing with sidekiq pro <code>reliable\_scheduler!</code> <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/411">#411</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8">v7.0.0.beta8</a> (2019-11-28)</h2>
+<h2 id="v7-0-0-beta8-2019-11-28"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta8">v7.0.0.beta8</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta7...v7.0.0.beta8">Full Changelog</a></p>
 
@@ -213,7 +236,7 @@
 <li>:until_executed jobs get stuck every now and then <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/379">#379</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7">v7.0.0.beta7</a> (2019-11-28)</h2>
+<h2 id="v7-0-0-beta7-2019-11-28"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta7">v7.0.0.beta7</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta6...v7.0.0.beta7">Full Changelog</a></p>
 
@@ -224,9 +247,16 @@
 <li>Prevent callbacks from preventing locks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/460">#460</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta6">v7.0.0.beta6</a> (2019-11-28)</h2>
+<h2 id="v7-0-0-beta6-2019-11-28"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta6">v7.0.0.beta6</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.18...v7.0.0.beta6">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Clarify usage with global_id and sidekiq-status <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455">#455</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Bump rails <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450">#450</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
 
 <p><strong>Merged pull requests:</strong></p>
 
@@ -235,7 +265,7 @@
 <li>Fix typo in readme <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/456">#456</a> (<a href="https://github.com/sheerun">sheerun</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.18">v6.0.18</a> (2019-11-28)</h2>
+<h2 id="v6-0-18-2019-11-28"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.18">v6.0.18</a> (2019-11-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta5...v6.0.18">Full Changelog</a></p>
 
@@ -252,14 +282,13 @@
 <li>Unique jobs only executed once when used with sidekiq-global_id <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235">#235</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta5">v7.0.0.beta5</a> (2019-11-26)</h2>
+<h2 id="v7-0-0-beta5-2019-11-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta5">v7.0.0.beta5</a> (2019-11-26)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.17...v7.0.0.beta5">Full Changelog</a></p>
 
 <p><strong>Implemented enhancements:</strong></p>
 
 <ul>
-<li>Bump rails <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450">#450</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Rename myapp <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/449">#449</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Just to keep track of this <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/445">#445</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
@@ -278,15 +307,9 @@
 <li>Bump gems <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/446">#446</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.17">v6.0.17</a> (2019-11-26)</h2>
+<h2 id="v6-0-17-2019-11-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.17">v6.0.17</a> (2019-11-26)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.16...v6.0.17">Full Changelog</a></p>
-
-<p><strong>Implemented enhancements:</strong></p>
-
-<ul>
-<li>Clarify usage with global_id and sidekiq-status <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455">#455</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
-</ul>
 
 <p><strong>Fixed bugs:</strong></p>
 
@@ -294,7 +317,7 @@
 <li>Allow redis namespace to work with deletion <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/451">#451</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.16">v6.0.16</a> (2019-11-25)</h2>
+<h2 id="v6-0-16-2019-11-25"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.16">v6.0.16</a> (2019-11-25)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta4...v6.0.16">Full Changelog</a></p>
 
@@ -304,7 +327,7 @@
 <li>Ensure runtime locks are removed <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/447">#447</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta4">v7.0.0.beta4</a> (2019-11-25)</h2>
+<h2 id="v7-0-0-beta4-2019-11-25"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta4">v7.0.0.beta4</a> (2019-11-25)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta3...v7.0.0.beta4">Full Changelog</a></p>
 
@@ -314,7 +337,7 @@
 <li>Fix ruby reaper <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/444">#444</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta3">v7.0.0.beta3</a> (2019-11-24)</h2>
+<h2 id="v7-0-0-beta3-2019-11-24"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta3">v7.0.0.beta3</a> (2019-11-24)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta2...v7.0.0.beta3">Full Changelog</a></p>
 
@@ -344,7 +367,7 @@
 <li>Fix typo and some formatting issues in README <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/442">#442</a> (<a href="https://github.com/ajkerr">ajkerr</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta2">v7.0.0.beta2</a> (2019-10-08)</h2>
+<h2 id="v7-0-0-beta2-2019-10-08"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta2">v7.0.0.beta2</a> (2019-10-08)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta1...v7.0.0.beta2">Full Changelog</a></p>
 
@@ -360,7 +383,7 @@
 <li>incorrect <code>:until\_and\_while\_executing</code> behavior <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/424">#424</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta1">v7.0.0.beta1</a> (2019-10-07)</h2>
+<h2 id="v7-0-0-beta1-2019-10-07"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta1">v7.0.0.beta1</a> (2019-10-07)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.15...v7.0.0.beta1">Full Changelog</a></p>
 
@@ -395,7 +418,7 @@
 <li>Rename rails_example to my_app <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/385">#385</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.15">v6.0.15</a> (2019-10-05)</h2>
+<h2 id="v6-0-15-2019-10-05"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.15">v6.0.15</a> (2019-10-05)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.13...v6.0.15">Full Changelog</a></p>
 
@@ -431,7 +454,7 @@
 <li>Fix your paypal link in README <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/389">#389</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13">v6.0.13</a> (2019-04-14)</h2>
+<h2 id="v6-0-13-2019-04-14"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13">v6.0.13</a> (2019-04-14)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.12...v6.0.13">Full Changelog</a></p>
 
@@ -449,7 +472,7 @@
 <li>Passthrough has been deprecated and will be removed in redis-namespace 2.0 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/338">#338</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.12">v6.0.12</a> (2019-02-28)</h2>
+<h2 id="v6-0-12-2019-02-28"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.12">v6.0.12</a> (2019-02-28)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.11...v6.0.12">Full Changelog</a></p>
 
@@ -460,7 +483,7 @@
 <li>Fix converting legacy locks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/378">#378</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.11">v6.0.11</a> (2019-02-24)</h2>
+<h2 id="v6-0-11-2019-02-24"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.11">v6.0.11</a> (2019-02-24)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.10...v6.0.11">Full Changelog</a></p>
 
@@ -496,7 +519,7 @@
 <li>Clarify lock expiration in readme <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/376">#376</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.10">v6.0.10</a> (2019-02-23)</h2>
+<h2 id="v6-0-10-2019-02-23"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.10">v6.0.10</a> (2019-02-23)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.9...v6.0.10">Full Changelog</a></p>
 
@@ -512,7 +535,7 @@
 <li>Unsure of sane defaults <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/372">#372</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.9">v6.0.9</a> (2019-02-11)</h2>
+<h2 id="v6-0-9-2019-02-11"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.9">v6.0.9</a> (2019-02-11)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.8...v6.0.9">Full Changelog</a></p>
 
@@ -524,7 +547,7 @@
 <li>Various upgrades <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/366">#366</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.8">v6.0.8</a> (2019-01-10)</h2>
+<h2 id="v6-0-8-2019-01-10"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.8">v6.0.8</a> (2019-01-10)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.7...v6.0.8">Full Changelog</a></p>
 
@@ -549,7 +572,7 @@
 <li>update changelog <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/356">#356</a> (<a href="https://github.com/camallen">camallen</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.7">v6.0.7</a> (2018-11-29)</h2>
+<h2 id="v6-0-7-2018-11-29"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.7">v6.0.7</a> (2018-11-29)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.11...v6.0.7">Full Changelog</a></p>
 
@@ -584,7 +607,7 @@
 <li>Fix typo in documentation [ci-skip] <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/327">#327</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.11">v5.0.11</a> (2018-11-19)</h2>
+<h2 id="v5-0-11-2018-11-19"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.11">v5.0.11</a> (2018-11-19)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.6...v5.0.11">Full Changelog</a></p>
 
@@ -606,7 +629,7 @@
 <li>Job never requeued after raising unhandled error with until_and_while_executing? <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/322">#322</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.6">v6.0.6</a> (2018-08-09)</h2>
+<h2 id="v6-0-6-2018-08-09"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.6">v6.0.6</a> (2018-08-09)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.5...v6.0.6">Full Changelog</a></p>
 
@@ -623,7 +646,7 @@
 <li>Unique UntilExecuted not working while the job is executing? <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/319">#319</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.5">v6.0.5</a> (2018-08-07)</h2>
+<h2 id="v6-0-5-2018-08-07"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.5">v6.0.5</a> (2018-08-07)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.4...v6.0.5">Full Changelog</a></p>
 
@@ -639,7 +662,7 @@
 <li>Why is lock_timeout: nil VERY DANGEROUS? <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/313">#313</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.4">v6.0.4</a> (2018-08-02)</h2>
+<h2 id="v6-0-4-2018-08-02"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.4">v6.0.4</a> (2018-08-02)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.3...v6.0.4">Full Changelog</a></p>
 
@@ -655,7 +678,7 @@
 <li>Question about until_timeout with 6.0.0 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/303">#303</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.3">v6.0.3</a> (2018-08-02)</h2>
+<h2 id="v6-0-3-2018-08-02"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.3">v6.0.3</a> (2018-08-02)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.2...v6.0.3">Full Changelog</a></p>
 
@@ -663,7 +686,7 @@
 
 <ul>
 <li>Enable replace strategy <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/315">#315</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
-<li>Remove unused method <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307">#307</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Bug fixes <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310">#310</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
 <p><strong>Closed issues:</strong></p>
@@ -678,7 +701,7 @@
 <li>Correct documentation typo [ci skip] <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/312">#312</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.2">v6.0.2</a> (2018-08-01)</h2>
+<h2 id="v6-0-2-2018-08-01"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.2">v6.0.2</a> (2018-08-01)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.1...v6.0.2">Full Changelog</a></p>
 
@@ -686,10 +709,9 @@
 
 <ul>
 <li>Not unlocking automatically (version 6.0.0rc5) <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/293">#293</a></li>
-<li>Bug fixes <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310">#310</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.1">v6.0.1</a> (2018-07-31)</h2>
+<h2 id="v6-0-1-2018-07-31"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.1">v6.0.1</a> (2018-07-31)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0...v6.0.1">Full Changelog</a></p>
 
@@ -697,6 +719,7 @@
 
 <ul>
 <li>:until_executed is throwing errors and not requeuing the job. <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/256">#256</a></li>
+<li>Remove unused method <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/307">#307</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
 <p><strong>Closed issues:</strong></p>
@@ -713,11 +736,11 @@
 <li>Fix require path for sidekiq_unique_jobs/web <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/305">#305</a> (<a href="https://github.com/soundasleep">soundasleep</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0">v6.0.0</a> (2018-07-27)</h2>
+<h2 id="v6-0-0-2018-07-27"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0">v6.0.0</a> (2018-07-27)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc8...v6.0.0">Full Changelog</a></p>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc8">v6.0.0.rc8</a> (2018-07-24)</h2>
+<h2 id="v6-0-0-rc8-2018-07-24"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc8">v6.0.0.rc8</a> (2018-07-24)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc7...v6.0.0.rc8">Full Changelog</a></p>
 
@@ -736,7 +759,7 @@
 <li>Update README.md <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/300">#300</a> (<a href="https://github.com/pirj">pirj</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc7">v6.0.0.rc7</a> (2018-07-23)</h2>
+<h2 id="v6-0-0-rc7-2018-07-23"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc7">v6.0.0.rc7</a> (2018-07-23)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc6...v6.0.0.rc7">Full Changelog</a></p>
 
@@ -762,7 +785,7 @@
 <li>Fix README <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/298">#298</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc6">v6.0.0.rc6</a> (2018-07-15)</h2>
+<h2 id="v6-0-0-rc6-2018-07-15"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc6">v6.0.0.rc6</a> (2018-07-15)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc5...v6.0.0.rc6">Full Changelog</a></p>
 
@@ -784,7 +807,7 @@
 <li>Readme <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/288">#288</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc5">v6.0.0.rc5</a> (2018-06-30)</h2>
+<h2 id="v6-0-0-rc5-2018-06-30"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc5">v6.0.0.rc5</a> (2018-06-30)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc4...v6.0.0.rc5">Full Changelog</a></p>
 
@@ -795,7 +818,7 @@
 <li>Rename command line binary <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/287">#287</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc4">v6.0.0.rc4</a> (2018-06-30)</h2>
+<h2 id="v6-0-0-rc4-2018-06-30"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc4">v6.0.0.rc4</a> (2018-06-30)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc3...v6.0.0.rc4">Full Changelog</a></p>
 
@@ -806,7 +829,7 @@
 <li>Only unlock not delete <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/285">#285</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc3">v6.0.0.rc3</a> (2018-06-29)</h2>
+<h2 id="v6-0-0-rc3-2018-06-29"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc3">v6.0.0.rc3</a> (2018-06-29)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc2...v6.0.0.rc3">Full Changelog</a></p>
 
@@ -816,7 +839,7 @@
 <li>Fix waiting for locks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/284">#284</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc2">v6.0.0.rc2</a> (2018-06-26)</h2>
+<h2 id="v6-0-0-rc2-2018-06-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc2">v6.0.0.rc2</a> (2018-06-26)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.rc1...v6.0.0.rc2">Full Changelog</a></p>
 
@@ -852,7 +875,7 @@
 <li>Remove some misleading information <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/283">#283</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc1">v6.0.0.rc1</a> (2018-06-26)</h2>
+<h2 id="v6-0-0-rc1-2018-06-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc1">v6.0.0.rc1</a> (2018-06-26)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.beta2...v6.0.0.rc1">Full Changelog</a></p>
 
@@ -865,7 +888,7 @@
 <li>Fix UntilExpired <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/278">#278</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta2">v6.0.0.beta2</a> (2018-06-25)</h2>
+<h2 id="v6-0-0-beta2-2018-06-25"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta2">v6.0.0.beta2</a> (2018-06-25)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.beta1...v6.0.0.beta2">Full Changelog</a></p>
 
@@ -876,7 +899,7 @@
 <li>Rename UntilTimeout -&gt; UntilExpired <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/276">#276</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta1">v6.0.0.beta1</a> (2018-06-22)</h2>
+<h2 id="v6-0-0-beta1-2018-06-22"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta1">v6.0.0.beta1</a> (2018-06-22)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.0.beta...v6.0.0.beta1">Full Changelog</a></p>
 
@@ -888,7 +911,7 @@
 <li>Improve testing <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/272">#272</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta">v6.0.0.beta</a> (2018-06-17)</h2>
+<h2 id="v6-0-0-beta-2018-06-17"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta">v6.0.0.beta</a> (2018-06-17)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.10...v6.0.0.beta">Full Changelog</a></p>
 
@@ -931,7 +954,7 @@
 <li>Better runtime locks <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/241">#241</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10">v5.0.10</a> (2017-08-19)</h2>
+<h2 id="v5-0-10-2017-08-19"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10">v5.0.10</a> (2017-08-19)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.9...v5.0.10">Full Changelog</a></p>
 
@@ -950,7 +973,7 @@
 <li>Fix: uninitialized constant CustomQueueJob on rspec <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/239">#239</a> (<a href="https://github.com/dalpo">dalpo</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.9">v5.0.9</a> (2017-07-06)</h2>
+<h2 id="v5-0-9-2017-07-06"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.9">v5.0.9</a> (2017-07-06)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.8...v5.0.9">Full Changelog</a></p>
 
@@ -970,7 +993,7 @@
 <li>Fix filename <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/224">#224</a> (<a href="https://github.com/ikataitsev">ikataitsev</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.8">v5.0.8</a> (2017-05-03)</h2>
+<h2 id="v5-0-8-2017-05-03"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.8">v5.0.8</a> (2017-05-03)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.7...v5.0.8">Full Changelog</a></p>
 
@@ -981,7 +1004,7 @@
 <li>Is it possible to get the Job ID of original job? <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/217">#217</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.7">v5.0.7</a> (2017-04-26)</h2>
+<h2 id="v5-0-7-2017-04-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.7">v5.0.7</a> (2017-04-26)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.6...v5.0.7">Full Changelog</a></p>
 
@@ -992,7 +1015,7 @@
 <li>Uniqueness across workers <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/210">#210</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.6">v5.0.6</a> (2017-04-23)</h2>
+<h2 id="v5-0-6-2017-04-23"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.6">v5.0.6</a> (2017-04-23)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.5...v5.0.6">Full Changelog</a></p>
 
@@ -1004,7 +1027,7 @@
 <li>while_executing working wrong <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/193">#193</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.5">v5.0.5</a> (2017-04-23)</h2>
+<h2 id="v5-0-5-2017-04-23"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.5">v5.0.5</a> (2017-04-23)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.4...v5.0.5">Full Changelog</a></p>
 
@@ -1014,15 +1037,15 @@
 <li>Fixed typo on README.md <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/216">#216</a> (<a href="https://github.com/jsantos">jsantos</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.4">v5.0.4</a> (2017-04-18)</h2>
+<h2 id="v5-0-4-2017-04-18"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.4">v5.0.4</a> (2017-04-18)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.3...v5.0.4">Full Changelog</a></p>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.3">v5.0.3</a> (2017-04-18)</h2>
+<h2 id="v5-0-3-2017-04-18"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.3">v5.0.3</a> (2017-04-18)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.2...v5.0.3">Full Changelog</a></p>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.2">v5.0.2</a> (2017-04-17)</h2>
+<h2 id="v5-0-2-2017-04-17"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.2">v5.0.2</a> (2017-04-17)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.1...v5.0.2">Full Changelog</a></p>
 
@@ -1033,7 +1056,7 @@
 <li>when arguments are empty then unique_args proc/method is not executed <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/201">#201</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.1">v5.0.1</a> (2017-04-16)</h2>
+<h2 id="v5-0-1-2017-04-16"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.1">v5.0.1</a> (2017-04-16)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v5.0.0...v5.0.1">Full Changelog</a></p>
 
@@ -1059,7 +1082,7 @@
 <li>Add the possibility to clear the hash <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/215">#215</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.0">v5.0.0</a> (2017-04-08)</h2>
+<h2 id="v5-0-0-2017-04-08"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.0">v5.0.0</a> (2017-04-08)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.18...v5.0.0">Full Changelog</a></p>
 
@@ -1093,7 +1116,7 @@
 <li>unique args need to be an array <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/194">#194</a> (<a href="https://github.com/pboling">pboling</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">v4.0.18</a> (2016-07-24)</h2>
+<h2 id="v4-0-18-2016-07-24"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">v4.0.18</a> (2016-07-24)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.17...v4.0.18">Full Changelog</a></p>
 
@@ -1118,9 +1141,10 @@
 <li>missed space <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/188">#188</a> (<a href="https://github.com/TheBigSadowski">TheBigSadowski</a>)</li>
 <li>Convert unless if to just 1 if <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/179">#179</a> (<a href="https://github.com/otzy007">otzy007</a>)</li>
 <li>fix for #168. Handle the NOSCRIPT by sending the script again <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/178">#178</a> (<a href="https://github.com/otzy007">otzy007</a>)</li>
+<li>Fixed gitter badge link <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/176">#176</a> (<a href="https://github.com/andrew">andrew</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.17">v4.0.17</a> (2016-03-02)</h2>
+<h2 id="v4-0-17-2016-03-02"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.17">v4.0.17</a> (2016-03-02)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.16...v4.0.17">Full Changelog</a></p>
 
@@ -1130,19 +1154,18 @@
 <li>No place where I can say &quot;Thank you&quot; for all contributors <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/165">#165</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.16">v4.0.16</a> (2016-02-17)</h2>
+<h2 id="v4-0-16-2016-02-17"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.16">v4.0.16</a> (2016-02-17)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.15...v4.0.16">Full Changelog</a></p>
 
 <p><strong>Merged pull requests:</strong></p>
 
 <ul>
-<li>Fixed gitter badge link <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/176">#176</a> (<a href="https://github.com/andrew">andrew</a>)</li>
 <li>Fix for sidekiq delete failing for version 3.4.x  <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/167">#167</a> (<a href="https://github.com/theprogrammerin">theprogrammerin</a>)</li>
 <li>Run lock timeout configurable <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/164">#164</a> (<a href="https://github.com/Slania">Slania</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.15">v4.0.15</a> (2016-02-16)</h2>
+<h2 id="v4-0-15-2016-02-16"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.15">v4.0.15</a> (2016-02-16)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.13...v4.0.15">Full Changelog</a></p>
 
@@ -1164,7 +1187,7 @@
 <li>Remove wrong Server::Middleware#worker_class override <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/156">#156</a> (<a href="https://github.com/vkuznetsov">vkuznetsov</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.13">v4.0.13</a> (2015-12-16)</h2>
+<h2 id="v4-0-13-2015-12-16"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.13">v4.0.13</a> (2015-12-16)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.12...v4.0.13">Full Changelog</a></p>
 
@@ -1175,7 +1198,7 @@
 <li>Unique job showing weird behavior <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/153">#153</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.12">v4.0.12</a> (2015-12-15)</h2>
+<h2 id="v4-0-12-2015-12-15"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.12">v4.0.12</a> (2015-12-15)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.11...v4.0.12">Full Changelog</a></p>
 
@@ -1189,7 +1212,7 @@
 <li>Version 4 Upgrade <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/133">#133</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.11">v4.0.11</a> (2015-12-12)</h2>
+<h2 id="v4-0-11-2015-12-12"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.11">v4.0.11</a> (2015-12-12)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.10...v4.0.11">Full Changelog</a></p>
 
@@ -1199,7 +1222,7 @@
 <li>Release a new version for Ruby &lt; 2.1 compatability <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/152">#152</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.10">v4.0.10</a> (2015-12-12)</h2>
+<h2 id="v4-0-10-2015-12-12"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.10">v4.0.10</a> (2015-12-12)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.9...v4.0.10">Full Changelog</a></p>
 
@@ -1211,7 +1234,7 @@
 <li>sidekiq-unique-jobs not enabled from sidekiq workers <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/131">#131</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.9">v4.0.9</a> (2015-11-14)</h2>
+<h2 id="v4-0-9-2015-11-14"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.9">v4.0.9</a> (2015-11-14)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.8...v4.0.9">Full Changelog</a></p>
 
@@ -1224,7 +1247,7 @@
 <li>ActiveRecord::RecordNotDestroyed: Failed to destroy the record <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/139">#139</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.8">v4.0.8</a> (2015-10-31)</h2>
+<h2 id="v4-0-8-2015-10-31"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.8">v4.0.8</a> (2015-10-31)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.7...v4.0.8">Full Changelog</a></p>
 
@@ -1244,7 +1267,7 @@
 <li>Fix markdown link formatting <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/134">#134</a> (<a href="https://github.com/thbar">thbar</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.7">v4.0.7</a> (2015-10-14)</h2>
+<h2 id="v4-0-7-2015-10-14"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.7">v4.0.7</a> (2015-10-14)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.6...v4.0.7">Full Changelog</a></p>
 
@@ -1255,7 +1278,7 @@
 <li>4.* is hurting background job workers performance <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/127">#127</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.6">v4.0.6</a> (2015-10-14)</h2>
+<h2 id="v4-0-6-2015-10-14"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.6">v4.0.6</a> (2015-10-14)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.5...v4.0.6">Full Changelog</a></p>
 
@@ -1265,7 +1288,7 @@
 <li>NameError: uninitialized constant SidekiqUniqueJobs::RunLockFailed <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/126">#126</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.5">v4.0.5</a> (2015-10-13)</h2>
+<h2 id="v4-0-5-2015-10-13"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.5">v4.0.5</a> (2015-10-13)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.4...v4.0.5">Full Changelog</a></p>
 
@@ -1284,7 +1307,7 @@
 <li>Fix outdated phrasing and add test coverage to readme <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/123">#123</a> (<a href="https://github.com/albertyw">albertyw</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.4">v4.0.4</a> (2015-10-09)</h2>
+<h2 id="v4-0-4-2015-10-09"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.4">v4.0.4</a> (2015-10-09)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.3...v4.0.4">Full Changelog</a></p>
 
@@ -1296,7 +1319,7 @@
 <li>Update Changelog and Tags <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/115">#115</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.3">v4.0.3</a> (2015-10-08)</h2>
+<h2 id="v4-0-3-2015-10-08"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.3">v4.0.3</a> (2015-10-08)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.2...v4.0.3">Full Changelog</a></p>
 
@@ -1309,11 +1332,11 @@
 <li>4.0.2 commited but not released to rubygems? <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/118">#118</a></li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.2">v4.0.2</a> (2015-10-06)</h2>
+<h2 id="v4-0-2-2015-10-06"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.2">v4.0.2</a> (2015-10-06)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/4.0.1...v4.0.2">Full Changelog</a></p>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/4.0.1">4.0.1</a> (2015-10-06)</h2>
+<h2 id="4-0-1-2015-10-06"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/4.0.1">4.0.1</a> (2015-10-06)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v4.0.0...4.0.1">Full Changelog</a></p>
 
@@ -1338,7 +1361,7 @@
 <li>Clean up version 4 upgrade instructions <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/116">#116</a> (<a href="https://github.com/albertyw">albertyw</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.0">v4.0.0</a> (2015-10-05)</h2>
+<h2 id="v4-0-0-2015-10-05"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.0">v4.0.0</a> (2015-10-05)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v3.0.11...v4.0.0">Full Changelog</a></p>
 
@@ -1397,7 +1420,7 @@
 <li>Checking Sidekiq::Testing.inline? on testing strategy and connector <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/75">#75</a> (<a href="https://github.com/Draiken">Draiken</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.11">v3.0.11</a> (2014-12-15)</h2>
+<h2 id="v3-0-11-2014-12-15"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.11">v3.0.11</a> (2014-12-15)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v3.0.10...v3.0.11">Full Changelog</a></p>
 
@@ -1414,7 +1437,7 @@
 <li>Use ConnectionPool blocks to ensure exclusive connection. Closes #66. <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/67">#67</a> (<a href="https://github.com/adstage-david">adstage-david</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.10">v3.0.10</a> (2014-11-19)</h2>
+<h2 id="v3-0-10-2014-11-19"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.10">v3.0.10</a> (2014-11-19)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v3.0.9...v3.0.10">Full Changelog</a></p>
 
@@ -1431,7 +1454,7 @@
 <li>Added method name to depreciation warning message <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/61">#61</a> (<a href="https://github.com/jamesbowles">jamesbowles</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.9">v3.0.9</a> (2014-11-05)</h2>
+<h2 id="v3-0-9-2014-11-05"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.9">v3.0.9</a> (2014-11-05)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v3.0.3...v3.0.9">Full Changelog</a></p>
 
@@ -1454,7 +1477,7 @@
 <li>Add extension to Sidekiq API that is uniqueness-aware <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/52">#52</a> (<a href="https://github.com/rickenharp">rickenharp</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.3">v3.0.3</a> (2014-11-03)</h2>
+<h2 id="v3-0-3-2014-11-03"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.3">v3.0.3</a> (2014-11-03)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v3.0.2...v3.0.3">Full Changelog</a></p>
 
@@ -1471,7 +1494,7 @@
 <li>Declare mock_redis as development dependency instead of runtime one <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/51">#51</a> (<a href="https://github.com/phuongnd08">phuongnd08</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.2">v3.0.2</a> (2014-06-08)</h2>
+<h2 id="v3-0-2-2014-06-08"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.2">v3.0.2</a> (2014-06-08)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v3.0.1...v3.0.2">Full Changelog</a></p>
 
@@ -1487,7 +1510,7 @@
 <li>Add the unique hash to the message for use by the workers. <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/41">#41</a> (<a href="https://github.com/sullimander">sullimander</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.1">v3.0.1</a> (2014-06-08)</h2>
+<h2 id="v3-0-1-2014-06-08"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v3.0.1">v3.0.1</a> (2014-06-08)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v2.7.0...v3.0.1">Full Changelog</a></p>
 
@@ -1514,7 +1537,7 @@
 <li>Fix homepage in gemspec <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/29">#29</a> (<a href="https://github.com/tmaier">tmaier</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.7.0">v2.7.0</a> (2013-11-24)</h2>
+<h2 id="v2-7-0-2013-11-24"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.7.0">v2.7.0</a> (2013-11-24)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v2.3.2...v2.7.0">Full Changelog</a></p>
 
@@ -1541,7 +1564,7 @@
 <li>Remove unnecessary log messages <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/7">#7</a> (<a href="https://github.com/marclennox">marclennox</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.3.2">v2.3.2</a> (2012-09-27)</h2>
+<h2 id="v2-3-2-2012-09-27"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.3.2">v2.3.2</a> (2012-09-27)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v2.2.1...v2.3.2">Full Changelog</a></p>
 
@@ -1558,15 +1581,15 @@
 <li>Dependency on sidekiq 2.2.0 and up <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/3">#3</a> (<a href="https://github.com/philostler">philostler</a>)</li>
 </ul>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.2.1">v2.2.1</a> (2012-08-19)</h2>
+<h2 id="v2-2-1-2012-08-19"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.2.1">v2.2.1</a> (2012-08-19)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v2.2.0...v2.2.1">Full Changelog</a></p>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.2.0">v2.2.0</a> (2012-08-19)</h2>
+<h2 id="v2-2-0-2012-08-19"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.2.0">v2.2.0</a> (2012-08-19)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v2.1.0...v2.2.0">Full Changelog</a></p>
 
-<h2><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.1.0">v2.1.0</a> (2012-08-07)</h2>
+<h2 id="v2-1-0-2012-08-07"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.1.0">v2.1.0</a> (2012-08-07)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/03d8c0ebb6b5978a4604b179ec0cd70b6ba4662a...v2.1.0">Full Changelog</a></p>
 
@@ -1574,9 +1597,9 @@
 </div></div>
 
       <div id="footer">
-  Generated on Fri Apr 10 08:12:06 2020 by
+  Generated on Tue May 19 08:51:08 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.24 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>
