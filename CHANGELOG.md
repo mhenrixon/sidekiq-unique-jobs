@@ -1,5 +1,18 @@
 # Changelog
 
+## [v7.0.0.beta16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta16) (2020-05-19)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta15...v7.0.0.beta16)
+
+**Fixed bugs:**
+
+- Deprecate configuration options with `default\_` [\#504](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/504) ([mhenrixon](https://github.com/mhenrixon))
+- Fix access to both server and client conflict [\#503](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/503) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- V7 Beta 15 `on\_conflict:` with Hash does not work on server [\#499](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/499)
+
 ## [v7.0.0.beta15](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta15) (2020-04-10)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta14...v7.0.0.beta15)
@@ -155,7 +168,6 @@
 **Implemented enhancements:**
 
 - Clarify usage with global\_id and sidekiq-status [\#455](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/455) ([mhenrixon](https://github.com/mhenrixon))
-- Bump rails [\#450](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450) ([mhenrixon](https://github.com/mhenrixon))
 
 **Merged pull requests:**
 
@@ -181,6 +193,7 @@
 
 **Implemented enhancements:**
 
+- Bump rails [\#450](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/450) ([mhenrixon](https://github.com/mhenrixon))
 - Rename myapp [\#449](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/449) ([mhenrixon](https://github.com/mhenrixon))
 - Just to keep track of this [\#445](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/445) ([mhenrixon](https://github.com/mhenrixon))
 
@@ -492,7 +505,6 @@
 **Fixed bugs:**
 
 - Enable replace strategy [\#315](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/315) ([mhenrixon](https://github.com/mhenrixon))
-- Bug fixes [\#310](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -509,6 +521,7 @@
 **Fixed bugs:**
 
 - Not unlocking automatically \(version 6.0.0rc5\) [\#293](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/293)
+- Bug fixes [\#310](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/310) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.1) (2018-07-31)
 
