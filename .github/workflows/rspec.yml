@@ -1,7 +1,7 @@
 name: RSpec
 on: [push]
 jobs:
-  test:
+  tests:
     env:
       COV: false
 

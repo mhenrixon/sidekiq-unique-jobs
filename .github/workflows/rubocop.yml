@@ -1,7 +1,7 @@
 name: Rubocop
 on: [push]
 jobs:
-  test:
+  styles:
     env:
       COV: false
 
@@ -22,3 +22,4 @@ jobs:
           ruby-version: 2.6
       - run: bundle install
       - run: bin/rubocop -P
+      - run: bin/reek .
