@@ -1,7 +1,6 @@
 name: Lint
 on: [push]
 jobs:
-  default: &default
   rubocop:
     runs-on: ubuntu-latest
     strategy:
