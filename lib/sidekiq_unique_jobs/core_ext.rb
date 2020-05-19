@@ -20,6 +20,30 @@ class Hash
     end
   end
 
+  unless {}.respond_to?(:deep_stringify_keys)
+    #
+    # Depp converts all keys to string
+    #
+    #
+    # @return [Hash<String>]
+    #
+    def deep_stringify_keys
+      deep_transform_keys(&:to_s)
+    end
+  end
+
+  unless {}.respond_to?(:deep_transform_keys)
+    #
+    # Deep transfor all keys by yielding to the caller
+    #
+    #
+    # @return [Hash<String>]
+    #
+    def deep_transform_keys(&block)
+      _deep_transform_keys_in_object(self, &block)
+    end
+  end
+
   unless {}.respond_to?(:stringify_keys)
     #
     # Converts all keys to string
@@ -64,6 +88,24 @@ class Hash
       hash.default_proc = default_proc if default_proc
       replace(hash)
       omit
+    end
+  end
+
+  private
+
+  unless {}.respond_to?(:_deep_transform_keys_in_object)
+    # support methods for deep transforming nested hashes and arrays
+    def _deep_transform_keys_in_object(object, &block)
+      case object
+      when Hash
+        object.each_with_object({}) do |(key, value), result|
+          result[yield(key)] = _deep_transform_keys_in_object(value, &block)
+        end
+      when Array
+        object.map { |e| _deep_transform_keys_in_object(e, &block) }
+      else
+        object
+      end
     end
   end
 end
