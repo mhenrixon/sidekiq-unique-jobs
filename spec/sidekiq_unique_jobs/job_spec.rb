@@ -29,5 +29,22 @@ RSpec.describe SidekiqUniqueJobs::Job do
         },
       )
     end
+
+    context "when there is a hash in on_conflict" do
+      let(:worker_class) { UniqueJobOnConflictHash }
+
+      let(:job) { worker_class.get_sidekiq_options }
+
+      it "stringifies the on_conflict hash" do
+        expect(prepare).to match(
+          hash_including(
+            "on_conflict" => {
+              "client" => :log,
+              "server" => :reschedule,
+            },
+          ),
+        )
+      end
+    end
   end
 end

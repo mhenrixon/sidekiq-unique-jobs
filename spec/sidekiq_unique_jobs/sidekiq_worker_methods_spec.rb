@@ -68,8 +68,8 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
     let(:worker_class) { UniqueJobOnConflictHash }
 
     it do
-      expect(worker_options).to eq(
-        {
+      expect(worker_options).to match(
+        hash_including(
           "lock" => :until_and_while_executing,
           "on_conflict" => {
             "client" => :log,
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
           },
           "queue" => :customqueue,
           "retry" => true,
-        },
+        ),
       )
     end
   end
