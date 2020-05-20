@@ -16,7 +16,7 @@ module SidekiqUniqueJobs
     def worker_options
       return {} unless sidekiq_worker_class?
 
-      worker_class.get_sidekiq_options.stringify_keys
+      worker_class.get_sidekiq_options.deep_stringify_keys
     end
 
     # Tests that the
