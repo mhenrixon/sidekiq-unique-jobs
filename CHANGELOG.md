@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.0.0.beta18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta18) (2020-05-21)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta17...v7.0.0.beta18)
+
+**Fixed bugs:**
+
+- Stringify on\_conflict hash in Job prepare method [\#507](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/507) ([jasonbekolay](https://github.com/jasonbekolay))
+
 ## [v7.0.0.beta17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta17) (2020-05-20)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta16...v7.0.0.beta17)
