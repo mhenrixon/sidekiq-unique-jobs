@@ -7,6 +7,12 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
   describe ".start" do
     subject(:start) { described_class.start }
 
+    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
+
+    around do |example|
+      Timecop.freeze(frozen_time, &example)
+    end
+
     before do
       allow(SidekiqUniqueJobs::Orphans::Observer).to receive(:new).and_return(observer)
 
@@ -18,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     end
 
     context "when registered?" do
-      before { redis { |conn| conn.set(SidekiqUniqueJobs::UNIQUE_REAPER, 1) } }
+      before { described_class.register_reaper_process }
 
       it { is_expected.to eq(nil) }
     end
@@ -29,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       it "sets a mutex" do
         start
 
-        expect(get(SidekiqUniqueJobs::UNIQUE_REAPER)).to eq("1")
+        expect(get(SidekiqUniqueJobs::UNIQUE_REAPER)).to eq(frozen_time.to_i.to_s)
       end
 
       it "logs a start message" do
@@ -109,6 +115,23 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     subject(:reaper_timeout) { described_class.reaper_timeout }
 
     it { is_expected.to eq(SidekiqUniqueJobs.config.reaper_timeout) }
+  end
+
+  describe ".register_reaper_process" do
+    subject(:register_reaper_process) { described_class.register_reaper_process }
+
+    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
+
+    around do |example|
+      Timecop.freeze(frozen_time, &example)
+    end
+
+    it "writes a redis key with timestamp" do
+      expect { register_reaper_process }.to change { get(SidekiqUniqueJobs::UNIQUE_REAPER) }
+        .from(nil).to(frozen_time.to_i.to_s)
+
+      expect(ttl(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_within(20).of(SidekiqUniqueJobs.config.reaper_interval)
+    end
   end
 
   describe ".logging_context" do

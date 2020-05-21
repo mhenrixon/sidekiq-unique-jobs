@@ -10,6 +10,8 @@ module SidekiqUniqueJobs
     module Manager
       module_function
 
+      DRIFT_FACTOR = 0.02
+
       include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Logging
 
@@ -56,6 +58,7 @@ module SidekiqUniqueJobs
         @task ||= Concurrent::TimerTask.new(timer_task_options) do
           with_logging_context do
             redis do |conn|
+              refresh_reaper_mutex
               Orphans::Reaper.call(conn)
             end
           end
@@ -117,7 +120,9 @@ module SidekiqUniqueJobs
       # @return [true, false]
       #
       def registered?
-        redis { |conn| conn.get(UNIQUE_REAPER) }.to_i == 1
+        redis do |conn|
+          conn.get(UNIQUE_REAPER).to_i + drift_reaper_interval > current_timestamp
+        end
       end
 
       def disabled?
@@ -131,7 +136,17 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def register_reaper_process
-        redis { |conn| conn.set(UNIQUE_REAPER, 1) }
+        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, nx: true, ex: drift_reaper_interval) }
+      end
+
+      #
+      # Updates mutex key
+      #
+      #
+      # @return [void]
+      #
+      def refresh_reaper_mutex
+        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, ex: drift_reaper_interval) }
       end
 
       #
@@ -142,6 +157,14 @@ module SidekiqUniqueJobs
       #
       def unregister_reaper_process
         redis { |conn| conn.del(UNIQUE_REAPER) }
+      end
+
+      def drift_reaper_interval
+        reaper_interval + (reaper_interval * DRIFT_FACTOR).to_i
+      end
+
+      def current_timestamp
+        Time.now.to_i
       end
     end
   end
