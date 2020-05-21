@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta19...HEAD)
+
+**Fixed bugs:**
+
+- Reaper can't be registered again if sidekiq gets killed by SIGKILL [\#490](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/490)
+
+## [v7.0.0.beta19](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta19) (2020-05-21)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta18...v7.0.0.beta19)
+
+**Fixed bugs:**
+
+- Expire reaper when not checking in [\#508](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/508) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta18) (2020-05-21)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta17...v7.0.0.beta18)
