@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
     # Adds timeout, expiration, lock_args, lock_prefix and lock_digest to the sidekiq job hash
     # @return [Hash] the job hash
     def prepare(item)
+      stringify_on_conflict_hash(item)
       add_lock_timeout(item)
       add_lock_ttl(item)
       add_digest(item)
@@ -26,6 +27,13 @@ module SidekiqUniqueJobs
     end
 
     private
+
+    def stringify_on_conflict_hash(item)
+      on_conflict = item[ON_CONFLICT]
+      return unless on_conflict.is_a?(Hash)
+
+      item[ON_CONFLICT] = on_conflict.deep_stringify_keys
+    end
 
     def add_lock_ttl(item)
       item[LOCK_TTL] = SidekiqUniqueJobs::LockTTL.calculate(item)
