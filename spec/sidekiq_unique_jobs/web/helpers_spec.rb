@@ -10,9 +10,9 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
     let(:time)        { Time.now.to_f }
     let(:stamp)       { Time.now.getutc.iso8601 }
 
-    before { Timecop.freeze(frozen_time) }
-
-    after { Timecop.return }
+    around do |example|
+      Timecop.freeze(frozen_time, &example)
+    end
 
     it "returns relative time html" do
       expect(safe_relative_time).to eq(<<~HTML.chop)
@@ -26,9 +26,9 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
 
     let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
 
-    before { Timecop.freeze(frozen_time) }
-
-    after { Timecop.return }
+    around do |example|
+      Timecop.freeze(frozen_time, &example)
+    end
 
     context "when time is an Integer" do
       let(:time) { Time.now.to_i }
