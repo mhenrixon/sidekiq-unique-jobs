@@ -2,6 +2,14 @@ name: RSpec
 on: [push]
 jobs:
   coverage:
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
