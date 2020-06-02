@@ -63,7 +63,6 @@ module SidekiqUniqueJobs
     # @return [Array] args unfiltered when neither of the above
     def filtered_args
       return args if lock_args_disabled?
-      return args if args.empty?
 
       json_args = Normalizer.jsonify(args)
 
