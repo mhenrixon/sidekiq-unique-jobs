@@ -1,6 +1,29 @@
 name: RSpec
 on: [push]
 jobs:
+  coverage:
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.5
+      - run: bundle install --jobs=$(nproc) --retry=$(nproc)
+      - name: Coverage
+        uses: paambaati/codeclimate-action@v2.6.0
+        env:
+          COV: true
+          CC_TEST_REPORTER_ID: 88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
+        with:
+          coverageCommand: bin/rspec --require spec_helper --tag ~perf
+          debug: true
   tests:
     env:
       COV: false
