@@ -59,19 +59,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
   spec.add_dependency "sidekiq", ">= 4.0", "< 7.0"
   spec.add_dependency "thor", ">= 0.20", "< 2.0"
-
-  spec.add_development_dependency "bundler", "~> 2.1"
-  spec.add_development_dependency "rack-test", ">= 1.0", "< 2.0"
-  spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "rspec", "~> 3.9"
-  spec.add_development_dependency "sinatra", ">= 2.0", "< 3.0"
-  spec.add_development_dependency "timecop", "~> 0.9"
-
-  # ===== Documentation =====
-  spec.add_development_dependency "github-markup", "~> 3.0"
-  spec.add_development_dependency "github_changelog_generator", "~> 1.14"
-  spec.add_development_dependency "yard", "~> 0.9.18"
-
-  # ===== Release Management =====
-  spec.add_development_dependency "gem-release", "~> 2.0"
 end
