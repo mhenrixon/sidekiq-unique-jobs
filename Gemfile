@@ -5,8 +5,17 @@ gemspec
 
 LOCAL_GEMS = "Gemfile.local"
 
-gem "appraisal", ">= 2.2"
-gem "rspec-its", require: false
+gem "appraisal"
+gem "bundler"
+gem "gem-release"
+gem "github-markup"
+gem "rack-test"
+gem "rake"
+gem "rspec"
+gem "rspec-its"
+gem "sinatra"
+gem "timecop"
+gem "yard"
 
 platforms :mri do
   gem "fasterer"
