@@ -46,7 +46,7 @@ module SidekiqUniqueJobs
       # @return [false] when not exists
       #
       def exist?
-        redis { |conn| conn.exists(key) }
+        redis { |conn| !conn.exists(key).zero? }
       end
 
       #
