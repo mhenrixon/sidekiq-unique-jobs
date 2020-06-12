@@ -28,7 +28,7 @@ RSpec.describe Sidekiq::RetrySet do
 
   describe "#retry_all" do
     before do
-      zadd("retry", retry_at.to_s, Sidekiq.dump_json(item))
+      zadd("retry", retry_at.to_s, dump_json(item))
     end
 
     context "when a job is locked" do
