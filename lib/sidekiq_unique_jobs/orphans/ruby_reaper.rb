@@ -124,7 +124,7 @@ module SidekiqUniqueJobs
 
           procs.sort.each do |key|
             valid, workers = conn.pipelined do
-              conn.exists?(key)
+              conn.exists(key)
               conn.hgetall("#{key}:workers")
             end
 
