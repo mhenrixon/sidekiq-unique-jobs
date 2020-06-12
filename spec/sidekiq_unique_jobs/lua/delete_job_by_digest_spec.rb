@@ -20,7 +20,7 @@ RSpec.describe "delete_job_by_digest.lua" do
 
   context "when job is retried" do
     let(:job_id) { "abcdefab" }
-    let(:job)  { Sidekiq.dump_json(item) }
+    let(:job)  { dump_json(item) }
     let(:item) do
       {
         "class" => "MyUniqueJob",

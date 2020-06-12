@@ -111,7 +111,7 @@ module SidekiqUniqueJobs
       # @return [String] a JSON formatted string
       #
       def payload
-        @payload ||= Sidekiq.dump_json(item)
+        @payload ||= dump_json(item)
       end
     end
   end

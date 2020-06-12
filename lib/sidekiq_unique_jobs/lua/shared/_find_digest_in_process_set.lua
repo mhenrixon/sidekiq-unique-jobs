@@ -4,7 +4,7 @@ local function find_digest_in_process_set(digest)
   local pattern        = "*" .. digest .. "*"
   local found          = false
 
-  log_debug("searching in list processes:",
+  log_debug("Searching in process list",
             "for digest:", digest,
             "cursor:", process_cursor)
 
@@ -15,15 +15,26 @@ local function find_digest_in_process_set(digest)
     log_debug("Found number of processes:", #processes, "next cursor:", next_process_cursor)
 
     for _, process in ipairs(processes) do
+      local workers_key = process .. ":workers"
       log_debug("searching in process set:", process,
                 "for digest:", digest,
                 "cursor:", process_cursor)
 
-      local job = redis.call("HGET", process, "info")
+      local jobs = redis.call("HGETALL", workers_key)
 
-      if string.find(job, digest) then
-        log_debug("Found digest", digest, "in process:", process)
-        found = true
+      if #jobs == 0 then
+        log_debug("No entries in:", workers_key)
+      else
+        for i = 1, #jobs, 2 do
+          if string.find(jobs[i +1], digest) then
+            log_debug("Found digest", digest, "in:", workers_key)
+            found = true
+            break
+          end
+        end
+      end
+
+      if found == true then
         break
       end
     end

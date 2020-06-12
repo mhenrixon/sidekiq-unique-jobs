@@ -18,6 +18,7 @@ detectors:
     exclude:
       - Sidekiq::JobSet::UniqueExtension#delete_by_value
       - Sidekiq::ScheduledSet::UniqueExtension#delete
+      - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Redis::Hash#entries
   DataClump:
     enabled: true

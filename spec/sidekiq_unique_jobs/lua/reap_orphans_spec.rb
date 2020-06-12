@@ -111,15 +111,17 @@ RSpec.describe "reap_orphans.lua" do
     end
 
     context "with job" do
-      let(:process_key) { "worker-id" }
+      let(:process_key) { "process-id" }
+      let(:thread_id)   { "thread-id" }
+      let(:worker_key)  { "#{process_key}:workers" }
 
       before do
         SidekiqUniqueJobs.redis do |conn|
           conn.multi do
             conn.sadd("processes", process_key)
-            conn.exists(process_key)
-            conn.hmset(process_key, "info", Sidekiq.dump_json(item), "busy", 1, "beat", Time.now.to_f, "quiet", false)
+            conn.hset(worker_key, thread_id, dump_json(item))
             conn.expire(process_key, 60)
+            conn.expire(worker_key, 60)
           end
         end
       end
