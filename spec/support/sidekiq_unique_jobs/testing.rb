@@ -156,6 +156,7 @@ module SidekiqUniqueJobs
           value = conn.exists(key)
           return true  if value.is_a?(TrueClass)
           return false if value.is_a?(FalseClass)
+
           value.positive?
         end
       end
