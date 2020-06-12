@@ -126,7 +126,7 @@ module SidekiqUniqueJobs
     def batch_scan(match:, count:)
       cursor = "0"
       loop do
-        cursor, values = conn.scan(cursor, match: match, per: count)
+        cursor, values = conn.scan(cursor, match: match, count: count)
         yield values
         break if cursor == "0"
       end

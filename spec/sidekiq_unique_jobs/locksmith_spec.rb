@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   end
 
   describe "#==" do
-    subject(:==) { locksmith_one == comparable_locksmith }
+    subject(:==) { locksmith_one == comparable_locksmith } # rubocop:disable RSpec/VariableName
 
     context "when locksmiths are comparable" do
       let(:comparable_locksmith) { locksmith_one.dup }

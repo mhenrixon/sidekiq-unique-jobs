@@ -157,6 +157,8 @@ module SidekiqUniqueJobs
           entries     = conn.lrange(queue_key, range_start, range_end)
           page       += 1
 
+          break if entries.empty?
+
           entries.each do |entry|
             yield entry
           end

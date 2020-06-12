@@ -15,7 +15,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6.5
-      - run: bundle install --jobs=$(nproc) --retry=$(nproc)
+      - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
       - name: Coverage
         uses: paambaati/codeclimate-action@v2.6.0
         env:
@@ -47,6 +47,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - run: bundle install --jobs=$(nproc) --retry=$(nproc)
-      - run: bundle exec appraisal install  --jobs=$(nproc) --retry=$(nproc)
-      - run: bundle exec appraisal rspec --require spec_helper --tag ~perf
+      - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
+      - run: bin/appraisal install  --jobs=$(nproc) --retry=$(nproc)
+      - run: bin/appraisal rspec --require spec_helper --tag ~perf

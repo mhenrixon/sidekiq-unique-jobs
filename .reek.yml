@@ -53,6 +53,7 @@ detectors:
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
+      - SidekiqUniqueJobs::Redis::Entity#exist?
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
   IrresponsibleModule:

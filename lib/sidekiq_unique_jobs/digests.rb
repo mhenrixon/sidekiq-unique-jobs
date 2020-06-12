@@ -80,7 +80,7 @@ module SidekiqUniqueJobs
       options[:match] = pattern
       options[:count] = count if count
 
-      result = redis { |conn| conn.zscan_each(key, options).to_a }
+      result = redis { |conn| conn.zscan_each(key, **options).to_a }
 
       result.each_with_object({}) do |entry, hash|
         hash[entry[0]] = entry[1]
