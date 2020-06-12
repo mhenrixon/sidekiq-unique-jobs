@@ -210,7 +210,7 @@ module SidekiqUniqueJobs
       end
 
       def set(key, value, options = {})
-        redis { |conn| conn.set(key, value, options) }
+        redis { |conn| conn.set(key, value, **options) }
       end
 
       def setex(key, ttl, value)
@@ -334,7 +334,7 @@ module SidekiqUniqueJobs
       end
 
       def brpoplpush(source, destination, options = {})
-        redis { |conn| conn.brpoplpush(source, destination, options) }
+        redis { |conn| conn.brpoplpush(source, destination, **options) }
       end
 
       def lindex(key, index)
