@@ -117,17 +117,24 @@ module SidekiqUniqueJobs
         end
       end
 
-      def active?(digest)
+      def active?(digest) # rubocop:disable Metrics/MethodLength
         Sidekiq.redis do |conn|
-          procs = conn.sscan_each("processes").to_a.sort
+          procs = conn.sscan_each("processes").to_a
+          return false if procs.empty?
 
-          result = conn.pipelined do
-            procs.map do |key|
-              conn.hget(key, "info")
+          procs.sort.each do |key|
+            valid, workers = conn.pipelined do
+              conn.exists?(key)
+              conn.hgetall("#{key}:workers")
+            end
+
+            next unless valid
+            next unless workers.any?
+
+            workers.each_pair do |_tid, job|
+              return true if load_json(job)[LOCK_DIGEST] == digest
             end
           end
-
-          result.flatten.compact.any? { |job| load_json(job)[LOCK_DIGEST] == digest }
         end
       end
 

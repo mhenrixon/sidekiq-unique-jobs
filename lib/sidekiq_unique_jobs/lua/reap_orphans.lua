@@ -65,11 +65,7 @@ repeat
     -- TODO: Add check for jobs checked out by process
     if found ~= true then
       log_debug("Searching for digest:", digest, "in process sets")
-      local queue = find_digest_in_process_set(digest)
-      if queue then
-        log_debug("found digest:", digest, "in queue:", queue)
-        found = true
-      end
+      found = find_digest_in_process_set(digest)
     end
 
     if found ~= true then
