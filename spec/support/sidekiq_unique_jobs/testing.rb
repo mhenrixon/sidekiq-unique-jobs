@@ -152,7 +152,12 @@ module SidekiqUniqueJobs
       end
 
       def exists(key)
-        redis { |conn| conn.exists(key) }
+        redis do |conn|
+          value = conn.exists(key)
+          return true  if value.is_a?(TrueClass)
+          return false if value.is_a?(FalseClass)
+          value.positive?
+        end
       end
 
       def keys(pattern = "*")

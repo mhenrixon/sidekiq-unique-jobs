@@ -30,7 +30,7 @@ RSpec.describe SidekiqUniqueJobs::UpgradeLocks do
           expect(hlen("#{digest}:LOCKED")).to eq(1)
         end
 
-        expect(exists("unique:keys")).to eq(0)
+        expect(exists("unique:keys")).to eq(false)
         expect(digests.count).to eq(20)
       end
     end
