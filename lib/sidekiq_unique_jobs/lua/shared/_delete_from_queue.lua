@@ -6,6 +6,9 @@ local function delete_from_queue(queue, digest)
 
   while (index < total) do
     local items = redis.call("LRANGE", queue, index, index + per -1)
+    if #items == 0 then
+      break
+    end
     for _, item in pairs(items) do
       if string.find(item, digest) then
         redis.call("LREM", queue, 1, item)
