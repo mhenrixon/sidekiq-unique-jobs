@@ -1247,13 +1247,13 @@
       <pre class="lines">
 
 
+108
 109
 110
-111
-112</pre>
+111</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 109</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_args_method'>default_lock_args_method</span>
   <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_ARGS</span><span class='rbracket'>]</span> <span class='op'>||</span>
@@ -1302,12 +1302,12 @@
       <pre class="lines">
 
 
+119
 120
-121
-122</pre>
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 120</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 119</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
   <span class='ivar'>@default_worker_options</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span>
@@ -1378,12 +1378,12 @@
       <pre class="lines">
 
 
+80
 81
-82
-83</pre>
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 81</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 80</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_filter_by_proc'>filter_by_proc</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_lock_args_method'>lock_args_method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
@@ -1467,6 +1467,7 @@
       <pre class="lines">
 
 
+88
 89
 90
 91
@@ -1475,11 +1476,10 @@
 94
 95
 96
-97
-98</pre>
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_filter_by_symbol'>filter_by_symbol</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_args'>args</span> <span class='kw'>unless</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='id identifier rubyid_lock_args_method'>lock_args_method</span><span class='rparen'>)</span>
@@ -1575,15 +1575,13 @@
 72
 73
 74
-75
-76</pre>
+75</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_filtered_args'>filtered_args</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_args'>args</span> <span class='kw'>if</span> <span class='id identifier rubyid_lock_args_disabled?'>lock_args_disabled?</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_args'>args</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
 
   <span class='id identifier rubyid_json_args'>json_args</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Normalizer.html" title="SidekiqUniqueJobs::Normalizer (module)">Normalizer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_jsonify'><span class='object_link'><a href="Normalizer.html#jsonify-class_method" title="SidekiqUniqueJobs::Normalizer.jsonify (method)">jsonify</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
 
@@ -1791,15 +1789,15 @@
       <pre class="lines">
 
 
+100
 101
 102
 103
 104
-105
-106</pre>
+105</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 100</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_args_method'>lock_args_method</span>
   <span class='ivar'>@lock_args_method</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_ARGS</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ARGS</span><span class='rbracket'>]</span>
@@ -2605,7 +2603,7 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Tue May 19 08:51:09 2020 by
+  Generated on Sat Sep  5 20:24:32 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>

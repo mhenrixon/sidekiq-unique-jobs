@@ -285,16 +285,16 @@
       <pre class="lines">
 
 
-20
 21
 22
 23
 24
 25
-26</pre>
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_prefix'>add_lock_prefix</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -354,12 +354,14 @@
 13
 14
 15
-16</pre>
+16
+17</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prepare'>prepare</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_stringify_on_conflict_hash'>stringify_on_conflict_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_timeout'>add_lock_timeout</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_ttl'>add_lock_ttl</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -417,16 +419,16 @@
       <pre class="lines">
 
 
-20
 21
 22
 23
 24
 25
-26</pre>
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_prefix'>add_lock_prefix</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -486,12 +488,14 @@
 13
 14
 15
-16</pre>
+16
+17</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prepare'>prepare</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_stringify_on_conflict_hash'>stringify_on_conflict_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_timeout'>add_lock_timeout</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_ttl'>add_lock_ttl</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -506,7 +510,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue May 19 08:51:08 2020 by
+  Generated on Sat Sep  5 20:24:31 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>

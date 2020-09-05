@@ -254,7 +254,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/MethodLength.</p>
+</div></span>
   
 </li>
 
@@ -721,7 +722,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>rubocop:disable Metrics/MethodLength</p>
+
 
   </div>
 </div>
@@ -759,22 +761,36 @@
 129
 130
 131
-132</pre>
+132
+133
+134
+135
+136
+137
+138
+139</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 120</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_active?'>active?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
-    <span class='id identifier rubyid_procs'>procs</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_sscan_each'>sscan_each</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>processes</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_active?'>active?</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength
+</span>  <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
+    <span class='id identifier rubyid_procs'>procs</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_sscan_each'>sscan_each</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>processes</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='id identifier rubyid_procs'>procs</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
 
-    <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_pipelined'>pipelined</span> <span class='kw'>do</span>
-      <span class='id identifier rubyid_procs'>procs</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
-        <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_hget'>hget</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>info</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_procs'>procs</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
+      <span class='id identifier rubyid_valid'>valid</span><span class='comma'>,</span> <span class='id identifier rubyid_workers'>workers</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_pipelined'>pipelined</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_exists'>exists</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_hgetall'>hgetall</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>:workers</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+
+      <span class='kw'>next</span> <span class='kw'>unless</span> <span class='id identifier rubyid_valid'>valid</span>
+      <span class='kw'>next</span> <span class='kw'>unless</span> <span class='id identifier rubyid_workers'>workers</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
+
+      <span class='id identifier rubyid_workers'>workers</span><span class='period'>.</span><span class='id identifier rubyid_each_pair'>each_pair</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__tid'>_tid</span><span class='comma'>,</span> <span class='id identifier rubyid_job'>job</span><span class='op'>|</span>
+        <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_digest'>digest</span>
       <span class='kw'>end</span>
     <span class='kw'>end</span>
-
-    <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_job'>job</span><span class='op'>|</span> <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_digest'>digest</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1051,13 +1067,6 @@
       <pre class="lines">
 
 
-147
-148
-149
-150
-151
-152
-153
 154
 155
 156
@@ -1070,10 +1079,19 @@
 163
 164
 165
-166</pre>
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 147</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 154</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_queue'>queue</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength
 </span>  <span class='id identifier rubyid_queue_key'>queue_key</span>    <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>queue:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_queue'>queue</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -1087,6 +1105,8 @@
     <span class='id identifier rubyid_range_end'>range_end</span>   <span class='op'>=</span> <span class='id identifier rubyid_range_start'>range_start</span> <span class='op'>+</span> <span class='id identifier rubyid_page_size'>page_size</span> <span class='op'>-</span> <span class='int'>1</span>
     <span class='id identifier rubyid_entries'>entries</span>     <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_lrange'>lrange</span><span class='lparen'>(</span><span class='id identifier rubyid_queue_key'>queue_key</span><span class='comma'>,</span> <span class='id identifier rubyid_range_start'>range_start</span><span class='comma'>,</span> <span class='id identifier rubyid_range_end'>range_end</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_page'>page</span>       <span class='op'>+=</span> <span class='int'>1</span>
+
+    <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
 
     <span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='op'>|</span>
       <span class='kw'>yield</span> <span class='id identifier rubyid_entry'>entry</span>
@@ -1189,12 +1209,12 @@
       <pre class="lines">
 
 
-178
-179
-180</pre>
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 178</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 187</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_in_sorted_set?'>in_sorted_set?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zscan_each'>zscan_each</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='label'>match:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
@@ -1332,12 +1352,12 @@
       <pre class="lines">
 
 
-143
-144
-145</pre>
+150
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 143</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/ruby_reaper.rb', line 150</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_queues'>queues</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_sscan_each'>sscan_each</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>queues</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1504,7 +1524,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue May 19 08:51:10 2020 by
+  Generated on Sat Sep  5 20:24:33 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>

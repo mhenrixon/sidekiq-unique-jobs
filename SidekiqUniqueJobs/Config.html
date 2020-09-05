@@ -864,6 +864,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#class_name-instance_method" title="#class_name (instance method)">#<strong>class_name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#default_lock_timeout-instance_method" title="#default_lock_timeout (instance method)">#<strong>default_lock_timeout</strong>  &#x21d2; Object </a>
     
 
@@ -1208,16 +1230,16 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-220
-221
-222
-223
 224
 225
-226</pre>
+226
+227
+228
+229
+230</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 220</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 224</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_lock'>add_lock</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_klass'>klass</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_lock_sym'>lock_sym</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1318,16 +1340,16 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-239
-240
-241
-242
 243
 244
-245</pre>
+245
+246
+247
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 239</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 243</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_strategy'>add_strategy</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_klass'>klass</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_strategy_sym'>strategy_sym</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1335,6 +1357,36 @@ raise_on_config_error: false,
 
   <span class='id identifier rubyid_new_strategies'>new_strategies</span> <span class='op'>=</span> <span class='id identifier rubyid_strategies'>strategies</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_strategy_sym'>strategy_sym</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_klass'>klass</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_strategies'>strategies</span> <span class='op'>=</span> <span class='id identifier rubyid_new_strategies'>new_strategies</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="class_name-instance_method">
+  
+    #<strong>class_name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+207
+208
+209</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 207</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_class_name'>class_name</span>
+  <span class='ivar'>@class_name</span> <span class='op'>||=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1365,7 +1417,7 @@ raise_on_config_error: false,
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 202</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_timeout'>default_lock_timeout</span>
-  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_timeout` instead.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_timeout` instead.</span><span class='tstring_end'>&quot;</span></span>
   <span class='id identifier rubyid_lock_timeout'>lock_timeout</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1397,7 +1449,7 @@ raise_on_config_error: false,
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 192</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_timeout='>default_lock_timeout=</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_timeout=` instead.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_timeout=` instead.</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_lock_timeout'>lock_timeout</span> <span class='op'>=</span> <span class='id identifier rubyid_obj'>obj</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1429,7 +1481,7 @@ raise_on_config_error: false,
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 197</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
-  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_ttl` instead.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_ttl` instead.</span><span class='tstring_end'>&quot;</span></span>
   <span class='id identifier rubyid_lock_ttl'>lock_ttl</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1461,7 +1513,7 @@ raise_on_config_error: false,
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 187</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_ttl='>default_lock_ttl=</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_ttl=` instead.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated. Please use `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#lock_ttl=` instead.</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_lock_ttl'>lock_ttl</span> <span class='op'>=</span> <span class='id identifier rubyid_obj'>obj</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1511,13 +1563,13 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-253
-254
-255
-256</pre>
+257
+258
+259
+260</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 253</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 257</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redis_version'>redis_version</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_current_redis_version'>current_redis_version</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_fetch_redis_version'><span class='object_link'><a href="../SidekiqUniqueJobs.html#fetch_redis_version-class_method" title="SidekiqUniqueJobs.fetch_redis_version (method)">fetch_redis_version</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_current_redis_version'>current_redis_version</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#REDIS_VERSION-constant" title="SidekiqUniqueJobs::Config::REDIS_VERSION (constant)">REDIS_VERSION</a></span></span>
@@ -1533,7 +1585,7 @@ raise_on_config_error: false,
 </div>
 
       <div id="footer">
-  Generated on Tue May 19 08:51:09 2020 by
+  Generated on Sat Sep  5 20:24:31 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>

@@ -742,12 +742,12 @@
       <pre class="lines">
 
 
-89
-90
-91</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_count'>count</span>
   <span class='int'>0</span>
@@ -814,13 +814,25 @@
 
 48
 49
-50</pre>
+50
+51
+52
+53
+54
+55
+56</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_exist?'>exist?</span>
-  <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_exists'>exists</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
+    <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_exists'>exists</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>TrueClass</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>FalseClass</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -882,12 +894,12 @@
       <pre class="lines">
 
 
-79
-80
-81</pre>
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expires?'>expires?</span>
   <span class='id identifier rubyid_pttl'>pttl</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='op'>||</span> <span class='id identifier rubyid_ttl'>ttl</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
@@ -1368,12 +1380,12 @@
       <pre class="lines">
 
 
-58
-59
-60</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pttl'>pttl</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_pttl'>pttl</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -1425,12 +1437,12 @@
       <pre class="lines">
 
 
-68
-69
-70</pre>
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/entity.rb', line 74</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ttl'>ttl</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_ttl'>ttl</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -1529,7 +1541,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue May 19 08:51:10 2020 by
+  Generated on Sat Sep  5 20:24:32 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>

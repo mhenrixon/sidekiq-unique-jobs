@@ -708,7 +708,7 @@ failing back to the original argument when the constant can&#39;t be found</p>
 <span class='kw'>def</span> <span class='id identifier rubyid_worker_options'>worker_options</span>
   <span class='kw'>return</span> <span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_sidekiq_worker_class?'>sidekiq_worker_class?</span>
 
-  <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span>
+  <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='period'>.</span><span class='id identifier rubyid_deep_stringify_keys'>deep_stringify_keys</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -720,7 +720,7 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Tue May 19 08:51:08 2020 by
+  Generated on Sat Sep  5 20:24:31 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>
