@@ -18,15 +18,15 @@ module SidekiqUniqueJobs
       #
       # @yield when uniqueness is disable
       # @yield when the lock is successful
-      def call(*)
-        lock { yield }
+      def call(*, &block)
+        lock(&block)
       end
 
       private
 
       def lock
-        if (token = lock_instance.lock)
-          yield token
+        if (_token = lock_instance.lock)
+          yield
         else
           warn_about_duplicate
         end

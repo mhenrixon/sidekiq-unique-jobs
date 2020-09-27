@@ -13,6 +13,6 @@ RSpec.describe CustomQueueJobWithFilterProc do
   end
 
   it_behaves_like "a performing worker" do
-    let(:args) { [1, "random" => rand, "name" => "foobar"] }
+    let(:args) { [1, { "random" => rand, "name" => "foobar" }] }
   end
 end

@@ -21,7 +21,7 @@ m = Module.new do
     ENV["BUNDLER_VERSION"]
   end
 
-  def cli_arg_version # rubocop:disable Metrics/CyclomaticComplexity
+  def cli_arg_version # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     return unless invoked_as_script? # don't want to hijack other binstubs
     return unless "update".start_with?(ARGV.first || " ") # must be running `bundle update`
 

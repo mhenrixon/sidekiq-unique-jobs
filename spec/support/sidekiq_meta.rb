@@ -13,7 +13,7 @@ end
 
 RSpec.configure do |config|
   config.before do |example|
-    redis_db = example.metadata.fetch(:redis_db) { 0 }
+    redis_db = example.metadata.fetch(:redis_db, 0)
     redis_url = "redis://localhost/#{redis_db}"
     redis_options = { url: redis_url, driver: sidekiq_redis_driver }
     redis = Sidekiq::RedisConnection.create(redis_options)
@@ -28,13 +28,13 @@ RSpec.configure do |config|
     enable_delay = defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
     Sidekiq::Extensions.enable_delay! if enable_delay
 
-    if (sidekiq = example.metadata.fetch(:sidekiq) { :disable })
+    if (sidekiq = example.metadata.fetch(:sidekiq, :disable))
       sidekiq = :fake if sidekiq == true
       Sidekiq::Testing.send("#{sidekiq}!")
     end
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
-      unless SidekiqUniqueJobs::VersionCheck.satisfied?(Sidekiq::VERSION, sidekiq_ver)
+      if SidekiqUniqueJobs::VersionCheck.unfulfilled?(Sidekiq::VERSION, sidekiq_ver) # rubocop:disable Style/SoleNestedConditional
         skip("Sidekiq (#{Sidekiq::VERSION}) should be #{sidekiq_ver}")
       end
     end

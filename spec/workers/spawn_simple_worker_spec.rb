@@ -11,7 +11,7 @@ RSpec.describe SpawnSimpleWorker do
   end
 
   it_behaves_like "a performing worker", splat_arguments: false do
-    let(:args) { ["one", "type" => "unique", "id" => 2] }
+    let(:args) { ["one", { "type" => "unique", "id" => 2 }] }
   end
 
   describe "#perform" do

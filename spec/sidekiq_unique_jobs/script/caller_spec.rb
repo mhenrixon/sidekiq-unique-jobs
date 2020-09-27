@@ -33,7 +33,7 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller do
     end
 
     context "when arguments are a hash" do
-      let(:script_arguments) { [redis, keys: keys, argv: argv] }
+      let(:script_arguments) { [redis, { keys: keys, argv: argv }] }
 
       context "without conn" do
         let(:redis) { nil }

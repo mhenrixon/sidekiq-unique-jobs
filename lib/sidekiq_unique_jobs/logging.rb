@@ -114,8 +114,8 @@ module SidekiqUniqueJobs
     #
     # @yield
     #
-    def with_configured_loggers_context
-      logger_method.call(logging_context) { yield }
+    def with_configured_loggers_context(&block)
+      logger_method.call(logging_context, &block)
     end
 
     #

@@ -4,11 +4,13 @@ inherit_gem:
 
 AllCops:
   TargetRubyVersion: 2.5
+  NewCops: enable
   Include:
     - "examples/**/*.rb"
   Exclude:
     - "**/*.erb"
     - "**/*.lua"
+    - "myapp"
     - "bin/bench"
 
 Layout/EndAlignment:
@@ -89,6 +91,9 @@ RSpec/InstanceVariable:
     - spec/sidekiq_unique_jobs/middleware/server/call_spec.rb
 
 RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
   Enabled: false
 
 RSpec/NestedGroups:

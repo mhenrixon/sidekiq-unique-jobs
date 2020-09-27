@@ -562,17 +562,22 @@ If you need to perform any additional work after the lock has been released you 
 **Exception 1:** UntilExecuting unlocks and uses callback before yielding.
 **Exception 2:** UntilExpired expires eventually, no after_unlock hook is called.
 
+**NOTE:** _It is also possible to write this code as a class method._
+
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :while_executing,
+
+  def self.after_unlock
+   # block has yielded and lock is released
+  end
 
   def after_unlock
    # block has yielded and lock is released
   end
   ...
 end.
-```
 
 ### Logging
 

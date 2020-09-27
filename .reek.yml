@@ -78,6 +78,7 @@ detectors:
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#after_unlock_hook
   MissingSafeMethod:
     exclude:
       - Array

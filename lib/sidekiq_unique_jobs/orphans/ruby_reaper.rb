@@ -151,7 +151,7 @@ module SidekiqUniqueJobs
         conn.sscan_each("queues", &block)
       end
 
-      def entries(conn, queue) # rubocop:disable Metrics/MethodLength
+      def entries(conn, queue, &block) # rubocop:disable Metrics/MethodLength
         queue_key    = "queue:#{queue}"
         initial_size = conn.llen(queue_key)
         deleted_size = 0
@@ -166,9 +166,7 @@ module SidekiqUniqueJobs
 
           break if entries.empty?
 
-          entries.each do |entry|
-            yield entry
-          end
+          entries.each(&block)
 
           deleted_size = initial_size - conn.llen(queue_key)
         end

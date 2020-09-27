@@ -53,7 +53,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
   describe "#filtered_args" do
     subject(:filtered_args) { lock_args.filtered_args }
 
-    let(:args) { [1, "test" => "it"] }
+    let(:args) { [1, { "test" => "it" }] }
 
     context "when #lock_args_method is nil" do
       before do
@@ -67,7 +67,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
   describe "#filter_by_proc" do
     subject(:filter_by_proc) { lock_args.filter_by_proc(args) }
 
-    let(:args) { [1, "test" => "it"] }
+    let(:args) { [1, { "test" => "it" }] }
 
     context "when #lock_args_method is a proc" do
       let(:filter) { ->(args) { args[1]["test"] } }
@@ -91,7 +91,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
 
     context "when filter is a working symbol" do
       let(:worker_class)  { UniqueJobWithFilterMethod }
-      let(:args)          { ["name", 2, "whatever" => nil, "type" => "test"] }
+      let(:args)          { ["name", 2, { "whatever" => nil, "type" => "test" }] }
       let(:filtered_args) { %w[name test] }
 
       it { is_expected.to eq(filtered_args) }
@@ -130,7 +130,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
 
     context "when workers lock_args method doesn't take parameters" do
       let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
-      let(:args)         { ["name", 2, "whatever" => nil, "type" => "test"] }
+      let(:args)         { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
       it "raises a descriptive error" do
         expect { filter_by_symbol }
@@ -146,14 +146,14 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
 
     context "when @worker_class does not respond_to lock_args_method" do
       let(:worker_class) { UniqueJobWithNoUniqueArgsMethod }
-      let(:args)         { ["name", 2, "whatever" => nil, "type" => "test"] }
+      let(:args)         { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
       it { is_expected.to eq(args) }
     end
 
     context "when workers lock_args method returns nil" do
       let(:worker_class) { UniqueJobWithNilUniqueArgs }
-      let(:args) { ["name", 2, "whatever" => nil, "type" => "test"] }
+      let(:args) { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
       it { is_expected.to eq(nil) }
     end

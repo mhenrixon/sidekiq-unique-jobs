@@ -13,6 +13,6 @@ RSpec.describe UniqueJobOnConflictRaise do
   end
 
   it_behaves_like "a performing worker" do
-    let(:args) { ["hundred", "type" => "extremely unique", "id" => 44] }
+    let(:args) { ["hundred", { "type" => "extremely unique", "id" => 44 }] }
   end
 end

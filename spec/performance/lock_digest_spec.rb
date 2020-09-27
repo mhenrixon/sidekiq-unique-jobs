@@ -33,7 +33,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, perf: true do
 
     context "when unique_args is a proc" do
       let(:worker_class) { MyUniqueJobWithFilterProc }
-      let(:args)         { [1, 2, "type" => "it"] }
+      let(:args)         { [1, 2, { "type" => "it" }] }
 
       it "performs in under 0.1 ms" do
         expect { lock_digest }.to perform_under(0.1).ms
@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, perf: true do
 
     context "when unique_args is a symbol" do
       let(:worker_class) { MyUniqueJobWithFilterMethod }
-      let(:args)         { [1, 2, "type" => "it"] }
+      let(:args)         { [1, 2, { "type" => "it" }] }
 
       it "performs in under 0.1 ms" do
         expect { lock_digest }.to perform_under(0.1).ms

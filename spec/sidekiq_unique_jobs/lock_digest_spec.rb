@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
         end
 
         context "with different unique args" do
-          let(:another_item) { item.merge("lock_args" => [1, 3, "type" => "that"]) }
+          let(:another_item) { item.merge("lock_args" => [1, 3, { "type" => "that" }]) }
 
           it "differs from lock_digest for that item" do
             expect(lock_digest).not_to eq(digest_two.lock_digest)
@@ -53,14 +53,14 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
 
     context "when digest is a proc" do
       let(:worker_class) { MyUniqueJobWithFilterProc }
-      let(:args)         { [1, 2, "type" => "it"] }
+      let(:args)         { [1, 2, { "type" => "it" }] }
 
       it_behaves_like "unique digest"
     end
 
     context "when unique_args is a symbol" do
       let(:worker_class) { MyUniqueJobWithFilterMethod }
-      let(:args)         { [1, 2, "type" => "it"] }
+      let(:args)         { [1, 2, { "type" => "it" }] }
 
       it_behaves_like "unique digest"
     end

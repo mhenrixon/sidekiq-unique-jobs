@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
   #
   class Cli < Thor
     # :nodoc:
-    def self.banner(command, _namespace = nil, _subcommand = false)
+    def self.banner(command, _namespace = nil, _subcommand = false) # rubocop:disable Style/OptionalBooleanParameter
       "jobs #{@package_name} #{command.usage}" # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     end
 
