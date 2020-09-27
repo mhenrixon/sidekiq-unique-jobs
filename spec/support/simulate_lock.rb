@@ -66,7 +66,7 @@ module SimulateLock
   end
 
   def lock_while_executing(digest, jid, ttl = nil, **options)
-    digest = digest.dup + ":RUN"
+    digest = "#{digest.dup}:RUN"
     lock(
       parse_item(
         options.merge(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl),

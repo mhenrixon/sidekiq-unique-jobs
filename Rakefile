@@ -24,7 +24,7 @@ end
 
 def changed_files(pedantry)
   `git diff-tree --no-commit-id --name-only -r HEAD~#{pedantry} HEAD`
-    .split("\n").select { |f| f.match(/(\.rb\z)|Rakefile/) && File.exist?(f) && !f.match(/db/) }
+    .split("\n").select { |f| f.match(/(\.rb\z)|Rakefile/) && File.exist?(f) && f.include?(db) }
 end
 
 RuboCop::RakeTask.new(:rubocop) do |task|

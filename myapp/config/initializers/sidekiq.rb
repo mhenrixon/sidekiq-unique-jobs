@@ -43,7 +43,7 @@ Sidekiq.configure_client do |config|
   Sidekiq::Status.configure_client_middleware config, expiration: 30.minutes
 end
 
-Sidekiq.logger       = Sidekiq::Logger.new(STDOUT)
+Sidekiq.logger       = Sidekiq::Logger.new($stdout)
 Sidekiq.logger.level = Logger::DEBUG
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.configure do |config|

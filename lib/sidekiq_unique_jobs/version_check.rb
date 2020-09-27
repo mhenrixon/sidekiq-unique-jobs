@@ -7,10 +7,10 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@zoolutions.se>
   #
   class VersionCheck
-    PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m.freeze # rubocop:disable Layout/LineLength
+    PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m.freeze # rubocop:disable Layout/LineLength, Lint/MixedRegexpCaptureTypes
 
     #
-    # Checks if a version is consrtaint is satisfied
+    # Checks if a version is constraint is satisfied
     #
     # @example A satisfied constraint
     #   VersionCheck.satisfied?("5.0.0", ">= 4.0.0") #=> true
@@ -22,10 +22,29 @@ module SidekiqUniqueJobs
     # @param [String] version a version string `5.0.0`
     # @param [String] constraint a version constraint `>= 5.0.0 <= 5.1.1`
     #
-    # @return [<type>] <description>
+    # @return [true, false] <description>
     #
     def self.satisfied?(version, constraint)
       new(version, constraint).satisfied?
+    end
+
+    #
+    # Checks if a version is constraint is unfulfilled
+    #
+    # @example A satisfied constraint
+    #   VersionCheck.unfulfilled?("5.0.0", ">= 4.0.0") #=> false
+    #
+    # @example An unfulfilled constraint
+    #   VersionCheck.unfulfilled?("5.0.0", "<= 4.0.0") #=> true
+    #
+    #
+    # @param [String] version a version string `5.0.0`
+    # @param [String] constraint a version constraint `>= 5.0.0 <= 5.1.1`
+    #
+    # @return [true, false] <description>
+    #
+    def self.unfulfilled?(version, constraint)
+      !satisfied?(version, constraint)
     end
 
     #

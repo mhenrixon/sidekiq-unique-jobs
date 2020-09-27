@@ -12,7 +12,7 @@ RSpec.describe SimpleWorker do
   end
 
   it_behaves_like "a performing worker", splat_arguments: false do
-    let(:args) { ["one", "type" => "unique", "id" => 2] }
+    let(:args) { ["one", { "type" => "unique", "id" => 2 }] }
   end
 
   describe "lock_args" do
@@ -20,7 +20,7 @@ RSpec.describe SimpleWorker do
       described_class.get_sidekiq_options["lock_args"].call(args)
     end
 
-    let(:args) { ["unique", "type" => "unique", "id" => 2] }
+    let(:args) { ["unique", { "type" => "unique", "id" => 2 }] }
 
     it { is_expected.to eq(["unique"]) }
   end

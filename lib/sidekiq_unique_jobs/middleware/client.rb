@@ -18,8 +18,8 @@ module SidekiqUniqueJobs
       #
       # @yield when uniqueness is disable
       # @yield when the lock is successful
-      def call(*)
-        lock { yield }
+      def call(*, &block)
+        lock(&block)
       end
 
       private

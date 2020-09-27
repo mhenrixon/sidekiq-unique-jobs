@@ -97,7 +97,7 @@ module SidekiqUniqueJobs
     end
 
     # The method to use for filtering unique arguments
-    def lock_args_method
+    def lock_args_method # rubocop:disable Metrics/CyclomaticComplexity
       @lock_args_method ||= worker_options[LOCK_ARGS] || worker_options[UNIQUE_ARGS]
       @lock_args_method ||= :lock_args if worker_method_defined?(:lock_args)
       @lock_args_method ||= :unique_args if worker_method_defined?(:unique_args)

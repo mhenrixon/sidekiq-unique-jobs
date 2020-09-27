@@ -14,13 +14,13 @@ RSpec.describe MyUniqueJobWithFilterMethod do
   end
 
   it_behaves_like "a performing worker" do
-    let(:args) { ["hundred", "type" => "extremely unique", "id" => 44] }
+    let(:args) { ["hundred", { "type" => "extremely unique", "id" => 44 }] }
   end
 
   describe ".filtered_args" do
     subject { described_class.filtered_args(args) }
 
-    let(:args) { ["two", "type" => "very unique", "id" => 4] }
+    let(:args) { ["two", { "type" => "very unique", "id" => 4 }] }
 
     it { is_expected.to eq(["two", "very unique"]) }
   end

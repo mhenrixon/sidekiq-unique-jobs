@@ -10,7 +10,8 @@ class UniqueJobWithoutUniqueArgsParameter
                   retry: true,
                   lock_args: :unique_args
 
-  def perform(optional = true)
+  def perform(optional = true) # rubocop:disable Style/OptionalBooleanParameter
+    optional
     # NO-OP
   end
 
