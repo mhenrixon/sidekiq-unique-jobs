@@ -135,7 +135,6 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     subject(:lock_class) { options_with_fallback.lock_class }
 
     context 'when item["lock"] is present' do
-      
       let(:item) { { "lock" => :until_executed } }
 
       it { is_expected.to eq(SidekiqUniqueJobs::Lock::UntilExecuted) }
@@ -148,7 +147,6 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     end
 
     context 'when options["lock"] is present' do
-    
       let(:options) { { "lock" => :until_executed } }
 
       it { is_expected.to eq(SidekiqUniqueJobs::Lock::UntilExecuted) }
@@ -158,7 +156,8 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
         it { is_expected.to eq(SidekiqUniqueJobs::Lock::WhileExecuting) }
       end
-    end    
+    end
+
     context "without matching class in LOCKS" do
       let(:item) { { "lock" => :until_unknown } }
 
