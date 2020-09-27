@@ -25,7 +25,7 @@ module SidekiqUniqueJobs
       private
 
       def lock
-        if (token = lock_instance.lock)
+        if (_token = lock_instance.lock)
           yield
         else
           warn_about_duplicate
