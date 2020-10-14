@@ -30,7 +30,13 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - "spec/**/*"
 
+Lint/RaiseException: # (0.81)
+  Enabled: true
+
 Lint/SuppressedException:
+  Enabled: true
+
+Lint/StructNewOverride: # (0.81)
   Enabled: true
 
 Lint/UselessAssignment:

@@ -4,7 +4,7 @@ begin
   require "delegate"
   require "rack"
   require "sidekiq/web"
-rescue LoadError # rubocop:disable Lint/SuppressedException
+rescue LoadError
   # client-only usage
 end
 

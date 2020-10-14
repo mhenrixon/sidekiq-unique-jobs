@@ -49,7 +49,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     it "passes an exception right through" do
       expect do
         locksmith_one.lock(1) do
-          raise Exception, "redis lock exception"
+          raise Exception, "redis lock exception" # rubocop:disable Lint/RaiseException
         end
       end.to raise_error(Exception, "redis lock exception")
     end
@@ -57,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, redis: :redis do
     it "does not leave the lock locked after raising an exception" do
       expect do
         locksmith_one.lock(1) do
-          raise Exception, "redis lock exception"
+          raise Exception, "redis lock exception" # rubocop:disable Lint/RaiseException
         end
       end.to raise_error(Exception, "redis lock exception")
 

@@ -35,7 +35,13 @@ module SidekiqUniqueJobs
     # The hook to call after a successful unlock
     # @return [Proc]
     def after_unlock_hook
-      -> { worker_class.after_unlock if worker_method_defined?(:after_unlock) }
+      lambda do
+        if @worker_class.respond_to?(:after_unlock)
+          @worker_class.after_unlock # instance method in sidekiq v6
+        elsif worker_class.respond_to?(:after_unlock)
+          worker_class.after_unlock # class method regardless of sidekiq version
+        end
+      end
     end
 
     # Attempt to constantize a string worker_class argument, always
