@@ -18,7 +18,7 @@ RSpec.describe MyUniqueJobWithFilterProc do
   end
 
   describe "unique_args" do
-    subject(:unique_args) { described_class.get_sidekiq_options["unique_args"].call(args) }
+    subject(:unique_args) { described_class.get_sidekiq_options["unique_args"].call(args, a_hash_including("jid": "abc")) }
 
     let(:args) { ["one", "type" => "unique", "id" => 2] }
 

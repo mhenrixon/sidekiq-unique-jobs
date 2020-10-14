@@ -19,7 +19,7 @@ RSpec.describe MyUniqueJobWithFilterMethod do
   end
 
   describe ".filtered_args" do
-    subject { described_class.filtered_args(args) }
+    subject { described_class.filtered_args(args, a_hash_including("jid": "abc")) }
 
     let(:args) { ["two", "type" => "very unique", "id" => 4] }
 

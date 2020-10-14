@@ -8,7 +8,7 @@ class MyUniqueJobWithFilterProc
                   lock: :until_executed,
                   queue: :customqueue,
                   retry: true,
-                  unique_args: (lambda do |args|
+                  unique_args: (lambda do |args, _item|
                     options = args.extract_options!
                     [args.first, options["type"]]
                   end)

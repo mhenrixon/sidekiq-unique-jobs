@@ -19,7 +19,7 @@ RSpec.describe UniqueJobWithNilUniqueArgs do
   end
 
   describe ".unique_args" do
-    subject { described_class.unique_args(args) }
+    subject { described_class.unique_args(args, a_hash_including("jid": "abc")) }
 
     let(:args) { ["argument one", "two", "three"] }
 

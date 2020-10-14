@@ -96,7 +96,7 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   describe "#unique_args_enabled?" do
     subject(:unique_args_enabled?) { unique_args.unique_args_enabled? }
 
-    with_default_worker_options(unique: :until_executed, unique_args: ->(args) { args[1]["test"] }) do
+    with_default_worker_options(unique: :until_executed, unique_args: ->(args, _item) { args[1]["test"] }) do
       with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args) do
         it { is_expected.to eq(:unique_args) } # rubocop:disable RSpec/RepeatedExample
       end
@@ -186,14 +186,14 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     let(:args) { [1, "test" => "it"] }
 
     context "when #unique_args_method is a proc" do
-      let(:filter) { ->(args) { args[1]["test"] } }
+      let(:filter) { ->(args, _item) { args[1]["test"] } }
 
       before { allow(unique_args).to receive(:unique_args_method).and_return(filter) }
 
       it { is_expected.to eq("it") }
     end
 
-    with_default_worker_options(unique_args: ->(args) { args.first }) do
+    with_default_worker_options(unique_args: ->(args, _item) { args.first }) do
       it { is_expected.to eq(1) }
     end
   end

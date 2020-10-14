@@ -14,7 +14,7 @@ class UniqueJobWithFilterMethod
     # NO-OP
   end
 
-  def self.filtered_args(args)
+  def self.filtered_args(args, _item)
     options = args.extract_options!
     [args.first, options["type"]]
   end

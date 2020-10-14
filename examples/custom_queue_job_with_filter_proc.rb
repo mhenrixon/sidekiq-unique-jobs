@@ -8,7 +8,7 @@ class CustomQueueJobWithFilterProc < CustomQueueJob
   # slightly contrived example of munging args to the
   # worker and removing a random bit.
   sidekiq_options lock: :until_expired,
-                  unique_args: (lambda do |args|
+                  unique_args: (lambda do |args, _item|
                     options = args.extract_options!
                     options.delete("random")
                     args + [options]

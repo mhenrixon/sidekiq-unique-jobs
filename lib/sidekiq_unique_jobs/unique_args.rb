@@ -119,7 +119,7 @@ module SidekiqUniqueJobs
     # @param [Array] args the arguments passed to the sidekiq worker
     # @return [Array] with the filtered arguments
     def filter_by_proc(args)
-      unique_args_method.call(args)
+      unique_args_method.call(args, item)
     end
 
     # Filters unique arguments by method configured in the sidekiq worker
@@ -129,7 +129,7 @@ module SidekiqUniqueJobs
     def filter_by_symbol(args)
       return args unless worker_method_defined?(unique_args_method)
 
-      worker_class.send(unique_args_method, args)
+      worker_class.send(unique_args_method, args, item)
     rescue ArgumentError => ex
       log_fatal(ex)
       args

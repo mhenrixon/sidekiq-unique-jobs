@@ -18,7 +18,7 @@ RSpec.describe SimpleWorker do
 
   describe "unique_args" do
     subject do
-      described_class.get_sidekiq_options["unique_args"].call(args)
+      described_class.get_sidekiq_options["unique_args"].call(args, a_hash_including("jid": "abc"))
     end
 
     let(:args) { ["unique", "type" => "unique", "id" => 2] }

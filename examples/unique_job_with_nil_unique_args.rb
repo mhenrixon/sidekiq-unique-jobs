@@ -14,7 +14,7 @@ class UniqueJobWithNilUniqueArgs
     [args]
   end
 
-  def self.unique_args(_args)
+  def self.unique_args(_args, _item)
     nil
   end
 end
