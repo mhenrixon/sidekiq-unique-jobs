@@ -121,9 +121,20 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             end
           end
 
-          it "keeps the digest" do
-            expect { call }.not_to change { digests.count }.from(1)
-            expect(unique_keys).not_to match_array([])
+          context "that matches current digest" do
+            it "keeps the digest" do
+              expect { call }.not_to change { digests.count }.from(1)
+              expect(unique_keys).not_to match_array([])
+            end
+          end
+
+          context "that does not match current digest" do
+            let(:item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => "uniquejobs:d2" } }
+
+            it "deletes the digest" do
+              expect { call }.to change { digests.count }.by(-1)
+              expect(unique_keys).to match_array([])
+            end
           end
         end
       end
