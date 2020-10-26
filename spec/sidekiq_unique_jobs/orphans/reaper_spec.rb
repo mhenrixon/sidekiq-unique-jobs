@@ -121,7 +121,8 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             end
           end
 
-          context "that matches current digest" do
+          # TODO: Adjust this spec for earlier sidekiq versions
+          context "that matches current digest", sidekiq_ver: ">= 6.0" do
             it "keeps the digest" do
               expect { call }.not_to change { digests.count }.from(1)
               expect(unique_keys).not_to match_array([])

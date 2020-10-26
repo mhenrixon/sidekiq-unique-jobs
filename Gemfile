@@ -31,7 +31,6 @@ platforms :mri do
   gem "rspec-benchmark"
   gem "rubocop-mhenrixon"
   gem "simplecov", "< 0.18"
-  gem "simplecov-material"
   gem "simplecov-oj"
   gem "travis"
 end

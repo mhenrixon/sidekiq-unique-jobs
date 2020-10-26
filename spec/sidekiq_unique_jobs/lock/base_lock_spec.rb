@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     { "class" => "JustAWorker",
       "queue" => "testqueue",
       "on_conflict" => strategy,
-      "args" => [foo: "bar"] }
+      "args" => [{ foo: "bar" }] }
   end
 
   describe "#execute" do
