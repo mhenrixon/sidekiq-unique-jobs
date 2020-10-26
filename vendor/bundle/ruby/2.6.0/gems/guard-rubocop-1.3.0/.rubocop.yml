@@ -1,0 +1,30 @@
+inherit_from: .rubocop_todo.yml
+
+Layout/IndentArray:
+  EnforcedStyle: consistent
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/Encoding:
+  Enabled: true
+  EnforcedStyle: never
+
+Style/MethodMissing:
+  Exclude:
+    - spec/support/silence_output.rb
+
+Style/RegexpLiteral:
+  Exclude:
+    - '**/*.gemspec'
+    - '**/Guardfile'

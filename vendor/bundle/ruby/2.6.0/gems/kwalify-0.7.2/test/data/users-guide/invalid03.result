@@ -1,0 +1,5 @@
+$ kwalify -lf schema03.yaml document03b.yaml
+document03b.yaml#0: INVALID
+  - (line 3) [/1] key 'name:' is required.
+  - (line 3) [/1/naem] key 'naem:' is undefined.
+  - (line 6) [/2/mail] key 'mail:' is undefined.

@@ -1,0 +1,8 @@
+$ kwalify -lf schema12.json document12b.json
+document12b.json#0: INVALID
+  - (line 1) [/] key 'name:' is required.
+  - (line 2) [/mail] key 'mail:' is undefined.
+  - (line 3) [/age] 'twenty': not a integer.
+  - (line 4) [/gender] 'X': invalid gender value.
+  - (line 5) [/favorite/0] '123': not a string.
+  - (line 5) [/favorite/1] '456': not a string.

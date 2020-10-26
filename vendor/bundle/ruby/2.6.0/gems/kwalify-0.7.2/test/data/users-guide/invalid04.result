@@ -1,0 +1,4 @@
+$ kwalify -lf schema04.yaml document04b.yaml
+document04b.yaml#0: INVALID
+  - (line 4) [/employees/0/code] 'A101': not a integer.
+  - (line 9) [/employees/1/mail] key 'mail:' is undefined.

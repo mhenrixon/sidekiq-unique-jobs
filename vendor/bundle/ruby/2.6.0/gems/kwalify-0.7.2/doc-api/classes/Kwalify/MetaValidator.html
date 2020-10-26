@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Kwalify::MetaValidator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Kwalify::MetaValidator</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/kwalify/meta-validator_rb.html">
+                kwalify/meta-validator.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Validator.html">
+                Validator
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+ex.
+</p>
+<pre>
+  meta_validator = Kwalify::MetaValidator.instance()
+  schema = File.load_file('schema.yaml')
+  errors = meta_validator.validate(schema)
+  if !errors.empty?
+    errors.each do |error|
+      puts &quot;[#{error.path}] #{error.message}&quot;
+    end
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000113">instance</a>&nbsp;&nbsp;
+      <a href="#M000114">new</a>&nbsp;&nbsp;
+      <a href="#M000115">validate_hook</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">META_SCHEMA</td>
+          <td>=</td>
+          <td class="context-item-value">File.read(filename)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000113" class="method-detail">
+        <a name="M000113"></a>
+
+        <div class="method-heading">
+          <a href="#M000113" class="method-signature">
+          <span class="method-name">instance</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000113-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000113-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/meta-validator.rb, line 32</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">instance</span>()
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@instance</span>
+        <span class="ruby-identifier">schema</span> = <span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">Yaml</span><span class="ruby-operator">::</span><span class="ruby-constant">Parser</span>.<span class="ruby-identifier">new</span>().<span class="ruby-identifier">parse</span>(<span class="ruby-constant">META_SCHEMA</span>)
+        <span class="ruby-ivar">@instance</span> = <span class="ruby-constant">MetaValidator</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">schema</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@instance</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000114" class="method-detail">
+        <a name="M000114"></a>
+
+        <div class="method-heading">
+          <a href="#M000114" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(schema, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000114-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000114-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/meta-validator.rb, line 40</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">schema</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">super</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000115" class="method-detail">
+        <a name="M000115"></a>
+
+        <div class="method-heading">
+          <a href="#M000115" class="method-signature">
+          <span class="method-name">validate_hook</span><span class="method-args">(value, rule, path, errors)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000115-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000115-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/meta-validator.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate_hook</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>    <span class="ruby-comment cmt">## realy?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;MAIN&quot;</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">value</span>
+      <span class="ruby-identifier">type</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'type'</span>]
+      <span class="ruby-identifier">type</span> = <span class="ruby-constant">Types</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_TYPE</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">klass</span> = <span class="ruby-constant">Types</span>.<span class="ruby-identifier">type_class</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-comment cmt">#unless klass</span>
+      <span class="ruby-comment cmt">#  errors &lt;&lt; validate_error(:type_unknown, rule, &quot;#{path}/type&quot;, type)</span>
+      <span class="ruby-comment cmt">#end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'class'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'class'</span>]
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'map'</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:class_notmap</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/class&quot;</span>, <span class="ruby-value str">'class:'</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'pattern'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'pattern'</span>]
+        <span class="ruby-identifier">pat</span> = (<span class="ruby-identifier">val</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\A\/(.*)\/([mi]?[mi]?)\z/</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">$1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">compile</span>(<span class="ruby-identifier">pat</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">RegexpError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:pattern_syntaxerr</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/pattern&quot;</span>, <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'enum'</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Types</span>.<span class="ruby-identifier">collection_type?</span>(<span class="ruby-identifier">type</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:enum_notscalar</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'enum:'</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-comment cmt">#elem_table = {}</span>
+          <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'enum'</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">elem</span><span class="ruby-operator">|</span>
+            <span class="ruby-comment cmt">#if elem_table[elem]</span>
+            <span class="ruby-comment cmt">#  errors &lt;&lt; validate_error(:enum_duplicate, rule, &quot;#{path}/enum&quot;, elem.to_s)</span>
+            <span class="ruby-comment cmt">#end</span>
+            <span class="ruby-comment cmt">#elem_table[elem] = true</span>
+            <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">elem</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">klass</span>)
+              <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:enum_type_unmatch</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/enum&quot;</span>, <span class="ruby-identifier">elem</span>, [<span class="ruby-constant">Kwalify</span>.<span class="ruby-identifier">word</span>(<span class="ruby-identifier">type</span>)])
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'assert'</span>)
+        <span class="ruby-identifier">val</span> =  <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'assert'</span>]
+        <span class="ruby-comment cmt">#val =~ /\bval\b/ or errors &lt;&lt; validate_error(:assert_noval, rule, &quot;#{path}/assert&quot;, val)</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">eval</span> <span class="ruby-node">&quot;proc { |val| #{val} }&quot;</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">SyntaxError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:assert_syntaxerr</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/assert&quot;</span>, <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'range'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'range'</span>]
+        <span class="ruby-identifier">curr_path</span> = <span class="ruby-identifier">path</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;/range&quot;</span>
+        <span class="ruby-comment cmt">#if ! val.is_a?(Hash)</span>
+        <span class="ruby-comment cmt">#  errors &lt;&lt; validate_error(:range_notmap, rule, curr_path, val)</span>
+        <span class="ruby-comment cmt">#elsif ...</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Types</span>.<span class="ruby-identifier">collection_type?</span>(<span class="ruby-identifier">type</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'bool'</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'any'</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_notscalar</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'range:'</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">val</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rkey</span>, <span class="ruby-identifier">rval</span><span class="ruby-operator">|</span>
+            <span class="ruby-comment cmt">#case rkey</span>
+            <span class="ruby-comment cmt">#when 'max', 'min', 'max-ex', 'min-ex'</span>
+              <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">rval</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">klass</span>)
+                <span class="ruby-identifier">typename</span> = <span class="ruby-constant">Kwalify</span>.<span class="ruby-identifier">word</span>(<span class="ruby-identifier">type</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span>
+                <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_type_unmatch</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{curr_path}/#{rkey}&quot;</span>, <span class="ruby-identifier">rval</span>, [<span class="ruby-identifier">typename</span>])
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-comment cmt">#else</span>
+            <span class="ruby-comment cmt">#  errors &lt;&lt; validate_error(:range_undefined, rule, curr_path, &quot;#{rkey}:&quot;)</span>
+            <span class="ruby-comment cmt">#end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'max'</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'max-ex'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_twomax</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'min'</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'min-ex'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_twomin</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">max</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">max_ex</span>, <span class="ruby-identifier">min_ex</span> = <span class="ruby-identifier">val</span>[<span class="ruby-value str">'max'</span>], <span class="ruby-identifier">val</span>[<span class="ruby-value str">'min'</span>], <span class="ruby-identifier">val</span>[<span class="ruby-value str">'max-ex'</span>], <span class="ruby-identifier">val</span>[<span class="ruby-value str">'min-ex'</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">max</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">min</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_maxltmin</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max</span>, <span class="ruby-identifier">min</span>])
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">min_ex</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">min_ex</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_maxleminex</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max</span>, <span class="ruby-identifier">min_ex</span>])
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">max_ex</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max_ex</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">min</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_maxexlemin</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max_ex</span>, <span class="ruby-identifier">min</span>])
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">min_ex</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max_ex</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">min_ex</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:range_maxexleminex</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max_ex</span>, <span class="ruby-identifier">min_ex</span>])
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'length'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'length'</span>]
+        <span class="ruby-identifier">curr_path</span> = <span class="ruby-identifier">path</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;/length&quot;</span>
+        <span class="ruby-comment cmt">#val.is_a?(Hash) or errors &lt;&lt; validate_error(:length_notmap, rule, curr_path, val)</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'str'</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'text'</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_nottext</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'length:'</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-comment cmt">#val.each do |lkey, lval|</span>
+        <span class="ruby-comment cmt">#  #case lkey</span>
+        <span class="ruby-comment cmt">#  #when 'max', 'min', 'max-ex', 'min-ex'</span>
+        <span class="ruby-comment cmt">#    unless lval.is_a?(Integer)</span>
+        <span class="ruby-comment cmt">#      errors &lt;&lt; validate_error(:length_notint, rule, &quot;#{curr_path}/#{lkey}&quot;, lval)</span>
+        <span class="ruby-comment cmt">#    end</span>
+        <span class="ruby-comment cmt">#  #else</span>
+        <span class="ruby-comment cmt">#  #  errors &lt;&lt; validate_error(:length_undefined, rule, curr_path, &quot;#{lkey}:&quot;)</span>
+        <span class="ruby-comment cmt">#  #end</span>
+        <span class="ruby-comment cmt">#end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'max'</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'max-ex'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_twomax</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'min'</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'min-ex'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_twomin</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">max</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">max_ex</span>, <span class="ruby-identifier">min_ex</span> = <span class="ruby-identifier">val</span>[<span class="ruby-value str">'max'</span>], <span class="ruby-identifier">val</span>[<span class="ruby-value str">'min'</span>], <span class="ruby-identifier">val</span>[<span class="ruby-value str">'max-ex'</span>], <span class="ruby-identifier">val</span>[<span class="ruby-value str">'min-ex'</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">max</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">min</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_maxltmin</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max</span>, <span class="ruby-identifier">min</span>])
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">min_ex</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">min_ex</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_maxleminex</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max</span>, <span class="ruby-identifier">min_ex</span>])
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">max_ex</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max_ex</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">min</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_maxexlemin</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max_ex</span>, <span class="ruby-identifier">min</span>])
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">min_ex</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">max_ex</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">min_ex</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:length_maxexleminex</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">curr_path</span>, <span class="ruby-keyword kw">nil</span>, [<span class="ruby-identifier">max_ex</span>, <span class="ruby-identifier">min_ex</span>])
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'unique'</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'unique'</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Types</span>.<span class="ruby-identifier">collection_type?</span>(<span class="ruby-identifier">type</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:unique_notscalar</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">&quot;unique:&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:unique_onroot</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-value str">&quot;/&quot;</span>, <span class="ruby-value str">&quot;unique:&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'ident'</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'ident'</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Types</span>.<span class="ruby-identifier">collection_type?</span>(<span class="ruby-identifier">type</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:ident_notscalar</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">&quot;ident:&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:ident_onroot</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-value str">&quot;/&quot;</span>, <span class="ruby-value str">&quot;ident:&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'default'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'default'</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Types</span>.<span class="ruby-identifier">collection_type?</span>(<span class="ruby-identifier">type</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:default_notscalar</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">&quot;default:&quot;</span>)
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">klass</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:default_unmatch</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/default&quot;</span>, <span class="ruby-identifier">val</span>, [<span class="ruby-constant">Kwalify</span>.<span class="ruby-identifier">word</span>(<span class="ruby-identifier">type</span>)])
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'sequence'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'sequence'</span>]
+        <span class="ruby-comment cmt">#if !val.nil? &amp;&amp; !val.is_a?(Array)</span>
+        <span class="ruby-comment cmt">#  errors &lt;&lt; validate_error(:sequence_notseq,  rule, &quot;#{path}/sequence&quot;, val)</span>
+        <span class="ruby-comment cmt">#elsif ...</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:sequence_noelem</span>,  <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/sequence&quot;</span>, <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:sequence_toomany</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/sequence&quot;</span>, <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">elem</span> = <span class="ruby-identifier">val</span>[<span class="ruby-value">0</span>]
+          <span class="ruby-identifier">assert_error</span>(<span class="ruby-node">&quot;elem.class=#{elem.class}&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">elem</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">elem</span>[<span class="ruby-value str">'ident'</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">elem</span>[<span class="ruby-value str">'type'</span>] <span class="ruby-operator">!=</span> <span class="ruby-value str">'map'</span>
+            <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:ident_notmap</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-node">&quot;#{path}/sequence/0&quot;</span>, <span class="ruby-value str">'ident:'</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'mapping'</span>)
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'mapping'</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:mapping_notmap</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/mapping&quot;</span>, <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> (<span class="ruby-identifier">val</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">default</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:mapping_noelem</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-node">&quot;#{path}/mapping&quot;</span>, <span class="ruby-identifier">val</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'seq'</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:seq_nosequence</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-keyword kw">nil</span>)    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'sequence'</span>)
+        <span class="ruby-comment cmt">#errors &lt;&lt; validate_error(:seq_conflict, rule, path, 'enum:')      if hash.key?('enum')</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:seq_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'pattern:'</span>)    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'pattern'</span>)
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:seq_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'mapping:'</span>)    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'mapping'</span>)
+        <span class="ruby-comment cmt">#errors &lt;&lt; validate_error(:seq_conflict, rule, path, 'range:')     if hash.key?('range')</span>
+        <span class="ruby-comment cmt">#errors &lt;&lt; validate_error(:seq_conflict, rule, path, 'length:')    if hash.key?('length')</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'map'</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:map_nomapping</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-keyword kw">nil</span>)     <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'mapping'</span>)
+        <span class="ruby-comment cmt">#errors &lt;&lt; validate_error(:map_conflict, rule, path, 'enum:')      if hash.key?('enum')</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:map_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'pattern:'</span>)    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'pattern'</span>)
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:map_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'sequence:'</span>)   <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'sequence'</span>)
+        <span class="ruby-comment cmt">#errors &lt;&lt; validate_error(:map_conflict, rule, path, 'range:')     if hash.key?('range')</span>
+        <span class="ruby-comment cmt">#errors &lt;&lt; validate_error(:map_conflict, rule, path, 'length:')    if hash.key?('length')</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:scalar_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'sequence:'</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'sequence'</span>)
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:scalar_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'mapping:'</span>)  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'mapping'</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'enum'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:enum_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'range:'</span>)  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'range'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:enum_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'length:'</span>)  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'length'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:enum_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'pattern:'</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'pattern'</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">'default'</span>)
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:default_conflict</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">'default:'</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>[<span class="ruby-value str">'required'</span>]
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

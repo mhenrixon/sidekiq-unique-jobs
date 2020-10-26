@@ -1,0 +1,7 @@
+$ kwalify -ha genclass-java
+  --package=name        :  package name
+  --extends=name        :  class name to extend
+  --implements=name,... :  interface names to implement
+  --dir=path            :  directory to locate output file
+  --basedir=path        :  base directory to locate output file
+  --constructor=false   :  not print initialize() method

@@ -1,0 +1,1226 @@
+##
+## $Rev$
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+name:   sequence1
+desc:   basic sequence
+input: |
+  - aaa
+  - bbb
+  - ccc
+expected: |
+  ["aaa", "bbb", "ccc"]
+##
+---
+name:   sequence2
+desc:   nested sequence
+input: |
+  - A
+  -
+    - B1
+    - B2
+    -
+      - B2.1
+      - B2.2
+  - C
+expected: |
+  ["A", ["B1", "B2", ["B2.1", "B2.2"]], "C"]
+##
+---
+name:  sequence3
+desc:  null item of sequence
+input: |
+  - A
+  -
+  - C
+  -
+  -
+  -
+  - G
+expected: |
+  ["A", nil, "C", nil, nil, nil, "G"]
+##
+---
+name:  sequence4
+desc:  null item of nested sequence
+#
+input: |
+  -
+    -
+      -
+      -
+      -
+  -
+#
+expected: |
+  [[[nil, nil, nil]], nil]
+##
+---
+name:  sequence5
+desc:  sequence with empty lines
+input: |
+
+  - A
+
+  -
+
+
+      - B
+
+
+  -
+expected: |
+  ["A", ["B"], nil]
+##
+---
+name:  sequence6
+desc:  syntax error - invalid indent of sequence.
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - AAA
+    - BBB1
+    - BBB2
+  - CCC
+#
+expected: |
+##
+---
+name:  sequence7
+desc:  syntax error - sequence item is exepcted.
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+input: |
+  - 
+    - a1
+    - a2
+    a3
+  -
+    - b1
+    - b2
+    b3
+expected: |
+##
+---
+name:  mapping1
+desc:  basic mapping
+input: |
+  A: foo
+  B: bar
+  C  : baz
+expected: |
+  {"A"=>"foo", "B"=>"bar", "C"=>"baz"}
+##
+---
+name:  mapping2
+desc:  nested mapping
+input: |
+  A: 10
+  B:
+    B1:
+      B1-1: 21
+      B1-2: 22
+      B1-3: 23
+  C: 30
+expected: |
+  {"A"=>10, "B"=>{"B1"=>{"B1-1"=>21, "B1-2"=>22, "B1-3"=>23}}, "C"=>30}
+##
+---
+name:  mapping3
+desc:  null item in mapping
+input: |
+  A:
+  B:
+    B1:
+      B1-2:
+  C:
+expected: |
+  {"A"=>nil, "B"=>{"B1"=>{"B1-2"=>nil}}, "C"=>nil}
+##
+---
+name:  mapping4
+desc:  mapping with empty lines
+input: |
+
+  A: 1
+
+  B: 
+
+
+    B1:
+
+
+
+      B1a: 2
+  C: 3
+  
+expected: |
+  {"A"=>1, "B"=>{"B1"=>{"B1a"=>2}}, "C"=>3}
+##
+---
+name:  mapping5
+desc:  parse error - invalid indent of mapping.
+exception*:  { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+input: |
+  A: 10
+  B: 20
+    B1: 21
+    B2: 22
+  C: 30
+expected: |
+##
+---
+name:  mapping6
+desc:  parse error - mapping item is expected.
+exception*:  { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+input: |
+  A:
+    a1: 1
+    a2: 2
+    a3  3
+  B:
+    b1: 1
+    b2: 2
+    b3  3
+expected: |
+##
+---
+name:  combination1
+desc:  seq of mapping
+#
+input: |
+  -
+    x: 10
+    y: 20
+  -
+    x: 15
+    y: 25
+#
+expected: |
+  [{"x"=>10, "y"=>20}, {"x"=>15, "y"=>25}]
+##
+---
+name:  combination2
+desc:  seq of mapping (in same line)
+#
+input: |
+  - x: 10
+    y: 20
+  - x: 15
+    y: 25
+#
+expected: |
+  [{"x"=>10, "y"=>20}, {"x"=>15, "y"=>25}]
+##
+---
+name:  combination3
+desc:  seq of seq of seq
+#
+input: |
+  - - - a
+      - b
+  - - - c
+      - d
+#
+expected: |
+  [[["a", "b"]], [["c", "d"]]]
+##
+---
+name:  combination4
+desc:  map of sequence
+#
+input: |
+  A:
+    - 1
+    - 2
+    - 3
+  B:
+    - 4
+    - 5
+    - 6
+#
+expected: |
+  {"A"=>[1, 2, 3], "B"=>[4, 5, 6]}
+##
+---
+name:  combination5
+desc:  map of sequence (in same line)
+#
+input: |
+  A: - 1
+     - 2
+     - 3
+  B: - 4
+     - 5
+     - 6
+#
+expected: |
+  {"A"=>[1, 2, 3], "B"=>[4, 5, 6]}
+##
+---
+name:  combination6
+desc:  map of map of map
+#
+input: |
+  A: a: 1: 100
+        2: 200
+  B: b: 3: 300
+        "4": 400
+#
+expected: |
+  {"A"=>{"a"=>{1=>100, 2=>200}}, "B"=>{"b"=>{3=>300, "4"=>400}}}
+##
+---
+name:  comment1
+desc:  line comment
+input: |
+  # comment
+  - A
+  - B
+    # comment
+  -
+      # comment
+    - C
+#
+expected: |
+  ["A", "B", ["C"]]
+##
+---
+name:  comment2
+desc:  escape line comment
+#
+input: |
+  # comment
+  - A
+  - B:
+     "# comment"
+  -
+    '# comment'
+#
+expected: |
+  ["A", {"B"=>"# comment"}, "# comment"]
+##
+---
+name:  comment3
+desc:  line comment with seq and map
+#
+input: |
+  - A             # comment
+  - B:            # comment
+      C: foo      # comment
+      D: "bar#bar"    #comment
+#
+expected: |
+  ["A", {"B"=>{"C"=>"foo", "D"=>"bar#bar"}}]
+##
+---
+name:  comment4
+desc:  line comment with anchor and alias
+#
+input: |
+  - &a1           # comment
+    foo
+  - *a1           # comment
+#
+expected: |
+  ["foo", "foo"]
+##
+---
+name:  flowseq1
+desc:  flow style sequence
+#
+input: |
+  - [ 10, 20 ]
+  - [15,25,35]
+#
+expected: |
+  [[10, 20], [15, 25, 35]]
+#  [[10, 20], ["15,25,35"]]
+##
+---
+name:  flowseq2
+desc:  nested flow style sequence
+#
+input: |
+  1: [ A, [B1, B2]]
+  '2': [[[X]]]
+  3: [[1, 1], [2, "2"], ['3', 3]]
+#
+expected: |
+  {1=>["A", ["B1", "B2"]], "2"=>[[["X"]]], 3=>[[1, 1], [2, "2"], ["3", 3]]}
+#expected: |
+#  {1=>["A", ["B1", "B2"]],
+#   "2"=>[[["X"]]],
+#   3=>[["x1", "y1"], ["x2", "y2"], ["x3", "y3"]]}
+##
+---
+name:  flowseq3
+desc:  flow style sequence with some lines
+#
+input: |
+  A: [ [10, 20],
+       [11, 21],
+       [12, 22]]
+  B: [
+    [1.1,
+     1.2,
+     1.3
+    ]
+  ]
+#
+expected: |
+  {"A"=>[[10, 20], [11, 21], [12, 22]], "B"=>[[1.1, 1.2, 1.3]]}
+##
+---
+name:  flowseq4
+desc:  invalid flow style seq (sequence item required (or last comma is extra).)
+mesg:  sequence item required (or last comma is extra).
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  A: [ [10,20], ]
+#
+expected: |
+##
+---
+name:  flowseq5
+desc:  invalid flow style seq (flow style sequence requires ']').
+mesg:  flow style sequence requires ']'
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  A: [ [10,20]
+  B: [ [30, 40]]
+#
+expected: |
+##
+---
+name:  flowseq6
+desc:  invalid flow style seq (flow style sequence requires ']').
+mesg:  flow style sequence is closed but got ']'.
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  [ 10 ]]
+#
+expected: |
+##
+---
+name:  flowmap1
+desc:  flow style map
+#
+input: |
+  - { A1: 10, A2: 20 }
+  - {B1: 15, 'B2': 25, "B3": 35}
+#
+expected: |
+  [{"A1"=>10, "A2"=>20}, {"B1"=>15, "B2"=>25, "B3"=>35}]
+##
+---
+name:  flowmap2
+desc:  flow style map nested
+#
+input: |
+  A: { x: {y: {z: 10}}}
+  B: { a: 1, b: {c: 2, d: 3, e: {f: 4}}, g: 5}
+#
+expected: |
+  {"A"=>{"x"=>{"y"=>{"z"=>10}}}, "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+#expected: |
+#  {"A"=>{"x"=>{"y"=>{"z"=>10}}},
+#   "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+##
+---
+name:  flowmap3
+desc:  flow style map with some lines
+#
+input: |
+  A: { x:
+       {y:
+         {z: 10}
+       }
+     }
+  B: {
+    a: 1,
+    b: {
+      c: 2,
+      d: 3,
+      e: {
+        f: 4
+      }
+    },
+    g: 5
+  }
+#
+expected: |
+  {"A"=>{"x"=>{"y"=>{"z"=>10}}}, "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+#expected: |
+#  {"A"=>{"x"=>{"y"=>{"z"=>10}}},
+#   "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+##
+---
+name:  flowmap4
+desc:  invalid flow style map (mapping item required (or last comma is extra).)
+mesg:  mapping item required (or last comma is extra).
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - {A: 10, B: 20, }
+#
+expected: |
+##
+---
+name:  flowmap5
+desc:  invalid flow style map (flow style mapping requires '}').
+mesg:  flow style mapping requires '}'
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - {A: { x: 10, y: 20 }
+  - {A: { x: 11, y: 21 }}
+#
+expected: |
+##
+---
+name:  flowmap6
+desc:  invalid flow style map (flow style mapping requires ']').
+mesg:  flow style mapping is closed but got '}'.
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  { x: 10 }}
+#
+expected: |
+##
+---
+name:  flowscalar1
+desc:  string containing backslash escape
+#
+input: |
+  [ {"key1": "\"\\\n"},
+    {'key2': '\'\\\n'} ]
+#
+expected: |
+  [{"key1"=>"\"\\\n"}, {"key2"=>"'\\\\n"}]
+##
+---
+name:  flowcombination1
+desc:  combination of flow style seq and map
+#
+input: |
+  [
+    {name: '  foo  ',
+     e-mail: foo@mail.com},
+    {name: ba   z,
+     e-mail: ba__z@mail.com   }
+  ]
+#
+expected: |
+  [{"e-mail"=>"foo@mail.com", "name"=>"  foo  "}, {"e-mail"=>"ba__z@mail.com", "name"=>"ba   z"}]
+##
+---
+name:  blocktext01
+desc:  parse_blocktext
+#
+input: |
+  - text1: |
+     foo
+     bar
+     baz
+  - text2: |
+        aaa
+         bbb
+          ccc
+  - |
+   foo
+   bar
+   baz
+  - |
+        aaa
+         bbb
+          ccc
+#
+expected: |
+  [{"text1"=>"foo\nbar\nbaz\n"}, {"text2"=>"aaa\n bbb\n  ccc\n"}, "foo\nbar\nbaz\n", "aaa\n bbb\n  ccc\n"]
+##
+---
+name:  blocktext02
+desc:  block text with '|+' or '|-'
+#
+input: |
+  - text1: |
+      A
+  
+      B
+      C
+  
+  
+  - text2: |+
+      A
+  
+      B
+      C
+  
+  
+  - text3: |-
+      A
+  
+      B
+      C
+  
+  
+#
+expected: |
+  [{"text1"=>"A\n\nB\nC\n"}, {"text2"=>"A\n\nB\nC\n\n\n"}, {"text3"=>"A\n\nB\nC"}]
+##
+---
+name:  blocktext03
+desc:  block text with '|n'
+#
+input: |
+  - text1: |3
+         A
+       
+        B
+         C
+  
+  
+  - text2: |+3
+         A
+       
+        B
+         C
+  
+  
+  - text3: |-3
+         A
+        
+        B
+         C
+  
+  
+#
+expected: |
+  [{"text1"=>"  A\n\n B\n  C\n"}, {"text2"=>"  A\n\n B\n  C\n\n\n"}, {"text3"=>"  A\n\n B\n  C"}]
+##
+---
+name:  blocktext04
+desc:  block text with '| foo'
+#
+input: |
+  - text1: | foo  
+     A
+     
+     B
+     C
+     
+  - |  foo
+    A
+     B
+      C
+#
+expected: |
+  [{"text1"=>"foo  A\n\nB\nC\n"}, "fooA\n B\n  C\n"]
+##
+---
+name:  blocktext05
+desc:  block text with '#' (comment)
+#
+input: |
+  #
+    - text1: |
+       A
+       #
+       B
+      #
+      text2: |
+       #
+       #
+      #
+    - |
+     A
+     #
+     B
+    #
+    - |
+      #
+      #
+  #
+    - x
+  
+#
+expected: |
+  [{"text1"=>"A\n#\nB\n", "text2"=>"#\n#\n"}, "A\n#\nB\n", "#\n#\n", "x"]
+##
+#---
+#name:  blocktext06
+#desc:  invalid block text
+#exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+##
+#input: |
+#  - |
+#     a
+#    b
+#    c
+##
+#expected: |
+###
+---
+name:  blocktext11
+desc:  parse_blocktext (>)
+#
+input: |
+  - text1: >
+     foo
+     bar
+     baz
+  - text2: >
+        aaa
+         bbb
+          ccc
+  - >
+   foo
+   bar
+   baz
+  - >
+        aaa
+         bbb
+          ccc
+#
+expected: |
+  [{"text1"=>"foo bar baz\n"}, {"text2"=>"aaa  bbb   ccc\n"}, "foo bar baz\n", "aaa  bbb   ccc\n"]
+##
+---
+name:  blocktext12
+desc:  block text with '>+' or '>-'
+#
+input: |
+  - text1: >
+      A
+  
+      B
+      C
+  
+  
+  - text2: >+
+      A
+  
+      B
+      C
+  
+  
+  - text3: >-
+      A
+  
+      B
+      C
+  
+  
+#
+expected: |
+  [{"text1"=>"A\nB C\n"}, {"text2"=>"A\nB C\n\n\n"}, {"text3"=>"A\nB C"}]
+##
+---
+name:  blocktext13
+desc:  block text with '>n'
+#
+input: |
+  - >2
+      A
+  
+     B
+     C
+  
+  
+  - >+2
+      A
+  
+     B
+     C
+  
+  
+  - >-2
+      A
+  
+     B
+     C
+  
+  
+#
+expected: |
+  ["  A\n B  C\n", "  A\n B  C\n\n\n", "  A\n B  C"]
+#  ["  A\n\n B\n C\n", "  A\n\n B\n C\n\n\n", "  A\n\n B\n C"]
+##
+---
+name:  blocktext14
+desc:  block text with '> foo'
+#
+input: |
+  - text1: > foo  
+     A
+     
+     B
+     C
+     
+  - >  foo
+    A
+     B
+      C
+#
+expected: |
+  [{"text1"=>"foo  A\nB C\n"}, "fooA  B   C\n"]
+##
+---
+name:  blocktext15
+desc:  block text with '#' (comment)
+#
+input: |
+  #
+    - text1: >
+       AA
+       ##
+       BB
+      #
+      text2: >
+       #
+       #
+      #
+    - >
+     AA
+     ##
+     BB
+    #
+    - >
+      #
+      #
+  #
+    - x
+  
+#
+expected: |
+  [{"text1"=>"AA ## BB\n", "text2"=>"# #\n"}, "AA ## BB\n", "# #\n", "x"]
+##
+#---
+#name:  blocktext16
+#desc:  invalid block text
+#exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+##
+#input: |
+#  - >
+#     a
+#    b
+#    c
+##
+#expected: |
+###
+---
+name:  anchor1
+desc:  parse_anchor, parse_alias
+#
+input: |
+  - &a1 foo
+  - &a2
+   bar
+  - *a1
+  - *a2
+#
+expected: |
+  ["foo", "bar", "foo", "bar"]
+##
+---
+name:  anchor2
+desc:  parse_anchor, parse_alias
+#
+input: |
+  - A: &a1
+     x: 10
+     y: 20
+  - B: bar
+  - C: *a1
+#
+expected: |
+  [{"A"=>{"x"=>10, "y"=>20}}, {"B"=>"bar"}, {"C"=>{"x"=>10, "y"=>20}}]
+##
+---
+name:  anchor3
+desc:  anchor on child node
+testopts:  { recursive: yes }
+#
+input: |
+  - A: &a1
+     x: 10
+     y: 20
+     z: *a1
+#
+expected: |
+  [{"A"=>{"x"=>10, "y"=>20, "z"=>{...}}}]
+##
+---
+name:  anchor4
+desc:  preceding anchor
+#
+input: |
+  - *a1
+  - *a1
+  - foo
+  - &a1 bar
+#
+expected: |
+  ["bar", "bar", "foo", "bar"]
+##
+---
+name:  anchor5
+desc:  anchor not found
+exception*: { ruby: Kwalify::YamlSyntaxError, java: kwalify.SyntaxException }
+mesg:  anchor 'a2' not found (Kwalify::YamlSyntaxError)
+#
+input: |
+  - &a1 foo
+  - bar
+  - *a2
+#
+expected: |
+##
+---
+name:  anchor6
+desc:  anchor on child node
+testopts:  { recursive: yes }
+#
+input: |
+  type:        seq
+  sequence:
+    - &employee
+      type:    map
+      mapping:
+        name:
+          type:   str
+        post:
+          type:   str
+          enum:
+            - exective
+            - manager
+            - clerk
+        supervisor: *employee
+#
+expected*:
+  ruby: |
+    {"sequence"=>
+      [{"type"=>"map",
+        "mapping"=>
+         {"name"=>{"type"=>"str"},
+          "post"=>{"enum"=>["exective", "manager", "clerk"], "type"=>"str"},
+          "supervisor"=>{...}}}],
+     "type"=>"seq"}
+  java: |
+    {"sequence"=>[{"mapping"=>{"name"=>{"type"=>"str"}, "post"=>{"enum"=>["exective", "manager", "clerk"], "type"=>"str"}, "supervisor"=>{...}}, "type"=>"map"}], "type"=>"seq"}
+##
+---
+name:  anchor7
+desc:  anchor and alias with flow style data
+#
+input: |
+  - &a1 {v: &a2 [1, 2, 3]}
+  - [x, *a1, y]
+  - {z: *a2}
+#
+expected*:
+  ruby: |
+    [{"v"=>[1, 2, 3]}, ["x", {"v"=>[1, 2, 3]}, "y"], {"z"=>[1, 2, 3]}]
+  java: |
+    [{"v"=>[1, 2, 3]}, ["x", {"v"=>[1, 2, 3]}, "y"], {"z"=>[1, 2, 3]}]
+##
+---
+name:  anchor8
+desc:  recursive alias with flow style data
+testopts:  { recursive: yes }
+#
+input: |
+  - &a1
+    {v: &a2 [*a1, *a2]}
+#
+expected*:
+  ruby: |
+    [{"v"=>[{...}, [...]]}]
+  java: |
+    [{"v"=>[{...}, [...]]}]
+##
+---
+name:  preceding1
+desc:  preceding anchor
+testopts:  { allow_preceding_alias: yes }
+#
+input: |
+	- *a1
+	- &a1 AAA
+#
+expected*:
+  ruby: |
+	["AAA", "AAA"]
+  java: |
+	["AAA", "AAA"]
+##
+---
+name:  preceding2
+desc:  preceding anchor
+testopts:  { allow_preceding_alias: yes, pp: yes }
+#
+input: |
+	groups:
+	  - name:  wheel
+	    owner: *ROOT
+	  - name:  users
+	    owner: *USER1
+	
+	users:
+	  - &ROOT
+	    name: root
+	    email: root@localhost
+	  - &USER1
+	    name: user1
+	    email: user1@localhost
+#
+expected*:
+  ruby: |
+	{"groups"=>
+	  [{"name"=>"wheel", "owner"=>{"name"=>"root", "email"=>"root@localhost"}},
+	   {"name"=>"users", "owner"=>{"name"=>"user1", "email"=>"user1@localhost"}}],
+	 "users"=>
+	  [{"name"=>"root", "email"=>"root@localhost"},
+	   {"name"=>"user1", "email"=>"user1@localhost"}]}
+  java: |
+##
+---
+name:  preceding3
+desc:  preceding anchor not found
+testopts:  { allow_preceding_alias: yes }
+#
+input: |
+	groups:
+	  - name:  wheel
+	    owner: *ROOT
+	  - name:  users
+	    owner: *USER1
+	
+	users:
+	  - &ROOT
+	    name: root
+	    email: root@localhost
+	  - &USER2
+	    name: user1
+	    email: user1@localhost
+#
+exception*:
+  ruby:   Kwalify::YamlSyntaxError
+  #java:   kwalify.SyntaxError
+errormsg*:
+  ruby:   "*USER1: anchor not found."
+  #java:   "*USER1: anchor not found."
+location:  { linenum: 5, column: 13 }
+##
+---
+name:  tag1
+desc:  tag
+#
+input: |
+  - !str 123
+  - foo: !text 123
+#
+expected: |
+  [123, {"foo"=>123}]
+##
+---
+name:  docend1
+desc:  ... (document end)
+#
+input: |
+  - aaa
+  - bbb
+  ...
+  - ccc
+#
+expected: |
+  ["aaa", "bbb"]
+##
+---
+name:  docend2
+desc:  ... (document end) in block text
+#
+input: |
+  - |
+    foo
+    ...
+    bar
+#
+expected: |
+  ["foo\n...\nbar\n"]
+##
+---
+name:  docstart1
+desc:  --- (document start)
+#
+input: |
+  # comment
+  ---
+  - foo
+  - bar
+#
+expected: |
+  ["foo", "bar"]
+##
+---
+name:  docstart2
+desc:  --- (document start) with tag
+#
+input: |
+  # comment
+  --- %YAML !seq
+  - foo
+  - bar
+#
+expected: |
+  ["foo", "bar"]
+##
+---
+name:  docstart3
+desc:  --- (document start) with tag
+#
+input: |
+  - |
+    foo
+    ---
+    bar
+    ---
+    baz
+#
+expected: |
+  ["foo\n---\nbar\n---\nbaz\n"]
+##
+---
+name:  default1
+desc:  map default value
+#
+input: |
+  - A: 10
+    B: 20
+    =: -1
+  - K:
+      x: 10
+      y: 20
+    =:
+      x: 0
+      y: 0
+#
+expected: |
+  [{"A"=>10, "B"=>20}, {"K"=>{"x"=>10, "y"=>20}}]
+##
+---
+name:  merge1
+desc:  merge key '<<'
+#
+input: |
+  - &a1
+    A: 10
+    B: 20
+  - C: 30
+    <<: *a1
+    A: ~
+#
+expected: |
+  [{"A"=>10, "B"=>20}, {"A"=>nil, "B"=>20, "C"=>30}]
+##
+---
+name:  scalar1
+desc:  scalar with sequence
+input: |
+  - abc
+  - 123
+  - 3.14
+  - true
+  - false
+  - yes
+  - no
+  - ~
+  - null
+  - "123"
+  - '456'
+  - 2005-01-01
+  - :sym
+expected*:
+  ruby: |
+    ["abc", 123, 3.14, true, false, true, false, nil, nil, "123", "456", #<Date: 4906743/2,0,2299161>, :sym]
+#  ruby: |
+#    ["abc",
+#     123,
+#     3.14,
+#     true,
+#     false,
+#     true,
+#     false,
+#     nil,
+#     nil,
+#     "123",
+#     "456",
+#     #<Date: 4906743/2,0,2299161>,
+#     :sym]
+  java: |
+    ["abc", 123, 3.14, true, false, true, false, nil, nil, "123", "456", Tue Feb 01 00:00:00 JST 2005, ":sym"]
+#  ["abc", 123, true, false, true, false, nil, nil, "123", "456", #<Date: 4906743/2,0,2299161>, :sym]
+##
+---
+name:  scalar2
+desc:  mapping of scalar
+testopts:  { pp: yes }
+input: |
+  - abc : ABC
+  - 123 : 123
+  - 3.14 : 3.14
+  - true : true
+  - false : false
+  - yes : yes
+  - no : no
+  - null : ~
+  - null : null
+  - "123" : "123"
+  - '456' : '456'
+  - 2005-01-01 : 2005-01-01
+  - :sym : :sym
+# - ~ : ~
+# - 2005-01-01 00:00:00 : 2005-01-01 00:00:00
+expected*:
+  ruby: |
+    [{"abc"=>"ABC"},
+     {123=>123},
+     {3.14=>3.14},
+     {true=>true},
+     {false=>false},
+     {true=>true},
+     {false=>false},
+     {nil=>nil},
+     {nil=>nil},
+     {"123"=>"123"},
+     {"456"=>"456"},
+     {#<Date: 4906743/2,0,2299161>=>#<Date: 4906743/2,0,2299161>},
+     {:sym=>:sym}]
+  java: |
+    [{"abc"=>"ABC"}, {123=>123}, {3.14=>3.14}, {true=>true}, {false=>false}, {true=>true}, {false=>false}, "~ : ~", {nil=>nil}, {"123"=>"123"}, {"456"=>"456"}, {Tue Feb 01 00:00:00 JST 2005=>Tue Feb 01 00:00:00 JST 2005}, {":sym"=>":sym"}]
+# {123=>1.23, 3.14=>314, "abc"=>"ABC"}
+# {"abc"=>"ABC", 3.14=>314, 123=>1.23}
+##
+---
+name:  mapkey1
+desc:  mapping key test
+input: |
+  - key1:   A
+  - .key.2: B
+  - key3*:  C
+  - :key4:  D
+#  - k:e:y:5: E
+expected*:
+  ruby: |
+    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}]
+#    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}, {"k:e:y:5"=>"E"}]
+  java: |
+    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}]
+#    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}, {"k:e:y:5"=>"E"}]
+##

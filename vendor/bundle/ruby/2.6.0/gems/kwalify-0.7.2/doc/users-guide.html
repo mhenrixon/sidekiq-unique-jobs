@@ -1,0 +1,2050 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Kwalify User's Guide (for Ruby)</title>
+  <meta name="author" content="makoto kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="stylesheet" href="docstyle.css" type="text/css">
+ </head>
+ <body>
+
+   <div class="mainbody">
+
+    <div align="left"><h1>Kwalify User's Guide (for Ruby)</h1></div>
+    <div align="left">
+      makoto kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
+      last update: $Date$<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">Preface</h2>
+<p>Kwalify<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup> is a parser, schema validator, and data binding tool for YAML and JSON.
+Kwalify enables you to handle YAML and JSON more easily and strictly.
+</p>
+<p>Topics:
+</p>
+<ul type="disc">
+<li><a href="#schema">Schema validation for YAML</a> and <a href="#tips-json">JSON</a>
+</li>
+<li><a href="#actions">Class definition generation for Ruby, PHP, and Java</a>
+</li>
+<li><a href="#howto-databinding">Data binding</a>
+</li>
+<li><a href="#howto-preceding">Preceding alias</a>
+</li>
+</ul>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
+  <dd>Pronounce as 'Qualify'.</dd>
+ </dl>
+</div>
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
+<ul>
+  <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#schema">Schema Definition</a>
+  <ul>
+    <li><a href="#schema-seq">Sequence</a>
+    </li>
+    <li><a href="#schema-map">Mapping</a>
+    </li>
+    <li><a href="#schema-seq-of-map">Sequence of Mapping</a>
+    </li>
+    <li><a href="#schema-map-of-seq">Mapping of Sequence</a>
+    </li>
+    <li><a href="#schema-rules">Rule and Constraint</a>
+    </li>
+    <li><a href="#schema-unique">Unique constraint</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#tips">Tips</a>
+  <ul>
+    <li><a href="#tips-json">JSON</a>
+    </li>
+    <li><a href="#tips-anchor">Anchor and Alias</a>
+    </li>
+    <li><a href="#tips-default">Default of Mapping</a>
+    </li>
+    <li><a href="#tips-merge">Merging Mappings</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#howto">How to in Ruby</a>
+  <ul>
+    <li><a href="#howot-validate">Validation</a>
+    </li>
+    <li><a href="#howto-parse">Parsing with Validation</a>
+    </li>
+    <li><a href="#howto-meta">Meta Validation</a>
+    </li>
+    <li><a href="#howto-hook">Validator#validator_hook()</a>
+    </li>
+    <li><a href="#howto-preceding">Preceding Alias</a>
+    </li>
+    <li><a href="#howto-databinding">Data Binding</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#actions">Actions</a>
+  <ul>
+    <li><a href="#action-genclass">Class Definition Generation</a>
+    <ul>
+      <li><a href="#action-genclass-ruby">Ruby Class Definition</a>
+      </li>
+      <li><a href="#action-genclass-java">Java Class Definition</a>
+      </li>
+    </ul>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#ref">References</a>
+  <ul>
+    <li><a href="#ref-usage">Usage in Command-Line</a>
+    </li>
+  </ul>
+  </li>
+</ul>
+<br>
+
+
+<br>
+
+
+<a name="schema"></a>
+<h2 class="section1">Schema Definition</h2>
+<p>This section describes how to define schema definition of YAML.
+</p>
+<a name="schema-seq"></a>
+<h3 class="section2">Sequence</h3>
+<a name="schema01.yaml"></a>
+<div class="program_caption">
+<code>schema01.yaml</code> : sequence of string</div>
+<pre class="program">type:   seq
+sequence:
+  - type:   str
+</pre>
+<a name="document01a.yaml"></a>
+<div class="program_caption">
+<code>document01a.yaml</code> : valid document example</div>
+<pre class="program">- foo
+- bar
+- baz
+</pre>
+<a name="valid01.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema01.yaml document01a.yaml
+document01a.yaml#0: valid.
+</pre>
+<a name="document01b.yaml"></a>
+<div class="program_caption">
+<code>document01b.yaml</code> : invalid document example</div>
+<pre class="program">- foo
+- 123
+- baz
+</pre>
+<a name="invalid01.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema01.yaml document01b.yaml
+document01b.yaml#0: INVALID
+  - (line 2) [/1] '123': not a string.
+</pre>
+<p>Default '<code>type:</code>' is <code>str</code> so you can omit '<code>type: str</code>'.
+</p>
+<br>
+
+
+<a name="schema-map"></a>
+<h3 class="section2">Mapping</h3>
+<a name="schema02.yaml"></a>
+<div class="program_caption">
+<code>schema02.yaml</code> : mapping of scalar</div>
+<pre class="program">type:       map
+mapping:
+ "name":
+    type:      str
+    required:  yes
+ "email":
+    type:      str
+    pattern:   /@/
+ "age":
+    type:      int
+ "birth":
+    type:      date
+</pre>
+<a name="document02a.yaml"></a>
+<div class="program_caption">
+<code>document02a.yaml</code> : valid document example</div>
+<pre class="program">name:   foo
+email:  foo@mail.com
+age:    20
+birth:  1985-01-01
+</pre>
+<a name="valid02.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema02.yaml document02a.yaml
+document02a.yaml#0: valid.
+</pre>
+<a name="document02b.yaml"></a>
+<div class="program_caption">
+<code>document02b.yaml</code> : invalid document example</div>
+<pre class="program">name:   foo
+email:  foo(at)mail.com
+age:    twenty
+birth:  Jun 01, 1985
+</pre>
+<a name="invalid02.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema02.yaml document02b.yaml
+document02b.yaml#0: INVALID
+  - (line 2) [/email] 'foo(at)mail.com': not matched to pattern /@/.
+  - (line 3) [/age] 'twenty': not a integer.
+  - (line 4) [/birth] 'Jun 01, 1985': not a date.
+</pre>
+<br>
+
+
+<a name="schema-seq-of-map"></a>
+<h3 class="section2">Sequence of Mapping</h3>
+<a name="schema03.yaml"></a>
+<div class="program_caption">
+<code>schema03.yaml</code> : sequence of mapping</div>
+<pre class="program">type:      seq
+sequence:
+  - type:      map
+    mapping:
+     "name":
+        type:      str
+        required:  true
+     "email":
+        type:      str
+</pre>
+<a name="document03a.yaml"></a>
+<div class="program_caption">
+<code>document03a.yaml</code> : valid document example</div>
+<pre class="program">- name:   foo
+  email:  foo@mail.com
+- name:   bar
+  email:  bar@mail.net
+- name:   baz
+  email:  baz@mail.org
+</pre>
+<a name="valid03.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema03.yaml document03a.yaml
+document03a.yaml#0: valid.
+</pre>
+<a name="document03b.yaml"></a>
+<div class="program_caption">
+<code>document03b.yaml</code> : invalid document example</div>
+<pre class="program">- name:   foo
+  email:  foo@mail.com
+- naem:   bar
+  email:  bar@mail.net
+- name:   baz
+  mail:   baz@mail.org
+</pre>
+<a name="invalid03.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema03.yaml document03b.yaml
+document03b.yaml#0: INVALID
+  - (line 3) [/1] key 'name:' is required.
+  - (line 3) [/1/naem] key 'naem:' is undefined.
+  - (line 6) [/2/mail] key 'mail:' is undefined.
+</pre>
+<br>
+
+
+<a name="schema-map-of-seq"></a>
+<h3 class="section2">Mapping of Sequence</h3>
+<a name="schema04.yaml"></a>
+<div class="program_caption">
+<code>schema04.yaml</code> : mapping of sequence of mapping</div>
+<pre class="program">type:      map
+mapping:
+ "company":
+    type:      str
+    required:  yes
+ "email":
+    type:      str
+ "employees":
+    type:      seq
+    sequence:
+      - type:    map
+        mapping:
+         "code":
+            type:      int
+            required:  yes
+         "name":
+            type:      str
+            required:  yes
+         "email":
+            type:      str
+</pre>
+<a name="document04a.yaml"></a>
+<div class="program_caption">
+<code>document04a.yaml</code> : valid document example</div>
+<pre class="program">company:    Kuwata lab.
+email:      webmaster@kuwata-lab.com
+employees:
+  - code:   101
+    name:   foo
+    email:  foo@kuwata-lab.com
+  - code:   102
+    name:   bar
+    email:  bar@kuwata-lab.com
+</pre>
+<a name="valid04.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema04.yaml document04a.yaml
+document04a.yaml#0: valid.
+</pre>
+<a name="document04b.yaml"></a>
+<div class="program_caption">
+<code>document04b.yaml</code> : invalid document example</div>
+<pre class="program">company:    Kuwata Lab.
+email:      webmaster@kuwata-lab.com
+employees:
+  - code:   A101
+    name:   foo
+    email:  foo@kuwata-lab.com
+  - code:   102
+    name:   bar
+    mail:   bar@kuwata-lab.com
+</pre>
+<a name="invalid04.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema04.yaml document04b.yaml
+document04b.yaml#0: INVALID
+  - (line 4) [/employees/0/code] 'A101': not a integer.
+  - (line 9) [/employees/1/mail] key 'mail:' is undefined.
+</pre>
+<br>
+
+
+<a name="schema-rules"></a>
+<h3 class="section2">Rule and Constraint</h3>
+<p><code>type:</code>, <code>required:</code>, <code>length</code>, ... are called <strong>constraint</strong> and set of constraints are called <strong>rule</strong>.
+</p>
+<ul type="disc">
+<li>Rule contains 'type:' constraint. If 'type:' is omitted, 'type: str' is used as default.
+</li>
+<li>'sequence:' constraint takes a sequence of rule (the sequence can contain only a rule).
+</li>
+<li>'mapping:' constraint takes a mapping which values are rules.
+</li>
+</ul>
+<div style="align:center;">
+  <img src="img/fig01.png" alt="constraints and rules of schema definition." />
+</div>
+<p>The following is a list of constraints.
+</p>
+<dl class="dl3">
+<dt class="dt3"><strong>
+<code>required:</code> </strong></dt>
+<dd class="dd3">
+	Value is required when true (default is false).
+	This is similar to not-null constraint in RDBMS.
+</dd>
+<dt class="dt3"><strong>
+<code>enum:</code> </strong></dt>
+<dd class="dd3">
+	List of available values.
+</dd>
+<dt class="dt3"><strong>
+<code>pattern:</code> </strong></dt>
+<dd class="dd3">
+	Specifies regular expression pattern of value.
+</dd>
+<dt class="dt3"><strong>
+<code>type:</code> </strong></dt>
+<dd class="dd3">
+	Type of value. The followings are available:
+	 <ul type="circle">
+	 <li><code>str</code>
+	 </li>
+	 <li><code>int</code>
+	 </li>
+	 <li><code>float</code>
+	 </li>
+	 <li><code>number</code> (== int or float)
+	 </li>
+	 <li><code>text</code> (== str or number)
+	 </li>
+	 <li><code>bool</code>
+	 </li>
+	 <li><code>date</code>
+	 </li>
+	 <li><code>time</code>
+	 </li>
+	 <li><code>timestamp</code>
+	 </li>
+	 <li><code>seq</code>
+	 </li>
+	 <li><code>map</code>
+	 </li>
+	 <li><code>scalar</code> (all but seq and map)
+	 </li>
+	 <li><code>any</code> (means any data)
+	 </li>
+	 </ul>
+</dd>
+<dt class="dt3"><strong>
+<code>range:</code> </strong></dt>
+<dd class="dd3">
+	Range of value between max/max-ex and min/min-ex.
+	<ul type="circle">
+	<li>'max' means 'max-inclusive'.
+	</li>
+	<li>'min' means 'min-inclusive'.
+	</li>
+	<li>'max-ex' means 'max-exclusive'.
+	</li>
+	<li>'min-ex' means 'min-exclusive'.
+	</li>
+	</ul>
+	Type <code>seq</code>, <code>map</code>, <code>bool</code> and <code>any</code> are not available with <code>range:</code>.
+</dd>
+<dt class="dt3"><strong>
+<code>length:</code> </strong></dt>
+<dd class="dd3">
+	Range of length of value between max/max-ex and min/min-ex.
+	Only type <code>str</code> and <code>text</code> are available with <code>length:</code>.
+</dd>
+<dt class="dt3"><strong>
+<code>assert:</code> </strong></dt>
+<dd class="dd3">
+	String which represents validation expression.
+	String should contain variable name <code>val</code> which repsents value.
+	(This is an experimental function and not supported in Kwartz-java).
+</dd>
+<dt class="dt3"><strong>
+<code>unique:</code> </strong></dt>
+<dd class="dd3">
+	Value is unique for mapping or sequence.
+	This is similar to unique constraint of RDBMS.
+	See the next subsection for detail.
+</dd>
+<dt class="dt3"><strong>
+<code>name:</code> </strong></dt>
+<dd class="dd3">
+	Name of schema.
+</dd>
+<dt class="dt3"><strong>
+<code>desc:</code> </strong></dt>
+<dd class="dd3">
+	Description. This is not used for validation.
+</dd>
+<dt class="dt3"><strong>
+<code>class:</code> </strong></dt>
+<dd class="dd3">
+	Class name.  This is for data-binding and is available only with type 'map'.
+	This is also used in 'genclass' action.
+</dd>
+<dt class="dt3"><strong>
+<code>default:</code> </strong></dt>
+<dd class="dd3">
+	Default value.
+	This is only for 'genclass' action, and have no effect to validation and parsing.
+	Default value should be scalar and it is not available if <code>type:</code> is <code>map</code> or <code>seq</code>, and also not available when <code>required:</code> is true.
+</dd>
+</dl>
+<a name="schema05.yaml"></a>
+<div class="program_caption">
+<code>schema05.yaml</code> : rule examples</div>
+<pre class="program">type:      seq
+sequence:
+  -
+    type:      map
+    mapping:
+     "name":
+        type:       str
+        required:   yes
+     "email":
+        type:       str
+        required:   yes
+        pattern:    /@/
+     "password":
+        type:       text
+        length:     { max: 16, min: 8 }
+     "age":
+        type:       int
+        range:      { max: 30, min: 18 }
+        # or assert: 18 &lt;= val &amp;&amp; val &lt;= 30
+     "blood":
+        type:       str
+        enum:       [A, B, O, AB]
+     "birth":
+        type:       date
+     "memo":
+        type:       any
+     "deleted":
+        type:       bool
+        default:    false
+</pre>
+<a name="document05a.yaml"></a>
+<div class="program_caption">
+<code>document05a.yaml</code> : valid document example</div>
+<pre class="program">- name:     foo
+  email:    foo@mail.com
+  password: xxx123456
+  age:      20
+  blood:    A
+  birth:    1985-01-01
+- name:     bar
+  email:    bar@mail.net
+  age:      25
+  blood:    AB
+  birth:    1980-01-01
+</pre>
+<a name="valid05.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema05.yaml document05a.yaml
+document05a.yaml#0: valid.
+</pre>
+<a name="document05b.yaml"></a>
+<div class="program_caption">
+<code>document05b.yaml</code> : invalid document example</div>
+<pre class="program">- name:     foo
+  email:    foo(at)mail.com
+  password: xxx123
+  age:      twenty
+  blood:    a
+  birth:    1985-01-01
+- given-name:  bar
+  family-name: Bar
+  email:    bar@mail.net
+  age:      15
+  blood:    AB
+  birth:    1980/01/01
+</pre>
+<a name="invalid05.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema05.yaml document05b.yaml
+document05b.yaml#0: INVALID
+  - (line 2) [/0/email] 'foo(at)mail.com': not matched to pattern /@/.
+  - (line 3) [/0/password] 'xxx123': too short (length 6 &lt; min 8).
+  - (line 4) [/0/age] 'twenty': not a integer.
+  - (line 5) [/0/blood] 'a': invalid blood value.
+  - (line 7) [/1] key 'name:' is required.
+  - (line 7) [/1/given-name] key 'given-name:' is undefined.
+  - (line 8) [/1/family-name] key 'family-name:' is undefined.
+  - (line 10) [/1/age] '15': too small (&lt; min 18).
+  - (line 12) [/1/birth] '1980/01/01': not a date.
+</pre>
+<br>
+
+
+<a name="schema-unique"></a>
+<h3 class="section2">Unique constraint</h3>
+<p>'<code>unique:</code>' constraint is available with elements of sequence or mapping.
+This is equivalent to unique constraint of RDBMS.
+</p>
+<ul type="disc">
+<li>Type of rule which has '<code>unique:</code>' entry must be scalar (str, int, float, ...).
+</li>
+<li>Type of parent rule must be sequence or mapping.
+</li>
+</ul>
+<a name="schema06.yaml"></a>
+<div class="program_caption">
+<code>schema06.yaml</code> : unique constraint entry with mapping and sequence</div>
+<pre class="program">type: seq
+sequence:
+  - type:     map
+    required: yes
+    mapping:
+     "name":   { type: str, required: yes, <strong>unique: yes</strong> }
+     "email":  { type: str }
+     "groups":
+        type:     seq
+        sequence:
+          - { type: str, <strong>unique: yes</strong> }
+</pre>
+<a name="document06a.yaml"></a>
+<div class="program_caption">
+<code>document06a.yaml</code> : valid document example</div>
+<pre class="program">- name:   foo
+  email:  admin@mail.com
+  groups:
+    - users
+    - foo
+    - admin
+- name:   bar
+  email:  admin@mail.com
+  groups:
+    - users
+    - admin
+- name:   baz
+  email:  baz@mail.com
+  groups:
+    - users
+</pre>
+<a name="valid06.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema06.yaml document06a.yaml
+document06a.yaml#0: valid.
+</pre>
+<a name="document06b.yaml"></a>
+<div class="program_caption">
+<code>document06b.yaml</code> : invalid document example</div>
+<pre class="program">- name:   foo
+  email:  admin@mail.com
+  groups:
+    - foo
+    - users
+    - admin
+    - foo
+- name:   bar
+  email:  admin@mail.com
+  groups:
+    - admin
+    - users
+- name:   bar
+  email:  baz@mail.com
+  groups:
+    - users
+</pre>
+<a name="invalid06.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema06.yaml document06b.yaml
+document06b.yaml#0: INVALID
+  - (line 7) [/0/groups/3] 'foo': is already used at '/0/groups/0'.
+  - (line 13) [/2/name] 'bar': is already used at '/1/name'.
+</pre>
+<br>
+
+
+<br>
+
+
+<a name="tips"></a>
+<h2 class="section1">Tips</h2>
+<a name="tips-json"></a>
+<h3 class="section2">JSON</h3>
+<p><a href="http://www.json.org">JSON</a> is a lightweight data-interchange format, especially useful for JavaScript.
+JSON can be considered as a subset of YAML. It means that YAML parser can parse JSON and Kwalify can validate JSON document.
+</p>
+<a name="schema12.json"></a>
+<div class="program_caption">
+<code>schema12.json</code> : an example schema definition written in JSON format</div>
+<pre class="program">{ "type": "map",
+  "required": true,
+  "mapping": {
+    "name":   { "type": "str", "required": true },
+    "email":  { "type": "str" },
+    "age":    { "type": "int" },
+    "gender": { "type": "str", "enum": ["M", "F"] },
+    "favorite": { "type": "seq",
+                  "sequence": [ { "type": "str" } ]
+                }
+  }
+}
+</pre>
+<a name="document12a.json"></a>
+<div class="program_caption">
+<code>document12a.json</code> : valid JSON document example</div>
+<pre class="program">{ "name": "Foo",
+  "email": "foo@mail.com",
+  "age": 20,
+  "gender": "F",
+  "favorite": [
+     "football",
+     "basketball",
+     "baseball"
+  ]
+}
+</pre>
+<a name="valid12.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema12.json document12a.json
+document12a.json#0: valid.
+</pre>
+<a name="document12b.json"></a>
+<div class="program_caption">
+<code>document12b.json</code> : invalid JSON document example</div>
+<pre class="program">{
+  "mail": "foo@mail.com",
+  "age": twenty,
+  "gender": "X",
+  "favorite": [ 123, 456 ]
+}
+</pre>
+<a name="invalid12.json"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema12.json document12b.json
+document12b.json#0: INVALID
+  - (line 1) [/] key 'name:' is required.
+  - (line 2) [/mail] key 'mail:' is undefined.
+  - (line 3) [/age] 'twenty': not a integer.
+  - (line 4) [/gender] 'X': invalid gender value.
+  - (line 5) [/favorite/0] '123': not a string.
+  - (line 5) [/favorite/1] '456': not a string.
+</pre>
+<br>
+
+
+<a name="tips-anchor"></a>
+<h3 class="section2">Anchor and Alias</h3>
+<p>You can share rules by YAML anchor and alias.
+</p>
+<a name="schema13.yaml"></a>
+<div class="program_caption">
+<code>schema13.yaml</code> : anchor example</div>
+<pre class="program">type:   seq
+sequence:
+  - <strong>&amp;employee</strong>
+    type:      map
+    mapping:
+     "given-name": <strong>&amp;name</strong>
+        type:     str
+        required: yes
+     "family-name": <strong>*name</strong>
+     "post":
+        type: str
+        enum: [exective, manager, clerk]
+     "supervisor":  <strong>*employee</strong>
+</pre>
+<p>Anchor and alias is also available in YAML document.
+</p>
+<a name="document13a.yaml"></a>
+<div class="program_caption">
+<code>document13a.yaml</code> : valid document example</div>
+<pre class="program">- <strong>&amp;foo</strong>
+  given-name:    foo
+  family-name:   Foo
+  post:          exective
+- <strong>&amp;bar</strong>
+  given-name:    bar
+  family-name:   Bar
+  post:          manager
+  supervisor:    <strong>*foo</strong>
+- given-name:    baz
+  family-name:   Baz
+  post:          clerk
+  supervisor:    <strong>*bar</strong>
+- given-name:    zak
+  family-name:   Zak
+  post:          clerk
+  supervisor:    <strong>*bar</strong>
+</pre>
+<a name="valid13.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema13.yaml document13a.yaml
+document13a.yaml#0: valid.
+</pre>
+<br>
+
+
+<a name="tips-default"></a>
+<h3 class="section2">Default of Mapping</h3>
+<p>YAML allows user to specify default value of mapping.
+</p>
+<p>For example, the following YAML document uses default value of mapping.
+</p>
+<pre class="program">A: 10
+B: 20
+<strong>=: -1</strong>      # default value
+</pre>
+<p>This is equal to the following Ruby code.
+</p>
+<pre class="program">map = ["A"=&gt;10, "B"=&gt;20]
+map.default = -1
+map
+</pre>
+<p>Kwalify allows user to specify default rule using default value of mapping.
+It is useful when key names are unknown.
+</p>
+<a name="schema14.yaml"></a>
+<div class="program_caption">
+<code>schema14.yaml</code> : default rule example</div>
+<pre class="program">type: map
+mapping:
+  <strong>=:</strong>              # default rule
+    type: number
+    range: { max: 1, min: -1 }
+</pre>
+<a name="document14a.yaml"></a>
+<div class="program_caption">
+<code>document14a.yaml</code> : valid document example</div>
+<pre class="program">value1: 0
+value2: 0.5
+value3: -0.9
+</pre>
+<a name="valid14.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema14.yaml document14a.yaml
+document14a.yaml#0: valid.
+</pre>
+<a name="document14b.yaml"></a>
+<div class="program_caption">
+<code>document14b.yaml</code> : invalid document example</div>
+<pre class="program">value1: 0
+value2: 1.1
+value3: -2.0
+</pre>
+<a name="invalid14.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema14.yaml document14b.yaml
+document14b.yaml#0: INVALID
+  - (line 2) [/value2] '1.1': too large (&gt; max 1).
+  - (line 3) [/value3] '-2.0': too small (&lt; min -1).
+</pre>
+<br>
+
+
+<a name="tips-merge"></a>
+<h3 class="section2">Merging Mappings</h3>
+<p>YAML allows user to merge mappings.
+</p>
+<pre class="program">- <strong>&amp;a1</strong>
+  A: 10
+  B: 20
+- <strong>&lt;&lt;: *a1</strong>            # merge
+  A: 15              # override
+  C: 30              # add
+</pre>
+<p>This is equal to the following Ruby code.
+</p>
+<pre class="program">a1 = {"A"=&gt;10, "B"=&gt;20}
+tmp = {}
+tmp.update(a1)       # merge
+tmp["A"] = 15        # override
+tmp["C"] = 30        # add
+</pre>
+<p>This feature allows Kwalify to merge rule entries.
+</p>
+<a name="schema15.yaml"></a>
+<div class="program_caption">
+<code>schema15.yaml</code> : merging rule entries example</div>
+<pre class="program">type: map
+mapping:
+ "group":
+    type: map
+    mapping:
+     "name": <strong>&amp;name</strong>
+        type: str
+        required: yes
+     "email": <strong>&amp;email</strong>
+        type: str
+        pattern: /@/
+        required: no
+ "user":
+    type: map
+    mapping:
+     "name":
+        <strong>&lt;&lt;: *name</strong>             # merge
+        <strong>length: { max: 16 }</strong>   # add
+     "email":
+        <strong>&lt;&lt;: *email</strong>            # merge
+        <strong>required: yes</strong>         # override
+</pre>
+<a name="document15a.yaml"></a>
+<div class="program_caption">
+<code>document15a.yaml</code> : valid document example</div>
+<pre class="program">group:
+  name: foo
+  email: foo@mail.com
+user:
+  name: bar
+  email: bar@mail.com
+</pre>
+<a name="valid15.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema15.yaml document15a.yaml
+document15a.yaml#0: valid.
+</pre>
+<a name="document15b.yaml"></a>
+<div class="program_caption">
+<code>document15b.yaml</code> : invalid document example</div>
+<pre class="program">group:
+  name: foo
+  email: foo@mail.com
+user:
+  name: toooooo-looooong-name
+</pre>
+<a name="invalid15.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ kwalify -lf schema15.yaml document15b.yaml
+document15b.yaml#0: INVALID
+  - (line 5) [/user] key 'email:' is required.
+  - (line 5) [/user/name] 'toooooo-looooong-name': too long (length 21 &gt; max 16).
+</pre>
+<br>
+
+
+<br>
+
+
+<a name="howto"></a>
+<h2 class="section1">How to in Ruby</h2>
+<p>This section describes how to use Kwalify in Ruby.
+</p>
+<a name="howot-validate"></a>
+<h3 class="section2">Validation</h3>
+<a name="howto-validation.rb"></a>
+<pre class="program">require 'kwalify'
+#require 'yaml'
+
+## load schema data
+schema = Kwalify::Yaml.load_file('schema.yaml')
+## or
+#schema = YAML.load_file('schema.yaml')
+
+## create validator
+validator = Kwalify::Validator.new(schema)
+
+## load document
+document = Kwalify::Yaml.load_file('document.yaml')
+## or
+#document = YAML.load_file('document.yaml')
+
+## validate
+errors = validator.validate(document)
+
+## show errors
+if errors &amp;&amp; !errors.empty?
+  for e in errors
+    puts "[#{e.path}] #{e.message}"
+  end
+end
+</pre>
+<br>
+
+
+<a name="howto-parse"></a>
+<h3 class="section2">Parsing with Validation</h3>
+<p>From version 0.7, Kwalify supports parsing with validation.
+</p>
+<a name="howto-validation-with-parsing.rb"></a>
+<pre class="program">require 'kwalify'
+#require 'yaml'
+
+## load schema data
+schema = Kwalify::Yaml.load_file('schema.yaml')
+## or
+#schema = YAML.load_file('schema.yaml')
+
+## create validator
+validator = Kwalify::Validator.new(schema)
+
+## create parser with validator
+## (if validator is ommitted, no validation executed.)
+parser = Kwalify:::Yaml::Parser.new(validator)
+
+## parse document with validation
+filename = 'document.yaml'
+document = parser.parse_file(filename)
+## or
+#document = parser.parse(File.read(filename), filename)
+
+## show errors if exist
+errors = parser.errors()
+if errors &amp;&amp; !errors.empty?
+  for e in errors
+    puts "#{e.linenum}:#{e.column} [#{e.path}] #{e.message}"
+  end
+end
+</pre>
+<br>
+
+
+<a name="howto-meta"></a>
+<h3 class="section2">Meta Validation</h3>
+<p>Meta validator is a validator which validates schema definition.
+The schema definition is placed at 'kwalify/kwalify.schema.yaml'.
+</p>
+<p>Kwalify also provides Kwalify::MetaValidator class which validates
+schema defition.
+</p>
+<pre class="program">require 'kwalify'
+
+## meta validator
+metavalidator = Kwalify::MetaValidator.instance
+
+## validate schema definition
+parser = Kwalify::Yaml::Parser.new(metavalidator)
+errors = parser.parse_file('schema.yaml')
+for e in errors
+  puts "#{e.linenum}:#{e.column} [#{e.path}] #{e.message}"
+end if errors &amp;&amp; !errors.empty?
+</pre>
+<p>Meta validation is also available with command-line option '-m'.
+</p>
+<pre class="terminal">$ kwalify -m schema1.yaml schema2.yaml ...
+</pre>
+<br>
+
+
+<a name="howto-hook"></a>
+<h3 class="section2">Validator#validator_hook()</h3>
+<p>You can extend Kwalify::Validator and override Kwalify::Validator#validator_hook() method.
+This method is called by Kwalify::Validator#validate().
+</p>
+<a name="answers-schema.yaml"></a>
+<div class="program_caption">
+answers-schema.yaml : 'name:' is important.</div>
+<pre class="program">type:      map
+mapping:
+ "answers":
+    type:      seq
+    sequence:
+      - type:      map
+        <strong>name:        Answer</strong>
+        mapping:
+         "name":   { type: str, required: yes }
+         "answer": { type: str, required: yes,
+                     enum: [good, not bad, bad] }
+         "reason": { type: str }
+</pre>
+<a name="answers-validator.rb"></a>
+<div class="program_caption">
+answers-validator.rb : validate script for Ruby</div>
+<pre class="program">#!/usr/bin/env ruby
+
+require 'kwalify'
+
+## validator class for answers
+class AnswersValidator &lt; Kwalify::Validator
+
+   ## load schema definition
+   @@schema = Kwalify::Yaml.load_file('answers-schema.yaml')
+   ## or
+   ##   require 'yaml'
+   ##   @@schema = YAML.load_file('answers-schema.yaml')
+
+   def initialize()
+      super(@@schema)
+   end
+
+   ## hook method called by Validator#validate()
+   <strong>def validate_hook(value, rule, path, errors)</strong>
+      <strong>case rule.name</strong>
+      <strong>when 'Answer'</strong>
+         if value['answer'] == 'bad'
+            reason = value['reason']
+            if !reason || reason.empty?
+               msg = "reason is required when answer is 'bad'."
+               errors &lt;&lt; Kwalify::ValidationError.new(msg, path)
+            end
+         end
+      end
+   end
+
+end
+
+## create validator
+validator = AnswersValidator.new
+
+## parse and validate YAML document
+input = ARGF.read()
+parser = Kwalify::Yaml::Parser.new(validator)
+document = parser.parse(input)
+
+## show errors
+errors = parser.errors()
+if !errors || errors.empty?
+   puts "Valid."
+else
+   puts "*** INVALID!"
+   for e in errors
+      # e.class == Kwalify::ValidationError
+      puts "#{e.linenum}:#{e.column} [#{e.path}] #{e.message}"
+   end
+end
+</pre>
+<a name="document07a.yaml"></a>
+<div class="program_caption">
+<code>document07a.yaml</code> : valid document example</div>
+<pre class="program">answers:
+  - name:      Foo
+    answer:    good
+    reason:    I like this style.
+  - name:      Bar
+    answer:    not bad
+  - name:      Baz
+    answer:    bad
+    reason:    I don't like this style.
+</pre>
+<a name="valid07.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ ruby answers-validator.rb document07a.yaml
+Valid.
+</pre>
+<a name="document07b.yaml"></a>
+<div class="program_caption">
+<code>document07b.yaml</code> : invalid document example</div>
+<pre class="program">answers:
+  - name:    Foo
+    answer:  good
+  - name:    Bar
+    answer:  bad
+  - name:    Baz
+    answer:  not bad
+</pre>
+<a name="invalid07.result"></a>
+<div class="terminal_caption">
+validate</div>
+<pre class="terminal">$ ruby answers-validator.rb document07b.yaml
+*** INVALID!
+4:3 [/answers/1] reason is required when answer is 'bad'.
+</pre>
+<p>You can validate some document by a Validator instance because Validator class and Validator#validate() method are stateless. If you use instance variables in custom validator_hook() method, it becomes to be stateful.
+</p>
+<br>
+
+
+<a name="howto-preceding"></a>
+<h3 class="section2">Preceding Alias</h3>
+<p>From version 0.7, Kwalify allows aliases to appear before corresponding anchors are now appeared.
+These aliases are called as 'preceding alias'.
+</p>
+<a name="howto3.yaml"></a>
+<div class="program_caption">
+howto3.yaml</div>
+<pre class="program">- name: Foo
+  parent: *bar        # preceding alias
+- &amp;bar
+  name: Bar
+  parent: *baz        # preceding alias
+- &amp;baz
+  name: Baz
+  parent: null
+</pre>
+<p>To enable preceding alias, set Kwalify::Yaml::Parser#preceding_alias to true.
+</p>
+<a name="howto3.rb"></a>
+<div class="program_caption">
+howto3.rb</div>
+<pre class="program">require 'kwalify'
+parser = Kwalify::Yaml::Parser.new
+<strong>parser.preceding_alias = true</strong>   # enable preceding alias
+ydoc = parser.parse_file('howto3.yaml')
+require 'pp'
+pp ydoc
+</pre>
+<a name="howto3.result"></a>
+<div class="terminal_caption">
+result</div>
+<pre class="terminal">$ ruby howto3.rb
+[{"name"=&gt;"Foo",
+  "parent"=&gt;{"name"=&gt;"Bar", "parent"=&gt;{"name"=&gt;"Baz", "parent"=&gt;nil}}},
+ {"name"=&gt;"Bar", "parent"=&gt;{"name"=&gt;"Baz", "parent"=&gt;nil}},
+ {"name"=&gt;"Baz", "parent"=&gt;nil}]
+</pre>
+<p>Command-line option '-P' also enables preceding alias.
+</p>
+<p>Preceding alias is very useful when document is complex.
+</p>
+<br>
+
+
+<a name="howto-databinding"></a>
+<h3 class="section2">Data Binding</h3>
+<p>From version 0.7, Kwalify supports data binding.
+* To enable data binding, set Kwlaify::Yaml::Parser#data_binding to true.
+* It is required to specify class name in schema definition.
+  (Notice that 'class:' constraint is avaialbe only with rule which type is 'map'.)
+* Also instance methods '[]', '[]=', and 'keys?' must be defined in the classes.
+  (Including Kwalify::Util::HashLike modules is easy way to define them.)
+</p>
+<a name="config.schema.yaml"></a>
+<div class="program_caption">
+config.schema.yaml: schema definition file</div>
+<pre class="program">type:  map
+<strong>class: Config</strong>
+mapping:
+ "host": { type: str, required: true }
+ "port": { type: int }
+ "user": { type: str, required: true }
+ "pass": { type: str, required: true }
+</pre>
+<a name="config.yaml"></a>
+<div class="program_caption">
+config.yaml: data file</div>
+<pre class="program">host:  localhost
+port:  8080
+user:  user1
+pass:  password1
+</pre>
+<a name="loadconfig.rb"></a>
+<div class="program_caption">
+loadconfig.rb: ruby program</div>
+<pre class="program">## class definition
+require 'kwalify/util/hashlike'
+<strong>class Config</strong>
+  <strong>include Kwalify::Util::HashLike</strong>  # defines [], []=, and keys?
+  attr_accessor :host, :posrt, :user, :pass
+<strong>end</strong>
+## create validator object
+require 'kwalify'
+schema = Kwalify::Yaml.load_file('config.schema.yaml')
+validator = Kwalify::Validator.new(schema)
+## parse configuration file with data binding
+parser = Kwalify::Yaml::Parser.new(validator)
+<strong>parser.data_binding = true</strong>    # enable data binding
+config = parser.parse_file('config.yaml')
+require 'pp'
+pp config
+</pre>
+<a name="loadconfig.result"></a>
+<div class="terminal_caption">
+result</div>
+<pre class="terminal">$ ruby loadconfig.rb
+#&lt;Config:
+ @host="localhost",
+ @pass="password1",
+ @port=8080,
+ @user="user1"&gt;
+</pre>
+<p>Data binding is available even when data is more complex.
+Preceding alias is also available.
+</p>
+<p>For example, the following data is complex because it uses anchor and alias (including preceding alias).
+</p>
+<a name="BABEL.data.yaml"></a>
+<div class="program_caption">
+BABEL.data.yaml</div>
+<pre class="program">teams:
+  - &amp;thechildren
+    name:   The Children
+    desc:   Level 7 ESPers
+    chief:  *minamoto                  # preceding alias
+    members:  [*kaoru, *aoi, *shiho]   # preceding aliases
+
+members:
+  - &amp;minamoto
+    name:   Kohichi Minamoto
+    desc:   Scientist
+    team:   *thechildren
+  - &amp;kaoru
+    name:   Kaoru Akashi
+    desc:   Psychokino
+    team:   *thechildren
+  - &amp;aoi
+    name:   Aoi Nogami
+    desc:   Teleporter
+    team:   *thechildren
+  - &amp;shiho
+    name:   Shiho Sannomiya
+    desc:   Psycometrer
+    team:   *thechildren
+</pre>
+<p>Here is the schema definition.
+(Notice that 'class:' constraint is avaialbe only with rule which type is 'map'.)
+</p>
+<a name="BABEL.schema.yaml"></a>
+<div class="program_caption">
+BABEL.schema.yaml</div>
+<pre class="program">type: map
+required: yes
+mapping:
+ "teams":
+    type: seq
+    required: yes
+    sequence:
+      - &amp;team
+        type:  map
+        required: yes
+        <strong>class:  Team</strong>
+        mapping:
+         "name":  {type: str, required: yes, unique: yes}
+         "desc":  {type: str}
+         "chief":  *member       # preceding alias
+         "members":
+            type: seq
+            sequence: [*member]  # preceding alias
+ "members":
+    type: seq
+    required: yes
+    sequence:
+      - &amp;member
+        type:  map
+        required: yes
+        <strong>class:  Member</strong>
+        mapping:
+         "name":  {type: str, required: yes, unique: yes}
+         "desc":  {type: str}
+         "team":  *team
+</pre>
+<p>It is required to define class 'Team' and 'Member' for data-binding.
+Command-line option '-a genclass-ruby' will help you to generate class definitions from schema definition.
+Try 'kwalify -ha genclass-ruby' for more details about 'genclass-ruby' action.
+</p>
+<a name="babel_genclass.result"></a>
+<pre class="terminal">$ kwalify -a genclass-ruby -P -f BABEL.schema.yaml \
+    --hashlike --initialize=false --module=Babel
+require 'kwalify/util/hashlike'
+
+module Babel
+
+  ## 
+  class Team
+    include Kwalify::Util::HashLike
+    attr_accessor :name             # str
+    attr_accessor :desc             # str
+    attr_accessor :chief            # map
+    attr_accessor :members          # seq
+  end
+
+  ## 
+  class Member
+    include Kwalify::Util::HashLike
+    attr_accessor :name             # str
+    attr_accessor :desc             # str
+    attr_accessor :team             # map
+  end
+
+end
+$ kwalify -a genclass-ruby -P -f BABEL.schema.yaml  \
+    --hashlike --initialize=false --module=Babel &gt; models.rb
+</pre>
+<p>Here is the ruby program.
+</p>
+<a name="loadbabel.rb"></a>
+<div class="program_caption">
+loadbabel.rb</div>
+<pre class="program">require 'kwalify'
+<strong>require 'models'</strong>
+
+## load schema definition
+schema = Kwalify::Yaml.load_file('BABEL.schema.yaml',
+                                 :untabify=&gt;true,
+                                 :preceding_alias=&gt;true)
+
+## add module name to 'class:'
+Kwalify::Util.traverse_schema(schema) do |rulehash|
+  if rulehash['class']
+    rulehash['class'] = 'Babel::' + rulehash['class']
+  end
+end
+
+## create validator
+validator = Kwalify::Validator.new(schema)
+
+## parse with data-binding
+parser = Kwalify::Yaml::Parser.new(validator)
+parser.preceding_alias = true
+<strong>parser.data_binding = true</strong>
+ydoc = parser.parse_file('BABEL.data.yaml', :untabify=&gt;true)
+
+## show document
+require 'pp'
+pp ydoc
+</pre>
+<a name="howto5_databinding.result"></a>
+<div class="terminal_caption">
+result</div>
+<pre class="terminal">$ ruby loadbabel.rb
+{"teams"=&gt;
+  [#&lt;Babel::Team:0x53e0f8
+    @chief=
+     #&lt;Babel::Member:0x53d5e0
+      @desc="Scientist",
+      @name="Kohichi Minamoto",
+      @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+    @desc="Level 7 ESPers",
+    @members=
+     [#&lt;Babel::Member:0x53d018
+       @desc="Psychokino",
+       @name="Kaoru Akashi",
+       @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+      #&lt;Babel::Member:0x53ca50
+       @desc="Teleporter",
+       @name="Aoi Nogami",
+       @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+      #&lt;Babel::Member:0x53c488
+       @desc="Psycometrer",
+       @name="Shiho Sannomiya",
+       @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;],
+    @name="The Children"&gt;],
+ "members"=&gt;
+  [#&lt;Babel::Member:0x53d5e0
+    @desc="Scientist",
+    @name="Kohichi Minamoto",
+    @team=
+     #&lt;Babel::Team:0x53e0f8
+      @chief=#&lt;Babel::Member:0x53d5e0 ...&gt;,
+      @desc="Level 7 ESPers",
+      @members=
+       [#&lt;Babel::Member:0x53d018
+         @desc="Psychokino",
+         @name="Kaoru Akashi",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+        #&lt;Babel::Member:0x53ca50
+         @desc="Teleporter",
+         @name="Aoi Nogami",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+        #&lt;Babel::Member:0x53c488
+         @desc="Psycometrer",
+         @name="Shiho Sannomiya",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;],
+      @name="The Children"&gt;&gt;,
+   #&lt;Babel::Member:0x53d018
+    @desc="Psychokino",
+    @name="Kaoru Akashi",
+    @team=
+     #&lt;Babel::Team:0x53e0f8
+      @chief=
+       #&lt;Babel::Member:0x53d5e0
+        @desc="Scientist",
+        @name="Kohichi Minamoto",
+        @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+      @desc="Level 7 ESPers",
+      @members=
+       [#&lt;Babel::Member:0x53d018 ...&gt;,
+        #&lt;Babel::Member:0x53ca50
+         @desc="Teleporter",
+         @name="Aoi Nogami",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+        #&lt;Babel::Member:0x53c488
+         @desc="Psycometrer",
+         @name="Shiho Sannomiya",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;],
+      @name="The Children"&gt;&gt;,
+   #&lt;Babel::Member:0x53ca50
+    @desc="Teleporter",
+    @name="Aoi Nogami",
+    @team=
+     #&lt;Babel::Team:0x53e0f8
+      @chief=
+       #&lt;Babel::Member:0x53d5e0
+        @desc="Scientist",
+        @name="Kohichi Minamoto",
+        @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+      @desc="Level 7 ESPers",
+      @members=
+       [#&lt;Babel::Member:0x53d018
+         @desc="Psychokino",
+         @name="Kaoru Akashi",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+        #&lt;Babel::Member:0x53ca50 ...&gt;,
+        #&lt;Babel::Member:0x53c488
+         @desc="Psycometrer",
+         @name="Shiho Sannomiya",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;],
+      @name="The Children"&gt;&gt;,
+   #&lt;Babel::Member:0x53c488
+    @desc="Psycometrer",
+    @name="Shiho Sannomiya",
+    @team=
+     #&lt;Babel::Team:0x53e0f8
+      @chief=
+       #&lt;Babel::Member:0x53d5e0
+        @desc="Scientist",
+        @name="Kohichi Minamoto",
+        @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+      @desc="Level 7 ESPers",
+      @members=
+       [#&lt;Babel::Member:0x53d018
+         @desc="Psychokino",
+         @name="Kaoru Akashi",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+        #&lt;Babel::Member:0x53ca50
+         @desc="Teleporter",
+         @name="Aoi Nogami",
+         @team=#&lt;Babel::Team:0x53e0f8 ...&gt;&gt;,
+        #&lt;Babel::Member:0x53c488 ...&gt;],
+      @name="The Children"&gt;&gt;]}
+</pre>
+<br>
+
+
+<br>
+
+
+<a name="actions"></a>
+<h2 class="section1">Actions</h2>
+<p>Kwalify has the command-line '-a <em>action</em>' which perform a certain action to schema definition.
+Currently only the following actions are provided.
+</p>
+<dl class="dl2">
+<dt class="dt2">
+genclass-ruby</dt>
+<dd class="dd2">
+<p>	Generate class definitions in Ruby.
+</p>
+</dd>
+<dt class="dt2">
+genclass-java</dt>
+<dd class="dd2">
+<p>	Generate class definitions in Java.
+</p>
+</dd>
+<dt class="dt2">
+genclass-php</dt>
+<dd class="dd2">
+<p>	Generate class definitions in Ruby.
+</p>
+</dd>
+</dl>
+<p>In fact action name represents template filename.
+For example, action 'genclass-ruby' invokes template file 'kwalify/templates/genclass-ruby.eruby'.
+</p>
+<p>Each action can accept some command-line properties.
+For example, action 'genclass-ruby' can accept the command-line properties '--module=<em>name</em>', '--parent=<em>name</em>', and so on.
+Type 'kwalify -h -a <em>action</em>' to show the list of command-line properties the action can accept.
+</p>
+<p>It is able to add your on action template file.
+The command-line option '-I' (template path) will help you.
+</p>
+<a name="action-genclass"></a>
+<h3 class="section2">Class Definition Generation</h3>
+<p>Command-line option '-a genclass-ruby' or '-a genclass-java' generates class definition
+automatically from schema definition in Ruby or Java.
+</p>
+<p>Assume the following data file and schema definition.
+</p>
+<a name="address_book.yaml"></a>
+<div class="program_caption">
+<code>address_book.yaml</code> : data file</div>
+<pre class="program">groups:
+
+  - name:   family
+    desc:   my family
+
+  - name:   friend
+    desc:   my friends
+
+  - name:   business
+    desc:   those who works together
+
+people:
+
+  - name:   Sumire
+    group:  family
+    birth:  2000-01-01
+    blood:  A
+
+  - name:   Shiina
+    group:  friend
+    birth:  1995-01-01
+    email:  shiina@mail.org
+
+  - name:   Sakura
+    group:  business
+    email:  cherry@mail.net
+    phone:  012-345-6789
+</pre>
+<a name="address_book.schema.yaml"></a>
+<div class="program_caption">
+<code>address_book.schema.yaml</code> : schema definition file</div>
+<pre class="program">type:  map
+<strong>class:  AddressBook</strong>
+desc:  address-book class
+mapping:
+ "groups":
+    type:  seq
+    sequence:
+      - type:  map
+        <strong>class:  Group</strong>
+        desc:  group class
+        mapping:
+         "name":  { type: str,  required: yes }
+         "desc":  { type: str }
+ "people":
+    type:  seq
+    sequence:
+      - type:  map
+        <strong>class:  Person</strong>
+        desc:  person class
+        mapping:
+         "name":  { type: str, required: yes }
+         "desc":  { type: str }
+         "group": { type: str }
+         "email": { type: str, pattern: '/@/' }
+         "phone": { type: str }
+         "birth": { type: date }
+         "blood": { type: str, enum: [A, B, O, AB] }
+         "deleted": { type: bool, <strong>default: false</strong> }
+</pre>
+<a name="action-genclass-ruby"></a>
+<h4 class="section3">Ruby Class Definition</h4>
+<div class="terminal_caption">
+generate class definition</div>
+<pre class="terminal">$ kwalify <strong>-a genclass-ruby</strong> -tf address_book.schema.yaml &gt; address_book.rb
+</pre>
+<a name="address_book.rb"></a>
+<div class="program_caption">
+<code>address_book.rb</code> : generated class definition</div>
+<pre class="program">## address-book class
+class AddressBook
+  def initialize(hash=nil)
+    if hash.nil?
+      return
+    end
+    @groups           = (v=hash['groups']) ? v.map!{|e| e.is_a?(Group) ? e : Group.new(e)} : v
+    @people           = (v=hash['people']) ? v.map!{|e| e.is_a?(Person) ? e : Person.new(e)} : v
+  end
+  attr_accessor :groups           # seq
+  attr_accessor :people           # seq
+end
+
+## group class
+class Group
+  def initialize(hash=nil)
+    if hash.nil?
+      return
+    end
+    @name             = hash['name']
+    @desc             = hash['desc']
+  end
+  attr_accessor :name             # str
+  attr_accessor :desc             # str
+end
+
+## person class
+class Person
+  def initialize(hash=nil)
+    if hash.nil?
+      @deleted          = false
+      return
+    end
+    @name             = hash['name']
+    @desc             = hash['desc']
+    @group            = hash['group']
+    @email            = hash['email']
+    @phone            = hash['phone']
+    @birth            = hash['birth']
+    @blood            = hash['blood']
+    @deleted          = (v=hash['deleted']).nil? ? false : v
+  end
+  attr_accessor :name             # str
+  attr_accessor :desc             # str
+  attr_accessor :group            # str
+  attr_accessor :email            # str
+  attr_accessor :phone            # str
+  attr_accessor :birth            # date
+  attr_accessor :blood            # str
+  attr_accessor :deleted          # bool
+  def deleted?      ;  @deleted      ; end
+end
+</pre>
+<a name="example_address_book.rb"></a>
+<div class="program_caption">
+<code>example_address_book.rb</code> : example code of using address-book.rb</div>
+<pre class="program">require 'address_book'
+require 'yaml'
+require 'pp'
+
+str = File.read('address_book.yaml')
+ydoc = YAML.load(str)
+<strong>addrbook = AddressBook.new(ydoc)</strong>
+
+pp <strong>addrbook.groups</strong>
+pp <strong>addrbook.people</strong>
+</pre>
+<a name="example_address_book_ruby.result"></a>
+<div class="terminal_caption">
+result</div>
+<pre class="terminal">$ ruby example_address_book.rb
+[#&lt;Group:0xddf24 @desc="my family", @name="family"&gt;,
+ #&lt;Group:0xddf10 @desc="my friends", @name="friend"&gt;,
+ #&lt;Group:0xdde84 @desc="those who works together", @name="business"&gt;]
+[#&lt;Person:0xdefdc
+  @birth=#&lt;Date: 4903089/2,0,2299161&gt;,
+  @blood="A",
+  @deleted=false,
+  @desc=nil,
+  @email=nil,
+  @group="family",
+  @name="Sumire",
+  @phone=nil&gt;,
+ #&lt;Person:0xdee9c
+  @birth=#&lt;Date: 4899437/2,0,2299161&gt;,
+  @blood=nil,
+  @deleted=false,
+  @desc=nil,
+  @email="shiina@mail.org",
+  @group="friend",
+  @name="Shiina",
+  @phone=nil&gt;,
+ #&lt;Person:0xde8e8
+  @birth=nil,
+  @blood=nil,
+  @deleted=false,
+  @desc=nil,
+  @email="cherry@mail.net",
+  @group="business",
+  @name="Sakura",
+  @phone="012-345-6789"&gt;]
+</pre>
+<p>Command-line option '<code>-h -a genclass-ruby</code>' shows the commpand-line properties that template can accept.
+</p>
+<a name="option_ha.result"></a>
+<div class="terminal_caption">
+show command-line properties</div>
+<pre class="terminal">$ kwalify -ha genclass-ruby
+  --module=name   :  module name in which class defined
+  --parent=name   :  parent class name
+  --include=name  :  module name which all classes include
+  --initialize=false :  not print initialize() method
+  --hashlike      :  include Kwalify::Util::HashLike module
+</pre>
+<div class="terminal_caption">
+example of command-line properties</div>
+<pre class="terminal">$ kwalify -a genclass-ruby --module=My --hashlike
+</pre>
+<p>If command-line property '--hashlike' (== '--hashlike=true') is specified,
+module Kwalify::Util::HashLike is included for each classes generated.
+That module is defined in 'kwalify/util/hashlike.rb'
+</p>
+<br>
+
+<a name="action-genclass-java"></a>
+<h4 class="section3">Java Class Definition</h4>
+<a name="genclass_java.result"></a>
+<div class="terminal_caption">
+generate java class definition</div>
+<pre class="terminal">$ kwalify <strong>-a genclass-java</strong> -tf address_book.schema.yaml
+generating ./AddressBook.java...done.
+generating ./Group.java...done.
+generating ./Person.java...done.
+</pre>
+<a name="AddressBook.java.expected"></a>
+<div class="program_caption">
+<code>AddressBook.java</code> : generated class definition</div>
+<pre class="program">// generated by kwalify from address_book.schema.yaml
+
+import java.util.*;
+
+/**
+ *  address-book class
+ */
+public class AddressBook {
+
+    private List _groups;
+    private List _people;
+
+    public AddressBook() {}
+
+    public AddressBook(Map map) {
+        List seq;
+        Object obj;
+        if ((seq = (List)map.get("groups")) != null) {
+            for (int i = 0; i &lt; seq.size(); i++) {
+                if ((obj = seq.get(i)) instanceof Map) {
+                    seq.set(i, new Group((Map)obj));
+                }
+            }
+        }
+        _groups       = seq;
+        if ((seq = (List)map.get("people")) != null) {
+            for (int i = 0; i &lt; seq.size(); i++) {
+                if ((obj = seq.get(i)) instanceof Map) {
+                    seq.set(i, new Person((Map)obj));
+                }
+            }
+        }
+        _people       = seq;
+    }
+
+    public List getGroups() { return _groups; }
+    public void setGroups(List groups_) { _groups = groups_; }
+    public List getPeople() { return _people; }
+    public void setPeople(List people_) { _people = people_; }
+}
+</pre>
+<a name="Group.java.expected"></a>
+<div class="program_caption">
+<code>Group.java</code> : generated class definition</div>
+<pre class="program">// generated by kwalify from address_book.schema.yaml
+
+import java.util.*;
+
+/**
+ *  group class
+ */
+public class Group {
+
+    private String _name;
+    private String _desc;
+
+    public Group() {}
+
+    public Group(Map map) {
+        _name         = (String)map.get("name");
+        _desc         = (String)map.get("desc");
+    }
+
+    public String getName() { return _name; }
+    public void setName(String name_) { _name = name_; }
+    public String getDesc() { return _desc; }
+    public void setDesc(String desc_) { _desc = desc_; }
+}
+</pre>
+<a name="Person.java.expected"></a>
+<div class="program_caption">
+<code>Person.java</code> : generated class definition</div>
+<pre class="program">// generated by kwalify from address_book.schema.yaml
+
+import java.util.*;
+
+/**
+ *  person class
+ */
+public class Person {
+
+    private String _name;
+    private String _desc;
+    private String _group;
+    private String _email;
+    private String _phone;
+    private Date _birth;
+    private String _blood;
+
+    public Person() {}
+
+    public Person(Map map) {
+        _name         = (String)map.get("name");
+        _desc         = (String)map.get("desc");
+        _group        = (String)map.get("group");
+        _email        = (String)map.get("email");
+        _phone        = (String)map.get("phone");
+        _birth        = (Date)map.get("birth");
+        _blood        = (String)map.get("blood");
+    }
+
+    public String getName() { return _name; }
+    public void setName(String name_) { _name = name_; }
+    public String getDesc() { return _desc; }
+    public void setDesc(String desc_) { _desc = desc_; }
+    public String getGroup() { return _group; }
+    public void setGroup(String group_) { _group = group_; }
+    public String getEmail() { return _email; }
+    public void setEmail(String email_) { _email = email_; }
+    public String getPhone() { return _phone; }
+    public void setPhone(String phone_) { _phone = phone_; }
+    public Date getBirth() { return _birth; }
+    public void setBirth(Date birth_) { _birth = birth_; }
+    public String getBlood() { return _blood; }
+    public void setBlood(String blood_) { _blood = blood_; }
+}
+</pre>
+<a name="ExampleAddressBook.java"></a>
+<div class="program_caption">
+<code>ExampleAddressBook.java</code> : example code of using *.java</div>
+<pre class="program">import java.util.*;
+import kwalify.*;
+
+public class ExampleAddressBook {
+    public static void main(String args[]) throws Exception {
+        // read schema
+        String schema_str = Util.readFile("address_book.schema.yaml");
+        schema_str = Util.untabify(schema_str);
+        Object schema = new YamlParser(schema_str).parse();
+
+        // read document file
+        String document_str = Util.readFile("address_book.yaml");
+        document_str = Util.untabify(document_str);
+        YamlParser parser = new YamlParser(document_str);
+        Object document = parser.parse();
+
+        // create address book object
+        AddressBook addrbook = new AddressBook((Map)document);
+
+        // show groups
+        List groups = addrbook.getGroups();
+        if (groups != null) {
+            for (Iterator it = groups.iterator(); it.hasNext(); ) {
+                Group group = (Group)it.next();
+                System.out.println("group name: " + group.getName());
+                System.out.println("group desc: " + group.getDesc());
+                System.out.println();
+            }
+        }
+
+        // show people
+        List people = addrbook.getPeople();
+        if (people != null) {
+            for (Iterator it = people.iterator(); it.hasNext(); ) {
+                Person person = (Person)it.next();
+                System.out.println("person name:  " + person.getName());
+                System.out.println("person group: " + person.getGroup());
+                System.out.println("person email: " + person.getEmail());
+                System.out.println("person phone: " + person.getPhone());
+                System.out.println("person blood: " + person.getBlood());
+                System.out.println("person birth: " + person.getBirth());
+                System.out.println();
+            }
+        }
+    }
+
+}
+</pre>
+<a name="example_address_book_java.result"></a>
+<div class="terminal_caption">
+result</div>
+<pre class="terminal">$ javac -classpath '.:kwalify.jar' *.java
+$ java  -classpath '.:kwalify.jar' ExampleAddressBook
+group name: family
+group desc: my family
+
+group name: friend
+group desc: my friends
+
+group name: business
+group desc: those who works together
+
+person name:  Sumire
+person group: family
+person email: null
+person phone: null
+person blood: A
+person birth: Tue Feb 01 00:00:00 JST 2000
+
+person name:  Shiina
+person group: friend
+person email: shiina@mail.org
+person phone: null
+person blood: null
+person birth: Wed Feb 01 00:00:00 JST 1995
+
+person name:  Sakura
+person group: business
+person email: cherry@mail.net
+person phone: 012-345-6789
+person blood: null
+person birth: null
+
+</pre>
+<p>Command-line option '<code>-h -a genclass-java</code>' shows the commpand-line properties that template can accept.
+</p>
+<a name="option_ha_genclass_java.result"></a>
+<div class="terminal_caption">
+show command-line properties</div>
+<pre class="terminal">$ kwalify -ha genclass-java
+  --package=name        :  package name
+  --extends=name        :  class name to extend
+  --implements=name,... :  interface names to implement
+  --dir=path            :  directory to locate output file
+  --basedir=path        :  base directory to locate output file
+  --constructor=false   :  not print initialize() method
+</pre>
+<div class="terminal_caption">
+example of command-line properties</div>
+<pre class="terminal">$ kwalify -a genclass-java --package=com.example.my --implements=Serializable --basedir=src
+</pre>
+<br>
+
+<br>
+
+
+<br>
+
+
+<a name="ref"></a>
+<h2 class="section1">References</h2>
+<a name="ref-usage"></a>
+<h3 class="section2">Usage in Command-Line</h3>
+<div class="terminal_caption">
+</div>
+<pre class="terminal">### usage1: validate YAML document in command-line
+$ kwalify -f schema.yaml document.yaml [document2.yaml ...]
+### usage2: validate schema definition in command-line
+$ kwalify -m schema.yaml [schema2.yaml ...]
+</pre>
+<p>Command-line options:
+</p>
+<dl class="dl3">
+<dt class="dt3"><strong>
+<code>-h</code>, <code>--help</code> </strong></dt>
+<dd class="dd3">
+	Print help message.
+</dd>
+<dt class="dt3"><strong>
+<code>-v</code> </strong></dt>
+<dd class="dd3">
+	Print version.
+</dd>
+<dt class="dt3"><strong>
+<code>-q</code> </strong></dt>
+<dd class="dd3">
+	Quiet mode.
+</dd>
+<dt class="dt3"><strong>
+<code>-s</code> </strong></dt>
+<dd class="dd3">
+	(Obsolete. Use '-q' instead.) Silent mode.
+</dd>
+<dt class="dt3"><strong>
+<code>-f <em>schema.yaml</em></code> </strong></dt>
+<dd class="dd3">
+	Specify schema definition file.
+</dd>
+<dt class="dt3"><strong>
+<code>-m</code> </strong></dt>
+<dd class="dd3">
+	Meta-validation of schema definition.
+</dd>
+<dt class="dt3"><strong>
+<code>-t</code> </strong></dt>
+<dd class="dd3">
+	Expand tab characters to spaces automatically.
+</dd>
+<dt class="dt3"><strong>
+<code>-l</code> </strong></dt>
+<dd class="dd3">
+	Show linenumber on which error found.
+</dd>
+<dt class="dt3"><strong>
+<code>-E</code> </strong></dt>
+<dd class="dd3">
+	Show errors in Emacs-compatible style (implies '-l' option).
+</dd>
+<dt class="dt3"><strong>
+<code>-a action</code> </strong></dt>
+<dd class="dd3">
+	Do action. Currently supported action is 'genclass-ruby' and 'genclass-java'.
+	Try '-ha action' to get help about the action.
+</dd>
+<dt class="dt3"><strong>
+<code>-I path1,path2,...</code> </strong></dt>
+<dd class="dd3">
+	Template path (for '-a').
+</dd>
+<dt class="dt3"><strong>
+<code>-P</code> </strong></dt>
+<dd class="dd3">
+	Enable preceding alias.
+</dd>
+</dl>
+<br>
+
+
+<br>
+
+
+
+   </div>
+
+ </body>
+</html>

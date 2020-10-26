@@ -1,0 +1,11 @@
+$ kwalify -lf schema05.yaml document05b.yaml
+document05b.yaml#0: INVALID
+  - (line 2) [/0/email] 'foo(at)mail.com': not matched to pattern /@/.
+  - (line 3) [/0/password] 'xxx123': too short (length 6 < min 8).
+  - (line 4) [/0/age] 'twenty': not a integer.
+  - (line 5) [/0/blood] 'a': invalid blood value.
+  - (line 7) [/1] key 'name:' is required.
+  - (line 7) [/1/given-name] key 'given-name:' is undefined.
+  - (line 8) [/1/family-name] key 'family-name:' is undefined.
+  - (line 10) [/1/age] '15': too small (< min 18).
+  - (line 12) [/1/birth] '1980/01/01': not a date.

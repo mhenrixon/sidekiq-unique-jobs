@@ -1,0 +1,3 @@
+$ ruby answers-validator.rb document07b.yaml
+*** INVALID!
+4:3 [/answers/1] reason is required when answer is 'bad'.

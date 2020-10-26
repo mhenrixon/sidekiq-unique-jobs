@@ -1,0 +1,54 @@
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/oj-3.10.15/ext/oj
+/Users/mhenriksson/.rubies/ruby-2.6.6/bin/ruby -I /Users/mhenriksson/.rubies/ruby-2.6.6/lib/ruby/2.6.0 -r ./siteconf20201026-45340-mtyjpa.rb extconf.rb
+>>>>> Creating Makefile for ruby version 2.6.6 on x86_64-darwin19 <<<<<
+checking for rb_time_timespec()... yes
+checking for rb_ivar_count()... yes
+checking for rb_ivar_foreach()... yes
+checking for stpcpy()... yes
+checking for rb_data_object_wrap()... yes
+checking for pthread_mutex_init()... yes
+creating Makefile
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/oj-3.10.15/ext/oj
+make "DESTDIR=" clean
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/oj-3.10.15/ext/oj
+make "DESTDIR="
+compiling cache8.c
+compiling circarray.c
+compiling code.c
+compiling compat.c
+compiling custom.c
+compiling dump.c
+compiling dump_compat.c
+compiling dump_leaf.c
+compiling dump_object.c
+compiling dump_strict.c
+compiling err.c
+compiling fast.c
+compiling hash.c
+compiling hash_test.c
+compiling mimic_json.c
+compiling object.c
+compiling odd.c
+compiling oj.c
+compiling parse.c
+compiling rails.c
+compiling reader.c
+compiling resolve.c
+compiling rxclass.c
+compiling saj.c
+compiling scp.c
+compiling sparse.c
+compiling stream_writer.c
+compiling strict.c
+compiling string_writer.c
+compiling trace.c
+compiling util.c
+compiling val_stack.c
+compiling wab.c
+linking shared-object oj/oj.bundle
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/oj-3.10.15/ext/oj
+make "DESTDIR=" install
+/usr/local/bin/ginstall -c -m 0755 oj.bundle ./.gem.20201026-45340-1uh61p/oj

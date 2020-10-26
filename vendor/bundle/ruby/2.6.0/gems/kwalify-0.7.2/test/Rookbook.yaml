@@ -1,0 +1,10 @@
+
+recipes:
+
+  - product:	:diff
+    ingreds:	[ test-parser-yaml.yaml, test-yaml-parser.yaml ]
+    byprods:	[ hoge.yaml, hoge.diff ]
+    method*: |
+	sys "ruby -e 's=ARGF.read(); print s.gsub(/^locations:.*?(?=^\\S)/m,\"\").gsub(/Kwalify::SyntaxError/,\"Kwalify::YamlSyntaxError\")' #{@ingreds[0]} > #{@byprods[0]}"
+	sys! "diff -U5 hoge.yaml #{@ingreds[1]} | tee #{@byprods[1]}"
+	rm @byprods

@@ -1,0 +1,58 @@
+## $Rev$
+## $Date$
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+
+name:      MAIN
+type:      map
+required:  yes
+mapping:   &main-rule
+ "name":   { type: str }
+ "desc":   { type: str }
+ "class":  { type: str }
+ "type":
+    type:      str
+    #required:  yes
+    enum: [ seq, map, str, int, float, number, bool, text,
+            date, time, timestamp, any, scalar ]
+ "required":  { type: bool }    # equivarent to 'not-null'
+ "enum":
+    type:      seq
+    sequence:
+      - type:     scalar
+        unique:   yes
+ "pattern":  { type: str }
+ "assert":   { type: str, pattern: /\bval\b/ }
+ "range":
+    type:      map
+    mapping:
+     "max":    { type: scalar }
+     "min":    { type: scalar }
+     "max-ex": { type: scalar }
+     "min-ex": { type: scalar }
+ "length":
+    type:      map
+    mapping:
+     "max":    { type: int }
+     "min":    { type: int }
+     "max-ex": { type: int }
+     "min-ex": { type: int }
+ "ident":   { type: bool }      # equivarent to 'primary-key' (undocumented)
+ "unique":  { type: bool }
+ "default": { type: scalar }    # used only in action's template
+ "sequence":
+    name:      SEQUENCE
+    type:      seq
+    sequence:
+      - type:      map
+        mapping:   *main-rule
+        name:      MAIN
+        #required:  yes
+ "mapping":
+    name:      MAPPING
+    type:      map
+    mapping:
+      =:
+        type:      map
+        mapping:   *main-rule
+        name:      MAIN
+        #required:  yes

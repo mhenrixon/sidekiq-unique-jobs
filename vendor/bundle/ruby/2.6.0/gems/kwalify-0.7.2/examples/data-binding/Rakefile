@@ -1,0 +1,13 @@
+task :default => 'main'
+
+task 'main' => ['models.rb'] do
+  sh "ruby main.rb"
+end
+
+file 'models.rb' => ['BABEL.schema.yaml'] do
+  sh "kwalify -a genclass-ruby -f BABEL.schema.yaml -tP --hashlike --module=Babel --initialize=false > models.rb"
+end
+
+task 'clean' do
+  rm_f 'models.rb'
+end

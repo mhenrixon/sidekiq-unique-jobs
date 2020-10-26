@@ -1,0 +1,4 @@
+---
+detectors:
+  UncommunicativeMethodName:
+    enabled: false

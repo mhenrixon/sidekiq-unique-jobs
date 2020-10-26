@@ -1,0 +1,63 @@
+teams:
+  - &thechildren
+    name:   The Children
+    desc:   Level 7 ESPers
+    chief:  *minamoto                  # preceding alias
+    members: [*kaoru, *aoi, *shiho]    # preceding alias
+  - &thewildcat
+    name:   The WildCat
+    desc:   Level 6 Esper
+    chief:  *tanizaki                  # preceding alias
+    members: [*naomi]                  # preceding alias
+  - &thehounds
+    name:   The Hounds
+    desc:   Hatsune & Akira
+    chief:  *kojika                    # preceding alias
+    members: [*hatsune, *akira]        # preceding alias
+
+members:
+  - &minamoto
+    name:   Kohichi Minamoto
+    desc:   Scientist
+    team:   *thechildren
+    kind:   normal
+  - &kaoru
+    name:   Kaoru Akashi
+    desc:   Psychokino
+    team:   *thechildren
+    kind:   esper
+  - &aoi
+    name:   Aoi Nogami
+    desc:   Teleporter
+    team:   *thechildren
+    kind:   esper
+  - &shiho
+    name:   Shiho Sannomiya
+    desc:   Psycometrer
+    team:   *thechildren
+    kind:   esper
+  - &tanizaki
+    name:   Ichiro Tanizaki
+    desc:   Hentai Oyaji
+    team:   *thewildcat
+    kind:   normal
+  - &naomi
+    name:   Naomi Umegae
+    desc:   Psychokino
+    team:   *thewildcat
+    kind:   esper
+  - &kojika
+    name:   Keiko Kojika
+    desc:   Naturalist
+    team:   *thehounds
+    kind:   normal
+  - &hatsune
+    name:   Hatsune Inugami
+    desc:   Wolfwoman
+    team:   *thehounds
+    kind:   esper
+  - &akira
+	name:   Akira Yadorigi
+	desc:   Animal Controller
+	team:   *thehounds
+	kind:   esper

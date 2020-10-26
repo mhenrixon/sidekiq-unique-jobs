@@ -1,0 +1,28 @@
+type:  map
+class:  AddressBook
+desc:  address-book class
+mapping:
+ "groups":
+    type:  seq
+    sequence:
+      - type:  map
+        class:  Group
+        desc:  group class
+        mapping:
+         "name":  { type: str,  required: yes }
+         "desc":  { type: str }
+ "people":
+    type:  seq
+    sequence:
+      - type:  map
+        class:  Person
+        desc:  person class
+        mapping:
+         "name":  { type: str, required: yes }
+         "desc":  { type: str }
+         "group": { type: str }
+         "email": { type: str, pattern: '/@/' }
+         "phone": { type: str }
+         "birth": { type: date }
+         "blood": { type: str, enum: [A, B, O, AB] }
+         "deleted": { type: bool, default: false }

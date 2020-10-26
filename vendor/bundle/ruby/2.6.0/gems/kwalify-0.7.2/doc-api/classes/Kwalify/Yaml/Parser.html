@@ -1,0 +1,1538 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Kwalify::Yaml::Parser</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Kwalify::Yaml::Parser</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/kwalify/parser/yaml_rb.html">
+                kwalify/parser/yaml.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../BaseParser.html">
+                Kwalify::BaseParser
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+YAML parser with validator
+</p>
+<p>
+ex.
+</p>
+<pre>
+  schema = YAML.load_file('schema.yaml')
+  require 'kwalify'
+  validator = Kwalify::Validator.new(schema)
+  parser = Kwalify::Yaml::Parser.new(validator)  # validator is optional
+  #parser.preceding_alias = true  # optional
+  #parser.data_binding = true     # optional
+  ydoc = parser.parse_file('data.yaml')
+  errors = parser.errors
+  if errors &amp;&amp; !errors.empty?
+    errors.each do |e|
+      puts &quot;line=#{e.linenum}, path=#{e.path}, mesg=#{e.message}&quot;
+    end
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000071">_getclass</a>&nbsp;&nbsp;
+      <a href="#M000042">_set_error_info</a>&nbsp;&nbsp;
+      <a href="#M000057">_validate_map_value</a>&nbsp;&nbsp;
+      <a href="#M000069">add_to_seq</a>&nbsp;&nbsp;
+      <a href="#M000067">create_mapping</a>&nbsp;&nbsp;
+      <a href="#M000068">create_scalar</a>&nbsp;&nbsp;
+      <a href="#M000066">create_sequence</a>&nbsp;&nbsp;
+      <a href="#M000044">document_start?</a>&nbsp;&nbsp;
+      <a href="#M000046">has_next?</a>&nbsp;&nbsp;
+      <a href="#M000072">location</a>&nbsp;&nbsp;
+      <a href="#M000040">new</a>&nbsp;&nbsp;
+      <a href="#M000047">parse</a>&nbsp;&nbsp;
+      <a href="#M000053">parse_alias</a>&nbsp;&nbsp;
+      <a href="#M000052">parse_anchor</a>&nbsp;&nbsp;
+      <a href="#M000058">parse_block_map</a>&nbsp;&nbsp;
+      <a href="#M000059">parse_block_scalar</a>&nbsp;&nbsp;
+      <a href="#M000056">parse_block_seq</a>&nbsp;&nbsp;
+      <a href="#M000060">parse_block_text</a>&nbsp;&nbsp;
+      <a href="#M000055">parse_block_value</a>&nbsp;&nbsp;
+      <a href="#M000051">parse_documents</a>&nbsp;&nbsp;
+      <a href="#M000048">parse_file</a>&nbsp;&nbsp;
+      <a href="#M000063">parse_flow_map</a>&nbsp;&nbsp;
+      <a href="#M000064">parse_flow_scalar</a>&nbsp;&nbsp;
+      <a href="#M000062">parse_flow_seq</a>&nbsp;&nbsp;
+      <a href="#M000061">parse_flow_value</a>&nbsp;&nbsp;
+      <a href="#M000049">parse_next</a>&nbsp;&nbsp;
+      <a href="#M000050">parse_stream</a>&nbsp;&nbsp;
+      <a href="#M000070">put_to_map</a>&nbsp;&nbsp;
+      <a href="#M000041">reset_parser</a>&nbsp;&nbsp;
+      <a href="#M000054">resolve_preceding_aliases</a>&nbsp;&nbsp;
+      <a href="#M000073">set_errors_linenum</a>&nbsp;&nbsp;
+      <a href="#M000043">skip_spaces_and_comments</a>&nbsp;&nbsp;
+      <a href="#M000045">stream_end?</a>&nbsp;&nbsp;
+      <a href="#M000065">to_scalar</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PRECEDING_ALIAS_PLACEHOLDER</td>
+          <td>=</td>
+          <td class="context-item-value">Object.new    # :nodoc:</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">reset</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">reset_scanner</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">data_binding</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">errors</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">mapping_class</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">preceding_alias</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">sequence_class</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">validator</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000040" class="method-detail">
+        <a name="M000040"></a>
+
+        <div class="method-heading">
+          <a href="#M000040" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(validator=nil, properties={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000040-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000040-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 46</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">validator</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">properties</span>={})
+    <span class="ruby-ivar">@validator</span> = <span class="ruby-identifier">validator</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>) <span class="ruby-operator">?</span> <span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">Validator</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">validator</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">validator</span>
+    <span class="ruby-ivar">@data_binding</span>    = <span class="ruby-identifier">properties</span>[<span class="ruby-identifier">:data_binding</span>]    <span class="ruby-comment cmt"># enable data binding or not</span>
+    <span class="ruby-ivar">@preceding_alias</span> = <span class="ruby-identifier">properties</span>[<span class="ruby-identifier">:preceding_alias</span>] <span class="ruby-comment cmt"># allow preceding alias or not</span>
+    <span class="ruby-ivar">@sequence_class</span>  = <span class="ruby-identifier">properties</span>[<span class="ruby-identifier">:sequence_class</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">Array</span>
+    <span class="ruby-ivar">@mapping_class</span>   = <span class="ruby-identifier">properties</span>[<span class="ruby-identifier">:mapping_class</span>]  <span class="ruby-operator">||</span> <span class="ruby-constant">Hash</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000042" class="method-detail">
+        <a name="M000042"></a>
+
+        <div class="method-heading">
+          <a href="#M000042" class="method-signature">
+          <span class="method-name">_set_error_info</span><span class="method-args">(linenum=@linenum, column=@column) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+def _validate_error(message, path, linenum=@linenum, column=@column)
+</p>
+<pre>
+  #message = _build_message(message_key)
+  error = _error(ValidationError, message.to_s, path, linenum, column)
+  @errors &lt;&lt; error
+</pre>
+<p>
+end private :_validate_error
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000042-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000042-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 90</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">linenum</span>=<span class="ruby-ivar">@linenum</span>, <span class="ruby-identifier">column</span>=<span class="ruby-ivar">@column</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-identifier">len</span> = <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">length</span>
+    <span class="ruby-keyword kw">yield</span>
+    <span class="ruby-identifier">n</span> = <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">len</span>
+    (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">n</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">error</span> = <span class="ruby-ivar">@errors</span>[<span class="ruby-operator">-</span><span class="ruby-identifier">i</span>]
+      <span class="ruby-identifier">error</span>.<span class="ruby-identifier">linenum</span>  <span class="ruby-operator">||=</span> <span class="ruby-identifier">linenum</span>
+      <span class="ruby-identifier">error</span>.<span class="ruby-identifier">column</span>   <span class="ruby-operator">||=</span> <span class="ruby-identifier">column</span>
+      <span class="ruby-identifier">error</span>.<span class="ruby-identifier">filename</span> <span class="ruby-operator">||=</span> <span class="ruby-ivar">@filename</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000057" class="method-detail">
+        <a name="M000057"></a>
+
+        <div class="method-heading">
+          <a href="#M000057" class="method-signature">
+          <span class="method-name">_validate_map_value</span><span class="method-args">(map, map_rule, rule, path, uniq_table, key, val,</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000057-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000057-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 408</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_validate_map_value</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span>, <span class="ruby-comment cmt">#*V</span>
+                       <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>)                                  <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">map_rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>                                                   <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-comment cmt">#_validate_error(&quot;unknown mapping key.&quot;, path)                       #*V</span>
+      <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>) <span class="ruby-keyword kw">do</span>                                <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">error</span> = <span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">ErrorHelper</span>.<span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:key_undefined</span>,        <span class="ruby-comment cmt">#*V</span>
+                                      <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">map</span>, [<span class="ruby-node">&quot;#{key}:&quot;</span>])        <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-ivar">@errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">error</span>                                                   <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-comment cmt">#error.linenum = _linenum                                          #*V</span>
+        <span class="ruby-comment cmt">#error.column  = _column                                           #*V</span>
+      <span class="ruby-keyword kw">end</span>                                                                  <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span>                                                                    <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>) <span class="ruby-keyword kw">do</span>                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">val</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-ivar">@errors</span>, <span class="ruby-ivar">@done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-keyword kw">false</span>)  <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-constant">PRECEDING_ALIAS_PLACEHOLDER</span>)                <span class="ruby-comment cmt">#*V</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000044" class="method-detail">
+        <a name="M000044"></a>
+
+        <div class="method-heading">
+          <a href="#M000044" class="method-signature">
+          <span class="method-name">document_start?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000044-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000044-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 112</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">document_start?</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/---\s/</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@column</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000046" class="method-detail">
+        <a name="M000046"></a>
+
+        <div class="method-heading">
+          <a href="#M000046" class="method-signature">
+          <span class="method-name">has_next?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000046-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000046-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 122</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_next?</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-operator">!</span>(<span class="ruby-identifier">eos?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">stream_end?</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000072" class="method-detail">
+        <a name="M000072"></a>
+
+        <div class="method-heading">
+          <a href="#M000072" class="method-signature">
+          <span class="method-name">location</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000072-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000072-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 795</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">location</span>(<span class="ruby-identifier">path</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">path</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'/'</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@location_table</span>[<span class="ruby-value">-1</span>]    <span class="ruby-comment cmt"># return value is [linenum, column]</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+      <span class="ruby-identifier">items</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">to_scalar</span>(<span class="ruby-identifier">item</span>) }
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>)
+      <span class="ruby-identifier">items</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">to_scalar</span>(<span class="ruby-identifier">item</span>) }
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?/</span>  <span class="ruby-comment cmt"># delete empty string on head</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;path should be Array or String.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">last_item</span> = <span class="ruby-identifier">items</span>.<span class="ruby-identifier">pop</span>()
+    <span class="ruby-identifier">c</span> = <span class="ruby-ivar">@doc</span>                        <span class="ruby-comment cmt"># collection</span>
+    <span class="ruby-identifier">items</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">c</span> = <span class="ruby-identifier">c</span>[<span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_i</span>]
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-identifier">c</span> = <span class="ruby-identifier">c</span>[<span class="ruby-identifier">item</span>]
+      <span class="ruby-keyword kw">elsif</span> (<span class="ruby-identifier">table</span> = <span class="ruby-ivar">@location_table</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">__id__</span>]) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">table</span>[<span class="ruby-identifier">:classobj</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">item</span>)
+          <span class="ruby-identifier">c</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">item</span>)
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value str">&quot;[]=&quot;</span>)
+          <span class="ruby-identifier">c</span> = <span class="ruby-identifier">c</span>[<span class="ruby-identifier">item</span>]
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">assert</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt">#assert false</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;#{path.inspect}: invalid path.&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">collection</span> = <span class="ruby-ivar">@location_table</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">__id__</span>]
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">collection</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">index</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">last_item</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">last_item</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">collection</span>[<span class="ruby-identifier">index</span>]  <span class="ruby-comment cmt"># return value is [linenum, column]</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000047" class="method-detail">
+        <a name="M000047"></a>
+
+        <div class="method-heading">
+          <a href="#M000047" class="method-signature">
+          <span class="method-name">parse</span><span class="method-args">(input=nil, opts={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000047-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000047-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 127</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">input</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">opts</span>={})
+    <span class="ruby-identifier">reset_scanner</span>(<span class="ruby-identifier">input</span>, <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:filename</span>], <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:untabify</span>]) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">input</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">parse_next</span>()
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000053" class="method-detail">
+        <a name="M000053"></a>
+
+        <div class="method-heading">
+          <a href="#M000053" class="method-signature">
+          <span class="method-name">parse_alias</span><span class="method-args">(rule, path, uniq_table, container)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000053-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000053-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 198</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_alias</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-identifier">name</span> = <span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@anchors</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">val</span> = <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>]
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@preceding_alias</span>
+      <span class="ruby-ivar">@preceding_aliases</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">name</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>.<span class="ruby-identifier">dup</span>, <span class="ruby-identifier">container</span>,
+                             <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>]
+      <span class="ruby-identifier">val</span> = <span class="ruby-constant">PRECEDING_ALIAS_PLACEHOLDER</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-node">&quot;*#{name}: anchor not found.&quot;</span>, <span class="ruby-identifier">path</span>,
+                          <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000052" class="method-detail">
+        <a name="M000052"></a>
+
+        <div class="method-heading">
+          <a href="#M000052" class="method-signature">
+          <span class="method-name">parse_anchor</span><span class="method-args">(rule, path, uniq_table, container)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000052-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000052-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 187</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_anchor</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-identifier">name</span> = <span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@anchors</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-node">&quot;&amp;#{name}: anchor duplicated.&quot;</span>, <span class="ruby-identifier">path</span>,
+                          <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">name</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000058" class="method-detail">
+        <a name="M000058"></a>
+
+        <div class="method-heading">
+          <a href="#M000058" class="method-signature">
+          <span class="method-name">parse_block_map</span><span class="method-args">(map, map_rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000058-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000058-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 426</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_block_map</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-identifier">_start_linenum</span> = <span class="ruby-ivar">@linenum</span>                                              <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_start_column</span>  = <span class="ruby-ivar">@column</span>                                               <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">level</span> = <span class="ruby-ivar">@column</span>
+    <span class="ruby-identifier">path</span>.<span class="ruby-identifier">push</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">is_merged</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                   <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">level</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@column</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">scan</span>(<span class="ruby-constant">MAPKEY_PATTERN</span>)
+      <span class="ruby-identifier">key</span> = <span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>)
+      <span class="ruby-identifier">skip_spaces_and_comments</span>()                                           <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">_linenum2</span> = <span class="ruby-ivar">@linenum</span>                                                 <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">_column2</span>  = <span class="ruby-ivar">@column</span>                                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">is_merged</span> = <span class="ruby-identifier">_parse_map_value</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">level</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">is_merged</span>,
+                                   <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>, <span class="ruby-identifier">_linenum2</span>, <span class="ruby-identifier">_column2</span>)
+      <span class="ruby-comment cmt">#skip_spaces_and_comments()</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">path</span>.<span class="ruby-identifier">pop</span>()
+    <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_start_linenum</span>, <span class="ruby-identifier">_start_column</span>) <span class="ruby-keyword kw">do</span>                      <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate_mapping_required_keys</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>,            <span class="ruby-comment cmt">#*V</span>
+                                                 <span class="ruby-identifier">path</span>, <span class="ruby-ivar">@errors</span>)            <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">map_rule</span>                                                        <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">map</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000059" class="method-detail">
+        <a name="M000059"></a>
+
+        <div class="method-heading">
+          <a href="#M000059" class="method-signature">
+          <span class="method-name">parse_block_scalar</span><span class="method-args">(rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000059-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000059-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 463</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_block_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                    <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                     <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">peep</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'&quot;'</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;'&quot;</span>
+      <span class="ruby-identifier">val</span> = <span class="ruby-identifier">scan_string</span>()
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/[ \t]*(?:\#.*)?$/</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/(.*?)[ \t]*(?:\#.*)?$/</span>)
+      <span class="ruby-comment cmt">#str.rstrip!</span>
+      <span class="ruby-identifier">val</span> = <span class="ruby-identifier">to_scalar</span>(<span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>))
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">val</span> = <span class="ruby-identifier">create_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>)                      <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-comment cmt">#_set_error_info(_linenum, _column) do                                 #*V</span>
+    <span class="ruby-comment cmt">#  @validator._validate_unique(val, rule, path, @errors, uniq_table)   #*V</span>
+    <span class="ruby-comment cmt">#end if uniq_table                                                     #*V</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000056" class="method-detail">
+        <a name="M000056"></a>
+
+        <div class="method-heading">
+          <a href="#M000056" class="method-signature">
+          <span class="method-name">parse_block_seq</span><span class="method-args">(seq, seq_rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000056-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000056-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 307</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_block_seq</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-identifier">seq_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-identifier">level</span> = <span class="ruby-ivar">@column</span>
+    <span class="ruby-identifier">rule</span> = <span class="ruby-identifier">seq_rule</span> <span class="ruby-value">? </span><span class="ruby-identifier">seq_rule</span>.<span class="ruby-identifier">sequence</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">path</span>.<span class="ruby-identifier">push</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">i</span> = <span class="ruby-value">0</span>
+    <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                    <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                     <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">uniq_table</span> = <span class="ruby-identifier">rule</span> <span class="ruby-value">? </span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">_uniqueness_check_table</span>() <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>               <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">level</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@column</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/-\s+/</span>)
+      <span class="ruby-identifier">path</span>[<span class="ruby-value">-1</span>] = <span class="ruby-identifier">i</span>
+      <span class="ruby-identifier">skip_spaces_and_comments</span>()                                           <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">_linenum2</span> = <span class="ruby-ivar">@linenum</span>
+      <span class="ruby-identifier">_column2</span>  = <span class="ruby-ivar">@column</span>
+      <span class="ruby-identifier">val</span> = <span class="ruby-identifier">parse_block_value</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">seq</span>)
+      <span class="ruby-identifier">add_to_seq</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">seq</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">_linenum2</span>, <span class="ruby-identifier">_column2</span>)    <span class="ruby-comment cmt"># seq &lt;&lt; val</span>
+      <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>) <span class="ruby-keyword kw">do</span>                                <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">val</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-ivar">@errors</span>, <span class="ruby-ivar">@done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-keyword kw">false</span>) <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-constant">PRECEDING_ALIAS_PLACEHOLDER</span>)              <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">skip_spaces_and_comments</span>()
+      <span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                   <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">path</span>.<span class="ruby-identifier">pop</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">seq</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000060" class="method-detail">
+        <a name="M000060"></a>
+
+        <div class="method-heading">
+          <a href="#M000060" class="method-signature">
+          <span class="method-name">parse_block_text</span><span class="method-args">(column, rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000060-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000060-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 484</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_block_text</span>(<span class="ruby-identifier">column</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                    <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                     <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">indicator</span> = <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/[|&gt;]/</span>)
+    <span class="ruby-identifier">chomping</span> = <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/[-+]/</span>)
+    <span class="ruby-identifier">num</span> = <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\d+/</span>)
+    <span class="ruby-identifier">indent</span> = <span class="ruby-identifier">num</span> <span class="ruby-value">? </span><span class="ruby-identifier">column</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">num</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/[ \t]*(.*?)(\#.*)?\r?\n/</span>)   <span class="ruby-comment cmt"># /[ \t]*(\#.*)?\r?\n/</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-value str">&quot;Syntax Error (line break or comment are expected)&quot;</span>, <span class="ruby-identifier">path</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">s</span> = <span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-identifier">is_folded</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/( *)(.*?)(\r?\n)/</span>)
+      <span class="ruby-identifier">spaces</span> = <span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>)
+      <span class="ruby-identifier">text</span>   = <span class="ruby-identifier">group</span>(<span class="ruby-value">2</span>)
+      <span class="ruby-identifier">nl</span>     = <span class="ruby-identifier">group</span>(<span class="ruby-value">3</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">indent</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spaces</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">column</span>
+          <span class="ruby-identifier">indent</span> = <span class="ruby-identifier">spaces</span>.<span class="ruby-identifier">length</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">text</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nl</span>
+          <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/.*?\n/</span>)
+          <span class="ruby-keyword kw">next</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-ivar">@diagnostic</span> = <span class="ruby-value str">'text indent in block text may be shorter than that of first line or specified column.'</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spaces</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">indent</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">text</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-ivar">@diagnostic</span> = <span class="ruby-value str">'text indent in block text may be shorter than that of first line or specified column.'</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/.*?\n/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">indicator</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'|'</span>
+        <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">spaces</span>[<span class="ruby-identifier">indent</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spaces</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">indent</span>
+        <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">text</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nl</span>
+      <span class="ruby-keyword kw">else</span>  <span class="ruby-comment cmt"># indicator == '&gt;'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">text</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">spaces</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">indent</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\r?\n((\r?\n)+)\z/</span>, <span class="ruby-value str">'\1'</span>)
+            <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">is_folded</span>
+            <span class="ruby-identifier">s</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\r?\n\z/</span>, <span class="ruby-value str">' '</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-comment cmt">#s.sub!(/\r?\n\z/, '') if !s.sub!(/\r?\n(\r?\n)+\z/, '\1') &amp;&amp; is_folded</span>
+          <span class="ruby-identifier">is_folded</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">is_folded</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">spaces</span>[<span class="ruby-identifier">indent</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spaces</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">indent</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">text</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nl</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## chomping</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">chomping</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'+'</span>
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">chomping</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'-'</span>
+      <span class="ruby-identifier">s</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/(\r?\n)+\z/</span>, <span class="ruby-value str">''</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">s</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/(\r?\n)(\r?\n)+\z/</span>, <span class="ruby-value str">'\1'</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-identifier">val</span> = <span class="ruby-identifier">s</span>
+    <span class="ruby-comment cmt">#_set_error_info(_linenum, _column) do                                  #*V</span>
+    <span class="ruby-comment cmt">#  @validator._validate_unique(val, rule, path, @errors, uniq_table)    #*V</span>
+    <span class="ruby-comment cmt">#end if uniq_table                                                      #*V</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000055" class="method-detail">
+        <a name="M000055"></a>
+
+        <div class="method-heading">
+          <a href="#M000055" class="method-signature">
+          <span class="method-name">parse_block_value</span><span class="method-args">(level, rule, path, uniq_table, container)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000055-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000055-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 235</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_block_value</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-comment cmt">## nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@column</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">level</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">eos?</span>
+    <span class="ruby-comment cmt">## anchor and alias</span>
+    <span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\&amp;([-\w]+)/</span>)
+      <span class="ruby-identifier">name</span> = <span class="ruby-identifier">parse_anchor</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\*([-\w]+)/</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">parse_alias</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## type</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/!!?\w+/</span>)
+      <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## sequence</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/-\s+/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">sequence</span>
+        <span class="ruby-comment cmt">#_validate_error(&quot;sequence is not expected.&quot;, path)</span>
+        <span class="ruby-identifier">rule</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">seq</span> = <span class="ruby-identifier">create_sequence</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">seq</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">parse_block_seq</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">seq</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## mapping</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-constant">MAPKEY_PATTERN</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">mapping</span>
+        <span class="ruby-comment cmt">#_validate_error(&quot;mapping is not expected.&quot;, path)</span>
+        <span class="ruby-identifier">rule</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">map</span> = <span class="ruby-identifier">create_mapping</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">map</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">parse_block_map</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">map</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## sequence (flow-style)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\[/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">sequence</span>
+        <span class="ruby-comment cmt">#_validate_error(&quot;sequence is not expected.&quot;, path)</span>
+        <span class="ruby-identifier">rule</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">seq</span> = <span class="ruby-identifier">create_sequence</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">seq</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">parse_flow_seq</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">seq</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## mapping (flow-style)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\{/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">mapping</span>
+        <span class="ruby-comment cmt">#_validate_error(&quot;mapping is not expected.&quot;, path)</span>
+        <span class="ruby-identifier">rule</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">map</span> = <span class="ruby-identifier">create_mapping</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">map</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">parse_flow_map</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">map</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## block text</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/[|&gt;]/</span>)
+      <span class="ruby-identifier">text</span> = <span class="ruby-identifier">parse_block_text</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">text</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## scalar</span>
+    <span class="ruby-identifier">scalar</span> = <span class="ruby-identifier">parse_block_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">scalar</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">scalar</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000051" class="method-detail">
+        <a name="M000051"></a>
+
+        <div class="method-heading">
+          <span class="method-name">parse_documents</span><span class="method-args">(input, opts={}, &amp;block)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Parser.html#M000050">parse_stream</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000048" class="method-detail">
+        <a name="M000048"></a>
+
+        <div class="method-heading">
+          <a href="#M000048" class="method-signature">
+          <span class="method-name">parse_file</span><span class="method-args">(filename, opts={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000048-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000048-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 133</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_file</span>(<span class="ruby-identifier">filename</span>, <span class="ruby-identifier">opts</span>={})
+    <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:filename</span>] = <span class="ruby-identifier">filename</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">parse</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">filename</span>), <span class="ruby-identifier">opts</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000063" class="method-detail">
+        <a name="M000063"></a>
+
+        <div class="method-heading">
+          <a href="#M000063" class="method-signature">
+          <span class="method-name">parse_flow_map</span><span class="method-args">(map, map_rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000063-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000063-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 634</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_flow_map</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-comment cmt">#scan(/\{\s*/)  # not work?</span>
+    <span class="ruby-identifier">_start_linenum</span> = <span class="ruby-ivar">@linenum</span>                                              <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_start_column</span>  = <span class="ruby-ivar">@column</span>                                               <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\{/</span>)
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\}/</span>)
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">path</span>.<span class="ruby-identifier">push</span>(<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">is_merged</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+        <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                 <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scan</span>(<span class="ruby-constant">MAPKEY_PATTERN</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-value str">&quot;mapping key is expected.&quot;</span>, <span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">key</span> = <span class="ruby-identifier">group</span>(<span class="ruby-value">1</span>)
+        <span class="ruby-identifier">skip_spaces_and_comments</span>()
+        <span class="ruby-identifier">_linenum2</span> = <span class="ruby-ivar">@linenum</span>                                               <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">_column2</span>  = <span class="ruby-ivar">@column</span>                                                <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">is_merged</span> = <span class="ruby-identifier">_parse_map_value</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">is_merged</span>,
+                           <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>, <span class="ruby-identifier">_linenum2</span>, <span class="ruby-identifier">_column2</span>)
+        <span class="ruby-comment cmt">#skip_spaces_and_comments()</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/,\s+/</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">path</span>.<span class="ruby-identifier">pop</span>()
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\}/</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-value str">&quot;flow mapping is not closed by '}'.&quot;</span>, <span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_start_linenum</span>, <span class="ruby-identifier">_start_column</span>) <span class="ruby-keyword kw">do</span>                      <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate_mapping_required_keys</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">map_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-ivar">@errors</span>)  <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">map_rule</span>                                                        <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">map</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000064" class="method-detail">
+        <a name="M000064"></a>
+
+        <div class="method-heading">
+          <a href="#M000064" class="method-signature">
+          <span class="method-name">parse_flow_scalar</span><span class="method-args">(rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000064-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000064-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 673</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_flow_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">peep</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                    <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                     <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'&quot;'</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;'&quot;</span>
+      <span class="ruby-identifier">val</span> = <span class="ruby-identifier">scan_string</span>()
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">str</span> = <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/[^,\]\}\#]*/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/,\S/</span>)
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/,\S/</span>)
+          <span class="ruby-identifier">str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/./</span>)
+          <span class="ruby-identifier">str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/[^,\]\}\#]*/</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">str</span>.<span class="ruby-identifier">rstrip!</span>
+      <span class="ruby-identifier">val</span> = <span class="ruby-identifier">to_scalar</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">val</span> = <span class="ruby-identifier">create_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>)                      <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-comment cmt">#_set_error_info(_linenum, _column) do                                  #*V</span>
+    <span class="ruby-comment cmt">#  @validator._validate_unique(val, rule, path, @errors, uniq_table)    #*V</span>
+    <span class="ruby-comment cmt">#end if uniq_table                                                      #*V</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000062" class="method-detail">
+        <a name="M000062"></a>
+
+        <div class="method-heading">
+          <a href="#M000062" class="method-signature">
+          <span class="method-name">parse_flow_seq</span><span class="method-args">(seq, seq_rule, path, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000062-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000062-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 597</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_flow_seq</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-identifier">seq_rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-comment cmt">#scan(/\[\s*/)</span>
+    <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\[/</span>)
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\]/</span>)
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">rule</span> = <span class="ruby-identifier">seq_rule</span> <span class="ruby-value">? </span><span class="ruby-identifier">seq_rule</span>.<span class="ruby-identifier">sequence</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>                         <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">uniq_table</span> = <span class="ruby-identifier">rule</span> <span class="ruby-value">? </span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">_uniqueness_check_table</span>() <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>             <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">path</span>.<span class="ruby-identifier">push</span>(<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">i</span> = <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+        <span class="ruby-identifier">path</span>[<span class="ruby-value">-1</span>] = <span class="ruby-identifier">i</span>
+        <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">_column</span>  = <span class="ruby-ivar">@column</span>                                                 <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">val</span> = <span class="ruby-identifier">parse_flow_value</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">seq</span>)
+        <span class="ruby-identifier">add_to_seq</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">seq</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>)  <span class="ruby-comment cmt"># seq &lt;&lt; val</span>
+        <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>) <span class="ruby-keyword kw">do</span>                              <span class="ruby-comment cmt">#*V</span>
+          <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">val</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-ivar">@errors</span>, <span class="ruby-ivar">@done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-keyword kw">false</span>)  <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-constant">PRECEDING_ALIAS_PLACEHOLDER</span>)            <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-identifier">skip_spaces_and_comments</span>()
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/,\s+/</span>)
+        <span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\]/</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-value str">&quot;sequence item required (or last comma is extra).&quot;</span>, <span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">path</span>.<span class="ruby-identifier">pop</span>()
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\]/</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-value str">&quot;flow sequence is not closed by ']'.&quot;</span>, <span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">seq</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000061" class="method-detail">
+        <a name="M000061"></a>
+
+        <div class="method-heading">
+          <a href="#M000061" class="method-signature">
+          <span class="method-name">parse_flow_value</span><span class="method-args">(rule, path, uniq_table, container)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000061-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000061-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 555</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_flow_value</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-comment cmt">## anchor and alias</span>
+    <span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\&amp;([-\w]+)/</span>)
+      <span class="ruby-identifier">name</span> = <span class="ruby-identifier">parse_anchor</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\*([-\w]+)/</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">parse_alias</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">container</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## type</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/!!?\w+/</span>)
+      <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## sequence</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\[/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">sequence</span>                                            <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-comment cmt">#_validate_error(&quot;sequence is not expected.&quot;, path)                #*V</span>
+        <span class="ruby-identifier">rule</span> = <span class="ruby-keyword kw">nil</span>                                                         <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-keyword kw">end</span>                                                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">seq</span> = <span class="ruby-identifier">create_sequence</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">seq</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">parse_flow_seq</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">seq</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## mapping</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\{/</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rule</span>.<span class="ruby-identifier">mapping</span>                                             <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-comment cmt">#_validate_error(&quot;mapping is not expected.&quot;, path)                 #*V</span>
+        <span class="ruby-identifier">rule</span> = <span class="ruby-keyword kw">nil</span>                                                         <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-keyword kw">end</span>                                                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-identifier">map</span> = <span class="ruby-identifier">create_mapping</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-ivar">@linenum</span>, <span class="ruby-ivar">@column</span>)
+      <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">map</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">parse_flow_map</span>(<span class="ruby-identifier">map</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">map</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt">## scalar</span>
+    <span class="ruby-identifier">scalar</span> = <span class="ruby-identifier">parse_flow_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>)
+    <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">scalar</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">scalar</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000049" class="method-detail">
+        <a name="M000049"></a>
+
+        <div class="method-heading">
+          <a href="#M000049" class="method-signature">
+          <span class="method-name">parse_next</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000049-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000049-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 139</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_next</span>()
+    <span class="ruby-identifier">reset_parser</span>()
+    <span class="ruby-identifier">path</span> = []
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">document_start?</span>()
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/.*\n/</span>)
+      <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">_linenum</span> = <span class="ruby-ivar">@linenum</span>                                                    <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">_column</span> = <span class="ruby-ivar">@column</span>                                                      <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">rule</span> = <span class="ruby-ivar">@validator</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">rule</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>                              <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">uniq_table</span> = <span class="ruby-keyword kw">nil</span>                                                       <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">parent</span> = <span class="ruby-keyword kw">nil</span>                                                           <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">val</span> = <span class="ruby-identifier">parse_block_value</span>(<span class="ruby-value">0</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>) <span class="ruby-keyword kw">do</span>                                  <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">val</span>, <span class="ruby-identifier">rule</span>, [], <span class="ruby-ivar">@errors</span>, <span class="ruby-ivar">@done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-keyword kw">false</span>)  <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span>                                                            <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-identifier">resolve_preceding_aliases</span>(<span class="ruby-identifier">val</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@preceding_alias</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">eos?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">document_start?</span>() <span class="ruby-operator">||</span> <span class="ruby-identifier">stream_end?</span>()
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-value str">&quot;document end expected (maybe invalid tab char found).&quot;</span>, <span class="ruby-identifier">path</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@doc</span> = <span class="ruby-identifier">val</span>
+    <span class="ruby-ivar">@location_table</span>[<span class="ruby-value">-1</span>] = [<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>]
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000050" class="method-detail">
+        <a name="M000050"></a>
+
+        <div class="method-heading">
+          <a href="#M000050" class="method-signature">
+          <span class="method-name">parse_stream</span><span class="method-args">(input, opts={}) {|ydoc)| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000050-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000050-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 166</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_stream</span>(<span class="ruby-identifier">input</span>, <span class="ruby-identifier">opts</span>={}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-identifier">reset_scanner</span>(<span class="ruby-identifier">input</span>, <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:filename</span>], <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:untabify</span>])
+    <span class="ruby-identifier">ydocs</span> = <span class="ruby-identifier">block_given?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> []
+    <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">ydoc</span> = <span class="ruby-identifier">parse_next</span>()
+      <span class="ruby-identifier">ydocs</span> <span class="ruby-value">? </span>(<span class="ruby-identifier">ydocs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ydoc</span>) <span class="ruby-operator">:</span> (<span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">ydoc</span>)
+      <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">eos?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">stream_end?</span>()
+      <span class="ruby-identifier">document_start?</span>() <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;** internal error&quot;</span>
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/.*\n/</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">ydocs</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000041" class="method-detail">
+        <a name="M000041"></a>
+
+        <div class="method-heading">
+          <a href="#M000041" class="method-signature">
+          <span class="method-name">reset_parser</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000041-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000041-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 60</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_parser</span>()
+    <span class="ruby-ivar">@anchors</span> = {}
+    <span class="ruby-ivar">@errors</span> = []
+    <span class="ruby-ivar">@done</span> = {}
+    <span class="ruby-ivar">@preceding_aliases</span> = []
+    <span class="ruby-ivar">@location_table</span> = {}    <span class="ruby-comment cmt"># object_id -&gt; sequence or mapping</span>
+    <span class="ruby-ivar">@doc</span> = <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000054" class="method-detail">
+        <a name="M000054"></a>
+
+        <div class="method-heading">
+          <a href="#M000054" class="method-signature">
+          <span class="method-name">resolve_preceding_aliases</span><span class="method-args">(val)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000054-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000054-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 215</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">resolve_preceding_aliases</span>(<span class="ruby-identifier">val</span>)
+    <span class="ruby-ivar">@preceding_aliases</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">container</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@anchors</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">_syntax_error</span>(<span class="ruby-node">&quot;*#{name}: anchor not found.&quot;</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">key</span> = <span class="ruby-identifier">path</span>[<span class="ruby-value">-1</span>]
+      <span class="ruby-identifier">val</span> = <span class="ruby-ivar">@anchors</span>[<span class="ruby-identifier">name</span>]
+      <span class="ruby-identifier">raise</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-operator">!</span><span class="ruby-identifier">container</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value str">'[]'</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">container</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">equal?</span>(<span class="ruby-constant">PRECEDING_ALIAS_PLACEHOLDER</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">container</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">container</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">val</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">put_to_map</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">container</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">_set_error_info</span>(<span class="ruby-identifier">_linenum</span>, <span class="ruby-identifier">_column</span>) <span class="ruby-keyword kw">do</span>                                <span class="ruby-comment cmt">#*V</span>
+        <span class="ruby-ivar">@validator</span>.<span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">val</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-ivar">@errors</span>, <span class="ruby-ivar">@done</span>, <span class="ruby-keyword kw">false</span>)       <span class="ruby-comment cmt">#*V</span>
+      <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span>                                                          <span class="ruby-comment cmt">#*V</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000073" class="method-detail">
+        <a name="M000073"></a>
+
+        <div class="method-heading">
+          <a href="#M000073" class="method-signature">
+          <span class="method-name">set_errors_linenum</span><span class="method-args">(errors)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000073-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000073-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 834</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_errors_linenum</span>(<span class="ruby-identifier">errors</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">error</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">error</span>.<span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">error</span>.<span class="ruby-identifier">column</span> = <span class="ruby-identifier">location</span>(<span class="ruby-identifier">error</span>.<span class="ruby-identifier">path</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000043" class="method-detail">
+        <a name="M000043"></a>
+
+        <div class="method-heading">
+          <a href="#M000043" class="method-signature">
+          <span class="method-name">skip_spaces_and_comments</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000043-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000043-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 103</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\s+/</span>)
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\#/</span>)
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/.*?\n/</span>)
+      <span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/\s+/</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000045" class="method-detail">
+        <a name="M000045"></a>
+
+        <div class="method-heading">
+          <a href="#M000045" class="method-signature">
+          <span class="method-name">stream_end?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000045-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000045-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 117</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stream_end?</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">match?</span>(<span class="ruby-regexp re">/\.\.\.\s/</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@column</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000065" class="method-detail">
+        <a name="M000065"></a>
+
+        <div class="method-heading">
+          <a href="#M000065" class="method-signature">
+          <span class="method-name">to_scalar</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000065-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000065-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 702</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_scalar</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">str</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>                ;  <span class="ruby-identifier">val</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A-?\d+\.\d+\z/</span>   ;  <span class="ruby-identifier">val</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A-?\d+\z/</span>        ;  <span class="ruby-identifier">val</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A(true|yes)\z/</span>   ;  <span class="ruby-identifier">val</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A(false|no)\z/</span>   ;  <span class="ruby-identifier">val</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A(null|~)\z/</span>     ;  <span class="ruby-identifier">val</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A&quot;(.*)&quot;\z/</span>       ;  <span class="ruby-identifier">val</span> = <span class="ruby-identifier">$1</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A'(.*)'\z/</span>       ;  <span class="ruby-identifier">val</span> = <span class="ruby-identifier">$1</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A:(\w+)\z/</span>       ;  <span class="ruby-identifier">val</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">intern</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A(\d\d\d\d)-(\d\d)-(\d\d)(?: (\d\d):(\d\d):(\d\d))?\z/</span>
+      <span class="ruby-identifier">year</span>, <span class="ruby-identifier">month</span>, <span class="ruby-identifier">day</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$2</span>, <span class="ruby-identifier">$3</span>, <span class="ruby-identifier">$4</span>, <span class="ruby-identifier">$5</span>, <span class="ruby-identifier">$6</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hour</span>
+        <span class="ruby-identifier">val</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">mktime</span>(<span class="ruby-identifier">year</span>, <span class="ruby-identifier">month</span>, <span class="ruby-identifier">day</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">val</span> = <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">year</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">month</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">day</span>.<span class="ruby-identifier">to_i</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">## or</span>
+      <span class="ruby-comment cmt">#params = [$1, $2, $3, $4, $5, $6]</span>
+      <span class="ruby-comment cmt">#val = Time.mktime(*params)</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">val</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">str</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">skip_spaces_and_comments</span>()
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000071" class="method-detail">
+        <a name="M000071"></a>
+
+        <div class="method-heading">
+          <a href="#M000071" class="method-signature">
+          <span class="method-name">_getclass</span><span class="method-args">(classname)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000071-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000071-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 783</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_getclass</span>(<span class="ruby-identifier">classname</span>)
+    <span class="ruby-identifier">mod</span> = <span class="ruby-constant">Object</span>
+    <span class="ruby-identifier">classname</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/::/</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">modname</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">mod</span> = <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">modname</span>)   <span class="ruby-comment cmt"># raises NameError when module not found</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">mod</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000069" class="method-detail">
+        <a name="M000069"></a>
+
+        <div class="method-heading">
+          <a href="#M000069" class="method-signature">
+          <span class="method-name">add_to_seq</span><span class="method-args">(rule, seq, val, linenum, column)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000069-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000069-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 762</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_to_seq</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">seq</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>)
+    <span class="ruby-identifier">seq</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">val</span>
+    <span class="ruby-ivar">@location_table</span>[<span class="ruby-identifier">seq</span>.<span class="ruby-identifier">__id__</span>] <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000067" class="method-detail">
+        <a name="M000067"></a>
+
+        <div class="method-heading">
+          <a href="#M000067" class="method-signature">
+          <span class="method-name">create_mapping</span><span class="method-args">(rule, linenum, column)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000067-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000067-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 743</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_mapping</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">classobj</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@data_binding</span>
+      <span class="ruby-identifier">classobj</span> = <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">classobj</span>
+      <span class="ruby-identifier">map</span> = <span class="ruby-identifier">classobj</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">classobj</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">map</span> = <span class="ruby-ivar">@mapping_class</span>.<span class="ruby-identifier">new</span>   <span class="ruby-comment cmt"># {}</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@location_table</span>[<span class="ruby-identifier">map</span>.<span class="ruby-identifier">__id__</span>] = <span class="ruby-identifier">hash</span> = {}
+    <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">:classobj</span>] = <span class="ruby-identifier">classobj</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">classobj</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">map</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000068" class="method-detail">
+        <a name="M000068"></a>
+
+        <div class="method-heading">
+          <a href="#M000068" class="method-signature">
+          <span class="method-name">create_scalar</span><span class="method-args">(rule, value, linenum, column)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000068-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000068-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 757</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_scalar</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000066" class="method-detail">
+        <a name="M000066"></a>
+
+        <div class="method-heading">
+          <a href="#M000066" class="method-signature">
+          <span class="method-name">create_sequence</span><span class="method-args">(rule, linenum, column)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000066-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000066-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 736</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_sequence</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>)
+    <span class="ruby-identifier">seq</span> = <span class="ruby-ivar">@sequence_class</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@location_table</span>[<span class="ruby-identifier">seq</span>.<span class="ruby-identifier">__id__</span>] = []
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">seq</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000070" class="method-detail">
+        <a name="M000070"></a>
+
+        <div class="method-heading">
+          <a href="#M000070" class="method-signature">
+          <span class="method-name">put_to_map</span><span class="method-args">(rule, map, key, val, linenum, column)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000070-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000070-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/parser/yaml.rb, line 768</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">put_to_map</span>(<span class="ruby-identifier">rule</span>, <span class="ruby-identifier">map</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span>, <span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>)
+    <span class="ruby-comment cmt">#if map.is_a?(Hash)</span>
+    <span class="ruby-comment cmt">#  map[key] = val</span>
+    <span class="ruby-comment cmt">#elsif map.respond_to?(name=&quot;#{key}=&quot;)</span>
+    <span class="ruby-comment cmt">#  map.__send__(name, val)</span>
+    <span class="ruby-comment cmt">#elsif map.respond_to?('[]=')</span>
+    <span class="ruby-comment cmt">#  map[key] = val</span>
+    <span class="ruby-comment cmt">#else</span>
+    <span class="ruby-comment cmt">#  map.instance_variable_set(&quot;@#{key}&quot;, val)</span>
+    <span class="ruby-comment cmt">#end</span>
+    <span class="ruby-identifier">map</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">val</span>
+    <span class="ruby-ivar">@location_table</span>[<span class="ruby-identifier">map</span>.<span class="ruby-identifier">__id__</span>][<span class="ruby-identifier">key</span>] = [<span class="ruby-identifier">linenum</span>, <span class="ruby-identifier">column</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

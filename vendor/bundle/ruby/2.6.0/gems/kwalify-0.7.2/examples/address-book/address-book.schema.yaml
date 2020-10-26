@@ -1,0 +1,45 @@
+##
+## Kwalify schema example for address book
+##
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+##
+## NOTE: 'type:  str' is omitted in this example because 'str' is default type.
+##
+
+type:      seq
+required:  yes
+sequence:
+  - type:      map
+    classname: Person
+    required:  yes
+    mapping:
+     "name":
+        type:      str
+        required:  yes
+        unique:    yes
+     "email":
+        type:      str
+        pattern:   /@/
+     "tel":
+        type:      str
+        pattern:   /^\d+-\d+-\d+$/
+     "birth":
+        type:      date
+     "age":
+        type:      int
+     "zip":
+        type:      str
+        pattern:   /^\d+-\d+$/
+     "addr":
+        type:      str
+     "blood":
+        type:      str
+        enum:
+          - A
+          - B
+          - O
+          - AB
+     "memo":
+        type:      any

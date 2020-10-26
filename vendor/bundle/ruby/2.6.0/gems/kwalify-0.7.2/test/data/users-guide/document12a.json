@@ -1,0 +1,10 @@
+{ "name": "Foo",
+  "email": "foo@mail.com",
+  "age": 20,
+  "gender": "F",
+  "favorite": [
+     "football",
+     "basketball",
+     "baseball"
+  ]
+}

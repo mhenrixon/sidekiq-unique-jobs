@@ -1,0 +1,30 @@
+type: map
+required: yes
+mapping:
+ "teams":
+    type: seq
+    required: yes
+    sequence:
+      - &team
+        type:  map
+        required: yes
+        class:  Team
+        mapping:
+         "name":  {type: str, required: yes, unique: yes}
+         "desc":  {type: str}
+         "chief":  *member       # preceding alias
+         "members":
+            type: seq
+            sequence: [*member]  # preceding alias
+ "members":
+    type: seq
+    required: yes
+    sequence:
+      - &member
+        type:  map
+        required: yes
+        class:  Member
+        mapping:
+         "name":  {type: str, required: yes, unique: yes}
+         "desc":  {type: str}
+         "team":  *team

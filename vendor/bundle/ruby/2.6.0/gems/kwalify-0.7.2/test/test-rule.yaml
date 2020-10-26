@@ -1,0 +1,317 @@
+##
+## $Rev$
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+name:   sequence1
+desc:   basic sequence
+input: |
+  type: seq
+  sequence:
+    - type: str
+#
+---
+name:   mapping1
+desc:   basic mapping
+input: |
+  type:       map
+  mapping:
+   "name":
+      type:      str
+      required:  yes
+   "email":
+      type:      str
+      pattern:   /@/
+   "age":
+      type:      int
+   "birth":
+      type:      date
+#
+---
+name:   seqmap1
+desc:   mapping of sequence
+input: |
+  type:      seq
+  sequence:
+    - type:      map
+      mapping:
+       "name":
+          type:      str
+          required:  true
+       "email":
+          type:      str
+#
+---
+name:  mapseq1
+desc:  mapping of sequence
+input: |
+  type:      map
+  mapping:
+   "company":
+      type:      str
+      required:  yes
+   "email":
+      type:      str
+   "employees":
+      type:      seq
+      sequence:
+        - type:    map
+          mapping:
+           "code":
+              type:      int
+              required:  yes
+           "name":
+              type:      str
+              required:  yes
+           "email":
+              type:      str
+#
+---
+name: unique1
+desc: unique constraint
+input: |
+  type: seq
+  sequence:
+    - type:     map
+      required: yes
+      mapping:
+       "name":
+          type:     str
+          required: yes
+          unique:   yes
+       "email":
+          type:     str
+       "groups":
+          type:     seq
+          sequence:
+            - type: str
+              unique:   yes
+---
+name:  constraints1
+desc:  some constraints
+input: |
+  name:      address-book
+  desc:      Address book
+  type:      seq
+  sequence:
+    - type:      map
+      mapping:
+       "name":
+          type:       str
+          required:   yes
+       "email":
+          type:       str
+          required:   yes
+          pattern:    /@/
+       "password":
+          type:       str
+          length:     { max: 16, min: 8 }
+       "age":
+          type:       int
+          range:      { max: 30, min: 18 }
+          # or assert: 18 <= val && val <= 30
+       "blood":
+          type:       str
+          enum:
+            - A
+            - B
+            - O
+            - AB
+       "birth":
+          type:       date
+       "memo":
+          type:       any
+       "deleted"
+          type:       bool
+          default:    false  
+#
+---
+name:  default1
+desc:  default rule
+input: |
+  type: map
+  mapping:
+   "properties":
+      type: map
+      mapping:
+       =:
+          type: any
+#
+---
+name:  default2
+desc:  default rule #2
+input: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "name":
+          type: str
+          required: yes
+       "email":
+          type: str
+       "birth":
+          type: date
+       =:
+          type: any
+#
+---
+name:  merge1
+desc:  merge rule
+input: |
+  type: map
+  mapping:
+   "group":
+      type: map
+      mapping:
+       "name": &name
+          type: str
+          required: yes
+       "email": &email
+          type: str
+          pattern: /@/
+          required: no
+   "user":
+      type: map
+      mapping:
+       "name":
+          <<: *name             # merge
+          length: { max: 16 }   # append
+       "email":
+          <<: *email            # merge
+          required: yes         # overwrite
+#
+---
+name:  anchor1
+desc:  sharing rule with anchor and alias
+input: |
+  desc:   Bookshelf
+  type:   seq
+  sequence:
+    - type:   map
+      mapping:
+       "title":
+          type:   str
+          required: yes
+       "author":  &persons       # anchor
+          type:   seq
+          sequence:
+            - type: str
+       "translator": *persons     # alias
+       "publisher":
+          type:   str
+       "year":
+          type:   int
+#
+---
+name:  anchor2
+desc:  recursive definition of rule
+input: |
+  &task                  # anchor
+  desc:   WBS
+  type:   map
+  mapping:
+   "name":      { type: str, required: yes }
+   "assigned":  { type: str }
+   "deadline":  { type: date }
+   "subtasks":
+      type:  seq
+      sequence:
+        - *task          # alias
+---
+name: meta_schema
+desc: schema for meta-validator
+#
+input: |
+  name:      MAIN
+  type:      map
+  required:  yes
+  mapping:   &main-rule
+   "name":
+      type:      str
+   "desc":
+      type:      str
+   "type":
+      type:      str
+      #required:  yes
+      enum:
+        - seq
+        #- sequence
+        #- list
+        - map
+        #- mapping
+        #- hash
+        - str
+        #- string
+        - int
+        #- integer
+        - float
+        - number
+        #- numeric
+        - bool
+        #- boolean
+        - text
+        - date
+        - time
+        - timestamp
+        #- object
+        - any
+        - scalar
+        #- collection
+   "required":
+      type:      bool
+   "enum":
+      type:      seq
+      sequence:
+        - type:     scalar
+          unique:   yes
+   "pattern":
+      type:      str
+   "assert":
+      type:      str
+      pattern:   /\bval\b/
+   "range":
+      type:      map
+      mapping:
+       "max":
+          type:     scalar
+       "min":
+          type:     scalar
+       "max-ex":
+          type:     scalar
+       "min-ex":
+          type:     scalar
+   "length":
+      type:      map
+      mapping:
+       "max":
+          type:     int
+       "min":
+          type:     int
+       "max-ex":
+          type:     int
+       "min-ex":
+          type:     int
+   "ident":
+      type:      bool
+   "unique":
+      type:      bool
+   "sequence":
+      name:      SEQUENCE
+      type:      seq
+      sequence:
+        - type:      map
+          mapping:   *main-rule
+          name:      MAIN
+          #required:  yes
+   "mapping":
+      name:      MAPPING
+      type:      map
+      mapping:
+        =:
+          type:      map
+          mapping:   *main-rule
+          name:      MAIN
+          #required:  yes
+

@@ -1,0 +1,27 @@
+groups:
+
+  - name:   family
+    desc:   my family
+
+  - name:   friend
+    desc:   my friends
+
+  - name:   business
+    desc:   those who works together
+
+people:
+
+  - name:   Sumire
+    group:  family
+    birth:  2000-01-01
+    blood:  A
+
+  - name:   Shiina
+    group:  friend
+    birth:  1995-01-01
+    email:  shiina@mail.org
+
+  - name:   Sakura
+    group:  business
+    email:  cherry@mail.net
+    phone:  012-345-6789

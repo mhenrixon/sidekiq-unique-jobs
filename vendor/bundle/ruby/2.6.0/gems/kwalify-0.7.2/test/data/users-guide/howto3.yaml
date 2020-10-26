@@ -1,0 +1,8 @@
+- name: Foo
+  parent: *bar        # preceding alias
+- &bar
+  name: Bar
+  parent: *baz        # preceding alias
+- &baz
+  name: Baz
+  parent: null

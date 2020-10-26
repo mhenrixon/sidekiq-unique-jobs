@@ -1,0 +1,7 @@
+type:  map
+class: Config
+mapping:
+ "host": { type: str, required: true }
+ "port": { type: int }
+ "user": { type: str, required: true }
+ "pass": { type: str, required: true }

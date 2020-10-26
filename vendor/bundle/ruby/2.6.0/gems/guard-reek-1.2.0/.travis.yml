@@ -1,0 +1,17 @@
+language: ruby
+addons:
+  apt:
+    packages:
+      - haveged
+rvm:
+  - 2.1.10
+  - 2.2.7
+  - 2.3.4
+  - jruby-9.0.5.0
+  - jruby-9.1.12.0
+env:
+  global:
+    - RUBY_ENV=test
+  matrix:
+    - REEK_VERSION=3.0
+    - REEK_VERSION=4.0

@@ -1,0 +1,12 @@
+{ "type": "map",
+  "required": true,
+  "mapping": {
+    "name":   { "type": "str", "required": true },
+    "email":  { "type": "str" },
+    "age":    { "type": "int" },
+    "gender": { "type": "str", "enum": ["M", "F"] },
+    "favorite": { "type": "seq",
+                  "sequence": [ { "type": "str" } ]
+                }
+  }
+}

@@ -1,0 +1,214 @@
+require:
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+  - rubocop-thread_safety
+
+inherit_mode:
+  merge:
+    - Exclude  
+    - Include  
+
+AllCops:
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  TargetRubyVersion: 2.5
+  Include:
+    - "Rakefile"
+    - "Gemfile"
+    - "*.gemspec"
+    - 'Rakefile'
+    - 'lib/**/*'
+    - 'bin/**/*'
+    - 'spec/**/*.rb'
+    - '.simplecov'
+  Exclude:
+    - 'bin/setup'
+    - 'Gemfile.lock'
+    - 'gemfiles/**/*'
+    - '**/*.json'
+    - 'vendor/bundle/**/*'
+
+#==============
+#=== LAYOUT ===
+#==============
+
+Layout/EmptyLinesAroundAttributeAccessor: # (0.83)
+  Enabled: true
+
+Layout/LineLength:
+  Enabled: true
+  Max: 125
+
+Layout/SpaceAroundMethodCallOperator: # (0.82)
+  Enabled: true
+
+#============
+#=== LINT ===
+#============
+
+Lint/DeprecatedOpenSSLConstant: # (0.84)
+  Enabled: true
+
+Lint/DuplicateElsifCondition: # (0.88)
+  Enabled: true
+
+Lint/MixedRegexpCaptureTypes: # (0.85)
+  Enabled: true
+
+Lint/BinaryOperatorWithIdenticalOperands: # (0.89)
+  Enabled: true
+
+Lint/DuplicateRescueException: # (0.89)
+  Enabled: true
+
+Lint/EmptyConditionalBody: # (0.89)
+  Enabled: true
+
+Lint/FloatComparison: # (0.89)
+  Enabled: true
+
+Lint/MissingSuper: # (0.89)
+  Enabled: true
+
+Lint/OutOfRangeRegexpRef: # (0.89)
+  Enabled: true
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/SelfAssignment: # (0.89)
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Lint/TopLevelReturnWithArgument: # (0.89)
+  Enabled: true
+
+Lint/UnreachableLoop: # (0.89)
+  Enabled: true
+
+
+#===============
+#=== METRICS ===
+#===============
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/MethodLength:
+  CountComments: false 
+  Max: 12
+
+Metrics/ParameterLists:
+  Enabled: true
+  Max: 5
+  CountKeywordArgs: false
+
+#===================
+#=== PERFORMANCE ===
+#===================
+
+Performance/AncestorsInclude: # (1.7)
+  Enabled: true
+
+Performance/BigDecimalWithNumericArgument: # (1.7)
+  Enabled: true
+
+Performance/RedundantSortBlock: # (1.7)
+  Enabled: true
+
+Performance/RedundantStringChars: # (1.7)
+  Enabled: true
+
+Performance/ReverseFirst: # (1.7)
+  Enabled: true
+
+Performance/SortReverse: # (1.7)
+  Enabled: true
+
+Performance/Squeeze: # (1.7)
+  Enabled: true
+  
+Performance/StringInclude: # (1.7)
+  Enabled: true
+
+#=============
+#=== RSPEC ===
+#=============
+
+RSpec/AlignLeftLetBrace:
+  Enabled: true
+
+RSpec/ExampleLength:
+  Max: 10
+
+#=============
+#=== STYLE ===
+#=============
+
+Style/AccessorGrouping: # (0.87)
+  Enabled: true
+
+Style/ArrayCoercion: # (0.88)
+  Enabled: true
+
+Style/BisectedAttrAccessor: # (0.87)
+  Enabled: true
+
+Style/CaseLikeIf: # (0.88)
+  Enabled: true
+
+Style/ExponentialNotation: # (0.82)
+  Enabled: true
+
+Style/ExplicitBlockArgument: # (0.89)
+  Enabled: true
+
+Style/GlobalStdStream: # (0.89)
+  Enabled: true
+
+Style/HashAsLastArrayItem: # (0.88)
+  Enabled: true
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashLikeCase: # (0.88)
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+  
+Style/HashTransformValues:
+  Enabled: true
+
+Style/OptionalBooleanParameter: # (0.89)
+  Enabled: true
+
+Style/RedundantAssignment: # (0.87)
+  Enabled: true
+
+Style/RedundantFetchBlock: # (0.86)
+  Enabled: true
+
+Style/RedundantFileExtensionInRequire: # (0.88)
+  Enabled: true
+
+Style/RedundantRegexpCharacterClass: # (0.85)
+  Enabled: true
+
+Style/RedundantRegexpEscape: # (0.85)
+  Enabled: true
+
+Style/SingleArgumentDig: # (0.89)
+  Enabled: true
+
+Style/SlicingWithRange: # (0.83)
+  Enabled: true
+
+Style/StringConcatenation: # (0.89)
+  Enabled: true

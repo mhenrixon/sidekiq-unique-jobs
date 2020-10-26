@@ -1,0 +1,21 @@
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/psych-3.2.0/ext/psych
+/Users/mhenriksson/.rubies/ruby-2.6.6/bin/ruby -I /Users/mhenriksson/.rubies/ruby-2.6.6/lib/ruby/2.6.0 -r ./siteconf20201026-45340-97dzwm.rb extconf.rb
+checking for yaml.h... yes
+checking for yaml_get_version() in -lyaml... yes
+creating Makefile
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/psych-3.2.0/ext/psych
+make "DESTDIR=" clean
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/psych-3.2.0/ext/psych
+make "DESTDIR="
+compiling psych.c
+compiling psych_emitter.c
+compiling psych_parser.c
+compiling psych_to_ruby.c
+compiling psych_yaml_tree.c
+linking shared-object psych.bundle
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/psych-3.2.0/ext/psych
+make "DESTDIR=" install
+/usr/local/bin/ginstall -c -m 0755 psych.bundle ./.gem.20201026-45340-hzbkib

@@ -1,0 +1,30 @@
+# Additional configuration for thread_safety cops
+#
+# Without adding these to your rubocop config, these values will be the default.
+
+ThreadSafety/ClassAndModuleAttributes:
+  Description: 'Avoid mutating class and module attributes.'
+  Enabled: true
+
+ThreadSafety/InstanceVariableInClassMethod:
+  Description: 'Avoid using instance variables in class methods.'
+  Enabled: true
+
+ThreadSafety/MutableClassInstanceVariable:
+  Description: 'Do not assign mutable objects to class instance variables.'
+  Enabled: true
+  EnforcedStyle: literals
+  SupportedStyles:
+    # literals: freeze literals assigned to constants
+    # strict: freeze all constants
+    # Strict mode is considered an experimental feature. It has not been updated
+    # with an exhaustive list of all methods that will produce frozen objects so
+    # there is a decent chance of getting some false positives. Luckily, there is
+    # no harm in freezing an already frozen object.
+    - literals
+    - strict
+
+ThreadSafety/NewThread:
+  Description: >-
+                 Avoid starting new threads.
+                 Let a framework like Sidekiq handle the threads.

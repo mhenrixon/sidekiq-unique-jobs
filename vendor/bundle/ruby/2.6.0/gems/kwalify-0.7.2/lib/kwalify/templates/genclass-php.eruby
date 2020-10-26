@@ -1,0 +1,104 @@
+<%
+
+    ###
+    ### $Rev$
+    ### $Release: 0.7.2 $
+    ### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+    ###
+
+    if @describe
+       sb = []
+       sb << "  --namespace=name :  prefix name of class\n"
+       sb << "  --extends=name   :  parent class name\n"
+       sb << "  --inplements=name:  interface name\n"
+       sb << "  --constructor=false :  not print constructor\n"
+       #sb << "  --ggap          :  use generation gap pattern\n"
+       return sb.join
+    end
+
+
+    require 'kwalify/util/ordered-hash'
+
+    def generate_classdef(schema)
+      hash = Kwalify::Util::OrderedHash.new
+      #hash.instance_eval { alias []= add }
+      Kwalify::Util.traverse_schema(schema) do |rulehash|
+        if rulehash['class']
+          arr = _generate_classdef(rulehash)
+          key = rulehash['class']
+          classdef = arr.join()
+          #hash[key] = classdef if !hash.key?(key) || classdef != hash[key]
+          hash[key] = classdef if !hash.key?(key) || classdef.length > hash[key].length
+        end
+      end
+      sb = "<?php\n"
+      sb << "\n"
+      hash.each do |classname, classdef|
+        sb << classdef
+        sb << "\n"
+      end
+      sb << "?>\n"
+      return sb
+    end
+
+
+    def _generate_classdef(rulehash)
+      return nil unless rulehash['class']
+      assert unless rulehash['mapping']
+      classname = rulehash['class']
+      classname = classname + '_' if @properties[:ggap]
+      ns = @properties[:namespace]
+      ns = ns + '_' if ns
+      flag_init = @properties[:constructor] != false
+      v = nil
+      arr = ['']
+      arr     << "/// #{rulehash['desc']}\n"
+      arr     << "class #{ns}#{classname}"
+      arr     << " extends #{v}"     if v = @properties[:extends]
+      arr     << " implements #{v}"  if v = @properties[:implements]
+      arr     << " {\n"
+      arr2 = []   # assign into instance variables
+      rulehash['mapping'].each do |name, map_rulehash|
+        next unless name =~ /\A[a-zA-Z_][-\w]*\z/
+        name2 = name.gsub(/-/, '_')
+        var = "%-10s" % name2
+        len = 10 - name2.length
+        spc = ' ' * (len >= 0 ? len : 0)
+        if map_rulehash.key?('default')
+          arr << "    var $#{name2} = #{map_rulehash['default'].inspect}; // #{map_rulehash['type'] || 'str'}\n"
+        else
+          arr << "    var $#{name2}; #{spc}// #{map_rulehash['type'] || 'str'}\n"
+        end
+        if !flag_init
+          # pass
+        elsif map_rulehash['class']
+          cname = map_rulehash['class']
+          arr2 << "        $this->#{var} = is_array(@$arr['#{name}']) ? new #{cname}($arr['#{name}']) : @$arr['#{name}'];\n"
+        elsif map_rulehash['sequence'] && map_rulehash['sequence'][0]['class']
+          item_rulehash = map_rulehash['sequence'][0]
+          cname = item_rulehash['class']
+	  arr2 << "        if (is_array(@$arr['#{name}']))\n"
+	  arr2 << "            foreach ($arr['#{name}'] as $k=>$v)\n"
+	  arr2 << "                $this->#{name2}[$k] = is_array($v) ? new #{cname}($v) : $v;\n"
+	  arr2 << "        //else\n"
+	  arr2 << "        //    $this->#{var} = @$arr['#{name}'];\n"
+        elsif map_rulehash.key?('default')
+          arr2 << "        if (array_key_exists('#{name}', $arr)) $this->#{name2} = $arr['#{name}'];\n"
+        else
+          arr2 << "        $this->#{var} = @$arr['#{name}'];\n"
+        end
+      end
+      arr      << "    function __construct($arr=NULL) {\n"    if flag_init
+      arr      << "        if (! $arr) return;\n"            if flag_init
+      arr.concat(arr2)
+      arr      << "    }\n"   if flag_init
+      if @properties[:ggap]
+        arr   << "}\n"
+        arr   << "class #{ns}#{rulehash['class']} extends #{ns}#{classname}\n"
+      end
+      arr     << "}\n"
+      return arr
+    end
+
+%>
+<%= generate_classdef(@schema) %>

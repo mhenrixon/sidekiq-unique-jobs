@@ -1,0 +1,15 @@
+*.log
+.DS_Store
+coverage
+*.swp
+*.swn
+*.swm
+*.swo
+mkmf.log
+test/rcov/*
+.project
+.bundle
+pkg/*
+run_example_playground
+examples/hello_pusher_playground.rb
+Gemfile.lock

@@ -1,0 +1,21 @@
+# encoding: utf-8
+
+$:.unshift File.expand_path('../lib', __FILE__)
+require '<%= gem_path %>/version'
+
+Gem::Specification.new do |s|
+  s.name          = '<%= gem_name %>'
+  s.version       = <%= module_names.join('::') %>::VERSION
+  s.authors       = ['<%= author %>']
+  s.email         = ['<%= email %>']
+  s.homepage      = '<%= homepage %>'
+  s.licenses      = [<%= licenses.map { |license| "'#{license}'" }.join(', ') %>]
+  s.summary       = '<%= summary %>'
+  s.description   = '<%= description %>'
+
+  s.files         = <%= files %><% if bin_files %>
+  s.executables   = <%= bin_files %>
+<% end %>
+  s.platform      = Gem::Platform::RUBY
+  s.require_paths = ['lib']
+end

@@ -1,0 +1,4 @@
+$ kwalify -a genclass-java -tf address_book.schema.yaml
+generating ./AddressBook.java...done.
+generating ./Group.java...done.
+generating ./Person.java...done.

@@ -1,0 +1,8 @@
+# Also see https://github.com/github/gitignore/blob/master/Ruby.gitignore
+
+Gemfile.lock
+*.gem
+.bundle
+.env
+rdoc
+tmp

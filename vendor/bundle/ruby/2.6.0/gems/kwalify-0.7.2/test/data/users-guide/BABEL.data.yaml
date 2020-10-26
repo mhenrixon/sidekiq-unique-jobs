@@ -1,0 +1,24 @@
+teams:
+  - &thechildren
+    name:   The Children
+    desc:   Level 7 ESPers
+    chief:  *minamoto                  # preceding alias
+    members:  [*kaoru, *aoi, *shiho]   # preceding aliases
+
+members:
+  - &minamoto
+    name:   Kohichi Minamoto
+    desc:   Scientist
+    team:   *thechildren
+  - &kaoru
+    name:   Kaoru Akashi
+    desc:   Psychokino
+    team:   *thechildren
+  - &aoi
+    name:   Aoi Nogami
+    desc:   Teleporter
+    team:   *thechildren
+  - &shiho
+    name:   Shiho Sannomiya
+    desc:   Psycometrer
+    team:   *thechildren

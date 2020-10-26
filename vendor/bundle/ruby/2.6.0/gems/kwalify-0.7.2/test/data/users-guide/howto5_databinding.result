@@ -1,0 +1,111 @@
+$ ruby loadbabel.rb
+{"teams"=>
+  [#<Babel::Team:0x53e0f8
+    @chief=
+     #<Babel::Member:0x53d5e0
+      @desc="Scientist",
+      @name="Kohichi Minamoto",
+      @team=#<Babel::Team:0x53e0f8 ...>>,
+    @desc="Level 7 ESPers",
+    @members=
+     [#<Babel::Member:0x53d018
+       @desc="Psychokino",
+       @name="Kaoru Akashi",
+       @team=#<Babel::Team:0x53e0f8 ...>>,
+      #<Babel::Member:0x53ca50
+       @desc="Teleporter",
+       @name="Aoi Nogami",
+       @team=#<Babel::Team:0x53e0f8 ...>>,
+      #<Babel::Member:0x53c488
+       @desc="Psycometrer",
+       @name="Shiho Sannomiya",
+       @team=#<Babel::Team:0x53e0f8 ...>>],
+    @name="The Children">],
+ "members"=>
+  [#<Babel::Member:0x53d5e0
+    @desc="Scientist",
+    @name="Kohichi Minamoto",
+    @team=
+     #<Babel::Team:0x53e0f8
+      @chief=#<Babel::Member:0x53d5e0 ...>,
+      @desc="Level 7 ESPers",
+      @members=
+       [#<Babel::Member:0x53d018
+         @desc="Psychokino",
+         @name="Kaoru Akashi",
+         @team=#<Babel::Team:0x53e0f8 ...>>,
+        #<Babel::Member:0x53ca50
+         @desc="Teleporter",
+         @name="Aoi Nogami",
+         @team=#<Babel::Team:0x53e0f8 ...>>,
+        #<Babel::Member:0x53c488
+         @desc="Psycometrer",
+         @name="Shiho Sannomiya",
+         @team=#<Babel::Team:0x53e0f8 ...>>],
+      @name="The Children">>,
+   #<Babel::Member:0x53d018
+    @desc="Psychokino",
+    @name="Kaoru Akashi",
+    @team=
+     #<Babel::Team:0x53e0f8
+      @chief=
+       #<Babel::Member:0x53d5e0
+        @desc="Scientist",
+        @name="Kohichi Minamoto",
+        @team=#<Babel::Team:0x53e0f8 ...>>,
+      @desc="Level 7 ESPers",
+      @members=
+       [#<Babel::Member:0x53d018 ...>,
+        #<Babel::Member:0x53ca50
+         @desc="Teleporter",
+         @name="Aoi Nogami",
+         @team=#<Babel::Team:0x53e0f8 ...>>,
+        #<Babel::Member:0x53c488
+         @desc="Psycometrer",
+         @name="Shiho Sannomiya",
+         @team=#<Babel::Team:0x53e0f8 ...>>],
+      @name="The Children">>,
+   #<Babel::Member:0x53ca50
+    @desc="Teleporter",
+    @name="Aoi Nogami",
+    @team=
+     #<Babel::Team:0x53e0f8
+      @chief=
+       #<Babel::Member:0x53d5e0
+        @desc="Scientist",
+        @name="Kohichi Minamoto",
+        @team=#<Babel::Team:0x53e0f8 ...>>,
+      @desc="Level 7 ESPers",
+      @members=
+       [#<Babel::Member:0x53d018
+         @desc="Psychokino",
+         @name="Kaoru Akashi",
+         @team=#<Babel::Team:0x53e0f8 ...>>,
+        #<Babel::Member:0x53ca50 ...>,
+        #<Babel::Member:0x53c488
+         @desc="Psycometrer",
+         @name="Shiho Sannomiya",
+         @team=#<Babel::Team:0x53e0f8 ...>>],
+      @name="The Children">>,
+   #<Babel::Member:0x53c488
+    @desc="Psycometrer",
+    @name="Shiho Sannomiya",
+    @team=
+     #<Babel::Team:0x53e0f8
+      @chief=
+       #<Babel::Member:0x53d5e0
+        @desc="Scientist",
+        @name="Kohichi Minamoto",
+        @team=#<Babel::Team:0x53e0f8 ...>>,
+      @desc="Level 7 ESPers",
+      @members=
+       [#<Babel::Member:0x53d018
+         @desc="Psychokino",
+         @name="Kaoru Akashi",
+         @team=#<Babel::Team:0x53e0f8 ...>>,
+        #<Babel::Member:0x53ca50
+         @desc="Teleporter",
+         @name="Aoi Nogami",
+         @team=#<Babel::Team:0x53e0f8 ...>>,
+        #<Babel::Member:0x53c488 ...>],
+      @name="The Children">>]}

@@ -1,0 +1,4 @@
+$ kwalify -lf schema14.yaml document14b.yaml
+document14b.yaml#0: INVALID
+  - (line 2) [/value2] '1.1': too large (> max 1).
+  - (line 3) [/value3] '-2.0': too small (< min -1).

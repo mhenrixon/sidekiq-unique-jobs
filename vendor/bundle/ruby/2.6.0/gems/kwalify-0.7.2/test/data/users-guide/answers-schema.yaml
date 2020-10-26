@@ -1,0 +1,12 @@
+type:      map
+mapping:
+ "answers":
+    type:      seq
+    sequence:
+      - type:      map
+        name:        Answer
+        mapping:
+         "name":   { type: str, required: yes }
+         "answer": { type: str, required: yes,
+                     enum: [good, not bad, bad] }
+         "reason": { type: str }

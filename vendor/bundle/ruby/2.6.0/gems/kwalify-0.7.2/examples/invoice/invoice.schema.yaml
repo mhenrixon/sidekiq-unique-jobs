@@ -1,0 +1,43 @@
+###
+### Kwalify schema example for invoice
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+type:      map
+classname: Invoice
+required:  yes
+mapping:
+ "invoice":  { type: int, required: yes, unique: yes }
+ "date":     { type: date, required: yes }
+ "bill-to":  &customer
+    type:      map
+    required:  yes
+    mapping:
+     "given":      { type: str, required: yes }
+     "family":     { type: str, required: yes }
+     "address":
+        type:      map
+        required:  yes
+        mapping:
+         "lines":  { type: str }
+         "city":   { type: str }
+         "state":  { type: str }
+         "postal": { type: int }
+ "ship-to":   *customer
+ "product":
+    type:      seq
+    required:  yes
+    sequence:
+      - type:      map
+        required:  yes
+        mapping:
+         "sku":         { type: str, required: yes, pattern: '/^[A-Z0-9]+$/' }
+         "quantity":    { type: int, required: yes }
+         "description": { type: str }
+         "price":       { type: float }
+ "tax":      { type: float }
+ "total":    { type: float, required: yes }
+ "comments": { type: str }

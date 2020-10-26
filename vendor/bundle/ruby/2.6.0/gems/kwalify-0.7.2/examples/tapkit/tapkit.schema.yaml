@@ -1,0 +1,146 @@
+##
+## Kwalify schema example for TapKit
+##
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+
+type: map
+classname: Schema
+mapping:
+ "adapter_name":
+    type: str
+    enum:
+      - DBI
+      - CSV
+      #- MySQL
+      #- PostgreSQL
+      #- OpenBase
+ "connection":
+    type: map
+    classname: Connection
+    mapping:
+     "url":
+        type: str
+        required: yes
+     "user":
+        type: str
+     "password":
+        type: str
+     "encoding":
+        type: str
+        enum:
+          - jis
+          - sjis
+          - euc
+     "path":
+        type: str
+ "entities":
+    type: seq
+    sequence:
+      - type: map
+        classname: Entity
+        mapping:
+         "name":
+            type: str
+            required: yes
+            unique: yes
+         "external_name":
+            type: str
+            required: yes
+         "class_properties":
+            type: seq
+            required: yes
+            sequence:
+              - type: str
+         "primary_key_attributes":
+            type: seq
+            required: yes
+            sequence:
+              - type: str
+                unique: yes
+         "attributes":
+            type: seq
+            required: yes
+            sequence:
+              - type: map
+                classname: Attribute
+                mapping:
+                 "name":
+                    type: str
+                    required: yes
+                    unique: yes
+                 "column_name":
+                    type: str
+                    required: yes
+                 "class_name":
+                    type: str
+                    enum:
+                      - String
+                      - Integer
+                      - Float
+                      - Date
+                      - Time
+                      - Timestamp
+                      - Boolean
+                 "external_type":
+                    type: str
+                    required: yes
+                    enum:   [
+                      char, character, varchar, char varying, character varying,
+                      nchar, national char, national character,
+                      national character varying, bit, bit varying, 
+                      int, integer, smallint, interval,
+                      numeric, decimal, dec, float, real, double presicion,
+                      date, time, timestamp
+                      ]
+                 "allow_null":
+                    type: bool
+                 "read_only":
+                    type: bool
+                 "width":
+                    type: int
+                 "factory_method":
+                    type: str
+                 "convertion_method":
+                    type: str
+         "relationships":
+            type: seq
+            sequence:
+              - type: map
+                classname: Relationship
+                mapping:
+                 "name":
+                    type: str
+                    required: yes
+                    unique: yes
+                 "destination":
+                    type: str
+                    required: yes
+                 "joins":
+                    type: seq
+                    required: yes
+                    sequence:
+                      - type: map
+                        mapping:
+                         "source":
+                            type: str
+                         "destination":
+                            type: str
+                 "join-semantic":
+                    type: str
+                    enum:
+                      - inner
+                      - left_outer
+                      - right_outer
+                      - full_outer
+                 "to_many":
+                    type: bool
+                 "mandatory":
+                    type: bool
+                 "delete_rule":
+                    type: str
+                    enum:
+                      - nullify
+                      - cascade
+                      - deny

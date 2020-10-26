@@ -1,0 +1,64 @@
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/hiredis-0.6.3/ext/hiredis_ext
+/Users/mhenriksson/.rubies/ruby-2.6.6/bin/ruby -I /Users/mhenriksson/.rubies/ruby-2.6.6/lib/ruby/2.6.0 -r ./siteconf20201026-45340-1dw797z.rb extconf.rb
+checking for sys/socket.h... yes
+cc -std=c99 -pedantic -c -O3 -fPIC  -Wall -W -Wstrict-prototypes -Wwrite-strings -g -ggdb net.c
+cc -std=c99 -pedantic -c -O3 -fPIC  -Wall -W -Wstrict-prototypes -Wwrite-strings -g -ggdb hiredis.c
+cc -std=c99 -pedantic -c -O3 -fPIC  -Wall -W -Wstrict-prototypes -Wwrite-strings -g -ggdb sds.c
+cc -std=c99 -pedantic -c -O3 -fPIC  -Wall -W -Wstrict-prototypes -Wwrite-strings -g -ggdb async.c
+cc -std=c99 -pedantic -c -O3 -fPIC  -Wall -W -Wstrict-prototypes -Wwrite-strings -g -ggdb read.c
+ar rcs libhiredis.a net.o hiredis.o sds.o async.o read.o
+checking for rb_thread_fd_select()... yes
+creating Makefile
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/hiredis-0.6.3/ext/hiredis_ext
+make "DESTDIR=" clean
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/hiredis-0.6.3/ext/hiredis_ext
+make "DESTDIR="
+compiling connection.c
+In file included from connection.c:3:
+In file included from ./hiredis_ext.h:11:
+In file included from ./../../vendor/hiredis/hiredis.h:40:
+./../../vendor/hiredis/sds.h:145:34: warning: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'uint32_t' (aka 'unsigned int') [-Wshorten-64-to-32]
+            SDS_HDR(32,s)->len = newlen;
+                               ~ ^~~~~~
+./../../vendor/hiredis/sds.h:209:36: warning: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'uint32_t' (aka 'unsigned int') [-Wshorten-64-to-32]
+            SDS_HDR(32,s)->alloc = newlen;
+                                 ~ ^~~~~~
+connection.c:45:58: warning: function 'parent_context_raise' could be declared with attribute 'noreturn' [-Wmissing-noreturn]
+static void parent_context_raise(redisParentContext *pc) {
+                                                         ^
+connection.c:458:24: warning: passing 'volatile VALUE *' (aka 'volatile unsigned long *') to parameter of type 'VALUE *' (aka 'unsigned long *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+    if (__get_reply(pc,&reply) == -1)
+                       ^~~~~~
+connection.c:375:55: note: passing argument to parameter 'reply' here
+static int __get_reply(redisParentContext *pc, VALUE *reply) {
+                                                      ^
+4 warnings generated.
+compiling hiredis_ext.c
+In file included from hiredis_ext.c:4:
+In file included from ./hiredis_ext.h:11:
+In file included from ./../../vendor/hiredis/hiredis.h:40:
+./../../vendor/hiredis/sds.h:145:34: warning: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'uint32_t' (aka 'unsigned int') [-Wshorten-64-to-32]
+            SDS_HDR(32,s)->len = newlen;
+                               ~ ^~~~~~
+./../../vendor/hiredis/sds.h:209:36: warning: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'uint32_t' (aka 'unsigned int') [-Wshorten-64-to-32]
+            SDS_HDR(32,s)->alloc = newlen;
+                                 ~ ^~~~~~
+2 warnings generated.
+compiling reader.c
+In file included from reader.c:2:
+In file included from ./hiredis_ext.h:11:
+In file included from ./../../vendor/hiredis/hiredis.h:40:
+./../../vendor/hiredis/sds.h:145:34: warning: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'uint32_t' (aka 'unsigned int') [-Wshorten-64-to-32]
+            SDS_HDR(32,s)->len = newlen;
+                               ~ ^~~~~~
+./../../vendor/hiredis/sds.h:209:36: warning: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'uint32_t' (aka 'unsigned int') [-Wshorten-64-to-32]
+            SDS_HDR(32,s)->alloc = newlen;
+                                 ~ ^~~~~~
+2 warnings generated.
+linking shared-object hiredis/ext/hiredis_ext.bundle
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/hiredis-0.6.3/ext/hiredis_ext
+make "DESTDIR=" install
+/usr/local/bin/ginstall -c -m 0755 hiredis_ext.bundle ./.gem.20201026-45340-rdbx05/hiredis/ext

@@ -1,0 +1,738 @@
+##
+## $Rev$
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+- name:  action_genclass_ruby1
+  desc:  action 'genclass-ruby'
+  action: genclass-ruby
+  method: action
+  args:  [ -a, genclass-ruby, -tf, action_genclass_ruby1.schema ]
+  schema: &action_schema1 |
+	type:  map
+	class: Context
+	mapping:
+	 "groups":
+	    type:  seq
+	    sequence:
+	      - type:  map
+	        class: Group
+	        mapping:
+		 "name":
+		    type:  str
+		    required:  yes
+		 "desc":
+		    type:  str
+		 "owner": &userschema
+		    type:  map
+		    class: User
+		    mapping:
+		     "name":
+		        type:  str
+			required: yes
+	             "desc":
+		        type:  str
+	             "gender":
+		        type:  bool
+		     "mail":
+		        type:   str
+		     "manager": *userschema
+		     "deleted":
+		        type:   bool
+		        default: false
+	 "users":
+	    type: seq
+	    sequence:
+	      - *userschema
+  document: &action_document1 |
+	groups:
+	  - name:	admin
+	    desc:	administrator group
+	    owner: &root
+	      name:	root
+	      desc:	root user
+	  - name:       users
+	    desc:	user group
+	    owner: &guest
+	      name:	guest
+	      desc:	guest user
+	users:
+	  - *root
+	  - *guest
+	  - &user1
+	    name: user1
+	  - name: user2
+	    manager: *user1
+  expected: |
+	## 
+	class Context
+	  def initialize(hash=nil)
+	    if hash.nil?
+	      return
+	    end
+	    @groups           = (v=hash['groups']) ? v.map!{|e| e.is_a?(Group) ? e : Group.new(e)} : v
+	    @users            = (v=hash['users']) ? v.map!{|e| e.is_a?(User) ? e : User.new(e)} : v
+	  end
+	  attr_accessor :groups           # seq
+	  attr_accessor :users            # seq
+	end
+	
+	## 
+	class Group
+	  def initialize(hash=nil)
+	    if hash.nil?
+	      return
+	    end
+	    @name             = hash['name']
+	    @desc             = hash['desc']
+	    @owner            = (v=hash['owner']) && v.is_a?(Hash) ? User.new(v) : v
+	  end
+	  attr_accessor :name             # str
+	  attr_accessor :desc             # str
+	  attr_accessor :owner            # map
+	end
+	
+	## 
+	class User
+	  def initialize(hash=nil)
+	    if hash.nil?
+	      @deleted          = false
+	      return
+	    end
+	    @name             = hash['name']
+	    @desc             = hash['desc']
+	    @gender           = hash['gender']
+	    @mail             = hash['mail']
+	    @manager          = (v=hash['manager']) && v.is_a?(Hash) ? User.new(v) : v
+	    @deleted          = (v=hash['deleted']).nil? ? false : v
+	  end
+	  attr_accessor :name             # str
+	  attr_accessor :desc             # str
+	  attr_accessor :gender           # bool
+	  attr_accessor :mail             # str
+	  attr_accessor :manager          # map
+	  attr_accessor :deleted          # bool
+	  def gender?       ;  @gender       ; end
+	  def deleted?      ;  @deleted      ; end
+	end
+
+##
+- name:  action_genclass_php1
+  desc:  action 'genclass-php'
+  action: genclass-php
+  method: action
+  args:  [ -a, genclass-php, -tf, action_genclass_php1.schema ]
+  schema: *action_schema1
+  document: *action_document1
+  expected: |
+	<?php
+	
+	/// 
+	class Context {
+	    var $groups;     // seq
+	    var $users;      // seq
+	    function __construct($arr=NULL) {
+	        if (! $arr) return;
+	        if (is_array(@$arr['groups']))
+	            foreach ($arr['groups'] as $k=>$v)
+	                $this->groups[$k] = is_array($v) ? new Group($v) : $v;
+	        //else
+	        //    $this->groups     = @$arr['groups'];
+	        if (is_array(@$arr['users']))
+	            foreach ($arr['users'] as $k=>$v)
+	                $this->users[$k] = is_array($v) ? new User($v) : $v;
+	        //else
+	        //    $this->users      = @$arr['users'];
+	    }
+	}
+	
+	/// 
+	class Group {
+	    var $name;       // str
+	    var $desc;       // str
+	    var $owner;      // map
+	    function __construct($arr=NULL) {
+	        if (! $arr) return;
+	        $this->name       = @$arr['name'];
+	        $this->desc       = @$arr['desc'];
+	        $this->owner      = is_array(@$arr['owner']) ? new User($arr['owner']) : @$arr['owner'];
+	    }
+	}
+	
+	/// 
+	class User {
+	    var $name;       // str
+	    var $desc;       // str
+	    var $gender;     // bool
+	    var $mail;       // str
+	    var $manager;    // map
+	    var $deleted = false; // bool
+	    function __construct($arr=NULL) {
+	        if (! $arr) return;
+	        $this->name       = @$arr['name'];
+	        $this->desc       = @$arr['desc'];
+	        $this->gender     = @$arr['gender'];
+	        $this->mail       = @$arr['mail'];
+	        $this->manager    = is_array(@$arr['manager']) ? new User($arr['manager']) : @$arr['manager'];
+	        if (array_key_exists('deleted', $arr)) $this->deleted = $arr['deleted'];
+	    }
+	}
+	
+	?>
+
+##	
+- name:  action_genclass_java1
+  desc:  action 'genclass-java'
+  action: genclass-java
+  method: action
+  args:  [ -a, genclass-java, -tf, action_genclass_java1.schema ]
+  schema: *action_schema1
+  document: *action_document1
+  output_files: [ Context.java, Group.java, User.java ]
+  output_message: |+
+      generating ./Context.java...done.
+      generating ./Group.java...done.
+      generating ./User.java...done.
+  expected:
+    'Context.java': |
+	// generated by kwalify from action_genclass_java1.schema
+	
+	import java.util.*;
+	
+	/**
+	 *  
+	 */
+	public class Context {
+	
+	    private List _groups;
+	    private List _users;
+	
+	    public Context() {}
+	
+	    public Context(Map map) {
+	        List seq;
+	        Object obj;
+	        if ((seq = (List)map.get("groups")) != null) {
+	            for (int i = 0; i < seq.size(); i++) {
+	                if ((obj = seq.get(i)) instanceof Map) {
+	                    seq.set(i, new Group((Map)obj));
+	                }
+	            }
+	        }
+	        _groups       = seq;
+	        if ((seq = (List)map.get("users")) != null) {
+	            for (int i = 0; i < seq.size(); i++) {
+	                if ((obj = seq.get(i)) instanceof Map) {
+	                    seq.set(i, new User((Map)obj));
+	                }
+	            }
+	        }
+	        _users        = seq;
+	    }
+	
+	    public List getGroups() { return _groups; }
+	    public void setGroups(List groups_) { _groups = groups_; }
+	    public List getUsers() { return _users; }
+	    public void setUsers(List users_) { _users = users_; }
+	}
+	
+    'Group.java': |
+	// generated by kwalify from action_genclass_java1.schema
+	
+	import java.util.*;
+	
+	/**
+	 *  
+	 */
+	public class Group {
+	
+	    private String _name;
+	    private String _desc;
+	    private User _owner;
+	
+	    public Group() {}
+	
+	    public Group(Map map) {
+	        _name         = (String)map.get("name");
+	        _desc         = (String)map.get("desc");
+	        Object obj;
+	        if ((obj = map.get("owner")) != null && obj instanceof Map) {
+	            _owner    = new User((Map)obj);
+	        } else {
+	            _owner    = (User)obj;
+	        }
+	    }
+	
+	    public String getName() { return _name; }
+	    public void setName(String name_) { _name = name_; }
+	    public String getDesc() { return _desc; }
+	    public void setDesc(String desc_) { _desc = desc_; }
+	    public User getOwner() { return _owner; }
+	    public void setOwner(User owner_) { _owner = owner_; }
+	}
+
+    'User.java': |
+	// generated by kwalify from action_genclass_java1.schema
+	
+	import java.util.*;
+	
+	/**
+	 *  
+	 */
+	public class User {
+	
+	    private String _name;
+	    private String _desc;
+	    private boolean _gender;
+	    private String _mail;
+	    private User _manager;
+	    private boolean _deleted = false;
+	
+	    public User() {}
+	
+	    public User(Map map) {
+	        _name         = (String)map.get("name");
+	        _desc         = (String)map.get("desc");
+	        if (map.get("gender") != null) {
+	            _gender   = ((Boolean)map.get("gender")).booleanValue();
+	        }
+	        _mail         = (String)map.get("mail");
+	        Object obj;
+	        if ((obj = map.get("manager")) != null && obj instanceof Map) {
+	            _manager  = new User((Map)obj);
+	        } else {
+	            _manager  = (User)obj;
+	        }
+	        if (map.get("deleted") != null) {
+	            _deleted  = ((Boolean)map.get("deleted")).booleanValue();
+	        }
+	    }
+	
+	    public String getName() { return _name; }
+	    public void setName(String name_) { _name = name_; }
+	    public String getDesc() { return _desc; }
+	    public void setDesc(String desc_) { _desc = desc_; }
+	    public boolean isGender() { return _gender; }
+	    public void setGender(boolean gender_) { _gender = gender_; }
+	    public String getMail() { return _mail; }
+	    public void setMail(String mail_) { _mail = mail_; }
+	    public User getManager() { return _manager; }
+	    public void setManager(User manager_) { _manager = manager_; }
+	    public boolean isDeleted() { return _deleted; }
+	    public void setDeleted(boolean deleted_) { _deleted = deleted_; }
+	}
+
+## not used
+  main_file:
+    name:  Example.java
+    content: |
+	import kwalify.*;
+	import java.util.*;
+	
+	public class Example {
+	  public static void main(String[] args) throws Exception {
+	    String input = kwalify.Util.readFile("action_genclass_java1.document");
+	    input = kwalify.Util.untabify(input);
+	    YamlParser parser = new YamlParser(input);
+	    Object ydoc = parser.parse();
+	    //
+	    Context context = new Context((Map)ydoc);
+	    //
+	    List groups = context.getGroups();
+	    if (groups != null) {
+	      for (Iterator it = groups.iterator(); it.hasNext(); ) {
+	        Group g = (Group)it.next();
+	        System.out.println("group.name = " + g.getName());
+	        System.out.println("group.desc = " + g.getDesc());
+	        System.out.println("group.owner.name = " + g.getOwner().getName());
+	        System.out.println();
+	      }
+	    }
+	    //
+	    List users = context.getUsers();
+	    if (users != null) {
+	      for (Iterator it = users.iterator(); it.hasNext(); ) {
+	        User u = (User)it.next();
+	        System.out.println("user.name = " + u.getName());
+	        System.out.println("user.desc = " + u.getDesc());
+	        System.out.println("user.manager.name = " + (u.getManager() != null ? u.getManager().getName() : null));
+	        System.out.println();
+	      }
+	    }
+	  }
+	}
+
+##
+- name:  action_genclass_ruby2
+  desc:  action 'genclass-ruby'
+  action: genclass-ruby
+  method: action
+  args:  [ -a, genclass-ruby, -tf, action_genclass_ruby2.schema, --module=My::DTO, --parent=BaseObject, "--include=Enumerable,Comparable", --hashlike ]
+  schema: &action_schema2 |
+	type: map
+	mapping:
+	 "tables":
+	    type:  seq
+	    sequence:
+	      - type:  map
+		class: Table
+		mapping:
+		 "name":   {type: str}
+		 "desc":   {type: text}
+		 "columns":
+		    type:  seq
+		    sequence:
+		      - type:  map
+			class: Column
+			mapping: &column
+			 "name":  {type: str}
+			 "type":  {type: str}
+			 "desc":  {type: str}
+			 "not-null":  {type: bool}
+			 "primary-key": {type: bool}
+			 "default":  {type: any}
+			 "ref":	  {type: str}
+	 "columns":
+	    type:  seq
+	    sequence:
+	      - type:  map
+		class: Column
+		mapping:
+		 <<: *column
+		 "namepattern":	 {type: str}
+	 "columnsets":
+	    type:  seq
+	    sequence:
+	     - type:  map
+	       class: Columnset
+	       mapping:
+		"name": {type: str}
+		"columns":
+		   type:  seq
+		   sequence:
+		     - type:  map
+		       class: Column
+		       mapping: *column
+  document: &action_document3 |
+	columns:
+	  - name:	id
+	    type:	int
+	    primary-key: yes
+	    not-null:	yes
+	  - name:	updated_at
+	    type:	timestamp
+	    not-null:	yes
+	    default:	current_timestamp
+	  - name:	created_at
+	    type:	timestamp
+	    not-null:	yes
+	    default:	current_timestamp
+	columnsets:
+	  - name:	common
+	    columns:
+	      - name:	created_at
+	      - name:	updated_at
+	tables:
+	  - name:	customers
+	    desc:	Customer master table
+	    columns:
+	      - name:	id
+	      - name:	name
+	        type:	str
+	        not-null: yes
+	      - name:	common
+	  - name:	sales_orders
+	    desc:	Sales orders master table
+	    columns:
+	      - name:	id
+	      - name:	customer_id
+	        ref:	customers.id
+	        not-null: yes
+	      - name:	ordered_date
+	        type:	date
+	        not-null:  yes
+	      - name:	delivery_date
+	        type:	date
+  expected: |
+	require 'kwalify/util/hashlike'
+	
+	module My::DTO
+	
+	  ## 
+	  class Table < BaseObject
+	    include Kwalify::Util::HashLike
+	    include Enumerable,Comparable
+	    def initialize(hash=nil)
+	      if hash.nil?
+	        return
+	      end
+	      @name             = hash['name']
+	      @desc             = hash['desc']
+	      @columns          = (v=hash['columns']) ? v.map!{|e| e.is_a?(Column) ? e : Column.new(e)} : v
+	    end
+	    attr_accessor :name             # str
+	    attr_accessor :desc             # text
+	    attr_accessor :columns          # seq
+	  end
+	
+	  ## 
+	  class Column < BaseObject
+	    include Kwalify::Util::HashLike
+	    include Enumerable,Comparable
+	    def initialize(hash=nil)
+	      if hash.nil?
+	        return
+	      end
+	      @name             = hash['name']
+	      @type             = hash['type']
+	      @desc             = hash['desc']
+	      @not_null         = hash['not-null']
+	      @primary_key      = hash['primary-key']
+	      @default          = hash['default']
+	      @ref              = hash['ref']
+	      @namepattern      = hash['namepattern']
+	    end
+	    attr_accessor :name             # str
+	    attr_accessor :type             # str
+	    attr_accessor :desc             # str
+	    attr_accessor :not_null         # bool
+	    attr_accessor :primary_key      # bool
+	    attr_accessor :default          # any
+	    attr_accessor :ref              # str
+	    attr_accessor :namepattern      # str
+	    def not_null?     ;  @not_null     ; end
+	    def primary_key?  ;  @primary_key  ; end
+	  end
+	
+	  ## 
+	  class Columnset < BaseObject
+	    include Kwalify::Util::HashLike
+	    include Enumerable,Comparable
+	    def initialize(hash=nil)
+	      if hash.nil?
+	        return
+	      end
+	      @name             = hash['name']
+	      @columns          = (v=hash['columns']) ? v.map!{|e| e.is_a?(Column) ? e : Column.new(e)} : v
+	    end
+	    attr_accessor :name             # str
+	    attr_accessor :columns          # seq
+	  end
+	
+	end
+
+##
+- name:  action_genclass_php2
+  desc:  action 'genclass-php'
+  action: genclass-php
+  method: action
+  args:  [ -a, genclass-php, -tf, action_genclass_php2.schema, --namespace=My, --extends=BaseObject, --implements=Serializable ]
+  schema: *action_schema2
+  document: *action_document2
+  expected: |
+	<?php
+	
+	/// 
+	class My_Table extends BaseObject implements Serializable {
+	    var $name;       // str
+	    var $desc;       // text
+	    var $columns;    // seq
+	    function __construct($arr=NULL) {
+	        if (! $arr) return;
+	        $this->name       = @$arr['name'];
+	        $this->desc       = @$arr['desc'];
+	        if (is_array(@$arr['columns']))
+	            foreach ($arr['columns'] as $k=>$v)
+	                $this->columns[$k] = is_array($v) ? new Column($v) : $v;
+	        //else
+	        //    $this->columns    = @$arr['columns'];
+	    }
+	}
+	
+	/// 
+	class My_Column extends BaseObject implements Serializable {
+	    var $name;       // str
+	    var $type;       // str
+	    var $desc;       // str
+	    var $not_null;   // bool
+	    var $primary_key; // bool
+	    var $default;    // any
+	    var $ref;        // str
+	    var $namepattern; // str
+	    function __construct($arr=NULL) {
+	        if (! $arr) return;
+	        $this->name       = @$arr['name'];
+	        $this->type       = @$arr['type'];
+	        $this->desc       = @$arr['desc'];
+	        $this->not_null   = @$arr['not-null'];
+	        $this->primary_key = @$arr['primary-key'];
+	        $this->default    = @$arr['default'];
+	        $this->ref        = @$arr['ref'];
+	        $this->namepattern = @$arr['namepattern'];
+	    }
+	}
+	
+	/// 
+	class My_Columnset extends BaseObject implements Serializable {
+	    var $name;       // str
+	    var $columns;    // seq
+	    function __construct($arr=NULL) {
+	        if (! $arr) return;
+	        $this->name       = @$arr['name'];
+	        if (is_array(@$arr['columns']))
+	            foreach ($arr['columns'] as $k=>$v)
+	                $this->columns[$k] = is_array($v) ? new Column($v) : $v;
+	        //else
+	        //    $this->columns    = @$arr['columns'];
+	    }
+	}
+	
+	?>
+
+
+##
+- name:  action_genclass_java2
+  desc:  action 'genclass-java'
+  action: genclass-java
+  method: action
+  args:  [ -a, genclass-java, -tf, action_genclass_java2.schema, --extends=java.lang.Object, --implements=java.io.Serializable, --package=my.dto, --dir=. ]
+  schema: *action_schema2
+  document: *action_document2
+  output_files: [ Table.java, Column.java, Columnset.java ]
+  output_message: |+
+      generating ./Table.java...done.
+      generating ./Column.java...done.
+      generating ./Columnset.java...done.
+  expected:
+    "Table.java": |
+	// generated by kwalify from action_genclass_java2.schema
+	
+	package my.dto;
+	import java.util.*;
+	
+	/**
+	 *  
+	 */
+	public class Table extends java.lang.Object implements java.io.Serializable {
+	
+	    private String _name;
+	    private String _desc;
+	    private List _columns;
+	
+	    public Table() {}
+	
+	    public Table(Map map) {
+	        _name         = (String)map.get("name");
+	        _desc         = (String)map.get("desc");
+	        List seq;
+	        Object obj;
+	        if ((seq = (List)map.get("columns")) != null) {
+	            for (int i = 0; i < seq.size(); i++) {
+	                if ((obj = seq.get(i)) instanceof Map) {
+	                    seq.set(i, new Column((Map)obj));
+	                }
+	            }
+	        }
+	        _columns      = seq;
+	    }
+	
+	    public String getName() { return _name; }
+	    public void setName(String name_) { _name = name_; }
+	    public String getDesc() { return _desc; }
+	    public void setDesc(String desc_) { _desc = desc_; }
+	    public List getColumns() { return _columns; }
+	    public void setColumns(List columns_) { _columns = columns_; }
+	}
+
+    "Column.java": |
+	// generated by kwalify from action_genclass_java2.schema
+	
+	package my.dto;
+	import java.util.*;
+	
+	/**
+	 *  
+	 */
+	public class Column extends java.lang.Object implements java.io.Serializable {
+	
+	    private String _name;
+	    private String _type;
+	    private String _desc;
+	    private boolean _not_null;
+	    private boolean _primary_key;
+	    private Object _default;
+	    private String _ref;
+	    private String _namepattern;
+	
+	    public Column() {}
+	
+	    public Column(Map map) {
+	        _name         = (String)map.get("name");
+	        _type         = (String)map.get("type");
+	        _desc         = (String)map.get("desc");
+	        if (map.get("not-null") != null) {
+	            _not_null = ((Boolean)map.get("not-null")).booleanValue();
+	        }
+	        if (map.get("primary-key") != null) {
+	            _primary_key = ((Boolean)map.get("primary-key")).booleanValue();
+	        }
+	        _default      = (Object)map.get("default");
+	        _ref          = (String)map.get("ref");
+	        _namepattern  = (String)map.get("namepattern");
+	    }
+	
+	    public String getName() { return _name; }
+	    public void setName(String name_) { _name = name_; }
+	    public String getType() { return _type; }
+	    public void setType(String type_) { _type = type_; }
+	    public String getDesc() { return _desc; }
+	    public void setDesc(String desc_) { _desc = desc_; }
+	    public boolean isNotNull() { return _not_null; }
+	    public void setNotNull(boolean not_null_) { _not_null = not_null_; }
+	    public boolean isPrimaryKey() { return _primary_key; }
+	    public void setPrimaryKey(boolean primary_key_) { _primary_key = primary_key_; }
+	    public Object getDefault() { return _default; }
+	    public void setDefault(Object default_) { _default = default_; }
+	    public String getRef() { return _ref; }
+	    public void setRef(String ref_) { _ref = ref_; }
+	    public String getNamepattern() { return _namepattern; }
+	    public void setNamepattern(String namepattern_) { _namepattern = namepattern_; }
+	}
+
+    "Columnset.java": |
+	// generated by kwalify from action_genclass_java2.schema
+	
+	package my.dto;
+	import java.util.*;
+	
+	/**
+	 *  
+	 */
+	public class Columnset extends java.lang.Object implements java.io.Serializable {
+	
+	    private String _name;
+	    private List _columns;
+	
+	    public Columnset() {}
+	
+	    public Columnset(Map map) {
+	        _name         = (String)map.get("name");
+	        List seq;
+	        Object obj;
+	        if ((seq = (List)map.get("columns")) != null) {
+	            for (int i = 0; i < seq.size(); i++) {
+	                if ((obj = seq.get(i)) instanceof Map) {
+	                    seq.set(i, new Column((Map)obj));
+	                }
+	            }
+	        }
+	        _columns      = seq;
+	    }
+	
+	    public String getName() { return _name; }
+	    public void setName(String name_) { _name = name_; }
+	    public List getColumns() { return _columns; }
+	    public void setColumns(List columns_) { _columns = columns_; }
+	}
+##

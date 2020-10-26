@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Kwalify::Main</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Kwalify::Main</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/kwalify/main_rb.html">
+                kwalify/main.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+ex.
+</p>
+<pre>
+ command = File.basename($0)
+ begin
+   main = Kwalify::Main.new(command)
+   s = main.execute
+   print s if s
+ rescue Kwalify::CommandOptionError =&gt; ex
+   $stderr.puts &quot;ERROR: #{ex.message}&quot;
+   exit 1
+ rescue Kwalify::KwalifyError =&gt; ex
+   $stderr.puts &quot;ERROR: #{ex.message}&quot;
+   exit 1
+ end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000078">_inspect</a>&nbsp;&nbsp;
+      <a href="#M000077">debug?</a>&nbsp;&nbsp;
+      <a href="#M000079">execute</a>&nbsp;&nbsp;
+      <a href="#M000080">main</a>&nbsp;&nbsp;
+      <a href="#M000076">new</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000080" class="method-detail">
+        <a name="M000080"></a>
+
+        <div class="method-heading">
+          <a href="#M000080" class="method-signature">
+          <span class="method-name">main</span><span class="method-args">(command, argv=ARGV)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000080-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000080-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/main.rb, line 121</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">main</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">argv</span>=<span class="ruby-constant">ARGV</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">main</span> = <span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">Main</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">command</span>)
+        <span class="ruby-identifier">s</span> = <span class="ruby-identifier">main</span>.<span class="ruby-identifier">execute</span>(<span class="ruby-identifier">argv</span>)
+        <span class="ruby-identifier">print</span> <span class="ruby-identifier">s</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">CommandOptionError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">ex</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">main</span>.<span class="ruby-identifier">debug?</span>
+        <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">message</span>
+        <span class="ruby-identifier">exit</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">KwalifyError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">ex</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">main</span>.<span class="ruby-identifier">debug?</span>
+        <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;ERROR: #{ex.to_s}&quot;</span>
+        <span class="ruby-identifier">exit</span> <span class="ruby-value">1</span>
+      <span class="ruby-comment cmt">#rescue =&gt; ex</span>
+      <span class="ruby-comment cmt">#  if main.debug?</span>
+      <span class="ruby-comment cmt">#    raise ex</span>
+      <span class="ruby-comment cmt">#  else</span>
+      <span class="ruby-comment cmt">#    $stderr.puts ex.message</span>
+      <span class="ruby-comment cmt">#    exit 1</span>
+      <span class="ruby-comment cmt">#  end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000076" class="method-detail">
+        <a name="M000076"></a>
+
+        <div class="method-heading">
+          <a href="#M000076" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(command=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000076-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000076-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/main.rb, line 45</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">command</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-ivar">@command</span> = <span class="ruby-identifier">command</span> <span class="ruby-operator">||</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">$0</span>)
+      <span class="ruby-ivar">@options</span> = {}
+      <span class="ruby-ivar">@properties</span>   = {}
+      <span class="ruby-ivar">@template_path</span>  = []
+      <span class="ruby-identifier">$:</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">tpath</span> = <span class="ruby-node">&quot;#{path}/kwalify/templates&quot;</span>
+        <span class="ruby-ivar">@template_path</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tpath</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">test</span>(<span class="ruby-value">?d</span>, <span class="ruby-identifier">tpath</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000078" class="method-detail">
+        <a name="M000078"></a>
+
+        <div class="method-heading">
+          <a href="#M000078" class="method-signature">
+          <span class="method-name">_inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000078-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000078-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/main.rb, line 62</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_inspect</span>()
+      <span class="ruby-identifier">sb</span> = []
+      <span class="ruby-identifier">sb</span> <span class="ruby-operator">&lt;&lt;</span>   <span class="ruby-node">&quot;command: #{@command}\n&quot;</span>
+      <span class="ruby-identifier">sb</span> <span class="ruby-operator">&lt;&lt;</span>   <span class="ruby-value str">&quot;options:\n&quot;</span>
+      <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sort</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k1</span>,<span class="ruby-identifier">k2</span><span class="ruby-operator">|</span> <span class="ruby-identifier">k1</span>.<span class="ruby-identifier">to_s</span><span class="ruby-operator">&lt;=&gt;</span><span class="ruby-identifier">k2</span>.<span class="ruby-identifier">to_s</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">sb</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;  - #{key}: #{@options[key]}\n&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">sb</span> <span class="ruby-operator">&lt;&lt;</span>   <span class="ruby-value str">&quot;properties:\n&quot;</span>
+      <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sort_by</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>}.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">sb</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;  - #{key}: #{@properties[key]}\n&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#sb &lt;&lt;   &quot;template_path:\n&quot;</span>
+      <span class="ruby-comment cmt">#@template_path.each do |path|</span>
+      <span class="ruby-comment cmt">#  sb &lt;&lt; &quot;  - #{path}\n&quot;</span>
+      <span class="ruby-comment cmt">#end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">sb</span>.<span class="ruby-identifier">join</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000077" class="method-detail">
+        <a name="M000077"></a>
+
+        <div class="method-heading">
+          <a href="#M000077" class="method-signature">
+          <span class="method-name">debug?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000077-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000077-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/main.rb, line 57</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">debug?</span>
+      <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:debug</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000079" class="method-detail">
+        <a name="M000079"></a>
+
+        <div class="method-heading">
+          <a href="#M000079" class="method-signature">
+          <span class="method-name">execute</span><span class="method-args">(argv=ARGV)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000079-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000079-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/main.rb, line 81</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">execute</span>(<span class="ruby-identifier">argv</span>=<span class="ruby-constant">ARGV</span>)
+      <span class="ruby-comment cmt">## parse command-line options</span>
+      <span class="ruby-identifier">filenames</span> = <span class="ruby-identifier">_parse_argv</span>(<span class="ruby-identifier">argv</span>)
+
+      <span class="ruby-comment cmt">## help or version</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:help</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:version</span>]
+        <span class="ruby-identifier">action</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:action</span>]
+        <span class="ruby-identifier">s</span> = <span class="ruby-value str">''</span>
+        <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">_version</span>() <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span>           <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:version</span>]
+        <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">_usage</span>()                     <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:help</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">action</span>
+        <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">_describe_properties</span>(<span class="ruby-identifier">action</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:help</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">action</span>
+        <span class="ruby-identifier">puts</span> <span class="ruby-identifier">s</span>
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># validation</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:meta2</span>]
+        <span class="ruby-identifier">validate_schemafiles2</span>(<span class="ruby-identifier">filenames</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:meta</span>]
+        <span class="ruby-identifier">validate_schemafiles</span>(<span class="ruby-identifier">filenames</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:action</span>]
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:schema</span>]
+          <span class="ruby-comment cmt">#* key=:command_option_actionnoschema  msg=&quot;schema filename is not specified.&quot;</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-identifier">option_error</span>(<span class="ruby-identifier">:command_option_actionnoschema</span>, <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:action</span>])
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">perform_action</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:action</span>], <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:schema</span>])
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:schema</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:debug</span>]
+          <span class="ruby-identifier">inspect_schema</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:schema</span>])
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">validate_files</span>(<span class="ruby-identifier">filenames</span>, <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:schema</span>])
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt">#* key=:command_option_noaction  msg=&quot;command-line option '-f' or '-m' required.&quot;</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">option_error</span>(<span class="ruby-identifier">:command_option_noaction</span>, <span class="ruby-ivar">@command</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

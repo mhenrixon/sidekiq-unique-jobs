@@ -1,0 +1,2 @@
+$ kwalify -lf schema06.yaml document06a.yaml
+document06a.yaml#0: valid.

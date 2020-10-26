@@ -1,0 +1,168 @@
+
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+    Methods
+
+  -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Methods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="rdoc-style.css" type="text/css" />
+  <base target="docwin" />
+</head>
+<body>
+<div id="index">
+  <h1 class="section-bar">Methods</h1>
+  <div id="index-entries">
+    <a href="classes/Kwalify/BaseError.html#M000084"><=> (Kwalify::BaseError)</a><br />
+    <a href="classes/Kwalify/Util/HashLike.html#M000025">[] (Kwalify::Util::HashLike)</a><br />
+    <a href="classes/Kwalify/Util/HashLike.html#M000026">[]= (Kwalify::Util::HashLike)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000033">[]= (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/ErrorHelper.html#M000018">_build_message (Kwalify::ErrorHelper)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000092">_getch (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000071">_getclass (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Rule.html#M000110">_init (Kwalify::Rule)</a><br />
+    <a href="classes/Kwalify/Validator.html#M000137">_inspect (Kwalify::Validator)</a><br />
+    <a href="classes/Kwalify/Main.html#M000078">_inspect (Kwalify::Main)</a><br />
+    <a href="classes/Kwalify/Rule.html#M000112">_inspect (Kwalify::Rule)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000087">_set_column_and_linenum (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000042">_set_error_info (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000094">_syntax_error (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Validator.html#M000140">_validate (Kwalify::Validator)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000057">_validate_map_value (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Validator.html#M000141">_validate_unique (Kwalify::Validator)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000032">add (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000125">add_to_map (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000104">add_to_map (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000122">add_to_seq (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000069">add_to_seq (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000101">add_to_seq (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/ErrorHelper.html#M000015">assert_error (Kwalify::ErrorHelper)</a><br />
+    <a href="classes/Kwalify/Types.html#M000011">collection? (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/Types.html#M000013">collection_type? (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/Util.html#M000023">create_hashtable (Kwalify::Util)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000124">create_mapping (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000103">create_mapping (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000067">create_mapping (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000129">create_scalar (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000108">create_scalar (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000068">create_scalar (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000121">create_sequence (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000100">create_sequence (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000066">create_sequence (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000130">current_line (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000131">current_linenum (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/Main.html#M000077">debug? (Kwalify::Main)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000036">delete (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000044">document_start? (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000037">each (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/Util/HashLike.html#M000029">each (Kwalify::Util::HashLike)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000090">eos? (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Main.html#M000079">execute (Kwalify::Main)</a><br />
+    <a href="classes/Kwalify/Util.html#M000022">get_class (Kwalify::Util)</a><br />
+    <a href="classes/Kwalify/Rule.html#M000111">get_init_method (Kwalify::Rule)</a><br />
+    <a href="classes/Kwalify/Types.html#M000010">get_type_class (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/Util.html#M000024">get_value (Kwalify::Util)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000089">group (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000046">has_next? (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000119">has_next? (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/MetaValidator.html#M000113">instance (Kwalify::MetaValidator)</a><br />
+    <a href="classes/Kwalify/Util/HashLike.html#M000028">key? (Kwalify::Util::HashLike)</a><br />
+    <a href="classes/Kwalify/Util/HashLike.html#M000027">key? (Kwalify::Util::HashLike)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000034">keys (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/Yaml.html#M000038">load (Kwalify::Yaml)</a><br />
+    <a href="classes/Kwalify/Yaml.html#M000039">load_file (Kwalify::Yaml)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000072">location (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Main.html#M000080">main (Kwalify::Main)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000088">match? (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000107">merge_map (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000128">merge_map (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/SyntaxError.html#M000134">message (Kwalify::SyntaxError)</a><br />
+    <a href="classes/Kwalify.html#M000007">meta_validator (Kwalify)</a><br />
+    <a href="classes/Kwalify.html#M000005">msg (Kwalify)</a><br />
+    <a href="classes/CommandOptionParser.html#M000001">new (CommandOptionParser)</a><br />
+    <a href="classes/Kwalify/CommandOptionError.html#M000142">new (Kwalify::CommandOptionError)</a><br />
+    <a href="classes/Kwalify/Rule.html#M000109">new (Kwalify::Rule)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000117">new (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/CommandOptionError.html#M000004">new (CommandOptionError)</a><br />
+    <a href="classes/Kwalify/Validator.html#M000136">new (Kwalify::Validator)</a><br />
+    <a href="classes/Kwalify/AssertionError.html#M000135">new (Kwalify::AssertionError)</a><br />
+    <a href="classes/Kwalify/Parser.html#M000074">new (Kwalify::Parser)</a><br />
+    <a href="classes/Kwalify/SchemaError.html#M000075">new (Kwalify::SchemaError)</a><br />
+    <a href="classes/Kwalify/Main.html#M000076">new (Kwalify::Main)</a><br />
+    <a href="classes/Kwalify/SyntaxError.html#M000133">new (Kwalify::SyntaxError)</a><br />
+    <a href="classes/Kwalify/ValidationError.html#M000116">new (Kwalify::ValidationError)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000095">new (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000040">new (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/BaseError.html#M000081">new (Kwalify::BaseError)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser/Alias.html#M000132">new (Kwalify::PlainYamlParser::Alias)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000030">new (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/MetaValidator.html#M000114">new (Kwalify::MetaValidator)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000118">parse (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/CommandOptionParser.html#M000003">parse (CommandOptionParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000096">parse (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000047">parse (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000053">parse_alias (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000120">parse_all (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000052">parse_anchor (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000058">parse_block_map (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000059">parse_block_scalar (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000056">parse_block_seq (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000060">parse_block_text (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000055">parse_block_value (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000051">parse_documents (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000048">parse_file (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000063">parse_flow_map (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000064">parse_flow_scalar (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000062">parse_flow_seq (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000061">parse_flow_value (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000049">parse_next (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000050">parse_stream (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/BaseError.html#M000082">path (Kwalify::BaseError)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000097">path_linenum (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000091">peep (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000031">put (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000070">put_to_map (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000085">reset (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000041">reset_parser (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000054">resolve_preceding_aliases (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Types.html#M000012">scalar? (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/Types.html#M000014">scalar_type? (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000086">scan (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/BaseParser.html#M000093">scan_string (Kwalify::BaseParser)</a><br />
+    <a href="classes/Kwalify/ErrorHelper.html#M000017">schema_error (Kwalify::ErrorHelper)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000106">set_default (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000127">set_default (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000099">set_error_linenums (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000098">set_errors_linenum (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000073">set_errors_linenum (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000126">set_map_with (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000105">set_map_with (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/YamlParser.html#M000102">set_seq_at (Kwalify::YamlParser)</a><br />
+    <a href="classes/Kwalify/PlainYamlParser.html#M000123">set_seq_at (Kwalify::PlainYamlParser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000043">skip_spaces_and_comments (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000045">stream_end? (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/Kwalify/BaseError.html#M000083">to_s (Kwalify::BaseError)</a><br />
+    <a href="classes/Kwalify/Yaml/Parser.html#M000065">to_scalar (Kwalify::Yaml::Parser)</a><br />
+    <a href="classes/CommandOptionParser.html#M000002">to_value (CommandOptionParser)</a><br />
+    <a href="classes/Kwalify/Util.html#M000021">traverse_rule (Kwalify::Util)</a><br />
+    <a href="classes/Kwalify/Util.html#M000020">traverse_schema (Kwalify::Util)</a><br />
+    <a href="classes/Kwalify/Types.html#M000009">type_class (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/Types.html#M000008">type_table (Kwalify::Types)</a><br />
+    <a href="classes/Kwalify/Util.html#M000019">untabify (Kwalify::Util)</a><br />
+    <a href="classes/Kwalify/Validator.html#M000138">validate (Kwalify::Validator)</a><br />
+    <a href="classes/Kwalify/ErrorHelper.html#M000016">validate_error (Kwalify::ErrorHelper)</a><br />
+    <a href="classes/Kwalify/Validator.html#M000139">validate_hook (Kwalify::Validator)</a><br />
+    <a href="classes/Kwalify/MetaValidator.html#M000115">validate_hook (Kwalify::MetaValidator)</a><br />
+    <a href="classes/Kwalify/Util/OrderedHash.html#M000035">values (Kwalify::Util::OrderedHash)</a><br />
+    <a href="classes/Kwalify.html#M000006">word (Kwalify)</a><br />
+  </div>
+</div>
+</body>
+</html>

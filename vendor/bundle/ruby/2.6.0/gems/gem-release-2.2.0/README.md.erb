@@ -1,0 +1,183 @@
+# gem release [![Build Status](https://secure.travis-ci.org/svenfuchs/gem-release.svg)](http://travis-ci.org/svenfuchs/gem-release)
+
+This gem plugin aims at making gem development easier by automating repetitive work based on conventions, configuration, and templates.
+
+It adds the commands `bootstrap`, `gemspec`, `bump`, `tag` and a `release` to the rubygems `gem` command.
+
+| Project                |  Gem Release |
+| ---------------------- | ------------ |
+| Gem name               |  gem-release |
+| License                |  [MIT](https://github.com/svenfuchs/gem-release/blob/master/LICENSE.md) |
+| Version                |  [![Gem Version](https://badge.fury.io/rb/gem-release.svg)](http://badge.fury.io/rb/gem-release) |
+| Continuous integration |  [![Build Status](https://secure.travis-ci.org/svenfuchs/gem-release.svg?branch=master)](https://travis-ci.org/svenfuchs/gem-release) |
+| Test coverage          |  [![Coverage Status](https://coveralls.io/repos/svenfuchs/gem-release/badge.svg)](https://coveralls.io/r/svenfuchs/gem-release) |
+| Documentation          |  [Documentation](http://rdoc.info/github/svenfuchs/gem-release/frames) |
+| Credits                |  [Contributors](https://github.com/svenfuchs/gem-release/graphs/contributors) |
+
+# Table of contents
+
+* [Demo](#demo)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Conventions](#conventions)
+* [Piping](#piping)
+* [Reference](#reference)
+* [Scenarios](#scenarios)
+* [Development](#development)
+
+# Demo
+
+This gif demos some of the things you can do with this plugin:
+
+![gem-release-demo](https://cloud.githubusercontent.com/assets/2208/25634571/68b78080-2f7b-11e7-9eb2-c7d1df13c727.gif)
+
+## Installation
+
+The gem provides a rubygems plugin, so it's just:
+
+```
+gem install gem-release
+```
+
+
+# Configuration
+
+Defaults for all options can be specified in a config file at either one of
+these locations:
+
+* `~/.gem_release/config.yml`
+* `~/.gem_release.yml`
+* `./.gem_release/config.yml`
+* `./.gem_release.yml`
+
+Config files must be in the [YAML](http://www.yaml.org/) format, and list
+options per command. Common options can be set on the root.
+
+For instance, the following entries will set the `quiet` flag for all commands,
+and a custom host name with `gem release`:
+
+```yaml
+quiet: true
+
+release:
+  host: https://example.com
+```
+
+Defaults for all options also can be specified as environment variables, for
+example `GEM_RELEASE_PRETEND=true`.
+
+Defaults specified in config files and environment variables can be overridden
+as command line options when issuing the respective `gem` command.
+
+Only the first config file found in the locations given above will be used, if
+any, and defaults from this config file will be merged with both environment
+variables and given command line options.
+
+
+# Conventions
+
+When bootstrapping a new gem:
+
+* A gem name `gem_name` is left untouched when mapped to the path `lib/gem_name`, and the Ruby constant name `GemName`.
+* A gem name `gem-name` is mapped to the path `lib/gem/name`, and the Ruby constant name `Gem::Name`
+
+When bumping the version of an existing gem `gem-name` the following locations are checked:
+
+* `lib/gem/name/version.rb`
+* `lib/gem-name/version.rb`
+
+# Piping
+
+Output depends on a `tty` being available or not. I.e. when run as an
+individual command colorized human readable output will be printed (see the
+Demo screencast above). When attached to a pipe then output is kept simple and
+parsable.
+
+E.g.:
+
+```
+$ gem bump --pretend | cat
+bump gem-release 1.0.0 1.0.1
+git_add lib/gem/release/version.rb
+git_commit "Bump gem-release to 1.0.1"
+```
+
+This is useful, for example, for grabbing the next version number:
+
+```
+$ gem bump --pretend --no-commit | awk '{ print $4 }'
+1.0.1
+```
+
+
+# Reference
+
+The gem `gem-release` adds the following commands to the rubygems `gem` command:
+
+<% cmds.each do |name, help| -%>
+  * [gem <%= name %>](#gem-<%= name %>) - <%= help[:summary] %>
+<% end -%>
+
+<% cmds.each do |name, help| -%>
+## gem <%= name %>
+
+<%= help[:summary] %>
+
+<% if help[:arguments] -%>
+### Arguments
+
+```
+<%= help[:arguments] %>
+```
+
+<% end -%>
+<% if help[:options] -%>
+### Options
+
+```
+<%= help[:options] %>
+```
+<% end -%>
+
+<% if help[:description] -%>
+### Description
+
+<%= help[:description] %>
+
+<% end -%>
+<% end -%>
+
+# Scenarios
+
+<% scenarios.each do |scenario| -%>
+* [<%= scenario[:title] %>](#<%= scenario[:id] %>)
+<% end -%>
+
+<% scenarios.each do |scenario| -%>
+<%= scenario[:text] %>
+<% end -%>
+
+# Development
+
+Running tests:
+
+```
+bundle install
+bundle exec rspec
+```
+
+Testing commands against a [Geminabox](https://github.com/geminabox/geminabox) instance:
+
+```
+# start geminabox
+bundle install
+bundle exec rackup
+
+# workaround rubygems issue with a missing key
+# see https://github.com/geminabox/geminabox/issues/153
+echo ':localhost: none' >> ~/.gem/credentials
+
+# test release
+bundle exec gem release --host=http://localhost:9292 --key localhost
+```
+

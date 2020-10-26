@@ -1,0 +1,32 @@
+$ javac -classpath '.:kwalify.jar' *.java
+$ java  -classpath '.:kwalify.jar' ExampleAddressBook
+group name: family
+group desc: my family
+
+group name: friend
+group desc: my friends
+
+group name: business
+group desc: those who works together
+
+person name:  Sumire
+person group: family
+person email: null
+person phone: null
+person blood: A
+person birth: Tue Feb 01 00:00:00 JST 2000
+
+person name:  Shiina
+person group: friend
+person email: shiina@mail.org
+person phone: null
+person blood: null
+person birth: Wed Feb 01 00:00:00 JST 1995
+
+person name:  Sakura
+person group: business
+person email: cherry@mail.net
+person phone: 012-345-6789
+person blood: null
+person birth: null
+

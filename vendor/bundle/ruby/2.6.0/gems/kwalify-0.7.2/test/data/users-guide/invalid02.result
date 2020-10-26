@@ -1,0 +1,5 @@
+$ kwalify -lf schema02.yaml document02b.yaml
+document02b.yaml#0: INVALID
+  - (line 2) [/email] 'foo(at)mail.com': not matched to pattern /@/.
+  - (line 3) [/age] 'twenty': not a integer.
+  - (line 4) [/birth] 'Jun 01, 1985': not a date.

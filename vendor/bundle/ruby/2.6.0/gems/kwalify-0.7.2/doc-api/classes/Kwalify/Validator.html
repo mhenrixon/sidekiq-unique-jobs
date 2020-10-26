@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Kwalify::Validator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Kwalify::Validator</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/kwalify/validator_rb.html">
+                kwalify/validator.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Validator.html#M000138">validate</a> YAML document
+</p>
+<p>
+ex1. <a href="Validator.html#M000138">validate</a> yaml document
+</p>
+<pre>
+  schema = YAML.load_file('schema.yaml')
+  validator = Kwalify::Validator.new(schema)
+  document = YAML.load_file('document.yaml')
+  erros = validator.validate(document)
+  if errors &amp;&amp; !errors.empty?
+    errors.each do |err|
+      puts &quot;- [#{err.path}] #{err.message}&quot;
+    end
+  end
+</pre>
+<p>
+ex2. <a href="Validator.html#M000138">validate</a> with parsing
+</p>
+<pre>
+  schema = YAML.load_file('schema.yaml')
+  validator = Kwalify::Validator.new(schema)
+  parser = Kwalify::Yaml::Parser.new(validator)
+  document = parser.parse(File.read('document.yaml'))
+  errors = parser.errors
+  if errors &amp;&amp; errors.empty?
+    errors.each do |e|
+      puts &quot;#{e.linenum}:#{e.column} [#{e.path}] #{e.message}&quot;
+    end
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000137">_inspect</a>&nbsp;&nbsp;
+      <a href="#M000140">_validate</a>&nbsp;&nbsp;
+      <a href="#M000141">_validate_unique</a>&nbsp;&nbsp;
+      <a href="#M000136">new</a>&nbsp;&nbsp;
+      <a href="#M000138">validate</a>&nbsp;&nbsp;
+      <a href="#M000139">validate_hook</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="ErrorHelper.html">Kwalify::ErrorHelper</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">rule</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000136" class="method-detail">
+        <a name="M000136"></a>
+
+        <div class="method-heading">
+          <a href="#M000136" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(hash_or_rule, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000136-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000136-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/validator.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">hash_or_rule</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">hash_or_rule</span>
+      <span class="ruby-ivar">@rule</span> = (<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Rule</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">obj</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Rule</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>)
+      <span class="ruby-ivar">@block</span> = <span class="ruby-identifier">block</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000137" class="method-detail">
+        <a name="M000137"></a>
+
+        <div class="method-heading">
+          <a href="#M000137" class="method-signature">
+          <span class="method-name">_inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000137-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000137-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/validator.rb, line 52</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_inspect</span>
+      <span class="ruby-ivar">@rule</span>.<span class="ruby-identifier">_inspect</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000140" class="method-detail">
+        <a name="M000140"></a>
+
+        <div class="method-heading">
+          <a href="#M000140" class="method-signature">
+          <span class="method-name">_validate</span><span class="method-args">(value, rule, path, errors, done, uniq_table, recursive=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000140-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000140-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/validator.rb, line 75</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>, <span class="ruby-identifier">done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">recursive</span>=<span class="ruby-keyword kw">true</span>)
+      <span class="ruby-comment cmt">#if Types.collection?(value)</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-constant">Types</span>.<span class="ruby-identifier">scalar?</span>(<span class="ruby-identifier">value</span>)
+        <span class="ruby-comment cmt">#if done[value.__id__]</span>
+        <span class="ruby-comment cmt">#  rule2 = done[value.__id__]</span>
+        <span class="ruby-comment cmt">#  if rule2.is_a?(Rule)</span>
+        <span class="ruby-comment cmt">#    return if rule.equal?(rule2)</span>
+        <span class="ruby-comment cmt">#    done[value.__id__] = [rule2, rule]</span>
+        <span class="ruby-comment cmt">#  elsif rule2.is_a?(Array)</span>
+        <span class="ruby-comment cmt">#    return if rule2.any? {|r| r.equal?(rule)}</span>
+        <span class="ruby-comment cmt">#    done[value.__id__] &lt;&lt; rule</span>
+        <span class="ruby-comment cmt">#  else</span>
+        <span class="ruby-comment cmt">#    raise &quot;unreachable&quot;</span>
+        <span class="ruby-comment cmt">#  end</span>
+        <span class="ruby-comment cmt">#end</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">done</span>[<span class="ruby-identifier">value</span>.<span class="ruby-identifier">__id__</span>]     <span class="ruby-comment cmt"># avoid infinite loop</span>
+        <span class="ruby-identifier">done</span>[<span class="ruby-identifier">value</span>.<span class="ruby-identifier">__id__</span>] = <span class="ruby-identifier">rule</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-comment cmt">#* key=:required_novalue  msg=&quot;value required but none.&quot;</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:required_novalue</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">value</span>)
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">type_class</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">rule</span>.<span class="ruby-identifier">type_class</span>)
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">classobj</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-identifier">rule</span>.<span class="ruby-identifier">classobj</span>)
+          <span class="ruby-comment cmt">#* key=:type_unmatch  msg=&quot;not a %s.&quot;</span>
+          <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:type_unmatch</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">value</span>, [<span class="ruby-constant">Kwalify</span>.<span class="ruby-identifier">word</span>(<span class="ruby-identifier">rule</span>.<span class="ruby-identifier">type</span>)])
+          <span class="ruby-keyword kw">return</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">n</span> = <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">length</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">sequence</span>
+        <span class="ruby-identifier">_validate_sequence</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>, <span class="ruby-identifier">done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">recursive</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">mapping</span>
+        <span class="ruby-identifier">_validate_mapping</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>, <span class="ruby-identifier">done</span>, <span class="ruby-identifier">uniq_table</span>, <span class="ruby-identifier">recursive</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">_validate_scalar</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>, <span class="ruby-identifier">done</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">n</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt">#path_str = path.is_a?(Array) ? '/'+path.join('/') : path</span>
+      <span class="ruby-comment cmt">#validate_hook(value, rule, path_str, errors)</span>
+      <span class="ruby-comment cmt">#@block.call(value, rule, path_str, errors) if @block</span>
+      <span class="ruby-identifier">validate_hook</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>)
+      <span class="ruby-ivar">@block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@block</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000141" class="method-detail">
+        <a name="M000141"></a>
+
+        <div class="method-heading">
+          <a href="#M000141" class="method-signature">
+          <span class="method-name">_validate_unique</span><span class="method-args">(value, rule, path, errors, uniq_table)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000141-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000141-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/validator.rb, line 188</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_validate_unique</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-identifier">assert_error</span> <span class="ruby-node">&quot;uniq_table=#{uniq_table.inspect}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">unique</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">ident</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">uniq_table</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">value</span>)
+        <span class="ruby-identifier">exist_at</span> = <span class="ruby-identifier">uniq_table</span>[<span class="ruby-identifier">value</span>]
+        <span class="ruby-identifier">exist_at</span> = <span class="ruby-node">&quot;/#{exist_at.join('/')}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">exist_at</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-comment cmt">#* key=:value_notunique  msg=&quot;is already used at '%s'.&quot;</span>
+        <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">validate_error</span>(<span class="ruby-identifier">:value_notunique</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">exist_at</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">uniq_table</span>[<span class="ruby-identifier">value</span>] = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000138" class="method-detail">
+        <a name="M000138"></a>
+
+        <div class="method-heading">
+          <a href="#M000138" class="method-signature">
+          <span class="method-name">validate</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000138-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000138-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/validator.rb, line 57</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-identifier">path</span> = <span class="ruby-value str">''</span>;  <span class="ruby-identifier">errors</span> = [];  <span class="ruby-identifier">done</span> = {};  <span class="ruby-identifier">uniq_table</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">_validate</span>(<span class="ruby-identifier">value</span>, <span class="ruby-ivar">@rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>, <span class="ruby-identifier">done</span>, <span class="ruby-identifier">uniq_table</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">errors</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000139" class="method-detail">
+        <a name="M000139"></a>
+
+        <div class="method-heading">
+          <a href="#M000139" class="method-signature">
+          <span class="method-name">validate_hook</span><span class="method-args">(value, rule, path, errors)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000139-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000139-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/validator.rb, line 67</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate_hook</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">rule</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">errors</span>)
+      <span class="ruby-comment cmt">## may be overrided by subclass</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

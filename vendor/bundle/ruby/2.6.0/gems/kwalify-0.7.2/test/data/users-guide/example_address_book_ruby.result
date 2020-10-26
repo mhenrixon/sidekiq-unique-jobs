@@ -1,0 +1,31 @@
+$ ruby example_address_book.rb
+[#<Group:0xddf24 @desc="my family", @name="family">,
+ #<Group:0xddf10 @desc="my friends", @name="friend">,
+ #<Group:0xdde84 @desc="those who works together", @name="business">]
+[#<Person:0xdefdc
+  @birth=#<Date: 4903089/2,0,2299161>,
+  @blood="A",
+  @deleted=false,
+  @desc=nil,
+  @email=nil,
+  @group="family",
+  @name="Sumire",
+  @phone=nil>,
+ #<Person:0xdee9c
+  @birth=#<Date: 4899437/2,0,2299161>,
+  @blood=nil,
+  @deleted=false,
+  @desc=nil,
+  @email="shiina@mail.org",
+  @group="friend",
+  @name="Shiina",
+  @phone=nil>,
+ #<Person:0xde8e8
+  @birth=nil,
+  @blood=nil,
+  @deleted=false,
+  @desc=nil,
+  @email="cherry@mail.net",
+  @group="business",
+  @name="Sakura",
+  @phone="012-345-6789">]

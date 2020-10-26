@@ -1,0 +1,4160 @@
+#!/usr/bin/env ruby
+
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--begin of require 'kwalify'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2006 kuwata-lab.com all rights reserved.
+###
+
+
+module Kwalify
+
+  RELEASE = ("$Release: 0.7.2 $" =~ /[.\d]+/) && $&
+
+end
+
+#--begin of require 'kwalify/types'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+require 'date'
+
+
+module Kwalify
+  module Boolean  # :nodoc:
+  end
+end
+class TrueClass   # :nodoc:
+  include Kwalify::Boolean
+end
+class FalseClass  # :nodoc:
+  include Kwalify::Boolean
+end
+#module Boolean; end
+#class TrueClass
+#  include Boolean
+#end
+#class FalseClass
+#  include Boolean
+#end
+
+
+module Kwalify
+  module Text  # :nodoc:
+  end
+end
+class String   # :nodoc:
+  include Kwalify::Text
+end
+class Numeric  # :nodoc:
+  include Kwalify::Text
+end
+#module Text; end
+#class String
+#  include Text
+#end
+#class Numeric
+#  include Text
+#end
+
+
+module Kwalify
+  module Scalar  # :nodoc:
+  end
+end
+class String     # :nodoc:
+  include Kwalify::Scalar
+end
+class Numeric    # :nodoc:
+  include Kwalify::Scalar
+end
+class Date       # :nodoc:
+  include Kwalify::Scalar
+end
+class Time       # :nodoc:
+  include Kwalify::Scalar
+end
+class TrueClass  # :nodoc:
+  include Kwalify::Scalar
+end
+class FalseClass # :nodoc:
+  include Kwalify::Scalar
+end
+class NilClass   # :nodoc:
+  include Kwalify::Scalar
+end
+module Kwalify
+  module Text    # :nodoc:
+    include Kwalify::Scalar
+  end
+end
+
+
+module Kwalify
+
+
+  module Types
+
+
+    DEFAULT_TYPE = "str"        ## use "str" as default of @type
+
+    @@type_table = {
+      "seq"     => Array,
+      "map"     => Hash,
+      "str"     => String,
+      #"string"   => String,
+      "text"    => Text,
+      "int"     => Integer,
+      #"integer"  => Integer,
+      "float"    => Float,
+      "number"   => Numeric,
+      #"numeric"  => Numeric,
+      "date"    => Date,
+      "time"    => Time,
+      "timestamp" => Time,
+      "bool"    => Boolean,
+      #"boolean"  => Boolean,
+      #"object"   => Object,
+      "any"     => Object,
+      "scalar"   => Scalar,
+    }
+
+    def self.type_table
+      return @@type_table
+    end
+
+    def self.type_class(type)
+      klass = @@type_table[type]
+      #assert_error('type=#{type.inspect}') unless klass
+      return klass
+    end
+
+    def self.get_type_class(type)
+      return type_class(type)
+    end
+
+
+
+    #--
+    #def collection_class?(klass)
+    #  return klass.is_a?(Array) || klass.is_a?(Hash)
+    #end
+    #
+    #def scalar_class?(klass)
+    #  return !klass.is_a?(Array) && !klass.is_a?(Hash) && klass != Object
+    #end
+
+    def collection?(val)
+      return val.is_a?(Array) || val.is_a?(Hash)
+    end
+
+    def scalar?(val)
+      #return !val.is_a?(Array) && !val.is_a?(Hash) && val.class != Object
+      return val.is_a?(Kwalify::Scalar)  #&& val.class != Object
+    end
+
+    def collection_type?(type)
+      return type == 'seq' || type == 'map'
+    end
+
+    def scalar_type?(type)
+      return type != 'seq' && type != 'map' && type == 'any'
+    end
+
+    module_function 'collection?', 'scalar?', 'collection_type?', 'scalar_type?'
+  end
+
+  extend Types
+
+end
+#--end of require 'kwalify/types'
+#--begin of require 'kwalify/messages'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+module Kwalify
+
+   @@messages = {}
+
+   def self.msg(key)
+      return @@messages[key]
+   end
+
+
+
+   @@messages[:command_help] = <<END
+kwalify - schema validator and data binding tool for YAML and JSON
+## Usage1: validate yaml document
+kwalify [..options..] -f schema.yaml doc.yaml [doc2.yaml ...]
+## Usage2: validate schema definition
+kwalify [..options..] -m schema.yaml [schema2.yaml ...]
+## Usage3: do action
+kwalify [..options..] -a action -f schema.yaml [schema2.yaml ...]
+  -h, --help     : help
+  -v             : version
+  -q             : quiet
+  -s             : silent (obsolete, use '-q' instead)
+  -f schema.yaml : schema definition file
+  -m             : meta-validation mode
+  -t             : expand tab characters
+  -l             : show linenumber when errored (experimental)
+  -E             : show errors in emacs-style (experimental, implies '-l')
+  -a action      : action ('genclass-ruby', 'genclass-php', 'genclass-java')
+                   (try '-ha genclass-ruby' for details)
+  -I path        : template path (for '-a')
+  -P             : allow preceding alias
+END
+#  -z              :  syntax checking of schema file
+#  -I path         :  path for template of action
+
+
+
+   ##----- begin
+   # filename: lib/kwalify/main.rb
+   @@messages[:command_option_actionnoschema] = "schema filename is not specified."
+   @@messages[:command_option_noaction] = "command-line option '-f' or '-m' required."
+   @@messages[:command_option_notemplate] = "%s: invalid action (template not found).\n"
+   @@messages[:schema_empty]         = "%s: empty schema.\n"
+   @@messages[:validation_empty]     = "%s#%d: empty."
+   @@messages[:validation_empty]     = "%s#%d: empty.\n"
+   @@messages[:validation_valid]     = "%s#%d: valid."
+   @@messages[:command_option_schema_required] = "-%s: schema filename required."
+   @@messages[:command_option_action_required] = "-%s: action required."
+   @@messages[:command_option_tpath_required] = "-%s: template path required."
+   @@messages[:command_property_invalid] = "%s: invalid property."
+   @@messages[:command_option_invalid] = "-%s: invalid command option."
+   # --
+   # filename: lib/kwalify/rule.rb
+   @@messages[:schema_notmap]        = "schema definition is not a mapping."
+   @@messages[:key_unknown]          = "unknown key."
+   @@messages[:type_notstr]          = "not a string."
+   @@messages[:type_unknown]         = "unknown type."
+   @@messages[:class_notmap]         = "available only with map type."
+   @@messages[:required_notbool]     = "not a boolean."
+   @@messages[:pattern_notstr]       = "not a string (or regexp)"
+   @@messages[:pattern_notmatch]     = "should be '/..../'."
+   @@messages[:pattern_syntaxerr]    = "has regexp error."
+   @@messages[:enum_notseq]          = "not a sequence."
+   @@messages[:enum_notscalar]       = "not available with seq or map."
+   @@messages[:enum_type_unmatch]    = "%s type expected."
+   @@messages[:enum_duplicate]       = "duplicated enum value."
+   @@messages[:assert_notstr]        = "not a string."
+   @@messages[:assert_noval]         = "'val' is not used."
+   @@messages[:assert_syntaxerr]     = "expression syntax error."
+   @@messages[:range_notmap]         = "not a mapping."
+   @@messages[:range_notscalar]      = "is available only with scalar type."
+   @@messages[:range_type_unmatch]   = "not a %s."
+   @@messages[:range_undefined]      = "undefined key."
+   @@messages[:range_twomax]         = "both 'max' and 'max-ex' are not available at once."
+   @@messages[:range_twomin]         = "both 'min' and 'min-ex' are not available at once."
+   @@messages[:range_maxltmin]       = "max '%s' is less than min '%s'."
+   @@messages[:range_maxleminex]     = "max '%s' is less than or equal to min-ex '%s'."
+   @@messages[:range_maxexlemin]     = "max-ex '%s' is less than or equal to min '%s'."
+   @@messages[:range_maxexleminex]   = "max-ex '%s' is less than or equal to min-ex '%s'."
+   @@messages[:length_notmap]        = "not a mapping."
+   @@messages[:length_nottext]       = "is available only with string or text."
+   @@messages[:length_notint]        = "not an integer."
+   @@messages[:length_undefined]     = "undefined key."
+   @@messages[:length_twomax]        = "both 'max' and 'max-ex' are not available at once."
+   @@messages[:length_twomin]        = "both 'min' and 'min-ex' are not available at once."
+   @@messages[:length_maxltmin]      = "max '%s' is less than min '%s'."
+   @@messages[:length_maxleminex]    = "max '%s' is less than or equal to min-ex '%s'."
+   @@messages[:length_maxexlemin]    = "max-ex '%s' is less than or equal to min '%s'."
+   @@messages[:length_maxexleminex]  = "max-ex '%s' is less than or equal to min-ex '%s'."
+   @@messages[:ident_notbool]        = "not a boolean."
+   @@messages[:ident_notscalar]      = "is available only with a scalar type."
+   @@messages[:ident_onroot]         = "is not available on root element."
+   @@messages[:ident_notmap]         = "is available only with an element of mapping."
+   @@messages[:unique_notbool]       = "not a boolean."
+   @@messages[:unique_notscalar]     = "is available only with a scalar type."
+   @@messages[:unique_onroot]        = "is not available on root element."
+   @@messages[:default_nonscalarval] = "not a scalar."
+   @@messages[:default_notscalar]    = "is available only with a scalar type."
+   @@messages[:default_unmatch]      = "not a %s."
+   @@messages[:sequence_notseq]      = "not a sequence."
+   @@messages[:sequence_noelem]      = "required one element."
+   @@messages[:sequence_toomany]     = "required just one element."
+   @@messages[:mapping_notmap]       = "not a mapping."
+   @@messages[:mapping_noelem]       = "required at least one element."
+   @@messages[:seq_nosequence]       = "type 'seq' requires 'sequence:'."
+   @@messages[:seq_conflict]         = "not available with sequence."
+   @@messages[:map_nomapping]        = "type 'map' requires 'mapping:'."
+   @@messages[:map_conflict]         = "not available with mapping."
+   @@messages[:scalar_conflict]      = "not available with scalar type."
+   @@messages[:enum_conflict]        = "not available with 'enum:'."
+   @@messages[:default_conflict]     = "not available when 'required:' is true."
+   # --
+   # filename: lib/kwalify/validator.rb
+   @@messages[:required_novalue]     = "value required but none."
+   @@messages[:type_unmatch]         = "not a %s."
+   @@messages[:key_undefined]        = "key '%s' is undefined."
+   @@messages[:required_nokey]       = "key '%s:' is required."
+   @@messages[:value_notunique]      = "is already used at '%s'."
+   @@messages[:assert_failed]        = "assertion expression failed (%s)."
+   @@messages[:enum_notexist]        = "invalid %s value."
+   @@messages[:pattern_unmatch]      = "not matched to pattern %s."
+   @@messages[:range_toolarge]       = "too large (> max %s)."
+   @@messages[:range_toosmall]       = "too small (< min %s)."
+   @@messages[:range_toolargeex]     = "too large (>= max %s)."
+   @@messages[:range_toosmallex]     = "too small (<= min %s)."
+   @@messages[:length_toolong]       = "too long (length %d > max %d)."
+   @@messages[:length_tooshort]      = "too short (length %d < min %d)."
+   @@messages[:length_toolongex]     = "too long (length %d >= max %d)."
+   @@messages[:length_tooshortex]    = "too short (length %d <= min %d)."
+   # --
+   # filename: lib/kwalify/yaml-parser.rb
+   @@messages[:flow_hastail]         = "flow style sequence is closed but got '%s'."
+   @@messages[:flow_eof]             = "found EOF when parsing flow style."
+   @@messages[:flow_alias_label]     = "alias name expected."
+   @@messages[:flow_anchor_label]    = "anchor name expected."
+   @@messages[:flow_noseqitem]       = "sequence item required (or last comma is extra)."
+   @@messages[:flow_seqnotclosed]    = "flow style sequence requires ']'."
+   @@messages[:flow_mapnoitem]       = "mapping item required (or last comma is extra)."
+   @@messages[:flow_mapnotclosed]    = "flow style mapping requires '}'."
+   @@messages[:flow_nocolon]         = "':' expected but got %s."
+   @@messages[:flow_str_notclosed]   = "%s: string not closed."
+   @@messages[:anchor_duplicated]    = "anchor '%s' is already used."
+   @@messages[:alias_extradata]      = "alias cannot take any data."
+   @@messages[:anchor_notfound]      = "anchor '%s' not found"
+   @@messages[:sequence_noitem]      = "sequence item is expected."
+   @@messages[:sequence_badindent]   = "illegal indent of sequence."
+   @@messages[:mapping_noitem]       = "mapping item is expected."
+   @@messages[:mapping_badindent]    = "illegal indent of mapping."
+   # --
+   ##----- end
+
+
+
+
+   @@words = {}
+
+   def self.word(key)
+      return @@words[key] || key
+   end
+
+   @@words['str']  = 'string'
+   @@words['int']  = 'integer'
+   @@words['bool'] = 'boolean'
+   @@words['seq']  = 'sequence'
+   @@words['map']  = 'mapping'
+
+end
+#--end of require 'kwalify/messages'
+#--begin of require 'kwalify/errors'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--already included require 'kwalify/messages'
+
+module Kwalify
+
+  class KwalifyError < StandardError
+  end
+
+
+  class AssertionError < KwalifyError
+    def initialize(msg)
+      super("*** assertion error: " + msg)
+    end
+  end
+
+
+  class BaseError < KwalifyError
+    def initialize(message="", path=nil, value=nil, rule=nil, error_symbol=nil)
+      super(message)
+      @path  = path.is_a?(Array) ? '/'+path.join('/') : path
+      @rule  = rule
+      @value = value
+      @error_symbol = error_symbol
+    end
+    attr_accessor :error_symbol, :rule, :path, :value
+    attr_accessor :filename, :linenum, :column
+
+    def path
+      return @path == '' ? "/" : @path
+    end
+
+    alias _to_s to_s
+    alias message to_s
+
+    def to_s
+      s = ''
+      s << @filename << ":" if @filename
+      s << "#{@linenum}:#{@column} " if @linenum
+      s << "[#{path()}] " if @path
+      s << _to_s()
+      return s
+    end
+
+    def <=>(ex)
+      #return @linenum <=> ex.linenum
+      v = 0
+      v = @linenum <=> ex.linenum if @linenum && ex.linenum
+      v = @column  <=> ex.column  if v == 0 && @column && ex.column
+      v = @path    <=> ex.path    if v == 0
+      return v
+    end
+  end
+
+
+  class SchemaError < BaseError
+    def initialize(message="", path=nil, rule=nil, value=nil, error_symbol=nil)
+      super(message, path, rule, value, error_symbol)
+    end
+  end
+
+
+  class ValidationError < BaseError
+    def initialize(message="", path=nil, rule=nil, value=nil, error_symbol=nil)
+      super(message, path, rule, value, error_symbol)
+    end
+  end
+
+
+  ## syntax error for YAML and JSON
+  class SyntaxError < BaseError  #KwalifyError
+    def initialize(msg, linenum=nil, error_symbol=nil)
+      super(linenum ? "line #{linenum}: #{msg}" : msg)
+      @linenum = linenum
+      @error_symbol = error_symbol
+    end
+    #attr_accessor :linenum, :error_symbol
+    def message
+      "file: #{@filename}, line #{@linenum}: #{super}"
+    end
+  end
+
+
+  ## (obsolete) use Kwalify::SyntaxError instead
+  class YamlSyntaxError < SyntaxError
+  end
+
+
+  module ErrorHelper
+
+    #module_function
+
+    def assert_error(message="")
+      raise AssertionError.new(message)
+    end
+
+    def validate_error(error_symbol, rule, path, val, args=nil)
+      msg = _build_message(error_symbol, val, args);
+      path = '/'+path.join('/') if path.is_a?(Array)
+      return ValidationError.new(msg, path, val, rule, error_symbol)
+    end
+    module_function :validate_error
+
+    def schema_error(error_symbol, rule, path, val, args=nil)
+      msg = _build_message(error_symbol, val, args);
+      path = '/'+path.join('/') if path.is_a?(Array)
+      return SchemaError.new(msg, path, val, rule, error_symbol)
+    end
+
+    def _build_message(message_key, val, args)
+      msg = Kwalify.msg(message_key)
+      assert_error("message_key=#{message_key.inspect}") unless msg
+      msg = msg % args if args
+      msg = "'#{val.to_s.gsub(/\n/, '\n')}': #{msg}" if !val.nil? && Types.scalar?(val)
+      return msg;
+    end
+    module_function :_build_message
+
+  end
+
+  extend ErrorHelper
+
+end
+#--end of require 'kwalify/errors'
+#--begin of require 'kwalify/rule'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--already included require 'kwalify/messages'
+#--already included require 'kwalify/errors'
+#--already included require 'kwalify/types'
+
+
+module Kwalify
+
+
+  class Rule
+    include Kwalify::ErrorHelper
+
+    attr_accessor :parent
+    attr_reader :name
+    attr_reader :desc
+    attr_reader :enum
+    attr_reader :required
+    attr_reader :type
+    attr_reader :type_class
+    attr_reader :pattern
+    attr_reader :regexp
+    attr_reader :sequence
+    attr_reader :mapping
+    attr_reader :assert
+    attr_reader :assert_proc
+    attr_reader :range
+    attr_reader :length
+    attr_reader :ident
+    attr_reader :unique
+    attr_reader :default
+    attr_reader :classname
+    attr_reader :classobj
+
+
+    def initialize(hash=nil, parent=nil)
+      _init(hash, "", {}) if hash
+      @parent = parent
+    end
+
+
+    def _init(hash, path="", rule_table={})
+      unless hash.is_a?(Hash)
+        #* key=:schema_notmap  msg="schema definition is not a mapping."
+        raise Kwalify.schema_error(:schema_notmap, nil, (!path || path.empty? ? "/" : path), nil)
+      end
+      rule = self
+      rule_table[hash.__id__] = rule
+      ## 'type:' entry
+      curr_path = "#{path}/type"
+      _init_type_value(hash['type'], rule, curr_path)
+      ## other entries
+      hash.each do |key, val|
+        curr_path = "#{path}/#{key}"
+        sym = key.intern
+        method = get_init_method(sym)
+        unless method
+          #* key=:key_unknown  msg="unknown key."
+          raise schema_error(:key_unknown, rule, curr_path, "#{key}:")
+        end
+        if sym == :sequence || sym == :mapping
+          __send__(method, val, rule, curr_path, rule_table)
+        else
+          __send__(method, val, rule, curr_path)
+        end
+      end
+      _check_confliction(hash, rule, path)
+      return self
+    end
+
+
+    keys = %w[type name desc required pattern enum assert range length
+              ident unique default sequence mapping class]
+    #table = keys.inject({}) {|h, k| h[k.intern] = "_init_#{k}_value".intern; h }
+    table = {}; keys.each {|k| table[k.intern] = "_init_#{k}_value".intern }
+    @@dispatch_table = table
+
+
+    protected
+
+
+    def get_init_method(sym)
+      @_dispatch_table ||= @@dispatch_table
+      return @_dispatch_table[sym]
+    end
+
+
+    private
+
+
+    def _init_type_value(val, rule, path)
+      @type = val
+      @type = Types::DEFAULT_TYPE if @type.nil?
+      unless @type.is_a?(String)
+        #* key=:type_notstr  msg="not a string."
+        raise schema_error(:type_notstr, rule, path, @type.to_s)
+      end
+      @type_class = Types.type_class(@type)
+      #if @type_class.nil?
+      #  begin
+      #    @type_class = Kernel.const_get(@type)
+      #  rescue NameError
+      #  end
+      #end
+      unless @type_class
+        #* key=:type_unknown  msg="unknown type."
+        raise schema_error(:type_unknown, rule, path, @type.to_s)
+      end
+    end
+
+
+    def _init_class_value(val, rule, path)
+      @classname = val
+      unless @type == 'map'
+        #* key=:class_notmap  msg="available only with map type."
+        raise schema_error(:class_notmap, rule, path, 'class:')
+      end
+      begin
+        @classobj = Util.get_class(val)
+      rescue NameError
+        @classobj = nil
+      end
+    end
+
+
+    def _init_name_value(val, rule, path)
+      @name = val
+    end
+
+
+    def _init_desc_value(val, rule, path)
+      @desc = val
+    end
+
+
+    def _init_required_value(val, rule, path)
+      @required = val
+      unless val.is_a?(Boolean)  #|| val.nil?
+        #* key=:required_notbool  msg="not a boolean."
+        raise schema_error(:required_notbool, rule, path, val)
+      end
+    end
+
+
+    def _init_pattern_value(val, rule, path)
+      @pattern = val
+      unless val.is_a?(String) || val.is_a?(Regexp)
+        #* key=:pattern_notstr  msg="not a string (or regexp)"
+        raise schema_error(:pattern_notstr, rule, path, val)
+      end
+      unless val =~ /\A\/(.*)\/([mi]?[mi]?)\z/
+        #* key=:pattern_notmatch  msg="should be '/..../'."
+        raise schema_error(:pattern_notmatch, rule, path, val)
+      end
+      pat = $1; opt = $2
+      flag = 0
+      flag += Regexp::IGNORECASE if opt.include?("i")
+      flag += Regexp::MULTILINE  if opt.include?("m")
+      begin
+        @regexp = Regexp.compile(pat, flag)
+      rescue RegexpError => ex
+        #* key=:pattern_syntaxerr  msg="has regexp error."
+        raise schema_error(:pattern_syntaxerr, rule, path, val)
+      end
+    end
+
+
+    def _init_enum_value(val, rule, path)
+      @enum = val
+      unless val.is_a?(Array)
+        #* key=:enum_notseq  msg="not a sequence."
+        raise schema_error(:enum_notseq, rule, path, val)
+      end
+      if Types.collection_type?(@type)  # unless Kwalify.scalar_class?(@type_class)
+        #* key=:enum_notscalar  msg="not available with seq or map."
+        raise schema_error(:enum_notscalar, rule, File.dirname(path), 'enum:')
+      end
+      elem_table = {}
+      @enum.each do |elem|
+        unless elem.is_a?(@type_class)
+          #* key=:enum_type_unmatch  msg="%s type expected."
+          raise schema_error(:enum_type_unmatch, rule, path, elem, [Kwalify.word(@type)])
+        end
+        if elem_table[elem]
+          #* key=:enum_duplicate  msg="duplicated enum value."
+          raise schema_error(:enum_duplicate, rule, path, elem.to_s)
+        end
+        elem_table[elem] = true
+      end
+    end
+
+
+    def _init_assert_value(val, rule, path)
+      @assert = val
+      unless val.is_a?(String)
+        #* key=:assert_notstr  msg="not a string."
+        raise schema_error(:assert_notstr, rule, path, val)
+      end
+      unless val =~ /\bval\b/
+        #* key=:assert_noval  msg="'val' is not used."
+        raise schema_error(:assert_noval, rule, path, val)
+      end
+      begin
+        @assert_proc = eval "proc { |val| #{val} }"
+      rescue ::SyntaxError => ex
+        #* key=:assert_syntaxerr  msg="expression syntax error."
+        raise schema_error(:assert_syntaxerr, rule, path, val)
+      end
+    end
+
+
+    def _init_range_value(val, rule, path)
+      @range = val
+      unless val.is_a?(Hash)
+        #* key=:range_notmap  msg="not a mapping."
+        raise schema_error(:range_notmap, rule, path, val)
+      end
+      if Types.collection_type?(@type) || @type == 'bool'
+        #* key=:range_notscalar  msg="is available only with scalar type."
+        raise schema_error(:range_notscalar, rule, File.dirname(path), 'range:')
+      end
+      val.each do |k, v|
+        case k
+        when 'max', 'min', 'max-ex', 'min-ex'
+          unless v.is_a?(@type_class)
+            typename = Kwalify.word(@type) || @type
+            #* key=:range_type_unmatch  msg="not a %s."
+            raise schema_error(:range_type_unmatch, rule, "#{path}/#{k}", v, [typename])
+          end
+        else
+          #* key=:range_undefined  msg="undefined key."
+          raise schema_error(:range_undefined, rule, "#{path}/#{k}", "#{k}:")
+        end
+      end
+      if val.key?('max') && val.key?('max-ex')
+        #* key=:range_twomax  msg="both 'max' and 'max-ex' are not available at once."
+        raise schema_error(:range_twomax, rule, path, nil)
+      end
+      if val.key?('min') && val.key?('min-ex')
+        #* key=:range_twomin  msg="both 'min' and 'min-ex' are not available at once."
+        raise schema_error(:range_twomin, rule, path, nil)
+      end
+      max, min, max_ex, min_ex = val['max'], val['min'], val['max-ex'], val['min-ex']
+      if max
+        if min && max < min
+          #* key=:range_maxltmin  msg="max '%s' is less than min '%s'."
+          raise validate_error(:range_maxltmin, rule, path, nil, [max, min])
+        elsif min_ex && max <= min_ex
+          #* key=:range_maxleminex  msg="max '%s' is less than or equal to min-ex '%s'."
+          raise validate_error(:range_maxleminex, rule, path, nil, [max, min_ex])
+        end
+      elsif max_ex
+        if min && max_ex <= min
+          #* key=:range_maxexlemin msg="max-ex '%s' is less than or equal to min '%s'."
+          raise validate_error(:range_maxexlemin, rule, path, nil, [max_ex, min])
+        elsif min_ex && max_ex <= min_ex
+          #* key=:range_maxexleminex msg="max-ex '%s' is less than or equal to min-ex '%s'."
+          raise validate_error(:range_maxexleminex, rule, path, nil, [max_ex, min_ex])
+        end
+      end
+    end
+
+
+    def _init_length_value(val, rule, path)
+      @length = val
+      unless val.is_a?(Hash)
+        #* key=:length_notmap  msg="not a mapping."
+        raise schema_error(:length_notmap, rule, path, val)
+      end
+      unless @type == 'str' || @type == 'text'
+        #* key=:length_nottext  msg="is available only with string or text."
+        raise schema_error(:length_nottext, rule, File.dirname(path), 'length:')
+      end
+      val.each do |k, v|
+        case k
+        when 'max', 'min', 'max-ex', 'min-ex'
+          unless v.is_a?(Integer)
+            #* key=:length_notint  msg="not an integer."
+            raise schema_error(:length_notint, rule, "#{path}/#{k}", v)
+          end
+        else
+          #* key=:length_undefined  msg="undefined key."
+          raise schema_error(:length_undefined, rule, "#{path}/#{k}", "#{k}:")
+        end
+      end
+      if val.key?('max') && val.key?('max-ex')
+        #* key=:length_twomax msg="both 'max' and 'max-ex' are not available at once."
+        raise schema_error(:length_twomax, rule, path, nil)
+      end
+      if val.key?('min') && val.key?('min-ex')
+        #* key=:length_twomin msg="both 'min' and 'min-ex' are not available at once."
+        raise schema_error(:length_twomin, rule, path, nil)
+      end
+      max, min, max_ex, min_ex = val['max'], val['min'], val['max-ex'], val['min-ex']
+      if max
+        if min && max < min
+          #* key=:length_maxltmin  msg="max '%s' is less than min '%s'."
+          raise validate_error(:length_maxltmin, rule, path, nil, [max, min])
+        elsif min_ex && max <= min_ex
+          #* key=:length_maxleminex  msg="max '%s' is less than or equal to min-ex '%s'."
+          raise validate_error(:length_maxleminex, rule, path, nil, [max, min_ex])
+        end
+      elsif max_ex
+        if min && max_ex <= min
+          #* key=:length_maxexlemin  msg="max-ex '%s' is less than or equal to min '%s'."
+          raise validate_error(:length_maxexlemin, rule, path, nil, [max_ex, min])
+        elsif min_ex && max_ex <= min_ex
+          #* key=:length_maxexleminex  msg="max-ex '%s' is less than or equal to min-ex '%s'."
+          raise validate_error(:length_maxexleminex, rule, path, nil, [max_ex, min_ex])
+        end
+      end
+    end
+
+
+    def _init_ident_value(val, rule, path)
+      @ident = val
+      @required = true
+      unless val.is_a?(Boolean)
+        #* key=:ident_notbool  msg="not a boolean."
+        raise schema_error(:ident_notbool, rule, path, val)
+      end
+      if @type == 'map' || @type == 'seq'
+        #* key=:ident_notscalar  msg="is available only with a scalar type."
+        raise schema_error(:ident_notscalar, rule, File.dirname(path), "ident:")
+      end
+      if File.dirname(path) == "/"
+        #* key=:ident_onroot  msg="is not available on root element."
+        raise schema_error(:ident_onroot, rule, "/", "ident:")
+      end
+      unless @parent && @parent.type == 'map'
+        #* key=:ident_notmap  msg="is available only with an element of mapping."
+        raise schema_error(:ident_notmap, rule, File.dirname(path), "ident:")
+      end
+    end
+
+
+    def _init_unique_value(val, rule, path)
+      @unique = val
+      unless val.is_a?(Boolean)
+        #* key=:unique_notbool  msg="not a boolean."
+        raise schema_error(:unique_notbool, rule, path, val)
+      end
+      if @type == 'map' || @type == 'seq'
+        #* key=:unique_notscalar  msg="is available only with a scalar type."
+        raise schema_error(:unique_notscalar, rule, File.dirname(path), "unique:")
+      end
+      if File.dirname(path) == "/"
+        #* key=:unique_onroot  msg="is not available on root element."
+        raise schema_error(:unique_onroot, rule, "/", "unique:")
+      end
+    end
+
+
+    def _init_default_value(val, rule, path)
+      @default = val
+      unless Types.scalar?(val)
+        #* key=:default_nonscalarval  msg="not a scalar."
+        raise schema_error(:default_nonscalarval, rule, path, val)
+      end
+      if @type == 'map' || @type == 'seq'
+        #* key=:default_notscalar  msg="is available only with a scalar type."
+        raise schema_error(:default_notscalar, rule, File.dirname(path), "default:")
+      end
+      unless val.nil? || val.is_a?(@type_class)
+        #* key=:default_unmatch  msg="not a %s."
+        raise schema_error(:default_unmatch, rule, path, val, [Kwalify.word(@type)])
+      end
+    end
+
+
+    def _init_sequence_value(val, rule, path, rule_table)
+      if !val.nil? && !val.is_a?(Array)
+        #* key=:sequence_notseq  msg="not a sequence."
+        raise schema_error(:sequence_notseq, rule, path, val)
+      elsif val.nil? || val.empty?
+        #* key=:sequence_noelem  msg="required one element."
+        raise schema_error(:sequence_noelem, rule, path, val)
+      elsif val.length > 1
+        #* key=:sequence_toomany  msg="required just one element."
+        raise schema_error(:sequence_toomany, rule, path, val)
+      else
+        elem = val[0]
+        elem ||= {}
+        i = 0  # or 1?  *index*
+        rule = rule_table[elem.__id__]
+        rule ||= Rule.new(nil, self)._init(elem, "#{path}/#{i}", rule_table)
+        @sequence = [ rule ]
+      end
+    end
+
+
+    def _init_mapping_value(val, rule, path, rule_table)
+      if !val.nil? && !val.is_a?(Hash)
+        #* key=:mapping_notmap  msg="not a mapping."
+        raise schema_error(:mapping_notmap, rule, path, val)
+      elsif val.nil? || (val.empty? && !val.default)
+        #* key=:mapping_noelem  msg="required at least one element."
+        raise schema_error(:mapping_noelem, rule, path, val)
+      else
+        @mapping = {}
+        if val.default
+          elem = val.default  # hash
+          rule = rule_table[elem.__id__]
+          rule ||= Rule.new(nil, self)._init(elem, "#{path}/=", rule_table)
+          @mapping.default = rule
+        end
+        val.each do |k, v|
+          ##* key=:key_duplicate  msg="key duplicated."
+          #raise schema_error(:key_duplicate, rule, path, key) if @mapping.key?(key)
+          v ||= {}
+          rule = rule_table[v.__id__]
+          rule ||= Rule.new(nil, self)._init(v, "#{path}/#{k}", rule_table)
+          if k == '='
+            @mapping.default = rule
+          else
+            @mapping[k] = rule
+          end
+        end if val
+      end
+    end
+
+
+    def _check_confliction(hash, rule, path)
+      if @type == 'seq'
+        #* key=:seq_nosequence  msg="type 'seq' requires 'sequence:'."
+        raise schema_error(:seq_nosequence, rule, path, nil) unless hash.key?('sequence')
+        #* key=:seq_conflict  msg="not available with sequence."
+        raise schema_error(:seq_conflict, rule, path, 'enum:')      if @enum
+        raise schema_error(:seq_conflict, rule, path, 'pattern:')   if @pattern
+        raise schema_error(:seq_conflict, rule, path, 'mapping:')   if @mapping
+        raise schema_error(:seq_conflict, rule, path, 'range:')     if @range
+        raise schema_error(:seq_conflict, rule, path, 'length:')    if @length
+      elsif @type == 'map'
+        #* key=:map_nomapping  msg="type 'map' requires 'mapping:'."
+        raise schema_error(:map_nomapping, rule, path, nil)  unless hash.key?('mapping')
+        #* key=:map_conflict  msg="not available with mapping."
+        raise schema_error(:map_conflict, rule, path, 'enum:')      if @enum
+        raise schema_error(:map_conflict, rule, path, 'pattern:')   if @pattern
+        raise schema_error(:map_conflict, rule, path, 'sequence:')  if @sequence
+        raise schema_error(:map_conflict, rule, path, 'range:')     if @range
+        raise schema_error(:map_conflict, rule, path, 'length:')    if @length
+      else
+        #* key=:scalar_conflict  msg="not available with scalar type."
+        raise schema_error(:scalar_conflict, rule, path, 'sequence:') if @sequence
+        raise schema_error(:scalar_conflict, rule, path, 'mapping:')  if @mapping
+        if @enum
+          #* key=:enum_conflict  msg="not available with 'enum:'."
+          raise schema_error(:enum_conflict, rule, path, 'range:')   if @range
+          raise schema_error(:enum_conflict, rule, path, 'length:')  if @length
+          raise schema_error(:enum_conflict, rule, path, 'pattern:') if @pattern
+        end
+        unless @default.nil?
+          #* key=:default_conflict  msg="not available when 'required:' is true."
+          raise schema_error(:default_conflict, rule, path, 'default:') if @required
+        end
+      end
+    end
+
+    #def inspect()
+    #  str = "";  level = 0;  done = {}
+    #  _inspect(str, level, done)
+    #  return str
+    #end
+
+
+    protected
+
+
+    def _inspect(str="", level=0, done={})
+      done[self.__id__] = true
+      str << "  " * level << "name:    #{@name}\n"         unless @name.nil?
+      str << "  " * level << "desc:    #{@desc}\n"         unless @desc.nil?
+      str << "  " * level << "type:    #{@type}\n"         unless @type.nil?
+      str << "  " * level << "klass:    #{@type_class.name}\n"  unless @type_class.nil?
+      str << "  " * level << "required:  #{@required}\n"      unless @required.nil?
+      str << "  " * level << "pattern:  #{@regexp.inspect}\n"  unless @pattern.nil?
+      str << "  " * level << "assert:   #{@assert}\n"        unless @assert.nil?
+      str << "  " * level << "ident:    #{@ident}\n"        unless @ident.nil?
+      str << "  " * level << "unique:   #{@unique}\n"        unless @unique.nil?
+      if !@enum.nil?
+        str << "  " * level << "enum:\n"
+        @enum.each do |item|
+          str << "  " * (level+1) << "- #{item}\n"
+        end
+      end
+      if !@range.nil?
+        str << "  " * level
+        str << "range:    { "
+        colon = ""
+        %w[max max-ex min min-ex].each do |key|
+          val = @range[key]
+          unless val.nil?
+            str << colon << "#{key}: #{val.inspect}"
+            colon = ", "
+          end
+        end
+        str << " }\n"
+      end
+      if !@length.nil?
+        str << "  " * level
+        str << "length:    { "
+        colon = ""
+        %w[max max-ex min min-ex].each do |key|
+          val = @length[key]
+          if !val.nil?
+            str << colon << "#{key}: #{val.inspect}"
+            colon = ", "
+          end
+        end
+        str << " }\n"
+      end
+      @sequence.each do |rule|
+        if done[rule.__id__]
+          str << "  " * (level+1) << "- ...\n"
+        else
+          str << "  " * (level+1) << "- \n"
+          rule._inspect(str, level+2, done)
+        end
+      end if @sequence
+      @mapping.each do |key, rule|
+        if done[rule.__id__]
+          str << '  ' * (level+1) << '"' << key << "\": ...\n"
+        else
+          str << '  ' * (level+1) << '"' << key << "\":\n"
+          rule._inspect(str, level+2, done)
+        end
+      end if @mapping
+      return str
+    end
+
+
+    public
+
+
+    def _uniqueness_check_table()   # :nodoc:
+      uniq_table = nil
+      if @type == 'map'
+        @mapping.keys.each do |key|
+          rule = @mapping[key]
+          if rule.unique || rule.ident
+            uniq_table ||= {}
+            uniq_table[key] = {}
+          end
+        end
+      elsif @unique || @ident
+        uniq_table = {}
+      end
+      return uniq_table
+    end
+
+
+  end
+
+
+end
+#--end of require 'kwalify/rule'
+#--begin of require 'kwalify/validator'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--already included require 'kwalify/messages'
+#--already included require 'kwalify/errors'
+#--already included require 'kwalify/types'
+#--already included require 'kwalify/rule'
+
+module Kwalify
+
+  ##
+  ## validate YAML document
+  ##
+  ## ex1. validate yaml document
+  ##   schema = YAML.load_file('schema.yaml')
+  ##   validator = Kwalify::Validator.new(schema)
+  ##   document = YAML.load_file('document.yaml')
+  ##   erros = validator.validate(document)
+  ##   if errors && !errors.empty?
+  ##     errors.each do |err|
+  ##       puts "- [#{err.path}] #{err.message}"
+  ##     end
+  ##   end
+  ##
+  ## ex2. validate with parsing
+  ##   schema = YAML.load_file('schema.yaml')
+  ##   validator = Kwalify::Validator.new(schema)
+  ##   parser = Kwalify::Yaml::Parser.new(validator)
+  ##   document = parser.parse(File.read('document.yaml'))
+  ##   errors = parser.errors
+  ##   if errors && errors.empty?
+  ##     errors.each do |e|
+  ##       puts "#{e.linenum}:#{e.column} [#{e.path}] #{e.message}"
+  ##     end
+  ##   end
+  ##
+  class Validator
+    include Kwalify::ErrorHelper
+
+
+    def initialize(hash_or_rule, &block)
+      obj = hash_or_rule
+      @rule = (obj.nil? || obj.is_a?(Rule)) ? obj : Rule.new(obj)
+      @block = block
+    end
+    attr_reader :rule
+
+
+    def _inspect
+      @rule._inspect
+    end
+
+
+    def validate(value)
+      path = '';  errors = [];  done = {};  uniq_table = nil
+      _validate(value, @rule, path, errors, done, uniq_table)
+      return errors
+    end
+
+
+    protected
+
+
+    def validate_hook(value, rule, path, errors)
+      ## may be overrided by subclass
+    end
+
+
+    public
+
+
+    def _validate(value, rule, path, errors, done, uniq_table, recursive=true)
+      #if Types.collection?(value)
+      if !Types.scalar?(value)
+        #if done[value.__id__]
+        #  rule2 = done[value.__id__]
+        #  if rule2.is_a?(Rule)
+        #    return if rule.equal?(rule2)
+        #    done[value.__id__] = [rule2, rule]
+        #  elsif rule2.is_a?(Array)
+        #    return if rule2.any? {|r| r.equal?(rule)}
+        #    done[value.__id__] << rule
+        #  else
+        #    raise "unreachable"
+        #  end
+        #end
+        return if done[value.__id__]     # avoid infinite loop
+        done[value.__id__] = rule
+      end
+      if rule.required && value.nil?
+        #* key=:required_novalue  msg="value required but none."
+        errors << validate_error(:required_novalue, rule, path, value)
+        return
+      end
+      if rule.type_class && !value.nil? && !value.is_a?(rule.type_class)
+        unless rule.classobj && value.is_a?(rule.classobj)
+          #* key=:type_unmatch  msg="not a %s."
+          errors << validate_error(:type_unmatch, rule, path, value, [Kwalify.word(rule.type)])
+          return
+        end
+      end
+      #
+      n = errors.length
+      if rule.sequence
+        _validate_sequence(value, rule, path, errors, done, uniq_table, recursive)
+      elsif rule.mapping
+        _validate_mapping(value, rule, path, errors, done, uniq_table, recursive)
+      else
+        _validate_scalar(value, rule, path, errors, done, uniq_table)
+      end
+      return unless errors.length == n
+      #
+      #path_str = path.is_a?(Array) ? '/'+path.join('/') : path
+      #validate_hook(value, rule, path_str, errors)
+      #@block.call(value, rule, path_str, errors) if @block
+      validate_hook(value, rule, path, errors)
+      @block.call(value, rule, path, errors) if @block
+    end
+
+
+    private
+
+
+    def _validate_sequence(list, seq_rule, path, errors, done, uniq_table, recursive=true)
+      assert_error("seq_rule.sequence.class==#{seq_rule.sequence.class.name} (expected Array)") unless seq_rule.sequence.is_a?(Array)
+      assert_error("seq_rule.sequence.length==#{seq_rule.sequence.length} (expected 1)") unless seq_rule.sequence.length == 1
+      return if list.nil? || !recursive
+      rule = seq_rule.sequence[0]
+      uniq_table = rule._uniqueness_check_table()
+      list.each_with_index do |val, i|
+        child_path = path.is_a?(Array) ? path + [i] : "#{path}/#{i}"
+        _validate(val, rule, child_path, errors, done, uniq_table)   ## validate recursively
+      end
+    end
+
+
+    def _validate_mapping(hash, map_rule, path, errors, done, uniq_table, recursive=true)
+      assert_error("map_rule.mapping.class==#{map_rule.mapping.class.name} (expected Hash)") unless map_rule.mapping.is_a?(Hash)
+      return if hash.nil?
+      return if !recursive
+      _validate_mapping_required_keys(hash, map_rule, path, errors)
+      hash.each do |key, val|
+        rule = map_rule.mapping[key]
+        child_path = path.is_a?(Array) ? path+[key] : "#{path}/#{key}"
+        unless rule
+          #* key=:key_undefined  msg="key '%s' is undefined."
+          errors << validate_error(:key_undefined, rule, child_path, hash, ["#{key}:"])
+          ##* key=:key_undefined  msg="undefined key."
+          #errors << validate_error(:key_undefined, rule, child_path, "#{key}:")
+        else
+          _validate(val, rule, child_path, errors, done,
+                    uniq_table ? uniq_table[key] : nil)   ## validate recursively
+        end
+      end
+    end
+
+
+    def _validate_mapping_required_keys(hash, map_rule, path, errors)  #:nodoc:
+      map_rule.mapping.each do |key, rule|
+        #next unless rule.required
+        #val = hash.is_a?(Hash) ? hash[key] : hash.instance_variable_get("@#{key}")
+        #if val.nil?
+        if rule.required && hash[key].nil?  # or !hash.key?(key)
+          #* key=:required_nokey  msg="key '%s:' is required."
+          errors << validate_error(:required_nokey, rule, path, hash, [key])
+        end
+      end
+    end
+    public :_validate_mapping_required_keys
+
+
+    def _validate_scalar(value, rule, path, errors, done, uniq_table)
+      assert_error("rule.sequence.class==#{rule.sequence.class.name} (expected NilClass)") if rule.sequence
+      assert_error("rule.mapping.class==#{rule.mapping.class.name} (expected NilClass)") if rule.mapping
+      _validate_assert( value, rule, path, errors)  if rule.assert_proc
+      _validate_enum(   value, rule, path, errors)  if rule.enum
+      return if value.nil?
+      _validate_pattern(value, rule, path, errors)  if rule.pattern
+      _validate_range(  value, rule, path, errors)  if rule.range
+      _validate_length( value, rule, path, errors)  if rule.length
+      _validate_unique( value, rule, path, errors, uniq_table)  if uniq_table
+    end
+
+
+    def _validate_unique(value, rule, path, errors, uniq_table)
+      assert_error "uniq_table=#{uniq_table.inspect}" unless rule.unique || rule.ident
+      if uniq_table.key?(value)
+        exist_at = uniq_table[value]
+        exist_at = "/#{exist_at.join('/')}" if exist_at.is_a?(Array)
+        #* key=:value_notunique  msg="is already used at '%s'."
+        errors << validate_error(:value_notunique, rule, path, value, exist_at)
+      else
+        uniq_table[value] = path.dup
+      end
+    end
+    public :_validate_unique
+
+
+    def _validate_assert(value, rule, path, errors)
+      assert_error("rule=#{rule._inspect}") unless rule.assert_proc
+      unless rule.assert_proc.call(value)
+        #* key=:assert_failed  msg="assertion expression failed (%s)."
+        errors << validate_error(:assert_failed, rule, path, value, [rule.assert])
+      end
+    end
+
+
+    def _validate_enum(value, rule, path, errors)
+      assert_error("rule=#{rule._inspect}") unless rule.enum
+      unless rule.enum.include?(value)
+        keyname = path.is_a?(Array) ? path[-1] : File.basename(path)
+        keyname = 'enum' if keyname =~ /\A\d+\z/
+        #* key=:enum_notexist  msg="invalid %s value."
+        errors << validate_error(:enum_notexist, rule, path, value, [keyname])
+      end
+    end
+
+
+    def _validate_pattern(value, rule, path, errors)
+      assert_error("rule=#{rule._inspect}") unless rule.pattern
+      unless value.to_s =~ rule.regexp
+        #* key=:pattern_unmatch  msg="not matched to pattern %s."
+        errors << validate_error(:pattern_unmatch, rule, path, value, [rule.pattern])
+      end
+    end
+
+
+    def _validate_range(value, rule, path, errors)
+      assert_error("rule=#{rule._inspect}") unless rule.range
+      assert_error("value.class=#{value.class.name}") unless Types.scalar?(value)
+      h = rule.range
+      max, min, max_ex, min_ex = h['max'], h['min'], h['max-ex'], h['min-ex']
+      if max && max < value
+        #* key=:range_toolarge  msg="too large (> max %s)."
+        errors << validate_error(:range_toolarge, rule, path, value, [max.to_s])
+      end
+      if min && min > value
+        #* key=:range_toosmall  msg="too small (< min %s)."
+        errors << validate_error(:range_toosmall, rule, path, value, [min.to_s])
+      end
+      if max_ex && max_ex <= value
+        #* key=:range_toolargeex  msg="too large (>= max %s)."
+        errors << validate_error(:range_toolargeex, rule, path, value, [max_ex.to_s])
+      end
+      if min_ex && min_ex >= value
+        #* key=:range_toosmallex  msg="too small (<= min %s)."
+        errors << validate_error(:range_toosmallex, rule, path, value, [min_ex.to_s])
+      end
+    end
+
+
+    def _validate_length(value, rule, path, errors)
+      assert_error("rule=#{rule._inspect}") unless rule.length
+      assert_error("value.class=#{value.class.name}") unless value.is_a?(String) || value.is_a?(Text)
+      len = value.to_s.length
+      h = rule.length
+      max, min, max_ex, min_ex = h['max'], h['min'], h['max-ex'], h['min-ex']
+      if max && max < len
+        #* key=:length_toolong  msg="too long (length %d > max %d)."
+        errors << validate_error(:length_toolong, rule, path, value, [len, max])
+      end
+      if min && min > len
+        #* key=:length_tooshort  msg="too short (length %d < min %d)."
+        errors << validate_error(:length_tooshort, rule, path, value, [len, min])
+      end
+      if max_ex && max_ex <= len
+        #* key=:length_toolongex  msg="too long (length %d >= max %d)."
+        errors << validate_error(:length_toolongex, rule, path, value, [len, max_ex])
+      end
+      if min_ex && min_ex >= len
+        #* key=:length_tooshortex  msg="too short (length %d <= min %d)."
+        errors << validate_error(:length_tooshortex, rule, path, value, [len, min_ex])
+      end
+    end
+
+
+  end
+
+end
+#--end of require 'kwalify/validator'
+#--begin of require 'kwalify/meta-validator'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--already included require 'kwalify/errors'
+#--already included require 'kwalify/rule'
+#--already included require 'kwalify/validator'
+#--begin of require 'kwalify/parser/yaml'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--already included require 'kwalify/validator'
+#--already included require 'kwalify/errors'
+#--begin of require 'kwalify/util'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+module Kwalify
+
+  module Util
+
+    module_function
+
+    ##
+    ## expand tab character to spaces
+    ##
+    ## ex.
+    ##   untabified_str = YamlHelper.untabify(tabbed_str)
+    ##
+    def untabify(str, width=8)
+      return str if str.nil?
+      list = str.split(/\t/, -1)   # if 2nd arg is negative then split() doesn't remove tailing empty strings
+      last = list.pop
+      sb = ''
+      list.each do |s|
+        column = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+        n = width - (column % width)
+        sb << s << (' ' * n)
+      end
+      sb << last if last
+      return sb
+    end
+
+
+    ## traverse schema
+    ##
+    ## ex.
+    ##   schema = YAML.load_file('myschema.yaml')
+    ##   Kwalify::Util.traverse_schema(schema) do |rulehash|
+    ##     ## add module prefix to class name
+    ##     if rulehash['class']
+    ##       rulehash['class'] = 'MyModule::' + rulehash['class']
+    ##     end
+    ##   end
+    def traverse_schema(schema, &block)  #:yield: rulehash
+      hash = schema
+      _done = {}
+      _traverse_schema(hash, _done, &block)
+    end
+
+    def _traverse_schema(hash, _done={}, &block)
+      return if _done.key?(hash.__id__)
+      _done[hash.__id__] = hash
+      yield hash
+      if hash['mapping']
+        hash['mapping'].each {|k, v| _traverse_schema(v, _done, &block) }
+      elsif hash['sequence']
+        _traverse_schema(hash['sequence'][0], _done, &block)
+      end
+    end
+    private :_traverse_schema
+
+
+    ## traverse rule
+    ##
+    ## ex.
+    ##   schema = YAML.load_file('myschema.yaml')
+    ##   validator = Kwalify::Validator.new(schema)
+    ##   Kwalify::Util.traverse_rule(validator) do |rule|
+    ##     p rule if rule.classname
+    ##   end
+    def traverse_rule(validator, &block)  #:yield: rule
+      rule = validator.is_a?(Rule) ? validator : validator.rule
+      _done = {}
+      _traverse_rule(rule, _done, &block)
+    end
+
+    def _traverse_rule(rule, _done={}, &block)
+       return if _done.key?(rule.__id__)
+       _done[rule.__id__] = rule
+       yield rule
+       rule.sequence.each do |seq_rule|
+          _traverse_rule(seq_rule, _done, &block)
+       end if rule.sequence
+       rule.mapping.each do |name, map_rule|
+          _traverse_rule(map_rule, _done, &block)
+       end if rule.mapping
+    end
+    private :_traverse_rule
+
+
+    ##
+    ## get class object. if not found, NameError raised.
+    ##
+    def get_class(classname)
+      klass = Object
+      classname.split('::').each do |name|
+        klass = klass.const_get(name)
+      end
+      return klass
+    end
+
+
+    ##
+    ## create a hash table from list of hash with primary key.
+    ##
+    ## ex.
+    ##   hashlist = [
+    ##     { "name"=>"Foo", "gender"=>"M", "age"=>20, },
+    ##     { "name"=>"Bar", "gender"=>"F", "age"=>25, },
+    ##     { "name"=>"Baz", "gender"=>"M", "age"=>30, },
+    ##   ]
+    ##   hashtable = YamlHelper.create_hashtable(hashlist, "name")
+    ##   p hashtable
+    ##       # => { "Foo" => { "name"=>"Foo", "gender"=>"M", "age"=>20, },
+    ##       #      "Bar" => { "name"=>"Bar", "gender"=>"F", "age"=>25, },
+    ##       #      "Baz" => { "name"=>"Baz", "gender"=>"M", "age"=>30, }, }
+    ##
+    def create_hashtable(hashlist, primarykey, flag_duplicate_check=true)
+      hashtable = {}
+      hashlist.each do |hash|
+        key = hash[primarykey]
+        unless key
+          riase "primary key '#{key}' not found."
+        end
+        if flag_duplicate_check && hashtable.key?(key)
+          raise "primary key '#{key}' duplicated (value '#{hashtable[key]}')"
+        end
+        hashtable[key] = hash
+      end if hashlist
+      return hashtable
+    end
+
+
+    ##
+    ## get nested value directly.
+    ##
+    ## ex.
+    ##   val = YamlHelper.get_value(obj, ['aaa', 0, 'xxx'])
+    ##
+    ## This is equal to the following:
+    ##   begin
+    ##     val = obj['aaa'][0]['xxx']
+    ##   rescue NameError
+    ##     val = nil
+    ##   end
+    ##
+    def get_value(obj, path)
+      val = obj
+      path.each do |key|
+        return nil unless val.is_a?(Hash) || val.is_a?(Array)
+        val = val[key]
+      end if path
+      return val
+    end
+
+  end
+
+end
+#--end of require 'kwalify/util'
+#--begin of require 'kwalify/parser/base'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+require 'strscan'
+#--already included require 'kwalify/errors'
+#--already included require 'kwalify/util'
+
+
+##
+## base class for Yaml::Parser
+##
+class Kwalify::BaseParser
+
+
+  def reset(input, filename=nil, untabify=false)
+    input = Kwalify::Util.untabify(input) if untabify
+    @scanner = StringScanner.new(input)
+    @filename = filename
+    @linenum = 1
+    @column  = 1
+  end
+  attr_reader :filename, :linenum, :column
+
+
+  def scan(regexp)
+    ret = @scanner.scan(regexp)
+    return nil if ret.nil?
+    _set_column_and_linenum(ret)
+    return ret
+  end
+
+
+  def _set_column_and_linenum(s)
+    pos = s.rindex(?\n)
+    if pos
+      @column = s.length - pos
+      @linenum += s.count("\n")
+    else
+      @column += s.length
+    end
+  end
+
+
+  def match?(regexp)
+    return @scanner.match?(regexp)
+  end
+
+
+  def group(n)
+    return @scanner[n]
+  end
+
+
+  def eos?
+    return @scanner.eos?
+  end
+
+
+  def peep(n=1)
+    return @scanner.peep(n)
+  end
+
+
+  def _getch
+    ch = @scanner.getch()
+    if ch == "\n"
+      @linenum += 1
+      @column = 0
+    else
+      @column += 1
+    end
+    return ch
+  end
+
+
+  CHAR_TABLE = { "\""=>"\"", "\\"=>"\\", "n"=>"\n", "r"=>"\r", "t"=>"\t", "b"=>"\b" }
+
+  def scan_string
+    ch = _getch()
+    ch == '"' || ch == "'" or raise "assertion error"
+    endch = ch
+    s = ''
+    while !(ch = _getch()).nil? && ch != endch
+      if ch != '\\'
+        s << ch
+      elsif (ch = _getch()).nil?
+        raise _syntax_error("%s: string is not closed." % (endch == '"' ? "'\"'" : '"\'"'))
+      elsif endch == '"'
+        if CHAR_TABLE.key?(ch)
+          s << CHAR_TABLE[ch]
+        elsif ch == 'u'
+          ch2 = scan(/(?:[0-9a-f][0-9a-f]){1,4}/)
+          unless ch2
+            raise _syntax_error("\\x: invalid unicode format.")
+          end
+          s << [ch2.hex].pack('U*')
+        elsif ch == 'x'
+          ch2 = scan(/[0-9a-zA-Z][0-9a-zA-Z]/)
+          unless ch2
+            raise _syntax_error("\\x: invalid binary format.")
+          end
+          s << [ch2].pack('H2')
+        else
+          s << "\\" << ch
+        end
+      elsif endch == "'"
+        ch == '\'' || ch == '\\' ? s << ch : s << '\\' << ch
+      else
+        raise "unreachable"
+      end
+    end
+    #_getch()
+    return s
+  end
+
+
+  def _syntax_error(message, path=nil, linenum=@linenum, column=@column)
+    #message = _build_message(message_key)
+    return _error(Kwalify::SyntaxError, message.to_s, path, linenum, column)
+  end
+  protected :_syntax_error
+
+
+end
+#--end of require 'kwalify/parser/base'
+
+
+
+module Kwalify
+
+  module Yaml
+  end
+
+end
+
+
+##
+## YAML parser with validator
+##
+## ex.
+##   schema = YAML.load_file('schema.yaml')
+##   require 'kwalify'
+##   validator = Kwalify::Validator.new(schema)
+##   parser = Kwalify::Yaml::Parser.new(validator)  # validator is optional
+##   #parser.preceding_alias = true  # optional
+##   #parser.data_binding = true     # optional
+##   ydoc = parser.parse_file('data.yaml')
+##   errors = parser.errors
+##   if errors && !errors.empty?
+##     errors.each do |e|
+##       puts "line=#{e.linenum}, path=#{e.path}, mesg=#{e.message}"
+##     end
+##   end
+##
+class Kwalify::Yaml::Parser < Kwalify::BaseParser
+
+
+  alias reset_scanner reset
+
+
+  def initialize(validator=nil, properties={})
+    @validator = validator.is_a?(Hash) ? Kwalify::Validator.new(validator) : validator
+    @data_binding    = properties[:data_binding]    # enable data binding or not
+    @preceding_alias = properties[:preceding_alias] # allow preceding alias or not
+    @sequence_class  = properties[:sequence_class] || Array
+    @mapping_class   = properties[:mapping_class]  || Hash
+  end
+  attr_accessor :validator        # Validator
+  attr_accessor :data_binding     # boolean
+  attr_accessor :preceding_alias  # boolean
+  attr_accessor :sequence_class   # Class
+  attr_accessor :mapping_class    # Class
+
+
+  def reset_parser()
+    @anchors = {}
+    @errors = []
+    @done = {}
+    @preceding_aliases = []
+    @location_table = {}    # object_id -> sequence or mapping
+    @doc = nil
+  end
+  attr_reader :errors
+
+
+  def _error(klass, message, path, linenum, column)
+    ex = klass.new(message)
+    ex.path = path.is_a?(Array) ? '/' + path.join('/') : path
+    ex.linenum = linenum
+    ex.column = column
+    ex.filename = @filename
+    return ex
+  end
+  private :_error
+
+
+#  def _validate_error(message, path, linenum=@linenum, column=@column)
+#    #message = _build_message(message_key)
+#    error = _error(ValidationError, message.to_s, path, linenum, column)
+#    @errors << error
+#  end
+#  private :_validate_error
+
+
+  def _set_error_info(linenum=@linenum, column=@column, &block)
+    len = @errors.length
+    yield
+    n = @errors.length - len
+    (1..n).each do |i|
+      error = @errors[-i]
+      error.linenum  ||= linenum
+      error.column   ||= column
+      error.filename ||= @filename
+    end if n > 0
+  end
+
+
+  def skip_spaces_and_comments()
+    scan(/\s+/)
+    while match?(/\#/)
+      scan(/.*?\n/)
+      scan(/\s+/)
+    end
+  end
+
+
+  def document_start?()
+    return match?(/---\s/) && @column == 1
+  end
+
+
+  def stream_end?()
+    return match?(/\.\.\.\s/) && @column == 1
+  end
+
+
+  def has_next?()
+    return !(eos? || stream_end?)
+  end
+
+
+  def parse(input=nil, opts={})
+    reset_scanner(input, opts[:filename], opts[:untabify]) if input
+    return parse_next()
+  end
+
+
+  def parse_file(filename, opts={})
+    opts[:filename] = filename
+    return parse(File.read(filename), opts)
+  end
+
+
+  def parse_next()
+    reset_parser()
+    path = []
+    skip_spaces_and_comments()
+    if document_start?()
+      scan(/.*\n/)
+      skip_spaces_and_comments()
+    end
+    _linenum = @linenum                                                    #*V
+    _column = @column                                                      #*V
+    rule = @validator ? @validator.rule : nil                              #*V
+    uniq_table = nil                                                       #*V
+    parent = nil                                                           #*V
+    val = parse_block_value(0, rule, path, uniq_table, parent)
+    _set_error_info(_linenum, _column) do                                  #*V
+      @validator._validate(val, rule, [], @errors, @done, uniq_table, false)  #*V
+    end if rule                                                            #*V
+    resolve_preceding_aliases(val) if @preceding_alias
+    unless eos? || document_start?() || stream_end?()
+      raise _syntax_error("document end expected (maybe invalid tab char found).", path)
+    end
+    @doc = val
+    @location_table[-1] = [_linenum, _column]
+    return val
+  end
+
+
+  def parse_stream(input, opts={}, &block)
+    reset_scanner(input, opts[:filename], opts[:untabify])
+    ydocs = block_given? ? nil : []
+    while true
+      ydoc = parse_next()
+      ydocs ? (ydocs << ydoc) : (yield ydoc)
+      break if eos? || stream_end?()
+      document_start?() or raise "** internal error"
+      scan(/.*\n/)
+    end
+    return ydocs
+  end
+
+  alias parse_documents parse_stream
+
+
+  MAPKEY_PATTERN = /([\w.][-\w.:]*\*?|".*?"|'.*?'|:\w+|=|<<)[ \t]*:\s+/  # :nodoc:
+
+  PRECEDING_ALIAS_PLACEHOLDER = Object.new    # :nodoc:
+
+
+  def parse_anchor(rule, path, uniq_table, container)
+    name = group(1)
+    if @anchors.key?(name)
+      raise _syntax_error("&#{name}: anchor duplicated.", path,
+                          @linenum, @column - name.length)
+    end
+    skip_spaces_and_comments()
+    return name
+  end
+
+
+  def parse_alias(rule, path, uniq_table, container)
+    name = group(1)
+    if @anchors.key?(name)
+      val = @anchors[name]
+    elsif @preceding_alias
+      @preceding_aliases << [name, rule, path.dup, container,
+                             @linenum, @column - name.length - 1]
+      val = PRECEDING_ALIAS_PLACEHOLDER
+    else
+      raise _syntax_error("*#{name}: anchor not found.", path,
+                          @linenum, @column - name.length - 1)
+    end
+    skip_spaces_and_comments()
+    return val
+  end
+
+
+  def resolve_preceding_aliases(val)
+    @preceding_aliases.each do |name, rule, path, container, _linenum, _column|
+      unless @anchors.key?(name)
+        raise _syntax_error("*#{name}: anchor not found.", path, _linenum, _column)
+      end
+      key = path[-1]
+      val = @anchors[name]
+      raise unless !container.respond_to?('[]') || container[key].equal?(PRECEDING_ALIAS_PLACEHOLDER)
+      if container.is_a?(Array)
+        container[key] = val
+      else
+        put_to_map(rule, container, key, val, _linenum, _column)
+      end
+      _set_error_info(_linenum, _column) do                                #*V
+        @validator._validate(val, rule, path, @errors, @done, false)       #*V
+      end if rule                                                          #*V
+    end
+  end
+
+
+  def parse_block_value(level, rule, path, uniq_table, container)
+    skip_spaces_and_comments()
+    ## nil
+    return nil if @column <= level || eos?
+    ## anchor and alias
+    name = nil
+    if scan(/\&([-\w]+)/)
+      name = parse_anchor(rule, path, uniq_table, container)
+    elsif scan(/\*([-\w]+)/)
+      return parse_alias(rule, path, uniq_table, container)
+    end
+    ## type
+    if scan(/!!?\w+/)
+      skip_spaces_and_comments()
+    end
+    ## sequence
+    if match?(/-\s+/)
+      if rule && !rule.sequence
+        #_validate_error("sequence is not expected.", path)
+        rule = nil
+      end
+      seq = create_sequence(rule, @linenum, @column)
+      @anchors[name] = seq if name
+      parse_block_seq(seq, rule, path, uniq_table)
+      return seq
+    end
+    ## mapping
+    if match?(MAPKEY_PATTERN)
+      if rule && !rule.mapping
+        #_validate_error("mapping is not expected.", path)
+        rule = nil
+      end
+      map = create_mapping(rule, @linenum, @column)
+      @anchors[name] = map if name
+      parse_block_map(map, rule, path, uniq_table)
+      return map
+    end
+    ## sequence (flow-style)
+    if match?(/\[/)
+      if rule && !rule.sequence
+        #_validate_error("sequence is not expected.", path)
+        rule = nil
+      end
+      seq = create_sequence(rule, @linenum, @column)
+      @anchors[name] = seq if name
+      parse_flow_seq(seq, rule, path, uniq_table)
+      return seq
+    end
+    ## mapping (flow-style)
+    if match?(/\{/)
+      if rule && !rule.mapping
+        #_validate_error("mapping is not expected.", path)
+        rule = nil
+      end
+      map = create_mapping(rule, @linenum, @column)
+      @anchors[name] = map if name
+      parse_flow_map(map, rule, path, uniq_table)
+      return map
+    end
+    ## block text
+    if match?(/[|>]/)
+      text = parse_block_text(level, rule, path, uniq_table)
+      @anchors[name] = text if name
+      return text
+    end
+    ## scalar
+    scalar = parse_block_scalar(rule, path, uniq_table)
+    @anchors[name] = scalar if name
+    return scalar
+  end
+
+
+  def parse_block_seq(seq, seq_rule, path, uniq_table)
+    level = @column
+    rule = seq_rule ? seq_rule.sequence[0] : nil
+    path.push(nil)
+    i = 0
+    _linenum = @linenum                                                    #*V
+    _column  = @column                                                     #*V
+    uniq_table = rule ? rule._uniqueness_check_table() : nil               #*V
+    while level == @column && scan(/-\s+/)
+      path[-1] = i
+      skip_spaces_and_comments()                                           #*V
+      _linenum2 = @linenum
+      _column2  = @column
+      val = parse_block_value(level, rule, path, uniq_table, seq)
+      add_to_seq(rule, seq, val, _linenum2, _column2)    # seq << val
+      _set_error_info(_linenum, _column) do                                #*V
+        @validator._validate(val, rule, path, @errors, @done, uniq_table, false) #*V
+      end if rule && !val.equal?(PRECEDING_ALIAS_PLACEHOLDER)              #*V
+      skip_spaces_and_comments()
+      i += 1
+      _linenum = @linenum                                                  #*V
+      _column  = @column                                                   #*V
+    end
+    path.pop()
+    return seq
+  end
+
+
+  def _parse_map_value(map, map_rule, path, level, key, is_merged, uniq_table,
+                       _linenum, _column, _linenum2, _column2)  #:nodoc:
+    key = to_mapkey(key)
+    path[-1] = key
+    #if map.is_a?(Hash) && map.key?(key) && !is_merged
+    if map.respond_to?('key?') && map.key?(key) && !is_merged
+      rule = map_rule.mapping[key]
+      unless rule && rule.default
+        raise _syntax_error("mapping key is duplicated.", path)
+      end
+    end
+    #
+    if key == '='      # default
+      val = level ? parse_block_value(level, nil, path, uniq_table, map) \
+                  : parse_flow_value(nil, path, uniq_table, map)
+      map.default = val
+    elsif key == '<<'  # merge
+      classobj = nil
+      if map_rule && map_rule.classname
+        map_rule = map_rule.dup()
+        classobj = map_rule.classobj
+        map_rule.classname = nil
+        map_rule.classobj = nil
+      end
+      val = level ? parse_block_value(level, map_rule, path, uniq_table, map) \
+                  : parse_flow_value(map_rule, path, uniq_table, map)
+      if val.is_a?(Array)
+        val.each_with_index do |v, i|
+          unless v.is_a?(Hash) || (classobj && val.is_a?(classobj))
+            raise _syntax_error("'<<': mapping required.", path + [i])
+          end
+        end
+        values = val
+      elsif val.is_a?(Hash) || (classobj && val.is_a?(classobj))
+        values = [val]
+      else
+        raise _syntax_error("'<<': mapping (or sequence of mapping) required.", path)
+      end
+      #
+      values.each do |hash|
+        if !hash.is_a?(Hash)
+          assert_error "hash=#{hash.inspect}" unless classobj && hash.is_a?(classobj)
+          obj = hash
+          hash = {}
+          obj.instance_variables.each do |name|
+            key = name[1..-1]  # '@foo' => 'foo'
+            val = obj.instane_variable_get(name)
+            hash[key] = val
+          end
+        end
+        for key, val in hash
+          path[-1] = key                                                   #*V
+          rule = map_rule ? map_rule.mapping[key] : nil                    #*V
+          utable = uniq_table ? uniq_table[key] : nil                      #*V
+          _validate_map_value(map, map_rule, rule, path, utable,           #*V
+                           key, val, _linenum, _column)                    #*V
+          put_to_map(rule, map, key, val, _linenum2, _column2)
+        end
+      end
+      is_merged = true
+    else               # other
+      rule = map_rule ? map_rule.mapping[key] : nil                        #*V
+      utable = uniq_table ? uniq_table[key] : nil                          #*V
+      val = level ? parse_block_value(level, rule, path, utable, map) \
+                  : parse_flow_value(rule, path, utable, map)
+      _validate_map_value(map, map_rule, rule, path, utable, key, val,     #*V
+                       _linenum, _column)                                  #*V
+      put_to_map(rule, map, key, val, _linenum2, _column2)
+    end
+    return is_merged
+  end
+
+
+  def _validate_map_value(map, map_rule, rule, path, uniq_table, key, val, #*V
+                       _linenum, _column)                                  #*V
+    if map_rule && !rule                                                   #*V
+      #_validate_error("unknown mapping key.", path)                       #*V
+      _set_error_info(_linenum, _column) do                                #*V
+        error = Kwalify::ErrorHelper.validate_error(:key_undefined,        #*V
+                                      rule, path, map, ["#{key}:"])        #*V
+        @errors << error                                                   #*V
+        #error.linenum = _linenum                                          #*V
+        #error.column  = _column                                           #*V
+      end                                                                  #*V
+    end                                                                    #*V
+    _set_error_info(_linenum, _column) do                                  #*V
+      @validator._validate(val, rule, path, @errors, @done, uniq_table, false)  #*V
+    end if rule && !val.equal?(PRECEDING_ALIAS_PLACEHOLDER)                #*V
+  end
+
+
+  def parse_block_map(map, map_rule, path, uniq_table)
+    _start_linenum = @linenum                                              #*V
+    _start_column  = @column                                               #*V
+    level = @column
+    path.push(nil)
+    is_merged = false
+    while true
+      _linenum = @linenum                                                  #*V
+      _column  = @column                                                   #*V
+      break unless level == @column && scan(MAPKEY_PATTERN)
+      key = group(1)
+      skip_spaces_and_comments()                                           #*V
+      _linenum2 = @linenum                                                 #*V
+      _column2  = @column                                                  #*V
+      is_merged = _parse_map_value(map, map_rule, path, level, key, is_merged,
+                                   uniq_table, _linenum, _column, _linenum2, _column2)
+      #skip_spaces_and_comments()
+    end
+    path.pop()
+    _set_error_info(_start_linenum, _start_column) do                      #*V
+      @validator._validate_mapping_required_keys(map, map_rule,            #*V
+                                                 path, @errors)            #*V
+    end if map_rule                                                        #*V
+    return map
+  end
+
+
+  def to_mapkey(str)
+    if str[0] == ?" || str[0] == ?'
+      return str[1..-2]
+    else
+      return to_scalar(str)
+    end
+  end
+  private :to_mapkey
+
+
+  def parse_block_scalar(rule, path, uniq_table)
+    _linenum = @linenum                                                    #*V
+    _column  = @column                                                     #*V
+    ch = peep(1)
+    if ch == '"' || ch == "'"
+      val = scan_string()
+      scan(/[ \t]*(?:\#.*)?$/)
+    else
+      scan(/(.*?)[ \t]*(?:\#.*)?$/)
+      #str.rstrip!
+      val = to_scalar(group(1))
+    end
+    val = create_scalar(rule, val, _linenum, _column)                      #*V
+    #_set_error_info(_linenum, _column) do                                 #*V
+    #  @validator._validate_unique(val, rule, path, @errors, uniq_table)   #*V
+    #end if uniq_table                                                     #*V
+    skip_spaces_and_comments()
+    return val
+  end
+
+
+  def parse_block_text(column, rule, path, uniq_table)
+    _linenum = @linenum                                                    #*V
+    _column  = @column                                                     #*V
+    indicator = scan(/[|>]/)
+    chomping = scan(/[-+]/)
+    num = scan(/\d+/)
+    indent = num ? column + num.to_i - 1 : nil
+    unless scan(/[ \t]*(.*?)(\#.*)?\r?\n/)   # /[ \t]*(\#.*)?\r?\n/
+      raise _syntax_error("Syntax Error (line break or comment are expected)", path)
+    end
+    s = group(1)
+    is_folded = false
+    while match?(/( *)(.*?)(\r?\n)/)
+      spaces = group(1)
+      text   = group(2)
+      nl     = group(3)
+      if indent.nil?
+        if spaces.length >= column
+          indent = spaces.length
+        elsif text.empty?
+          s << nl
+          scan(/.*?\n/)
+          next
+        else
+          @diagnostic = 'text indent in block text may be shorter than that of first line or specified column.'
+          break
+        end
+      else
+        if spaces.length < indent && !text.empty?
+          @diagnostic = 'text indent in block text may be shorter than that of first line or specified column.'
+          break
+        end
+      end
+      scan(/.*?\n/)
+      if indicator == '|'
+        s << spaces[indent..-1] if spaces.length >= indent
+        s << text << nl
+      else  # indicator == '>'
+        if !text.empty? && spaces.length == indent
+          if s.sub!(/\r?\n((\r?\n)+)\z/, '\1')
+            nil
+          elsif is_folded
+            s.sub!(/\r?\n\z/, ' ')
+          end
+          #s.sub!(/\r?\n\z/, '') if !s.sub!(/\r?\n(\r?\n)+\z/, '\1') && is_folded
+          is_folded = true
+        else
+          is_folded = false
+          s << spaces[indent..-1] if spaces.length > indent
+        end
+        s << text << nl
+      end
+    end
+    ## chomping
+    if chomping == '+'
+      nil
+    elsif chomping == '-'
+      s.sub!(/(\r?\n)+\z/, '')
+    else
+      s.sub!(/(\r?\n)(\r?\n)+\z/, '\1')
+    end
+    #
+    skip_spaces_and_comments()
+    val = s
+    #_set_error_info(_linenum, _column) do                                  #*V
+    #  @validator._validate_unique(val, rule, path, @errors, uniq_table)    #*V
+    #end if uniq_table                                                      #*V
+    return val
+  end
+
+
+  def parse_flow_value(rule, path, uniq_table, container)
+    skip_spaces_and_comments()
+    ## anchor and alias
+    name = nil
+    if scan(/\&([-\w]+)/)
+      name = parse_anchor(rule, path, uniq_table, container)
+    elsif scan(/\*([-\w]+)/)
+      return parse_alias(rule, path, uniq_table, container)
+    end
+    ## type
+    if scan(/!!?\w+/)
+      skip_spaces_and_comments()
+    end
+    ## sequence
+    if match?(/\[/)
+      if rule && !rule.sequence                                            #*V
+        #_validate_error("sequence is not expected.", path)                #*V
+        rule = nil                                                         #*V
+      end                                                                  #*V
+      seq = create_sequence(rule, @linenum, @column)
+      @anchors[name] = seq if name
+      parse_flow_seq(seq, rule, path, uniq_table)
+      return seq
+    end
+    ## mapping
+    if match?(/\{/)
+      if rule && !rule.mapping                                             #*V
+        #_validate_error("mapping is not expected.", path)                 #*V
+        rule = nil                                                         #*V
+      end                                                                  #*V
+      map = create_mapping(rule, @linenum, @column)
+      @anchors[name] = map if name
+      parse_flow_map(map, rule, path, uniq_table)
+      return map
+    end
+    ## scalar
+    scalar = parse_flow_scalar(rule, path, uniq_table)
+    @anchors[name] = scalar if name
+    return scalar
+  end
+
+
+  def parse_flow_seq(seq, seq_rule, path, uniq_table)
+    #scan(/\[\s*/)
+    scan(/\[/)
+    skip_spaces_and_comments()
+    if scan(/\]/)
+      nil
+    else
+      rule = seq_rule ? seq_rule.sequence[0] : nil                         #*V
+      uniq_table = rule ? rule._uniqueness_check_table() : nil             #*V
+      path.push(nil)
+      i = 0
+      while true
+        path[-1] = i
+        _linenum = @linenum                                                #*V
+        _column  = @column                                                 #*V
+        val = parse_flow_value(rule, path, uniq_table, seq)
+        add_to_seq(rule, seq, val, _linenum, _column)  # seq << val
+        _set_error_info(_linenum, _column) do                              #*V
+          @validator._validate(val, rule, path, @errors, @done, uniq_table, false)  #*V
+        end if rule && !val.equal?(PRECEDING_ALIAS_PLACEHOLDER)            #*V
+        skip_spaces_and_comments()
+        break unless scan(/,\s+/)
+        i += 1
+        if match?(/\]/)
+          raise _syntax_error("sequence item required (or last comma is extra).", path)
+        end
+      end
+      path.pop()
+      unless scan(/\]/)
+        raise _syntax_error("flow sequence is not closed by ']'.", path)
+      end
+    end
+    skip_spaces_and_comments()
+    return seq
+  end
+
+
+  def parse_flow_map(map, map_rule, path, uniq_table)
+    #scan(/\{\s*/)  # not work?
+    _start_linenum = @linenum                                              #*V
+    _start_column  = @column                                               #*V
+    scan(/\{/)
+    skip_spaces_and_comments()
+    if scan(/\}/)
+      nil
+    else
+      path.push(nil)
+      is_merged = false
+      while true
+        _linenum = @linenum                                                #*V
+        _column  = @column                                                 #*V
+        unless scan(MAPKEY_PATTERN)
+          raise _syntax_error("mapping key is expected.", path)
+        end
+        key = group(1)
+        skip_spaces_and_comments()
+        _linenum2 = @linenum                                               #*V
+        _column2  = @column                                                #*V
+        is_merged = _parse_map_value(map, map_rule, path, nil, key, is_merged,
+                           uniq_table, _linenum, _column, _linenum2, _column2)
+        #skip_spaces_and_comments()
+        break unless scan(/,\s+/)
+      end
+      path.pop()
+      unless scan(/\}/)
+        raise _syntax_error("flow mapping is not closed by '}'.", path)
+      end
+    end
+    skip_spaces_and_comments()
+    _set_error_info(_start_linenum, _start_column) do                      #*V
+      @validator._validate_mapping_required_keys(map, map_rule, path, @errors)  #*V
+    end if map_rule                                                        #*V
+    return map
+  end
+
+
+  def parse_flow_scalar(rule, path, uniq_table)
+    ch = peep(1)
+    _linenum = @linenum                                                    #*V
+    _column  = @column                                                     #*V
+    if ch == '"' || ch == "'"
+      val = scan_string()
+    else
+      str = scan(/[^,\]\}\#]*/)
+      if match?(/,\S/)
+        while match?(/,\S/)
+          str << scan(/./)
+          str << scan(/[^,\]\}\#]*/)
+        end
+      end
+      str.rstrip!
+      val = to_scalar(str)
+    end
+    val = create_scalar(rule, val, _linenum, _column)                      #*V
+    #_set_error_info(_linenum, _column) do                                  #*V
+    #  @validator._validate_unique(val, rule, path, @errors, uniq_table)    #*V
+    #end if uniq_table                                                      #*V
+    skip_spaces_and_comments()
+    return val
+  end
+
+
+  ####
+
+
+  def to_scalar(str)
+    case str
+    when nil                ;  val = nil
+    when /\A-?\d+\.\d+\z/   ;  val = str.to_f
+    when /\A-?\d+\z/        ;  val = str.to_i
+    when /\A(true|yes)\z/   ;  val = true
+    when /\A(false|no)\z/   ;  val = false
+    when /\A(null|~)\z/     ;  val = nil
+    when /\A"(.*)"\z/       ;  val = $1
+    when /\A'(.*)'\z/       ;  val = $1
+    when /\A:(\w+)\z/       ;  val = $1.intern
+    when /\A(\d\d\d\d)-(\d\d)-(\d\d)(?: (\d\d):(\d\d):(\d\d))?\z/
+      year, month, day, hour, min, sec = $1, $2, $3, $4, $5, $6
+      if hour
+        val = Time.mktime(year, month, day, hour, min, sec)
+      else
+        val = Date.new(year.to_i, month.to_i, day.to_i)
+      end
+      ## or
+      #params = [$1, $2, $3, $4, $5, $6]
+      #val = Time.mktime(*params)
+    else
+      val = str.empty? ? nil : str
+    end
+    skip_spaces_and_comments()
+    return val
+  end
+
+
+  ##
+
+  protected
+
+
+  def create_sequence(rule, linenum, column)
+    seq = @sequence_class.new
+    @location_table[seq.__id__] = []
+    return seq
+  end
+
+
+  def create_mapping(rule, linenum, column)
+    if rule && rule.classobj && @data_binding
+      classobj = rule.classobj
+      map = classobj.new
+    else
+      classobj = nil
+      map = @mapping_class.new   # {}
+    end
+    @location_table[map.__id__] = hash = {}
+    hash[:classobj] = classobj if classobj
+    return map
+  end
+
+
+  def create_scalar(rule, value, linenum, column)
+    return value
+  end
+
+
+  def add_to_seq(rule, seq, val, linenum, column)
+    seq << val
+    @location_table[seq.__id__] << [linenum, column]
+  end
+
+
+  def put_to_map(rule, map, key, val, linenum, column)
+    #if map.is_a?(Hash)
+    #  map[key] = val
+    #elsif map.respond_to?(name="#{key}=")
+    #  map.__send__(name, val)
+    #elsif map.respond_to?('[]=')
+    #  map[key] = val
+    #else
+    #  map.instance_variable_set("@#{key}", val)
+    #end
+    map[key] = val
+    @location_table[map.__id__][key] = [linenum, column]
+  end
+
+
+  def _getclass(classname)
+    mod = Object
+    classname.split(/::/).each do |modname|
+      mod = mod.const_get(modname)   # raises NameError when module not found
+    end
+    return mod
+  end
+
+
+  public
+
+
+  def location(path)
+    if path.empty? || path == '/'
+      return @location_table[-1]    # return value is [linenum, column]
+    end
+    if path.is_a?(Array)
+      items = path.collect { |item| to_scalar(item) }
+    elsif path.is_a?(String)
+      items = path.split('/').collect { |item| to_scalar(item) }
+      items.shift if path[0] == ?/  # delete empty string on head
+    else
+      raise ArgumentError.new("path should be Array or String.")
+    end
+    last_item = items.pop()
+    c = @doc                        # collection
+    items.each do |item|
+      if c.is_a?(Array)
+        c = c[item.to_i]
+      elsif c.is_a?(Hash)
+        c = c[item]
+      elsif (table = @location_table[c.__id__]) && table[:classobj]
+        if c.respond_to?(item)
+          c = c.__send__(item)
+        elsif c.respond_to?("[]=")
+          c = c[item]
+        else
+          assert false
+        end
+      else
+        #assert false
+        raise ArgumentError.new("#{path.inspect}: invalid path.")
+      end
+    end
+    collection = @location_table[c.__id__]
+    return nil if collection.nil?
+    index = c.is_a?(Array) ? last_item.to_i : last_item
+    return collection[index]  # return value is [linenum, column]
+  end
+
+
+  def set_errors_linenum(errors)
+    errors.each do |error|
+      error.linenum, error.column = location(error.path)
+    end
+  end
+
+
+end
+#--end of require 'kwalify/parser/yaml'
+#require 'yaml'
+
+module Kwalify
+
+
+  ##
+  ## ex.
+  ##   meta_validator = Kwalify::MetaValidator.instance()
+  ##   schema = File.load_file('schema.yaml')
+  ##   errors = meta_validator.validate(schema)
+  ##   if !errors.empty?
+  ##     errors.each do |error|
+  ##       puts "[#{error.path}] #{error.message}"
+  ##     end
+  ##   end
+  ##
+  class MetaValidator < Validator
+
+    filename = File.join(File.dirname(__FILE__), 'kwalify.schema.yaml')
+    META_SCHEMA = File.read(filename)
+
+    def self.instance()
+      unless @instance
+        schema = Kwalify::Yaml::Parser.new().parse(META_SCHEMA)
+        @instance = MetaValidator.new(schema)
+      end
+      return @instance
+    end
+
+    def initialize(schema, &block)
+      super
+    end
+
+    def validate_hook(value, rule, path, errors)
+      return if value.nil?    ## realy?
+      return unless rule.name == "MAIN"
+      #
+      hash = value
+      type = hash['type']
+      type = Types::DEFAULT_TYPE if type.nil?
+      klass = Types.type_class(type)
+      #unless klass
+      #  errors << validate_error(:type_unknown, rule, "#{path}/type", type)
+      #end
+      #
+      if hash.key?('class')
+        val = hash['class']
+        unless val.nil? || type == 'map'
+          errors << validate_error(:class_notmap, rule, "#{path}/class", 'class:')
+        end
+      end
+      #
+      if hash.key?('pattern')
+        val = hash['pattern']
+        pat = (val =~ /\A\/(.*)\/([mi]?[mi]?)\z/ ? $1 : val)
+        begin
+          Regexp.compile(pat)
+        rescue RegexpError => ex
+          errors << validate_error(:pattern_syntaxerr, rule, "#{path}/pattern", val)
+        end
+      end
+      #
+      if hash.key?('enum')
+        if Types.collection_type?(type)
+          errors << validate_error(:enum_notscalar, rule, path, 'enum:')
+        else
+          #elem_table = {}
+          hash['enum'].each do |elem|
+            #if elem_table[elem]
+            #  errors << validate_error(:enum_duplicate, rule, "#{path}/enum", elem.to_s)
+            #end
+            #elem_table[elem] = true
+            unless elem.is_a?(klass)
+              errors << validate_error(:enum_type_unmatch, rule, "#{path}/enum", elem, [Kwalify.word(type)])
+            end
+          end
+        end
+      end
+      #
+      if hash.key?('assert')
+        val =  hash['assert']
+        #val =~ /\bval\b/ or errors << validate_error(:assert_noval, rule, "#{path}/assert", val)
+        begin
+          eval "proc { |val| #{val} }"
+        rescue ::SyntaxError => ex
+          errors << validate_error(:assert_syntaxerr, rule, "#{path}/assert", val)
+        end
+      end
+      #
+      if hash.key?('range')
+        val = hash['range']
+        curr_path = path + "/range"
+        #if ! val.is_a?(Hash)
+        #  errors << validate_error(:range_notmap, rule, curr_path, val)
+        #elsif ...
+        if Types.collection_type?(type) || type == 'bool' || type == 'any'
+          errors << validate_error(:range_notscalar, rule, path, 'range:')
+        else
+          val.each do |rkey, rval|
+            #case rkey
+            #when 'max', 'min', 'max-ex', 'min-ex'
+              unless rval.is_a?(klass)
+                typename = Kwalify.word(type) || type
+                errors << validate_error(:range_type_unmatch, rule, "#{curr_path}/#{rkey}", rval, [typename])
+              end
+            #else
+            #  errors << validate_error(:range_undefined, rule, curr_path, "#{rkey}:")
+            #end
+          end
+        end
+        if val.key?('max') && val.key?('max-ex')
+          errors << validate_error(:range_twomax, rule, curr_path, nil)
+        end
+        if val.key?('min') && val.key?('min-ex')
+          errors << validate_error(:range_twomin, rule, curr_path, nil)
+        end
+        max, min, max_ex, min_ex = val['max'], val['min'], val['max-ex'], val['min-ex']
+        if max
+          if min && max < min
+            errors << validate_error(:range_maxltmin, rule, curr_path, nil, [max, min])
+          elsif min_ex && max <= min_ex
+            errors << validate_error(:range_maxleminex, rule, curr_path, nil, [max, min_ex])
+          end
+        elsif max_ex
+          if min && max_ex <= min
+            errors << validate_error(:range_maxexlemin, rule, curr_path, nil, [max_ex, min])
+          elsif min_ex && max_ex <= min_ex
+            errors << validate_error(:range_maxexleminex, rule, curr_path, nil, [max_ex, min_ex])
+          end
+        end
+      end
+      #
+      if hash.key?('length')
+        val = hash['length']
+        curr_path = path + "/length"
+        #val.is_a?(Hash) or errors << validate_error(:length_notmap, rule, curr_path, val)
+        unless type == 'str' || type == 'text'
+          errors << validate_error(:length_nottext, rule, path, 'length:')
+        end
+        #val.each do |lkey, lval|
+        #  #case lkey
+        #  #when 'max', 'min', 'max-ex', 'min-ex'
+        #    unless lval.is_a?(Integer)
+        #      errors << validate_error(:length_notint, rule, "#{curr_path}/#{lkey}", lval)
+        #    end
+        #  #else
+        #  #  errors << validate_error(:length_undefined, rule, curr_path, "#{lkey}:")
+        #  #end
+        #end
+        if val.key?('max') && val.key?('max-ex')
+          errors << validate_error(:length_twomax, rule, curr_path, nil)
+        end
+        if val.key?('min') && val.key?('min-ex')
+          errors << validate_error(:length_twomin, rule, curr_path, nil)
+        end
+        max, min, max_ex, min_ex = val['max'], val['min'], val['max-ex'], val['min-ex']
+        if max
+          if min && max < min
+            errors << validate_error(:length_maxltmin, rule, curr_path, nil, [max, min])
+          elsif min_ex && max <= min_ex
+            errors << validate_error(:length_maxleminex, rule, curr_path, nil, [max, min_ex])
+          end
+        elsif max_ex
+          if min && max_ex <= min
+            errors << validate_error(:length_maxexlemin, rule, curr_path, nil, [max_ex, min])
+          elsif min_ex && max_ex <= min_ex
+            errors << validate_error(:length_maxexleminex, rule, curr_path, nil, [max_ex, min_ex])
+          end
+        end
+      end
+      #
+      if hash.key?('unique')
+        if hash['unique'] && Types.collection_type?(type)
+          errors << validate_error(:unique_notscalar, rule, path, "unique:")
+        end
+        if path.empty?
+          errors << validate_error(:unique_onroot, rule, "/", "unique:")
+        end
+      end
+      #
+      if hash.key?('ident')
+        if hash['ident'] && Types.collection_type?(type)
+          errors << validate_error(:ident_notscalar, rule, path, "ident:")
+        end
+        if path.empty?
+          errors << validate_error(:ident_onroot, rule, "/", "ident:")
+        end
+      end
+      #
+      if hash.key?('default')
+        val = hash['default']
+        if Types.collection_type?(type)
+          errors << validate_error(:default_notscalar, rule, path, "default:")
+        elsif !val.nil? && !val.is_a?(klass)
+          errors << validate_error(:default_unmatch, rule, "#{path}/default", val, [Kwalify.word(type)])
+        end
+      end
+      #
+      if hash.key?('sequence')
+        val = hash['sequence']
+        #if !val.nil? && !val.is_a?(Array)
+        #  errors << validate_error(:sequence_notseq,  rule, "#{path}/sequence", val)
+        #elsif ...
+        if val.nil? || val.empty?
+          errors << validate_error(:sequence_noelem,  rule, "#{path}/sequence", val)
+        elsif val.length > 1
+          errors << validate_error(:sequence_toomany, rule, "#{path}/sequence", val)
+        else
+          elem = val[0]
+          assert_error("elem.class=#{elem.class}") unless elem.is_a?(Hash)
+          if elem['ident'] && elem['type'] != 'map'
+            errors << validate_error(:ident_notmap, nil, "#{path}/sequence/0", 'ident:')
+          end
+        end
+      end
+      #
+      if hash.key?('mapping')
+        val = hash['mapping']
+        if !val.nil? && !val.is_a?(Hash)
+          errors << validate_error(:mapping_notmap, rule, "#{path}/mapping", val)
+        elsif val.nil? || (val.empty? && !val.default)
+          errors << validate_error(:mapping_noelem, rule, "#{path}/mapping", val)
+        end
+      end
+      #
+      if type == 'seq'
+        errors << validate_error(:seq_nosequence, rule, path, nil)    unless hash.key?('sequence')
+        #errors << validate_error(:seq_conflict, rule, path, 'enum:')      if hash.key?('enum')
+        errors << validate_error(:seq_conflict, rule, path, 'pattern:')    if hash.key?('pattern')
+        errors << validate_error(:seq_conflict, rule, path, 'mapping:')    if hash.key?('mapping')
+        #errors << validate_error(:seq_conflict, rule, path, 'range:')     if hash.key?('range')
+        #errors << validate_error(:seq_conflict, rule, path, 'length:')    if hash.key?('length')
+      elsif type == 'map'
+        errors << validate_error(:map_nomapping, rule, path, nil)     unless hash.key?('mapping')
+        #errors << validate_error(:map_conflict, rule, path, 'enum:')      if hash.key?('enum')
+        errors << validate_error(:map_conflict, rule, path, 'pattern:')    if hash.key?('pattern')
+        errors << validate_error(:map_conflict, rule, path, 'sequence:')   if hash.key?('sequence')
+        #errors << validate_error(:map_conflict, rule, path, 'range:')     if hash.key?('range')
+        #errors << validate_error(:map_conflict, rule, path, 'length:')    if hash.key?('length')
+      else
+        errors << validate_error(:scalar_conflict, rule, path, 'sequence:') if hash.key?('sequence')
+        errors << validate_error(:scalar_conflict, rule, path, 'mapping:')  if hash.key?('mapping')
+        if hash.key?('enum')
+          errors << validate_error(:enum_conflict, rule, path, 'range:')  if hash.key?('range')
+          errors << validate_error(:enum_conflict, rule, path, 'length:')  if hash.key?('length')
+          errors << validate_error(:enum_conflict, rule, path, 'pattern:') if hash.key?('pattern')
+        end
+        if hash.key?('default')
+          errors << validate_error(:default_conflict, rule, path, 'default:') if hash['required']
+        end
+      end
+
+    end  # end of def validate_hook()
+
+
+  end # end of class MetaValidator
+
+
+  META_VALIDATOR = MetaValidator.instance()
+
+  def self.meta_validator        # obsolete
+    return META_VALIDATOR
+  end
+
+end
+#--end of require 'kwalify/meta-validator'
+#--begin of require 'kwalify/yaml-parser'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+#--already included require 'kwalify/messages'
+#--already included require 'kwalify/errors'
+#--already included require 'kwalify/types'
+
+require 'date'
+
+
+module Kwalify
+
+  ##
+  ## base class of yaml parser
+  ##
+  ## ex.
+  ##   str = ARGF.read()
+  ##   parser = Kwalify::PlainYamlParser.new(str)
+  ##   doc = parser.parse()
+  ##   p doc
+  ##
+  class PlainYamlParser
+
+    class Alias
+      def initialize(label, linenum)
+        @label   = label
+        @linenum = linenum
+      end
+      attr_reader :label, :linenum
+    end
+
+
+    def initialize(yaml_str)
+      @lines = yaml_str.to_a()
+      @line  = nil
+      @linenum = 0
+      @anchors = {}
+      @aliases = {}
+    end
+
+
+    def parse()
+      data = parse_child(0)
+      if data.nil? && @end_flag == '---'
+        data = parse_child(0)
+      end
+      resolve_aliases(data) unless @aliases.empty?
+      return data
+    end
+
+
+    def has_next?
+      return @end_flag != 'EOF'
+    end
+
+
+    def parse_all
+      list = []
+      while has_next()
+        doc = parse()
+        list << doc
+      end
+      return list
+    end
+
+
+    protected
+
+
+    def create_sequence(linenum=nil)
+      return []
+    end
+
+    def add_to_seq(seq, value, linenum)
+      seq << value
+    end
+
+    def set_seq_at(seq, i, value, linenum)
+      seq[i] = value
+    end
+
+    def create_mapping(linenum=nil)
+      return {}
+    end
+
+    def add_to_map(map, key, value, linenum)
+      map[key] = value
+    end
+
+    def set_map_with(map, key, value, linenum)
+      map[key] = value
+    end
+
+    def set_default(map, value, linenum)
+      map.value = value
+    end
+
+    def merge_map(map, map2, linenum)
+      map2.each do |key, val|
+        map[key] = value unless map.key?(key)
+      end
+    end
+
+    def create_scalar(value, linenum=nil)
+      return value
+    end
+
+
+    def current_line
+      return @line
+    end
+
+    def current_linenum
+      return @linenum
+    end
+
+
+    private
+
+
+    def getline
+      line = _getline()
+      line = _getline() while line && line =~ /^\s*($|\#)/
+        return line
+    end
+
+    def _getline
+      @line = @lines[@linenum]
+      @linenum += 1
+      case @line
+      when nil             ; @end_flag = 'EOF'
+      when /^\.\.\.$/      ; @end_flag = '...'; @line = nil
+      when /^---(\s+.*)?$/ ; @end_flag = '---'; @line = nil
+      else                 ; @end_flag = nil
+      end
+      return @line
+    end
+
+
+    def reset_sbuf(str)
+      @sbuf = str[-1] == ?\n ? str : str + "\n"
+      @index = -1
+    end
+
+
+    def _getchar
+      @index += 1
+      ch = @sbuf[@index]
+      while ch.nil?
+        break if (line = getline()).nil?
+        reset_sbuf(line)
+        @index += 1
+        ch = @sbuf[@index]
+      end
+      return ch
+    end
+
+    def getchar
+      ch = _getchar()
+      ch = _getchar() while ch && white?(ch)
+      return ch
+    end
+
+    def getchar_or_nl
+      ch = _getchar()
+      ch = _getchar() while ch && white?(ch) && ch != ?\n
+      return ch
+    end
+
+    def current_char
+      return @sbuf[@index]
+    end
+
+    def getlabel
+      if @sbuf[@index..-1] =~ /\A\w[-\w]*/
+        label = $&
+        @index += label.length
+      else
+        label = nil
+      end
+      return label
+    end
+
+    #--
+    #def syntax_error(error_symbol, linenum=@linenum)
+    #  msg = Kwalify.msg(error_symbol) % [linenum]
+    #  return Kwalify::YamlSyntaxError.new(msg, linenum,error_symbol)
+    #end
+    #++
+    def syntax_error(error_symbol, arg=nil, linenum=@linenum)
+      msg = Kwalify.msg(error_symbol)
+      msg = msg % arg.to_a unless arg.nil?
+      return Kwalify::YamlSyntaxError.new(msg, linenum, error_symbol)
+    end
+
+    def parse_child(column)
+      line = getline()
+      return create_scalar(nil) if !line
+      line =~ /^( *)(.*)/
+      indent = $1.length
+      return create_scalar(nil) if indent < column
+      value = $2
+      return parse_value(column, value, indent)
+    end
+
+
+    def parse_value(column, value, value_start_column)
+      case value
+      when /^-( |$)/
+        data = parse_sequence(value_start_column, value)
+      when /^(:?:?[-.\w]+\*?|'.*?'|".*?"|=|<<) *:( |$)/
+        #when /^:?["']?[-.\w]+["']? *:( |$)/			#'
+        data = parse_mapping(value_start_column, value)
+      when /^\[/, /^\{/
+        data = parse_flowstyle(column, value)
+      when /^\&[-\w]+( |$)/
+        data = parse_anchor(column, value)
+      when /^\*[-\w]+( |$)/
+        data = parse_alias(column, value)
+      when /^[|>]/
+        data = parse_block_text(column, value)
+      when /^!/
+        data = parse_tag(column, value)
+      when /^\#/
+          data = parse_child(column)
+      else
+        data = parse_scalar(column, value)
+      end
+      return data
+    end
+
+    def white?(ch)
+      return ch == ?\  || ch == ?\t || ch == ?\n || ch == ?\r
+    end
+
+
+    ##
+    ## flowstyle     ::=  flow_seq | flow_map | flow_scalar | alias
+    ##
+    ## flow_seq      ::=  '[' [ flow_seq_item { ',' sp flow_seq_item } ] ']'
+    ## flow_seq_item ::=  flowstyle
+    ##
+    ## flow_map      ::=  '{' [ flow_map_item { ',' sp flow_map_item } ] '}'
+    ## flow_map_item ::=  flowstyle ':' sp flowstyle
+    ##
+    ## flow_scalar   ::=  string | number | boolean | symbol | date
+    ##
+
+    def parse_flowstyle(column, value)
+      reset_sbuf(value)
+      getchar()
+      data = parse_flow(0)
+      ch = current_char
+      assert ch == ?] || ch == ?}
+      ch = getchar_or_nl()
+      unless ch == ?\n || ch == ?# || ch.nil?
+        #* key=:flow_hastail  msg="flow style sequence is closed but got '%s'."
+        raise syntax_error(:flow_hastail, [ch.chr])
+      end
+      getline() if !ch.nil?
+      return data
+    end
+
+    def parse_flow(depth)
+      ch = current_char()
+      #ch = getchar()
+      if ch.nil?
+        #* key=:flow_eof  msg="found EOF when parsing flow style."
+        rase syntax_error(:flow_eof)
+      end
+      ## alias
+      if ch == ?*
+        _getchar()
+        label = getlabel()
+        unless label
+          #* key=:flow_alias_label  msg="alias name expected."
+          rase syntax_error(:flow_alias_label)
+        end
+        data = @anchors[label]
+        unless data
+          data = register_alias(label)
+          #raise syntax_error("anchor '#{label}' not found (cannot refer to backward or child anchor).")
+        end
+        return data
+      end
+      ## anchor
+      label = nil
+      if ch == ?&
+        _getchar()
+        label = getlabel()
+        unless label
+          #* key=:flow_anchor_label  msg="anchor name expected."
+          rase syntax_error(:flow_anchor_label)
+        end
+        ch = current_char()
+        ch = getchar() if white?(ch)
+      end
+      ## flow data
+      if ch == ?[
+        data = parse_flow_seq(depth)
+      elsif ch == ?{
+        data = parse_flow_map(depth)
+      else
+        data = parse_flow_scalar(depth)
+      end
+      ## register anchor
+      register_anchor(label, data) if label
+      return data
+    end
+
+    def parse_flow_seq(depth)
+      assert current_char() == ?[
+      seq = create_sequence()  # []
+      ch = getchar()
+      if ch != ?}
+        linenum = current_linenum()
+        #seq << parse_flow_seq_item(depth + 1)
+        add_to_seq(seq, parse_flow_seq_item(depth + 1), linenum)
+        while (ch = current_char()) == ?,
+          ch = getchar()
+          if ch == ?]
+            #* key=:flow_noseqitem  msg="sequence item required (or last comma is extra)."
+            raise syntax_error(:flow_noseqitem)
+          end
+          #break if ch == ?]
+          linenum = current_linenum()
+          #seq << parse_flow_seq_item(depth + 1)
+          add_to_seq(seq, parse_flow_seq_item(depth + 1), linenum)
+        end
+      end
+      unless current_char() == ?]
+        #* key=:flow_seqnotclosed  msg="flow style sequence requires ']'."
+        raise syntax_error(:flow_seqnotclosed)
+      end
+      getchar() if depth > 0
+      return seq
+    end
+
+    def parse_flow_seq_item(depth)
+      return parse_flow(depth)
+    end
+
+    def parse_flow_map(depth)
+      assert current_char() == ?{          #}
+      map = create_mapping()  # {}
+      ch = getchar()
+      if ch != ?}
+        linenum = current_linenum()
+        key, value = parse_flow_map_item(depth + 1)
+        #map[key] = value
+        add_to_map(map, key, value, linenum)
+        while (ch = current_char()) == ?,
+          ch = getchar()
+          if ch == ?}
+            #* key=:flow_mapnoitem  msg="mapping item required (or last comma is extra)."
+            raise syntax_error(:flow_mapnoitem)
+          end
+          #break if ch == ?}
+          linenum = current_linenum()
+          key, value = parse_flow_map_item(depth + 1)
+          #map[key] = value
+          add_to_map(map, key, value, linenum)
+        end
+      end
+      unless current_char() == ?}
+        #* key=:flow_mapnotclosed  msg="flow style mapping requires '}'."
+        raise syntax_error(:flow_mapnotclosed)
+      end
+      getchar() if depth > 0
+      return map
+    end
+
+    def parse_flow_map_item(depth)
+      key = parse_flow(depth)
+      unless (ch = current_char()) == ?:
+        $stderr.puts "*** debug: key=#{key.inspect}"
+        s = ch ? "'#{ch.chr}'" : "EOF"
+        #* key=:flow_nocolon  msg="':' expected but got %s."
+        raise syntax_error(:flow_nocolon, [s])
+      end
+      getchar()
+      value = parse_flow(depth)
+      return key, value
+    end
+
+    def parse_flow_scalar(depth)
+      case ch = current_char()
+      when ?", ?'         #"
+        endch = ch
+        s = ''
+        while (ch = _getchar()) != nil && ch != endch
+          if ch == ?\\
+            ch = _getchar()
+            if ch.nil?
+              #* key=:flow_str_notclosed  msg="%s: string not closed."
+              raise syntax_error(:flow_str_notclosed, endch == ?" ? "'\"'" : '"\'"')
+            end
+            if endch == ?"
+              case ch
+              when ?\\ ;  s << "\\"
+              when ?"  ;  s << "\""
+              when ?n  ;  s << "\n"
+              when ?r  ;  s << "\r"
+              when ?t  ;  s << "\t"
+              when ?b  ;  s << "\b"
+              else     ;  s << "\\" << ch.chr
+              end
+            elsif endch == ?'
+              case ch
+              when ?\\ ;  s << '\\'
+              when ?'  ;  s << '\''
+              else     ;  s << '\\' << ch.chr
+              end
+            end
+          else
+            s << ch.chr
+          end
+        end
+        getchar()
+        scalar = s
+      else
+        s = ch.chr
+        while (ch = _getchar()) != nil && ch != ?: && ch != ?, && ch != ?] && ch != ?}
+          s << ch.chr
+        end
+        scalar = to_scalar(s.strip)
+      end
+      return create_scalar(scalar)
+    end
+
+
+    def parse_tag(column, value)
+      assert value =~ /^!\S+/
+      value =~ /^!(\S+)((\s+)(.*))?$/
+      tag    = $1
+      space  = $3
+      value2 = $4
+      if value2 && !value2.empty?
+        value_start_column = column + 1 + tag.length + space.length
+        data = parse_value(column, value2, value_start_column)
+      else
+        data = parse_child(column)
+      end
+      return data
+    end
+
+
+    def parse_anchor(column, value)
+      assert value =~ /^\&([-\w]+)(( *)(.*))?$/
+      label  = $1
+      space  = $3
+      value2 = $4
+      if value2 && !value2.empty?
+        #column2 = column + 1 + label.length + space.length
+        #data = parse_value(column2, value2)
+        value_start_column = column + 1 + label.length + space.length
+        data = parse_value(column, value2, value_start_column)
+      else
+        #column2 = column + 1
+        #data = parse_child(column2)
+        data = parse_child(column)
+      end
+      register_anchor(label, data)
+      return data
+    end
+
+    def register_anchor(label, data)
+      if @anchors[label]
+        #* key=:anchor_duplicated  msg="anchor '%s' is already used."
+        raise syntax_error(:anchor_duplicated, [label])
+      end
+      @anchors[label] = data
+    end
+
+    def parse_alias(column, value)
+      assert value =~ /^\*([-\w]+)(( *)(.*))?$/
+      label  = $1
+      space  = $3
+      value2 = $4
+      if value2 && !value2.empty? && value2[0] != ?\#
+        #* key=:alias_extradata  msg="alias cannot take any data."
+        raise syntax_error(:alias_extradata)
+      end
+      data = @anchors[label]
+      unless data
+        data = register_alias(label)
+        #raise syntax_error("anchor '#{label}' not found (cannot refer to backward or child anchor).")
+      end
+      getline()
+      return data
+    end
+
+    def register_alias(label)
+      @aliases[label] ||= 0
+      @aliases[label] += 1
+      return Alias.new(label, @linenum)
+    end
+
+
+    def resolve_aliases(data)
+      @resolved ||= {}
+      return if @resolved[data.__id__]
+      @resolved[data.__id__] = data
+      case data
+      when Array
+        seq = data
+        seq.each_with_index do |val, i|
+          if val.is_a?(Alias)
+            anchor = val
+            if @anchors.key?(anchor.label)
+              #seq[i] = @anchors[anchor.label]
+              set_seq_at(seq, i, @anchors[anchor.label], anchor.linenum)
+            else
+              #* key=:anchor_notfound  msg="anchor '%s' not found"
+              raise syntax_error(:anchor_notfound, [anchor.label], val.linenum)
+            end
+          elsif val.is_a?(Array) || val.is_a?(Hash)
+            resolve_aliases(val)
+          end
+        end
+      when Hash
+        map = data
+        map.each do |key, val|
+          if val.is_a?(Alias)
+            if @anchors.key?(val.label)
+              anchor = val
+              #map[key] = @anchors[anchor.label]
+              set_map_with(map, key, @anchors[anchor.label], anchor.linenum)
+            else
+              ## :anchor_notfound is already defined on above
+              raise syntax_error(:anchor_notfound, [val.label], val.linenum)
+            end
+          elsif val.is_a?(Array) || val.is_a?(Hash)
+            resolve_aliases(val)
+          end
+        end
+      else
+        assert !data.is_a?(Alias)
+      end
+    end
+
+
+    def parse_block_text(column, value)
+      assert value =~ /^[>|\|]/
+      value =~ /^([>|\|])([-+]?)(\d+)?\s*(.*)$/
+      char = $1
+      indicator = $2
+      sep = char == "|" ? "\n" : " "
+      margin = $3 && !$3.empty? ? $3.to_i : nil
+      #text = $4.empty? ? '' :  $4 + sep
+      text = $4
+      s = ''
+      empty = ''
+      min_indent = -1
+      while line = _getline()
+        line =~ /^( *)(.*)/
+        indent = $1.length
+        if $2.empty?
+          empty << "\n"
+        elsif indent < column
+          break
+        else
+          min_indent = indent if min_indent < 0 || min_indent > indent
+          s << empty << line
+          empty = ''
+        end
+      end
+      s << empty if indicator == '+' && char != '>'
+      s[-1] = "" if indicator == '-'
+      min_indent = column + margin - 1 if margin
+      if min_indent > 0
+        sp = ' ' * min_indent
+        s.gsub!(/^#{sp}/, '')
+      end
+      if char == '>'
+        s.gsub!(/([^\n])\n([^\n])/, '\1 \2')
+        s.gsub!(/\n(\n+)/, '\1')
+        s << empty if indicator == '+'
+      end
+      getline() if current_line() =~ /^\s*\#/
+        return create_scalar(text + s)
+    end
+
+
+    def parse_sequence(column, value)
+      assert value =~ /^-(( +)(.*))?$/
+      seq = create_sequence()  # []
+      while true
+        unless value =~ /^-(( +)(.*))?$/
+          #* key=:sequence_noitem  msg="sequence item is expected."
+          raise syntax_error(:sequence_noitem)
+        end
+        value2 = $3
+        space  = $2
+        column2 = column + 1
+        linenum = current_linenum()
+        #
+        if !value2 || value2.empty?
+          elem = parse_child(column2)
+        else
+          value_start_column = column2 + space.length
+          elem = parse_value(column2, value2, value_start_column)
+        end
+        add_to_seq(seq, elem, linenum)    #seq << elem
+        #
+        line = current_line()
+        break unless line
+        line =~ /^( *)(.*)/
+        indent = $1.length
+        if    indent < column
+          break
+        elsif indent > column
+          #* key=:sequence_badindent  msg="illegal indent of sequence."
+          raise syntax_error(:sequence_badindent)
+        end
+        value = $2
+      end
+      return seq
+    end
+
+
+    def parse_mapping(column, value)
+      #assert value =~ /^(:?["']?[-.\w]+["']? *):(( +)(.*))?$/         #'
+      assert value =~ /^((?::?[-.\w]+\*?|'.*?'|".*?"|=|<<) *):(( +)(.*))?$/
+      map = create_mapping()  # {}
+      while true
+        #unless value =~ /^(:?["']?[-.\w]+["']? *):(( +)(.*))?$/      #'
+        unless value =~ /^((?::?[-.\w]+\*?|'.*?'|".*?"|=|<<) *):(( +)(.*))?$/
+          #* key=:mapping_noitem  msg="mapping item is expected."
+          raise syntax_error(:mapping_noitem)
+        end
+        v = $1.strip
+        key = to_scalar(v)
+        value2 = $4
+        column2 = column + 1
+        linenum = current_linenum()
+        #
+        if !value2 || value2.empty?
+          elem = parse_child(column2)
+        else
+          value_start_column = column2 + $1.length + $3.length
+          elem = parse_value(column2, value2, value_start_column)
+        end
+        case v
+        when '='
+          set_default(map, elem, linenum)
+        when '<<'
+          merge_map(map, elem, linenum)
+        else
+          add_to_map(map, key, elem, linenum)    # map[key] = elem
+        end
+        #
+        line = current_line()
+        break unless line
+        line =~ /^( *)(.*)/
+        indent = $1.length
+        if    indent < column
+          break
+        elsif indent > column
+          #* key=:mapping_badindent  msg="illegal indent of mapping."
+          raise syntax_error(:mapping_badindent)
+        end
+        value = $2
+      end
+      return map
+    end
+
+
+    def parse_scalar(indent, value)
+      data = create_scalar(to_scalar(value))
+      getline()
+      return data
+    end
+
+
+    def to_scalar(str)
+      case str
+      when /^"(.*)"([ \t]*\#.*$)?/    ; return $1
+      when /^'(.*)'([ \t]*\#.*$)?/    ; return $1
+      when /^(.*\S)[ \t]*\#/          ; str = $1
+      end
+
+      case str
+      when /^-?\d+$/              ;  return str.to_i    # integer
+      when /^-?\d+\.\d+$/         ;  return str.to_f    # float
+      when "true", "yes", "on"    ;  return true        # true
+      when "false", "no", "off"   ;  return false       # false
+      when "null", "~"            ;  return nil         # nil
+        #when /^"(.*)"$/             ;  return $1          # "string"
+        #when /^'(.*)'$/             ;  return $1          # 'string'
+      when /^:(\w+)$/             ;  return $1.intern   # :symbol
+      when /^(\d\d\d\d)-(\d\d)-(\d\d)$/                 # date
+        year, month, day = $1.to_i, $2.to_i, $3.to_i
+        return Date.new(year, month, day)
+      when /^(\d\d\d\d)-(\d\d)-(\d\d)(?:[Tt]|[ \t]+)(\d\d?):(\d\d):(\d\d)(\.\d*)?(?:Z|[ \t]*([-+]\d\d?)(?::(\d\d))?)?$/
+        year, mon, mday, hour, min, sec, usec, tzone_h, tzone_m = $1, $2, $3, $4, $5, $6, $7, $8, $9
+        #Time.utc(sec, min, hour, mday, mon, year, wday, yday, isdst, zone)
+        #t = Time.utc(sec, min, hour, mday, mon, year, nil, nil, nil, nil)
+        #Time.utc(year[, mon[, day[, hour[, min[, sec[, usec]]]]]])
+        time = Time.utc(year, mon, day, hour, min, sec, usec)
+        if tzone_h
+          diff_sec = tzone_h.to_i * 60 * 60
+          if tzone_m
+            if diff_sec > 0 ; diff_sec += tzone_m.to_i * 60
+            else            ; diff_sec -= tzone_m.to_i * 60
+            end
+          end
+          p diff_sec
+          time -= diff_sec
+        end
+        return time
+      end
+      return str
+    end
+
+
+    def assert(bool_expr)
+      raise "*** assertion error" unless bool_expr
+    end
+
+  end
+
+
+
+  ##
+  ## (OBSOLETE) yaml parser
+  ##
+  ## this class has been obsoleted. use Kwalify::Yaml::Parser instead.
+  ##
+  ## ex.
+  ##  # load document with YamlParser
+  ##  str = ARGF.read()
+  ##  parser = Kwalify::YamlParser.new(str)
+  ##  document = parser.parse()
+  ##
+  ##  # validate document
+  ##  schema = YAML.load(File.read('schema.yaml'))
+  ##  validator = Kwalify::Validator.new(schema)
+  ##  errors = validator.validate(document)
+  ##
+  ##  # print validation result
+  ##  if errors && !errors.empty?
+  ##    parser.set_errors_linenum(errors)
+  ##    errors.sort.each do |error|
+  ##      print "line %d: path %s: %s" % [error.linenum, error.path, error.message]
+  ##    end
+  ##  end
+  ##
+  class YamlParser < PlainYamlParser
+
+    def initialize(*args)
+      super
+      @linenums_table = {}     # object_id -> hash or array
+    end
+
+    def parse()
+      @doc = super()
+      return @doc
+    end
+
+    def path_linenum(path)
+      return 1 if path.empty? || path == '/'
+      elems = path.split('/')
+      elems.shift if path[0] == ?/    # delete empty string on head
+      last_elem = elems.pop
+      c = @doc   # collection
+      elems.each do |elem|
+        if c.is_a?(Array)
+          c = c[elem.to_i]
+        elsif c.is_a?(Hash)
+          c = c[elem]
+        else
+          assert false
+        end
+      end
+      linenums = @linenums_table[c.__id__]
+      if c.is_a?(Array)
+        linenum = linenums[last_elem.to_i]
+      elsif c.is_a?(Hash)
+        linenum = linenums[last_elem]
+      end
+      return linenum
+    end
+
+    def set_errors_linenum(errors)
+      errors.each do |error|
+        error.linenum = path_linenum(error.path)
+      end
+    end
+
+    def set_error_linenums(errors)
+      warn "*** Kwalify::YamlParser#set_error_linenums() is obsolete. You should use set_errors_linenum() instead."
+      set_errors_linenum(errors)
+    end
+
+    protected
+
+    def create_sequence(linenum=current_linenum())
+      seq = []
+      @linenums_table[seq.__id__] = []
+      return seq
+    end
+
+    def add_to_seq(seq, value, linenum)
+      seq << value
+      @linenums_table[seq.__id__] << linenum
+    end
+
+    def set_seq_at(seq, i, value, linenum)
+      seq[i] = value
+      @linenums_table[seq.__id__][i] = linenum
+    end
+
+    def create_mapping(linenum=current_linenum())
+      map = {}
+      @linenums_table[map.__id__] = {}
+      return map
+    end
+
+    def add_to_map(map, key, value, linenum)
+      map[key] = value
+      @linenums_table[map.__id__][key] = linenum
+    end
+
+    def set_map_with(map, key, value, linenum)
+      map[key] = value
+      @linenums_table[map.__id__][key] = linenum
+    end
+
+    def set_default(map, value, linenum)
+      map.default = value
+      @linenums_table[map.__id__][:'='] = linenum
+    end
+
+    def merge_map(map, collection, linenum)
+      t = @linenums_table[map.__id__]
+      list = collection.is_a?(Array) ? collection : [ collection ]
+      list.each do |m|
+        t2 = @linenums_table[m.__id__]
+        m.each do |key, val|
+          unless map.key?(key)
+            map[key] = val
+            t[key] = t2[key]
+          end
+        end
+      end
+    end
+
+    def create_scalar(value, linenum=current_linenum())
+      data = super(value)
+      #return Scalar.new(data, linenum)
+      return data
+    end
+
+  end
+
+
+  ## alias of YamlParser class
+  class Parser < YamlParser
+    def initialize(yaml_str)
+      super(yaml_str)
+      #warn "*** class Kwalify::Parser is obsolete. Please use Kwalify::YamlParser instead."
+    end
+  end
+
+
+end
+#--end of require 'kwalify/yaml-parser'
+#require 'kwalify/parser/base'
+#require 'kwalify/parser/yaml'
+
+
+module Kwalify
+
+  module Util
+
+    autoload :HashLike, 'kwalify/util/hashlike'
+
+  end
+
+  module Yaml
+
+    autoload :Parser, 'kwalify/parser/yaml'
+
+    ## read yaml_str, parse it, and return yaml document.
+    ##
+    ## opts:
+    ## ::validator:        Kwalify::Validator object
+    ## ::preceding_aliass: allow preceding alias if true
+    ## ::data_binding:     enable data binding if true
+    ## ::untabify:         expand tab chars if true
+    ## ::filename:         filename
+    def self.load(yaml_str, opts={})
+      #require 'kwalify/parser/yaml'
+      parser = Kwalify::Yaml::Parser.new(opts[:validator])
+      parser.preceding_alias = true if opts[:preceding_alias]
+      parser.data_binding    = true if opts[:data_binding]
+      yaml_str = Kwalify::Util.untabify(yaml_str) if opts[:untabify]
+      ydoc = parser.parse(yaml_str, :filename=>opts[:filename])
+      return ydoc
+    end
+
+    ## read file, parse it, and return yaml document.
+    ## see Kwalify::Yaml::Parser.load()
+    def self.load_file(filename, opts={})
+      opts[:filename] = filename
+      return self.load(File.read(filename), opts)
+    end
+
+  end
+
+  module Json
+  end
+
+end
+#--end of require 'kwalify'
+#--begin of require 'kwalify/main'
+###
+### $Rev$
+### $Release: 0.7.2 $
+### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+###
+
+require 'yaml'
+require 'erb'
+#--already included require 'kwalify'
+#--already included require 'kwalify/util'
+#--begin of require 'kwalify/util/ordered-hash'
+###
+### $Rev$
+### 0.7.2
+### $COPYRIGHT$
+###
+
+module Kwalify
+
+  module Util
+
+    class OrderedHash < Hash
+
+      def initialize(*args, &block)
+        super
+        @_keys = []
+      end
+
+      alias __set__ []=
+
+      def put(key, val)
+        @_keys << key unless self.key?(key)
+        __set__(key, val)
+      end
+
+      def add(key, val)
+        @_keys.delete_at(@_keys.index(key)) if self.key?(key)
+        @_keys << key
+        __set__(key, val)
+      end
+
+      alias []= put
+      #alias []= add
+
+      def keys
+        return @_keys.dup
+      end
+
+      def values
+        return @_keys.collect {|key| self[key] }
+      end
+
+      def delete(key)
+        @_keys.delete_at(@_keys.index(key)) if self.key?(key)
+        super
+      end
+
+      def each
+        @_keys.each do |key|
+          yield key, self[key]
+        end
+      end
+
+    end
+
+  end
+
+end
+#--end of require 'kwalify/util/ordered-hash'
+
+
+module Kwalify
+
+
+  class CommandOptionError < KwalifyError
+    def initialize(message, option, error_symbol)
+      super(message)
+      @option = option
+      @error_symbol = error_symbol
+    end
+    attr_reader :option, :error_symbol
+  end
+
+
+  ##
+  ## ex.
+  ##  command = File.basename($0)
+  ##  begin
+  ##    main = Kwalify::Main.new(command)
+  ##    s = main.execute
+  ##    print s if s
+  ##  rescue Kwalify::CommandOptionError => ex
+  ##    $stderr.puts "ERROR: #{ex.message}"
+  ##    exit 1
+  ##  rescue Kwalify::KwalifyError => ex
+  ##    $stderr.puts "ERROR: #{ex.message}"
+  ##    exit 1
+  ##  end
+  ##
+  class Main
+
+
+    def initialize(command=nil)
+      @command = command || File.basename($0)
+      @options = {}
+      @properties   = {}
+      @template_path  = []
+      $:.each do |path|
+        tpath = "#{path}/kwalify/templates"
+        @template_path << tpath if test(?d, tpath)
+      end
+    end
+
+
+    def debug?
+      @options[:debug]
+    end
+
+
+    def _inspect()
+      sb = []
+      sb <<   "command: #{@command}\n"
+      sb <<   "options:\n"
+      @options.keys.sort {|k1,k2| k1.to_s<=>k2.to_s }.each do |key|
+        sb << "  - #{key}: #{@options[key]}\n"
+      end
+      sb <<   "properties:\n"
+      @properties.keys.sort_by {|k| k.to_s}.each do |key|
+        sb << "  - #{key}: #{@properties[key]}\n"
+      end
+      #sb <<   "template_path:\n"
+      #@template_path.each do |path|
+      #  sb << "  - #{path}\n"
+      #end
+      return sb.join
+    end
+
+
+    def execute(argv=ARGV)
+      ## parse command-line options
+      filenames = _parse_argv(argv)
+
+      ## help or version
+      if @options[:help] || @options[:version]
+        action = @options[:action]
+        s = ''
+        s << _version() << "\n"           if @options[:version]
+        s << _usage()                     if @options[:help] && !action
+        s << _describe_properties(action) if @options[:help] && action
+        puts s
+        return
+      end
+
+      # validation
+      if @options[:meta2]
+        validate_schemafiles2(filenames)
+      elsif @options[:meta]
+        validate_schemafiles(filenames)
+      elsif @options[:action]
+        unless @options[:schema]
+          #* key=:command_option_actionnoschema  msg="schema filename is not specified."
+          raise option_error(:command_option_actionnoschema, @options[:action])
+        end
+        perform_action(@options[:action], @options[:schema])
+      elsif @options[:schema]
+        if @options[:debug]
+          inspect_schema(@options[:schema])
+        else
+          validate_files(filenames, @options[:schema])
+        end
+      else
+        #* key=:command_option_noaction  msg="command-line option '-f' or '-m' required."
+        raise option_error(:command_option_noaction, @command)
+      end
+      return
+    end
+
+
+    def self.main(command, argv=ARGV)
+      begin
+        main = Kwalify::Main.new(command)
+        s = main.execute(argv)
+        print s if s
+      rescue Kwalify::CommandOptionError => ex
+        raise ex if main.debug?
+        $stderr.puts ex.message
+        exit 1
+      rescue Kwalify::KwalifyError => ex
+        raise ex if main.debug?
+        $stderr.puts "ERROR: #{ex.to_s}"
+        exit 1
+      #rescue => ex
+      #  if main.debug?
+      #    raise ex
+      #  else
+      #    $stderr.puts ex.message
+      #    exit 1
+      #  end
+      end
+    end
+
+
+    private
+
+
+    def option_error(error_symbol, arg)
+      msg = Kwalify.msg(error_symbol) % arg
+      return CommandOptionError.new(msg, arg, error_symbol)
+    end
+
+
+    def _find_template(action)
+      template_filename = action + '.eruby'
+      unless test(?f, template_filename)
+        pathlist = []
+        pathlist.concat(@options[:tpath].split(/,/)) if @options[:tpath]
+        pathlist.concat(@template_path)
+        tpath = pathlist.find {|path| test(?f, "#{path}/#{template_filename}") }
+        #* key=:command_option_notemplate  msg="%s: invalid action (template not found).\n"
+        raise option_error(:command_option_notemplate, action) unless tpath
+        template_filename = "#{tpath}/#{action}.eruby"
+      end
+      return template_filename
+    end
+
+
+    def apply_template(template_filename, hash)
+      template = File.read(template_filename)
+      trim_mode = 1
+      erb = ERB.new(template, nil, trim_mode)
+      context = Object.new
+      hash.each do |key, val|
+        context.instance_variable_set("@#{key}", val)
+      end
+      s = context.instance_eval(erb.src, template_filename)
+      return s
+    end
+
+
+    def _describe_properties(action)
+      template_filename = _find_template(action)
+      s = apply_template(template_filename, :describe=>true)
+      return s
+    end
+
+
+    def perform_action(action, schema_filename, describe=false)
+      template_filename = _find_template(action)
+      schema = _load_schemafile(schema_filename, ordered=true)
+      validator = Kwalify::Validator.new(schema)
+      @properties[:schema_filename] = schema_filename
+      hash = { :validator=>validator, :schema=>schema, :properties=>@properties }
+      s = apply_template(template_filename, hash)
+      puts s if s && !s.empty?
+    end
+
+
+    def inspect_schema(schema_filename)
+      schema = _load_schemafile(schema_filename)
+      if schema.nil?
+        puts "nil"
+      else
+        validator = Kwalify::Validator.new(schema)  # error raised when schema is wrong
+        puts validator._inspect()
+      end
+    end
+
+
+    ## -f schemafile datafile
+    def validate_files(filenames, schema_filename)
+      schema = _load_schemafile(schema_filename)
+      validator = Kwalify::Validator.new(schema)
+      _validate_files(validator, filenames)
+    end
+
+
+    def _load_schemafile(schema_filename, ordered=false)
+      str = File.read(schema_filename)
+      if str.empty?
+        #* key=:schema_empty  msg="%s: empty schema.\n"
+        msg = Kwalify.msg(:schema_emtpy) % filename
+        raise CommandOptionError.new(msg)
+      end
+      str = Util.untabify(str) if @options[:untabify]
+      parser = Kwalify::Yaml::Parser.new()
+      parser.preceding_alias = true if @options[:preceding]
+      parser.mapping_class = Kwalify::Util::OrderedHash if ordered
+      schema = parser.parse(str, :filename=>schema_filename) # or YAML.load(str)
+      return schema
+    end
+
+
+    ## -m schemafile
+    def validate_schemafiles(schema_filenames)
+      meta_validator = Kwalify::MetaValidator.instance()
+      _validate_files(meta_validator, schema_filenames)
+    end
+
+
+    ## -M schemafile
+    def validate_schemafiles2(schema_filenames)
+      parser = Kwalify::Yaml::Parser.new()
+      parser.preceding_alias = true if @options[:preceding]
+      for schema_filename in schema_filenames
+        str = File.read(schema_filename)
+        str = Util.untabify(str) if @options[:untabify]
+        schema = parser.parse(str, :filename=>schema_filename)
+        Kwalify::Validator.new(schema)   # exception raised when schema has errors
+      end
+    end
+
+
+    def _validate_files(validator, filenames)
+      ## parser
+      if @options[:linenum] || @options[:preceding]
+        parser = Kwalify::Yaml::Parser.new(validator)
+        parser.preceding_alias = true if @options[:preceding]
+      else
+        parser = nil
+      end
+      ## filenames
+      if filenames.empty?
+        filenames = [ $stdin ]
+      end
+      for filename in filenames
+        ## read input
+        if filename.is_a?(IO)
+          input = filename.read()
+          filename = '(stdin)'
+        else
+          input = File.read(filename)
+        end
+        if input.empty?
+          #* key=:validation_empty  msg="%s#%d: empty."
+          puts kwalify.msg(:validation_empty) % [filename, i]
+          #puts "#{filename}##{i}: empty."
+          next
+        end
+        input = Util.untabify(input) if @options[:untabify]
+        ## parse input
+        if parser
+          #i = 0
+          #ydoc = parser.parse(input, :filename=>filename)
+          #_show_errors(filename, i, ydoc, parser.errors)
+          #while parser.has_next?
+          #  i += 1
+          #  ydoc = parser.parse_next()
+          #  _show_errors(filename, i, ydoc, parser.errors)
+          #end
+          i = 0
+          parser.parse_stream(input, :filename=>filename) do |ydoc|
+            _show_errors(filename, i, ydoc, parser.errors)
+            i += 1
+          end
+        else
+          i = 0
+          YAML.load_documents(input) do |ydoc|
+            errors = validator.validate(ydoc)
+            _show_errors(filename, i, ydoc, errors)
+            i += 1
+          end
+        end
+      end
+    end
+
+
+    def _show_errors(filename, i, ydoc, errors, ok_label="valid.", ng_label="INVALID")
+      if errors && !errors.empty?
+        puts "#{filename}##{i}: #{ng_label}"
+        errors.sort!
+        for error in errors
+          e = error
+          if @options[:emacs]
+            raise unless @options[:linenum]
+            puts "#{filename}:#{e.linenum}:#{e.column} [#{e.path}] #{e.message}\n"
+          elsif @options[:linenum]
+            puts "  - (line #{e.linenum}) [#{e.path}] #{e.message}\n"
+          else
+            puts "  - [#{e.path}] #{e.message}\n"
+          end
+        end
+      elsif ydoc.nil?
+        #* key=:validation_empty  msg="%s#%d: empty.\n"
+        puts Kwalify.msg(:validation_empty) % [filename, i]
+      else
+        #* key=:validation_valid  msg="%s#%d: valid."
+        puts Kwalify.msg(:validation_valid) % [filename, i] unless @options[:quiet]
+        #puts "#{filename}##{i} - #{ok_label}" unless @options[:quiet]
+      end
+    end
+
+
+    def _usage()
+      #msg = Kwalify.msg(:command_help) % [@command, @command, @command]
+      msg = Kwalify.msg(:command_help)
+      return msg
+    end
+
+
+    def _version()
+      return RELEASE
+    end
+
+
+    def _to_value(str)
+      case str
+      when nil, "null", "nil"     ;  return nil
+      when "true", "yes"          ;  return true
+      when "false", "no"          ;  return false
+      when /\A\d+\z/              ;  return str.to_i
+      when /\A\d+\.\d+\z/         ;  return str.to_f
+      when /\/(.*)\//             ;  return Regexp.new($1)
+      when /\A'.*'\z/, /\A".*"\z/ ;  return eval(str)
+      else                        ;  return str
+      end
+    end
+
+
+    def _parse_argv(argv)
+      option_table = {
+        ?h => :help,
+        ?v => :version,
+        ?q => :quiet,
+        ?s => :quiet,
+        ?t => :untabify,
+        #?z => :meta,
+        ?m => :meta,
+        ?M => :meta2,
+        ?E => :emacs,
+        ?l => :linenum,
+        ?f => :schema,
+        ?D => :debug,
+        ?a => :action,
+        ?I => :tpath,
+        ?P => :preceding,
+      }
+
+      errcode_table = {
+        #* key=:command_option_schema_required  msg="-%s: schema filename required."
+        ?f => :command_option_schema_required,
+        #* key=:command_option_action_required  msg="-%s: action required."
+        ?a => :command_option_action_required,
+        #* key=:command_option_tpath_required  msg="-%s: template path required."
+        ?I => :command_option_tpath_required,
+      }
+
+      while argv[0] && argv[0][0] == ?-
+        optstr = argv.shift
+        optstr = optstr[1, optstr.length-1]
+        ## property
+        if optstr[0] == ?-
+          unless optstr =~ /\A\-([-\w]+)(?:=(.*))?\z/
+            #* key=:command_property_invalid  msg="%s: invalid property."
+            raise option_error(:command_property_invalid, optstr)
+          end
+          prop_name = $1;  prop_value = $2
+          key  = prop_name.gsub(/-/, '_').intern
+          value = prop_value.nil? ? true : _to_value(prop_value)
+          @properties[key] = value
+        ## option
+        else
+          while optstr && !optstr.empty?
+            optchar = optstr[0]
+            optstr[0,1] = ""
+            unless option_table.key?(optchar)
+              #* key=:command_option_invalid  msg="-%s: invalid command option."
+              raise option_error(:command_option_invalid, optchar.chr)
+            end
+            optkey = option_table[optchar]
+            case optchar
+            when ?f, ?a, ?I
+              arg = optstr.empty? ? argv.shift : optstr
+              raise option_error(errcode_table[optchar], optchar.chr) unless arg
+              @options[optkey] = arg
+              optstr = ''
+            else
+              @options[optkey] = true
+            end
+          end
+        end
+      end  # end of while
+      #
+      @options[:linenum] = true if @options[:emacs]
+      @options[:help]    = true if @properties[:help]
+      @options[:version] = true if @properties[:version]
+      filenames = argv
+      return filenames
+    end
+
+
+    def _domain_type?(doc)
+      klass = defined?(YAML::DomainType) ? YAML::DomainType : YAML::Syck::DomainType
+      return doc.is_a?(klass)
+    end
+
+
+  end
+
+
+end
+#--end of require 'kwalify/main'
+
+command = File.basename($0)
+Kwalify::Main.main(command, ARGV)

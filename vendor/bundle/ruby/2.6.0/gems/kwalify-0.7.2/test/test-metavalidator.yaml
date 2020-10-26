@@ -1,0 +1,1179 @@
+##
+## $Rev$
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+name:  schema_notmap
+desc:  schema_notmap
+#
+schema: |
+  - type: str
+  - type: int
+#
+meta-msg: |
+  :type_unmatch       : [/] not a mapping.
+#
+rule-msg: |
+  :schema_notmap      : [/] schema definition is not a mapping.
+# :invalid_schema     : [/] schema definition is invalid.
+#
+---
+name:  type_unknown1
+desc:  unkown type
+#
+schema: |
+  type: map
+  mapping:
+   "name1":
+      type: str
+   "name2":
+      type: string
+   "age1":
+      type: int
+   "age2":
+      type: integer
+   "desc1":
+      type: text
+   "amount1":
+      type: float
+   "amount2":
+      type: number
+   "birth1":
+      type: date
+   "birth2":
+      type: time
+   "birth3":
+      type: timestamp
+   "data1":
+      type: scalar
+   "data2":
+      type: schalar
+#
+meta-msg: |
+  :enum_notexist      : [/mapping/name2/type] 'string': invalid type value.
+  :enum_notexist      : [/mapping/age2/type] 'integer': invalid type value.
+  :enum_notexist      : [/mapping/data2/type] 'schalar': invalid type value.
+#
+---
+name:  type_unknown2
+desc:  unkown type
+#
+schema: |
+  type: map
+  mapping:
+   "name1":
+      type: str
+   "name2":
+      type: string
+#
+meta-msg: |
+  :enum_notexist      : [/mapping/name2/type] 'string': invalid type value.
+#
+rule-msg: |
+  :type_unknown       : [/mapping/name2/type] 'string': unknown type.
+#
+---
+name:  required_notbool1
+desc:  required is not boolean
+#
+schema: |
+  type: map
+  mapping:
+   "name":
+      type: str
+      required: 1
+#
+meta-msg: |
+  :type_unmatch       : [/mapping/name/required] '1': not a boolean.
+#
+rule-msg: |
+  :required_notbool   : [/mapping/name/required] '1': not a boolean.
+# :required_notbool   : [/mapping/name] 'required:' is not boolean.
+#
+---
+name:  pattern_syntaxerr
+desc:  pattern_syntaxerr
+#
+schema: |
+  type: str
+  pattern: /[A-/
+#
+meta-msg: |
+  :pattern_syntaxerr  : [/pattern] '/[A-/': has regexp error.
+#
+rule-msg: |
+  :pattern_syntaxerr  : [/pattern] '/[A-/': has regexp error.
+# :pattern_syntaxerr  : [/] 'pattern:' has regexp error (= /[A-/).
+#
+---
+name:  enum_notseq
+desc:  enum_notseq
+#
+schema: |
+  type: str
+  enum: A, B, C
+#
+meta-msg: |
+  :type_unmatch       : [/enum] 'A, B, C': not a sequence.
+#
+rule-msg: |
+  :enum_notseq        : [/enum] 'A, B, C': not a sequence.
+#  :enum_notseq       : [/] 'enum:' is not a sequence.
+#
+---
+name:  enum_notscalar
+desc:  enum_notscalar
+#
+schema: |
+  type: seq
+  enum:
+    - A
+    - B
+  sequence:
+    - type: str
+#
+meta-msg: |
+  :enum_notscalar     : [/] 'enum:': not available with seq or map.
+#
+rule-msg: |
+  :enum_notscalar     : [/] 'enum:': not available with seq or map.
+#
+---
+name:  enum_duplicate
+desc:  enum_duplicate
+#
+schema: |
+  enum:
+   - A
+   - B
+   - A
+#
+meta-msg: |
+  :value_notunique    : [/enum/2] 'A': is already used at '/enum/0'.
+#  :enum_duplicate     : [/enum] 'A': duplicated enum value.
+#
+rule-msg: |
+  :enum_duplicate     : [/enum] 'A': duplicated enum value.
+#
+---
+name:  enum_type_unmatch
+desc:  enum_type_unmatch
+#
+schema: |
+  enum:
+   - 100
+   - 200
+#
+meta-msg: |
+  :enum_type_unmatch  : [/enum] '100': string type expected.
+  :enum_type_unmatch  : [/enum] '200': string type expected.
+#
+rule-msg: |
+  :enum_type_unmatch  : [/enum] '100': string type expected.
+#
+---
+name:  assert_notstr
+desc:  assert_notstr
+#
+schema: |
+  type: number
+  assert:  100
+#
+meta-msg: |
+  :type_unmatch       : [/assert] '100': not a string.
+#
+rule-msg: |
+  :assert_notstr      : [/assert] '100': not a string.
+# :assert_notstr      : [/] 'assert:' is not a string.
+#
+---
+name:  assert_noval
+desc:  assert_noval
+#
+schema: |
+  type:  int
+  assert: value > 100
+#
+meta-msg: |
+  :pattern_unmatch    : [/assert] 'value > 100': not matched to pattern /\bval\b/.
+#
+rule-msg: |
+  :assert_noval       : [/assert] 'value > 100': 'val' is not used.
+---
+name:  assert_syntaxerr
+desc:  assert_syntaxerr
+#
+schema: |
+  type: int
+  assert: 0 < val &&
+#
+meta-msg*:
+  ruby: |
+    :assert_syntaxerr   : [/assert] '0 < val &&': expression syntax error.
+  java: ""
+#
+rule-msg*:
+  ruby: |
+    :assert_syntaxerr   : [/assert] '0 < val &&': expression syntax error.
+  java: ~
+#
+---
+name:  range_notmap
+desc:  range_notmap
+#
+schema: |
+  type: int
+  range: 0 < val && val < 100
+#
+meta-msg: |
+  :type_unmatch       : [/range] '0 < val && val < 100': not a mapping.
+#
+rule-msg: |
+  :range_notmap       : [/range] '0 < val && val < 100': not a mapping.
+#
+---
+name:  range_notscalar
+desc:  range_notscalar
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+  range: { max: 10, min: 10 }
+#
+meta-msg: |
+  :range_notscalar    : [/] 'range:': is available only with scalar type.
+#
+rule-msg: |
+  :range_notscalar    : [/] 'range:': is available only with scalar type.
+#
+---
+name:  range_type_unmatch
+desc:  range_type_unmatch
+#
+schema: |
+  type:  int
+  range: { max: 10, min: 1.0 }
+#
+meta-msg: |
+  :range_type_unmatch : [/range/min] '1.0': not a integer.
+#
+rule-msg: |
+  :range_type_unmatch : [/range/min] '1.0': not a integer.
+#
+---
+name:  range_undefined
+desc:  range_undefined
+#
+schema: |
+  type:  int
+  range: { max: 10, mim: 1 }
+#
+meta-msg: |
+  :key_undefined      : [/range/mim] key 'mim:' is undefined.
+#  :key_undefined      : [/range/mim] 'mim:': undefined key.
+#
+rule-msg: |
+  :range_undefined    : [/range/mim] 'mim:': undefined key.
+#  :range_undefined    : [/range/mim] key 'mim:' undefined key.
+#
+---
+name:  range_twomax
+desc:  range_twomax
+#
+schema: |
+  type:  float
+  range: { max: 10.0, max-ex: 1.0 }
+#
+meta-msg: |
+  :range_twomax       : [/range] both 'max' and 'max-ex' are not available at once.
+#
+rule-msg: |
+  :range_twomax       : [/range] both 'max' and 'max-ex' are not available at once.
+#
+---
+name:  range_twomin
+desc:  both 'min' and 'min-ex' are not available at once.
+#
+schema: |
+  type:  float
+  range: { min: 10.0, min-ex: 1.0 }
+#
+meta-msg: |
+  :range_twomin       : [/range] both 'min' and 'min-ex' are not available at once.
+#
+rule-msg: |
+  :range_twomin       : [/range] both 'min' and 'min-ex' are not available at once.
+#
+---
+name:  range_maxltmin
+desc:  "'max:' < 'min:'"
+#
+schema: |
+  type: map
+  mapping:
+   "EQ":
+      type: int
+      range: { max: 10, min: 10 }
+   "LG":
+      type:  str
+      range: { max: aa, min: xx }
+#
+meta-msg: |
+  :range_maxltmin     : [/mapping/LG/range] max 'aa' is less than min 'xx'.
+#
+rule-msg: |
+  :range_maxltmin     : [/mapping/LG/range] max 'aa' is less than min 'xx'.
+#
+---
+name:  range_maxleminex1
+desc:  "'max:' < 'min-ex:'"
+#
+schema: |
+   type: str
+   range: { max: aa, min-ex: xx }
+#
+meta-msg: |
+  :range_maxleminex   : [/range] max 'aa' is less than or equal to min-ex 'xx'.
+#
+rule-msg: |
+  :range_maxleminex   : [/range] max 'aa' is less than or equal to min-ex 'xx'.
+#
+---
+name:  range_maxleminex2
+desc:  "'max:' == 'min-ex:'"
+#
+schema: |
+   type: int
+   range: { max: 10, min-ex: 10 }
+#
+meta-msg: |
+  :range_maxleminex   : [/range] max '10' is less than or equal to min-ex '10'.
+#
+rule-msg: |
+  :range_maxleminex   : [/range] max '10' is less than or equal to min-ex '10'.
+#
+---
+name:  range_maxexlemin1
+desc:  "'max-ex:' < 'min:'"
+#
+schema: |
+   type: str
+   range: { max-ex: aa, min: xx }
+#
+meta-msg: |
+  :range_maxexlemin   : [/range] max-ex 'aa' is less than or equal to min 'xx'.
+#
+rule-msg: |
+  :range_maxexlemin   : [/range] max-ex 'aa' is less than or equal to min 'xx'.
+#
+---
+name:  range_maxexlemin2
+desc:  "'max-ex:' == 'min:'"
+#
+schema: |
+   type: int
+   range: { max-ex: 10, min: 10 }
+#
+meta-msg: |
+  :range_maxexlemin   : [/range] max-ex '10' is less than or equal to min '10'.
+#
+rule-msg: |
+  :range_maxexlemin   : [/range] max-ex '10' is less than or equal to min '10'.
+#
+---
+name:  range_maxexleminex1
+desc:  "'max-ex:' < 'min:-ex'"
+#
+schema: |
+   type: str
+   range: { max-ex: aa, min-ex: xx }
+#
+meta-msg: |
+  :range_maxexleminex : [/range] max-ex 'aa' is less than or equal to min-ex 'xx'.
+#
+rule-msg: |
+  :range_maxexleminex : [/range] max-ex 'aa' is less than or equal to min-ex 'xx'.
+#
+---
+name:  range_maxexleminex2
+desc:  "'max-ex:' == 'min-ex:'"
+#
+schema: |
+   type: int
+   range: { max-ex: 10, min-ex: 10 }
+#
+meta-msg: |
+  :range_maxexleminex : [/range] max-ex '10' is less than or equal to min-ex '10'.
+#
+rule-msg: |
+  :range_maxexleminex : [/range] max-ex '10' is less than or equal to min-ex '10'.
+#
+---
+name:  length_notmap
+desc:  length_notmap
+#
+schema: |
+  type:  text
+  length: [ 10, 4 ]
+#
+meta-msg: |
+  :type_unmatch       : [/length] not a mapping.
+#
+rule-msg: |
+  :length_notmap      : [/length] not a mapping.
+#
+---
+name:  length_nottext
+desc:  length_nottext
+#
+schema: |
+  type: number
+  length: { max: 10, min: 0 }
+#
+meta-msg: |
+  :length_nottext     : [/] 'length:': is available only with string or text.
+#
+rule-msg: |
+  :length_nottext     : [/] 'length:': is available only with string or text.
+#
+---
+name:  length_notint
+desc:  length_notint
+#
+schema: |
+  type:  text
+  length: { max: 10.1 }
+#
+meta-msg: |
+  :type_unmatch       : [/length/max] '10.1': not a integer.
+#
+rule-msg: |
+  :length_notint      : [/length/max] '10.1': not an integer.
+#
+---
+name:  length_undefined
+desc:  length_undefined
+#
+schema: |
+  type: text
+  length: { maximum: 10 }
+#
+meta-msg: |
+  :key_undefined      : [/length/maximum] key 'maximum:' is undefined.
+#  :key_undefined      : [/length/maximum] 'maximum:': undefined key.
+#
+rule-msg: |
+  :length_undefined   : [/length/maximum] 'maximum:': undefined key.
+#  :length_undefined   : [/length/maximum] key 'maximum:' is undefined.
+#
+---
+name:  length_twomax
+desc:  length_twomax
+#
+schema: |
+  type:  text
+  length: { max: 10, max-ex: 1 }
+#
+meta-msg: |
+  :length_twomax      : [/length] both 'max' and 'max-ex' are not available at once.
+#
+rule-msg: |
+  :length_twomax      : [/length] both 'max' and 'max-ex' are not available at once.
+#
+---
+name:  length_twomin
+desc:  length_twomin
+#
+schema: |
+  type:  str
+  length: { min: 10, min-ex: 10 }
+#
+meta-msg: |
+  :length_twomin      : [/length] both 'min' and 'min-ex' are not available at once.
+#
+rule-msg: |
+  :length_twomin      : [/length] both 'min' and 'min-ex' are not available at once.
+#
+---
+name:  length_maxltmin
+desc:  "'max:' < 'min:'"
+#
+schema: |
+  type: map
+  mapping:
+   "EQ":
+      type: str
+      length: { max: 2, min: 2 }
+   "LT":
+      type: str
+      length: { max: 2, min: 3 }
+#
+meta-msg: |
+  :length_maxltmin    : [/mapping/LT/length] max '2' is less than min '3'.
+#
+rule-msg: |
+  :length_maxltmin    : [/mapping/LT/length] max '2' is less than min '3'.
+#
+---
+name:  length_maxleminex1
+desc:  "'max:' < 'min-ex:'"
+#
+schema: |
+  type: str
+  length: { max: 2, min-ex: 3 }
+#
+meta-msg: |
+  :length_maxleminex  : [/length] max '2' is less than or equal to min-ex '3'.
+#
+rule-msg: |
+  :length_maxleminex  : [/length] max '2' is less than or equal to min-ex '3'.
+#
+---
+name:  length_maxleminex2
+desc:  "'max:' == 'min-ex:'"
+#
+schema: |
+  type: str
+  length: { max: 2, min-ex: 2 }
+#
+meta-msg: |
+  :length_maxleminex  : [/length] max '2' is less than or equal to min-ex '2'.
+#
+rule-msg: |
+  :length_maxleminex  : [/length] max '2' is less than or equal to min-ex '2'.
+#
+---
+name:  length_maxexlemin1
+desc:  "'max-ex:' < 'min:'"
+#
+schema: |
+  type: str
+  length: { max-ex: 2, min: 3 }
+#
+meta-msg: |
+  :length_maxexlemin  : [/length] max-ex '2' is less than or equal to min '3'.
+#
+rule-msg: |
+  :length_maxexlemin  : [/length] max-ex '2' is less than or equal to min '3'.
+#
+---
+name:  length_maxexlemin2
+desc:  "'max-ex:' == 'min:'"
+#
+schema: |
+  type: str
+  length: { max-ex: 2, min: 2 }
+#
+meta-msg: |
+  :length_maxexlemin  : [/length] max-ex '2' is less than or equal to min '2'.
+#
+rule-msg: |
+  :length_maxexlemin  : [/length] max-ex '2' is less than or equal to min '2'.
+#
+---
+name:  length_maxexleminex1
+desc:  "'max-ex:' < 'min-ex:'"
+#
+schema: |
+  type: str
+  length: { max-ex: 2, min-ex: 3 }
+#
+meta-msg: |
+  :length_maxexleminex: [/length] max-ex '2' is less than or equal to min-ex '3'.
+#
+rule-msg: |
+  :length_maxexleminex: [/length] max-ex '2' is less than or equal to min-ex '3'.
+#
+---
+name:  length_maxexltminex2
+desc:  "'max-ex:' == 'min-ex:'"
+#
+schema: |
+  type: str
+  length: { max-ex: 2, min-ex: 2 }
+#
+meta-msg: |
+  :length_maxexleminex: [/length] max-ex '2' is less than or equal to min-ex '2'.
+#
+rule-msg: |
+  :length_maxexleminex: [/length] max-ex '2' is less than or equal to min-ex '2'.
+#
+---
+name:  sequence_notseq
+desc:  sequence_notseq
+#
+schema: |
+  type: seq
+  sequence: |-
+    - type: str
+#
+meta-msg: |
+  :type_unmatch       : [/sequence] '- type: str': not a sequence.
+#
+rule-msg: |
+  :sequence_notseq    : [/sequence] '- type: str': not a sequence.
+#
+---
+name:  sequence_noelem
+desc:  sequence_noelem
+#
+schema: |
+  type: seq
+  sequence:
+#
+meta-msg: |
+  :sequence_noelem    : [/sequence] required one element.
+# :type_unmatch       : [/sequence] not a sequence.
+#
+rule-msg: |
+  :sequence_noelem    : [/sequence] required one element.
+#
+---
+name:  sequence_toomany
+desc:  sequence_toomany
+#
+schema: |
+  type: seq
+  sequence:
+    - type: text
+    - type: text
+#
+meta-msg: |
+  :sequence_toomany   : [/sequence] required just one element.
+#
+rule-msg: |
+  :sequence_toomany   : [/sequence] required just one element.
+#
+---
+name:  mapping_notmap
+desc:  mapping_notmap
+#
+schema: |
+  type: map
+  mapping: |-
+   "name":
+      type: str
+#
+meta-msg: |
+  :type_unmatch       : [/mapping] '"name":\n   type: str': not a mapping.
+#
+rule-msg: |
+  :mapping_notmap     : [/mapping] '"name":\n   type: str': not a mapping.
+#
+---
+name:  mapping_noelem
+desc:  mapping_noelem
+#
+schema: |
+  type: map
+  mapping:
+#
+meta-msg: |
+  :mapping_noelem     : [/mapping] required at least one element.
+#
+rule-msg: |
+  :mapping_noelem     : [/mapping] required at least one element.
+#
+---
+name:  key_unknown
+desc:  key_unknown
+#
+schema: |
+  type: str
+  values:
+    - one
+    - two
+#
+meta-msg: |
+  :key_undefined      : [/values] key 'values:' is undefined.
+#  :key_undefined      : [/values] 'values:': undefined key.
+#
+rule-msg: |
+  :key_unknown        : [/values] 'values:': unknown key.
+#  :key_unknown        : [/values] key 'values:' is unknown.
+#
+---
+name:  seq_nosequence
+desc:  seq_nosequence
+#
+schema: |
+  type: seq
+#
+meta-msg: |
+  :seq_nosequence     : [/] type 'seq' requires 'sequence:'.
+#
+rule-msg: |
+  :seq_nosequence     : [/] type 'seq' requires 'sequence:'.
+#
+---
+name:  seq_conflict1
+desc:  type 'seq' and item 'mapping:'
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+  mapping: { name: {type: str} }
+meta-msg: |
+  :seq_conflict       : [/] 'mapping:': not available with sequence.
+#
+rule-msg: |
+  :seq_conflict       : [/] 'mapping:': not available with sequence.
+#
+---
+name:  seq_conflict2
+desc:  type 'seq' and item 'pattern:'
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+  pattern: /abc/
+#
+meta-msg: |
+  :seq_conflict       : [/] 'pattern:': not available with sequence.
+#
+rule-msg: |
+  :seq_conflict       : [/] 'pattern:': not available with sequence.
+#
+---
+name:  seq_conflict3
+desc:  type 'seq' and item 'range:'
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+  range:  { max: 10 }
+#
+meta-msg: |
+  :range_notscalar    : [/] 'range:': is available only with scalar type.
+#  :seq_conflict       : [/] 'range:': not available with sequence.
+#
+rule-msg: |
+  :range_notscalar    : [/] 'range:': is available only with scalar type.
+#  :seq_conflict       : [/] 'range:': not available with sequence.
+#
+---
+name:  seq_conflict4
+desc:  type 'seq' and item 'length:'
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+  length: { max: 10 }
+#
+meta-msg: |
+  :length_nottext     : [/] 'length:': is available only with string or text.
+#  :seq_conflict       : [/] 'length:': not available with sequence.
+#
+rule-msg: |
+  :length_nottext     : [/] 'length:': is available only with string or text.
+#  :seq_conflict       : [/] 'length:': not available with sequence.
+#
+---
+name:  seq_conflict5
+desc:  type 'seq' and item 'enum:'
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+  enum: [ A, B, C ]
+#
+meta-msg: |
+  :enum_notscalar     : [/] 'enum:': not available with seq or map.
+#  :seq_conflict       : [/] 'enum:': not available with sequence.
+#
+rule-msg: |
+  :enum_notscalar     : [/] 'enum:': not available with seq or map.
+#  :seq_conflict       : [/] 'enum:': not available with sequence.
+#
+---
+name:  map_nomapping
+desc:  map_nomapping
+#
+schema: |
+  type: map
+#
+meta-msg: |
+  :map_nomapping      : [/] type 'map' requires 'mapping:'.
+#
+rule-msg: |
+  :map_nomapping      : [/] type 'map' requires 'mapping:'.
+#
+---
+name:  map_conflict1
+desc:  type 'map' and item 'sequence:'
+#
+schema: |
+  type: map
+  mapping:
+   "name":
+      type: str
+  sequence:
+    - type: str
+#
+meta-msg: |
+  :map_conflict       : [/] 'sequence:': not available with mapping.
+#
+rule-msg: |
+  :map_conflict       : [/] 'sequence:': not available with mapping.
+#
+---
+name:  map_conflict2
+desc:  type 'map' and item 'pattern:'
+#
+schema: |
+  type: map
+  mapping:
+   "name":
+      type: str
+  pattern: /foo/
+#
+meta-msg: |
+  :map_conflict       : [/] 'pattern:': not available with mapping.
+#
+rule-msg: |
+  :map_conflict       : [/] 'pattern:': not available with mapping.
+#
+---
+name:  map_conflict3
+desc:  type 'map' and item 'range:'
+#
+schema: |
+  type: map
+  mapping:
+   "name":
+      type: str
+  range: { min-ex: 5 }
+#
+meta-msg: |
+  :range_notscalar    : [/] 'range:': is available only with scalar type.
+#  :map_conflict       : [/] 'range:': not available with mapping.
+#
+rule-msg: |
+  :range_notscalar    : [/] 'range:': is available only with scalar type.
+#  :map_conflict       : [/] 'range:': not available with mapping.
+#
+---
+name:  map_conflict4
+desc:  type 'map' and item 'length:'
+#
+schema: |
+  type: map
+  mapping:
+   "name":
+      type: str
+  length: { min-ex: 5 }
+#
+meta-msg: |
+  :length_nottext     : [/] 'length:': is available only with string or text.
+#  :map_conflict       : [/] 'length:': not available with mapping.
+#
+rule-msg: |
+  :length_nottext     : [/] 'length:': is available only with string or text.
+#  :map_conflict       : [/] 'length:': not available with mapping.
+#
+---
+name:  scalar_confict1
+desc:  scalar type and item 'sequence:'
+#
+schema: |
+  type:  int
+  sequence:
+    - type: str
+#
+meta-msg: |
+  :scalar_conflict    : [/] 'sequence:': not available with scalar type.
+#
+rule-msg: |
+  :scalar_conflict    : [/] 'sequence:': not available with scalar type.
+#
+---
+name:  scalar_confict2
+desc:  scalar type and item 'mapping:'
+#
+schema: |
+  type:  int
+  mapping:
+   "name":
+      type: str
+#
+meta-msg: |
+  :scalar_conflict    : [/] 'mapping:': not available with scalar type.
+#
+rule-msg: |
+  :scalar_conflict    : [/] 'mapping:': not available with scalar type.
+#
+---
+name:  enum_conflict1
+desc:  item 'enum:' and 'range:'
+#
+schema: |
+  type: str
+  enum:
+    - aa
+    - bb
+  range: { max: xx, min: aa }
+#
+meta-msg: |
+  :enum_conflict      : [/] 'range:': not available with 'enum:'.
+#
+rule-msg: |
+  :enum_conflict      : [/] 'range:': not available with 'enum:'.
+#
+---
+name:  enum_conflict2
+desc:  item 'enum:' and 'length:'
+#
+schema: |
+  type: str
+  enum:
+    - aa
+    - bb
+  length: { max: 3 }
+#
+meta-msg: |
+  :enum_conflict      : [/] 'length:': not available with 'enum:'.
+#
+rule-msg: |
+  :enum_conflict      : [/] 'length:': not available with 'enum:'.
+#
+---
+name:  enum_conflict3
+desc:  item 'enum:' and 'pattern:'
+#
+schema: |
+  type: str
+  enum:
+    - aa
+    - bb
+  pattern: /0/
+#
+meta-msg: |
+  :enum_conflict      : [/] 'pattern:': not available with 'enum:'.
+#
+rule-msg: |
+  :enum_conflict      : [/] 'pattern:': not available with 'enum:'.
+#
+---
+name:  unique_notbool
+desc:  unique_notbool
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "id":
+          type:    int
+          unique:  'yes'
+       "name":
+          type:    str
+#
+meta-msg: |
+  :type_unmatch       : [/sequence/0/mapping/id/unique] 'yes': not a boolean.
+#
+rule-msg: |
+  :unique_notbool     : [/sequence/0/mapping/id/unique] 'yes': not a boolean.
+#
+---
+name:  unique_notscalar
+desc:  unique_notscalar
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "id":
+          type:    int
+          unique:  yes
+       "values":
+          type:    seq
+          unique:  yes
+          sequence:
+            - type: str
+#
+meta-msg: |
+  :unique_notscalar   : [/sequence/0/mapping/values] 'unique:': is available only with a scalar type.
+#
+rule-msg: |
+  :unique_notscalar   : [/sequence/0/mapping/values] 'unique:': is available only with a scalar type.
+#
+---
+name:  unique_root
+desc:  unique_root
+#
+schema: |
+  type: str
+  unique: yes
+#
+meta-msg: |
+  :unique_onroot      : [/] 'unique:': is not available on root element.
+#
+rule-msg: |
+  :unique_onroot      : [/] 'unique:': is not available on root element.
+#
+---
+name:  ident_notbool
+desc:  ident_notbool
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "id":
+          type:    int
+          ident:  'yes'
+       "name":
+          type:    str
+#
+meta-msg: |
+  :type_unmatch       : [/sequence/0/mapping/id/ident] 'yes': not a boolean.
+#
+rule-msg: |
+  :ident_notbool      : [/sequence/0/mapping/id/ident] 'yes': not a boolean.
+#
+---
+name:  ident_notscalar
+desc:  ident_notscalar
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "id":
+          type:    int
+          ident:  yes
+       "values":
+          type:    seq
+          ident:  yes
+          sequence:
+            - type: str
+#
+meta-msg: |
+  :ident_notscalar    : [/sequence/0/mapping/values] 'ident:': is available only with a scalar type.
+#
+rule-msg: |
+  :ident_notscalar    : [/sequence/0/mapping/values] 'ident:': is available only with a scalar type.
+#
+---
+name:  ident_root
+desc:  ident_root
+#
+schema: |
+  type: str
+  ident: yes
+#
+meta-msg: |
+  :ident_onroot       : [/] 'ident:': is not available on root element.
+#
+rule-msg: |
+  :ident_onroot       : [/] 'ident:': is not available on root element.
+#
+---
+name:  ident_notmap
+desc:  ident_notmap
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "id":
+          type:    int
+          ident:  yes
+       "values":
+          type:    seq
+          sequence:
+            - type: str
+              ident: yes
+#
+meta-msg: |
+  :ident_notmap       : [/sequence/0/mapping/values/sequence/0] 'ident:': is available only with an element of mapping.
+#
+rule-msg: |
+  :ident_notmap       : [/sequence/0/mapping/values/sequence/0] 'ident:': is available only with an element of mapping.
+#
+---
+name:   class_notmap
+desc:   class_notmap
+schema: |
+  type:   map
+  class:  User
+  mapping:
+   "name":  { type: str, required: yes }
+   "email": { type: str }
+   "phones":
+      type:  seq
+      class:  Phone
+      sequence:
+        - type: str
+     
+meta-msg: |
+  :class_notmap       : [/mapping/phones/class] 'class:': available only with map type.
+rule-msg: |
+  :class_notmap       : [/mapping/phones/class] 'class:': available only with map type.
+#
+---
+name:   default_nonscalarval
+desc:   value is not a scalar
+schema: |
+      type: map
+      mapping:
+       "deleted":
+          type: any
+          default: [ null ]
+meta-msg: |
+  :type_unmatch       : [/mapping/deleted/default] not a scalar.
+rule-msg: |
+  :default_nonscalarval: [/mapping/deleted/default] not a scalar.
+#
+---
+name:   default_notscalar
+desc:   "'default:' is not available with container"
+schema: |
+      type: map
+      default: null
+      mapping:
+       "=":
+meta-msg: |
+  :default_notscalar  : [/] 'default:': is available only with a scalar type.
+rule-msg: |
+  :default_notscalar  : [/] 'default:': is available only with a scalar type.
+#
+---
+name:   default_conflict
+desc:   "'default:' is not available when 'required:' is true"
+schema: |
+      type: map
+      mapping:
+       "name":
+          type: str
+	  required: true
+	  default: ''
+meta-msg: |
+  :default_conflict   : [/mapping/name] 'default:': not available when 'required:' is true.
+rule-msg: |
+  :default_conflict   : [/mapping/name] 'default:': not available when 'required:' is true.
+#
+---
+name:   default_unmatch
+desc:   "'default:' value is not matched to the type"
+schema: |
+      type: map
+      mapping:
+       "name":
+          type: str
+	  default: 123
+meta-msg: |
+  :default_unmatch    : [/mapping/name/default] '123': not a string.
+rule-msg: |
+  :default_unmatch    : [/mapping/name/default] '123': not a string.

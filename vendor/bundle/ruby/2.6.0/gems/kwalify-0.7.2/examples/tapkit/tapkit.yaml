@@ -1,0 +1,85 @@
+##
+## original:
+##   http://www.spice-of-life.net/tapkit/ja/TapKitUserGuide_J_c5_s6.html#doc7_1532
+##
+
+adapter_name: DBI
+
+connection:
+  url:      dbi:Mysql:examples
+  user:     mysql
+  password: mysql
+
+entities:
+  -
+    name:          Employee
+    external_name: EMPLOYEE
+
+    attributes:
+      -
+        name:          employee_id
+        column_name:   EMPLOYEE_ID
+        external_type: int
+        class_name:    Integer
+      -
+        name:          name
+        column_name:   NAME
+        external_type: char
+        class_name:    String
+        width:         64
+      -
+        name:          company_id
+        column_name:   COMPANY_ID
+        external_type: int
+        class_name:    Integer
+
+    relationships:
+      -
+        name:          company
+        destination:   Company
+        to_many:       false
+        joins:
+          -
+             source:      company_id
+             destination: company_id
+
+    primary_key_attributes:
+      - employee_id
+
+    class_properties:
+      - name
+      - company
+
+  -
+    name:          Company
+    external_name: COMPANY
+
+    attributes:
+      -
+        name:          company_id
+        column_name:   COMPANY_ID
+        external_type: int
+        class_name:    Integer
+      -
+        name:          name
+        column_name:   NAME
+        external_type: char
+        class_name:    String
+        width:         64
+
+    relationships:
+      -
+        name:          employees
+        destination:   Employee
+        to_many:       true
+        joins:
+          -
+             source:      company_id
+             destination: company_id
+
+    primary_key_attributes:
+      - company_id
+
+    class_properties:
+      - name
+      - employees

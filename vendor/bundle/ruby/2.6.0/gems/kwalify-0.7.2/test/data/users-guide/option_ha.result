@@ -1,0 +1,6 @@
+$ kwalify -ha genclass-ruby
+  --module=name   :  module name in which class defined
+  --parent=name   :  parent class name
+  --include=name  :  module name which all classes include
+  --initialize=false :  not print initialize() method
+  --hashlike      :  include Kwalify::Util::HashLike module

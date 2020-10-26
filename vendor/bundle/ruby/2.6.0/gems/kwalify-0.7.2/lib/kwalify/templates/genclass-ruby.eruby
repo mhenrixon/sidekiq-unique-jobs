@@ -1,0 +1,113 @@
+<%
+
+    ###
+    ### $Rev$
+    ### $Release: 0.7.2 $
+    ### copyright(c) 2005-2010 kuwata-lab all rights reserved.
+    ###
+
+    if @describe
+       sb = []
+       sb << "  --module=name   :  module name in which class defined\n"
+       sb << "  --parent=name   :  parent class name\n"
+       sb << "  --include=name  :  module name which all classes include\n"
+       sb << "  --initialize=false :  not print initialize() method\n"
+       sb << "  --hashlike      :  include Kwalify::Util::HashLike module\n"
+       #sb << "  --ggap          :  use generation gap pattern\n"
+       return sb.join
+    end
+
+
+    require 'kwalify/util/ordered-hash'
+
+    def generate_classdef(schema)
+      hash = Kwalify::Util::OrderedHash.new
+      #hash.instance_eval { alias []= add }
+      modname = @properties[:module]
+      Kwalify::Util.traverse_schema(schema) do |rulehash|
+        if rulehash['class']
+          arr = _generate_classdef(rulehash)
+          key = rulehash['class']
+          classdef = modname ? arr.join('  ') : arr.join()
+          #hash[key] = classdef if !hash.key?(key) || classdef != hash[key]
+          hash[key] = classdef if !hash.key?(key) || classdef.length > hash[key].length
+        end
+      end
+      sb = ''
+      sb   << "require 'kwalify/util/hashlike'\n" if @properties[:hashlike]
+      sb   << "\n"                                if @properties[:hashlike]
+      sb   << "module #{@properties[:module]}\n"  if modname
+      sb   << "\n"                                if modname
+      hash.each do |classname, classdef|
+        sb << classdef
+        sb << "\n"
+      end
+      sb   << "end\n"                             if modname
+      sb   << "\n"                                if modname
+      return sb.chomp
+    end
+
+
+    def _generate_classdef(rulehash)
+      return nil unless rulehash['class']
+      assert unless rulehash['mapping']
+      classname = rulehash['class']
+      classname = classname + '_' if @properties[:ggap]
+      extend = @properties[:parent] ? " < #{@properties[:parent]}" : nil
+      flag_init = @properties[:initialize] != false
+      arr = ['']
+      arr      << "## #{rulehash['desc']}\n"
+      arr      << "class #{classname}#{extend}\n"
+      arr      << "  include Kwalify::Util::HashLike\n"  if @properties[:hashlike]
+      arr      << "  include #{@properties[:include]}\n" if @properties[:include]
+      arr1 = []
+      arr2 = []   # accessors
+      arr3 = []   # boolean accessors
+      arr4 = []   # default values
+      v = nil
+      rulehash['mapping'].each do |name, map_rulehash|
+        next unless name =~ /\A[a-zA-Z_][-\w]*\z/
+        name2 = name.gsub(/-/, '_')
+        var = "%-16s" % name2
+        len = 13 - name2.length
+        len = 0 if len < 0
+        spc = ' ' * len
+        arr2   << "  attr_accessor :#{var} # #{map_rulehash['type'] || 'str'}\n"
+        flag_bool = (t = map_rulehash['type']) == 'bool' || t == 'boolean'
+        arr3   << "  def #{name2}?#{spc};  @#{name2}#{spc}; end\n" if flag_bool
+        arr4   << "      @#{var} = #{v.inspect}\n" unless (v=map_rulehash['default']).nil?
+        if !flag_init
+          # pass
+        elsif map_rulehash['class']
+          cname = map_rulehash['class']
+          arr1 << "    @#{var} = (v=hash['#{name}']) && v.is_a?(Hash) ? #{cname}.new(v) : v\n"
+        elsif map_rulehash['sequence'] && map_rulehash['sequence'][0]['class']
+          item_rulehash = map_rulehash['sequence'][0]
+          cname = item_rulehash['class']
+          arr1 << "    @#{var} = (v=hash['#{name}']) ? v.map!{|e| e.is_a?(#{cname}) ? e : #{cname}.new(e)} : v\n"
+        elsif map_rulehash.key?('default')
+          #arr << "    @#{var} = hash.key?('#{name}') ? hash['#{name}'] : #{map_rulehash['default'].inspect}\n"
+          arr1 << "    @#{var} = (v=hash['#{name}']).nil? ? #{map_rulehash['default'].inspect} : v\n"
+        else
+          arr1 << "    @#{var} = hash['#{name}']\n"
+        end
+      end
+      arr      << "  def initialize(hash=nil)\n" if flag_init
+      arr      << "    if hash.nil?\n"           if flag_init
+      arr.concat arr4                            if flag_init
+      arr      << "      return\n"               if flag_init
+      arr      << "    end\n"                    if flag_init
+      arr.concat arr1                            if flag_init
+      arr      << "  end\n"                      if flag_init
+      arr.concat(arr2)
+      arr.concat(arr3)
+      if @properties[:ggap]
+        arr    << "end\n"
+        arr    << "class #{rulehash['class']} < #{classname}\n"
+      end
+      arr      << "end\n"
+      return arr
+    end
+
+%>
+<%= generate_classdef(@schema) %>

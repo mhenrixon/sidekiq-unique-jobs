@@ -1,0 +1,986 @@
+##
+## $Rev$
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+name:  sequence1
+desc:  sequence test
+checked: yes
+#
+schema: |
+  type:        seq
+  required:    true
+  sequence:
+    - type:       str
+      required:   true
+#
+valid: |
+  - foo
+  - bar
+  - baz
+#
+invalid: |
+  - foo
+  - bar
+  -
+  - baz
+  - 100
+#
+error: |
+  :required_novalue   : (line 3)[/2] value required but none.
+  :type_unmatch       : (line 5)[/4] '100': not a string.
+error2: |
+  :required_novalue   : 3:1:[/2] value required but none.
+  :type_unmatch       : 5:1:[/4] '100': not a string.
+##
+---
+name:  mapping1
+desc:  mapping test
+checked: yes
+#
+schema: |
+  type:        map
+  required:    true
+  mapping:
+    name:
+      type:       str
+      required:   true
+    email:
+      type:       str
+      pattern:    /@/
+      required:   yes
+    age:
+      type:       int
+    blood:
+      type:       str
+      enum:
+        - A
+        - B
+        - O
+        - AB
+    birth:
+      type:       date
+#
+valid: |
+  name:   foo
+  email:  foo@mail.com
+  age:    20
+  blood:  AB
+  birth:   1985-01-01
+#
+invalid: |
+  nam:    foo
+  email:  foo(at)mail.com
+  age:    twenty
+  blood:  ab
+  birth:  Jul 01, 1985
+#
+error: |
+  :required_nokey     : (line 1)[/] key 'name:' is required.
+  :key_undefined      : (line 1)[/nam] key 'nam:' is undefined.
+  :pattern_unmatch    : (line 2)[/email] 'foo(at)mail.com': not matched to pattern /@/.
+  :type_unmatch       : (line 3)[/age] 'twenty': not a integer.
+  :enum_notexist      : (line 4)[/blood] 'ab': invalid blood value.
+  :type_unmatch       : (line 5)[/birth] 'Jul 01, 1985': not a date.
+error2: |
+  :required_nokey     : 1:1:[/] key 'name:' is required.
+  :key_undefined      : 1:1:[/nam] key 'nam:' is undefined.
+  :pattern_unmatch    : 2:1:[/email] 'foo(at)mail.com': not matched to pattern /@/.
+  :type_unmatch       : 3:1:[/age] 'twenty': not a integer.
+  :enum_notexist      : 4:1:[/blood] 'ab': invalid blood value.
+  :type_unmatch       : 5:1:[/birth] 'Jul 01, 1985': not a date.
+##
+---
+name:  nested1
+desc:  nest of seq and map
+checked: yes
+#
+schema: |
+  type:        map
+  required:    true
+  mapping:
+    address-book:
+      type:       seq
+      required:   true
+      sequence:
+        - type:   map
+          mapping:
+            name:
+              type:       str
+              required:   yes
+            email:
+              type:       str
+              pattern:    /@/
+              required:   yes
+            age:
+              type:       int
+            blood:
+              type:       str
+              enum:
+                - A
+                - B
+                - O
+                - AB
+            birth:
+              type:       date
+#
+valid: |
+  address-book:
+    - name:       foo
+      email:      foo@mail.com
+      age:        20
+      blood:      AB
+      birth:      1985-01-01
+    - name:       bar
+      email:      foo@mail.com
+#
+invalid: |
+  address-book:
+    - name:       foo
+      mail:       foo@mail.com
+      age:        twenty
+      blood:      ab
+      birth:      1985/01/01
+    - name:       bar
+      email:      bar(at)mail.com
+#
+error: |
+  :required_nokey     : (line 2)[/address-book/0] key 'email:' is required.
+  :key_undefined      : (line 3)[/address-book/0/mail] key 'mail:' is undefined.
+  :type_unmatch       : (line 4)[/address-book/0/age] 'twenty': not a integer.
+  :enum_notexist      : (line 5)[/address-book/0/blood] 'ab': invalid blood value.
+  :type_unmatch       : (line 6)[/address-book/0/birth] '1985/01/01': not a date.
+  :pattern_unmatch    : (line 8)[/address-book/1/email] 'bar(at)mail.com': not matched to pattern /@/.
+error2: |
+  :required_nokey     : 2:5:[/address-book/0] key 'email:' is required.
+  :key_undefined      : 3:5:[/address-book/0/mail] key 'mail:' is undefined.
+  :type_unmatch       : 4:5:[/address-book/0/age] 'twenty': not a integer.
+  :enum_notexist      : 5:5:[/address-book/0/blood] 'ab': invalid blood value.
+  :type_unmatch       : 6:5:[/address-book/0/birth] '1985/01/01': not a date.
+  :pattern_unmatch    : 8:5:[/address-book/1/email] 'bar(at)mail.com': not matched to pattern /@/.
+##
+---
+name:  anchor1
+desc:  schema with anchor
+checked: yes
+#
+schema: |
+  type:        seq
+  required:    true
+  sequence:
+    - type:        map
+      required:    true
+      mapping:
+        first-name: &name
+          type:       str
+          required:   yes
+        family-name: *name
+#
+valid: |
+  - first-name:  foo
+    family-name: Foo
+  - first-name:  bar
+    family-name: Bar
+#
+invalid: |
+  - first-name:  foo
+    last-name:   Foo
+  - first-name:  bar
+    family-name: 100
+#
+error: |
+  :required_nokey     : (line 1)[/0] key 'family-name:' is required.
+  :key_undefined      : (line 2)[/0/last-name] key 'last-name:' is undefined.
+  :type_unmatch       : (line 4)[/1/family-name] '100': not a string.
+error2: |
+  :required_nokey     : 1:3:[/0] key 'family-name:' is required.
+  :key_undefined      : 2:3:[/0/last-name] key 'last-name:' is undefined.
+  :type_unmatch       : 4:3:[/1/family-name] '100': not a string.
+##
+---
+name:  anchor2
+desc:  schema with anchor 2
+checked: yes
+#
+schema: |
+  type:        map
+  required:    true
+  mapping:
+    title: &name
+      type:       str
+      required:   true
+    address-book:
+      type:       seq
+      required:   true
+      sequence:
+        - type:   map
+          mapping:
+            name: *name
+            email:
+              type:       str
+              required:   yes
+#
+valid: |
+  title:   my friends
+  address-book:
+    - name:   foo
+      email:  foo@mail.com
+    - name:   bar
+      email:  bar@mail.com
+#
+invalid: |
+  title:   my friends
+  address-book:
+    - name:  100
+      email: foo@mail.com
+    - first-name:  bar
+      email: bar@mail.com
+#
+error: |
+  :type_unmatch       : (line 3)[/address-book/0/name] '100': not a string.
+  :required_nokey     : (line 5)[/address-book/1] key 'name:' is required.
+  :key_undefined      : (line 5)[/address-book/1/first-name] key 'first-name:' is undefined.
+error2: |
+  :type_unmatch       : 3:5:[/address-book/0/name] '100': not a string.
+  :required_nokey     : 5:5:[/address-book/1] key 'name:' is required.
+  :key_undefined      : 5:5:[/address-book/1/first-name] key 'first-name:' is undefined.
+##
+---
+name:  anchor3
+desc:  document with anchor
+checked: yes
+#
+schema: |
+  type:        seq
+  sequence:
+    - &employee
+      type:    map
+      mapping:
+        name:
+          type:   str
+        post:
+          type:   str
+          enum:
+            - exective
+            - manager
+            - clerk
+        supervisor: *employee
+#
+valid: |
+  - &foo
+    name:  foo
+    post:  exective
+  - &bar
+    name:  bar
+    post:  manager
+    supervisor: *foo
+  - &baz
+    name:  baz
+    post:  clerk
+    supervisor: *bar
+  - &zak
+    name:  zak
+    post:  clerk
+    supervisor: *bar
+#
+invalid: |
+  - &foo
+    name:  100
+    post:  exective
+    supervisor: *foo
+  - &bar
+    name:  foo
+    post:  worker
+    supervisor: *foo
+#
+error: |
+  :type_unmatch       : (line 2)[/0/name] '100': not a string.
+  :enum_notexist      : (line 7)[/1/post] 'worker': invalid post value.
+error2: |
+  :type_unmatch       : 2:3:[/0/name] '100': not a string.
+  :enum_notexist      : 7:3:[/1/post] 'worker': invalid post value.
+##
+---
+name:  range1
+desc:  range test && bug#?????
+checked: yes
+#
+schema: |
+  type:  map
+  mapping:
+   "max-only":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { max: 100 }
+   "min-only":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { min: 10.0 }
+   "max-and-min":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { max: 100.0, min: 10.0 }
+#
+valid: |
+  max-only:
+    - 100
+    - 100.0
+  min-only:
+    - 10
+    - 10.0
+  max-and-min:
+    - 100
+    - 10
+    - 100.0
+    - 10.0
+#
+invalid: |
+  max-only:
+    - 101
+    - 100.1
+  min-only:
+    - 9
+    - 9.99
+  max-and-min:
+    - 101
+    - 100.1
+    - 9
+    - 9.99
+#
+error: |
+  :range_toolarge     : (line 2)[/max-only/0] '101': too large (> max 100).
+  :range_toolarge     : (line 3)[/max-only/1] '100.1': too large (> max 100).
+  :range_toosmall     : (line 5)[/min-only/0] '9': too small (< min 10.0).
+  :range_toosmall     : (line 6)[/min-only/1] '9.99': too small (< min 10.0).
+  :range_toolarge     : (line 8)[/max-and-min/0] '101': too large (> max 100.0).
+  :range_toolarge     : (line 9)[/max-and-min/1] '100.1': too large (> max 100.0).
+  :range_toosmall     : (line 10)[/max-and-min/2] '9': too small (< min 10.0).
+  :range_toosmall     : (line 11)[/max-and-min/3] '9.99': too small (< min 10.0).
+error2: |
+  :range_toolarge     : 2:3:[/max-only/0] '101': too large (> max 100).
+  :range_toolarge     : 3:3:[/max-only/1] '100.1': too large (> max 100).
+  :range_toosmall     : 5:3:[/min-only/0] '9': too small (< min 10.0).
+  :range_toosmall     : 6:3:[/min-only/1] '9.99': too small (< min 10.0).
+  :range_toolarge     : 8:3:[/max-and-min/0] '101': too large (> max 100.0).
+  :range_toolarge     : 9:3:[/max-and-min/1] '100.1': too large (> max 100.0).
+  :range_toosmall     : 10:3:[/max-and-min/2] '9': too small (< min 10.0).
+  :range_toosmall     : 11:3:[/max-and-min/3] '9.99': too small (< min 10.0).
+##
+---
+name:  range2
+desc:  range test (with max-ex and min-ex)
+#
+schema: |
+  type:  map
+  mapping:
+   "max-ex-only":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { max-ex: 100 }
+   "min-ex-only":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { min-ex: 10.0 }
+   "max-ex-and-min-ex":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { max-ex: 100.0, min-ex: 10.0 }
+#
+valid: |
+  max-ex-only:
+    - 99
+    - 99.99999
+  min-ex-only:
+    - 11
+    - 10.00001
+  max-ex-and-min-ex:
+    - 99
+    - 11
+    - 99.99999
+    - 10.00001
+#
+invalid: |
+  max-ex-only:
+    - 100
+    - 100.0
+  min-ex-only:
+    - 10
+    - 10.0
+  max-ex-and-min-ex:
+    - 100
+    - 100.0
+    - 10
+    - 10.0
+#
+error: |
+  :range_toolargeex   : (line 2)[/max-ex-only/0] '100': too large (>= max 100).
+  :range_toolargeex   : (line 3)[/max-ex-only/1] '100.0': too large (>= max 100).
+  :range_toosmallex   : (line 5)[/min-ex-only/0] '10': too small (<= min 10.0).
+  :range_toosmallex   : (line 6)[/min-ex-only/1] '10.0': too small (<= min 10.0).
+  :range_toolargeex   : (line 8)[/max-ex-and-min-ex/0] '100': too large (>= max 100.0).
+  :range_toolargeex   : (line 9)[/max-ex-and-min-ex/1] '100.0': too large (>= max 100.0).
+  :range_toosmallex   : (line 10)[/max-ex-and-min-ex/2] '10': too small (<= min 10.0).
+  :range_toosmallex   : (line 11)[/max-ex-and-min-ex/3] '10.0': too small (<= min 10.0).
+error2: |
+  :range_toolargeex   : 2:3:[/max-ex-only/0] '100': too large (>= max 100).
+  :range_toolargeex   : 3:3:[/max-ex-only/1] '100.0': too large (>= max 100).
+  :range_toosmallex   : 5:3:[/min-ex-only/0] '10': too small (<= min 10.0).
+  :range_toosmallex   : 6:3:[/min-ex-only/1] '10.0': too small (<= min 10.0).
+  :range_toolargeex   : 8:3:[/max-ex-and-min-ex/0] '100': too large (>= max 100.0).
+  :range_toolargeex   : 9:3:[/max-ex-and-min-ex/1] '100.0': too large (>= max 100.0).
+  :range_toosmallex   : 10:3:[/max-ex-and-min-ex/2] '10': too small (<= min 10.0).
+  :range_toosmallex   : 11:3:[/max-ex-and-min-ex/3] '10.0': too small (<= min 10.0).
+##
+---
+name:  range3
+desc:  range test (with max, min, max-ex and min-ex)
+#
+schema: |
+  type:  map
+  mapping:
+   "A":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { max: 100, min-ex: 10.0 }
+   "B":
+      type:     seq
+      sequence:
+        - type:     number
+          required: yes
+          range:    { min: 10, max-ex: 100.0 }
+#
+valid: |
+  A:
+    - 100
+    - 10.00001
+  B:
+    - 10
+    - 99.99999
+#
+invalid: |
+  A:
+    - 100.00001
+    - 10.0
+  B:
+    - 9.99999
+    - 100.0
+#
+error: |
+  :range_toolarge     : (line 2)[/A/0] '100.00001': too large (> max 100).
+  :range_toosmallex   : (line 3)[/A/1] '10.0': too small (<= min 10.0).
+  :range_toosmall     : (line 5)[/B/0] '9.99999': too small (< min 10).
+  :range_toolargeex   : (line 6)[/B/1] '100.0': too large (>= max 100.0).
+error2: |
+  :range_toolarge     : 2:3:[/A/0] '100.00001': too large (> max 100).
+  :range_toosmallex   : 3:3:[/A/1] '10.0': too small (<= min 10.0).
+  :range_toosmall     : 5:3:[/B/0] '9.99999': too small (< min 10).
+  :range_toolargeex   : 6:3:[/B/1] '100.0': too large (>= max 100.0).
+##
+---
+name:  length1
+desc:  length test
+#
+schema: |
+  type:  map
+  mapping:
+   "max-only":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { max: 8 }
+   "min-only":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { min: 4 }
+   "max-and-min":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { max: 8, min: 4 }
+#
+valid: |
+  max-only:
+    - hogehoge
+    - a
+    -
+  min-only:
+    - hoge
+    - hogehogehogehogehoge
+  max-and-min:
+    - hogehoge
+    - hoge
+#
+invalid: |
+  max-only:
+    - hogehoge!
+  min-only:
+    - foo
+    -
+  max-and-min:
+    - foobarbaz
+    - foo
+#
+error: |
+  :length_toolong     : (line 2)[/max-only/0] 'hogehoge!': too long (length 9 > max 8).
+  :length_tooshort    : (line 4)[/min-only/0] 'foo': too short (length 3 < min 4).
+  :length_toolong     : (line 7)[/max-and-min/0] 'foobarbaz': too long (length 9 > max 8).
+  :length_tooshort    : (line 8)[/max-and-min/1] 'foo': too short (length 3 < min 4).
+error2: |
+  :length_toolong     : 2:3:[/max-only/0] 'hogehoge!': too long (length 9 > max 8).
+  :length_tooshort    : 4:3:[/min-only/0] 'foo': too short (length 3 < min 4).
+  :length_toolong     : 7:3:[/max-and-min/0] 'foobarbaz': too long (length 9 > max 8).
+  :length_tooshort    : 8:3:[/max-and-min/1] 'foo': too short (length 3 < min 4).
+##
+---
+name:  length2
+desc:  length test (with max-ex and min-ex)
+#
+schema: |
+  type:  map
+  mapping:
+   "max-ex-only":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { max-ex: 8 }
+   "min-ex-only":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { min-ex: 4 }
+   "max-ex-and-min-ex":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { max-ex: 8, min-ex: 4 }
+#
+valid: |
+  max-ex-only:
+    - hogehog
+    - a
+    -
+  min-ex-only:
+    - hoge!
+  max-ex-and-min-ex:
+    - hogehog
+    - hoge!
+#
+invalid: |
+  max-ex-only:
+    - hogehoge
+  min-ex-only:
+    - foo!
+    -
+  max-ex-and-min-ex:
+    - foobarba
+    - foo!
+#
+error: |
+  :length_toolongex   : (line 2)[/max-ex-only/0] 'hogehoge': too long (length 8 >= max 8).
+  :length_tooshortex  : (line 4)[/min-ex-only/0] 'foo!': too short (length 4 <= min 4).
+  :length_toolongex   : (line 7)[/max-ex-and-min-ex/0] 'foobarba': too long (length 8 >= max 8).
+  :length_tooshortex  : (line 8)[/max-ex-and-min-ex/1] 'foo!': too short (length 4 <= min 4).
+error2: |
+  :length_toolongex   : 2:3:[/max-ex-only/0] 'hogehoge': too long (length 8 >= max 8).
+  :length_tooshortex  : 4:3:[/min-ex-only/0] 'foo!': too short (length 4 <= min 4).
+  :length_toolongex   : 7:3:[/max-ex-and-min-ex/0] 'foobarba': too long (length 8 >= max 8).
+  :length_tooshortex  : 8:3:[/max-ex-and-min-ex/1] 'foo!': too short (length 4 <= min 4).
+##
+---
+name:  length3
+desc:  length test (with min, max, max-ex and min-ex)
+#
+schema: |
+  type:  map
+  mapping:
+   "A":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { max: 8, min-ex: 4 }
+   "B":
+      type:   seq
+      sequence:
+        - type:  str
+          length:  { max-ex: 8, min: 4 }
+#
+valid: |
+  A:
+    - hogehoge
+    - hogeh
+  B:
+    - hogehog
+    - hoge
+#
+invalid: |
+  A:
+    - hogehoge!
+    - hoge
+  B:
+    - hogehoge
+    - hog
+#
+error: |
+  :length_toolong     : (line 2)[/A/0] 'hogehoge!': too long (length 9 > max 8).
+  :length_tooshortex  : (line 3)[/A/1] 'hoge': too short (length 4 <= min 4).
+  :length_toolongex   : (line 5)[/B/0] 'hogehoge': too long (length 8 >= max 8).
+  :length_tooshort    : (line 6)[/B/1] 'hog': too short (length 3 < min 4).
+error2: |
+  :length_toolong     : 2:3:[/A/0] 'hogehoge!': too long (length 9 > max 8).
+  :length_tooshortex  : 3:3:[/A/1] 'hoge': too short (length 4 <= min 4).
+  :length_toolongex   : 5:3:[/B/0] 'hogehoge': too long (length 8 >= max 8).
+  :length_tooshort    : 6:3:[/B/1] 'hog': too short (length 3 < min 4).
+##
+---
+name:  assert1
+desc:  assert test
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "less-than":
+          type: number
+          assert: val < 8
+       "more-than":
+          type: number
+          assert: 3 < val
+       "between":
+          type: number
+          assert: 3 < val && val < 8
+       "except":
+          type: number
+          assert: val < 3 || 8 < val
+#
+valid: |
+  - less-than: 5
+  - more-than: 5
+  - between: 5
+  - except: 0
+#
+invalid*:
+  java: ~
+  ruby: |
+    - less-than: 8
+    - more-than: 3
+    - between: 2.9
+    - except: 3.1
+#
+error: |
+  :assert_failed      : (line 1)[/0/less-than] '8': assertion expression failed (val < 8).
+  :assert_failed      : (line 2)[/1/more-than] '3': assertion expression failed (3 < val).
+  :assert_failed      : (line 3)[/2/between] '2.9': assertion expression failed (3 < val && val < 8).
+  :assert_failed      : (line 4)[/3/except] '3.1': assertion expression failed (val < 3 || 8 < val).
+error2: |
+  :assert_failed      : 1:3:[/0/less-than] '8': assertion expression failed (val < 8).
+  :assert_failed      : 2:3:[/1/more-than] '3': assertion expression failed (3 < val).
+  :assert_failed      : 3:3:[/2/between] '2.9': assertion expression failed (3 < val && val < 8).
+  :assert_failed      : 4:3:[/3/except] '3.1': assertion expression failed (val < 3 || 8 < val).
+##
+---
+name:  deftype1
+desc:  default type test
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "name":
+       "email":
+#
+valid: |
+  - name: foo
+    email: foo@mail.com
+  - name: bar
+  - email: baz@mail.com
+#
+invalid: |
+  - name: 123
+    email: true
+  - name: 3.14
+  - email: 2004-01-01
+#
+error*:
+  ruby: |
+    :type_unmatch       : (line 1)[/0/name] '123': not a string.
+    :type_unmatch       : (line 2)[/0/email] 'true': not a string.
+    :type_unmatch       : (line 3)[/1/name] '3.14': not a string.
+    :type_unmatch       : (line 4)[/2/email] '2004-01-01': not a string.
+  java: |
+    :type_unmatch       : (line 1)[/0/name] '123': not a string.
+    :type_unmatch       : (line 2)[/0/email] 'true': not a string.
+    :type_unmatch       : (line 3)[/1/name] '3.14': not a string.
+    :type_unmatch       : (line 4)[/2/email] 'Sun Feb 01 00:00:00 JST 2004': not a string.
+error2*:
+  ruby: |
+    :type_unmatch       : 1:3:[/0/name] '123': not a string.
+    :type_unmatch       : 2:3:[/0/email] 'true': not a string.
+    :type_unmatch       : 3:3:[/1/name] '3.14': not a string.
+    :type_unmatch       : 4:3:[/2/email] '2004-01-01': not a string.
+  java: |
+    :type_unmatch       : 1:3:[/0/name] '123': not a string.
+    :type_unmatch       : 2:3:[/0/email] 'true': not a string.
+    :type_unmatch       : 3:3:[/1/name] '3.14': not a string.
+    :type_unmatch       : 4:3:[/2/email] 'Sun Feb 01 00:00:00 JST 2004': not a string.
+##
+---
+name:  ident1
+desc:  ident constraint test
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "name":
+          ident:  yes
+       "age":
+          type: int
+#
+valid: |
+  - name: foo
+    age:  10
+  - name: bar
+    age:  10
+  - name: baz
+    age:  10
+#
+invalid: |
+  - name: foo
+    age:  10
+  - name: bar
+    age:  10
+  - name: bar
+    age:  10
+#
+error: |
+  :value_notunique    : (line 5)[/2/name] 'bar': is already used at '/1/name'.
+error2: |
+  :value_notunique    : 5:3:[/2/name] 'bar': is already used at '/1/name'.
+##
+---
+name:  unique1
+desc:  unique constraint test with map
+#
+schema: |
+  type: seq
+  sequence:
+    - type: map
+      mapping:
+       "name":
+          unique:  yes
+       "age":
+          type: int
+#
+valid: |
+  - name: foo
+    age:  10
+  - name: bar
+    age:  10
+  - name: baz
+    age:  10
+#
+invalid: |
+  - name: foo
+    age:  10
+  - name: bar
+    age:  10
+  - age:  10
+    name: bar
+#
+error: |
+  :value_notunique    : (line 6)[/2/name] 'bar': is already used at '/1/name'.
+error2: |
+  :value_notunique    : 6:3:[/2/name] 'bar': is already used at '/1/name'.
+##
+---
+name:  unique2
+desc:  unique constraint test with seq
+#
+schema: |
+  type: seq
+  sequence:
+    - type: str
+      unique: yes
+#
+valid: |
+  - foo
+  - ~
+  - bar
+  - ~
+  - baz
+#
+invalid: |
+  - foo
+  - ~
+  - bar
+  - ~
+  - bar
+#
+error: |
+  :value_notunique    : (line 5)[/4] 'bar': is already used at '/2'.
+error2: |
+  :value_notunique    : 5:1:[/4] 'bar': is already used at '/2'.
+##
+---
+name:  unique3
+desc:  unique constraint and '<<' (merge)
+#
+schema: |
+	type: seq
+	sequence:
+	  - type: map
+	    mapping:
+	     "name":  { type: str, required: yes, unique: yes }
+	     "value": { type: any, required: yes }
+#
+valid: |
+	# no sense
+	- name: x1
+	  value: 10
+	- name: x2
+	  value: 20
+#
+invalid: |
+	- &a1
+	  name:  x1
+	  value: 10
+	- <<: *a1
+	- <<: *a1         # wrong validation error
+	  name:  x3
+#
+error: |
+	:value_notunique    : (line 2)[/1/name] 'x1': is already used at '/0/name'.
+error2: |
+	:value_notunique    : 4:3:[/1/name] 'x1': is already used at '/0/name'.
+	:value_notunique    : 5:3:[/2/name] 'x1': is already used at '/0/name'.
+memo: |
+	* '(line 2)' is not expected line number.
+##
+---
+name:  unique4
+desc:  unique constrant and anchor
+#
+schema: |
+	type: seq
+	sequence:
+	  - type: map
+	    mapping:
+	     "name":  { type: str }
+	     "value": { type: any }
+#
+valid: |
+	# no sense
+	- name: x1
+	  value: 10
+	- name: x2
+	  value: 20
+#
+invalid: |
+	- &a1
+	  name:  x1
+	  value: 10
+	- name:  x2
+	  value: 20
+	- *a1
+#
+error: |
+#	:value_notunique    : (line 6)[/2/name] 'x1': is already used at '/0/name'.
+error2: |
+memo: |
+	* validation error should be reported but not reported.
+##
+---
+name:  default1
+desc:  default value of map
+#
+schema: |
+  type: map
+  mapping:
+    =:
+      type: number
+      range: { min: -10, max: 10 }
+#
+valid: |
+  value1: 0
+  value2: 10
+  value3: -10
+#
+invalid: |
+  value1: 0
+  value2: 20
+  value3: -20
+error: |
+  :range_toolarge     : (line 2)[/value2] '20': too large (> max 10).
+  :range_toosmall     : (line 3)[/value3] '-20': too small (< min -10).
+error2: |
+  :range_toolarge     : 2:1:[/value2] '20': too large (> max 10).
+  :range_toosmall     : 3:1:[/value3] '-20': too small (< min -10).
+##
+---
+name:  merge1
+desc:  merge maps
+#
+schema: |
+  type: map
+  mapping:
+   "group":
+      type: map
+      mapping:
+       "name": &name
+          type: str
+          required: yes
+       "email": &email
+          type: str
+          pattern: /@/
+          required: no
+   "user":
+      type: map
+      mapping:
+       "name":
+          <<: *name             # merge
+          length: { max: 16 }   # add
+       "email":
+          <<: *email            # merge
+          required: yes         # override
+#
+valid: |
+  group:
+    name: foo
+    email: foo@mail.com
+  user:
+    name:  bar
+    email: bar@mail.com
+#
+invalid: |
+  group:
+    name: foo
+    email: foo@mail.com
+  user:
+    name: toooooo-looooong-naaaame
+#
+error: |
+  :required_nokey     : (line 4)[/user] key 'email:' is required.
+  :length_toolong     : (line 5)[/user/name] 'toooooo-looooong-naaaame': too long (length 24 > max 16).
+error2: |
+  :required_nokey     : 5:3:[/user] key 'email:' is required.
+  :length_toolong     : 5:3:[/user/name] 'toooooo-looooong-naaaame': too long (length 24 > max 16).
+##

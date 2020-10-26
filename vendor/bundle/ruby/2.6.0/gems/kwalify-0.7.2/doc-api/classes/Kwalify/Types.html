@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Kwalify::Types</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Kwalify::Types</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/kwalify/types_rb.html">
+                kwalify/types.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000011">collection?</a>&nbsp;&nbsp;
+      <a href="#M000013">collection_type?</a>&nbsp;&nbsp;
+      <a href="#M000010">get_type_class</a>&nbsp;&nbsp;
+      <a href="#M000012">scalar?</a>&nbsp;&nbsp;
+      <a href="#M000014">scalar_type?</a>&nbsp;&nbsp;
+      <a href="#M000009">type_class</a>&nbsp;&nbsp;
+      <a href="#M000008">type_table</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_TYPE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;str&quot;</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <a href="#M000010" class="method-signature">
+          <span class="method-name">get_type_class</span><span class="method-args">(type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000010-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 119</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">get_type_class</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">type_class</span>(<span class="ruby-identifier">type</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <a href="#M000009" class="method-signature">
+          <span class="method-name">type_class</span><span class="method-args">(type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000009-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 113</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">type_class</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-identifier">klass</span> = <span class="ruby-ivar">@@type_table</span>[<span class="ruby-identifier">type</span>]
+      <span class="ruby-comment cmt">#assert_error('type=#{type.inspect}') unless klass</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">klass</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <a href="#M000008" class="method-signature">
+          <span class="method-name">type_table</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000008-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 109</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">type_table</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@@type_table</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
+
+        <div class="method-heading">
+          <a href="#M000011" class="method-signature">
+          <span class="method-name">collection?</span><span class="method-args">(val)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000011-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000011-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 134</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">collection?</span>(<span class="ruby-identifier">val</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="#M000013" class="method-signature">
+          <span class="method-name">collection_type?</span><span class="method-args">(type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000013-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 143</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">collection_type?</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'seq'</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'map'</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <a href="#M000012" class="method-signature">
+          <span class="method-name">scalar?</span><span class="method-args">(val)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000012-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 138</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scalar?</span>(<span class="ruby-identifier">val</span>)
+      <span class="ruby-comment cmt">#return !val.is_a?(Array) &amp;&amp; !val.is_a?(Hash) &amp;&amp; val.class != Object</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Kwalify</span><span class="ruby-operator">::</span><span class="ruby-constant">Scalar</span>)  <span class="ruby-comment cmt">#&amp;&amp; val.class != Object</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <a href="#M000014" class="method-signature">
+          <span class="method-name">scalar_type?</span><span class="method-args">(type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000014-source">
+<pre>
+<span class="ruby-comment cmt"># File kwalify/types.rb, line 147</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scalar_type?</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">'seq'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">'map'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'any'</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

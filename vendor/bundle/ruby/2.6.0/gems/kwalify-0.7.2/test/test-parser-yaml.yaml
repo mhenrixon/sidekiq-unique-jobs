@@ -1,0 +1,1749 @@
+##
+## $Rev: 59 $
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+name:   sequence1
+desc:   basic sequence
+input: |
+  - aaa
+  - bbb
+  - ccc
+expected: |
+  ["aaa", "bbb", "ccc"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+  - [ "/1",  2, 3 ]
+  - [ "/2",  3, 3 ]
+##
+---
+name:   sequence2
+desc:   nested sequence
+input: |
+  - A
+  -
+    - B1
+    - B2
+    -
+      - B2.1
+      - B2.2
+  - C
+expected: |
+  ["A", ["B1", "B2", ["B2.1", "B2.2"]], "C"]
+locations:
+  - [ "/",       1,  1 ]
+  - [ "/0",      1,  3 ]
+  - [ "/1",      3,  3 ]
+  - [ "/1/0",    3,  5 ]
+  - [ "/1/1",    4,  5 ]
+  - [ "/1/2",    6,  5 ]
+  - [ "/1/2/0",  6,  7 ]
+  - [ "/1/2/1",  7,  7 ]
+  - [ "/2",      8,  3 ]
+##
+---
+name:  sequence3
+desc:  null item of sequence
+input: |
+  - A
+  -
+  - C
+  -
+  -
+  -
+  - G
+expected: |
+  ["A", nil, "C", nil, nil, nil, "G"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+  - [ "/1",  3, 1 ]
+  - [ "/2",  3, 3 ]
+  - [ "/3",  5, 1 ]
+  - [ "/6",  7, 3 ]
+##
+---
+name:  sequence4
+desc:  null item of nested sequence
+#
+input: |
+  -
+    -
+      -
+      -
+      -
+  -
+#
+expected: |
+  [[[nil, nil, nil]], nil]
+locations:
+  - [ "/",      1, 1 ]
+  - [ "/0",     2, 3 ]
+  - [ "/0/0",   3, 5 ]
+  - [ "/0/0/0", 4, 5 ]
+  - [ "/1",     7, 1 ]
+##
+---
+name:  sequence5
+desc:  sequence with empty lines
+input: |
+
+  - A
+
+  -
+
+
+      - B
+
+
+  -
+expected: |
+  ["A", ["B"], nil]
+locations:
+  - [ "/",    2,  1 ]
+  - [ "/0",   2,  3 ]
+  - [ "/1",   7,  5 ]
+  - [ "/2",  11,  1 ]
+##
+---
+name:  sequence6
+desc:  syntax error - invalid indent of sequence.
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - AAA
+    - BBB1
+    - BBB2
+  - CCC
+#
+expected: |
+locations:
+##
+---
+name:  sequence7
+desc:  syntax error - sequence item is exepcted.
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+input: |
+  - 
+    - a1
+    - a2
+    a3
+  -
+    - b1
+    - b2
+    b3
+expected: |
+locations:
+##
+---
+name:  mapping1
+desc:  basic mapping
+input: |
+  A: foo
+  B: bar
+  C  : baz
+expected: |
+  {"A"=>"foo", "B"=>"bar", "C"=>"baz"}
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/A",  1, 4 ]
+  - [ "/B",  2, 4 ]
+  - [ "/C",  3, 6 ]
+##
+---
+name:  mapping2
+desc:  nested mapping
+input: |
+  A: 10
+  B:
+    B1:
+      B1-1: 21
+      B1-2: 22
+      B1-3: 23
+  C: 30
+expected: |
+  {"A"=>10, "B"=>{"B1"=>{"B1-1"=>21, "B1-2"=>22, "B1-3"=>23}}, "C"=>30}
+locations:
+  - [ "/",           1,  1 ]
+  - [ "/A",          1,  4 ]
+  - [ "/B",          3,  3 ]
+  - [ "/B/B1",       4,  5 ]
+  - [ "/B/B1/B1-1",  4, 11 ]
+  - [ "/B/B1/B1-2",  5, 11 ]
+  - [ "/B/B1/B1-3",  6, 11 ]
+  - [ "/C",          7,  4 ]
+##
+---
+name:  mapping3
+desc:  null item in mapping
+input: |
+  A:
+  B:
+    B1:
+      B1-2:
+  C:
+expected: |
+  {"A"=>nil, "B"=>{"B1"=>{"B1-2"=>nil}}, "C"=>nil}
+locations:
+  - [ "/",           1, 1 ]
+  - [ "/A",          2, 1 ]
+  - [ "/B",          3, 3 ]
+  - [ "/B/B1",       4, 5 ]
+  - [ "/B/B1/B1-2",  5, 1 ]
+  - [ "/C",          6, 1 ]
+##
+---
+name:  mapping4
+desc:  mapping with empty lines
+input: |
+
+  A: 1
+
+  B: 
+
+
+    B1:
+
+
+
+      B1a: 2
+  C: 3
+  
+expected: |
+  {"A"=>1, "B"=>{"B1"=>{"B1a"=>2}}, "C"=>3}
+locations:
+  - [ "/",           2,  1 ]
+  - [ "/A",          2,  4 ]
+  - [ "/B",          7,  3 ]
+  - [ "/B/B1",      11,  5 ]
+  - [ "/B/B1/B1a",  11, 10 ]
+  - [ "/C",         12,  4 ]
+##
+---
+name:  mapping5
+desc:  parse error - invalid indent of mapping.
+exception*:  { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+input: |
+  A: 10
+  B: 20
+    B1: 21
+    B2: 22
+  C: 30
+expected: |
+##
+---
+name:  mapping6
+desc:  parse error - mapping item is expected.
+exception*:  { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+input: |
+  A:
+    a1: 1
+    a2: 2
+    a3  3
+  B:
+    b1: 1
+    b2: 2
+    b3  3
+expected: |
+locations:
+##
+---
+name:  combination1
+desc:  seq of mapping
+#
+input: |
+  -
+    x: 10
+    y: 20
+  -
+    x: 15
+    y: 25
+#
+expected: |
+  [{"x"=>10, "y"=>20}, {"x"=>15, "y"=>25}]
+locations:
+  - [ "/",     1, 1 ]
+  - [ "/0",    2, 3 ]
+  - [ "/0/x",  2, 6 ]
+  - [ "/0/y",  3, 6 ]
+  - [ "/1",    5, 3 ]
+  - [ "/1/x",  5, 6 ]
+  - [ "/1/y",  6, 6 ]
+##
+---
+name:  combination2
+desc:  seq of mapping (in same line)
+#
+input: |
+  - x: 10
+    y: 20
+  - x: 15
+    y: 25
+#
+expected: |
+  [{"x"=>10, "y"=>20}, {"x"=>15, "y"=>25}]
+locations:
+  - [ "/",     1, 1 ]
+  - [ "/0",    1, 3 ]
+  - [ "/0/x",  1, 6 ]
+  - [ "/0/y",  2, 6 ]
+  - [ "/1",    3, 3 ]
+  - [ "/1/x",  3, 6 ]
+  - [ "/1/y",  4, 6 ]
+##
+---
+name:  combination3
+desc:  seq of seq of seq
+#
+input: |
+  - - - a
+      - b
+  - - - c
+      - d
+#
+expected: |
+  [[["a", "b"]], [["c", "d"]]]
+locations:
+  - [ "/",       1, 1 ]
+  - [ "/0",      1, 3 ]
+  - [ "/0/0",    1, 5 ]
+  - [ "/0/0/0",  1, 7 ]
+  - [ "/0/0/1",  2, 7 ]
+  - [ "/1",      3, 3 ]
+  - [ "/1/0",    3, 5 ]
+  - [ "/1/0/0",  3, 7 ]
+  - [ "/1/0/1",  4, 7 ]
+##
+---
+name:  combination4
+desc:  map of sequence
+#
+input: |
+  A:
+    - 1
+    - 2
+    - 3
+  B:
+    - 4
+    - 5
+    - 6
+#
+expected: |
+  {"A"=>[1, 2, 3], "B"=>[4, 5, 6]}
+locations:
+  - [ "/",     1, 1 ]
+  - [ "/A",    2, 3 ]
+  - [ "/A/0",  2, 5 ]
+  - [ "/A/1",  3, 5 ]
+  - [ "/A/2",  4, 5 ]
+  - [ "/B",    6, 3 ]
+  - [ "/B/0",  6, 5 ]
+  - [ "/B/1",  7, 5 ]
+  - [ "/B/2",  8, 5 ]
+##
+---
+name:  combination5
+desc:  map of sequence (in same line)
+#
+input: |
+  A: - 1
+     - 2
+     - 3
+  B: - 4
+     - 5
+     - 6
+#
+expected: |
+  {"A"=>[1, 2, 3], "B"=>[4, 5, 6]}
+locations:
+  - [ "/",     1, 1 ]
+  - [ "/A",    1, 4 ]
+  - [ "/A/0",  1, 6 ]
+  - [ "/A/1",  2, 6 ]
+  - [ "/A/2",  3, 6 ]
+  - [ "/B",    4, 4 ]
+  - [ "/B/0",  4, 6 ]
+  - [ "/B/1",  5, 6 ]
+  - [ "/B/2",  6, 6 ]
+##
+---
+name:  combination6
+desc:  map of map of map
+#
+input: |
+  A: a: 1: 100
+        2: 200
+  B: b: 3: 300
+        "4": 400
+#
+expected: |
+  {"A"=>{"a"=>{1=>100, 2=>200}}, "B"=>{"b"=>{3=>300, "4"=>400}}}
+locations:
+  - [ "/",         1,  1 ]
+  - [ "/A",        1,  4 ]
+  - [ "/A/a",      1,  7 ]
+  - [ "/A/a/1",    1, 10 ]
+  - [ "/A/a/2",    2, 10 ]
+  - [ "/B",        3,  4 ]
+  - [ "/B/b",      3,  7 ]
+  - [ "/B/b/3",    3, 10 ]
+  - [ "/B/b/'4'",  4, 12 ]
+##
+---
+name:  comment1
+desc:  line comment
+input: |
+  # comment
+  - A
+  - B
+    # comment
+  -
+      # comment
+    - C
+#
+expected: |
+  ["A", "B", ["C"]]
+locations:
+  - [ "/",    2,  1 ]
+  - [ "/0",   2,  3 ]
+  - [ "/1",   3,  3 ]
+  - [ "/2",   7,  3 ]
+  - [ "/2/0", 7,  5 ]
+##
+---
+name:  comment2
+desc:  escape line comment
+#
+input: |
+  # comment
+  - A
+  - B:
+     "# comment"
+  -
+    '# comment'
+#
+expected: |
+  ["A", {"B"=>"# comment"}, "# comment"]
+locations:
+  - [ "/",     2, 1 ]
+  - [ "/0",    2, 3 ]
+  - [ "/1",    3, 3 ]
+  - [ "/1/B",  4, 4 ]
+  - [ "/2",    6, 3 ]
+##
+---
+name:  comment3
+desc:  line comment with seq and map
+#
+input: |
+  - A             # comment
+  - B:            # comment
+      C: foo      # comment
+      D: "bar#bar"    #comment
+#
+expected: |
+  ["A", {"B"=>{"C"=>"foo", "D"=>"bar#bar"}}]
+locations:
+  - [ "/",       1,  1 ]
+  - [ "/0",      1,  3 ]
+  - [ "/1",      2,  3 ]
+  - [ "/1/B",    3,  5 ]
+  - [ "/1/B/C",  3,  8 ]
+  - [ "/1/B/D",  4,  8 ]
+##
+---
+name:  comment4
+desc:  line comment with anchor and alias
+#
+input: |
+  - &a1           # comment
+    foo
+  - *a1           # comment
+#
+expected: |
+  ["foo", "foo"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+  - [ "/1",  3, 3 ]
+##
+---
+name:  flowseq1
+desc:  flow style sequence
+#
+input: |
+  - [ 10, 20 ]
+  - [15,25,35]
+#
+expected: |
+  [[10, 20], ["15,25,35"]]
+# [[10, 20], [15, 25, 35]]
+locations:
+  - [ "/",     1, 1 ]
+  - [ "/0",    1, 3 ]
+  - [ "/0/0",  1, 5 ]
+  - [ "/0/1",  1, 9 ]
+  - [ "/1",    2, 3 ]
+  - [ "/1/0",  2, 4 ]
+##
+---
+name:  flowseq2
+desc:  nested flow style sequence
+#
+input: |
+  1: [ A, [B1, B2]]
+  '2': [[[X]]]
+  3: [[1, 1], [2, "2"], ['3', 3]]
+#
+expected: |
+  {1=>["A", ["B1", "B2"]], "2"=>[[["X"]]], 3=>[[1, 1], [2, "2"], ["3", 3]]}
+#expected: |
+#  {1=>["A", ["B1", "B2"]],
+#   "2"=>[[["X"]]],
+#   3=>[["x1", "y1"], ["x2", "y2"], ["x3", "y3"]]}
+locations:
+  - [ "/",         1,  1 ]
+  - [ "/1",        1,  4 ]
+  - [ "/1/0",      1,  6 ]
+  - [ "/1/1",      1,  9 ]
+  - [ "/1/1/0",    1, 10 ]
+  - [ "/1/1/1",    1, 14 ]
+  - [ "/'2'",        2,  6 ]
+  - [ "/'2'/0",      2,  7 ]
+  - [ "/'2'/0/0",    2,  8 ]
+  - [ "/'2'/0/0/0",  2,  9 ]
+  - [ "/3",        3,  4 ]
+  - [ "/3/0",      3,  5 ]
+  - [ "/3/0/0",    3,  6 ]
+  - [ "/3/0/1",    3,  9 ]
+  - [ "/3/1",      3, 13 ]
+  - [ "/3/1/0",    3, 14 ]
+  - [ "/3/1/1",    3, 17 ]
+  - [ "/3/2",      3, 23 ]
+  - [ "/3/2/0",    3, 24 ]
+  - [ "/3/2/1",    3, 29 ]
+##
+---
+name:  flowseq3
+desc:  flow style sequence with some lines
+#
+input: |
+  A: [ [10, 20],
+       [11, 21],
+       [12, 22]]
+  B: [
+    [1.1,
+     1.2,
+     1.3
+    ]
+  ]
+#
+expected: |
+  {"A"=>[[10, 20], [11, 21], [12, 22]], "B"=>[[1.1, 1.2, 1.3]]}
+locations:
+  - [ "/",       1,  1 ]
+  - [ "/A",      1,  4 ]
+  - [ "/A/0",    1,  6 ]
+  - [ "/A/0/0",  1,  7 ]
+  - [ "/A/0/1",  1, 11 ]
+  - [ "/A/1",    2,  6 ]
+  - [ "/A/1/0",  2,  7 ]
+  - [ "/A/1/1",  2, 11 ]
+  - [ "/A/2",    3,  6 ]
+  - [ "/A/2/0",  3,  7 ]
+  - [ "/A/2/1",  3, 11 ]
+  - [ "/B",      4,  4 ]
+  - [ "/B/0",    5,  3 ]
+  - [ "/B/0/0",  5,  4 ]
+  - [ "/B/0/1",  6,  4 ]
+  - [ "/B/0/2",  7,  4 ]
+##
+---
+name:  flowseq4
+desc:  invalid flow style seq (sequence item required (or last comma is extra).)
+mesg:  sequence item required (or last comma is extra).
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  A: [ [10,20], ]
+#
+expected: |
+locations:
+##
+---
+name:  flowseq5
+desc:  invalid flow style seq (flow style sequence requires ']').
+mesg:  flow style sequence requires ']'
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  A: [ [10,20]
+  B: [ [30, 40]]
+#
+expected: |
+locations:
+##
+---
+name:  flowseq6
+desc:  invalid flow style seq (flow style sequence requires ']').
+mesg:  flow style sequence is closed but got ']'.
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  [ 10 ]]
+#
+expected: |
+locations:
+##
+---
+name:  flowmap1
+desc:  flow style map
+#
+input: |
+  - { A1: 10, A2: 20 }
+  - {B1: 15, 'B2': 25, "B3": 35}
+#
+expected: |
+  [{"A1"=>10, "A2"=>20}, {"B1"=>15, "B2"=>25, "B3"=>35}]
+locations:
+  - [ "/",      1,  1 ]
+  - [ "/0",     1,  3 ]
+  - [ "/0/A1",  1,  9 ]
+  - [ "/0/A2",  1, 17 ]
+  - [ "/1",     2,  3 ]
+  - [ "/1/B1",  2,  8 ]
+  - [ "/1/B2",  2, 18 ]
+  - [ "/1/B3",  2, 28 ]
+##
+---
+name:  flowmap2
+desc:  flow style map nested
+#
+input: |
+  A: { x: {y: {z: 10}}}
+  B: { a: 1, b: {c: 2, d: 3, e: {f: 4}}, g: 5}
+#
+expected: |
+  {"A"=>{"x"=>{"y"=>{"z"=>10}}}, "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+#expected: |
+#  {"A"=>{"x"=>{"y"=>{"z"=>10}}},
+#   "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+locations:
+  - [ "/",         1,  1 ]
+  - [ "/A",        1,  4 ]
+  - [ "/A/x",      1,  9 ]
+  - [ "/A/x/y",    1, 13 ]
+  - [ "/A/x/y/z",  1, 17 ]
+  - [ "/B",        2,  4 ]
+  - [ "/B/a",      2,  9 ]
+  - [ "/B/b",      2, 15 ]
+  - [ "/B/b/c",    2, 19 ]
+  - [ "/B/b/d",    2, 25 ]
+  - [ "/B/b/e",    2, 31 ]
+  - [ "/B/b/e/f",  2, 35 ]
+  - [ "/B/g",      2, 43 ]
+##
+---
+name:  flowmap3
+desc:  flow style map with some lines
+#
+input: |
+  A: { x:
+       {y:
+         {z: 10}
+       }
+     }
+  B: {
+    a: 1,
+    b: {
+      c: 2,
+      d: 3,
+      e: {
+        f: 4
+      }
+    },
+    g: 5
+  }
+#
+expected: |
+  {"A"=>{"x"=>{"y"=>{"z"=>10}}}, "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+#expected: |
+#  {"A"=>{"x"=>{"y"=>{"z"=>10}}},
+#   "B"=>{"a"=>1, "b"=>{"c"=>2, "d"=>3, "e"=>{"f"=>4}}, "g"=>5}}
+locations:
+  - [ "/",          1,  1 ]
+  - [ "/A",         1,  4 ]
+  - [ "/A/x",       2,  6 ]
+  - [ "/A/x/y",     3,  8 ]
+  - [ "/A/x/y/z",   3, 12 ]
+  - [ "/B",         6,  4 ]
+  - [ "/B/a",       7,  6 ]
+  - [ "/B/b",       8,  6 ]
+  - [ "/B/b/c",     9,  8 ]
+  - [ "/B/b/d",    10,  8 ]
+  - [ "/B/b/e",    11,  8 ]
+  - [ "/B/b/e/f",  12, 10 ]
+  - [ "/B/g",      15,  6 ]
+##
+---
+name:  flowmap4
+desc:  invalid flow style map (mapping item required (or last comma is extra).)
+mesg:  mapping item required (or last comma is extra).
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - {A: 10, B: 20, }
+#
+expected: |
+locations:
+##
+---
+name:  flowmap5
+desc:  invalid flow style map (flow style mapping requires '}').
+mesg:  flow style mapping requires '}'
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - {A: { x: 10, y: 20 }
+  - {A: { x: 11, y: 21 }}
+#
+expected: |
+locations:
+##
+---
+name:  flowmap6
+desc:  invalid flow style map (flow style mapping requires ']').
+mesg:  flow style mapping is closed but got '}'.
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  { x: 10 }}
+#
+expected: |
+locations:
+##
+---
+name:  flowscalar1
+desc:  string containing backslash escape
+#
+input: |
+  [ {"key1": "\"\\\n"},
+    {'key2': '\'\\\n'} ]
+#
+expected: |
+  [{"key1"=>"\"\\\n"}, {"key2"=>"'\\\\n"}]
+locations:
+  - [ "/",        1,  1 ]
+  - [ "/0",       1,  3 ]
+  - [ "/0/key1",  1, 12 ]
+  - [ "/1",       2,  3 ]
+  - [ "/1/key2",  2, 12 ]
+##
+---
+name:  flowcombination1
+desc:  combination of flow style seq and map
+#
+input: |
+  [
+    {name: '  foo  ',
+     e-mail: foo@mail.com},
+    {name: ba   z,
+     e-mail: ba__z@mail.com   }
+  ]
+#
+expected: |
+  [{"e-mail"=>"foo@mail.com", "name"=>"  foo  "}, {"e-mail"=>"ba__z@mail.com", "name"=>"ba   z"}]
+locations:
+  - [ "/",          1,  1 ]
+  - [ "/0",         2,  3 ]
+  - [ "/0/name",    2, 10 ]
+  - [ "/0/e-mail",  3, 12 ]
+  - [ "/1",         4,  3 ]
+  - [ "/1/name",    4, 10 ]
+  - [ "/1/e-mail",  5, 12 ]
+##
+---
+name:  blocktext01
+desc:  parse_blocktext
+#
+input: |
+  - text1: |
+     foo
+     bar
+     baz
+  - text2: |
+        aaa
+         bbb
+          ccc
+  - |
+   foo
+   bar
+   baz
+  - |
+        aaa
+         bbb
+          ccc
+#
+expected: |
+  [{"text1"=>"foo\nbar\nbaz\n"}, {"text2"=>"aaa\n bbb\n  ccc\n"}, "foo\nbar\nbaz\n", "aaa\n bbb\n  ccc\n"]
+locations:
+  - [ "/",         1,  1 ]
+  - [ "/0",        1,  3 ]
+  - [ "/0/text1",  1, 10 ]
+  - [ "/1",        5,  3 ]
+  - [ "/1/text2",  5, 10 ]
+  - [ "/2",        9,  3 ]
+  - [ "/3",       13,  3 ]
+##
+---
+name:  blocktext02
+desc:  block text with '|+' or '|-'
+#
+input: |
+  - text1: |
+      A
+  
+      B
+      C
+  
+  
+  - text2: |+
+      A
+  
+      B
+      C
+  
+  
+  - text3: |-
+      A
+  
+      B
+      C
+  
+  
+#
+expected: |
+  [{"text1"=>"A\n\nB\nC\n"}, {"text2"=>"A\n\nB\nC\n\n\n"}, {"text3"=>"A\n\nB\nC"}]
+locations:
+  - [ "/",         1,  1 ]
+  - [ "/0",        1,  3 ]
+  - [ "/0/text1",  1, 10 ]
+  - [ "/1",        8,  3 ]
+  - [ "/1/text2",  8, 10 ]
+  - [ "/2",       15,  3 ]
+  - [ "/2/text3", 15, 10 ]
+##
+---
+name:  blocktext03
+desc:  block text with '|n'
+#
+input: |
+  - text1: |3
+         A
+       
+        B
+         C
+  
+  
+  - text2: |+3
+         A
+       
+        B
+         C
+  
+  
+  - text3: |-3
+         A
+        
+        B
+         C
+  
+  
+#
+expected: |
+  [{"text1"=>"  A\n\n B\n  C\n"}, {"text2"=>"  A\n\n B\n  C\n\n\n"}, {"text3"=>"  A\n\n B\n  C"}]
+locations:
+  - [ "/",          1,  1 ]
+  - [ "/0",         1,  3 ]
+  - [ "/0/text1",   1, 10 ]
+  - [ "/1",         8,  3 ]
+  - [ "/1/text2",   8, 10 ]
+  - [ "/2",        15,  3 ]
+  - [ "/2/text3",  15, 10 ]
+##
+#---
+#name:  blocktext04
+#desc:  block text with '| foo'
+##
+#input: |
+#  - text1: | foo  
+#     A
+#     
+#     B
+#     C
+#     
+#  - |  foo
+#    A
+#     B
+#      C
+##
+#expected: |
+#  [{"text1"=>"foo  A\n\nB\nC\n"}, "fooA\n B\n  C\n"]
+###
+---
+name:  blocktext05
+desc:  block text with '#' (comment)
+#
+input: |
+  #
+    - text1: |
+       A
+       #
+       B
+      #
+      text2: |
+       #
+       #
+      #
+    - |
+     A
+     #
+     B
+    #
+    - |
+      #
+      #
+  #
+    - x
+  
+#
+expected: |
+  [{"text1"=>"A\n#\nB\n", "text2"=>"#\n#\n"}, "A\n#\nB\n", "#\n#\n", "x"]
+locations:
+  - [ "/",         2,  3 ]
+  - [ "/0",        2,  5 ]
+  - [ "/0/text1",  2, 12 ]
+  - [ "/0/text2",  7, 12 ]
+  - [ "/1",       11,  5 ]
+  - [ "/2",       16,  5 ]
+  - [ "/3",       20,  5 ]
+##
+---
+name:  blocktext06
+desc:  invalid block text
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - |
+     a
+    b
+    c
+#
+expected: |
+##
+---
+name:  blocktext11
+desc:  parse_blocktext (>)
+#
+input: |
+  - text1: >
+     foo
+     bar
+     baz
+  - text2: >
+        aaa
+         bbb
+          ccc
+  - >
+   foo
+   bar
+   baz
+  - >
+        aaa
+         bbb
+          ccc
+#
+expected: |
+  [{"text1"=>"foo bar baz\n"}, {"text2"=>"aaa\n bbb\n  ccc\n"}, "foo bar baz\n", "aaa\n bbb\n  ccc\n"]
+# [{"text1"=>"foo bar baz\n"}, {"text2"=>"aaa  bbb   ccc\n"}, "foo bar baz\n", "aaa  bbb   ccc\n"]
+locations:
+  - [ "/",         1,  1 ]
+  - [ "/0",        1,  3 ]
+  - [ "/0/text1",  1, 10 ]
+  - [ "/1",        5,  3 ]
+  - [ "/1/text2",  5, 10 ]
+  - [ "/2",        9,  3 ]
+  - [ "/3",       13,  3 ]
+##
+---
+name:  blocktext12
+desc:  block text with '>+' or '>-'
+#
+input: |
+  - text1: >
+      A
+  
+      B
+      C
+  
+  
+  - text2: >+
+      A
+  
+      B
+      C
+  
+  
+  - text3: >-
+      A
+  
+      B
+      C
+  
+  
+#
+expected: |
+  [{"text1"=>"A\nB C\n"}, {"text2"=>"A\nB C\n\n\n"}, {"text3"=>"A\nB C"}]
+locations:
+  - [ "/",          1,  1 ]
+  - [ "/0",         1,  3 ]
+  - [ "/0/text1",   1, 10 ]
+  - [ "/1",         8,  3 ]
+  - [ "/1/text2",   8, 10 ]
+  - [ "/2",        15,  3 ]
+  - [ "/2/text3",  15, 10 ]
+##
+---
+name:  blocktext13
+desc:  block text with '>n'
+#
+input: |
+  - >2
+      A
+  
+     B
+     C
+  
+  
+  - >+2
+      A
+  
+     B
+     C
+  
+  
+  - >-2
+      A
+  
+     B
+     C
+  
+  
+#
+expected: |
+  ["  A\n\n B\n C\n", "  A\n\n B\n C\n\n\n", "  A\n\n B\n C"]
+# ["  A\n B  C\n", "  A\n B  C\n\n\n", "  A\n B  C"]
+locations:
+  - [ "/",   1,  1 ]
+  - [ "/0",  1,  3 ]
+  - [ "/1",  8,  3 ]
+  - [ "/2", 15,  3 ]
+##
+#---
+#name:  blocktext14
+#desc:  block text with '> foo'
+##
+#input: |
+#  - text1: > foo  
+#     A
+#     
+#     B
+#     C
+#     
+#  - >  foo
+#    A
+#     B
+#      C
+##
+#expected: |
+#  [{"text1"=>"foo  A\nB C\n"}, "fooA  B   C\n"]
+###
+---
+name:  blocktext15
+desc:  block text with '#' (comment)
+#
+input: |
+  #
+    - text1: >
+       AA
+       ##
+       BB
+      #
+      text2: >
+       #
+       #
+      #
+    - >
+     AA
+     ##
+     BB
+    #
+    - >
+      #
+      #
+  #
+    - x
+  
+#
+expected: |
+  [{"text1"=>"AA ## BB\n", "text2"=>"# #\n"}, "AA ## BB\n", "# #\n", "x"]
+locations:
+  - [ "/",  2, 3 ]
+  - [ "/0",  2, 5 ]
+  - [ "/0/text1",  2, 12 ]
+  - [ "/0/text2",  7, 12 ]
+  - [ "/1", 11, 5 ]
+  - [ "/2", 16, 5 ]
+  - [ "/3", 20, 5 ]
+##
+---
+name:  blocktext16
+desc:  invalid block text
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+#
+input: |
+  - >
+     a
+    b
+    c
+#
+expected: |
+##
+---
+name:  anchor1
+desc:  parse_anchor, parse_alias
+#
+input: |
+  - &a1 foo
+  - &a2
+   bar
+  - *a1
+  - *a2
+#
+expected: |
+  ["foo", "bar", "foo", "bar"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+  - [ "/1",  2, 3 ]
+  - [ "/2",  4, 3 ]
+  - [ "/3",  5, 3 ]
+##
+---
+name:  anchor2
+desc:  parse_anchor, parse_alias
+#
+input: |
+  - A: &a1
+     x: 10
+     y: 20
+  - B: bar
+  - C: *a1
+#
+expected: |
+  [{"A"=>{"x"=>10, "y"=>20}}, {"B"=>"bar"}, {"C"=>{"x"=>10, "y"=>20}}]
+locations:
+  - [ "/",  1, 1 ]
+  - [ "/0",  1, 3 ]
+  - [ "/0/A",  1, 6 ]
+  - [ "/0/A/x",  2, 7 ]
+  - [ "/0/A/y",  3, 7 ]
+  - [ "/1",      4, 3 ]
+  - [ "/1/B",    4, 6 ]
+  - [ "/2",      5, 3 ]
+  - [ "/2/C",    5, 6 ]
+##
+---
+name:  anchor3
+desc:  anchor on child node
+testopts:  { recursive: yes }
+#
+input: |
+  - A: &a1
+     x: 10
+     y: 20
+     z: *a1
+#
+expected: |
+  [{"A"=>{"x"=>10, "y"=>20, "z"=>{...}}}]
+locations:
+  - [ "/",       1,  1 ]
+  - [ "/0",      1,  3 ]
+  - [ "/0/A",    1,  6 ]
+  - [ "/0/A/x",  2,  7 ]
+  - [ "/0/A/y",  3,  7 ]
+  - [ "/0/A/z",  4,  7 ]
+##
+---
+name:  anchor4
+desc:  preceding anchor
+#
+input: |
+  - *a1
+  - *a1
+  - foo
+  - &a1 bar
+#
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+errormsg:    anchor 'a1' not found.
+expected: |
+  ["bar", "bar", "foo", "bar"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+  - [ "/1",  2, 3 ]
+  - [ "/2",  3, 3 ]
+  - [ "/3",  4, 3 ]
+##
+---
+name:  anchor5
+desc:  anchor not found
+exception*: { ruby: Kwalify::SyntaxError, java: kwalify.SyntaxException }
+mesg:  anchor 'a2' not found (Kwalify::SyntaxError)
+#
+input: |
+  - &a1 foo
+  - bar
+  - *a2
+#
+expected: |
+locations:
+##
+---
+name:  anchor6
+desc:  anchor on child node
+testopts:  { recursive: yes }
+#
+input: |
+  type:        seq
+  sequence:
+    - &employee
+      type:    map
+      mapping:
+        name:
+          type:   str
+        post:
+          type:   str
+          enum:
+            - exective
+            - manager
+            - clerk
+        supervisor: *employee
+#
+expected*:
+  ruby: |
+    {"sequence"=>
+      [{"type"=>"map",
+        "mapping"=>
+         {"name"=>{"type"=>"str"},
+          "post"=>{"enum"=>["exective", "manager", "clerk"], "type"=>"str"},
+          "supervisor"=>{...}}}],
+     "type"=>"seq"}
+  java: |
+    {"sequence"=>[{"mapping"=>{"name"=>{"type"=>"str"}, "post"=>{"enum"=>["exective", "manager", "clerk"], "type"=>"str"}, "supervisor"=>{...}}, "type"=>"map"}], "type"=>"seq"}
+locations:
+  - [ "/",            1,  1 ]
+  - [ "/type",        1, 14 ]
+  - [ "/sequence",    3,  3 ]
+  - [ "/sequence/0",  3,  5 ]
+  - [ "/sequence/0/type",     4, 14 ]
+  - [ "/sequence/0/mapping",  6,  7 ]
+  - [ "/sequence/0/mapping/name",          7,  9 ]
+  - [ "/sequence/0/mapping/name/type",     7, 17 ]
+  - [ "/sequence/0/mapping/post",          9,  9 ]
+  - [ "/sequence/0/mapping/post/type",     9, 17 ]
+  - [ "/sequence/0/mapping/post/enum",    11, 11 ]
+  - [ "/sequence/0/mapping/post/enum/0",  11, 13 ]
+  - [ "/sequence/0/mapping/post/enum/1",  12, 13 ]
+  - [ "/sequence/0/mapping/post/enum/2",  13, 13 ]
+  - [ "/sequence/0/mapping/supervisor",   14, 19 ]
+##
+---
+name:  anchor7
+desc:  anchor and alias with flow style data
+#
+input: |
+  - &a1 {v: &a2 [1, 2, 3]}
+  - [x, *a1, y]
+  - {z: *a2}
+#
+expected*:
+  ruby: |
+    [{"v"=>[1, 2, 3]}, ["x", {"v"=>[1, 2, 3]}, "y"], {"z"=>[1, 2, 3]}]
+  java: |
+    [{"v"=>[1, 2, 3]}, ["x", {"v"=>[1, 2, 3]}, "y"], {"z"=>[1, 2, 3]}]
+##
+---
+name:  anchor8
+desc:  recursive alias with flow style data
+testopts:  { recursive: yes }
+#
+input: |
+  - &a1
+    {v: &a2 [*a1, *a2]}
+#
+expected*:
+  ruby: |
+    [{"v"=>[{...}, [...]]}]
+  java: |
+    [{"v"=>[{...}, [...]]}]
+##
+---
+name:  preceding1
+desc:  preceding anchor
+testopts:  { preceding_alias: yes }
+#
+input: |
+	- *a1
+	- &a1 AAA
+#
+expected*:
+  ruby: |
+	["AAA", "AAA"]
+  java: |
+	["AAA", "AAA"]
+locations:
+  - [ "/",   1,  1 ]
+  - [ "/0",  1,  3 ]
+  - [ "/1",  2,  3 ]
+##
+---
+name:  preceding2
+desc:  preceding anchor
+testopts:  { preceding_alias: yes, pp: yes }
+#
+input: |
+	groups:
+	  - name:  wheel
+	    owner: *ROOT
+	  - name:  users
+	    owner: *USER1
+	
+	users:
+	  - &ROOT
+	    name: root
+	    email: root@localhost
+	  - &USER1
+	    name: user1
+	    email: user1@localhost
+#
+expected*:
+  ruby: |
+	{"groups"=>
+	  [{"name"=>"wheel", "owner"=>{"name"=>"root", "email"=>"root@localhost"}},
+	   {"name"=>"users", "owner"=>{"name"=>"user1", "email"=>"user1@localhost"}}],
+	 "users"=>
+	  [{"name"=>"root", "email"=>"root@localhost"},
+	   {"name"=>"user1", "email"=>"user1@localhost"}]}
+  java: |
+locations:
+  - [ "/",               1,  1 ]
+  - [ "/groups",         2,  3 ]
+  - [ "/groups/0",       2,  5 ]
+  - [ "/groups/0/name",  2, 12 ]
+  - [ "/groups/0/owner", 3, 12 ]
+  - [ "/groups/1",       4,  5 ]
+  - [ "/groups/1/name",  4, 12 ]
+  - [ "/groups/1/owner", 5, 12 ]
+  - [ "/users",          8,  3 ]
+  - [ "/users/0",        8,  5 ]
+  - [ "/users/0/name",   9, 11 ]
+  - [ "/users/0/email", 10, 12 ]
+  - [ "/users/1",       11,  5 ]
+  - [ "/users/1/name",  12, 11 ]
+  - [ "/users/1/email", 13, 12 ]
+##
+---
+name:  preceding3
+desc:  preceding anchor not found
+testopts:  { preceding_alias: yes }
+#
+input: |
+	groups:
+	  - name:  wheel
+	    owner: *ROOT
+	  - name:  users
+	    owner: *USER1
+	
+	users:
+	  - &ROOT
+	    name: root
+	    email: root@localhost
+	  - &USER2
+	    name: user1
+	    email: user1@localhost
+#
+exception*:
+  ruby:   Kwalify::SyntaxError
+  #java:   kwalify.SyntaxError
+errormsg*:
+  ruby:   "*USER1: anchor not found."
+  #java:   "*USER1: anchor not found."
+location:  { linenum: 5, column: 13 }
+locations:
+##
+---
+name:  tag1
+desc:  tag
+#
+input: |
+  - !str 123
+  - foo: !text 123
+#
+expected: |
+  [123, {"foo"=>123}]
+locations:
+  - [ "/",       1,  1 ]
+  - [ "/0",      1,  3 ]
+  - [ "/1",      2,  3 ]
+  - [ "/1/foo",  2,  8 ]
+##
+---
+name:  docend1
+desc:  ... (document end)
+#
+input: |
+  - aaa
+  - bbb
+  ...
+  - ccc
+#
+expected: |
+  ["aaa", "bbb"]
+locations:
+  - [ "/",   1,  1 ]
+  - [ "/0",  1,  3 ]
+  - [ "/1",  2,  3 ]
+  - [ "/2",  null,  null ]
+##
+#---
+name:  docend2
+desc:  ... (document end) in block text
+#
+input: |
+  - |
+    foo
+    ...
+    bar
+#
+expected: |
+  ["foo\n...\nbar\n"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+##
+---
+name:  docstart1
+desc:  --- (document start)
+#
+input: |
+  # comment
+  ---
+  - foo
+  - bar
+#
+expected: |
+  ["foo", "bar"]
+locations:
+  - [ "/",   3, 1 ]
+  - [ "/0",  3, 3 ]
+  - [ "/1",  4, 3 ]
+##
+---
+name:  docstart2
+desc:  --- (document start) with tag
+#
+input: |
+  # comment
+  --- %YAML !seq
+  - foo
+  - bar
+#
+expected: |
+  ["foo", "bar"]
+locations:
+  - [ "/",   3, 1 ]
+  - [ "/0",  3, 3 ]
+  - [ "/1",  4, 3 ]
+##
+---
+name:  docstart3
+desc:  --- (document start) with tag
+#
+input: |
+  - |
+    foo
+    ---
+    bar
+    ---
+    baz
+#
+expected: |
+  ["foo\n---\nbar\n---\nbaz\n"]
+locations:
+  - [ "/",   1, 1 ]
+  - [ "/0",  1, 3 ]
+##
+---
+name:  default1
+desc:  map default value
+#
+input: |
+  - A: 10
+    B: 20
+    =: -1
+  - K:
+      x: 10
+      y: 20
+    =:
+      x: 0
+      y: 0
+#
+expected: |
+  [{"A"=>10, "B"=>20}, {"K"=>{"x"=>10, "y"=>20}}]
+locations:
+  - [ "/",     1,  1 ]
+  - [ "/0",    1,  3 ]
+  - [ "/0/A",  1,  6 ]
+  - [ "/0/B",  2,  6 ]
+  - [ "/1",    4,  3 ]
+  - [ "/1/K",  5,  5 ]
+  - [ "/1/K/x",  5,  8 ]
+  - [ "/1/K/y",  6,  8 ]
+##
+---
+name:  merge1
+desc:  merge key '<<'
+#
+input: |
+  - &a1
+    A: 10
+    B: 20
+  - C: 30
+    <<: *a1
+    A: ~
+#
+expected: |
+  [{"A"=>10, "B"=>20}, {"A"=>nil, "B"=>20, "C"=>30}]
+locations:
+  - [ "/",     1, 1 ]
+  - [ "/0",    1, 3 ]
+  - [ "/0/A",  2, 6 ]
+  - [ "/0/B",  3, 6 ]
+  - [ "/1",    4, 3 ]
+  - [ "/1/C",  4, 6 ]
+  - [ "/1/A",  6, 6 ]
+##
+---
+name:  scalar1
+desc:  scalar with sequence
+input: |
+  - abc
+  - 123
+  - 3.14
+  - true
+  - false
+  - yes
+  - no
+  - ~
+  - null
+  - "123"
+  - '456'
+  - 2005-01-01
+  - :sym
+expected*:
+  ruby: |
+    ["abc", 123, 3.14, true, false, true, false, nil, nil, "123", "456", #<Date: 4906743/2,0,2299161>, :sym]
+#  ruby: |
+#    ["abc",
+#     123,
+#     3.14,
+#     true,
+#     false,
+#     true,
+#     false,
+#     nil,
+#     nil,
+#     "123",
+#     "456",
+#     #<Date: 4906743/2,0,2299161>,
+#     :sym]
+  java: |
+    ["abc", 123, 3.14, true, false, true, false, nil, nil, "123", "456", Tue Feb 01 00:00:00 JST 2005, ":sym"]
+#  ["abc", 123, true, false, true, false, nil, nil, "123", "456", #<Date: 4906743/2,0,2299161>, :sym]
+##
+---
+name:  scalar2
+desc:  mapping of scalar
+testopts:  { pp: yes }
+input: |
+  - abc : ABC
+  - 123 : 123
+  - 3.14 : 3.14
+  - true : true
+  - false : false
+  - yes : yes
+  - no : no
+  - null : ~
+  - null : null
+  - "123" : "123"
+  - '456' : '456'
+  - 2005-01-01 : 2005-01-01
+  - :sym : :sym
+# - ~ : ~
+# - 2005-01-01 00:00:00 : 2005-01-01 00:00:00
+expected*:
+  ruby: |
+    [{"abc"=>"ABC"},
+     {123=>123},
+     {3.14=>3.14},
+     {true=>true},
+     {false=>false},
+     {true=>true},
+     {false=>false},
+     {nil=>nil},
+     {nil=>nil},
+     {"123"=>"123"},
+     {"456"=>"456"},
+     {#<Date: 4906743/2,0,2299161>=>#<Date: 4906743/2,0,2299161>},
+     {:sym=>:sym}]
+  java: |
+    [{"abc"=>"ABC"}, {123=>123}, {3.14=>3.14}, {true=>true}, {false=>false}, {true=>true}, {false=>false}, "~ : ~", {nil=>nil}, {"123"=>"123"}, {"456"=>"456"}, {Tue Feb 01 00:00:00 JST 2005=>Tue Feb 01 00:00:00 JST 2005}, {":sym"=>":sym"}]
+# {123=>1.23, 3.14=>314, "abc"=>"ABC"}
+# {"abc"=>"ABC", 3.14=>314, 123=>1.23}
+locations:
+  - [ "/",         1,   1 ]
+  - [ "/0/abc",    1,   9 ]
+  - [ "/1/123",    2,   9 ]
+  - [ "/2/3.14",   3,  10 ]
+  - [ "/3/true",   4,  10 ]
+  - [ "/4/false",  5,  11 ]
+  - [ "/5/yes",    6,   9 ]
+  - [ "/6/no",     7,   8 ]
+  - [ "/7/null",   8,  10 ]
+  - [ "/8/null",   9,  10 ]
+  - [ '/9/"123"/',  10,  11 ]
+  - [ "/10/'456'/", 11,  11 ]
+  - [ "/11/2005-01-01",  12, 16 ]
+  - [ "/12/:sym",   13,  10 ]
+##
+---
+name:  str1
+desc:  single/double quoted
+input: |
+  -
+   - 'a'
+   - "b"
+  - 'A': 'a'
+    "B": 'b'
+  - ['C', "c"]
+  - {"D": "d"}
+expected: |
+    [["a", "b"], {"A"=>"a", "B"=>"b"}, ["C", "c"], {"D"=>"d"}]
+locations:
+  - [ "/",	1, 1 ]
+  - [ "/0",	2, 2 ]
+  - [ "/0/0",	2, 4 ]
+  - [ "/0/1",	3, 4 ]
+  - [ "/1",	4, 3 ]
+  - [ "/1/A",	4, 8 ]
+  - [ "/1/B",	5, 8 ]
+  - [ "/2",	6, 3 ]
+  - [ "/2/0",	6, 4 ]
+  - [ "/2/1",	6, 9 ]
+  - [ "/3",	7, 3 ]
+  - [ "/3/D",	7, 9 ]
+##
+---
+name:  str2
+desc:  escape sequence
+input: |
+  -
+   - '\\\'\t\b\r\n'
+   - "\\\"\t\b\r\n"
+  - 'A': '\\\'\t\b\r\n'
+    "B": "\\\"\t\b\r\n"
+  - ['\\\'\t\b\r\n', "\\\"\t\b\r\n"]
+  - {'A': '\\\'\t\b\r\n',
+     "B": "\\\"\t\b\r\n"}
+expected: |
+    [["\\'\\t\\b\\r\\n", "\\\"\t\b\r\n"], {"A"=>"\\'\\t\\b\\r\\n", "B"=>"\\\"\t\b\r\n"}, ["\\'\\t\\b\\r\\n", "\\\"\t\b\r\n"], {"A"=>"\\'\\t\\b\\r\\n", "B"=>"\\\"\t\b\r\n"}]
+locations:
+  - [ "/",	1, 1 ]
+  - [ "/0",	2, 2 ]
+  - [ "/0/0",	2, 4 ]
+  - [ "/0/1",	3, 4 ]
+  - [ "/1",	4, 3 ]
+  - [ "/1/A",	4, 8 ]
+  - [ "/1/B",	5, 8 ]
+  - [ "/2",	6, 3 ]
+  - [ "/2/0",	6, 4 ]
+  - [ "/2/1",	6, 20 ]
+  - [ "/3",	7, 3 ]
+  - [ "/3/A",	7, 9 ]
+  - [ "/3/B",	8, 9 ]
+##
+---
+name:  str3
+desc:  binary and unicode
+input: |
+  -
+   - "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"
+   - "\u65e5\u672c\u8a9e"
+  - 'A': "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"
+    "B": "\u65e5\u672c\u8a9e"
+  - ["\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e", "\u65e5\u672c\u8a9e"]
+  - {'A': "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e",
+     "B": "\u65e5\u672c\u8a9e" }
+expected: |
+    [["\346\227\245\346\234\254\350\252\236", "\346\227\245\346\234\254\350\252\236"], {"A"=>"\346\227\245\346\234\254\350\252\236", "B"=>"\346\227\245\346\234\254\350\252\236"}, ["\346\227\245\346\234\254\350\252\236", "\346\227\245\346\234\254\350\252\236"], {"A"=>"\346\227\245\346\234\254\350\252\236", "B"=>"\346\227\245\346\234\254\350\252\236"}]
+locations:
+  - [ "/",	1, 1 ]
+  - [ "/0",	2, 2 ]
+  - [ "/0/0",	2, 4 ]
+  - [ "/0/1",	3, 4 ]
+  - [ "/1",	4, 3 ]
+  - [ "/1/A",	4, 8 ]
+  - [ "/1/B",	5, 8 ]
+  - [ "/2",	6, 3 ]
+  - [ "/2/0",	6, 4 ]
+  - [ "/2/1",	6, 44 ]
+  - [ "/3",	7, 3 ]
+  - [ "/3/A",	7, 9 ]
+  - [ "/3/B",	8, 9 ]
+##
+---
+name:  mapkey1
+desc:  mapping key test
+input: |
+  - key1:   A
+  - .key.2: B
+  - key3*:  C
+  - :key4:  D
+#  - k:e:y:5: E
+expected*:
+  ruby: |
+    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}]
+#    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}, {"k:e:y:5"=>"E"}]
+  java: |
+    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}]
+#    [{"key1"=>"A"}, {".key.2"=>"B"}, {"key3*"=>"C"}, {:key4=>"D"}, {"k:e:y:5"=>"E"}]
+locations:
+  - [ "/",          1,  1 ]
+  - [ "/0/key1",    1, 11 ]
+  - [ "/1/.key.2",  2, 11 ]
+  - [ "/2/key3*",   3, 11 ]
+  - [ "/3/:key4",   4, 11 ]
+##

@@ -1,0 +1,4 @@
+$ kwalify -lf schema15.yaml document15b.yaml
+document15b.yaml#0: INVALID
+  - (line 5) [/user] key 'email:' is required.
+  - (line 5) [/user/name] 'toooooo-looooong-name': too long (length 21 > max 16).

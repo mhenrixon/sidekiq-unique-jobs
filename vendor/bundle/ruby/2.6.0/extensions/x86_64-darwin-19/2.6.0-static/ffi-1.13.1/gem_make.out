@@ -1,0 +1,125 @@
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c
+/Users/mhenriksson/.rubies/ruby-2.6.6/bin/ruby -I /Users/mhenriksson/.rubies/ruby-2.6.6/lib/ruby/2.6.0 -r ./siteconf20201026-45340-a3l4p4.rb extconf.rb
+checking for ffi_prep_closure_loc() in -lffi... no
+checking for ffi_prep_closure_loc() in -llibffi... no
+checking for ffi_prep_closure_loc() in -llibffi-8... no
+creating extconf.h
+creating Makefile
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c
+make "DESTDIR=" clean
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c
+make "DESTDIR="
+Configuring libffi
+/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/configure: line 18632: readelf: command not found
+clang: error: unsupported option '-print-multi-os-directory'
+clang: error: no input files
+cd "/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi-x86_64-darwin19" && /Applications/Xcode-beta.app/Contents/Developer/usr/bin/make
+/Applications/Xcode-beta.app/Contents/Developer/usr/bin/make  all-recursive
+Making all in include
+make[3]: Nothing to be done for `all'.
+Making all in testsuite
+make[3]: Nothing to be done for `all'.
+Making all in man
+make[3]: Nothing to be done for `all'.
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/prep_cif.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/prep_cif.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/prep_cif.c  -fno-common -DPIC -o src/.libs/prep_cif.o
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/types.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/types.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/types.c  -fno-common -DPIC -o src/.libs/types.o
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/raw_api.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/raw_api.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/raw_api.c  -fno-common -DPIC -o src/.libs/raw_api.o
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/java_raw_api.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/java_raw_api.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/java_raw_api.c  -fno-common -DPIC -o src/.libs/java_raw_api.o
+/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/java_raw_api.c:328:46: warning: 'ffi_java_raw_size' is deprecated [-Wdeprecated-declarations]
+  ffi_java_raw *raw = (ffi_java_raw*)alloca (ffi_java_raw_size (cif));
+                                             ^
+include/ffi.h:299:56: note: 'ffi_java_raw_size' has been explicitly marked deprecated here
+size_t ffi_java_raw_size (ffi_cif *cif) __attribute__((deprecated));
+                                                       ^
+/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/java_raw_api.c:331:3: warning: 'ffi_java_ptrarray_to_raw' is deprecated [-Wdeprecated-declarations]
+  ffi_java_ptrarray_to_raw (cif, avalue, raw);
+  ^
+include/ffi.h:295:93: note: 'ffi_java_ptrarray_to_raw' has been explicitly marked deprecated here
+void ffi_java_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_java_raw *raw) __attribute__((deprecated));
+                                                                                            ^
+2 warnings generated.
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/closures.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/closures.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/closures.c  -fno-common -DPIC -o src/.libs/closures.o
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/x86/ffi64.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/ffi64.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/ffi64.c  -fno-common -DPIC -o src/x86/.libs/ffi64.o
+/bin/sh ./libtool    --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src  -c -o src/x86/unix64.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/unix64.S
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/unix64.S  -fno-common -DPIC -o src/x86/.libs/unix64.o
+/bin/sh ./libtool  --tag=CC   --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT    -Wall -fexceptions -c -o src/x86/ffiw64.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/ffiw64.c
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -Wall -fexceptions -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/ffiw64.c  -fno-common -DPIC -o src/x86/.libs/ffiw64.o
+/bin/sh ./libtool    --mode=compile clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi  -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src  -c -o src/x86/win64.lo /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/win64.S
+libtool: compile:  clang -DHAVE_CONFIG_H -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -DRUBY_EXTCONF_H=\"extconf.h\" -I/usr/local/opt/readline/include -I/usr/local/opt/zlib/include -I/usr/local/opt/openssl/include -I/usr/local/opt/sqlite/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/readline/include -I/usr/local/opt/libyaml/include -I/usr/local/opt/gdbm/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT -I. -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/include -Iinclude -I/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src -c /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/src/x86/win64.S  -fno-common -DPIC -o src/x86/.libs/win64.o
+/bin/sh ./libtool  --tag=CC   --mode=link clang  -Wall -fexceptions  -L/usr/local/opt/readline/lib -L/usr/local/opt/zlib/lib -L/usr/local/opt/openssl/lib -L/usr/local/opt/sqlite/lib -o libffi_convenience.la  src/prep_cif.lo src/types.lo src/raw_api.lo src/java_raw_api.lo src/closures.lo   src/x86/ffi64.lo src/x86/unix64.lo src/x86/ffiw64.lo src/x86/win64.lo 
+libtool: link: ar cru .libs/libffi_convenience.a src/.libs/prep_cif.o src/.libs/types.o src/.libs/raw_api.o src/.libs/java_raw_api.o src/.libs/closures.o src/x86/.libs/ffi64.o src/x86/.libs/unix64.o src/x86/.libs/ffiw64.o src/x86/.libs/win64.o 
+libtool: link: ranlib .libs/libffi_convenience.a
+libtool: link: ( cd ".libs" && rm -f "libffi_convenience.la" && ln -s "../libffi_convenience.la" "libffi_convenience.la" )
+/bin/sh ./libtool  --tag=CC   --mode=link clang  -Wall -fexceptions -no-undefined -version-info `grep -v '^#' /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi/libtool-version`   '-L/usr/local/opt/readline/lib' '-L/usr/local/opt/zlib/lib' '-L/usr/local/opt/openssl/lib' '-L/usr/local/opt/sqlite/lib'  -L/usr/local/opt/readline/lib -L/usr/local/opt/zlib/lib -L/usr/local/opt/openssl/lib -L/usr/local/opt/sqlite/lib -o libffi.la -rpath /usr/local/lib src/prep_cif.lo src/types.lo src/raw_api.lo src/java_raw_api.lo src/closures.lo  src/x86/ffi64.lo src/x86/unix64.lo src/x86/ffiw64.lo src/x86/win64.lo 
+libtool: link: clang -dynamiclib  -o .libs/libffi.8.dylib  src/.libs/prep_cif.o src/.libs/types.o src/.libs/raw_api.o src/.libs/java_raw_api.o src/.libs/closures.o src/x86/.libs/ffi64.o src/x86/.libs/unix64.o src/x86/.libs/ffiw64.o src/x86/.libs/win64.o   -L/usr/local/opt/readline/lib -L/usr/local/opt/zlib/lib -L/usr/local/opt/openssl/lib -L/usr/local/opt/sqlite/lib    -install_name  /usr/local/lib/libffi.8.dylib -compatibility_version 10 -current_version 10.0 -Wl,-single_module
+libtool: link: (cd ".libs" && rm -f "libffi.dylib" && ln -s "libffi.8.dylib" "libffi.dylib")
+libtool: link: ( cd ".libs" && rm -f "libffi.la" && ln -s "../libffi.la" "libffi.la" )
+compiling AbstractMemory.c
+compiling ArrayType.c
+compiling Buffer.c
+compiling Call.c
+compiling ClosurePool.c
+compiling DynamicLibrary.c
+compiling Function.c
+compiling FunctionInfo.c
+compiling LastError.c
+compiling LongDouble.c
+compiling MappedType.c
+compiling MemoryPointer.c
+compiling MethodHandle.c
+compiling Platform.c
+compiling Pointer.c
+compiling Struct.c
+compiling StructByValue.c
+compiling StructLayout.c
+compiling Thread.c
+compiling Type.c
+compiling Types.c
+compiling Variadic.c
+compiling ffi.c
+linking shared-object ffi_c.bundle
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c
+make "DESTDIR=" install
+cd "/Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/ffi-1.13.1/ext/ffi_c/libffi-x86_64-darwin19" && /Applications/Xcode-beta.app/Contents/Developer/usr/bin/make
+/Applications/Xcode-beta.app/Contents/Developer/usr/bin/make  all-recursive
+Making all in include
+make[3]: Nothing to be done for `all'.
+Making all in testsuite
+make[3]: Nothing to be done for `all'.
+Making all in man
+make[3]: Nothing to be done for `all'.
+make[3]: Nothing to be done for `all-am'.
+compiling AbstractMemory.c
+compiling ArrayType.c
+compiling Buffer.c
+compiling Call.c
+compiling ClosurePool.c
+compiling DynamicLibrary.c
+compiling Function.c
+compiling FunctionInfo.c
+compiling LastError.c
+compiling LongDouble.c
+compiling MappedType.c
+compiling MemoryPointer.c
+compiling MethodHandle.c
+compiling Platform.c
+compiling Pointer.c
+compiling Struct.c
+compiling StructByValue.c
+compiling StructLayout.c
+compiling Thread.c
+compiling Type.c
+compiling Types.c
+compiling Variadic.c
+compiling ffi.c
+linking shared-object ffi_c.bundle
+/usr/local/bin/ginstall -c -m 0755 ffi_c.bundle ./.gem.20201026-45340-whgdt1

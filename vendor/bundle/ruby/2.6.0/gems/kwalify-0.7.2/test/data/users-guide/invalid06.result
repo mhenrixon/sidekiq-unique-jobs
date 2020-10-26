@@ -1,0 +1,4 @@
+$ kwalify -lf schema06.yaml document06b.yaml
+document06b.yaml#0: INVALID
+  - (line 7) [/0/groups/3] 'foo': is already used at '/0/groups/0'.
+  - (line 13) [/2/name] 'bar': is already used at '/1/name'.

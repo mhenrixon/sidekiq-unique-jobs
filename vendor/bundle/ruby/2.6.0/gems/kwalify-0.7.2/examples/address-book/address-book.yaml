@@ -1,0 +1,36 @@
+##
+## address book example
+##
+
+- name:    Sumire
+  email:   amethyst@mail.com
+  tel:     012-111-1111
+  birth:   1985-01-01
+  age:     20
+  zip:     123-4567
+  addr:    xxxx xxxx xxxx
+  blood:   B
+  memo:    My friend
+
+- name:    Kasumi
+  email:   mist@mail.net
+  tel:     012-222-2222
+  birth:   1980-02-02
+  age:     25
+  blood:   AB
+  memo:
+    - Home tutor
+    - A doctor (university)
+
+- name:    Nana
+  email:   seven@mail.com
+  tel:     012-333-3333
+  birth:   1990-03-03
+  age:     15
+  blood:   O
+  memo:    My sister
+
+- name:    Sizuka
+  email:   quiet@mail.org
+  memo:     Firend of Sumire
+

@@ -1,0 +1,14 @@
+_Yardoc
+.DS_Store
+*.rbc
+*.pdf
+.yardoc
+*.gem
+Gemfile.lock
+/pkg
+/doc
+/doc_guide
+/coverage
+/.bundle
+/vendor
+spec/examples.txt

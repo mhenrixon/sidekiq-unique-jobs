@@ -1,0 +1,3 @@
+$ kwalify -lf schema01.yaml document01b.yaml
+document01b.yaml#0: INVALID
+  - (line 2) [/1] '123': not a string.

@@ -1,0 +1,415 @@
+##
+## $Rev$
+## $Release: 0.7.2 $
+## copyright(c) 2005-2010 kuwata-lab all rights reserved.
+##
+---
+- name:  parseOptions1
+  desc:  test Main#parseOptions()
+  method: parseOptions
+  args: [ -hvsmtlEDf, schema.yaml, -a, gemclass-ruby, -Ipath/to/dir, document.yaml, document2.yaml ]
+  expected: |
+	command: kwalify
+	options:
+	  - action: gemclass-ruby
+	  - debug: true
+	  - emacs: true
+	  - help: true
+	  - linenum: true
+	  - meta: true
+	  - quiet: true
+	  - schema: schema.yaml
+	  - tpath: path/to/dir
+	  - untabify: true
+	  - version: true
+	properties:
+	filenames:
+	  - document.yaml
+	  - document2.yaml
+##
+- name:  parseOptions2
+  desc:  -ffilename
+  method: parseOptions
+  args: [ -lfschema.yaml, -hagenclass-ruby, -I/path/to/dir]
+  expected: |
+	command: kwalify
+	options:
+	  - action: genclass-ruby
+	  - help: true
+	  - linenum: true
+	  - schema: schema.yaml
+	  - tpath: /path/to/dir
+	properties:
+	filenames:
+##
+- name:  parseOptions3
+  desc:  "'--help' is equal to '-h'"
+  method: parseOptions
+  args:  [ --help, document.yaml ]
+  expected: |
+	command: kwalify
+	options:
+	  - help: true
+	properties:
+	  - help: true
+	filenames:
+	  - document.yaml
+##
+- name:  parseOptions4
+  desc:  "'-E' turns on '-l'"
+  method: parseOptions
+  args:  [ -E, document.yaml ]
+  expected: |
+	command: kwalify
+	options:
+	  - emacs: true
+	  - linenum: true
+	properties:
+	filenames:
+	  - document.yaml
+##
+---
+- name:  optionError1
+  desc:  invalid command-line option
+  method: parseOptions
+  args:  [ -hvi ]
+  inspect: '*'
+  exception*:
+    ruby: CommandOptionError
+    java: CommandOptionException
+  message: "-i: invalid command option."
+  error_symbol*:
+    ruby: !ruby/sym :command_option_invalid
+    java: command.option.invalid
+##
+- name:  optionError2
+  desc:  no argument of '-f'
+  method: parseOptions
+  args:  [ -f ]
+  inspect: '*'
+  exception*:
+    ruby: CommandOptionError
+    java: CommandOptionException
+  message: "-f: schema filename is required."
+  error_symbol*:
+    ruby: !ruby/sym :command_option_schema_required
+    java: command.option.noschema
+####
+##name:  optionError3
+##desc:  invalid property
+##method: parseOptions
+##args:  [ --foo@var ]
+##inspect: '*'
+##exception*:
+##  ruby: CommandOptionError
+##  #java: CommandOptionException
+##message: "'--foo@var': invalid property."
+##error_symbol*:
+##  ruby: !ruby/sym :command_property_invalid
+##  #java: command.property.invalid
+#
+
+##
+- name:  optionError4
+  desc:  action required
+  method: execute
+  args:  [ document.yaml ]
+  inspect: '*'
+  expected: |
+  exception*:
+    ruby: CommandOptionError
+    java: CommandOptionException
+  message: "command-line option '-f' or '-m' required."
+  error_symbol*:
+    ruby: !ruby/sym :command_option_noschema
+    java: command.option.noaction
+##
+---
+- name:  version  	# -v
+  desc:  option '-v'
+  method: execute
+  args:  [ -vt, document.yaml ]
+  expected: |
+    0.0.0
+##
+- name:  help		# -h
+  desc:  option '-h'
+  method: execute
+  args:  [ -hD, document.yaml ]
+  expected: |
+    kwalify - schema validator and data binding tool for YAML and JSON
+    ## Usage1: validate yaml document
+    kwalify [..options..] -f schema.yaml doc.yaml [doc2.yaml ...]
+    ## Usage2: validate schema definition
+    kwalify [..options..] -m schema.yaml [schema2.yaml ...]
+    ## Usage3: do action
+    kwalify [..options..] -a action -f schema.yaml [schema2.yaml ...]
+      -h, --help     : help
+      -v             : version
+      -q             : quiet
+      -s             : silent (obsolete, use '-q' instead)
+      -f schema.yaml : schema definition file
+      -m             : meta-validation mode
+      -t             : expand tab characters
+      -l             : show linenumber when errored (experimental)
+      -E             : show errors in emacs-style (experimental, implies '-l')
+      -a action      : action ('genclass-ruby', 'genclass-php', 'genclass-java')
+                       (try '-ha genclass-ruby' for details)
+      -I path        : template path (for '-a')
+      -P             : allow preceding alias
+##
+- name:  quiet1	# -q
+  desc:  option '-q' (valid)
+  method: execute
+  args:  [ -qf, quiet1.schema, quiet1.document ]
+  expected: |
+  schema: &quiet1_schema |
+    type:   seq
+    sequence:
+      - type:   str
+  document: &quiet1_document |
+    - foo
+    - bar
+    - baz
+##
+- name:  quiet2	# -s
+  desc:  option '-s' (invalid)
+  method: execute
+  args:  [ -sf, quiet2.schema, quiet2.document ]
+  expected: |
+    quiet2.document#1: INVALID
+      - [/1] '123': not a string.
+      - [/2] 'true': not a string.
+  schema: &quiet2_schema |
+    type:   seq
+    sequence:
+      - type:   str
+  document: &quiet2_document |
+    - foo
+    - bar
+    - baz
+    ---
+    - foo
+    - 123
+    - true
+##
+- name:  silent1	# -s
+  desc:  option '-s' (valid)
+  method: execute
+  args:  [ -sf, silent1.schema, silent1.document ]
+  expected: |
+  schema: *quiet1_schema
+  document: *quiet1_document
+##
+- name:  silent2	# -s
+  desc:  option '-s' (invalid)
+  method: execute
+  args:  [ -sf, silent2.schema, silent2.document ]
+  expected: |
+    silent2.document#1: INVALID
+      - [/1] '123': not a string.
+      - [/2] 'true': not a string.
+  schema: *quiet2_schema
+  document: *quiet2_document
+##
+- name:  untabify	# -t
+  desc:  option '-t'
+  method: execute
+  args:  [ -tf, untabify.schema, untabify.document ]
+  expected: |
+    untabify.document#0: valid.
+  schema: |
+        type:		seq
+        sequence:
+          -	type: map
+        	mapping:
+          	   "key":
+        	  	type: text
+        	        required:	yes
+        	   "value":
+        	        type: any
+        	       	required:  yes
+  document: |
+        #
+        	- key: foo
+        	  value: 123
+                - key: bar
+          	  value: [a, b, c]
+##
+- name:  stream
+  desc:  stream document
+  method: validation
+  schema: |
+    type:   seq
+    sequence:
+      - type:   str
+  valid: |
+     ---
+     - foo
+     - bar
+     - baz
+     ---
+     - aaa
+     - bbb
+     - ccc
+  valid_out: |
+    stream.valid#0: valid.
+    stream.valid#1: valid.
+  invalid: |
+    ---
+    - foo
+    - 123
+    - baz
+    ---
+    - aaa
+    - bbb
+    - true
+  invalid_out: |
+    stream.invalid#0: INVALID
+      - (line 3) [/1] '123': not a string.
+    stream.invalid#1: INVALID
+      - (line 8) [/2] 'true': not a string.
+##
+- name:  meta1		# -m
+  desc:  meta validation (valid)
+  method: execute
+  args:  [ -m, meta1.schema ]
+  schema: &meta1_schema |
+    type:   seq
+    sequence:
+      - type:   str
+  document: |
+  expected: &meta1_expected |
+    meta1.schema#0: valid.
+##
+- name:  meta2		# -m
+  desc:  meta validation (invalid)
+  method: execute
+  args:  [ -m, meta2.schema ]
+  schema: |
+    type:   map
+    sequence:
+      - type:   str
+  document: |
+  expected: |
+    meta2.schema#0: INVALID
+      - [/] type 'map' requires 'mapping:'.
+      - [/] 'sequence:': not available with mapping.
+##
+- name:  emacs		# -E
+  desc:  show errors in emacs style
+  method: execute
+  args:  [ -Ef, emacs.schema, emacs.document ]
+  schema: |
+    type:   seq
+    sequence:
+      - type:   map
+        mapping:
+         "key":   { type: str, required: yes }
+         "value": { type: any }
+  document: |
+    - key: one
+      value: 1
+    - key: 2
+      val: two
+    - kye: three
+      value:
+  expected: |
+    emacs.document#0: INVALID
+    emacs.document:3:3 [/1/key] '2': not a string.
+    emacs.document:4:3 [/1/val] key 'val:' is undefined.
+    emacs.document:5:3 [/2] key 'key:' is required.
+    emacs.document:5:3 [/2/kye] key 'kye:' is undefined.
+##
+- name:  preceding1		# -P
+  desc:  preceding anchor
+  method: execute
+  args:  [ -Pf, preceding1.schema, preceding1.document ]
+  schema: &preceding1_schema |
+    type:   map
+    mapping:
+     "groups": 
+        type:   seq
+        sequence:
+	  - &GROUP
+	    type:  map
+	    mapping:
+	     "name":  { type: str, required: yes }
+	     "owner":  *USER
+     "users": 
+        type:  seq
+	sequence:
+	  - &USER
+	    type:  map
+	    mapping:
+	     "name":  { type: str, required: yes }
+	     "mail":  { type: str }
+	     "group": *GROUP
+  document: &preceding1_document |
+    groups:
+      - &WHEEL
+        name: wheel
+	owner: *root
+      - &GUEST
+        name: guest
+	owner: *root
+      - &USERS
+        name: users
+	owner: *user1
+    users:
+      - &root
+        name: root
+	mail: root@localhost
+	group: *WHEEL
+      - &user1
+        name: user1
+	mail: user1@localhost
+	group: *USERS
+  expected: |
+    preceding1.document#0: valid.
+##
+- name:  preceding2		# -P
+  desc:  preceding anchor
+  method: execute
+  args:  [ -lf, preceding2.schema, preceding2.document ]
+  schema: *preceding1_schema
+  document: *preceding1_document
+  exception*:
+    ruby:   Kwalify::SyntaxError
+    #java:  kwalify.YamlSyntaxException
+  errormsg*:
+    ruby:   "file: preceding2.schema, line 10: *USER: anchor not found."
+    #java:  "*USER: anchor not found."
+  expected: |
+##
+---
+- name:  empty1
+  desc:  ignore first empty document
+  method: execute
+  args:  [ -f, empty1.schema, empty1.document ]
+  schema: |
+    type: map
+    mapping:
+     "name": { type: str }
+  document: |
+    ---
+    name: Foo
+  expected: |
+    empty1.document#0: valid.
+
+- name:  empty2
+  desc:  report 'empty.' when document is empty
+  method: execute
+  args:  [ -f, empty2.schema, empty2.document ]
+  schema: |
+    type: map
+    mapping:
+     "name": { type: str }
+  document: |
+    ---
+    name: Foo
+    ---
+  expected: |
+    empty2.document#0: valid.
+    empty2.document#1: empty.
+

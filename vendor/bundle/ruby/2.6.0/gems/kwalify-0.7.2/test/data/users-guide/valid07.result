@@ -1,0 +1,2 @@
+$ ruby answers-validator.rb document07a.yaml
+Valid.
