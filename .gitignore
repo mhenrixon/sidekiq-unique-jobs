@@ -19,3 +19,5 @@ tmp/
 /OLD_README.md
 
 /Gemfile.local
+/gemfiles/vendor/
+/vendor/
