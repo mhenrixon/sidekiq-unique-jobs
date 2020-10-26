@@ -7,6 +7,7 @@
 #
 module SidekiqUniqueJobs
   ARGS_KEY                  ||= "args"
+  APARTMENT                 ||= "apartment"
   AT_KEY                    ||= "at"
   CLASS_KEY                 ||= "class"
   JAVA                      ||= "java"

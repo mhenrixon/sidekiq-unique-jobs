@@ -7,7 +7,8 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
   let(:class_name)   { worker_class.to_s }
   let(:queue)        { "myqueue" }
   let(:args)         { [[1, 2]] }
-  let(:item) do
+  let(:item)         { base_item }
+  let(:base_item) do
     {
       "class" => class_name,
       "queue" => queue,
@@ -79,6 +80,14 @@ RSpec.describe SidekiqUniqueJobs::UniqueArgs do
     end
 
     it_behaves_like "a digestable hash"
+
+    context "when apartment gem is in use" do
+      let(:item) { base_item.merge('apartment' => 'not_public') }
+
+      it "includes apartment in digestable_hash" do
+        expect(digestable_hash).to eq(expected_hash.merge('apartment' => 'not_public'))
+      end
+    end
 
     with_sidekiq_options_for(UntilExecutedJob, unique_args: :unique_args, unique_on_all_queues: true) do
       let(:expected_hash) { { "class" => "UntilExecutedJob", "unique_args" => [[1, 2]] } }
