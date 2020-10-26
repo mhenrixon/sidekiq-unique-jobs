@@ -20,7 +20,7 @@ if [[ "$(git branch | grep \* | cut -d ' ' -f2)" !=  "gh-pages" ]]; then
 fi;
 
 echo "Cleaning up current documentation"
-find . ! -path '*/.git*' ! -path '*/doc*' ! -path '*/update_docs.sh*' ! -path '*/_config.yml*' ! -path '*/_index.html*' ! -path '.' | xargs rm -rf
+find . ! -path '*/.git*' ! -path '*/doc*' ! -path '*/vendor*' ! -path '*/gemfiles/vendor*' ! -path '*/update_docs.sh*' ! -path '*/_config.yml*' ! -path '*/_index.html*' ! -path '.' | xargs rm -rf
 
 echo "Copying new documentation"
 mv doc/* ./
