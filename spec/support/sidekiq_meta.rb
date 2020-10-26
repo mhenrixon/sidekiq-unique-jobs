@@ -34,7 +34,7 @@ RSpec.configure do |config|
     end
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
-      if SidekiqUniqueJobs::VersionCheck.unfulfilled?(Sidekiq::VERSION, sidekiq_ver) # rubocop:disable Style/SoleNestedConditional
+      unless SidekiqUniqueJobs::VersionCheck.satisfied?(Sidekiq::VERSION, sidekiq_ver) # rubocop:disable Style/SoleNestedConditional
         skip("Sidekiq (#{Sidekiq::VERSION}) should be #{sidekiq_ver}")
       end
     end

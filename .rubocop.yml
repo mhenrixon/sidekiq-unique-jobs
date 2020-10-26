@@ -3,8 +3,8 @@ inherit_gem:
     - config/default.yml
 
 AllCops:
-  TargetRubyVersion: 2.5
   NewCops: enable
+  TargetRubyVersion: 2.5
   Include:
     - "examples/**/*.rb"
   Exclude:
@@ -64,6 +64,17 @@ Naming/MethodParameterName:
   AllowedNames:
     - ex
 
+RSpec/ContextWording:
+  Enabled: true
+  Prefixes:
+    - when
+    - with
+    - without
+    - if
+    - unless
+    - for
+    - that
+
 RSpec/DescribeClass:
   Exclude:
     - spec/sidekiq/api_spec.rb
@@ -97,8 +108,7 @@ RSpec/MultipleMemoizedHelpers:
   Enabled: false
 
 RSpec/NestedGroups:
-  Max: 4
-  Enabled: true
+  Max: 5
 
 RSpec/RepeatedExample:
   Exclude:

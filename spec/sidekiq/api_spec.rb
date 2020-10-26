@@ -4,7 +4,7 @@ RSpec.describe "Sidekiq::Api" do
   let(:item) do
     { "class" => "JustAWorker",
       "queue" => "testqueue",
-      "args" => [foo: "bar"] }
+      "args" => [{ foo: "bar" }] }
   end
   let(:lock_digest) { "uniquejobs:577db3c4fc72230bf2c256faa708a083" }
   let(:key)         { SidekiqUniqueJobs::Key.new(lock_digest) }

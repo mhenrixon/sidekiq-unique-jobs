@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require "simplecov-material"
 require "simplecov-oj"
 
 SimpleCov.command_name "RSpec"
 # SimpleCov.refuse_coverage_drop
 SimpleCov.formatters = [
-  SimpleCov::Formatter::MaterialFormatter,
+  SimpleCov::Formatter::HTMLFormatter,
   SimpleCov::Formatter::OjFormatter,
 ]
 
