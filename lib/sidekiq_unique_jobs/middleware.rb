@@ -25,11 +25,19 @@ module SidekiqUniqueJobs
     def self.configure_server # rubocop:disable Metrics/MethodLength
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
-          chain.add SidekiqUniqueJobs::Middleware::Client
+          if defined?(Apartment::Sidekiq::Middleware::Client)
+            chain.insert_after Apartment::Sidekiq::Middleware::Client, SidekiqUniqueJobs::Middleware::Client
+          else
+            chain.add SidekiqUniqueJobs::Middleware::Client
+          end
         end
 
         config.server_middleware do |chain|
-          chain.add SidekiqUniqueJobs::Middleware::Server
+          if defined?(Apartment::Sidekiq::Middleware::Server)
+            chain.insert_after Apartment::Sidekiq::Middleware::Server, SidekiqUniqueJobs::Middleware::Server
+          else
+            chain.add SidekiqUniqueJobs::Middleware::Server
+          end
         end
 
         config.on(:startup) do
@@ -51,7 +59,11 @@ module SidekiqUniqueJobs
     def self.configure_client
       Sidekiq.configure_client do |config|
         config.client_middleware do |chain|
-          chain.add SidekiqUniqueJobs::Middleware::Client
+          if defined?(Apartment::Sidekiq::Middleware::Client)
+            chain.insert_after Apartment::Sidekiq::Middleware::Client, SidekiqUniqueJobs::Middleware::Client
+          else
+            chain.add SidekiqUniqueJobs::Middleware::Client
+          end
         end
       end
     end

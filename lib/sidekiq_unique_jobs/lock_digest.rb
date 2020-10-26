@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
     # Filter a hash to use for digest
     # @return [Hash] to use for digest
     def digestable_hash
-      @item.slice(CLASS, QUEUE, LOCK_ARGS).tap do |hash|
+      @item.slice(CLASS, QUEUE, LOCK_ARGS, APARTMENT).tap do |hash|
         hash.delete(QUEUE) if unique_across_queues?
         hash.delete(CLASS) if unique_across_workers?
       end
