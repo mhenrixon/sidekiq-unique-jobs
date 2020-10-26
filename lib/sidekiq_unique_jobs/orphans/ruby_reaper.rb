@@ -135,6 +135,8 @@ module SidekiqUniqueJobs
               return true if load_json(job)[LOCK_DIGEST] == digest
             end
           end
+
+          false
         end
       end
 
