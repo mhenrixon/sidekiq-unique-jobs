@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
       configure_client_middleware
     end
 
-    def configure_server_middleware
+    def configure_server_middleware # rubocop:disable Metrics/MethodLength
       Sidekiq.configure_server do |config|
         config.client_middleware do |chain|
           require "sidekiq_unique_jobs/client/middleware"
