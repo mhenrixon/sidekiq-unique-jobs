@@ -1,5 +1,26 @@
 # Changelog
 
+## [v7.0.0.beta25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta25) (2020-10-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta24...v7.0.0.beta25)
+
+**Implemented enhancements:**
+
+- Bump rubocop [\#539](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/539) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Ruby reaper not working, active jobs queried incorrectly [\#537](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/537)
+- Fix RubyReaper active? [\#538](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/538) ([tanner-rutgers](https://github.com/tanner-rutgers))
+
+**Closed issues:**
+
+- ConnectionPool::TimeoutError and :until\_executed [\#535](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/535)
+
+**Merged pull requests:**
+
+- Support apartment [\#540](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/540) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta24](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta24) (2020-09-27)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta23...v7.0.0.beta24)
@@ -10,7 +31,6 @@
 
 **Closed issues:**
 
-- while\_executing + raise let non-unique jobs to be executed [\#534](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/534)
 - Leaked keys in version 5.0.10 [\#519](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/519)
 
 ## [v7.0.0.beta23](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta23) (2020-06-23)
@@ -662,6 +682,7 @@
 
 **Merged pull requests:**
 
+- Add more details about testing uniqueness [\#301](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/301) ([mhenrixon](https://github.com/mhenrixon))
 - Update README.md [\#300](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/300) ([pirj](https://github.com/pirj))
 
 ## [v6.0.0.rc7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc7) (2018-07-23)
@@ -681,7 +702,6 @@
 
 **Merged pull requests:**
 
-- Add more details about testing uniqueness [\#301](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/301) ([mhenrixon](https://github.com/mhenrixon))
 - Adds changelog entry [\#299](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/299) ([mhenrixon](https://github.com/mhenrixon))
 - Fix README [\#298](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/298) ([mhenrixon](https://github.com/mhenrixon))
 
