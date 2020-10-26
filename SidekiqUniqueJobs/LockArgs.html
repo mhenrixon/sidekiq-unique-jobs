@@ -1799,8 +1799,8 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_args.rb', line 100</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_lock_args_method'>lock_args_method</span>
-  <span class='ivar'>@lock_args_method</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_ARGS</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ARGS</span><span class='rbracket'>]</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_args_method'>lock_args_method</span> <span class='comment'># rubocop:disable Metrics/CyclomaticComplexity
+</span>  <span class='ivar'>@lock_args_method</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>LOCK_ARGS</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_worker_options'>worker_options</span><span class='lbracket'>[</span><span class='const'>UNIQUE_ARGS</span><span class='rbracket'>]</span>
   <span class='ivar'>@lock_args_method</span> <span class='op'>||=</span> <span class='symbol'>:lock_args</span> <span class='kw'>if</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='symbol'>:lock_args</span><span class='rparen'>)</span>
   <span class='ivar'>@lock_args_method</span> <span class='op'>||=</span> <span class='symbol'>:unique_args</span> <span class='kw'>if</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='symbol'>:unique_args</span><span class='rparen'>)</span>
   <span class='ivar'>@lock_args_method</span> <span class='op'>||=</span> <span class='id identifier rubyid_default_lock_args_method'>default_lock_args_method</span>
@@ -2603,9 +2603,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Sep  5 20:24:32 2020 by
+  Generated on Mon Oct 26 22:50:10 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.6).
 </div>
 
     </div>

@@ -338,13 +338,25 @@
 
 37
 38
-39</pre>
+39
+40
+41
+42
+43
+44
+45</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_after_unlock_hook'>after_unlock_hook</span>
-  <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span> <span class='kw'>if</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_lambda'>lambda</span> <span class='kw'>do</span>
+    <span class='kw'>if</span> <span class='ivar'>@worker_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span>
+      <span class='ivar'>@worker_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span> <span class='comment'># instance method in sidekiq v6
+</span>    <span class='kw'>elsif</span> <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span> <span class='comment'># class method regardless of sidekiq version
+</span>    <span class='kw'>end</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -389,12 +401,12 @@
       <pre class="lines">
 
 
-65
-66
-67</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
   <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
@@ -566,22 +578,22 @@ failing back to the original argument when the constant can&#39;t be found</p>
       <pre class="lines">
 
 
-45
-46
-47
-48
-49
-50
 51
 52
 53
 54
 55
 56
-57</pre>
+57
+58
+59
+60
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_worker_class_constantize'>worker_class_constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span> <span class='op'>=</span> <span class='ivar'>@worker_class</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='kw'>if</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span><span class='rparen'>)</span> <span class='comment'># sidekiq v6.x
@@ -720,9 +732,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Sep  5 20:24:31 2020 by
+  Generated on Mon Oct 26 22:50:09 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.6).
 </div>
 
     </div>

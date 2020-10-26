@@ -1442,7 +1442,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_digest.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_digestable_hash'>digestable_hash</span>
-  <span class='ivar'>@item</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='const'>CLASS</span><span class='comma'>,</span> <span class='const'>QUEUE</span><span class='comma'>,</span> <span class='const'>LOCK_ARGS</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+  <span class='ivar'>@item</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='const'>CLASS</span><span class='comma'>,</span> <span class='const'>QUEUE</span><span class='comma'>,</span> <span class='const'>LOCK_ARGS</span><span class='comma'>,</span> <span class='const'>APARTMENT</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
     <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='const'>QUEUE</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_across_queues?'>unique_across_queues?</span>
     <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='const'>CLASS</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unique_across_workers?'>unique_across_workers?</span>
   <span class='kw'>end</span>
@@ -2355,9 +2355,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Sep  5 20:24:32 2020 by
+  Generated on Mon Oct 26 22:50:10 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.6).
 </div>
 
     </div>

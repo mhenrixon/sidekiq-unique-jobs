@@ -602,22 +602,28 @@ end
 <p><strong>Exception 1:</strong> UntilExecuting unlocks and uses callback before yielding.
 <strong>Exception 2:</strong> UntilExpired expires eventually, no after_unlock hook is called.</p>
 
+<p><strong>NOTE:</strong> <em>It is also possible to write this code as a class method.</em></p>
+
 <pre class="code ruby"><code class="ruby">class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :while_executing,
+
+  def self.after_unlock
+   # block has yielded and lock is released
+  end
 
   def after_unlock
    # block has yielded and lock is released
   end
   ...
 end.
-</code></pre>
 
-<h3 id="logging">Logging</h3>
+### Logging
 
-<p>To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false</p>
+To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false
 
-<pre class="code ruby"><code class="ruby">class UniqueJobWithFilterMethod
+```ruby
+class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :while_executing,
                   log_duplicate: true
@@ -736,7 +742,7 @@ already does this.</p>
 
 <h3 id="uniqueness">Uniqueness</h3>
 
-<p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][]</p>
+<p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: <a href="https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs">Enterprise unique jobs</a></p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='op'>!</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_test?'>test?</span>
@@ -796,19 +802,13 @@ already does this.</p>
 
 <h2 id="contributors">Contributors</h2>
 
-<p>You can find a list of contributors over on [Contributors][]</p>
-
-<p>[v5.0.10]: <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10">https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10</a>.
-[v4.0.18]: <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18</a>
-[Sidekiq requirements]: <a href="https://github.com/mperham/sidekiq#requirements">https://github.com/mperham/sidekiq#requirements</a>
-[Enterprise unique jobs]: <a href="https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs">https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs</a>
-[Contributors]: <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors">https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors</a></p>
+<p>You can find a list of contributors over on <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors">Contributors</a></p>
 </div></div>
 
       <div id="footer">
-  Generated on Sat Sep  5 20:24:30 2020 by
+  Generated on Mon Oct 26 22:50:08 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.6).
 </div>
 
     </div>

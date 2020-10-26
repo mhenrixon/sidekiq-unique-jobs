@@ -931,8 +931,8 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 117</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_with_configured_loggers_context'>with_configured_loggers_context</span>
-  <span class='id identifier rubyid_logger_method'>logger_method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_logging_context'>logging_context</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_with_configured_loggers_context'>with_configured_loggers_context</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_logger_method'>logger_method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_logging_context'>logging_context</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1009,9 +1009,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Sep  5 20:24:31 2020 by
+  Generated on Mon Oct 26 22:50:09 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.6.6).
 </div>
 
     </div>
