@@ -6,7 +6,8 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
   let(:class_name)   { worker_class.to_s }
   let(:queue)        { "myqueue" }
   let(:args)         { [[1, 2]] }
-  let(:item) do
+  let(:item)         { base_item }
+  let(:base_item) do
     {
       "class" => class_name,
       "queue" => queue,
@@ -70,6 +71,19 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
     subject(:digestable_hash) { digest.digestable_hash }
 
     it { is_expected.to eq("class" => "UntilExecutedJob", "queue" => "myqueue", "lock_args" => [[1, 2]]) }
+
+    context "when used with apartment gem" do
+      let(:item) { base_item.merge("apartment" => "public") }
+
+      it "appends apartment to digestable hash" do
+        expect(digestable_hash).to eq(
+          "class" => "UntilExecutedJob",
+          "queue" => "myqueue",
+          "lock_args" => [[1, 2]],
+          "apartment" => "public",
+        )
+      end
+    end
 
     context "when unique_across_queues", :with_worker_options do
       let(:worker_options) { { unique_across_queues: true } }

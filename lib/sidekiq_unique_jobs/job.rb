@@ -40,19 +40,19 @@ module SidekiqUniqueJobs
     end
 
     def add_lock_timeout(item)
-      item[LOCK_TIMEOUT] = SidekiqUniqueJobs::LockTimeout.calculate(item)
+      item[LOCK_TIMEOUT] ||= SidekiqUniqueJobs::LockTimeout.calculate(item)
     end
 
     def add_lock_args(item)
-      item[LOCK_ARGS] = SidekiqUniqueJobs::LockArgs.call(item)
+      item[LOCK_ARGS] ||= SidekiqUniqueJobs::LockArgs.call(item)
     end
 
     def add_lock_digest(item)
-      item[LOCK_DIGEST] = SidekiqUniqueJobs::LockDigest.call(item)
+      item[LOCK_DIGEST] ||= SidekiqUniqueJobs::LockDigest.call(item)
     end
 
     def add_lock_prefix(item)
-      item[LOCK_PREFIX] = SidekiqUniqueJobs.config.unique_prefix
+      item[LOCK_PREFIX] ||= SidekiqUniqueJobs.config.unique_prefix
     end
   end
 end

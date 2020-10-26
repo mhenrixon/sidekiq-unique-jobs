@@ -7,6 +7,7 @@
 #
 module SidekiqUniqueJobs
   ARGS                  ||= "args"
+  APARTMENT             ||= "apartment"
   AT                    ||= "at"
   CHANGELOGS            ||= "uniquejobs:changelog"
   CLASS                 ||= "class"
