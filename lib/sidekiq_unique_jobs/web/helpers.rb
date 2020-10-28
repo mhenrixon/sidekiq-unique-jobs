@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Provides view helpers for the Sidekiq::Web extension
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module Helpers
       #

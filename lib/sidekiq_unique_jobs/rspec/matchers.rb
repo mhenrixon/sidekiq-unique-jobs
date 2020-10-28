@@ -4,13 +4,13 @@ module SidekiqUniqueJobs
   #
   # We all know what the hell RSpec is no?
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   module RSpec
     #
     # Module Matchers provides RSpec matcher for your workers
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module Matchers
     end

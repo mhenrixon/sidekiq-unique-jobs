@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
-    class LuaReaper < Reaper
+    class NullReaper < Reaper
       #
       # Delete orphaned digests
       #
@@ -17,12 +17,7 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of reaped locks
       #
       def call
-        call_script(
-          :reap_orphans,
-          conn,
-          keys: [DIGESTS, SCHEDULE, RETRY, PROCESSES],
-          argv: [reaper_count],
-        )
+        # NO OP
       end
     end
   end

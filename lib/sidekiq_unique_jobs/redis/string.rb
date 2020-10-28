@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Class String provides convenient access to redis strings
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class String < Entity
       #
