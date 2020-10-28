@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @note this is a much slower version of the lua script but does not crash redis
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class Reaper
       include SidekiqUniqueJobs::Connection
@@ -17,12 +17,16 @@ module SidekiqUniqueJobs
 
       require_relative "lua_reaper"
       require_relative "ruby_reaper"
+      require_relative "null_reaper"
 
       #
       # @return [Hash<Symbol, SidekiqUniqueJobs::Orphans::Reaper] the current implementation of reapers
       REAPERS = {
         lua: SidekiqUniqueJobs::Orphans::LuaReaper,
         ruby: SidekiqUniqueJobs::Orphans::RubyReaper,
+        none: SidekiqUniqueJobs::Orphans::NullReaper,
+        nil => SidekiqUniqueJobs::Orphans::NullReaper,
+        false => SidekiqUniqueJobs::Orphans::NullReaper,
       }.freeze
 
       #
