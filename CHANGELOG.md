@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...HEAD)
+
+**Merged pull requests:**
+
+- Update sidekiq-unique-jobs.gemspec [\#542](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/542) ([sergey-alekseev](https://github.com/sergey-alekseev))
+
+## [v6.0.25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.25) (2020-10-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta25...v6.0.25)
+
+**Implemented enhancements:**
+
+- Support apartment [\#541](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/541) ([mhenrixon](https://github.com/mhenrixon))
+- Support both instance method and class method [\#528](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/528) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.0.beta25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta25) (2020-10-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta24...v7.0.0.beta25)
@@ -224,6 +241,7 @@
 - Split calculator into two separate [\#474](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/474) ([mhenrixon](https://github.com/mhenrixon))
 - Prepare for improving tests [\#473](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/473) ([mhenrixon](https://github.com/mhenrixon))
 - Update gemspec: thor [\#465](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/465) ([masawo](https://github.com/masawo))
+- Various changes to test and verify reliability [\#463](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/463) ([mhenrixon](https://github.com/mhenrixon))
 
 **Fixed bugs:**
 
@@ -251,7 +269,6 @@
 **Implemented enhancements:**
 
 - Keys without TTL [\#417](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/417)
-- Various changes to test and verify reliability [\#463](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/463) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
