@@ -129,6 +129,7 @@ detectors:
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Orphans::Manager#start
+      - SidekiqUniqueJobs::Orphans::Manager#stop
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Orphans::RubyReaper#enqueued?
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
