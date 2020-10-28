@@ -1,6 +1,0 @@
-$ ruby loadconfig.rb
-#<Config:
- @host="localhost",
- @pass="password1",
- @port=8080,
- @user="user1">

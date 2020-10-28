@@ -1,2 +1,0 @@
-$ kwalify -lf schema12.json document12a.json
-document12a.json#0: valid.

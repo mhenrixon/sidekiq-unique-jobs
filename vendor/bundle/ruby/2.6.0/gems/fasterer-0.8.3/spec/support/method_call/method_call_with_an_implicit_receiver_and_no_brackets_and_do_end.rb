@@ -1,3 +1,0 @@
-fetch :writing do
-end
-

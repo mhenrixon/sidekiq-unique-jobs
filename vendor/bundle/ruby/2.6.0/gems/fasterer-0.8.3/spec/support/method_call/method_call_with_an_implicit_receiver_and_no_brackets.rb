@@ -1,1 +1,0 @@
-fetch :writing, :listening

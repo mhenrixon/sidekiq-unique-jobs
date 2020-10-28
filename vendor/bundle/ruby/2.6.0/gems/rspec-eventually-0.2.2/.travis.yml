@@ -1,4 +1,0 @@
-language: ruby
-rvm:
-  - 2.1.2
-before_install: gem install bundler -v 1.9.4

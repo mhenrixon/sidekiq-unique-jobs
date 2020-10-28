@@ -1,5 +1,0 @@
-$ ruby howto3.rb
-[{"name"=>"Foo",
-  "parent"=>{"name"=>"Bar", "parent"=>{"name"=>"Baz", "parent"=>nil}}},
- {"name"=>"Bar", "parent"=>{"name"=>"Baz", "parent"=>nil}},
- {"name"=>"Baz", "parent"=>nil}]

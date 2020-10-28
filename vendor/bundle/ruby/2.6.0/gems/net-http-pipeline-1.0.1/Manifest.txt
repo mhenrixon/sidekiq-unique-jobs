@@ -1,8 +1,0 @@
-.autotest
-History.txt
-Manifest.txt
-README.txt
-Rakefile
-lib/net/http/pipeline.rb
-sample/pipeline.rb
-test/test_net_http_pipeline.rb

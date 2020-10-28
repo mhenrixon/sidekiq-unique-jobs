@@ -15,3 +15,6 @@ Gemfile.lock
 gemfiles/*.lock
 rails_example/spec/examples.txt
 tmp/
+/Gemfile.local
+/gemfiles/vendor/
+/vendor/

@@ -1,2 +1,0 @@
-fetch:
-  - fetch-gem-version toxiproxy Shopify/toxiproxy-ruby
