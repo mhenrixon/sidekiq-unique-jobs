@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Class UpdateVersion sets the right version in redis
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class UpdateVersion
     #

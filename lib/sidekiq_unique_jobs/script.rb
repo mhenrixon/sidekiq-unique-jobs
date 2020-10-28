@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Interface to dealing with .lua files
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Script
     include Brpoplpush::RedisScript::DSL
 

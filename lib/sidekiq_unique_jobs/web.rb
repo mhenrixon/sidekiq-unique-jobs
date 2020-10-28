@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
   # Utility module to help manage unique keys in redis.
   # Useful for deleting keys that for whatever reason wasn't deleted
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Web
     def self.registered(app) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       app.helpers do

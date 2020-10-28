@@ -5,7 +5,7 @@ require "openssl"
 module SidekiqUniqueJobs
   # Handles uniqueness of sidekiq arguments
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   class LockDigest
     include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::JSON

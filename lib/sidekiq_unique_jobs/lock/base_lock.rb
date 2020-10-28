@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     # Abstract base class for locks
     #
     # @abstract
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class BaseLock
       include SidekiqUniqueJobs::Logging
 

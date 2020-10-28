@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Utility module for reducing the number of uses of logger.
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Logging
     def self.included(base)
       base.send(:extend, self)

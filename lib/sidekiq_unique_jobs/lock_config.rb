@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
   # Gathers all configuration for a lock
   #   which helps reduce the amount of instance variables
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class LockConfig
     #

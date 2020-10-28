@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     # Abstract conflict strategy class
     #
     # @abstract
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Strategy
       include SidekiqUniqueJobs::JSON
       include SidekiqUniqueJobs::Logging

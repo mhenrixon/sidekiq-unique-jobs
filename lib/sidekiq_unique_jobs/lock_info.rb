@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Class Info provides information about a lock
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class LockInfo < Redis::String
     #

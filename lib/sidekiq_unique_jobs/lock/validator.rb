@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Validator base class to avoid some duplication
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class Validator
       #

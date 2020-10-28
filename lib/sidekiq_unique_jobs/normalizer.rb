@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Normalizes hashes by dumping them to json and loading them from json
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Normalizer
     extend SidekiqUniqueJobs::JSON
 

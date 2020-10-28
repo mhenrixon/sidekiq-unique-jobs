@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Handles checking if a version is compliant with given constraint
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class VersionCheck
     PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m.freeze # rubocop:disable Layout/LineLength, Lint/MixedRegexpCaptureTypes

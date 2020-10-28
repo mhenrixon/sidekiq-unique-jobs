@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Class BatchDelete provides batch deletion of digests
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class BatchDelete
     #

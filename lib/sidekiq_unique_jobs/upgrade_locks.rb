@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Upgrades locks between gem version upgrades
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class UpgradeLocks # rubocop:disable Metrics/ClassLength
     #

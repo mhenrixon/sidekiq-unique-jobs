@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Utility class to append uniqueness to the sidekiq job hash
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Job
     extend self
 

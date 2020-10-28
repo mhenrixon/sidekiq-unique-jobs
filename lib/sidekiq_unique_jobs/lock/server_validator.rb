@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Validates the sidekiq options for the Sidekiq server process
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class ServerValidator
       #

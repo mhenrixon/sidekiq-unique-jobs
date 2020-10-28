@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   #
   # Command line interface for unique jobs
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Cli < Thor
     # :nodoc:

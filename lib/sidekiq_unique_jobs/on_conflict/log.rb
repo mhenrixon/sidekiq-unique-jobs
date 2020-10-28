@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   module OnConflict
     # Strategy to log information about conflict
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Log < OnConflict::Strategy
       include SidekiqUniqueJobs::Logging
 

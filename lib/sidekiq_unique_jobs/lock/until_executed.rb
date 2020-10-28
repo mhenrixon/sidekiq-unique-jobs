@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
     # - Locks on perform_in or perform_async
     # - Unlocks after yielding to the worker's perform method
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class UntilExecuted < BaseLock
       OK ||= "OK"
 

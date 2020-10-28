@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Shared module for dealing with redis connections
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Connection
     def self.included(base)
       base.send(:extend, self)

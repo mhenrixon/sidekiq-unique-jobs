@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   module OnConflict
     # Strategy to send jobs to dead queue
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Reject < OnConflict::Strategy
       include SidekiqUniqueJobs::Timing
 

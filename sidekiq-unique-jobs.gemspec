@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.name        = "sidekiq-unique-jobs"
   spec.version     = SidekiqUniqueJobs::VERSION
   spec.authors     = ["Mikael Henriksson"]
-  spec.email       = ["mikael@zoolutions.se"]
+  spec.email       = ["mikael@mhenrixon.com"]
   spec.homepage    = "https://mhenrixon.github.io/sidekiq-unique-jobs"
   spec.license     = "MIT"
   spec.summary     = <<~SUMMARY

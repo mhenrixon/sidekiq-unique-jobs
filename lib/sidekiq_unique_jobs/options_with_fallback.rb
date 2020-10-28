@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
   #   1. item (required)
   #   2. options (can be nil)
   #   3. worker_class (required, can be anything)
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module OptionsWithFallback
     def self.included(base)
       base.send(:include, SidekiqUniqueJobs::SidekiqWorkerMethods)

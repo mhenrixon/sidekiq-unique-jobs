@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Key class wraps logic dealing with various lock keys
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Key
     #
     # @!attribute [r] digest

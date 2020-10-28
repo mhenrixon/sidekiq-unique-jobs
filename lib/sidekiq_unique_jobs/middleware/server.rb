@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   module Middleware
     # The unique sidekiq middleware for the server processor
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Server
       prepend SidekiqUniqueJobs::Middleware
 

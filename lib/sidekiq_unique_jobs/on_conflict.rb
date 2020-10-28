@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
   #
   # Provides lock conflict resolutions
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   module OnConflict
     # A convenience method for using the configured strategies

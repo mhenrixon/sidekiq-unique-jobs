@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   module OnConflict
     # Default conflict strategy class that does nothing
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class NullStrategy < OnConflict::Strategy
       # Do nothing on conflict
       # @return [nil]

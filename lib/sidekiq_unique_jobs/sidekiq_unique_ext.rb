@@ -11,7 +11,7 @@ module Sidekiq
     #
     # Provides extensions for unlocking jobs that are removed and deleted
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module UniqueExtension
       #
@@ -48,7 +48,7 @@ module Sidekiq
     #
     # Provides extensions for unlocking jobs that are removed and deleted
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module UniqueExtension
       #
@@ -73,7 +73,7 @@ module Sidekiq
     #
     # Provides extensions for unlocking jobs that are removed and deleted
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module UniqueExtension
       #
@@ -93,7 +93,7 @@ module Sidekiq
     #
     # Provides extensions for unlocking jobs that are removed and deleted
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module UniqueExtension
       #
@@ -113,7 +113,7 @@ module Sidekiq
     #
     # Provides extensions for unlocking jobs that are removed and deleted
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module UniqueExtension
       #

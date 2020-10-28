@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Calculates timeout and expiration
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   class LockTTL
     # includes "SidekiqUniqueJobs::SidekiqWorkerMethods"
     # @!parse include SidekiqUniqueJobs::SidekiqWorkerMethods

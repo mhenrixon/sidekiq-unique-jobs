@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   module OnConflict
     # Strategy to replace the job on conflict
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Replace < OnConflict::Strategy
       #
       # @!attribute [r] queue

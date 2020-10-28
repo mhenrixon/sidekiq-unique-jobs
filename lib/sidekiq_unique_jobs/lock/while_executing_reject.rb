@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     # See {#lock} for more information about the client.
     # See {#execute} for more information about the server
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class WhileExecutingReject < WhileExecuting
       # Overridden with a forced {OnConflict::Reject} strategy
       # @return [OnConflict::Reject] a reject strategy

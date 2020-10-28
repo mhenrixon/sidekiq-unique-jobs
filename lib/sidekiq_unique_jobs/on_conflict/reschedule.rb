@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   module OnConflict
     # Strategy to reschedule job on conflict
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Reschedule < OnConflict::Strategy
       include SidekiqUniqueJobs::SidekiqWorkerMethods
       include SidekiqUniqueJobs::Logging

@@ -3,7 +3,7 @@
 #
 # Module with constants to avoid string duplication
 #
-# @author Mikael Henriksson <mikael@zoolutions.se>
+# @author Mikael Henriksson <mikael@mhenrixon.com>
 #
 module SidekiqUniqueJobs
   ARGS                  ||= "args"

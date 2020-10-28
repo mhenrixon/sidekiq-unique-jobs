@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
     # See {#lock} for more information about the client.
     # See {#execute} for more information about the server
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class WhileExecuting < BaseLock
       RUN_SUFFIX ||= ":RUN"
 

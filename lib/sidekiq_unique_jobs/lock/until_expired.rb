@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # UntilExpired locks until the job expires
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class UntilExpired < UntilExecuted
     end

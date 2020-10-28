@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
     # See {#lock} for more information about the client.
     # See {#execute} for more information about the server
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class UntilAndWhileExecuting < BaseLock
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method

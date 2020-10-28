@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Handles loading and dumping of json
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module JSON
     module_function
 

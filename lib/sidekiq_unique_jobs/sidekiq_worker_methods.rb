@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   # Module with convenience methods for the Sidekiq::Worker class
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module SidekiqWorkerMethods
     # Avoids duplicating worker_class.respond_to? in multiple places
     # @return [true, false]

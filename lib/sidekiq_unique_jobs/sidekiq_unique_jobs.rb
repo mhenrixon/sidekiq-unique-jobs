@@ -3,7 +3,7 @@
 #
 # Contains configuration and utility methods that belongs top level
 #
-# @author Mikael Henriksson <mikael@zoolutions.se>
+# @author Mikael Henriksson <mikael@mhenrixon.com>
 module SidekiqUniqueJobs
   include SidekiqUniqueJobs::Connection
   extend SidekiqUniqueJobs::JSON

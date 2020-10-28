@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Class Lock provides access to information about a lock
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Lock # rubocop:disable Metrics/ClassLength
     # includes "SidekiqUniqueJobs::Connection"

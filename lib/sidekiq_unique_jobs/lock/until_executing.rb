@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
     # - Locks on perform_in or perform_async
     # - Unlocks before yielding to the worker's perform method
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     class UntilExecuting < BaseLock
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method

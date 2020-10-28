@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Class Changelogs provides access to the changelog entries
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Changelog < Redis::SortedSet
     def initialize

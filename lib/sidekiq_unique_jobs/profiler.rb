@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Class MethodProfiler provides method level profiling
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Profiler
     def self.patch(klass, methods, name) # rubocop:disable Metrics/MethodLength

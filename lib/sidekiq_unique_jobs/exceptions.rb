@@ -4,14 +4,14 @@ module SidekiqUniqueJobs
   #
   # Base class for all exceptions raised from the gem
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class UniqueJobsError < ::RuntimeError
   end
 
   # Error raised when a Lua script fails to execute
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Conflict < UniqueJobsError
     def initialize(item)
       super("Item with the key: #{item[LOCK_DIGEST]} is already scheduled or processing")
@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
   #
   # Error raised when trying to add a duplicate lock
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class DuplicateLock < UniqueJobsError
   end
@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
   #
   # Error raised when trying to add a duplicate stragegy
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class DuplicateStrategy < UniqueJobsError
   end
@@ -37,7 +37,7 @@ module SidekiqUniqueJobs
   #
   # Error raised when an invalid argument is given
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class InvalidArgument < UniqueJobsError
   end
@@ -45,7 +45,7 @@ module SidekiqUniqueJobs
   #
   # Raised when a workers configuration is invalid
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class InvalidWorker < UniqueJobsError
     def initialize(lock_config)
@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
 
   # Error raised when a Lua script fails to execute
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   class InvalidUniqueArguments < UniqueJobsError
     def initialize(options)
       given            = options[:given]
@@ -79,7 +79,7 @@ module SidekiqUniqueJobs
   #
   # Raised when a workers configuration is invalid
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class NotUniqueWorker < UniqueJobsError
     def initialize(options)
@@ -89,7 +89,7 @@ module SidekiqUniqueJobs
 
   # Error raised from {OptionsWithFallback#lock_class}
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   class UnknownLock < UniqueJobsError
   end
 end
