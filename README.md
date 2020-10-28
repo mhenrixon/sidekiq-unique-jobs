@@ -196,6 +196,14 @@ On the other hand if I increase it to 10 000 orphaned locks per cleanup (`reaper
 
 > BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
 
+If you want to disable the reaper set it to `:none`, `nil` or `false`. Actually, any value that isn't `:ruby` or `:lua` will disable the reaping.
+
+```ruby
+SidekiqUniqueJobs.config.reaper = :none
+SidekiqUniqueJobs.config.reaper = nil
+SidekiqUniqueJobs.config.reaper = false
+```
+
 ### reaper_count
 
 ```ruby

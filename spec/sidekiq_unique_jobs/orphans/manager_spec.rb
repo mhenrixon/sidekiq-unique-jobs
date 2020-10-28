@@ -29,6 +29,14 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       it { is_expected.to eq(nil) }
     end
 
+    context "when disabled?" do
+      before do
+        allow(described_class).to receive(:disabled?).and_return(true)
+      end
+
+      it { is_expected.to eq(nil) }
+    end
+
     context "when NOT registered?" do
       it { is_expected.to eq(task) }
 
@@ -69,27 +77,165 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       allow(task).to receive(:execute)
 
       allow(described_class).to receive(:log_info).and_return(nil)
-      described_class.register_reaper_process
     end
 
-    it { is_expected.to eq(task) }
+    context "when unregistered?" do
+      before do
+        allow(described_class).to receive(:registered?).and_return(false)
+      end
 
-    it "removes the mutex" do
-      stop
-
-      expect(get(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_nil
+      it { is_expected.to eq(nil) }
     end
 
-    it "logs a stop message" do
-      stop
+    context "when disabled?" do
+      before do
+        allow(described_class).to receive(:enabled?).and_return(false)
+      end
 
-      expect(described_class).to have_received(:log_info).with("Stopping Reaper")
+      it { is_expected.to eq(nil) }
     end
 
-    it "shuts down the task" do
-      stop
+    context "when registered? and enabled?" do
+      before do
+        allow(described_class).to receive(:enabled?).and_return(true)
+        described_class.register_reaper_process
+      end
 
-      expect(task).to have_received(:shutdown)
+      it { is_expected.to eq(task) }
+
+      it "removes the mutex" do
+        stop
+
+        expect(get(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_nil
+      end
+
+      it "logs a stop message" do
+        stop
+
+        expect(described_class).to have_received(:log_info).with("Stopping Reaper")
+      end
+
+      it "shuts down the task" do
+        stop
+
+        expect(task).to have_received(:shutdown)
+      end
+    end
+  end
+
+  describe ".enabled?" do
+    subject(:enabled) { described_class.enabled? }
+
+    context "when SidekiqUniqueJobs.config.reaper = :lua" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: :lua, &example)
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = :ruby" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: :ruby, &example)
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = :none" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: :none, &example)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = nil" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: nil, &example)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = false" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: false, &example)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
+  describe ".disabled?" do
+    subject(:disabled) { described_class.disabled? }
+
+    context "when SidekiqUniqueJobs.config.reaper = :lua" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: :lua, &example)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = :ruby" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: :ruby, &example)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = :none" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: :none, &example)
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = nil" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: nil, &example)
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when SidekiqUniqueJobs.config.reaper = false" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(reaper: false, &example)
+      end
+
+      it { is_expected.to eq(true) }
+    end
+  end
+
+  describe ".registered?" do
+    subject(:registered) { described_class.registered? }
+
+    context "when registered" do
+      before { described_class.register_reaper_process }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when unregistered" do
+      it { is_expected.to eq(false) }
+    end
+  end
+
+  describe ".unregistered?" do
+    subject(:unregistered) { described_class.unregistered? }
+
+    context "when registered" do
+      before { described_class.register_reaper_process }
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when unregistered" do
+      it { is_expected.to eq(true) }
     end
   end
 

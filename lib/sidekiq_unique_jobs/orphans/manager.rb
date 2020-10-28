@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
       module_function
 
       DRIFT_FACTOR = 0.02
+      REAPERS      = [:ruby, :lua].freeze
 
       include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Logging
@@ -41,6 +42,9 @@ module SidekiqUniqueJobs
       # @return [Boolean]
       #
       def stop
+        return if disabled?
+        return if unregistered?
+
         with_logging_context do
           log_info("Stopping Reaper")
           unregister_reaper_process
@@ -114,7 +118,7 @@ module SidekiqUniqueJobs
       end
 
       #
-      # Checks if a reaper is already registered
+      # Checks if a reaper is registered
       #
       #
       # @return [true, false]
@@ -125,8 +129,35 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Checks if that reapers are not registerd
+      #
+      # @see registered?
+      #
+      # @return [true, false]
+      #
+      def unregistered?
+        !registered?
+      end
+
+      #
+      # Checks if reaping is disabled
+      #
+      # @see enabled?
+      #
+      # @return [true, false]
+      #
       def disabled?
-        reaper == :none
+        !enabled?
+      end
+
+      #
+      # Checks if reaping is enabled
+      #
+      # @return [true, false]
+      #
+      def enabled?
+        REAPERS.include?(reaper)
       end
 
       #
