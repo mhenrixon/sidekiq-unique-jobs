@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Class List provides convenient access to redis hashes
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class List < Entity
       #

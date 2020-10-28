@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @note this is a much slower version of the lua script but does not crash redis
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class LuaReaper < Reaper
       #

@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Class Entity functions as a base class for redis types
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class Entity
       # includes "SidekiqUniqueJobs::Logging"

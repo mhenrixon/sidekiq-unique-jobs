@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   #
   # Provides the sidekiq middleware that makes the gem work
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   module Middleware
     include SidekiqUniqueJobs::Logging::Middleware

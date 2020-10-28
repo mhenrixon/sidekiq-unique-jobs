@@ -1,5 +1,5 @@
 FROM ruby:2.3
-MAINTAINER Mika Hel <mikael@zoolutions.se>
+MAINTAINER Mika Hel <mikael@mhenrixon.com>
 
 # ENV BUILD_PACKAGES bash curl-dev ruby-dev build-base git libc-dev linux-headers
 # ENV RUBY_PACKAGES ruby ruby-io-console openssl-dev postgresql-dev ruby-bundler libxml2-dev libxslt-dev

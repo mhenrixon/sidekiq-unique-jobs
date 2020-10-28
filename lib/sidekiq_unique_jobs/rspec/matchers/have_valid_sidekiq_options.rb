@@ -5,13 +5,13 @@ module SidekiqUniqueJobs
     #
     # Module Matchers provides RSpec matcher for your workers
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module Matchers
       #
       # Class HaveValidSidekiqOptions validates the unique/lock configuration for a worker.
       #
-      # @author Mikael Henriksson <mikael@zoolutions.se>
+      # @author Mikael Henriksson <mikael@mhenrixon.com>
       #
       class HaveValidSidekiqOptions
         attr_reader :worker, :lock_config, :sidekiq_options

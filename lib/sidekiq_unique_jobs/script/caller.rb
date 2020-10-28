@@ -3,12 +3,12 @@
 module SidekiqUniqueJobs
   # Interface to dealing with .lua files
   #
-  # @author Mikael Henriksson <mikael@zoolutions.se>
+  # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Script
     #
     # Module Caller provides the convenience method #call_script
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module Caller
       module_function

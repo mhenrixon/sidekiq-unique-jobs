@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Module Redis provides more convenient access to redis
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     # rubocop:disable Naming/MethodParameterName, Metrics/ModuleLength
     # :nodoc:

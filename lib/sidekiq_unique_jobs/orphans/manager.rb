@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Manages the orphan reaper
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     module Manager
       module_function

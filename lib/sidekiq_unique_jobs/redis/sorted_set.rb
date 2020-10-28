@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Class SortedSet provides convenient access to redis sorted sets
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class SortedSet < Entity
       #

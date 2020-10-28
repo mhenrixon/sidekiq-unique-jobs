@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Class Set provides convenient access to redis sets
     #
-    # @author Mikael Henriksson <mikael@zoolutions.se>
+    # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class Set < Entity
       #
