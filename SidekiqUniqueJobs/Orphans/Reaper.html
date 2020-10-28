@@ -129,7 +129,7 @@
       
       
         
-        <div class='inline'><p>Mikael Henriksson <a href="mailto:mikael@zoolutions.se">mikael@zoolutions.se</a></p>
+        <div class='inline'><p>Mikael Henriksson <a href="mailto:mikael@mhenrixon.com">mikael@mhenrixon.com</a></p>
 </div>
       
     </li>
@@ -138,7 +138,7 @@
 
 </div><div id="subclasses">
   <h2>Direct Known Subclasses</h2>
-  <p class="children"><span class='object_link'><a href="LuaReaper.html" title="SidekiqUniqueJobs::Orphans::LuaReaper (class)">LuaReaper</a></span>, <span class='object_link'><a href="RubyReaper.html" title="SidekiqUniqueJobs::Orphans::RubyReaper (class)">RubyReaper</a></span></p>
+  <p class="children"><span class='object_link'><a href="LuaReaper.html" title="SidekiqUniqueJobs::Orphans::LuaReaper (class)">LuaReaper</a></span>, <span class='object_link'><a href="NullReaper.html" title="SidekiqUniqueJobs::Orphans::NullReaper (class)">NullReaper</a></span>, <span class='object_link'><a href="RubyReaper.html" title="SidekiqUniqueJobs::Orphans::RubyReaper (class)">RubyReaper</a></span></p>
 </div>
 
   
@@ -182,6 +182,9 @@
         <dd><pre class="code"><span class='lbrace'>{</span>
   <span class='label'>lua:</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="LuaReaper.html" title="SidekiqUniqueJobs::Orphans::LuaReaper (class)">LuaReaper</a></span></span><span class='comma'>,</span>
   <span class='label'>ruby:</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="RubyReaper.html" title="SidekiqUniqueJobs::Orphans::RubyReaper (class)">RubyReaper</a></span></span><span class='comma'>,</span>
+  <span class='label'>none:</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="NullReaper.html" title="SidekiqUniqueJobs::Orphans::NullReaper (class)">NullReaper</a></span></span><span class='comma'>,</span>
+  <span class='kw'>nil</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="NullReaper.html" title="SidekiqUniqueJobs::Orphans::NullReaper (class)">NullReaper</a></span></span><span class='comma'>,</span>
+  <span class='kw'>false</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="NullReaper.html" title="SidekiqUniqueJobs::Orphans::NullReaper (class)">NullReaper</a></span></span><span class='comma'>,</span>
 <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -721,12 +724,12 @@
       <pre class="lines">
 
 
-51
-52
-53</pre>
+55
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 55</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
   <span class='ivar'>@conn</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span>
@@ -768,12 +771,12 @@
       <pre class="lines">
 
 
-44
-45
-46</pre>
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_conn'>conn</span>
   <span class='ivar'>@conn</span>
@@ -836,14 +839,14 @@
       <pre class="lines">
 
 
-35
-36
-37
-38
-39</pre>
+39
+40
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span> <span class='kw'>if</span> <span class='id identifier rubyid_conn'>conn</span>
@@ -903,16 +906,16 @@
       <pre class="lines">
 
 
-91
-92
-93
-94
 95
 96
-97</pre>
+97
+98
+99
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_implementation'>implementation</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#REAPERS-constant" title="SidekiqUniqueJobs::Orphans::Reaper::REAPERS (constant)">REAPERS</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_reaper'>reaper</span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -964,12 +967,12 @@
       <pre class="lines">
 
 
-61
-62
-63</pre>
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_config'>config</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span>
@@ -1446,12 +1449,12 @@
       <pre class="lines">
 
 
-71
-72
-73</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper'>reaper</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span>
@@ -1499,12 +1502,12 @@
       <pre class="lines">
 
 
-81
-82
-83</pre>
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 81</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper_count'>reaper_count</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper_count'>reaper_count</span>
@@ -1647,9 +1650,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Oct 26 22:54:09 2020 by
+  Generated on Wed Oct 28 21:56:06 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.6).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

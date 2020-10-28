@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "pathname"
+require "fileutils"
+require "json"
+
+# path to your application root.
+APP_ROOT = Pathname.new File.expand_path("..", __dir__)
+MAIN_CHECK = <<~MAIN_CHECK
+  if [ $(git symbolic-ref --short -q HEAD) != 'main' ];
+    then exit 1;
+  fi
+MAIN_CHECK
+VERSION_TYPES = %w(major minor patch).freeze
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+abort("\n== Version Type incorrect ==") unless VERSION_TYPES.include?(ARGV[0])
+
+abort("\n== Not on main") unless system(MAIN_CHECK)
+
+current_version =
+  JSON.parse(File.read("package.json"))["version"].split(".").map(&:to_i)
+
+case ARGV[0]
+when "major"
+  current_version[0] += 1
+  current_version[1] = 0
+  current_version[2] = 0
+when "minor"
+  current_version[1] += 1
+  current_version[2] = 0
+when "patch"
+  current_version[2] += 1
+end
+
+joined_version = current_version.join(".")
+
+FileUtils.chdir APP_ROOT do # rubocop:disable Metrics/BlockLength
+  contents = <<~FILE
+    # frozen_string_literal: true
+
+    module SimpleCov
+      module Formatter
+        class MaterialFormatter
+          VERSION = "#{joined_version}"
+        end
+      end
+    end
+  FILE
+
+  package = JSON.parse(File.read("package.json"))
+  package["version"] = joined_version.to_s
+
+  puts "== Updating version in Version file to #{joined_version} =="
+  File.write("lib/simplecov-material/version.rb", contents)
+
+  puts "== Updated version in package.json file to #{joined_version} =="
+  File.open("package.json", "w") do |f|
+    f.write(JSON.pretty_generate(package))
+  end
+
+  system! "git add lib/simplecov-material/version.rb"
+  system! "git add package.json"
+
+  puts "== Committing updated files =="
+  system! "git commit -m 'Version bump to #{joined_version}'"
+  system! "git push"
+
+  puts "== Building gem =="
+  system! "yarn gem:build"
+
+  puts "== Publishing gem =="
+  built_gem_path = "pkg/simplecov-material-#{joined_version}.gem"
+  github_host = "https://rubygems.pkg.github.com/chiefpansancolt"
+
+  system! "gem push --key github --host #{github_host} #{built_gem_path}"
+  system! "gem push #{built_gem_path}"
+end

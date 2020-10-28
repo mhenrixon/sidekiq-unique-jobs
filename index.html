@@ -101,16 +101,40 @@
 <li><a href="#while-executing">While Executing</a></li>
 <li><a href="#custom-locks">Custom Locks</a></li>
 </ul></li>
-<li><a href="#conflict-strategy">Conflict Strategy</a></li>
-<li><a href="#libstrategiesmy_custom_strategyrb">lib/strategies/my_custom_strategy.rb</a></li>
-<li><a href="#for-rails-application">For rails application</a></li>
-<li><a href="#configinitializerssidekiq_unique_jobsrb">config/initializers/sidekiq_unique_jobs.rb</a></li>
-<li><a href="#for-other-projects-whenever-you-prefer">For other projects, whenever you prefer</a></li>
-<li><a href="#this-goes-in-your-initializer">this goes in your initializer</a></li>
-<li><a href="#appconfigroutesrb">app/config/routes.rb</a></li>
-<li><a href="#appworkersbad_workerrb">app/workers/bad_worker.rb</a></li>
-<li><a href="#specworkersbad_worker_specrb">spec/workers/bad_worker_spec.rb</a></li>
-<li><a href="#or">OR</a></li>
+<li><a href="#conflict-strategy">Conflict Strategy</a>
+
+<ul>
+<li><a href="#log">log</a></li>
+<li><a href="#raise">raise</a></li>
+<li><a href="#reject">reject</a></li>
+<li><a href="#replace">replace</a></li>
+<li><a href="#reschedule">Reschedule</a></li>
+<li><a href="#custom-strategies">Custom Strategies</a></li>
+</ul></li>
+<li><a href="#usage">Usage</a>
+
+<ul>
+<li><a href="#finer-control-over-uniqueness">Finer Control over Uniqueness</a></li>
+<li><a href="#after-unlock-callback">After Unlock Callback</a></li>
+<li><a href="#logging">Logging</a></li>
+<li><a href="#cleanup-dead-locks">Cleanup Dead Locks</a></li>
+<li><a href="#other-sidekiq-gems">Other Sidekiq gems</a></li>
+<li><a href="#sidekiq-global_id">sidekiq-global_id</a></li>
+</ul></li>
+<li><a href="#debugging">Debugging</a>
+
+<ul>
+<li><a href="#sidekiq-web">Sidekiq Web</a></li>
+<li><a href="#show-locks">Show Locks</a></li>
+<li><a href="#show-lock">Show Lock</a></li>
+</ul></li>
+<li><a href="#communication">Communication</a></li>
+<li><a href="#testing">Testing</a>
+
+<ul>
+<li><a href="#unique-sidekiq-configuration">Unique Sidekiq Configuration</a></li>
+<li><a href="#uniqueness">Uniqueness</a></li>
+</ul></li>
 <li><a href="#contributing">Contributing</a></li>
 <li><a href="#contributors">Contributors</a></li>
 </ul>
@@ -179,6 +203,8 @@
 <h2 id="global-configuration">Global Configuration</h2>
 
 <p>The gem supports a few different configuration options that might be of interest if you run into some weird issues.</p>
+
+<p>Configure SidekiqUniqueJobs in an initializer or the sidekiq initializer on application startup.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_debug_lua'>debug_lua</span>       <span class='op'>=</span> <span class='kw'>true</span>
@@ -256,6 +282,13 @@
 <blockquote>
 <p>BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)</p>
 </blockquote>
+
+<p>If you want to disable the reaper set it to <code>:none</code>, <code>nil</code> or <code>false</code>. Actually, any value that isn&#39;t <code>:ruby</code> or <code>:lua</code> will disable the reaping.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span> <span class='op'>=</span> <span class='symbol'>:none</span>
+<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span> <span class='op'>=</span> <span class='kw'>nil</span>
+<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span> <span class='op'>=</span> <span class='kw'>false</span>
+</code></pre>
 
 <h3 id="reaper_count">reaper_count</h3>
 
@@ -435,11 +468,9 @@
 
 <p>In order to make it available, you should call in your project startup:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># For rails application
-</span><span class='comment'># config/initializers/sidekiq_unique_jobs.rb
-</span><span class='comment'># For other projects, whenever you prefer
-</span>
-<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+<p>(For rails application config/initializers/sidekiq_unique_jobs.rb or other projects, wherever you prefer)</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_add_lock'>add_lock</span> <span class='symbol'>:my_custom_lock</span><span class='comma'>,</span> <span class='const'>Locks</span><span class='op'>::</span><span class='const'>MyCustomLock</span>
 <span class='kw'>end</span>
 </code></pre>
@@ -458,12 +489,13 @@
 
 <p>It is possible for locks to have different conflict strategy for the client and server. This is useful for <code>:until_and_while_executing</code>.</p>
 
-<pre class="code ruby"><code class="ruby">sidekiq_options lock: :until_and_while_executing, on_conflict: { client: :log, server: :reject }
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_and_while_executing</span><span class='comma'>,</span> 
+                <span class='label'>on_conflict:</span> <span class='lbrace'>{</span> <span class='label'>client:</span> <span class='symbol'>:log</span><span class='comma'>,</span> <span class='label'>server:</span> <span class='symbol'>:reject</span> <span class='rbrace'>}</span>
+</code></pre>
 
-### log
+<h3 id="log">log</h3>
 
-```ruby
-sidekiq_options on_conflict: :log
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:log</span>
 </code></pre>
 
 <p>This strategy is intended to be used with <code>UntilExecuted</code> and <code>UntilExpired</code>. It will log a line about that this is job is a duplicate of another.</p>
@@ -519,11 +551,9 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 
 <p>In order to make it available, you should call in your project startup:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># For rails application
-</span><span class='comment'># config/initializers/sidekiq_unique_jobs.rb
-</span><span class='comment'># For other projects, whenever you prefer
-</span>
-<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+<p>(For rails application config/initializers/sidekiq_unique_jobs.rb for other projects, wherever you prefer)</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_add_strategy'>add_strategy</span> <span class='symbol'>:my_custom_strategy</span><span class='comma'>,</span> <span class='const'>Strategies</span><span class='op'>::</span><span class='const'>MyCustomStrategy</span>
 <span class='kw'>end</span>
 </code></pre>
@@ -617,13 +647,13 @@ end
   end
   ...
 end.
+</code></pre>
 
-### Logging
+<h3 id="logging">Logging</h3>
 
-To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false
+<p>To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false</p>
 
-```ruby
-class UniqueJobWithFilterMethod
+<pre class="code ruby"><code class="ruby">class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :while_executing,
                   log_duplicate: true
@@ -647,8 +677,7 @@ end
 
 <p>Starting in v5.1, Sidekiq can also fire a global callback when a job dies:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># this goes in your initializer
-</span><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_death_handlers'>death_handlers</span> <span class='op'>&lt;&lt;</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='comma'>,</span> <span class='id identifier rubyid__ex'>_ex</span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unique_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
     <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
@@ -683,7 +712,7 @@ end
 
 <p>To use the web extension you need to require it in your routes.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># app/config/routes.rb
+<pre class="code ruby"><code class="ruby"><span class='comment'>#app/config/routes.rb
 </span><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>sidekiq_unique_jobs/web</span><span class='tstring_end'>&#39;</span></span>
 <span class='id identifier rubyid_mount'>mount</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>Web</span><span class='comma'>,</span> <span class='label'>at:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/sidekiq</span><span class='tstring_end'>&#39;</span></span>
 </code></pre>
@@ -713,15 +742,15 @@ already does this.</p>
 
 <p>Let&#39;s take a <em>bad</em> worker:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># app/workers/bad_worker.rb
+<pre class="code ruby"><code class="ruby"><span class='comment'>#app/workers/bad_worker.rb
 </span><span class='kw'>class</span> <span class='const'>BadWorker</span>
   <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:while_executing</span><span class='comma'>,</span> <span class='label'>on_conflict:</span> <span class='symbol'>:replace</span>
 <span class='kw'>end</span>
 
-<span class='comment'># spec/workers/bad_worker_spec.rb
+<span class='comment'>#spec/workers/bad_worker_spec.rb
 </span>
 <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>sidekiq_unique_jobs/testing</span><span class='tstring_end'>&quot;</span></span>
-<span class='comment'># OR
+<span class='comment'>#OR
 </span><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>sidekiq_unique_jobs/rspec/matchers</span><span class='tstring_end'>&quot;</span></span>
 
 <span class='const'>RSpec</span><span class='period'>.</span><span class='id identifier rubyid_describe'>describe</span> <span class='const'>BadWorker</span> <span class='kw'>do</span>
@@ -806,9 +835,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Mon Oct 26 22:54:07 2020 by
+  Generated on Wed Oct 28 21:56:03 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.6).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

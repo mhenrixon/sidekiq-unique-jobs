@@ -1,0 +1,11 @@
+dependencies:
+  override:
+    - bundle install
+    - ./bin/start-toxiproxy.sh
+test:
+  override:
+    - bundle exec rake test
+
+machine:
+  ruby:
+    version: 2.4.0

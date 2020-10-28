@@ -1,0 +1,68 @@
+{
+  "name": "simplecov-material",
+  "version": "1.0.0",
+  "description": "HTML Material Design View for Simplecov formatter",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "test:start": "bundle exec rake test",
+    "test:open": "open coverage/index.html",
+    "test": "npm-run-all test:*",
+    "markdown": "markdownlint CHANGELOG.md CODE_OF_CONDUCT.md CONTRIBUTING.md README.md -c .markdownlint.yml",
+    "ruby": "rubocop",
+    "javascript": "eslint dist webpack.config.js",
+    "css": "stylelint dist/**/*.scss",
+    "gem:build": "bundle exec rake build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chiefpansancolt/simplecov-material"
+  },
+  "keywords": [
+    "simplecov",
+    "simplecov-formatter",
+    "simplecov-material"
+  ],
+  "author": {
+    "name": "Christopher Pezza",
+    "email": "github@chiefpansancolt.live"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chiefpansancolt/simplecov-material/issues"
+  },
+  "contributors": [
+    {
+      "name": "Christopher Pezza",
+      "email": "github@chiefpansancolt.live"
+    }
+  ],
+  "homepage": "https://github.com/chiefpansancolt/simplecov-material#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "autoprefixer": "^9.6.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-google": "^0.13.0",
+    "extract-loader": "^3.1.0",
+    "file-loader": "^4.0.0",
+    "markdownlint": "^0.21.0",
+    "markdownlint-cli": "^0.24.0",
+    "node-sass": "^4.12.0",
+    "npm-run-all": "^4.1.5",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "stylelint": "^10.1.0",
+    "stylelint-config-standard": "^18.3.0",
+    "stylelint-order": "^3.0.0",
+    "stylelint-scss": "^3.8.0",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5"
+  },
+  "dependencies": {
+    "material-components-web": "^3.0.0",
+    "material-design-icons-iconfont": "^5.0.1",
+    "timeago.js": "^4.0.0-beta.2"
+  }
+}

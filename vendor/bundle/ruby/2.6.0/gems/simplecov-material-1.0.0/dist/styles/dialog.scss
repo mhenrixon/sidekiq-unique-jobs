@@ -1,0 +1,191 @@
+.mdc-dialog--scrollable {
+
+  .mdc-dialog__content {
+    padding: 0;
+  }
+}
+
+.mdc-dialog {
+
+  .mdc-dialog__surface {
+    max: {
+      width: 100%;
+    }
+    min: {
+      width: 560px;
+    }
+
+    width: 1000px;
+
+    .mdc-dialog__content {
+      padding: 0;
+    }
+  }
+
+  .mdc-dialog__actions {
+    justify: {
+      content: space-between !important;
+    }
+
+    .text {
+      justify: {
+        content: flex-start !important;
+      }
+    }
+
+    .buttons {
+      justify: {
+        content: flex-end !important;
+      }
+    }
+  }
+
+  .header {
+    padding: 10px;
+  }
+
+  code {
+    color: #000;
+  }
+
+  pre {
+    background: {
+      color: #546E7A;
+    }
+
+    color: #000;
+    margin: 0;
+    padding: 0;
+    white: {
+      space: normal;
+    }
+
+    ol {
+      color: #FFF;
+      padding: 0;
+      font: {
+        size: 12px;
+      }
+      margin: {
+        bottom: 0;
+        left: 45px;
+        right: 0;
+        top: 0;
+      }
+    }
+
+    li {
+      border: {
+        left: 5px solid #FFF;
+      }
+
+      margin: 0;
+      padding: 2px 6px;
+
+      code {
+        white: {
+          space: pre;
+          space: pre-wrap;
+        }
+      }
+    }
+
+    .hits {
+      background: {
+        color: #212121;
+      }
+      border: {
+        radius: 6px;
+      }
+
+      color: #FFF;
+      float: right;
+      font: {
+        size: 10px;
+        weight: bold;
+      }
+      margin: {
+        left: 10px;
+      }
+      padding: {
+        left: 5px;
+        right: 5px;
+      }
+      text: {
+        align: center;
+      }
+    }
+  }
+
+  .covered {
+    border: {
+      color: #388E3C;
+    }
+
+    &:nth-child(odd) {
+      background: {
+        color: #81C784;
+      }
+    }
+
+    &:nth-child(even) {
+      background: {
+        color: #A5D6A7;
+      }
+    }
+  }
+
+  .missed {
+    border: {
+      color: #D32F2F;
+    }
+
+    &:nth-child(odd) {
+      background: {
+        color: #E57373;
+      }
+    }
+
+    &:nth-child(even) {
+      background: {
+        color: #EF9A9A;
+      }
+    }
+  }
+
+  .never {
+    border: {
+      color: #000;
+    }
+
+    &:nth-child(odd) {
+      background: {
+        color: #EFEFEF;
+      }
+    }
+
+    &:nth-child(even) {
+      background: {
+        color: #F4F4F4;
+      }
+    }
+  }
+
+  .skipped {
+    border: {
+      color: #FBC02D;
+    }
+
+    &:nth-child(odd) {
+      background: {
+        color: #FFF176;
+      }
+    }
+
+    &:nth-child(even) {
+      background: {
+        color: #FFF59D;
+      }
+    }
+  }
+}

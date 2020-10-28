@@ -1,0 +1,5 @@
+= ruby-prof
+
+{<img src="https://travis-ci.org/ruby-prof/ruby-prof.png?branch=master" alt="Build Status" />}[https://travis-ci.org/ruby-prof/ruby-prof]
+
+For an overview of ruby-prof please see https://ruby-prof.github.io

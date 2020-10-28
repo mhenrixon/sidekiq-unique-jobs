@@ -1,0 +1,78 @@
+<div class="mdc-dialog" role="alertdialog" aria-modal="true"
+     aria-labelledby="<%= id(file) %>" id="<%= id(file) %>">
+  <div class="mdc-dialog__container">
+    <div class="mdc-dialog__surface">
+      <h2 class="mdc-dialog__title">
+        <%= shortened_filename file %>
+        <span class="parenthese">
+          <span class="<%= coverage_class(file.covered_percent) %>">
+              <%= file.covered_percent.round(2).to_s %>%
+          </span>
+        </span>
+        <% if branchable_result? %>
+          | Branches
+          <span class="parenthese">
+            <span class="<%= coverage_class(file.covered_percent) %>">
+                <%= file.branches_coverage_percent.round(2).to_s %>%
+            </span>
+          </span>
+        <% end %>
+      </h2>
+
+      <div class="mdc-dialog__content">
+        <pre>
+          <ol>
+            <% file.lines.each do |line| %>
+              <li class="<%= line.status %>" data-hits="<%= line.coverage ? line.coverage : '' %>"
+                  data-linenumber="<%= line.number %>">
+                <% if line.covered? %><span class="hits"><%= line.coverage %></span><% end %>
+                <% if line.skipped? %><span class="hits">skipped</span><% end %>
+
+                <% if branchable_result? %>
+                  <% file.branches_for_line(line.number).each do |branch_type, hit_count| %>
+                    <span class="hits" title="<%= branch_type%> branch hit <%= hit_count %> times">
+                      <%= branch_type %>: <%= hit_count %>
+                    </span>
+                  <% end %>
+                <% end %>
+                <code class="ruby"><%= CGI.escapeHTML(line.src.chomp) %></code>
+              </li>
+            <% end %>
+          </ol>
+        </pre>
+      </div>
+
+      <footer class="mdc-dialog__actions">
+        <div class="text">
+          <b><%= file.lines_of_code %></b> Relevant Lines
+          |
+          <span class="green"><b>
+            <%= format_number(file.covered_lines.count) %>
+          </b></span> Lines Covered
+          |
+          <span class="red"><b>
+            <%= format_number(file.missed_lines.count) %>
+          </b></span> Lines Missed
+          <% if branchable_result? %>
+          |
+          <b><%= file.total_branches.count %></b> Total Branches
+          |
+          <span class="green"><b>
+            <%= format_number(file.covered_branches.count) %>
+          </b></span> Branches Covered
+          |
+          <span class="red"><b>
+            <%= format_number(file.missed_branches.count) %>
+          </b></span> Branches Missed
+          <% end %>
+        </div>
+        <div class="buttons">
+          <button type="button" class="mdc-button mdc-button--raised mdc-dialog__button" data-mdc-dialog-action="close">
+            <span class="mdc-button__label">close</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
+  <div class="mdc-dialog__scrim"></div>
+</div>

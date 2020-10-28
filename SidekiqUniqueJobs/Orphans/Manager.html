@@ -101,7 +101,7 @@
       
       
         
-        <div class='inline'><p>Mikael Henriksson <a href="mailto:mikael@zoolutions.se">mikael@zoolutions.se</a></p>
+        <div class='inline'><p>Mikael Henriksson <a href="mailto:mikael@mhenrixon.com">mikael@mhenrixon.com</a></p>
 </div>
       
     </li>
@@ -121,6 +121,11 @@
           
         </dt>
         <dd><pre class="code"><span class='float'>0.02</span></pre></dd>
+      
+        <dt id="REAPERS-constant" class="">REAPERS =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span><span class='symbol'>:ruby</span><span class='comma'>,</span> <span class='symbol'>:lua</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
   
@@ -164,7 +169,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#disabled%3F-class_method" title="disabled? (class method)">.<strong>disabled?</strong>  &#x21d2; Boolean </a>
+      <a href="#disabled%3F-class_method" title="disabled? (class method)">.<strong>disabled?</strong>  &#x21d2; true, false </a>
     
 
     
@@ -178,7 +183,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Checks if reaping is disabled.</p>
+</div></span>
   
 </li>
 
@@ -201,6 +207,29 @@
 
   
     <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#enabled%3F-class_method" title="enabled? (class method)">.<strong>enabled?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Checks if reaping is enabled.</p>
+</div></span>
   
 </li>
 
@@ -357,7 +386,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Checks if a reaper is already registered.</p>
+    <span class="summary_desc"><div class='inline'><p>Checks if a reaper is registered.</p>
 </div></span>
   
 </li>
@@ -478,6 +507,29 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unregistered%3F-class_method" title="unregistered? (class method)">.<strong>unregistered?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Checks if that reapers are not registerd.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -502,12 +554,12 @@
       <pre class="lines">
 
 
-166
-167
-168</pre>
+197
+198
+199</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 166</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 197</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_current_timestamp'>current_timestamp</span>
   <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
@@ -520,7 +572,7 @@
       <div class="method_details ">
   <h3 class="signature " id="disabled?-class_method">
   
-    .<strong>disabled?</strong>  &#x21d2; <tt>Boolean</tt> 
+    .<strong>disabled?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
   
 
   
@@ -528,7 +580,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Checks if reaping is disabled</p>
+
 
   </div>
 </div>
@@ -540,7 +593,7 @@
     <li>
       
       
-        <span class='type'>(<tt>Boolean</tt>)</span>
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
       
       
       
@@ -548,21 +601,28 @@
   
 </ul>
 
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#enabled%3F-class_method" title="SidekiqUniqueJobs::Orphans::Manager.enabled? (method)">enabled?</a></span></li>
+    
+  </ul>
+
 </div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-128
-129
-130</pre>
+150
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 128</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 150</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disabled?'>disabled?</span>
-  <span class='id identifier rubyid_reaper'>reaper</span> <span class='op'>==</span> <span class='symbol'>:none</span>
+  <span class='op'>!</span><span class='id identifier rubyid_enabled?'>enabled?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -584,15 +644,68 @@
       <pre class="lines">
 
 
-162
-163
-164</pre>
+193
+194
+195</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 162</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 193</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_drift_reaper_interval'>drift_reaper_interval</span>
   <span class='id identifier rubyid_reaper_interval'>reaper_interval</span> <span class='op'>+</span> <span class='lparen'>(</span><span class='id identifier rubyid_reaper_interval'>reaper_interval</span> <span class='op'>*</span> <span class='const'><span class='object_link'><a href="#DRIFT_FACTOR-constant" title="SidekiqUniqueJobs::Orphans::Manager::DRIFT_FACTOR (constant)">DRIFT_FACTOR</a></span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="enabled?-class_method">
+  
+    .<strong>enabled?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Checks if reaping is enabled</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+159
+160
+161</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 159</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_enabled?'>enabled?</span>
+  <span class='const'><span class='object_link'><a href="#REAPERS-constant" title="SidekiqUniqueJobs::Orphans::Manager::REAPERS (constant)">REAPERS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_reaper'>reaper</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -654,16 +767,16 @@
       <pre class="lines">
 
 
-108
-109
-110
-111
 112
 113
-114</pre>
+114
+115
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 112</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logging_context'>logging_context</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_logger_context_hash?'>logger_context_hash?</span>
@@ -708,12 +821,12 @@
       <pre class="lines">
 
 
-83
-84
-85</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper'>reaper</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper'>reaper</span>
@@ -754,12 +867,12 @@
       <pre class="lines">
 
 
-90
-91
-92</pre>
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper_interval'>reaper_interval</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper_interval'>reaper_interval</span>
@@ -800,12 +913,12 @@
       <pre class="lines">
 
 
-97
-98
-99</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 97</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaper_timeout'>reaper_timeout</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reaper_timeout'>reaper_timeout</span>
@@ -840,12 +953,12 @@
       <pre class="lines">
 
 
-148
-149
-150</pre>
+179
+180
+181</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 148</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 179</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_refresh_reaper_mutex'>refresh_reaper_mutex</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='const'>UNIQUE_REAPER</span><span class='comma'>,</span> <span class='id identifier rubyid_current_timestamp'>current_timestamp</span><span class='comma'>,</span> <span class='label'>ex:</span> <span class='id identifier rubyid_drift_reaper_interval'>drift_reaper_interval</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -880,12 +993,12 @@
       <pre class="lines">
 
 
-138
-139
-140</pre>
+169
+170
+171</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 138</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 169</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_register_reaper_process'>register_reaper_process</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='const'>UNIQUE_REAPER</span><span class='comma'>,</span> <span class='id identifier rubyid_current_timestamp'>current_timestamp</span><span class='comma'>,</span> <span class='label'>nx:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>ex:</span> <span class='id identifier rubyid_drift_reaper_interval'>drift_reaper_interval</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -906,7 +1019,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Checks if a reaper is already registered</p>
+    <p>Checks if a reaper is registered</p>
 
 
   </div>
@@ -933,14 +1046,14 @@
       <pre class="lines">
 
 
-122
-123
-124
-125
-126</pre>
+126
+127
+128
+129
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_registered?'>registered?</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
@@ -994,7 +1107,6 @@
       <pre class="lines">
 
 
-24
 25
 26
 27
@@ -1005,14 +1117,15 @@
 32
 33
 34
-35</pre>
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_start'>start</span> <span class='comment'># rubocop:disable
-</span>  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_registered?'>registered?</span>
-  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_disabled?'>disabled?</span>
+</span>  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_disabled?'>disabled?</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_registered?'>registered?</span>
 
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_register_reaper_process'>register_reaper_process</span>
@@ -1065,18 +1178,24 @@
       <pre class="lines">
 
 
-43
 44
 45
 46
 47
 48
-49</pre>
+49
+50
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stop'>stop</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_disabled?'>disabled?</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_unregistered?'>unregistered?</span>
+
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_log_info'>log_info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Stopping Reaper</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
     <span class='id identifier rubyid_unregister_reaper_process'>unregister_reaper_process</span>
@@ -1130,19 +1249,19 @@
       <pre class="lines">
 
 
-57
-58
-59
-60
 61
 62
 63
 64
 65
-66</pre>
+66
+67
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 57</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_task'>task</span>
   <span class='ivar'>@task</span> <span class='op'>||=</span> <span class='const'>Concurrent</span><span class='op'>::</span><span class='const'>TimerTask</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_timer_task_options'>timer_task_options</span><span class='rparen'>)</span> <span class='kw'>do</span>
@@ -1197,14 +1316,14 @@
       <pre class="lines">
 
 
-74
-75
-76
-77
-78</pre>
+78
+79
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 78</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_timer_task_options'>timer_task_options</span>
   <span class='lbrace'>{</span> <span class='label'>run_now:</span> <span class='kw'>true</span><span class='comma'>,</span>
@@ -1241,15 +1360,75 @@
       <pre class="lines">
 
 
-158
-159
-160</pre>
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 158</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 189</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unregister_reaper_process'>unregister_reaper_process</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='const'>UNIQUE_REAPER</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unregistered?-class_method">
+  
+    .<strong>unregistered?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Checks if that reapers are not registerd</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#registered%3F-class_method" title="SidekiqUniqueJobs::Orphans::Manager.registered? (method)">registered?</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+139
+140
+141</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/manager.rb', line 139</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_unregistered?'>unregistered?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_registered?'>registered?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1261,9 +1440,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Oct 26 22:54:07 2020 by
+  Generated on Wed Oct 28 21:56:04 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.6).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

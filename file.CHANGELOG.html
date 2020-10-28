@@ -59,6 +59,56 @@
 
       <div id="content"><div id='filecontents'><h1 id="changelog">Changelog</h1>
 
+<h2 id="unreleased"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD">Unreleased</a></h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...HEAD">Full Changelog</a></p>
+
+<p><strong>Merged pull requests:</strong></p>
+
+<ul>
+<li>Update sidekiq-unique-jobs.gemspec <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/542">#542</a> (<a href="https://github.com/sergey-alekseev">sergey-alekseev</a>)</li>
+</ul>
+
+<h2 id="v6-0-25-2020-10-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.25">v6.0.25</a> (2020-10-26)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta25...v6.0.25">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Support apartment <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/541">#541</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+<li>Support both instance method and class method <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/528">#528</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<h2 id="v7-0-0-beta25-2020-10-26"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta25">v7.0.0.beta25</a> (2020-10-26)</h2>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta24...v7.0.0.beta25">Full Changelog</a></p>
+
+<p><strong>Implemented enhancements:</strong></p>
+
+<ul>
+<li>Bump rubocop <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/539">#539</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
+<p><strong>Fixed bugs:</strong></p>
+
+<ul>
+<li>Ruby reaper not working, active jobs queried incorrectly <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/537">#537</a></li>
+<li>Fix RubyReaper active? <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/538">#538</a> (<a href="https://github.com/tanner-rutgers">tanner-rutgers</a>)</li>
+</ul>
+
+<p><strong>Closed issues:</strong></p>
+
+<ul>
+<li>ConnectionPool::TimeoutError and :until_executed <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/535">#535</a></li>
+</ul>
+
+<p><strong>Merged pull requests:</strong></p>
+
+<ul>
+<li>Support apartment <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/540">#540</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
+</ul>
+
 <h2 id="v7-0-0-beta24-2020-09-27"><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta24">v7.0.0.beta24</a> (2020-09-27)</h2>
 
 <p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta23...v7.0.0.beta24">Full Changelog</a></p>
@@ -72,7 +122,6 @@
 <p><strong>Closed issues:</strong></p>
 
 <ul>
-<li>while_executing + raise let non-unique jobs to be executed <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/534">#534</a></li>
 <li>Leaked keys in version 5.0.10 <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/519">#519</a></li>
 </ul>
 
@@ -906,6 +955,7 @@
 <p><strong>Merged pull requests:</strong></p>
 
 <ul>
+<li>Add more details about testing uniqueness <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/301">#301</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Update README.md <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/300">#300</a> (<a href="https://github.com/pirj">pirj</a>)</li>
 </ul>
 
@@ -931,7 +981,6 @@
 <p><strong>Merged pull requests:</strong></p>
 
 <ul>
-<li>Add more details about testing uniqueness <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/301">#301</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Adds changelog entry <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/299">#299</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 <li>Fix README <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/pull/298">#298</a> (<a href="https://github.com/mhenrixon">mhenrixon</a>)</li>
 </ul>
@@ -1748,9 +1797,9 @@
 </div></div>
 
       <div id="footer">
-  Generated on Mon Oct 26 22:54:07 2020 by
+  Generated on Wed Oct 28 21:56:03 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.6).
+  0.9.25 (ruby-2.6.5).
 </div>
 
     </div>

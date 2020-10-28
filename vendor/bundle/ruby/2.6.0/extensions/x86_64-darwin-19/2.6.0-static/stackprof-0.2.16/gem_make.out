@@ -1,0 +1,56 @@
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/stackprof-0.2.16/ext/stackprof
+/Users/mhenriksson/.rubies/ruby-2.6.6/bin/ruby -I /Users/mhenriksson/.rubies/ruby-2.6.6/lib/ruby/2.6.0 -r ./siteconf20201026-62481-1s96kfq.rb extconf.rb
+checking for rb_postponed_job_register_one()... yes
+checking for rb_profile_frames()... yes
+checking for rb_tracepoint_new()... yes
+checking for RUBY_INTERNAL_EVENT_NEWOBJ... yes
+creating Makefile
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/stackprof-0.2.16/ext/stackprof
+make "DESTDIR=" clean
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/stackprof-0.2.16/ext/stackprof
+make "DESTDIR="
+compiling stackprof.c
+stackprof.c:149:30: warning: implicit conversion loses integer precision: 'long' to '__darwin_suseconds_t' (aka 'int') [-Wshorten-64-to-32]
+        timer.it_interval.tv_usec = NUM2LONG(interval);
+                                  ~ ^~~~~~~~~~~~~~~~~~
+/Users/mhenriksson/.rubies/ruby-2.6.6/include/ruby-2.6.0/ruby/ruby.h:678:21: note: expanded from macro 'NUM2LONG'
+#define NUM2LONG(x) RB_NUM2LONG(x)
+                    ^~~~~~~~~~~~~~
+/Users/mhenriksson/.rubies/ruby-2.6.6/include/ruby-2.6.0/ruby/ruby.h:677:24: note: expanded from macro 'RB_NUM2LONG'
+#define RB_NUM2LONG(x) rb_num2long_inline(x)
+                       ^~~~~~~~~~~~~~~~~~~~~
+stackprof.c:538:41: warning: implicit conversion loses integer precision: 'long' to 'int' [-Wshorten-64-to-32]
+        timestamp_delta = (1000 * diff.tv_sec) + diff.tv_usec;
+                        ~ ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+stackprof.c:557:76: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]
+        delta_to_first_unrecorded_gc_sample = (1000 * diff.tv_sec + diff.tv_usec) - (_stackprof.unrecorded_gc_samples - 1) * NUM2LONG(_stackprof.interval);
+                                            ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stackprof.c:564:19: warning: comparison of integers of different signs: 'int' and 'size_t' (aka 'unsigned long') [-Wsign-compare]
+    for (i = 0; i < _stackprof.unrecorded_gc_samples; i++) {
+                ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stackprof.c:565:71: warning: implicit conversion loses integer precision: 'long' to 'int' [-Wshorten-64-to-32]
+        int timestamp_delta = i == 0 ? delta_to_first_unrecorded_gc_sample : NUM2LONG(_stackprof.interval);
+            ~~~~~~~~~~~~~~~                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/mhenriksson/.rubies/ruby-2.6.6/include/ruby-2.6.0/ruby/ruby.h:678:21: note: expanded from macro 'NUM2LONG'
+#define NUM2LONG(x) RB_NUM2LONG(x)
+                    ^~~~~~~~~~~~~~
+/Users/mhenriksson/.rubies/ruby-2.6.6/include/ruby-2.6.0/ruby/ruby.h:677:24: note: expanded from macro 'RB_NUM2LONG'
+#define RB_NUM2LONG(x) rb_num2long_inline(x)
+                       ^~~~~~~~~~~~~~~~~~~~~
+stackprof.c:698:34: warning: implicit conversion loses integer precision: 'long' to '__darwin_suseconds_t' (aka 'int') [-Wshorten-64-to-32]
+            timer.it_interval.tv_usec = NUM2LONG(_stackprof.interval);
+                                      ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/mhenriksson/.rubies/ruby-2.6.6/include/ruby-2.6.0/ruby/ruby.h:678:21: note: expanded from macro 'NUM2LONG'
+#define NUM2LONG(x) RB_NUM2LONG(x)
+                    ^~~~~~~~~~~~~~
+/Users/mhenriksson/.rubies/ruby-2.6.6/include/ruby-2.6.0/ruby/ruby.h:677:24: note: expanded from macro 'RB_NUM2LONG'
+#define RB_NUM2LONG(x) rb_num2long_inline(x)
+                       ^~~~~~~~~~~~~~~~~~~~~
+6 warnings generated.
+linking shared-object stackprof/stackprof.bundle
+
+current directory: /Users/mhenriksson/Code/mhenrixon/sidekiq-unique-jobs/vendor/bundle/ruby/2.6.0/gems/stackprof-0.2.16/ext/stackprof
+make "DESTDIR=" install
+/usr/local/bin/ginstall -c -m 0755 stackprof.bundle ./.gem.20201026-62481-q93lzy/stackprof
