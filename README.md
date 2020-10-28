@@ -33,10 +33,15 @@
   - [While Executing](#while-executing)
   - [Custom Locks](#custom-locks)
 - [Conflict Strategy](#conflict-strategy)
-- [lib/strategies/my_custom_strategy.rb](#libstrategiesmy_custom_strategyrb)
-- [For rails application](#for-rails-application)
-- [config/initializers/sidekiq_unique_jobs.rb](#configinitializerssidekiq_unique_jobsrb)
-- [For other projects, whenever you prefer](#for-other-projects-whenever-you-prefer)
+  - [log](#log)
+  - [raise](#raise)
+  - [reject](#reject)
+  - [replace](#replace)
+  - [Reschedule](#reschedule)
+  - [Custom Strategies](#custom-strategies)
+- [Usage](#usage)
+  - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
+  - [After Unlock Callback](#after-unlock-callback)
   - [Logging](#logging)
   - [Cleanup Dead Locks](#cleanup-dead-locks)
   - [Other Sidekiq gems](#other-sidekiq-gems)
@@ -112,6 +117,8 @@ See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/
 ## Global Configuration
 
 The gem supports a few different configuration options that might be of interest if you run into some weird issues.
+
+Configure SidekiqUniqueJobs in an initializer or the sidekiq initializer on application startup.
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
@@ -398,11 +405,9 @@ You can refer on all the locks defined in `lib/sidekiq_unique_jobs/lock/*.rb`.
 
 In order to make it available, you should call in your project startup:
 
-```ruby
-# For rails application
-# config/initializers/sidekiq_unique_jobs.rb
-# For other projects, whenever you prefer
+(For rails application config/initializers/sidekiq_unique_jobs.rb or other projects, wherever you prefer)
 
+```ruby
 SidekiqUniqueJobs.configure do |config|
   config.add_lock :my_custom_lock, Locks::MyCustomLock
 end
@@ -423,7 +428,9 @@ The last one is log which can be be used with the lock `UntilExecuted` and `Unti
 It is possible for locks to have different conflict strategy for the client and server. This is useful for `:until_and_while_executing`.
 
 ```ruby
-sidekiq_options lock: :until_and_while_executing, on_conflict: { client: :log, server: :reject }
+sidekiq_options lock: :until_and_while_executing, 
+                on_conflict: { client: :log, server: :reject }
+```
 
 ### log
 
@@ -489,11 +496,9 @@ You can refer to all the strategies defined in `lib/sidekiq_unique_jobs/on_confl
 
 In order to make it available, you should call in your project startup:
 
-```ruby
-# For rails application
-# config/initializers/sidekiq_unique_jobs.rb
-# For other projects, whenever you prefer
+(For rails application config/initializers/sidekiq_unique_jobs.rb for other projects, wherever you prefer)
 
+```ruby
 SidekiqUniqueJobs.configure do |config|
   config.add_strategy :my_custom_strategy, Strategies::MyCustomStrategy
 end
@@ -593,6 +598,7 @@ class UniqueJobWithFilterMethod
   end
   ...
 end.
+```
 
 ### Logging
 
@@ -625,7 +631,6 @@ end
 Starting in v5.1, Sidekiq can also fire a global callback when a job dies:
 
 ```ruby
-# this goes in your initializer
 Sidekiq.configure_server do |config|
   config.death_handlers << ->(job, _ex) do
     digest = job['unique_digest']
@@ -663,7 +668,7 @@ There are several ways of removing keys that are stuck. The prefered way is by u
 To use the web extension you need to require it in your routes.
 
 ```ruby
-# app/config/routes.rb
+#app/config/routes.rb
 require 'sidekiq_unique_jobs/web'
 mount Sidekiq::Web, at: '/sidekiq'
 ```
@@ -694,15 +699,15 @@ Since v7 it is possible to perform some simple validation against your workers s
 Let's take a _bad_ worker:
 
 ```ruby
-# app/workers/bad_worker.rb
+#app/workers/bad_worker.rb
 class BadWorker
   sidekiq_options lock: :while_executing, on_conflict: :replace
 end
 
-# spec/workers/bad_worker_spec.rb
+#spec/workers/bad_worker_spec.rb
 
 require "sidekiq_unique_jobs/testing"
-# OR
+#OR
 require "sidekiq_unique_jobs/rspec/matchers"
 
 RSpec.describe BadWorker do
