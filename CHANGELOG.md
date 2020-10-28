@@ -1,8 +1,13 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v7.0.0.beta26](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta26) (2020-10-28)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...v7.0.0.beta26)
+
+**Implemented enhancements:**
+
+- How to disable Reaper [\#543](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/543)
+- Allow disabling of reaper [\#544](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/544) ([mhenrixon](https://github.com/mhenrixon))
 
 **Merged pull requests:**
 
@@ -188,14 +193,11 @@
 **Fixed bugs:**
 
 - Use thread-safe digest creation mechanism [\#484](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/484) ([mhenrixon](https://github.com/mhenrixon))
+- Remove digest deletion for concurrent locks [\#482](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/482) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13) (2020-03-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta12...v7.0.0.beta13)
-
-**Fixed bugs:**
-
-- Remove digest deletion for concurrent locks [\#482](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/482) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta12) (2020-03-25)
 
