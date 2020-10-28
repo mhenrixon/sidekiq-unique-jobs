@@ -23,8 +23,8 @@ module SidekiqUniqueJobs
       # @return [Concurrent::TimerTask] the task that was started
       #
       def start # rubocop:disable
-        return if registered?
         return if disabled?
+        return if registered?
 
         with_logging_context do
           register_reaper_process
