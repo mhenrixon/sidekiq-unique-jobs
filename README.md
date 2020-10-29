@@ -42,7 +42,8 @@
 - [Usage](#usage)
   - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
   - [After Unlock Callback](#after-unlock-callback)
-  - [Logging](#logging)
+  - [Disable Any Locking Strategy](#disable-any-locking-strategy)
+  - [Logging](#logging)  
   - [Cleanup Dead Locks](#cleanup-dead-locks)
   - [Other Sidekiq gems](#other-sidekiq-gems)
     - [sidekiq-global_id](#sidekiq-global_id)
@@ -599,6 +600,19 @@ class UniqueJobWithFilterMethod
   ...
 end.
 ```
+
+### Disable Any Locking Strategy
+
+Sometimes in your project you want to disable uniqueness constraints for that one job and enqueue/executed as many times as it is necessary with the same arguments. This will remove global uniqueness constraint on the job.
+```ruby
+class NonUniqueJob
+  include Sidekiq::Worker
+  sidekiq_options unique: false
+
+  def perform(args); end
+end
+```
+
 
 ### Logging
 
