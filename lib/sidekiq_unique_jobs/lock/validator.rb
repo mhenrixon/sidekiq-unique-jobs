@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
       # @return [Hash] a hash mapping of deprecated keys and their new value
       DEPRECATED_KEYS = {
         UNIQUE.to_sym => LOCK.to_sym,
-        UNIQUE_ARGS.to_sym => LOCK_ARGS.to_sym,
+        UNIQUE_ARGS.to_sym => LOCK_ARGS_METHOD.to_sym,
         LOCK_ARGS.to_sym => LOCK_ARGS_METHOD.to_sym,
         UNIQUE_PREFIX.to_sym => LOCK_PREFIX.to_sym,
       }.freeze
