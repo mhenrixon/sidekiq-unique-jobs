@@ -2,7 +2,7 @@
 
 require "spec_helper"
 RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
-  shared_context "given a regular job" do
+  shared_context "with a regular job" do
     let(:expected_keys) do
       %w[
         uniquejobs:e739dadc23533773b920936336341d01
@@ -25,10 +25,10 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
     end
   end
 
-  shared_context "given a runtime job" do
+  shared_context "with a runtime job" do
     before do
       (1..10).each do |arg|
-        SimulateLock.lock_while_executing("uniquejobs:abcde#{arg}", "#{arg}")
+        SimulateLock.lock_while_executing("uniquejobs:abcde#{arg}", arg.to_s)
       end
     end
 
@@ -51,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
   describe ".all" do
     subject(:all) { described_class.all(pattern: "*", count: 1000) }
 
-    include_context 'given a regular job'
+    include_context "with a regular job"
 
     it { is_expected.to match_array(expected_keys) }
   end
@@ -63,7 +63,7 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
     let(:pattern) { nil }
     let(:count)   { 1000 }
 
-    include_context "given a regular job"
+    include_context "with a regular job"
 
     before do
       allow(described_class).to receive(:log_info)
@@ -109,8 +109,8 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
   describe ".delete_by_digest" do
     subject(:delete_by_digest) { described_class.delete_by_digest(digest) }
 
-    context "when given a regular job" do
-      include_context "given a regular job"
+    context "when with a regular job" do
+      include_context "with a regular job"
 
       let(:digest) { expected_keys.last }
 
@@ -134,17 +134,17 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
     end
 
     context "when given a runtime job" do
-      include_context "given a runtime job"
+      include_context "with a runtime job"
 
       let(:digest) { expected_keys.last }
 
       it "deletes just the specific digest" do
         expect(delete_by_digest).to eq(9)
         expect(unique_keys).not_to include(%W[
-          #{digest}
-          #{digest}:EXISTS
-          #{digest}:GRABBED
-        ])
+                                             #{digest}
+                                             #{digest}:EXISTS
+                                             #{digest}:GRABBED
+                                           ])
 
         expect(described_class.all).to match_array(expected_keys - [digest])
       end
@@ -157,7 +157,7 @@ RSpec.describe SidekiqUniqueJobs::Digests, redis: :redis do
     let(:pattern) { "*" }
     let(:count)   { 1000 }
 
-    include_context "given a regular job"
+    include_context "with a regular job"
 
     before do
       allow(described_class).to receive(:log_info)
