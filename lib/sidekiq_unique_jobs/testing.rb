@@ -93,7 +93,8 @@ module Sidekiq
       #
       def clear_all
         super
-        SidekiqUniqueJobs::Digests.new.del(pattern: "*", count: 1_000)
+
+        SidekiqUniqueJobs::Digests.new.delete_by_pattern("*", count: 10_000)
       end
     end
 
