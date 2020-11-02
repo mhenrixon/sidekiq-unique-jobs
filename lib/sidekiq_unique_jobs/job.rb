@@ -44,7 +44,7 @@ module SidekiqUniqueJobs
     end
 
     def add_lock_args(item)
-      item[LOCK_ARGS] ||= SidekiqUniqueJobs::LockArgs.call(item)
+      item[LOCK_ARGS] = SidekiqUniqueJobs::LockArgs.call(item)
     end
 
     def add_lock_digest(item)

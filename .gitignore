@@ -21,3 +21,4 @@ tmp/
 /Gemfile.local
 /gemfiles/vendor/
 /vendor/
+/myapp/vendor/bundle/
