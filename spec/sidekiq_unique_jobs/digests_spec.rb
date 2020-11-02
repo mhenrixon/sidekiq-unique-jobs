@@ -56,8 +56,6 @@ RSpec.describe SidekiqUniqueJobs::Digests do
       (1..10).each do |arg|
         SimulateLock.lock_until_and_while_executing("uniquejobs:test#{arg}", "jid#{arg}")
       end
-      unique_keys
-      binding.pry
     end
   end
 
@@ -112,7 +110,7 @@ RSpec.describe SidekiqUniqueJobs::Digests do
             #{digest}:PRIMED
           ],
         )
-        expect(unique_keys).to include(digest.delete_suffix(':RUN'))
+        expect(unique_keys).to include(digest.delete_suffix(":RUN"))
       end
     end
   end
