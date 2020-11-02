@@ -10,7 +10,7 @@ AllCops:
   Exclude:
     - "**/*.erb"
     - "**/*.lua"
-    - "myapp"
+    - '**/vendor/**/*'
     - "bin/bench"
 
 Layout/EndAlignment:

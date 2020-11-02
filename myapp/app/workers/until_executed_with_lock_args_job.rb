@@ -11,10 +11,10 @@ class UntilExecutedWithLockArgsJob
 
   def self.lock_args(args)
     options = args.extract_options!
-    [args[0], options['bogus']]
+    [args[0], options["bogus"]]
   end
 
-  def perform(*args)
+  def perform(*_args)
     logger.info("cowboy")
     sleep(1)
     logger.info("beebop")
