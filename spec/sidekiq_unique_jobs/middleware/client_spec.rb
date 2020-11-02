@@ -97,11 +97,11 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     end
   end
 
-  describe "when unique_args is defined" do
+  describe "when lock_args_method is defined" do
     context "when filter method is defined" do
       it "pushes no duplicate messages" do
         expect(CustomQueueJobWithFilterMethod).to respond_to(:args_filter)
-        expect(CustomQueueJobWithFilterMethod.get_sidekiq_options["lock_args"]).to eq :args_filter
+        expect(CustomQueueJobWithFilterMethod.get_sidekiq_options["lock_args_method"]).to eq :args_filter
 
         Array.new(10) do |i|
           push_item(
@@ -112,16 +112,20 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
         end
 
         expect(queue_count("customqueue")).to eq(1)
+        # NOTE: Below is for regression purposes
+        expect(Sidekiq::Queue.new("customqueue").entries.first.item["lock_args"]).to eq(1)
       end
     end
 
     context "when filter proc is defined" do
-      let(:args) { [1, { random: rand, name: "foobar" }] }
+      let(:args) { [1, { "random" => rand, "name" => "foobar" }] }
 
       it "pushes no duplicate messsages" do
-        Array.new(100) { CustomQueueJobWithFilterProc.perform_async(args) }
+        Array.new(100) { CustomQueueJobWithFilterProc.perform_async(*args) }
 
         expect(queue_count("customqueue")).to eq(1)
+        # NOTE: Below is for regression purposes
+        expect(Sidekiq::Queue.new("customqueue").entries.first.item["lock_args"]).to eq([1, "foobar"])
       end
     end
 

@@ -7,7 +7,7 @@ RSpec.describe CustomQueueJobWithFilterMethod do
         "queue" => :customqueue,
         "retry" => true,
         "lock" => :until_executed,
-        "lock_args" => :args_filter,
+        "lock_args_method" => :args_filter,
       }
     end
   end
