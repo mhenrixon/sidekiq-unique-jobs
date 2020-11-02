@@ -4,7 +4,7 @@ class UntilExecutedWithLockArgsJob
   include Sidekiq::Worker
 
   sidekiq_options lock: :until_executed,
-                  lock_args: :lock_args,
+                  lock_args_method: :lock_args,
                   lock_timeout: 0,
                   lock_ttl: 600,
                   lock_limit: 2

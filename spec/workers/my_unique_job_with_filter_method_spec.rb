@@ -8,7 +8,7 @@ RSpec.describe MyUniqueJobWithFilterMethod do
         "queue" => :customqueue,
         "retry" => true,
         "lock" => :until_executed,
-        "lock_args" => :lock_args,
+        "lock_args_method" => :lock_args,
       }
     end
   end

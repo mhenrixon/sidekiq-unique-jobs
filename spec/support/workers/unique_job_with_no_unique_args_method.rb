@@ -8,7 +8,7 @@ class UniqueJobWithNoUniqueArgsMethod
                   lock: :until_executed,
                   queue: :customqueue,
                   retry: true,
-                  lock_args: :filtered_args
+                  lock_args_method: :filtered_args
 
   def perform(one, two)
     [one, two]

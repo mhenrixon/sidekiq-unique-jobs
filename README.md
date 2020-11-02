@@ -536,7 +536,7 @@ The method or the proc can return a modified version of args without the transie
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :until_and_while_executing,
-                  lock_args: :lock_args # this is default and will be used if such a method is defined
+                  lock_args_method: :lock_args # this is default and will be used if such a method is defined
 
   def self.lock_args(args)
     [ args[0], args[2][:type] ]
@@ -549,7 +549,7 @@ end
 class UniqueJobWithFilterProc
   include Sidekiq::Worker
   sidekiq_options lock: :until_executed,
-                  lock_args: ->(args) { [ args.first ] }
+                  lock_args_method: ->(args) { [ args.first ] }
 
   ...
 
@@ -561,7 +561,7 @@ It is possible to ensure different types of unique args based on context. I can'
 ```ruby
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
-  sidekiq_options lock: :until_and_while_executing, lock_args: :lock_args
+  sidekiq_options lock: :until_and_while_executing, lock_args_method: :lock_args
 
   def self.lock_args(args)
     if Sidekiq::ProcessSet.new.size > 1
