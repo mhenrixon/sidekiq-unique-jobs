@@ -60,16 +60,20 @@ module SimulateLock
   def lock_until_and_while_executing(digest, jid, ttl = nil, **options)
     lock(
       parse_item(
-        options.merge(digest: digest, jid: jid, lock_type: :until_expired, ttl: ttl),
+        options.merge(digest: digest, jid: jid, lock_type: :until_and_while_executing, ttl: ttl),
+      ),
+    )
+    lock(
+      parse_item(
+        options.merge(digest: "#{digest}:RUN", jid: jid, lock_type: :until_and_while_executing, ttl: ttl),
       ),
     )
   end
 
   def lock_while_executing(digest, jid, ttl = nil, **options)
-    digest = "#{digest.dup}:RUN"
     lock(
       parse_item(
-        options.merge(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl),
+        options.merge(digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl),
       ),
     )
   end
@@ -82,7 +86,7 @@ module SimulateLock
     )
     lock(
       parse_item(
-        options.merge(digest: "#{digest}:RUN", jid: "randomjid", lock_type: :while_executing, ttl: ttl),
+        options.merge(digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl),
       ),
     )
   end
@@ -97,10 +101,10 @@ module SimulateLock
 
   def parse_item(digest: "randomdigest", jid: "randomjid", lock_type: :until_executed, ttl: nil, **)
     item = {
-      UNIQUE_DIGEST => digest,
-      JID => jid,
-      LOCK_EXPIRATION => ttl,
-      LOCK => lock_type,
+      SidekiqUniqueJobs::UNIQUE_DIGEST => digest,
+      SidekiqUniqueJobs::JID => jid,
+      SidekiqUniqueJobs::LOCK_EXPIRATION => ttl,
+      SidekiqUniqueJobs::LOCK => lock_type,
     }
     @items << item
     item

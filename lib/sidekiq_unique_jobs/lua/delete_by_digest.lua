@@ -25,7 +25,7 @@ local redisversion = tostring(ARGV[5])
 --------  BEGIN delete_by_digest.lua --------
 local counter       = 0
 local redis_version = toversion(redisversion)
-local del_cmd   = "DEL"
+local del_cmd       = "DEL"
 
 log_debug("BEGIN delete_by_digest:", digest)
 
