@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta27...HEAD)
+
+**Fixed bugs:**
+
+- lock\_args does not work when you define the lock\_args argument and default lock\_args function at the same time. [\#548](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/548)
+
+## [v7.0.0.beta27](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta27) (2020-11-03)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta26...v7.0.0.beta27)
+
+**Implemented enhancements:**
+
+- Adds coverage for regression purposes [\#550](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/550) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Rename lock\_args to lock\_args\_method [\#551](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/551) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Documentation incorrect for `delete\_by\_digest` [\#547](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/547)
+- Locked jobs after kill -9 with while\_executing lock [\#546](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/546)
+
 ## [v7.0.0.beta26](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta26) (2020-10-28)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...v7.0.0.beta26)
@@ -193,11 +218,14 @@
 **Fixed bugs:**
 
 - Use thread-safe digest creation mechanism [\#484](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/484) ([mhenrixon](https://github.com/mhenrixon))
-- Remove digest deletion for concurrent locks [\#482](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/482) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13) (2020-03-26)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta12...v7.0.0.beta13)
+
+**Fixed bugs:**
+
+- Remove digest deletion for concurrent locks [\#482](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/482) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta12) (2020-03-25)
 
