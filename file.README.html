@@ -587,7 +587,7 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 <pre class="code ruby"><code class="ruby">class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options lock: :until_and_while_executing,
-                  lock_args: :lock_args # this is default and will be used if such a method is defined
+                  lock_args_method: :lock_args # this is default and will be used if such a method is defined
 
   def self.lock_args(args)
     [ args[0], args[2][:type] ]
@@ -600,7 +600,7 @@ end
 class UniqueJobWithFilterProc
   include Sidekiq::Worker
   sidekiq_options lock: :until_executed,
-                  lock_args: -&gt;(args) { [ args.first ] }
+                  lock_args_method: -&gt;(args) { [ args.first ] }
 
   ...
 
@@ -611,7 +611,7 @@ end
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>UniqueJobWithFilterMethod</span>
   <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span>
-  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_and_while_executing</span><span class='comma'>,</span> <span class='label'>lock_args:</span> <span class='symbol'>:lock_args</span>
+  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_and_while_executing</span><span class='comma'>,</span> <span class='label'>lock_args_method:</span> <span class='symbol'>:lock_args</span>
 
   <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_lock_args'>lock_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>ProcessSet</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>1</span>
@@ -669,8 +669,8 @@ end
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>MyWorker</span>
   <span class='id identifier rubyid_sidekiq_retries_exhausted'>sidekiq_retries_exhausted</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_msg'>msg</span><span class='comma'>,</span> <span class='id identifier rubyid__ex'>_ex</span><span class='op'>|</span>
-    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_msg'>msg</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unique_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
+    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_msg'>msg</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>lock_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#initialize-instance_method" title="SidekiqUniqueJobs::Digests#initialize (method)">new</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span>
 </code></pre>
@@ -679,8 +679,8 @@ end
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_death_handlers'>death_handlers</span> <span class='op'>&lt;&lt;</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='comma'>,</span> <span class='id identifier rubyid__ex'>_ex</span><span class='rparen'>)</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unique_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
+    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>lock_digest</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#initialize-instance_method" title="SidekiqUniqueJobs::Digests#initialize (method)">new</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span>
 </code></pre>
@@ -835,7 +835,7 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Oct 28 22:06:40 2020 by
+  Generated on Tue Nov  3 09:44:43 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>

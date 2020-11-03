@@ -597,7 +597,7 @@ failing back to the original argument when the constant can&#39;t be found</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_worker_class_constantize'>worker_class_constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span> <span class='op'>=</span> <span class='ivar'>@worker_class</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='kw'>if</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span><span class='rparen'>)</span> <span class='comment'># sidekiq v6.x
-</span>  <span class='kw'>return</span> <span class='id identifier rubyid_klazz'>klazz</span>       <span class='kw'>unless</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+</span>  <span class='kw'>return</span> <span class='id identifier rubyid_klazz'>klazz</span> <span class='kw'>unless</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
 
   <span class='const'>Object</span><span class='period'>.</span><span class='id identifier rubyid_const_get'>const_get</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span><span class='rparen'>)</span>
 <span class='kw'>rescue</span> <span class='const'>NameError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ex'>ex</span>
@@ -732,7 +732,7 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Oct 28 22:06:41 2020 by
+  Generated on Tue Nov  3 09:44:44 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.5).
 </div>
