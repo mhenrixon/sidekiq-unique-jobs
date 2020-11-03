@@ -18,32 +18,32 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     subject(:lock_args_enabled?) { lock_args.lock_args_enabled? }
 
     context "with default worker options", :with_sidekiq_options do
-      let(:sidekiq_options) { { unique: :until_executed, lock_args: ->(args) { args[1]["test"] } } }
+      let(:sidekiq_options) { { unique: :until_executed, lock_args_method: ->(args) { args[1]["test"] } } }
 
-      context "when `lock_args: :lock_args` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args: :lock_args } }
+      context "when `lock_args_method: :lock_args` in worker", :with_worker_options do
+        let(:worker_options) { { lock_args_method: :lock_args } }
 
         it { is_expected.to eq(:lock_args) }
       end
 
-      context "when `lock_args: false` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args: false } }
+      context "when `lock_args_method: false` in worker", :with_worker_options do
+        let(:worker_options) { { lock_args_method: false } }
 
         it { is_expected.to be_a(Proc) }
       end
     end
 
     context "when disabled in default_worker_options", :with_sidekiq_options do
-      let(:sidekiq_options) { { unique: false, lock_args: nil } }
+      let(:sidekiq_options) { { unique: false, lock_args_method: nil } }
 
-      context "when `lock_args: :lock_args` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args: :lock_args } }
+      context "when `lock_args_method: :lock_args` in worker", :with_worker_options do
+        let(:worker_options) { { lock_args_method: :lock_args } }
 
         it { is_expected.to eq(:lock_args) }
       end
 
-      context "when `lock_args: false` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args: false } }
+      context "when `lock_args_method: false` in worker", :with_worker_options do
+        let(:worker_options) { { lock_args_method: false } }
 
         it { is_expected.to eq(nil) }
       end
@@ -79,7 +79,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
 
     context "when configured globally" do
       it "uses global filter" do
-        Sidekiq.use_options(lock_args: ->(args) { args.first }) do
+        Sidekiq.use_options(lock_args_method: ->(args) { args.first }) do
           expect(filter_by_proc).to eq(1)
         end
       end

@@ -8,7 +8,7 @@ RSpec.describe MyUniqueJobWithFilterMethod do
         "queue" => :customqueue,
         "retry" => true,
         "lock" => :until_executed,
-        "lock_args" => :filtered_args,
+        "lock_args_method" => :lock_args,
       }
     end
   end
@@ -17,8 +17,8 @@ RSpec.describe MyUniqueJobWithFilterMethod do
     let(:args) { ["hundred", { "type" => "extremely unique", "id" => 44 }] }
   end
 
-  describe ".filtered_args" do
-    subject { described_class.filtered_args(args) }
+  describe ".lock_args" do
+    subject { described_class.lock_args(args) }
 
     let(:args) { ["two", { "type" => "very unique", "id" => 4 }] }
 

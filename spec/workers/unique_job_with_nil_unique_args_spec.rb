@@ -8,7 +8,7 @@ RSpec.describe UniqueJobWithNilUniqueArgs do
         "queue" => :customqueue,
         "retry" => true,
         "lock" => :until_executed,
-        "lock_args" => :unique_args,
+        "lock_args_method" => :unique_args,
       }
     end
   end

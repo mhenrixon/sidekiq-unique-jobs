@@ -8,13 +8,13 @@ class UniqueJobWithFilterMethod
                   lock: :while_executing,
                   queue: :customqueue,
                   retry: 1,
-                  lock_args: :filtered_args
+                  lock_args_method: :lock_args
 
   def perform(*)
     # NO-OP
   end
 
-  def self.filtered_args(args)
+  def self.lock_args(args)
     options = args.extract_options!
     [args.first, options["type"]]
   end

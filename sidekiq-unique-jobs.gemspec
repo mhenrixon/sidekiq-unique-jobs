@@ -29,7 +29,19 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/CHANGELOG.md"
 
   spec.post_install_message = <<~POST_INSTALL
-    This version deprecated the configuration options:
+    IMPORTANT!
+
+    This version deprecated the following sidekiq_options
+
+      - sidekiq_options lock_args: :method_name
+
+    It is now configured with:
+
+      - sidekiq_options lock_args_method: :method_name
+
+    This is also true for `Sidekiq.default_worker_options`
+
+    We also deprecated the global configuration options:
       - default_lock_ttl
       - default_lock_ttl=
       - default_lock_timeout
