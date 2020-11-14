@@ -87,7 +87,7 @@ module SidekiqUniqueJobs
     #
     def lock(&block)
       redis(redis_pool) do |conn|
-        return lock_async(conn, &block) if block_given?
+        return lock_async(conn, &block) if block
 
         lock_sync(conn) do
           return job_id
