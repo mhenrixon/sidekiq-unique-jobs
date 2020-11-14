@@ -2,7 +2,7 @@
 
 Redis.exists_returns_integer = false
 
-REDIS =  Redis.new(url: ENV["REDIS_URL"])
+REDIS = Redis.new(url: ENV["REDIS_URL"])
 
 Sidekiq.default_worker_options = {
   backtrace: true,
