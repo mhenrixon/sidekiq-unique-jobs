@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+Redis.exists_returns_integer = false
+
+REDIS =  Redis.new(url: ENV["REDIS_URL"])
+
 Sidekiq.default_worker_options = {
   backtrace: true,
-  retry: false,
+  retry: true,
 }
 
 Sidekiq.client_middleware do |chain|
@@ -44,11 +48,12 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.logger       = Sidekiq::Logger.new($stdout)
-Sidekiq.logger.level = Logger::DEBUG
+Sidekiq.logger.level = :info
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.configure do |config|
-  config.debug_lua       = true
+  config.debug_lua       = false
   config.lock_info       = true
+  config.logger          = Sidekiq.logger
   config.max_history     = 10_000
   config.reaper          = :lua
   config.reaper_count    = 10_000
