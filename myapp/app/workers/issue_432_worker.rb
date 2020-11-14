@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Issue145Worker
+class Issue432Worker
   include Sidekiq::Worker
   sidekiq_retry_in { 3 }
 
