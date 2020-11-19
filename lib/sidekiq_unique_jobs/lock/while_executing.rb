@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
           end
         end
       ensure
-        locksmith.unlock
+        locksmith.unlock!
       end
 
       private
