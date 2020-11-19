@@ -75,6 +75,7 @@ module SidekiqUniqueJobs
                        "#{digest}:GRABBED",
                        "#{digest}:AVAILABLE",
                        "#{digest}:VERSION",
+                       "#{digest}:RUN",
                        "#{digest}:RUN:EXISTS",
                        "#{digest}:RUN:GRABBED",
                        "#{digest}:RUN:AVAILABLE",

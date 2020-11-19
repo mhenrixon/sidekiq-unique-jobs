@@ -22,7 +22,7 @@ module SimulateLock
   end
 
   def lock_while_executing(digest, jid, ttl = nil)
-    item = get_item(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl)
+    item = get_item(digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl)
     lock(item)
   end
 
@@ -34,19 +34,19 @@ module SimulateLock
   end
 
   def lock(item)
-    Locksmith.new(item).lock
+    SidekiqUniqueJobs::Locksmith.new(item).lock
   end
 
   def unlock(item)
-    Locksmith.new(item).unlock
+    SidekiqUniqueJobs::Locksmith.new(item).unlock
   end
 
   def get_item(digest: "randomdigest", jid: "randomjid", lock_type: :until_executed, ttl: nil)
     item = {
-      UNIQUE_DIGEST_KEY => digest,
-      JID_KEY => jid,
-      LOCK_EXPIRATION_KEY => ttl,
-      LOCK_KEY => lock_type,
+      SidekiqUniqueJobs::UNIQUE_DIGEST_KEY => digest,
+      SidekiqUniqueJobs::JID_KEY => jid,
+      SidekiqUniqueJobs::LOCK_EXPIRATION_KEY => ttl,
+      SidekiqUniqueJobs::LOCK_KEY => lock_type,
     }
     @items << item
     item
