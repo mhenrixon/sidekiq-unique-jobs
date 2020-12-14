@@ -55,7 +55,9 @@ module SidekiqUniqueJobs
     # A prefix to use as namespace for the {#unique_digest}
     # @return [String] a unique digest
     def unique_prefix
-      worker_options[UNIQUE_PREFIX_KEY] || SidekiqUniqueJobs.config.unique_prefix
+      item[UNIQUE_PREFIX_KEY] ||
+        worker_options[UNIQUE_PREFIX_KEY] ||
+        SidekiqUniqueJobs.config.unique_prefix
     end
 
     # Filter a hash to use for digest
