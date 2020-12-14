@@ -18,7 +18,7 @@
   - [reaper_count](#reaper_count)
   - [reaper_interval](#reaper_interval)
   - [reaper_timeout](#reaper_timeout)
-  - [unique_prefix](#unique_prefix)
+  - [lock_prefix](#lock_prefix)
   - [lock_info](#lock_info)
 - [Worker Configuration](#worker-configuration)
   - [lock_ttl](#lock_ttl-1)
@@ -61,13 +61,13 @@
 
 ## Introduction
 
-The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.
+This gem adds unique constraints to the sidekiq queues. The uniqueness is achieved by acquiring locks for a hash of a queue name, a worker class, and job's arguments. Only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen strategy.
 
 This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.
 
 Here are links to some of the old versions
 
-- [v6.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13)
+- [v6.0.25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.25)
 - [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
 - [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
 
@@ -235,10 +235,10 @@ SidekiqUniqueJobs.config.reaper_timeout #=> 10
 
 The number of seconds to wait for the reaper to finish before raising a TimeoutError. This is done to ensure that the next time we reap isn't getting stuck due to the previous process already running.
 
-### unique_prefix
+### lock_prefix
 
 ```ruby
-SidekiqUniqueJobs.config.unique_prefix #=> "uniquejobs"
+SidekiqUniqueJobs.config.lock_prefix #=> "uniquejobs"
 ```
 
 Use if you want a different key prefix for the keys in redis.

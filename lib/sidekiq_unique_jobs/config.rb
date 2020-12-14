@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
                                                    :lock_timeout,
                                                    :lock_ttl,
                                                    :enabled,
-                                                   :unique_prefix,
+                                                   :lock_prefix,
                                                    :logger,
                                                    :locks,
                                                    :strategies,
@@ -127,7 +127,7 @@ module SidekiqUniqueJobs
     #   default_lock_timeout: 0,
     #   default_lock_ttl: nil,
     #   enabled: true,
-    #   unique_prefix: "uniquejobs",
+    #   lock_prefix: "uniquejobs",
     #   logger: #<Sidekiq::Logger:0x00007f81e096b0e0 @level=1 ...>,
     #   locks: {
     #     around_perform: SidekiqUniqueJobs::Lock::WhileExecuting,
