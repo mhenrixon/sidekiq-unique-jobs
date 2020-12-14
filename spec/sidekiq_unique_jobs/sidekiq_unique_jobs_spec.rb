@@ -4,24 +4,24 @@ RSpec.describe SidekiqUniqueJobs do
   describe ".config" do
     subject(:config) { described_class.config }
 
-    it                  { is_expected.to be_a(SidekiqUniqueJobs::Config) }
-    its(:lock_timeout)  { is_expected.to eq(0) }
-    its(:enabled)       { is_expected.to eq(true) }
-    its(:unique_prefix) { is_expected.to eq("uniquejobs") }
+    it                 { is_expected.to be_a(SidekiqUniqueJobs::Config) }
+    its(:lock_timeout) { is_expected.to eq(0) }
+    its(:enabled)      { is_expected.to eq(true) }
+    its(:lock_prefix)  { is_expected.to eq("uniquejobs") }
   end
 
   describe ".use_config" do
     it "changes configuration temporary" do
-      described_class.use_config(unique_prefix: "bogus") do
-        expect(described_class.config.unique_prefix).to eq("bogus")
+      described_class.use_config(lock_prefix: "bogus") do
+        expect(described_class.config.lock_prefix).to eq("bogus")
       end
 
-      expect(described_class.config.unique_prefix).to eq("uniquejobs")
+      expect(described_class.config.lock_prefix).to eq("uniquejobs")
     end
   end
 
   describe ".configure" do
-    let(:options) { { unique_prefix: "hi" } }
+    let(:options) { { lock_prefix: "hi" } }
 
     context "when given a block" do
       specify do
