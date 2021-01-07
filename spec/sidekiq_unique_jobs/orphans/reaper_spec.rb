@@ -114,7 +114,8 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             SidekiqUniqueJobs.redis do |conn|
               conn.multi do
                 conn.sadd("processes", process_key)
-                conn.hset(worker_key, thread_id, dump_json(item))
+                conn.set(process_key, "bogus")
+                conn.hset(worker_key, thread_id, dump_json(payload: item))
                 conn.expire(process_key, 60)
                 conn.expire(worker_key, 60)
               end
@@ -122,7 +123,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
           end
 
           # TODO: Adjust this spec for earlier sidekiq versions
-          context "that matches current digest", sidekiq_ver: ">= 6.0" do
+          context "that matches current digest", sidekiq_ver: ">= 5.0" do
             it "keeps the digest" do
               expect { call }.not_to change { digests.count }.from(1)
               expect(unique_keys).not_to match_array([])

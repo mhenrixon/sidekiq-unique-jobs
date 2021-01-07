@@ -132,7 +132,7 @@ module SidekiqUniqueJobs
             next unless workers.any?
 
             workers.each_pair do |_tid, job|
-              return true if load_json(job)[LOCK_DIGEST] == digest
+              return true if load_json(job).dig(PAYLOAD, LOCK_DIGEST) == digest
             end
           end
 
