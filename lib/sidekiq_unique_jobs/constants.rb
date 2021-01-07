@@ -32,6 +32,7 @@ module SidekiqUniqueJobs
   ON_CLIENT_CONFLICT    ||= "on_client_conflict"
   ON_CONFLICT           ||= "on_conflict"
   ON_SERVER_CONFLICT    ||= "on_server_conflict"
+  PAYLOAD               ||= "payload"
   PROCESSES             ||= "processes"
   QUEUE                 ||= "queue"
   RETRY                 ||= "retry"
