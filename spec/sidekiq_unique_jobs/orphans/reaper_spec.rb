@@ -114,6 +114,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             SidekiqUniqueJobs.redis do |conn|
               conn.multi do
                 conn.sadd("processes", process_key)
+                conn.set(process_key, "bogus")
                 conn.hset(worker_key, thread_id, dump_json(payload: item))
                 conn.expire(process_key, 60)
                 conn.expire(worker_key, 60)
