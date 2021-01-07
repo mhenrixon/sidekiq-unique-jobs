@@ -21,6 +21,9 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
   end
 
   before do
+    # Create the lock key without having a matching digest in a job hash
+    #   (this is needed because we want to setup the test conditions manually)
+    #   (find this to be more sensible defaults)
     SidekiqUniqueJobs.disable!
     lock
   end
