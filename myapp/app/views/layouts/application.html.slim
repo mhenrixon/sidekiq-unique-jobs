@@ -2,12 +2,12 @@ doctype html
 html
   head
     title MyApp
-    / = stylesheet_link_tag    'application', media: 'all'
-    / = javascript_include_tag 'application'
     = csrf_meta_tags
   body
     ul#top-menu
       li.menu-item
-        = link_to 'Issue 384', issue_384_path
+        = link_to 'Sign in', new_user_session_path
+      li.menu-item
+        = link_to 'Sign out', destroy_user_session_path, method: :delete
 
     = yield

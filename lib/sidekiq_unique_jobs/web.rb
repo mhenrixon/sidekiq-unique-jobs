@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-begin
-  require "sidekiq/web"
-rescue LoadError
-  # client-only usage
-end
-
 require_relative "web/helpers"
 
 module SidekiqUniqueJobs
@@ -59,8 +53,7 @@ module SidekiqUniqueJobs
   end
 end
 
-if defined?(Sidekiq::Web)
-  Sidekiq::Web.register SidekiqUniqueJobs::Web
-  Sidekiq::Web.tabs["Locks"] = "locks"
-  Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")
-end
+require "sidekiq/web" unless defined?(Sidekiq::Web)
+Sidekiq::Web.register(SidekiqUniqueJobs::Web)
+Sidekiq::Web.tabs["Locks"] = "locks"
+Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")

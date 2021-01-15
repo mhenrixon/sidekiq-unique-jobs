@@ -16,9 +16,18 @@ AllCops:
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 
+Layout/LineLength:
+  Exclude:
+    - myapp/db/**/*.rb
+    - myapp/config/initializers/devise.rb
+
 Lint/AmbiguousBlockAssociation:
   Exclude:
-    - "spec/**/*"
+    - spec/**/*
+
+Lint/EmptyBlock:
+  Exclude:
+    - spec/**/*
 
 Lint/SuppressedException:
   Enabled: true
@@ -34,10 +43,14 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
   Max: 13
+  Exclude:
+    - myapp/db/**/*.rb
+    - myapp/config/initializers/devise.rb
 
 Metrics/BlockLength:
   Enabled: true
   Exclude:
+    - "myapp/db/**/*.rb"
     - "**/spec/**/*.rb"
     - "**/*.rake"
     - "Rakefile"

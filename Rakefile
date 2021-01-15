@@ -72,7 +72,7 @@ namespace :appraisal do
     end
 
     desc "Runs rspec for older appraisals than sidekiq 6"
-    task :pre_sidekiq_6 do
+    task :pre_sidekiq6 do
       sh("bundle exec appraisal sidekiq-4.0 rspec")
       sh("bundle exec appraisal sidekiq-4.1 rspec")
       sh("bundle exec appraisal sidekiq-4.2 rspec")
@@ -82,7 +82,7 @@ namespace :appraisal do
     end
 
     desc "Runs rspec for appraisals containing sidekiq 6 or greater"
-    task :post_sidekiq_6 do
+    task :post_sidekiq6 do
       sh("bundle exec appraisal sidekiq-6.0 rspec")
       sh("bundle exec appraisal sidekiq-develop rspec")
     end

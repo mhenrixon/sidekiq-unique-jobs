@@ -7,3 +7,8 @@ require:
 inherit_mode:
   merge:
     - Exclude
+
+AllCops:
+  Exclude:
+    - 'bin/*'
+    - '**/.keep'
