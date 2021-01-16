@@ -1029,7 +1029,7 @@
 default_lock_timeout: 0,
 default_lock_ttl: nil,
 enabled: true,
-unique_prefix: &quot;uniquejobs&quot;,
+lock_prefix: &quot;uniquejobs&quot;,
 logger: #&lt;Sidekiq::Logger:0x00007f81e096b0e0 @level=1 ...&gt;,
 locks: {
   around_perform: SidekiqUniqueJobs::Lock::WhileExecuting,
@@ -1585,9 +1585,9 @@ raise_on_config_error: false,
 </div>
 
       <div id="footer">
-  Generated on Tue Nov  3 09:44:44 2020 by
+  Generated on Sat Jan 16 08:32:06 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.7.2).
 </div>
 
     </div>

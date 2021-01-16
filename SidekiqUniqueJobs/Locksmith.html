@@ -1401,7 +1401,7 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span><span class='lparen'>(</span><span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
-    <span class='kw'>return</span> <span class='id identifier rubyid_lock_async'>lock_async</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_lock_async'>lock_async</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_block'>block</span>
 
     <span class='id identifier rubyid_lock_sync'>lock_sync</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span> <span class='kw'>do</span>
       <span class='kw'>return</span> <span class='id identifier rubyid_job_id'>job_id</span>
@@ -2233,9 +2233,9 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Nov  3 09:44:44 2020 by
+  Generated on Sat Jan 16 08:32:06 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.7.2).
 </div>
 
     </div>

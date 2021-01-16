@@ -790,7 +790,7 @@
       <span class='kw'>next</span> <span class='kw'>unless</span> <span class='id identifier rubyid_workers'>workers</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
 
       <span class='id identifier rubyid_workers'>workers</span><span class='period'>.</span><span class='id identifier rubyid_each_pair'>each_pair</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__tid'>_tid</span><span class='comma'>,</span> <span class='id identifier rubyid_job'>job</span><span class='op'>|</span>
-        <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_digest'>digest</span>
+        <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='const'>PAYLOAD</span><span class='comma'>,</span> <span class='const'>LOCK_DIGEST</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='id identifier rubyid_digest'>digest</span>
       <span class='kw'>end</span>
     <span class='kw'>end</span>
 
@@ -1524,9 +1524,9 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Nov  3 09:44:46 2020 by
+  Generated on Sat Jan 16 08:32:07 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.7.2).
 </div>
 
     </div>

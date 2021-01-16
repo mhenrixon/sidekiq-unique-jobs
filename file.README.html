@@ -80,7 +80,7 @@
 <li><a href="#reaper_count">reaper_count</a></li>
 <li><a href="#reaper_interval">reaper_interval</a></li>
 <li><a href="#reaper_timeout">reaper_timeout</a></li>
-<li><a href="#unique_prefix">unique_prefix</a></li>
+<li><a href="#lock_prefix">lock_prefix</a></li>
 <li><a href="#lock_info">lock_info</a></li>
 </ul></li>
 <li><a href="#worker-configuration">Worker Configuration</a>
@@ -143,14 +143,14 @@
 
 <h2 id="introduction">Introduction</h2>
 
-<p>The goal of this gem is to ensure your Sidekiq jobs are unique. We do this by creating unique keys in Redis based on how you configure uniqueness.</p>
+<p>This gem adds unique constraints to the sidekiq queues. The uniqueness is achieved by acquiring locks for a hash of a queue name, a worker class, and job&#39;s arguments. Only one lock for a given hash can be acquired. What happens when a lock can&#39;t be acquired is governed by a chosen strategy.</p>
 
 <p>This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.</p>
 
 <p>Here are links to some of the old versions</p>
 
 <ul>
-<li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.13">v6.0.13</a></li>
+<li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.25">v6.0.25</a></li>
 <li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10">v5.0.10</a></li>
 <li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">v4.0.18</a></li>
 </ul>
@@ -311,9 +311,9 @@
 
 <p>The number of seconds to wait for the reaper to finish before raising a TimeoutError. This is done to ensure that the next time we reap isn&#39;t getting stuck due to the previous process already running.</p>
 
-<h3 id="unique_prefix">unique_prefix</h3>
+<h3 id="lock_prefix">lock_prefix</h3>
 
-<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_unique_prefix'>unique_prefix</span> <span class='comment'>#=&gt; &quot;uniquejobs&quot;
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lock_prefix'>lock_prefix</span> <span class='comment'>#=&gt; &quot;uniquejobs&quot;
 </span></code></pre>
 
 <p>Use if you want a different key prefix for the keys in redis.</p>
@@ -835,9 +835,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Tue Nov  3 09:44:43 2020 by
+  Generated on Sat Jan 16 08:32:05 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.6.5).
+  0.9.25 (ruby-2.7.2).
 </div>
 
     </div>
