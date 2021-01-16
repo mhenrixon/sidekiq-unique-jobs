@@ -2,10 +2,11 @@
 
 source "https://rubygems.org"
 
-ruby "2.6.6"
+ruby "2.7.2"
 
 gem "bigdecimal"
 gem "coverband"
+gem "devise"
 gem "hiredis"
 gem "json"
 gem "pg"
@@ -13,7 +14,7 @@ gem "puma"
 gem "rack-protection"
 gem "rails", ">= 6.0"
 gem "redis"
-gem "sidekiq", "~> 6.0.0"
+gem "sidekiq", "~> 6.1"
 gem "sidekiq-cron"
 gem "sidekiq-global_id"
 gem "sidekiq-status"
@@ -22,7 +23,6 @@ gem "sinatra"
 gem "slim-rails"
 
 group :development, :test do
-  gem "capybara"
   gem "dotenv-rails"
   gem "factory_bot_rails"
   gem "fuubar"
@@ -30,8 +30,16 @@ group :development, :test do
   gem "pry-byebug"
   gem "pry-rails"
   gem "rspec-rails"
+end
+
+group :development do
   gem "rubocop"
+  gem "rubocop-mhenrixon"
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "rubocop-rspec"
+end
+
+group :test do
+  gem "capybara"
 end
