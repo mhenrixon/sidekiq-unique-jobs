@@ -54,7 +54,6 @@ Sidekiq.configure_client do |config|
   end
 end
 
-
 SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get(LOGLEVEL)
   config.debug_lua    = %w[1 true].include?(ENV["DEBUG_LUA"])
