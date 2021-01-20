@@ -4,13 +4,11 @@
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0...HEAD)
 
-**Closed issues:**
 
-- Rejected jobs are still displayed as 'Queued' with gem 'sidekiq-status' on /sidekiq/statuses [\#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564)
 
 ## [v7.0.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0) (2021-01-20)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta29...v7.0.0)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...v7.0.0)
 
 **Implemented enhancements:**
 
@@ -24,6 +22,7 @@
 
 **Closed issues:**
 
+- Rejected jobs are still displayed as 'Queued' with gem 'sidekiq-status' on /sidekiq/statuses [\#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564)
 - Is it possible to have a :until\_executed lock with an expiration time? [\#524](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/524)
 
 ## [v7.0.0.beta29](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta29) (2021-01-16)

@@ -507,7 +507,7 @@ The last one is log which can be be used with the lock `UntilExecuted` and `Unti
 It is possible for locks to have different conflict strategy for the client and server. This is useful for `:until_and_while_executing`.
 
 ```ruby
-sidekiq_options lock: :until_and_while_executing, 
+sidekiq_options lock: :until_and_while_executing,
                 on_conflict: { client: :log, server: :reject }
 ```
 
@@ -751,8 +751,8 @@ Sidekiq.client_middleware do |chain|
 end
 
 Sidekiq.server_middleware do |chain|
-  chain.add SidekiqUniqueJobs::Middleware::Server
   chain.add Sidekiq::GlobalId::ServerMiddleware
+  chain.add SidekiqUniqueJobs::Middleware::Server
 end
 ```
 
@@ -764,13 +764,13 @@ It was reported in [#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issue
 
 ```ruby
 Sidekiq.client_middleware do |chain|
+  chain.add SidekiqUniqueJobs::Middleware::Client
   chain.add Sidekiq::Status::ClientMiddleware, expiration: 10.minutes
-  chain.add Sidekiq::Status::ServerMiddleware
 end
 
 Sidekiq.server_middleware do |chain|
-  chain.add Sidekiq::Status::ServerMiddleware, expiration: 10.minutes
   chain.add SidekiqUniqueJobs::Middleware::Server
+  chain.add Sidekiq::Status::ServerMiddleware, expiration: 10.minutes
 end
 ```
 
@@ -844,7 +844,6 @@ If you are not using RSpec (a lot of people prefer minitest or test unit) you ca
 ```ruby
 assert SidekiqUniqueJobs.validate_worker!(BadWorker.get_sidekiq_options)
 ```
-
 
 ### Uniqueness
 
