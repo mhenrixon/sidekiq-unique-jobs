@@ -2,4 +2,3 @@
 
 require "sidekiq_unique_jobs"
 
-SidekiqUniqueJobs::Middleware.configure
