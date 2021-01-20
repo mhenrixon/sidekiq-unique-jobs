@@ -764,8 +764,8 @@ It was reported in [#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issue
 
 ```ruby
 Sidekiq.client_middleware do |chain|
-  chain.add SidekiqUniqueJobs::Middleware::Client
   chain.add Sidekiq::Status::ClientMiddleware, expiration: 10.minutes
+  chain.add SidekiqUniqueJobs::Middleware::Client
 end
 
 Sidekiq.server_middleware do |chain|
