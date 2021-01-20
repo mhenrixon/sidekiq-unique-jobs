@@ -98,6 +98,8 @@ module SidekiqUniqueJobs
     # @return [String]
     #
     def errors_as_string
+      return if valid?
+
       @errors_as_string ||= begin
         error_msg = +"\t"
         error_msg << errors.map { |key, val| "#{key}: :#{val}" }.join("\n\t")

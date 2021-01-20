@@ -19,6 +19,66 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       allow(block).to receive(:call)
     end
 
+    context "when delete_job_by_digest returns nil" do
+      let(:jid) { "abcdefab" }
+
+      before do
+        allow(strategy).to receive(:delete_job_by_digest).and_return(nil)
+      end
+
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when delete_lock returns 9" do
+      let(:jid) { "bogus" }
+
+      before do
+        allow(strategy).to receive(:delete_job_by_digest).and_return(jid)
+        allow(strategy).to receive(:log_info).and_call_original
+        allow(strategy).to receive(:delete_lock).and_return(9)
+      end
+
+      it "logs important information" do
+        call
+
+        expect(strategy).to have_received(:log_info).with("Deleted job: #{jid}")
+        expect(strategy).to have_received(:log_info).with("Deleted `9` keys for #{lock_digest}")
+      end
+    end
+
+    context "when delete_lock returns nil" do
+      let(:jid) { "bogus" }
+
+      before do
+        allow(strategy).to receive(:delete_job_by_digest).and_return(jid)
+        allow(strategy).to receive(:log_info).and_call_original
+        allow(strategy).to receive(:delete_lock).and_return(nil)
+      end
+
+      it "logs important information" do
+        call
+
+        expect(strategy).to have_received(:log_info).with("Deleted job: #{jid}")
+        expect(strategy).not_to have_received(:log_info).with("Deleted `` keys for #{lock_digest}")
+      end
+    end
+
+    context "when block is nil" do
+      let(:jid)   { "bogus" }
+      let(:block) { nil }
+
+      before do
+        allow(strategy).to receive(:delete_job_by_digest).and_return(jid)
+        allow(strategy).to receive(:log_info).and_call_original
+        allow(strategy).to receive(:delete_lock).and_return(nil)
+      end
+
+      it "does not call block" do
+        call
+        expect(block).not_to have_received(:call)
+      end
+    end
+
     context "when job is retried" do
       let(:jid)  { "abcdefab" }
       let(:job)  { dump_json(item) }

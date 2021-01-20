@@ -59,7 +59,12 @@ module SidekiqUniqueJobs
       # @return [<type>] <description>
       #
       def task
-        @task ||= Concurrent::TimerTask.new(timer_task_options) do
+        @task ||= Concurrent::TimerTask.new(timer_task_options, &task_body)
+      end
+
+      # @private
+      def task_body
+        @task_body ||= lambda do
           with_logging_context do
             redis do |conn|
               refresh_reaper_mutex

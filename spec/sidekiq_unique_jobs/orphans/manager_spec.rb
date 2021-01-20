@@ -280,6 +280,56 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     end
   end
 
+  describe ".refresh_reaper_mutex" do
+    subject(:refresh_reaper_mutex) { described_class.refresh_reaper_mutex }
+
+    let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
+
+    around do |example|
+      Timecop.freeze(frozen_time, &example)
+    end
+
+    it "updates the redis key with timestamp" do
+      expect { refresh_reaper_mutex }.to change { get(SidekiqUniqueJobs::UNIQUE_REAPER) }
+        .from(nil).to(frozen_time.to_i.to_s)
+
+      expect(ttl(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_within(20).of(SidekiqUniqueJobs.config.reaper_interval)
+    end
+  end
+
+  describe "#task" do
+    subject(:task) { described_class.task }
+
+    before do
+      allow(Concurrent::TimerTask).to receive(:new).and_call_original
+    end
+
+    it "initializes a new timer task with the correct arguments" do
+      expect(task).to be_a(Concurrent::TimerTask)
+
+      expect(Concurrent::TimerTask).to have_received(:new)
+        .with(described_class.timer_task_options, &described_class.task_body)
+    end
+  end
+
+  describe "#task_body" do
+    subject(:task_body) { described_class.task_body }
+
+    before do
+      allow(described_class).to receive(:with_logging_context).and_yield
+      allow(described_class).to receive(:refresh_reaper_mutex).and_return(true)
+      allow(SidekiqUniqueJobs::Orphans::Reaper).to receive(:call).and_return(true)
+    end
+
+    it "is wired up correctly" do
+      task_body.call
+
+      expect(described_class).to have_received(:with_logging_context)
+      expect(described_class).to have_received(:refresh_reaper_mutex)
+      expect(SidekiqUniqueJobs::Orphans::Reaper).to have_received(:call)
+    end
+  end
+
   describe ".logging_context" do
     subject(:logging_context) { described_class.logging_context }
 

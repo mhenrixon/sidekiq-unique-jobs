@@ -48,10 +48,10 @@ module SidekiqUniqueJobs
       def exist?
         redis do |conn|
           value = conn.exists(key)
-          return true if value.is_a?(TrueClass)
-          return false if value.is_a?(FalseClass)
 
-          value.positive?
+          return value if boolean?(value)
+
+          value.to_i.positive?
         end
       end
 
@@ -94,6 +94,12 @@ module SidekiqUniqueJobs
       #
       def count
         0
+      end
+
+      private
+
+      def boolean?(value)
+        [TrueClass, FalseClass].any? { |klazz| value.is_a?(klazz) }
       end
     end
   end

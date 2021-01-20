@@ -3,9 +3,11 @@
 <!-- MarkdownTOC -->
 
 - [Introduction](#introduction)
-- [Requirements](#requirements)
-- [Installation](#installation)
+- [Usage](#usage)
+  - [Installation](#installation)
+  - [Your first worker](#your-first-worker)
 - [Support Me](#support-me)
+- [Requirements](#requirements)
 - [General Information](#general-information)
 - [Global Configuration](#global-configuration)
   - [debug_lua](#debug_lua)
@@ -21,6 +23,8 @@
   - [lock_prefix](#lock_prefix)
   - [lock_info](#lock_info)
 - [Worker Configuration](#worker-configuration)
+  - [lock_info](#lock_info-1)
+  - [lock_prefix](#lock_prefix-1)
   - [lock_ttl](#lock_ttl-1)
   - [lock_timeout](#lock_timeout-1)
   - [unique_across_queues](#unique_across_queues)
@@ -39,7 +43,7 @@
   - [replace](#replace)
   - [Reschedule](#reschedule)
   - [Custom Strategies](#custom-strategies)
-- [Usage](#usage)
+- [Usage](#usage-1)
   - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
   - [After Unlock Callback](#after-unlock-callback)
   - [Logging](#logging)
@@ -61,7 +65,7 @@
 
 ## Introduction
 
-This gem adds unique constraints to the sidekiq queues. The uniqueness is achieved by acquiring locks for a hash of a queue name, a worker class, and job's arguments. Only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen strategy.
+This gem adds unique constraints to the sidekiq queues. The uniqueness is achieved by acquiring locks for a hash of a queue name, a worker class, and job's arguments. By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen `on_conflict`strategy.
 
 This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.
 
@@ -71,20 +75,9 @@ Here are links to some of the old versions
 - [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
 - [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)
 
-## Requirements
+## Usage
 
-- Sidekiq `>= 4.0` (`>= 5.2` recommended)
-- Ruby:
-  - MRI `>= 2.3` (`>= 2.5` recommended)
-  - JRuby `>= 9.0` (`>= 9.2` recommended)
-  - Truffleruby
-- Redis Server `>= 3.0.2` (`>= 3.2` recommended)
-- [ActiveJob officially not supported][48]
-- [redis-namespace officially not supported][49]
-
-See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).
-
-## Installation
+### Installation
 
 Add this line to your application's Gemfile:
 
@@ -98,15 +91,50 @@ And then execute:
 bundle
 ```
 
-Or install it yourself as:
+### Your first worker
 
-```bash
-gem install sidekiq-unique-jobs
+```ruby
+# frozen_string_literal: true
+
+class UntilExecutedWorker
+  include Sidekiq::Worker
+
+  sidekiq_options queue: :special,
+                  retry: false,
+                  lock: :until_executed,
+                  lock_info: true,
+                  lock_timeout: 0,
+                  lock_prefix: "special",
+                  lock_ttl: 0,
+                  lock_limit: 5
+
+  def perform
+    logger.info("cowboy")
+    sleep(1) # hardcore processing
+    logger.info("beebop")
+  end
+end
+
 ```
+
+You can read more about the worker configuration in [Worker Configuration](#worker-configuration) below.
 
 ## Support Me
 
 Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link: [https://paypal.me/mhenrixon1](https://paypal.me/mhenrixon1). Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.
+
+## Requirements
+
+- Sidekiq `>= 4.0` (`>= 5.2` recommended)
+- Ruby:
+  - MRI `>= 2.5` (`>= 2.6` recommended)
+  - JRuby `>= 9.0` (`>= 9.2` recommended)
+  - Truffleruby
+- Redis Server `>= 3.0.2` (`>= 3.2` recommended)
+- [ActiveJob officially not supported][48]
+- [redis-namespace officially not supported][49]
+
+See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).
 
 ## General Information
 
@@ -253,11 +281,27 @@ Using lock info will create an additional key for the lock with a json object co
 
 ## Worker Configuration
 
+### lock_info
+
+Lock info gathers information about a specific lock. It collects things like which `lock_args` where used to compute the `lock_digest` that is used for maintaining uniqueness.
+
+```ruby
+sidekiq_options lock_info: false # this is the default, set to true to turn on
+```
+
+### lock_prefix
+
+Use if you want a different key prefix for the keys in redis.
+
+```ruby
+sidekiq_options lock_prefix: "uniquejobs" # this is the default value
+```
+
 ### lock_ttl
 
 Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.
 
-Since `v6.0.11` the other locks will expire after the server is done processing.
+Starting from `v7` the expiration will take place when the job is pushed to the queue.
 
 ```ruby
 sidekiq_options lock_ttl: nil # default - don't expire keys
@@ -277,6 +321,8 @@ sidekiq_options lock_timeout: nil # lock indefinitely, this process won't contin
 ### unique_across_queues
 
 This configuration option is slightly misleading. It doesn't disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.
+
+This is mainly intended for `Worker.set(queue: :another).perform_async`.
 
 ```ruby
 class Worker

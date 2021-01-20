@@ -36,7 +36,7 @@ module SidekiqUniqueJobs
     #
     def entries(pattern: "*", count: nil)
       options = {}
-      options[:match] = pattern if pattern
+      options[:match] = pattern
       options[:count] = count if count
 
       redis do |conn|

@@ -70,6 +70,18 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     end
   end
 
+  describe "#errors_as_string" do
+    subject(:errors_as_string) { lock_config.errors_as_string }
+
+    it { is_expected.to be_nil }
+
+    context "when given errors" do
+      let(:errors) { { any: :thing } }
+
+      it { is_expected.to eq("\tany: :thing") }
+    end
+  end
+
   describe "#on_client_conflict" do
     subject(:on_client_conflict) { lock_config.on_client_conflict }
 

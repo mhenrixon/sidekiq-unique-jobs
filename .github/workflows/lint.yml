@@ -10,7 +10,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 2.7
+          bundler: 2.2.5
+          bundler-cache: true
       - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
       - run: bin/rubocop -P
 
@@ -23,6 +25,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 2.7
+          bundler: 2.2.5
+          bundler-cache: true
       - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
       - run: bin/reek .

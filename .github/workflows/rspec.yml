@@ -14,20 +14,27 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6.5
-      - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
-      - name: Coverage
-        uses: paambaati/codeclimate-action@v2.6.0
-        env:
-          COV: true
-          CC_TEST_REPORTER_ID: 88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
-        with:
-          coverageCommand: bin/rspec --require spec_helper --tag ~perf
-          debug: true
-  tests:
-    env:
-      COV: false
+          ruby-version: 2.7
+          bundler: 2.2.5
+          bundler-cache: true
 
+      - name: Install Code Climate reporter
+        run: |
+          sudo curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          sudo chmod +x ./cc-test-reporter
+      - name: Generate Coverage
+        env:
+          CC_TEST_REPORTER_ID: 88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
+        run: |
+          export GIT_BRANCH=${GITHUB_REF#refs/heads/}
+          export GIT_COMMIT_SHA=${GITHUB_SHA}
+          echo $GIT_BRANCH
+          echo $GIT_COMMIT_SHA
+          ./cc-test-reporter before-build
+          COV=true bin/rspec --require spec_helper --tag ~perf
+          ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
+
+  tests:
     services:
       redis:
         image: redis:latest
@@ -39,7 +46,6 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        # ruby: [2.5, 2.6, 2.7, jruby, truffleruby]
         ruby: [2.5, 2.6, 2.7]
 
     steps:
@@ -47,6 +53,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
-      - run: bin/appraisal install  --jobs=$(nproc) --retry=$(nproc)
+          bundler: 2.2.5
+          bundler-cache: true
+      - run: bin/appraisal install --jobs=$(nproc) --retry=$(nproc)
       - run: bin/appraisal rspec --require spec_helper --tag ~perf

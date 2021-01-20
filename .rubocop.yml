@@ -87,6 +87,7 @@ RSpec/ContextWording:
     - unless
     - for
     - that
+    - and
 
 RSpec/DescribeClass:
   Exclude:
