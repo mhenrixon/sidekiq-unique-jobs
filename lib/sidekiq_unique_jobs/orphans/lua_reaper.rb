@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
           :reap_orphans,
           conn,
           keys: [DIGESTS, SCHEDULE, RETRY, PROCESSES],
-          argv: [reaper_count],
+          argv: [reaper_count, (Time.now - reaper_timeout).to_f],
         )
       end
     end

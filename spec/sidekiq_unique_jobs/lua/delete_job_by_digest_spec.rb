@@ -18,9 +18,15 @@ RSpec.describe "delete_job_by_digest.lua" do
     ]
   end
 
+  context "when job doesn't exist" do
+    let(:argv) { ["abcdefab"] }
+
+    it { is_expected.to eq(nil) }
+  end
+
   context "when job is retried" do
     let(:job_id) { "abcdefab" }
-    let(:job)  { dump_json(item) }
+    let(:job)    { dump_json(item) }
     let(:item) do
       {
         "class" => "MyUniqueJob",

@@ -16,12 +16,22 @@ RSpec.describe "reap_orphans.lua" do
       SidekiqUniqueJobs::RETRY,
     ]
   end
-  let(:argv)     { [100] }
-  let(:digest)   { "uniquejobs:digest" }
-  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
-  let(:job_id)   { "job_id" }
-  let(:item)     { raw_item }
-  let(:raw_item) { { "class" => MyUniqueJob, "args" => [1, 2], "jid" => job_id, "lock_digest" => digest } }
+  let(:argv)       { [100, threshold] }
+  let(:digest)     { "uniquejobs:digest" }
+  let(:lock)       { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
+  let(:job_id)     { "job_id" }
+  let(:item)       { raw_item }
+  let(:created_at) { (Time.now - 1000).to_f }
+  let(:threshold)  { [Time.now - SidekiqUniqueJobs.config.reaper_timeout] }
+  let(:raw_item) do
+    {
+      "class" => MyUniqueJob,
+      "args" => [1, 2],
+      "jid" => job_id,
+      "lock_digest" => digest,
+      "created_at" => created_at,
+    }
+  end
   let(:lock_info) do
     {
       "job_id" => job_id,

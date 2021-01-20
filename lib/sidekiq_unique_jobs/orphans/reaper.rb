@@ -77,6 +77,16 @@ module SidekiqUniqueJobs
       end
 
       #
+      # The configured timeout for the reaper
+      #
+      #
+      # @return [Integer] timeout in seconds
+      #
+      def reaper_timeout
+        config.reaper_timeout
+      end
+
+      #
       # The number of locks to reap at a time
       #
       #
