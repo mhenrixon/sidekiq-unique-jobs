@@ -117,7 +117,7 @@ module SidekiqUniqueJobs
         end
       end
 
-      def active?(digest) # rubocop:disable Metrics/MethodLength
+      def active?(digest) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
         Sidekiq.redis do |conn|
           procs = conn.sscan_each("processes").to_a
           return false if procs.empty?
@@ -132,12 +132,19 @@ module SidekiqUniqueJobs
             next unless workers.any?
 
             workers.each_pair do |_tid, job|
-              return true if load_json(job).dig(PAYLOAD, LOCK_DIGEST) == digest
+              item = load_json(job)
+
+              return true if item.dig(PAYLOAD, LOCK_DIGEST) == digest
+              return true if considered_active?(item[CREATED_AT])
             end
           end
 
           false
         end
+      end
+
+      def considered_active?(time_f)
+        (Time.now - reaper_timeout).to_f < time_f
       end
 
       #

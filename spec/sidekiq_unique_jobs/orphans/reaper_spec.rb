@@ -33,11 +33,31 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
   end
 
   describe ".call" do
-    subject(:call) { described_class.call }
+    subject(:call) { described_class.call(conn) }
+
+    let(:conn) { nil }
 
     around do |example|
       SidekiqUniqueJobs.use_config(reaper: reaper) do
         example.run
+      end
+    end
+
+    context "when given a connection" do
+      let(:conn)       { instance_spy(ConnectionPool) }
+      let(:reaper)     { :ruby }
+      let(:reaper_spy) { instance_spy("SidekiqUniqueJobs::Orphans::Reaper") }
+
+      before do
+        allow(reaper_spy).to receive(:call)
+        allow(described_class).to receive(:new).and_return(reaper_spy)
+      end
+
+      it "calls the reaper with the given connection" do
+        call
+
+        expect(reaper_spy).to have_received(:call)
+        expect(described_class).to have_received(:new).with(conn)
       end
     end
 
@@ -109,36 +129,63 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         end
 
         context "with job in process" do
-          let(:process_key) { "process-id" }
-          let(:thread_id)   { "thread-id" }
-          let(:worker_key)  { "#{process_key}:workers" }
+          let(:process_key)    { "process-id" }
+          let(:thread_id)      { "thread-id" }
+          let(:worker_key)     { "#{process_key}:workers" }
+          let(:created_at)     { (Time.now - reaper_timeout).to_f }
+          let(:reaper_timeout) { SidekiqUniqueJobs.config.reaper_timeout }
 
           before do
             SidekiqUniqueJobs.redis do |conn|
               conn.multi do
                 conn.sadd("processes", process_key)
                 conn.set(process_key, "bogus")
-                conn.hset(worker_key, thread_id, dump_json(payload: item))
+                conn.hset(worker_key, thread_id, dump_json(created_at: created_at, payload: item))
                 conn.expire(process_key, 60)
                 conn.expire(worker_key, 60)
               end
             end
           end
 
-          # TODO: Adjust this spec for earlier sidekiq versions
           context "that matches current digest", sidekiq_ver: ">= 5.0" do
-            it "keeps the digest" do
-              expect { call }.not_to change { digests.count }.from(1)
-              expect(unique_keys).not_to match_array([])
+            context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
+              let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
+
+              it "keeps the digest" do
+                expect { call }.not_to change { digests.count }.from(1)
+                expect(unique_keys).not_to match_array([])
+              end
+            end
+
+            context "and created_at is recent" do # rubocop:disable RSpec/NestedGroups
+              let(:created_at) { Time.now.to_f }
+
+              it "keeps the digest" do
+                expect { call }.not_to change { digests.count }.from(1)
+                expect(unique_keys).not_to match_array([])
+              end
             end
           end
 
           context "that does not match current digest" do
             let(:item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => "uniquejobs:d2" } }
 
-            it "deletes the digest" do
-              expect { call }.to change { digests.count }.by(-1)
-              expect(unique_keys).to match_array([])
+            context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
+              let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
+
+              it "deletes the digest" do
+                expect { call }.to change { digests.count }.by(-1)
+                expect(unique_keys).to match_array([])
+              end
+            end
+
+            context "and created_at is recent" do # rubocop:disable RSpec/NestedGroups
+              let(:created_at) { Time.now.to_f }
+
+              it "keeps the digest" do
+                expect { call }.not_to change { digests.count }.from(1)
+                expect(unique_keys).not_to match_array([])
+              end
             end
           end
         end

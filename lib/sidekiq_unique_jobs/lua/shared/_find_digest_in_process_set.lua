@@ -1,4 +1,4 @@
-local function find_digest_in_process_set(digest)
+local function find_digest_in_process_set(digest, threshold)
   local process_cursor = 0
   local job_cursor     = 0
   local pattern        = "*" .. digest .. "*"
@@ -26,8 +26,15 @@ local function find_digest_in_process_set(digest)
         log_debug("No entries in:", workers_key)
       else
         for i = 1, #jobs, 2 do
-          if string.find(jobs[i +1], digest) then
+          local jobstr = jobs[i +1]
+          if string.find(jobstr, digest) then
             log_debug("Found digest", digest, "in:", workers_key)
+            found = true
+            break
+          end
+
+          local job = cjson.decode(jobstr)
+          if job.created_at > threshold then
             found = true
             break
           end

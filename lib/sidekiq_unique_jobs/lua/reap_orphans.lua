@@ -7,15 +7,16 @@ local retry_set    = KEYS[3]
 --------  END keys  ---------
 
 -------- BEGIN argv ---------
-local reaper_count  = tonumber(ARGV[1])
+local reaper_count = tonumber(ARGV[1])
+local threshold    = tonumber(ARGV[2])
 --------  END argv  ---------
 
 --------  BEGIN injected arguments --------
-local current_time = tonumber(ARGV[2])
-local debug_lua    = ARGV[3] == "true"
-local max_history  = tonumber(ARGV[4])
-local script_name  = ARGV[5] .. ".lua"
-local redisversion = ARGV[6]
+local current_time = tonumber(ARGV[3])
+local debug_lua    = ARGV[4] == "true"
+local max_history  = tonumber(ARGV[5])
+local script_name  = ARGV[6] .. ".lua"
+local redisversion = ARGV[7]
 ---------  END injected arguments ---------
 
 
@@ -65,7 +66,7 @@ repeat
     -- TODO: Add check for jobs checked out by process
     if found ~= true then
       log_debug("Searching for digest:", digest, "in process sets")
-      found = find_digest_in_process_set(digest)
+      found = find_digest_in_process_set(digest, threshold)
     end
 
     if found ~= true then
