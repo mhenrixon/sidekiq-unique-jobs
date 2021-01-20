@@ -11,9 +11,9 @@ module SidekiqUniqueJobs
       #   @return [String] rthe sidekiq queue this job belongs to
       attr_reader :queue
       #
-      # @!attribute [r] unique_digest
+      # @!attribute [r] lock_digest
       #   @return [String] the unique digest to use for locking
-      attr_reader :unique_digest
+      attr_reader :lock_digest
 
       #
       # Initialize a new Replace strategy
@@ -22,8 +22,8 @@ module SidekiqUniqueJobs
       #
       def initialize(item, redis_pool = nil)
         super(item, redis_pool)
-        @queue         = item[QUEUE]
-        @unique_digest = item[LOCK_DIGEST]
+        @queue       = item[QUEUE]
+        @lock_digest = item[LOCK_DIGEST]
       end
 
       #
@@ -37,10 +37,11 @@ module SidekiqUniqueJobs
       def call(&block)
         return unless (deleted_job = delete_job_by_digest)
 
-        log_info("Deleting job: #{deleted_job}")
+        log_info("Deleted job: #{deleted_job}")
         if (del_count = delete_lock)
-          log_info("Deleted `#{del_count}` keys for #{unique_digest}")
+          log_info("Deleted `#{del_count}` keys for #{lock_digest}")
         end
+
         block&.call
       end
 
@@ -54,7 +55,7 @@ module SidekiqUniqueJobs
       def delete_job_by_digest
         call_script(:delete_job_by_digest,
                     keys: ["#{QUEUE}:#{queue}", SCHEDULE, RETRY],
-                    argv: [unique_digest])
+                    argv: [lock_digest])
       end
 
       #
@@ -64,7 +65,7 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of keys deleted
       #
       def delete_lock
-        digests.delete_by_digest(unique_digest)
+        digests.delete_by_digest(lock_digest)
       end
 
       #

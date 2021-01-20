@@ -3,7 +3,7 @@
 require "bundler/setup"
 
 if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6"
-  require "simplecov" unless %w[false 0].include?(ENV["COV"])
+  require "simplecov" if ENV["COV"]
 
   begin
     require "pry"
@@ -43,10 +43,12 @@ RSpec.configure do |config|
   config.define_derived_metadata do |meta|
     meta[:aggregate_failures] = true
   end
+
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
   config.mock_with :rspec do |mocks|
+    mocks.allow_message_expectations_on_nil = true
     mocks.verify_partial_doubles = true
   end
   config.example_status_persistence_file_path = ".rspec_status"

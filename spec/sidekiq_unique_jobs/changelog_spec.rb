@@ -116,7 +116,10 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
   end
 
   describe "#entries" do
-    subject(:entries) { entity.entries }
+    subject(:entries) { entity.entries(pattern: pattern, count: count) }
+
+    let(:pattern) { "*" }
+    let(:count)   { nil }
 
     context "when no entries exist" do
       it { is_expected.to match_array([]) }
@@ -145,6 +148,13 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
       end
 
       it { is_expected.to match_array([locked_entry, queued_entry]) }
+
+      context "when given count 1" do
+        let(:count) { 1 }
+
+        # count only is considered per iteration, this would have iterated twice
+        it { is_expected.to match_array([locked_entry, queued_entry]) }
+      end
     end
   end
 

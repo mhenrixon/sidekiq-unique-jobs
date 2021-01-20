@@ -28,8 +28,7 @@ platforms :mri do
   gem "reek", ">= 5.3"
   gem "rspec-benchmark"
   gem "rubocop-mhenrixon"
-  gem "simplecov", "< 0.18"
-  gem "simplecov-oj"
+  gem "simplecov-sublime", "0.21.0", require: false
   gem "travis"
 end
 

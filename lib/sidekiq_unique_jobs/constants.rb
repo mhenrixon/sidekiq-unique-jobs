@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
   AT                    ||= "at"
   CHANGELOGS            ||= "uniquejobs:changelog"
   CLASS                 ||= "class"
+  CREATED_AT            ||= "created_at"
   DEAD_VERSION          ||= "uniquejobs:dead"
   DIGESTS               ||= "uniquejobs:digests"
   ERRORS                ||= "errors"

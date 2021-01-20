@@ -53,7 +53,13 @@ module SidekiqUniqueJobs
   end
 end
 
-require "sidekiq/web" unless defined?(Sidekiq::Web)
-Sidekiq::Web.register(SidekiqUniqueJobs::Web)
-Sidekiq::Web.tabs["Locks"] = "locks"
-Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")
+begin
+  require "delegate" unless defined?(DelegateClass)
+  require "sidekiq/web" unless defined?(Sidekiq::Web)
+
+  Sidekiq::Web.register(SidekiqUniqueJobs::Web)
+  Sidekiq::Web.tabs["Locks"] = "locks"
+  Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")
+rescue NameError, LoadError => ex
+  SidekiqUniqueJobs.logger.error(ex)
+end

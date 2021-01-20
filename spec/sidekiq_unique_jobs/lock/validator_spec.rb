@@ -13,10 +13,48 @@ RSpec.describe SidekiqUniqueJobs::Lock::Validator do
     }
   end
 
-  it { expect(true).to eq(true) }
-
   describe "#validate" do
     subject(:validate) { validator.validate }
+
+    context "when lock is until_executed" do
+      let(:options) do
+        {
+          "lock" => "until_executed",
+        }
+      end
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when lock is until_executing" do
+      let(:options) do
+        {
+          "lock" => "until_executing",
+        }
+      end
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when lock is while_executing" do
+      let(:options) do
+        {
+          "lock" => "while_executing",
+        }
+      end
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when lock is until_and_while_executing" do
+      let(:options) do
+        {
+          "lock" => "until_and_while_executing",
+        }
+      end
+
+      it { is_expected.to be_valid }
+    end
 
     context "with deprecated sidekiq_options" do
       let(:options) do

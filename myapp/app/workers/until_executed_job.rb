@@ -11,7 +11,7 @@ class UntilExecutedJob
 
   def perform
     logger.info("cowboy")
-    sleep(1)
+    sleep(1) # hardcore processing
     logger.info("beebop")
   end
 end

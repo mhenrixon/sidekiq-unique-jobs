@@ -69,8 +69,7 @@ redis.call("LREM", queued, -1, job_id)
 log_debug("LREM", primed, 1, job_id)
 redis.call("LREM", primed, 1, job_id)
 
--- The Sidekiq client should only set pttl for until_expired
--- The Sidekiq server should set pttl for all other jobs
+-- The Sidekiq client sets pttl
 if pttl and pttl > 0 then
   log_debug("PEXPIRE", digest, pttl)
   redis.call("PEXPIRE", digest, pttl)

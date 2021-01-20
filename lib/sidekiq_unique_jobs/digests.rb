@@ -78,7 +78,7 @@ module SidekiqUniqueJobs
     def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
       options = {}
       options[:match] = pattern
-      options[:count] = count if count
+      options[:count] = count
 
       result = redis { |conn| conn.zscan_each(key, **options).to_a }
 
