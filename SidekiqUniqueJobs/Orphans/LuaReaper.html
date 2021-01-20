@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Orphans::LuaReaper
   
-    &mdash; Documentation by YARD 0.9.25
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -255,7 +255,7 @@
     <span class='symbol'>:reap_orphans</span><span class='comma'>,</span>
     <span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span>
     <span class='label'>keys:</span> <span class='lbracket'>[</span><span class='const'>DIGESTS</span><span class='comma'>,</span> <span class='const'>SCHEDULE</span><span class='comma'>,</span> <span class='const'>RETRY</span><span class='comma'>,</span> <span class='const'>PROCESSES</span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='label'>argv:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_reaper_count'>reaper_count</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>argv:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_reaper_count'>reaper_count</span><span class='comma'>,</span> <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='id identifier rubyid_reaper_timeout'>reaper_timeout</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span><span class='rbracket'>]</span><span class='comma'>,</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -268,9 +268,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Jan 16 08:34:10 2021 by
+  Generated on Wed Jan 20 10:23:00 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.7.2).
+  0.9.26 (ruby-2.7.2).
 </div>
 
     </div>

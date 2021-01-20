@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Middleware
   
-    &mdash; Documentation by YARD 0.9.25
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -78,6 +78,11 @@
   
   
 
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span>, <span class='object_link'><a href="Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></dd>
+  </dl>
   
 
   
@@ -165,84 +170,6 @@
 
 
 
-  
-    <h2>
-      Class Method Summary
-      <small><a href="#" class="summary_toggle">collapse</a></small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#configure-class_method" title="configure (class method)">.<strong>configure</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Configure both server and client.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#configure_client-class_method" title="configure_client (class method)">.<strong>configure_client</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Configures the Sidekiq client.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#configure_server-class_method" title="configure_server (class method)">.<strong>configure_server</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Configures the Sidekiq server.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
   
     <h2>
       Instance Method Summary
@@ -809,12 +736,12 @@
       <pre class="lines">
 
 
-73
-74
-75</pre>
+16
+17
+18</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 73</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_item'>item</span>
   <span class='ivar'>@item</span>
@@ -826,204 +753,6 @@
     
   </div>
 
-
-  <div id="class_method_details" class="method_details_list">
-    <h2>Class Method Details</h2>
-
-    
-      <div class="method_details first">
-  <h3 class="signature first" id="configure-class_method">
-  
-    .<strong>configure</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Configure both server and client</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-17
-18
-19
-20</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 17</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span>
-  <span class='id identifier rubyid_configure_server'>configure_server</span>
-  <span class='id identifier rubyid_configure_client'>configure_client</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="configure_client-class_method">
-  
-    .<strong>configure_client</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Configures the Sidekiq client</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 59</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure_client'>configure_client</span>
-  <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_client'>configure_client</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
-      <span class='kw'>if</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Client</span><span class='rparen'>)</span>
-        <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_insert_after'>insert_after</span> <span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Client</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
-      <span class='kw'>else</span>
-        <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
-      <span class='kw'>end</span>
-    <span class='kw'>end</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="configure_server-class_method">
-  
-    .<strong>configure_server</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Configures the Sidekiq server</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 25</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='comment'># rubocop:disable Metrics/MethodLength
-</span>  <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
-      <span class='kw'>if</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Client</span><span class='rparen'>)</span>
-        <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_insert_after'>insert_after</span> <span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Client</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
-      <span class='kw'>else</span>
-        <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
-      <span class='kw'>end</span>
-    <span class='kw'>end</span>
-
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_server_middleware'>server_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
-      <span class='kw'>if</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Server</span><span class='rparen'>)</span>
-        <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_insert_after'>insert_after</span> <span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Server</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
-      <span class='kw'>else</span>
-        <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
-      <span class='kw'>end</span>
-    <span class='kw'>end</span>
-
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='symbol'>:startup</span><span class='rparen'>)</span> <span class='kw'>do</span>
-      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="UpdateVersion.html" title="SidekiqUniqueJobs::UpdateVersion (class)">UpdateVersion</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="UpdateVersion.html#call-class_method" title="SidekiqUniqueJobs::UpdateVersion.call (method)">call</a></span></span>
-      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="UpgradeLocks.html" title="SidekiqUniqueJobs::UpgradeLocks (class)">UpgradeLocks</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="UpgradeLocks.html#call-class_method" title="SidekiqUniqueJobs::UpgradeLocks.call (method)">call</a></span></span>
-
-      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans/Manager.html" title="SidekiqUniqueJobs::Orphans::Manager (module)">Manager</a></span></span><span class='period'>.</span><span class='id identifier rubyid_start'><span class='object_link'><a href="Orphans/Manager.html#start-class_method" title="SidekiqUniqueJobs::Orphans::Manager.start (method)">start</a></span></span>
-    <span class='kw'>end</span>
-
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='symbol'>:shutdown</span><span class='rparen'>)</span> <span class='kw'>do</span>
-      <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans.html" title="SidekiqUniqueJobs::Orphans (module)">Orphans</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Orphans/Manager.html" title="SidekiqUniqueJobs::Orphans::Manager (module)">Manager</a></span></span><span class='period'>.</span><span class='id identifier rubyid_stop'><span class='object_link'><a href="Orphans/Manager.html#stop-class_method" title="SidekiqUniqueJobs::Orphans::Manager.stop (method)">stop</a></span></span>
-    <span class='kw'>end</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
@@ -1170,22 +899,22 @@
       <pre class="lines">
 
 
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100</pre>
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_worker_class'>worker_class</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_queue'>queue</span><span class='comma'>,</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@worker_class</span> <span class='op'>=</span> <span class='id identifier rubyid_worker_class'>worker_class</span>
@@ -2038,9 +1767,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Jan 16 08:34:08 2021 by
+  Generated on Wed Jan 20 10:22:58 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.7.2).
+  0.9.26 (ruby-2.7.2).
 </div>
 
     </div>

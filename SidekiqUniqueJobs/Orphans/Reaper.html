@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Orphans::Reaper
   
-    &mdash; Documentation by YARD 0.9.25
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -585,6 +585,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#reaper_timeout-instance_method" title="#reaper_timeout (instance method)">#<strong>reaper_timeout</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The configured timeout for the reaper.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#redis-instance_method" title="#redis (instance method)">#<strong>redis</strong>(r_pool = nil, &amp;block)  &#x21d2; Sidekiq::RedisConnection, ConnectionPool </a>
     
 
@@ -906,16 +929,16 @@
       <pre class="lines">
 
 
-95
-96
-97
-98
-99
-100
-101</pre>
+105
+106
+107
+108
+109
+110
+111</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 95</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 105</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_implementation'>implementation</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#REAPERS-constant" title="SidekiqUniqueJobs::Orphans::Reaper::REAPERS (constant)">REAPERS</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_reaper'>reaper</span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -1502,6 +1525,63 @@
       <pre class="lines">
 
 
+95
+96
+97</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 95</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reaper_count'>reaper_count</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper_count'>reaper_count</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reaper_timeout-instance_method">
+  
+    #<strong>reaper_timeout</strong>  &#x21d2; <tt>Integer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The configured timeout for the reaper</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>timeout in seconds</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
 85
 86
 87</pre>
@@ -1509,8 +1589,8 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/orphans/reaper.rb', line 85</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_reaper_count'>reaper_count</span>
-  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper_count'>reaper_count</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_reaper_timeout'>reaper_timeout</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reaper_timeout'>reaper_timeout</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1650,9 +1730,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Jan 16 08:34:10 2021 by
+  Generated on Wed Jan 20 10:23:00 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.7.2).
+  0.9.26 (ruby-2.7.2).
 </div>
 
     </div>

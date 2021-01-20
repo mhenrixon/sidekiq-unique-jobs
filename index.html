@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.25
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -63,9 +63,15 @@
 
 <ul>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#requirements">Requirements</a></li>
+<li><a href="#usage">Usage</a>
+
+<ul>
 <li><a href="#installation">Installation</a></li>
+<li><a href="#add-the-middleware">Add the middleware</a></li>
+<li><a href="#your-first-worker">Your first worker</a></li>
+</ul></li>
 <li><a href="#support-me">Support Me</a></li>
+<li><a href="#requirements">Requirements</a></li>
 <li><a href="#general-information">General Information</a></li>
 <li><a href="#global-configuration">Global Configuration</a>
 
@@ -86,6 +92,8 @@
 <li><a href="#worker-configuration">Worker Configuration</a>
 
 <ul>
+<li><a href="#lock_info-1">lock_info</a></li>
+<li><a href="#lock_prefix-1">lock_prefix</a></li>
 <li><a href="#lock_ttl-1">lock_ttl</a></li>
 <li><a href="#lock_timeout-1">lock_timeout</a></li>
 <li><a href="#unique_across_queues">unique_across_queues</a></li>
@@ -111,7 +119,7 @@
 <li><a href="#reschedule">Reschedule</a></li>
 <li><a href="#custom-strategies">Custom Strategies</a></li>
 </ul></li>
-<li><a href="#usage">Usage</a>
+<li><a href="#usage-1">Usage</a>
 
 <ul>
 <li><a href="#finer-control-over-uniqueness">Finer Control over Uniqueness</a></li>
@@ -119,7 +127,9 @@
 <li><a href="#logging">Logging</a></li>
 <li><a href="#cleanup-dead-locks">Cleanup Dead Locks</a></li>
 <li><a href="#other-sidekiq-gems">Other Sidekiq gems</a></li>
+<li><a href="#apartment-sidekiq">apartment-sidekiq</a></li>
 <li><a href="#sidekiq-global_id">sidekiq-global_id</a></li>
+<li><a href="#sidekiq-status">sidekiq-status</a></li>
 </ul></li>
 <li><a href="#debugging">Debugging</a>
 
@@ -143,7 +153,7 @@
 
 <h2 id="introduction">Introduction</h2>
 
-<p>This gem adds unique constraints to the sidekiq queues. The uniqueness is achieved by acquiring locks for a hash of a queue name, a worker class, and job&#39;s arguments. Only one lock for a given hash can be acquired. What happens when a lock can&#39;t be acquired is governed by a chosen strategy.</p>
+<p>This gem adds unique constraints to the sidekiq queues. The uniqueness is achieved by acquiring locks for a hash of a queue name, a worker class, and job&#39;s arguments. By default, only one lock for a given hash can be acquired. What happens when a lock can&#39;t be acquired is governed by a chosen <code>on_conflict</code>strategy.</p>
 
 <p>This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.</p>
 
@@ -155,25 +165,9 @@
 <li><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18">v4.0.18</a></li>
 </ul>
 
-<h2 id="requirements">Requirements</h2>
+<h2 id="usage">Usage</h2>
 
-<ul>
-<li>Sidekiq <code>&gt;= 4.0</code> (<code>&gt;= 5.2</code> recommended)</li>
-<li>Ruby:
-
-<ul>
-<li>MRI <code>&gt;= 2.3</code> (<code>&gt;= 2.5</code> recommended)</li>
-<li>JRuby <code>&gt;= 9.0</code> (<code>&gt;= 9.2</code> recommended)</li>
-<li>Truffleruby</li>
-</ul></li>
-<li>Redis Server <code>&gt;= 3.0.2</code> (<code>&gt;= 3.2</code> recommended)</li>
-<li>[ActiveJob officially not supported][48]</li>
-<li>[redis-namespace officially not supported][49]</li>
-</ul>
-
-<p>See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).</p>
-
-<h2 id="installation">Installation</h2>
+<h3 id="installation">Installation</h3>
 
 <p>Add this line to your application&#39;s Gemfile:</p>
 
@@ -185,14 +179,83 @@
 <pre class="code bash"><code class="bash">bundle
 </code></pre>
 
-<p>Or install it yourself as:</p>
+<h3 id="add-the-middleware">Add the middleware</h3>
 
-<pre class="code bash"><code class="bash">gem install sidekiq-unique-jobs
+<p>Before v7, the middleware was configured automatically. Since some people reported issues with other gems (see <a href="#other-sidekiq-gems">Other Sidekiq Gems</a>) it was decided to give full control over to the user.</p>
+
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/sidekiq.rb#L12">A full and hopefully working example</a></p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_redis'>redis</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>url:</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>REDIS_URL</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>driver:</span> <span class='symbol'>:hiredis</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_server_middleware'>server_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+    <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_error_handlers'>error_handlers</span> <span class='op'>&lt;&lt;</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_ctx_hash'>ctx_hash</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_p'>p</span> <span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_ctx_hash'>ctx_hash</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_death_handlers'>death_handlers</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_lambda'>lambda</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_job'>job</span><span class='comma'>,</span> <span class='id identifier rubyid__ex'>_ex</span><span class='op'>|</span>
+    <span class='id identifier rubyid_digest'>digest</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>lock_digest</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+    <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'><span class='object_link'><a href="SidekiqUniqueJobs/Digests.html#delete_by_digest-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_digest (method)">delete_by_digest</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_digest'>digest</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+
+<span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_client'>configure_client</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_redis'>redis</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>url:</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>REDIS_URL</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>driver:</span> <span class='symbol'>:hiredis</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+    <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
 </code></pre>
+
+<h3 id="your-first-worker">Your first worker</h3>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># frozen_string_literal: true
+</span>
+<span class='kw'>class</span> <span class='const'>UntilExecutedWorker</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span>
+
+  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>queue:</span> <span class='symbol'>:special</span><span class='comma'>,</span>
+                  <span class='label'>retry:</span> <span class='kw'>false</span><span class='comma'>,</span>
+                  <span class='label'>lock:</span> <span class='symbol'>:until_executed</span><span class='comma'>,</span>
+                  <span class='label'>lock_info:</span> <span class='kw'>true</span><span class='comma'>,</span>
+                  <span class='label'>lock_timeout:</span> <span class='int'>0</span><span class='comma'>,</span>
+                  <span class='label'>lock_prefix:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>special</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='label'>lock_ttl:</span> <span class='int'>0</span><span class='comma'>,</span>
+                  <span class='label'>lock_limit:</span> <span class='int'>5</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_perform'>perform</span>
+    <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cowboy</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_sleep'>sleep</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span> <span class='comment'># hardcore processing
+</span>    <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>beebop</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+
+</code></pre>
+
+<p>You can read more about the worker configuration in <a href="#worker-configuration">Worker Configuration</a> below.</p>
 
 <h2 id="support-me">Support Me</h2>
 
 <p>Want to show me some ❤️ for the hard work I do on this gem? You can use the following PayPal link: <a href="https://paypal.me/mhenrixon1">https://paypal.me/mhenrixon1</a>. Any amount is welcome and let me tell you it feels good to be appreciated. Even a dollar makes me super excited about all of this.</p>
+
+<h2 id="requirements">Requirements</h2>
+
+<ul>
+<li>Sidekiq <code>&gt;= 4.0</code> (<code>&gt;= 5.2</code> recommended)</li>
+<li>Ruby:
+
+<ul>
+<li>MRI <code>&gt;= 2.5</code> (<code>&gt;= 2.6</code> recommended)</li>
+<li>JRuby <code>&gt;= 9.0</code> (<code>&gt;= 9.2</code> recommended)</li>
+<li>Truffleruby</li>
+</ul></li>
+<li>Redis Server <code>&gt;= 3.0.2</code> (<code>&gt;= 3.2</code> recommended)</li>
+<li>[ActiveJob officially not supported][48]</li>
+<li>[redis-namespace officially not supported][49]</li>
+</ul>
+
+<p>See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).</p>
 
 <h2 id="general-information">General Information</h2>
 
@@ -327,11 +390,25 @@
 
 <h2 id="worker-configuration">Worker Configuration</h2>
 
+<h3 id="lock_info">lock_info</h3>
+
+<p>Lock info gathers information about a specific lock. It collects things like which <code>lock_args</code> where used to compute the <code>lock_digest</code> that is used for maintaining uniqueness.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_info:</span> <span class='kw'>false</span> <span class='comment'># this is the default, set to true to turn on
+</span></code></pre>
+
+<h3 id="lock_prefix">lock_prefix</h3>
+
+<p>Use if you want a different key prefix for the keys in redis.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_prefix:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>uniquejobs</span><span class='tstring_end'>&quot;</span></span> <span class='comment'># this is the default value
+</span></code></pre>
+
 <h3 id="lock_ttl">lock_ttl</h3>
 
 <p>Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.</p>
 
-<p>Since <code>v6.0.11</code> the other locks will expire after the server is done processing.</p>
+<p>Starting from <code>v7</code> the expiration will take place when the job is pushed to the queue.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_ttl:</span> <span class='kw'>nil</span> <span class='comment'># default - don&#39;t expire keys
 </span><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock_ttl:</span> <span class='int'>20</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='comment'># expire this lock in 20 days
@@ -349,6 +426,8 @@
 <h3 id="unique_across_queues">unique_across_queues</h3>
 
 <p>This configuration option is slightly misleading. It doesn&#39;t disregard the queue on other jobs. Just on itself, this means that a worker that might schedule jobs into multiple queues will be able to have uniqueness enforced on all queues it is pushed to.</p>
+
+<p>This is mainly intended for <code>Worker.set(queue: :another).perform_async</code>.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>Worker</span>
   <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span>
@@ -687,9 +766,28 @@ end
 
 <h3 id="other-sidekiq-gems">Other Sidekiq gems</h3>
 
+<h4 id="apartment-sidekiq">apartment-sidekiq</h4>
+
+<p>It was reported in <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/536">#536</a> that the order of the Sidekiq middleware needs to be as follows.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Client</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Client.html" title="SidekiqUniqueJobs::Middleware::Client (class)">Client</a></span></span>
+<span class='kw'>end</span>
+
+<span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_server_middleware'>server_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'>Apartment</span><span class='op'>::</span><span class='const'>Sidekiq</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>Server</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>The reason being that this gem needs to be configured AFTER the apartment gem or the apartment will not be able to be considered for uniqueness</p>
+
 <h4 id="sidekiq-global_id">sidekiq-global_id</h4>
 
 <p>It was reported in <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235">#235</a> that the order of the Sidekiq middleware needs to be as follows.</p>
+
+<p>For a working setup check the following <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/sidekiq.rb#L12">file</a>.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
   <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>GlobalId</span><span class='op'>::</span><span class='const'>ClientMiddleware</span>
@@ -702,7 +800,24 @@ end
 <span class='kw'>end</span>
 </code></pre>
 
-<p>For a working setup check the following <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/945c4c4c517168d49e3f8ee952fcc9c430865635/myapp/config/initializers/sidekiq.rb#L8">file</a></p>
+<p>The reason for this is that the global id needs to be set before the unique jobs middleware runs. Otherwise that won&#39;t be available for uniqueness.</p>
+
+<h4 id="sidekiq-status">sidekiq-status</h4>
+
+<p>It was reported in <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564">#564</a> that the order of the middleware needs to be as follows.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>Status</span><span class='op'>::</span><span class='const'>ClientMiddleware</span><span class='comma'>,</span> <span class='label'>expiration:</span> <span class='int'>10</span><span class='period'>.</span><span class='id identifier rubyid_minutes'>minutes</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>Status</span><span class='op'>::</span><span class='const'>ServerMiddleware</span>
+<span class='kw'>end</span>
+
+<span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_server_middleware'>server_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>Status</span><span class='op'>::</span><span class='const'>ServerMiddleware</span><span class='comma'>,</span> <span class='label'>expiration:</span> <span class='int'>10</span><span class='period'>.</span><span class='id identifier rubyid_minutes'>minutes</span>
+  <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">Middleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/Middleware/Server.html" title="SidekiqUniqueJobs::Middleware::Server (class)">Server</a></span></span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>The reason for this is that if a job is duplicated it shouldn&#39;t end up with the status middleware at all. Status is just a monitor so to prevent clashes, leftovers and ensure cleanup. The status middleware should run after uniqueness on client and before on server. This will lead to less surprises.</p>
 
 <h2 id="debugging">Debugging</h2>
 
@@ -835,9 +950,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Sat Jan 16 08:34:08 2021 by
+  Generated on Wed Jan 20 10:22:58 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.7.2).
+  0.9.26 (ruby-2.7.2).
 </div>
 
     </div>
