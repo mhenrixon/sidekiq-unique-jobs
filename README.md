@@ -158,12 +158,12 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
 
 ## Requirements
 
-- Sidekiq `>= 4.0` (`>= 5.2` recommended)
+- Sidekiq `>= 5.0` (`>= 5.2` recommended)
 - Ruby:
   - MRI `>= 2.5` (`>= 2.6` recommended)
   - JRuby `>= 9.0` (`>= 9.2` recommended)
   - Truffleruby
-- Redis Server `>= 3.0.2` (`>= 3.2` recommended)
+- Redis Server `>= 3.2` (`>= 5.0` recommended)
 - [ActiveJob officially not supported][48]
 - [redis-namespace officially not supported][49]
 
