@@ -5,6 +5,7 @@
 - [Introduction](#introduction)
 - [Usage](#usage)
   - [Installation](#installation)
+  - [Add the middleware](#add-the-middleware)
   - [Your first worker](#your-first-worker)
 - [Support Me](#support-me)
 - [Requirements](#requirements)
@@ -49,7 +50,9 @@
   - [Logging](#logging)
   - [Cleanup Dead Locks](#cleanup-dead-locks)
   - [Other Sidekiq gems](#other-sidekiq-gems)
+    - [apartment-sidekiq](#apartment-sidekiq)
     - [sidekiq-global_id](#sidekiq-global_id)
+    - [sidekiq-status](#sidekiq-status)
 - [Debugging](#debugging)
   - [Sidekiq Web](#sidekiq-web)
     - [Show Locks](#show-locks)
@@ -89,6 +92,36 @@ And then execute:
 
 ```bash
 bundle
+```
+
+### Add the middleware
+
+Before v7, the middleware was configured automatically. Since some people reported issues with other gems (see [Other Sidekiq Gems](#other-sidekiq-gems)) it was decided to give full control over to the user.
+
+[A full and hopefully working example](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/sidekiq.rb#L12)
+
+```ruby
+Sidekiq.configure_server do |config|
+  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+
+  config.server_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Server
+  end
+
+  config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
+  config.death_handlers << lambda do |job, _ex|
+    digest = job["lock_digest"]
+    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
+  end
+end
+
+Sidekiq.configure_client do |config|
+  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+end
 ```
 
 ### Your first worker
@@ -687,9 +720,29 @@ end
 
 ### Other Sidekiq gems
 
+#### apartment-sidekiq
+
+It was reported in [#536](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/536) that the order of the Sidekiq middleware needs to be as follows.
+
+```ruby
+Sidekiq.client_middleware do |chain|
+  chain.add Apartment::Sidekiq::Middleware::Client
+  chain.add SidekiqUniqueJobs::Middleware::Client
+end
+
+Sidekiq.server_middleware do |chain|
+  chain.add Apartment::Sidekiq::Middleware::Server
+  chain.add SidekiqUniqueJobs::Middleware::Server
+end
+```
+
+The reason being that this gem needs to be configured AFTER the apartment gem or the apartment will not be able to be considered for uniqueness
+
 #### sidekiq-global_id
 
 It was reported in [#235](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/235) that the order of the Sidekiq middleware needs to be as follows.
+
+For a working setup check the following [file](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/sidekiq.rb#L12).
 
 ```ruby
 Sidekiq.client_middleware do |chain|
@@ -703,7 +756,25 @@ Sidekiq.server_middleware do |chain|
 end
 ```
 
-For a working setup check the following [file](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/945c4c4c517168d49e3f8ee952fcc9c430865635/myapp/config/initializers/sidekiq.rb#L8)
+The reason for this is that the global id needs to be set before the unique jobs middleware runs. Otherwise that won't be available for uniqueness.
+
+#### sidekiq-status
+
+It was reported in [#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564) that the order of the middleware needs to be as follows.
+
+```ruby
+Sidekiq.client_middleware do |chain|
+  chain.add Sidekiq::Status::ClientMiddleware, expiration: 10.minutes
+  chain.add Sidekiq::Status::ServerMiddleware
+end
+
+Sidekiq.server_middleware do |chain|
+  chain.add Sidekiq::Status::ServerMiddleware, expiration: 10.minutes
+  chain.add SidekiqUniqueJobs::Middleware::Server
+end
+```
+
+The reason for this is that if a job is duplicated it shouldn't end up with the status middleware at all. Status is just a monitor so to prevent clashes, leftovers and ensure cleanup. The status middleware should run after uniqueness on client and before on server. This will lead to less surprises.
 
 ## Debugging
 

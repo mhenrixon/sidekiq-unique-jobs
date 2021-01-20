@@ -11,63 +11,6 @@ module SidekiqUniqueJobs
     include SidekiqUniqueJobs::OptionsWithFallback
     include SidekiqUniqueJobs::JSON
 
-    #
-    # Configure both server and client
-    #
-    def self.configure
-      configure_server
-      configure_client
-    end
-
-    #
-    # Configures the Sidekiq server
-    #
-    def self.configure_server # rubocop:disable Metrics/MethodLength
-      Sidekiq.configure_server do |config|
-        config.client_middleware do |chain|
-          if defined?(Apartment::Sidekiq::Middleware::Client)
-            chain.insert_after Apartment::Sidekiq::Middleware::Client, SidekiqUniqueJobs::Middleware::Client
-          else
-            chain.add SidekiqUniqueJobs::Middleware::Client
-          end
-        end
-
-        config.server_middleware do |chain|
-          if defined?(Apartment::Sidekiq::Middleware::Server)
-            chain.insert_after Apartment::Sidekiq::Middleware::Server, SidekiqUniqueJobs::Middleware::Server
-          else
-            chain.add SidekiqUniqueJobs::Middleware::Server
-          end
-        end
-
-        config.on(:startup) do
-          SidekiqUniqueJobs::UpdateVersion.call
-          SidekiqUniqueJobs::UpgradeLocks.call
-
-          SidekiqUniqueJobs::Orphans::Manager.start
-        end
-
-        config.on(:shutdown) do
-          SidekiqUniqueJobs::Orphans::Manager.stop
-        end
-      end
-    end
-
-    #
-    # Configures the Sidekiq client
-    #
-    def self.configure_client
-      Sidekiq.configure_client do |config|
-        config.client_middleware do |chain|
-          if defined?(Apartment::Sidekiq::Middleware::Client)
-            chain.insert_after Apartment::Sidekiq::Middleware::Client, SidekiqUniqueJobs::Middleware::Client
-          else
-            chain.add SidekiqUniqueJobs::Middleware::Client
-          end
-        end
-      end
-    end
-
     # The sidekiq job hash
     # @return [Hash] the Sidekiq job hash
     attr_reader :item
