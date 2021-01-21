@@ -111,7 +111,7 @@ Sidekiq.configure_server do |config|
   config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
   config.death_handlers << lambda do |job, _ex|
     digest = job["lock_digest"]
-    SidekiqUniqueJobs::Digests.delete_by_digest(digest) if digest
+    SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
   end
 end
 
