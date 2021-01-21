@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
-  let(:entity)      { described_class.new(key) }
-  let(:key)         { SidekiqUniqueJobs::Key.new(digest) }
+  let(:entity)      { described_class.new(digest) }
   let(:digest)      { "digest:#{SecureRandom.hex(12)}" }
   let(:job_id)      { SecureRandom.hex(12) }
   let(:with_scores) { nil }
@@ -31,6 +30,22 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     end
   end
 
+  describe "#add" do
+    subject(:add) { entity.add(values) }
+
+    context "when given an array of arrays" do
+      let(:values) { [[1.0, "string"], [2.0, "other"]] }
+
+      it { is_expected.to be == 2 }
+    end
+
+    context "when given a string entries" do
+      let(:values) { "abcdef" }
+
+      it { is_expected.to be == true }
+    end
+  end
+
   describe "#count" do
     subject(:count) { entity.count }
 
@@ -44,6 +59,28 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
       it { is_expected.to be == 1 }
     end
   end
+
+  describe "#clear" do
+    subject(:clear) { entity.clear }
+
+    context "without entries" do
+      it { is_expected.to be == 0 }
+    end
+
+    context "with entries" do
+      before do
+        values = (1..100).each_with_object([]) do |num, memo|
+          memo.concat << [now_f, "#{job_id}#{num}"]
+        end
+
+        entity.add(values)
+        zcard(digest)
+      end
+
+      it { is_expected.to be == 100 }
+    end
+  end
+
 
   describe "#score" do
     subject(:score) { entity.score(job_id) }

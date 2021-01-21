@@ -24,6 +24,33 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     end
   end
 
+  describe "#clear" do
+    subject(:clear) { entity.clear }
+
+    context "with entries" do
+      before do
+        entity.add(
+          message: "Added from test",
+          job_id: job_id,
+          digest: digest,
+          script: __FILE__.to_s,
+        )
+      end
+
+      it "clears out all entries" do
+        expect { clear }.to change { entity.entries.size }.by(-1)
+        expect(clear).to be == 1
+      end
+    end
+
+    context "without entries" do
+      it "returns 0 (zero)" do
+        expect { clear }.not_to change { entity.entries.size }
+        expect(clear).to be == 0
+      end
+    end
+  end
+
   describe "#exist?" do
     subject(:exist?) { entity.exist? }
 

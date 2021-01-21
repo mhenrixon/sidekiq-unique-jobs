@@ -24,6 +24,23 @@ module SidekiqUniqueJobs
       end
 
       #
+      # Adds a value to the sorted set
+      #
+      # @param [Array<Float, String>, String] the values to add
+      #
+      # @return [Boolean, Integer] <description>
+      #
+      def add(values)
+        redis do |conn|
+          if values.is_a?(Array)
+            conn.zadd(key, values)
+          else
+            conn.zadd(key, now_f, values)
+          end
+        end
+      end
+
+      #
       # Return the zrak of the member
       #
       # @param [String] member the member to pull rank on
@@ -43,6 +60,16 @@ module SidekiqUniqueJobs
       #
       def score(member)
         redis { |conn| conn.zscore(key, member) }
+      end
+
+      #
+      # Clears the sorted set from all entries
+      #
+      #
+      # @return [Integer] number of entries removed
+      #
+      def clear
+        redis { |conn| conn.zremrangebyrank(key, 0, count) }
       end
 
       #
