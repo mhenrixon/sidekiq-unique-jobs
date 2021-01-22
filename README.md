@@ -98,21 +98,23 @@ bundle
 
 Before v7, the middleware was configured automatically. Since some people reported issues with other gems (see [Other Sidekiq Gems](#other-sidekiq-gems)) it was decided to give full control over to the user.
 
+*NOTE* if you want to use the reaper you also need to configure the server middleware.
+
 [A full and hopefully working example](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/sidekiq.rb#L12)
 
 ```ruby
 Sidekiq.configure_server do |config|
   config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
 
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
   end
 
-  config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
-  config.death_handlers << lambda do |job, _ex|
-    digest = job["lock_digest"]
-    SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
-  end
+  SidekiqUniqueJobs::Middleware::Server.configure(config)
 end
 
 Sidekiq.configure_client do |config|
