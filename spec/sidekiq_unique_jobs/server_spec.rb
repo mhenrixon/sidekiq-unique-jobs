@@ -9,9 +9,7 @@ RSpec.describe SidekiqUniqueJobs::Server do
     before do
       allow(config).to receive(:on).with(:startup).and_call_original
       allow(config).to receive(:on).with(:shutdown).and_call_original
-      if Sidekiq.respond_to?(:death_handlers)
-        allow(config.death_handlers).to receive(:<<).and_call_original
-      end
+      allow(config.death_handlers).to receive(:<<).and_call_original if Sidekiq.respond_to?(:death_handlers)
     end
 
     it "configures startup" do
