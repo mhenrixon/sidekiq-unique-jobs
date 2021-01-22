@@ -3,7 +3,7 @@
 RSpec.describe SidekiqUniqueJobs::Server, redis_db: 9 do
   describe ".start" do
     subject(:start) { described_class.start }
-    
+
     before do
       allow(SidekiqUniqueJobs::UpdateVersion).to receive(:call).and_return(true)
       allow(SidekiqUniqueJobs::UpgradeLocks).to receive(:call).and_return(true)
@@ -36,8 +36,8 @@ RSpec.describe SidekiqUniqueJobs::Server, redis_db: 9 do
   describe ".death_handler" do
     subject(:death_handler) { described_class.death_handler }
 
-    let(:item)    { { 'lock_digest' => digest } }
-    let(:digest)  { 'uniquejobs:abcdefab' }
+    let(:item)    { { "lock_digest" => digest } }
+    let(:digest)  { "uniquejobs:abcdefab" }
     let(:digests) { SidekiqUniqueJobs::Digests.new }
 
     before do
