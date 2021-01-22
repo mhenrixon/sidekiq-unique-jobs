@@ -81,7 +81,6 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     end
   end
 
-
   describe "#score" do
     subject(:score) { entity.score(job_id) }
 
