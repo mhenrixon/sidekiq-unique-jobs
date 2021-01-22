@@ -6,7 +6,6 @@ class UntilExecutedJob
   sidekiq_options lock: :until_executed,
                   lock_info: true,
                   lock_timeout: 0,
-                  lock_ttl: 0,
                   lock_limit: 5
 
   def perform
