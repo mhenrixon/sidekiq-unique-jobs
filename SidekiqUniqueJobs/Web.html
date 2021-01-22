@@ -234,7 +234,24 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 49
 50
 51
-52</pre>
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web.rb', line 11</span>
@@ -242,6 +259,23 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_registered'>registered</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 </span>  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_helpers'>helpers</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Web (module)">Web</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Helpers.html" title="SidekiqUniqueJobs::Web::Helpers (module)">Helpers</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/changelogs</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:filter</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span>
+    <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='ivar'>@filter</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+    <span class='ivar'>@count</span>          <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>100</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span>
+    <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span>
+    <span class='ivar'>@pagination</span>     <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>pattern:</span> <span class='ivar'>@filter</span><span class='comma'>,</span> <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span> <span class='label'>page_size:</span> <span class='ivar'>@count</span> <span class='rbrace'>}</span>
+    <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@changelogs</span> <span class='op'>=</span> <span class='id identifier rubyid_changelog'>changelog</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span><span class='op'>**</span><span class='ivar'>@pagination</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:changelogs</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/changelogs/delete_all</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_changelog'>changelog</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:changelogs</span>
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
@@ -291,7 +325,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 20 10:22:58 2021 by
+  Generated on Fri Jan 22 16:52:43 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>
