@@ -186,7 +186,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
   end
 
   describe "#page" do
-    subject(:page) { entity.page(cursor, pattern: pattern, page_size: page_size) }
+    subject(:page) { entity.page(cursor: cursor, pattern: pattern, page_size: page_size) }
 
     let(:cursor)    { 0 }
     let(:pattern)   { "*" }

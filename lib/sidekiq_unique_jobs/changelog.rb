@@ -7,6 +7,13 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Changelog < Redis::SortedSet
+    #
+    # @return [Integer] the number of matches to return by default
+    DEFAULT_COUNT = 1_000
+    #
+    # @return [String] the default pattern to use for matching
+    SCAN_PATTERN  = "*"
+
     def initialize
       super(CHANGELOGS)
     end
@@ -34,10 +41,10 @@ module SidekiqUniqueJobs
     #
     # @return [Array<Hash>] an array of entries
     #
-    def entries(pattern: "*", count: nil)
+    def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
       options = {}
       options[:match] = pattern
-      options[:count] = count if count
+      options[:count] = count
 
       redis do |conn|
         conn.zscan_each(key, **options).to_a.map { |entry| load_json(entry[0]) }
@@ -53,7 +60,7 @@ module SidekiqUniqueJobs
     #
     # @return [Array<Integer, Integer, Array<Hash>] the total size, next cursor and changelog entries
     #
-    def page(cursor, pattern: "*", page_size: 100)
+    def page(cursor: 0, pattern: "*", page_size: 100)
       redis do |conn|
         total_size, result = conn.multi do
           conn.zcard(key)

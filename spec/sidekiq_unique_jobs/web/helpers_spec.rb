@@ -21,6 +21,34 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
     end
   end
 
+  describe "#unique_filename" do
+    subject(:unique_filename) { described_class.unique_filename(name) }
+
+    context "when name is changelogs" do
+      let(:name) { :changelogs }
+
+      it { is_expected.to end_with("#{name}.erb") }
+    end
+
+    context "when name is _paging" do
+      let(:name) { :_paging }
+
+      it { is_expected.to end_with("#{name}.erb") }
+    end
+
+    context "when name is lock" do
+      let(:name) { :lock }
+
+      it { is_expected.to end_with("#{name}.erb") }
+    end
+
+    context "when name is locks" do
+      let(:name) { :locks }
+
+      it { is_expected.to end_with("#{name}.erb") }
+    end
+  end
+
   describe "#parse_time" do
     subject(:parse_time) { described_class.parse_time(time) }
 

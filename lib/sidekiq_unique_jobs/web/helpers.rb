@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
     module Helpers
       #
       # @return [String] the path to gem specific views
-      VIEW_PATH    = File.expand_path("../web/views", __dir__)
+      VIEW_PATH    = File.expand_path("../web/views", __dir__).freeze
       #
       # @return [Array<String>] safe params
       SAFE_CPARAMS = %w[cursor prev_cursor].freeze
@@ -25,7 +25,18 @@ module SidekiqUniqueJobs
       # @return [String] the file contents of the template
       #
       def unique_template(name)
-        File.open(File.join(VIEW_PATH, "#{name}.erb")).read
+        File.open(unique_filename(name)).read
+      end
+
+      #
+      # Construct template file name
+      #
+      # @param [Symbol] name the name of the template
+      #
+      # @return [String] the full name of the file
+      #
+      def unique_filename(name)
+        File.join(VIEW_PATH, "#{name}.erb")
       end
 
       #
@@ -36,6 +47,16 @@ module SidekiqUniqueJobs
       #
       def digests
         @digests ||= SidekiqUniqueJobs::Digests.new
+      end
+
+      #
+      # The collection of changelog entries
+      #
+      #
+      # @return [SidekiqUniqueJobs::Digests] the sorted set with digests
+      #
+      def changelog
+        @changelog ||= SidekiqUniqueJobs::Changelog.new
       end
 
       #
