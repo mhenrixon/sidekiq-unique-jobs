@@ -57,6 +57,7 @@ detectors:
       - SidekiqUniqueJobs::Redis::Entity#exist?
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
+      - SidekiqUniqueJobs::Web::Helpers#display_lock_args
   IrresponsibleModule:
     enabled: true
   LongParameterList:
