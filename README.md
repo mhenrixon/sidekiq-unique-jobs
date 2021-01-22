@@ -114,7 +114,7 @@ Sidekiq.configure_server do |config|
     chain.add SidekiqUniqueJobs::Middleware::Server
   end
 
-  SidekiqUniqueJobs::Middleware::Server.configure(config)
+  SidekiqUniqueJobs::Server.configure(config)
 end
 
 Sidekiq.configure_client do |config|

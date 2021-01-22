@@ -9,31 +9,6 @@ module SidekiqUniqueJobs
       prepend SidekiqUniqueJobs::Middleware
 
       #
-      # Configure the server middleware
-      #
-      #
-      # @return [Sidekiq] the sidekiq configuration
-      #
-      def self.configure(config)
-        config.on(:startup) do
-          SidekiqUniqueJobs::UpdateVersion.call
-          SidekiqUniqueJobs::UpgradeLocks.call
-          SidekiqUniqueJobs::Orphans::Manager.start
-        end
-
-        config.on(:shutdown) do
-          SidekiqUniqueJobs::Orphans::Manager.stop
-        end
-
-        return unless config.respond_to?(:death_handlers)
-
-        config.death_handlers << lambda do |job, _ex|
-          digest = job["lock_digest"]
-          SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
-        end
-      end
-
-      #
       #
       # Runs the server middleware (used from Sidekiq::Processor#process)
       #

@@ -37,7 +37,7 @@ Sidekiq.configure_server do |config|
     chain.add SidekiqUniqueJobs::Middleware::Client
   end
 
-  SidekiqUniqueJobs::Middleware::Server.configure(config)
+  SidekiqUniqueJobs::Server.configure(config)
 
   config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
 end
