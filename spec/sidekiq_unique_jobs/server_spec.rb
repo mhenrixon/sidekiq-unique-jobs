@@ -22,6 +22,7 @@ RSpec.describe SidekiqUniqueJobs::Server do
         .with(described_class.death_handler)
     end
   end
+
   describe ".start" do
     subject(:start) { described_class.start }
 

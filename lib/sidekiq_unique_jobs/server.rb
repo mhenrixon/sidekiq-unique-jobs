@@ -5,6 +5,11 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Server
+    DEATH_HANDLER ||= (lambda do |job, _ex|
+      return unless (digest = job["lock_digest"])
+
+      SidekiqUniqueJobs::Digests.new.delete_by_digest(digest)
+    end).freeze
     #
     # Configure the server middleware
     #
@@ -37,11 +42,7 @@ module SidekiqUniqueJobs
     # @return [lambda]
     #
     def self.death_handler
-      @death_handler ||= lambda do |job, _ex|
-        return unless (digest = job["lock_digest"])
-
-        SidekiqUniqueJobs::Digests.new.delete_by_digest(digest)
-      end
+      DEATH_HANDLER
     end
   end
 end
