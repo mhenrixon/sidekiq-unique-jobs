@@ -709,7 +709,7 @@ class MyWorker
 end
 ```
 
-Starting in v5.1, Sidekiq can also fire a global callback when a job dies:
+Starting in v5.1, Sidekiq can also fire a global callback when a job dies: In version 7, this is handled automatically for you. You don't need to add a death handler, if you configure v7 like in [Add the middleware](#add-the-middleware) you don't have to worry about the below.
 
 ```ruby
 Sidekiq.configure_server do |config|
@@ -765,14 +765,28 @@ The reason for this is that the global id needs to be set before the unique jobs
 It was reported in [#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564) that the order of the middleware needs to be as follows.
 
 ```ruby
-Sidekiq.client_middleware do |chain|
-  chain.add Sidekiq::Status::ClientMiddleware, expiration: 10.minutes
-  chain.add SidekiqUniqueJobs::Middleware::Client
+# Thanks to @ArturT for the correction
+
+Sidekiq.configure_server do |config|
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+    chain.add Sidekiq::Status::ClientMiddleware, expiration: 30.minutes
+  end
+
+  config.server_middleware do |chain|
+    chain.add Sidekiq::Status::ServerMiddleware, expiration: 30.minutes
+    chain.add SidekiqUniqueJobs::Middleware::Server
+  end
+
+  SidekiqUniqueJobs::Server.configure(config)
 end
 
-Sidekiq.server_middleware do |chain|
-  chain.add SidekiqUniqueJobs::Middleware::Server
-  chain.add Sidekiq::Status::ServerMiddleware, expiration: 10.minutes
+
+Sidekiq.configure_client do |config|
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+    chain.add Sidekiq::Status::ClientMiddleware, expiration: 30.minutes
+  end
 end
 ```
 
