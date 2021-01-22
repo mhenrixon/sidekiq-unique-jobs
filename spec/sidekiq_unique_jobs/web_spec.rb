@@ -33,6 +33,15 @@ RSpec.describe SidekiqUniqueJobs::Web do
     ]
   end
 
+  it "can display changelog" do
+    lock_one.lock(jid_one, lock_info)
+    lock_two.lock(jid_two, lock_info)
+
+    get "/changelogs"
+
+    expect(last_response.status).to eq(200)
+  end
+
   it "can display digests" do
     lock_one.lock(jid_one, lock_info)
     lock_two.lock(jid_two, lock_info)

@@ -13,6 +13,23 @@ module SidekiqUniqueJobs
         include Web::Helpers
       end
 
+      app.get "/changelogs" do
+        @filter         = params[:filter] || "*"
+        @filter         = "*" if @filter == ""
+        @count          = (params[:count] || 100).to_i
+        @current_cursor = params[:cursor]
+        @prev_cursor    = params[:prev_cursor]
+        @pagination     = { pattern: @filter, cursor: @current_cursor, page_size: @count }
+        @total_size, @next_cursor, @changelogs = changelog.page(**@pagination)
+
+        erb(unique_template(:changelogs))
+      end
+
+      app.get "/changelogs/delete_all" do
+        changelog.clear
+        redirect_to :changelogs
+      end
+
       app.get "/locks" do
         @filter         = params[:filter] || "*"
         @filter         = "*" if @filter == ""
@@ -58,7 +75,8 @@ begin
   require "sidekiq/web" unless defined?(Sidekiq::Web)
 
   Sidekiq::Web.register(SidekiqUniqueJobs::Web)
-  Sidekiq::Web.tabs["Locks"] = "locks"
+  Sidekiq::Web.tabs["Locks"]      = "locks"
+  Sidekiq::Web.tabs["Changelogs"] = "changelogs"
   Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")
 rescue NameError, LoadError => ex
   SidekiqUniqueJobs.logger.error(ex)
