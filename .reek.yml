@@ -75,7 +75,7 @@ detectors:
       - Hash#slice
       - Hash#slice!
       - SidekiqUniqueJobs::Logging#logger_respond_to_with_context?
-      - SidekiqUniqueJobs::Middleware::Server#self.configure
+      - SidekiqUniqueJobs::Server#self.configure
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
@@ -128,7 +128,7 @@ detectors:
       - SidekiqUniqueJobs::LockTTL#calculate
       - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#call
-      - SidekiqUniqueJobs::Middleware::Server#self.configure
+      - SidekiqUniqueJobs::Server#self.configure
       - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::Manager#stop
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
