@@ -37,7 +37,7 @@ module SidekiqUniqueJobs
     # @return [lambda]
     #
     def self.death_handler
-      lambda do |job, _ex|
+      @death_handler ||= lambda do |job, _ex|
         return unless (digest = job["lock_digest"])
 
         SidekiqUniqueJobs::Digests.new.delete_by_digest(digest)

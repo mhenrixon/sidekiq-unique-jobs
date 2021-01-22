@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::Server, redis_db: 9 do
+RSpec.describe SidekiqUniqueJobs::Server do
+  describe ".configure" do
+    subject(:configure) { described_class.configure(config) }
+
+    let(:config) { Sidekiq }
+
+    before do
+      allow(config).to receive(:on).with(:startup).and_call_original
+      allow(config).to receive(:on).with(:shutdown).and_call_original
+      allow(config.death_handlers).to receive(:<<).and_call_original
+    end
+
+    it "configures startup" do
+      configure
+
+      expect(config).to have_received(:on).with(:startup)
+      expect(config).to have_received(:on).with(:shutdown)
+
+      expect(config.death_handlers).to have_received(:<<)
+        .with(described_class.death_handler)
+    end
+  end
   describe ".start" do
     subject(:start) { described_class.start }
 
