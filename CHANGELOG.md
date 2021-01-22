@@ -1,37 +1,45 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v7.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.1) (2021-01-22)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0...v7.0.1)
 
+**Implemented enhancements:**
 
+- Any way to manually clear/reset the changelog history? [\#568](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/568)
+- Present the entire changelog in its own view [\#569](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/569) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Fix configuration [\#570](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/570) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- undefined method 'delete\_by\_digest' for SidekiqUniqueJobs::Digests:Class  [\#567](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/567)
+- Rejected jobs are still displayed as 'Queued' with gem 'sidekiq-status' on /sidekiq/statuses [\#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564)
 
 ## [v7.0.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0) (2021-01-20)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.25...v7.0.0)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta29...v7.0.0)
 
 **Implemented enhancements:**
 
 - Give user full control over adding middleware [\#566](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/566) ([mhenrixon](https://github.com/mhenrixon))
+- Fix coverage reporting and add coverage [\#565](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/565) ([mhenrixon](https://github.com/mhenrixon))
 
 **Fixed bugs:**
 
 - Race condition in ruby reaper [\#559](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/559)
 - Fix until and while executed and improve documentation [\#397](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/397)
-- Fix 532 [\#549](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/549) ([mhenrixon](https://github.com/mhenrixon))
+- Fix race condition to avoid reaping active jobs [\#563](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/563) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
-- Rejected jobs are still displayed as 'Queued' with gem 'sidekiq-status' on /sidekiq/statuses [\#564](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/564)
 - Is it possible to have a :until\_executed lock with an expiration time? [\#524](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/524)
 
 ## [v7.0.0.beta29](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta29) (2021-01-16)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.0.beta28...v7.0.0.beta29)
-
-**Implemented enhancements:**
-
-- Fix coverage reporting and add coverage [\#565](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/565) ([mhenrixon](https://github.com/mhenrixon))
 
 **Fixed bugs:**
 
@@ -50,7 +58,6 @@
 
 - lock\_args does not work when you define the lock\_args argument and default lock\_args function at the same time. [\#548](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/548)
 - incorrect `:while\_executing` behavior [\#432](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/432)
-- Fix race condition to avoid reaping active jobs [\#563](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/563) ([mhenrixon](https://github.com/mhenrixon))
 - Fix active check for the worker hash [\#558](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/558) ([mhenrixon](https://github.com/mhenrixon))
 - Prefer lock\_prefix not unique\_prefix [\#554](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/554) ([mhenrixon](https://github.com/mhenrixon))
 - Fix issue 432 [\#552](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/552) ([mhenrixon](https://github.com/mhenrixon))
@@ -66,6 +73,7 @@
 **Fixed bugs:**
 
 - Rename lock\_args to lock\_args\_method [\#551](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/551) ([mhenrixon](https://github.com/mhenrixon))
+- Fix RubyReaper active? [\#538](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/538) ([tanner-rutgers](https://github.com/tanner-rutgers))
 
 **Closed issues:**
 
@@ -105,7 +113,6 @@
 **Fixed bugs:**
 
 - Ruby reaper not working, active jobs queried incorrectly [\#537](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/537)
-- Fix RubyReaper active? [\#538](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/538) ([tanner-rutgers](https://github.com/tanner-rutgers))
 
 **Closed issues:**
 
@@ -165,7 +172,6 @@
 **Fixed bugs:**
 
 - Prevent indefinitely looping entries [\#516](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/516) ([mhenrixon](https://github.com/mhenrixon))
-- Don't bypass lock\_args if arguments are empty [\#511](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/511) ([nhippenmeyer](https://github.com/nhippenmeyer))
 
 **Closed issues:**
 
@@ -198,6 +204,7 @@
 **Fixed bugs:**
 
 - Stringify on\_conflict hash in Job prepare method [\#507](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/507) ([jasonbekolay](https://github.com/jasonbekolay))
+- Fix access to both server and client conflict [\#503](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/503) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta17) (2020-05-20)
 
@@ -207,10 +214,6 @@
 
 - Try GitHub actions [\#505](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/505) ([mhenrixon](https://github.com/mhenrixon))
 
-**Fixed bugs:**
-
-- Deep stringify worker options to account for hash in on\_conflict [\#506](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/506) ([jasonbekolay](https://github.com/jasonbekolay))
-
 ## [v7.0.0.beta16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta16) (2020-05-19)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.22...v7.0.0.beta16)
@@ -218,7 +221,6 @@
 **Fixed bugs:**
 
 - Deprecate configuration options with `default\_` [\#504](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/504) ([mhenrixon](https://github.com/mhenrixon))
-- Fix access to both server and client conflict [\#503](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/503) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -230,6 +232,7 @@
 
 **Fixed bugs:**
 
+- Deep stringify worker options to account for hash in on\_conflict [\#506](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/506) ([jasonbekolay](https://github.com/jasonbekolay))
 - \[LockType\] Allow overwriting default lock type at item level [\#497](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/497) ([EmmN](https://github.com/EmmN))
 
 ## [v7.0.0.beta15](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta15) (2020-04-10)
@@ -247,6 +250,7 @@
 - Brpoplpush::RedisScript::LuaError: WRONGTYPE Operation against a key holding the wrong kind of value [\#491](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/491)
 - Lua script bug [\#489](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/489)
 - Reaper will delete locks for running jobs [\#488](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/488)
+- Fix access to hash members [\#496](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/496) ([mhenrixon](https://github.com/mhenrixon))
 - Fix cursor assignment [\#494](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/494) ([mhenrixon](https://github.com/mhenrixon))
 - Prevent reaping of active jobs [\#493](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/493) ([mhenrixon](https://github.com/mhenrixon))
 
@@ -264,7 +268,6 @@
 
 **Fixed bugs:**
 
-- Fix access to hash members [\#496](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/496) ([mhenrixon](https://github.com/mhenrixon))
 - Use thread-safe digest creation mechanism [\#484](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/484) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta13) (2020-03-26)
@@ -283,6 +286,7 @@
 
 - until\_expired is not setting TTL [\#468](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/468)
 - Fix bug where expiration wasn't set until unlock [\#481](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/481) ([mhenrixon](https://github.com/mhenrixon))
+- Fix access to lock [\#476](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/476) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.20](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.20) (2020-03-22)
 
@@ -336,7 +340,6 @@
 
 **Fixed bugs:**
 
-- Fix access to lock [\#476](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/476) ([mhenrixon](https://github.com/mhenrixon))
 - Backport v7 fix for conflicts [\#461](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/461) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.0.beta9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.0.beta9) (2019-12-04)
@@ -346,7 +349,6 @@
 **Implemented enhancements:**
 
 - Keys without TTL [\#417](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/417)
-- Various changes to test and verify reliability [\#463](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/463) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -359,6 +361,7 @@
 **Implemented enhancements:**
 
 - Allow worker to configure client and server strategies separately [\#402](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/402)
+- Various changes to test and verify reliability [\#463](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/463) ([mhenrixon](https://github.com/mhenrixon))
 - Separate client and server on\_conflict [\#462](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/462) ([mhenrixon](https://github.com/mhenrixon))
 
 **Fixed bugs:**
@@ -500,7 +503,6 @@
 
 **Fixed bugs:**
 
-- Include redis directory [\#430](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/430) ([mhenrixon](https://github.com/mhenrixon))
 - Allow Sidekiq::Context to be used for logging [\#429](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/429) ([mhenrixon](https://github.com/mhenrixon))
 - Fix sidekiq develop [\#426](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/426) ([mhenrixon](https://github.com/mhenrixon))
 - Reap as many orphans as advertised [\#403](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/403) ([mhenrixon](https://github.com/mhenrixon))
@@ -527,6 +529,7 @@
 
 - Duplicate job was pushed \( v6.0.13 \) [\#414](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/414)
 - Constant SidekiqUniqueJobs::Web::Digests not found [\#396](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/396)
+- Include redis directory [\#430](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/430) ([mhenrixon](https://github.com/mhenrixon))
 - Fix v6 [\#428](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/428) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
@@ -583,6 +586,7 @@
 - Version 6 Ignores Jobs Enqueued in Version 5 [\#345](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/345)
 - Job will not enqueue even with no existing match [\#342](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/342)
 - Convert v5 locks when needed [\#375](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/375) ([mhenrixon](https://github.com/mhenrixon))
+- Always Remove Job ID from uniquejobs Hash [\#347](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/347) ([chadrschroeder](https://github.com/chadrschroeder))
 
 **Closed issues:**
 
@@ -647,7 +651,7 @@
 
 - Version 5: Job ID Hash Entries Not Removed if Unique Key Expires [\#346](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/346)
 - Move the lpush last [\#354](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/354) ([mhenrixon](https://github.com/mhenrixon))
-- Fix the broken expiration [\#316](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/316) ([mhenrixon](https://github.com/mhenrixon))
+- Convert expiration time to integer [\#330](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/330) ([dareddov](https://github.com/dareddov))
 
 **Closed issues:**
 
@@ -665,11 +669,6 @@
 ## [v5.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.11) (2018-11-19)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.6...v5.0.11)
-
-**Fixed bugs:**
-
-- Always Remove Job ID from uniquejobs Hash [\#347](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/347) ([chadrschroeder](https://github.com/chadrschroeder))
-- Convert expiration time to integer [\#330](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/330) ([dareddov](https://github.com/dareddov))
 
 **Closed issues:**
 
@@ -709,6 +708,10 @@
 ## [v6.0.4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.4) (2018-08-02)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v6.0.3...v6.0.4)
+
+**Fixed bugs:**
+
+- Fix the broken expiration [\#316](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/316) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
@@ -757,7 +760,6 @@
 
 - Dead jobs [\#308](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/308) ([mhenrixon](https://github.com/mhenrixon))
 - Fix require path for sidekiq\_unique\_jobs/web [\#305](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/305) ([soundasleep](https://github.com/soundasleep))
-- Update README.md [\#300](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/300) ([pirj](https://github.com/pirj))
 
 ## [v6.0.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0) (2018-07-27)
 
@@ -776,6 +778,7 @@
 **Merged pull requests:**
 
 - Add more details about testing uniqueness [\#301](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/301) ([mhenrixon](https://github.com/mhenrixon))
+- Update README.md [\#300](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/300) ([pirj](https://github.com/pirj))
 
 ## [v6.0.0.rc7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc7) (2018-07-23)
 
@@ -820,6 +823,7 @@
 **Fixed bugs:**
 
 - bundle exec jobs console does not work [\#253](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/253)
+- Rename command line binary [\#287](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/287) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.0.rc4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc4) (2018-06-30)
 
@@ -829,10 +833,6 @@
 
 - Prepare for v6 [\#286](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/286) ([mhenrixon](https://github.com/mhenrixon))
 - Only unlock not delete [\#285](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/285) ([mhenrixon](https://github.com/mhenrixon))
-
-**Fixed bugs:**
-
-- Rename command line binary [\#287](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/287) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.0.rc3](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.rc3) (2018-06-29)
 
@@ -878,7 +878,6 @@
 
 - Legacy support [\#280](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/280)
 - Adds legacy support [\#281](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/281) ([mhenrixon](https://github.com/mhenrixon))
-- Adds guard-reek [\#279](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/279) ([mhenrixon](https://github.com/mhenrixon))
 - Fix UntilExpired [\#278](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/278) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.0.beta2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta2) (2018-06-25)
@@ -896,7 +895,9 @@
 
 **Implemented enhancements:**
 
+- Adds guard-reek [\#279](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/279) ([mhenrixon](https://github.com/mhenrixon))
 - Code smells [\#275](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/275) ([mhenrixon](https://github.com/mhenrixon))
+- Reject while scheduling [\#273](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/273) ([mhenrixon](https://github.com/mhenrixon))
 - Improve testing [\#272](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/272) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v6.0.0.beta](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.0.beta) (2018-06-17)
@@ -905,7 +906,6 @@
 
 **Implemented enhancements:**
 
-- Reject while scheduling [\#273](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/273) ([mhenrixon](https://github.com/mhenrixon))
 - Until and while executing [\#271](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/271) ([mhenrixon](https://github.com/mhenrixon))
 - Solidify master [\#270](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/270) ([mhenrixon](https://github.com/mhenrixon))
 - Minor adjustments [\#268](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/268) ([mhenrixon](https://github.com/mhenrixon))
