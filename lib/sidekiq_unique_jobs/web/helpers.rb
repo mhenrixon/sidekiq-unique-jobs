@@ -15,7 +15,7 @@ module SidekiqUniqueJobs
       # @return [Array<String>] safe params
       SAFE_CPARAMS = %w[cursor prev_cursor].freeze
 
-      module_function
+      extend self
 
       #
       # Opens a template file contained within this gem

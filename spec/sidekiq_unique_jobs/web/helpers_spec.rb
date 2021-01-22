@@ -3,8 +3,24 @@
 require "sidekiq_unique_jobs/web/helpers"
 
 RSpec.describe SidekiqUniqueJobs::Web::Helpers do
+  before do
+    stub_const(
+      "SidekiqUniqueJobs::WebHelpers",
+      Class.new do
+        include Sidekiq::WebHelpers
+        include SidekiqUniqueJobs::Web::Helpers
+
+        def params
+          {}
+        end
+      end,
+    )
+  end
+
+  let(:helper) { SidekiqUniqueJobs::WebHelpers.new }
+
   describe "#safe_relative_time" do
-    subject(:safe_relative_time) { described_class.safe_relative_time(time) }
+    subject(:safe_relative_time) { helper.safe_relative_time(time) }
 
     let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
     let(:time)        { Time.now.to_f }
@@ -21,8 +37,47 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
     end
   end
 
+  describe "#cparams" do
+    subject(:cparams) { helper.cparams(options) }
+
+    before do
+      allow(helper).to receive(:params).and_return({})
+    end
+
+    let(:options) do
+      {
+        "cursor" => "0",
+        "prev_cursor" => "1",
+        "bogus" => "hokuspokus",
+      }
+    end
+
+    it { is_expected.to eq("cursor=0&prev_cursor=1") }
+  end
+
+  describe "#display_lock_args" do
+    subject(:display_lock_args) { helper.display_lock_args(args, num) }
+
+    let(:args) { ["abc", 1, "cde"] }
+    let(:num)  { 2000 }
+
+    it { is_expected.to eq("&quot;abc&quot;, 1, &quot;cde&quot;") }
+
+    context "when args is nil" do
+      let(:args) { nil }
+
+      it { is_expected.to eq("Invalid job payload, args is nil") }
+    end
+
+    context "when args is not an array" do
+      let(:args) { 123 }
+
+      it { is_expected.to eq("Invalid job payload, args must be an Array, not #{args.class.name}") }
+    end
+  end
+
   describe "#unique_filename" do
-    subject(:unique_filename) { described_class.unique_filename(name) }
+    subject(:unique_filename) { helper.unique_filename(name) }
 
     context "when name is changelogs" do
       let(:name) { :changelogs }
@@ -50,7 +105,7 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
   end
 
   describe "#parse_time" do
-    subject(:parse_time) { described_class.parse_time(time) }
+    subject(:parse_time) { helper.parse_time(time) }
 
     let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
 

@@ -302,31 +302,16 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
 
     before do
       allow(Concurrent::TimerTask).to receive(:new).and_call_original
+      allow(described_class).to receive(:with_logging_context).and_yield
+      allow(described_class).to receive(:refresh_reaper_mutex).and_return(true)
+      allow(SidekiqUniqueJobs::Orphans::Reaper).to receive(:call).and_return(true)
     end
 
     it "initializes a new timer task with the correct arguments" do
       expect(task).to be_a(Concurrent::TimerTask)
 
       expect(Concurrent::TimerTask).to have_received(:new)
-        .with(described_class.timer_task_options, &described_class.task_body)
-    end
-  end
-
-  describe "#task_body" do
-    subject(:task_body) { described_class.task_body }
-
-    before do
-      allow(described_class).to receive(:with_logging_context).and_yield
-      allow(described_class).to receive(:refresh_reaper_mutex).and_return(true)
-      allow(SidekiqUniqueJobs::Orphans::Reaper).to receive(:call).and_return(true)
-    end
-
-    it "is wired up correctly" do
-      task_body.call
-
-      expect(described_class).to have_received(:with_logging_context)
-      expect(described_class).to have_received(:refresh_reaper_mutex)
-      expect(SidekiqUniqueJobs::Orphans::Reaper).to have_received(:call)
+        .with(described_class.timer_task_options)
     end
   end
 

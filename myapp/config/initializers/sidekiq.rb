@@ -37,14 +37,9 @@ Sidekiq.configure_server do |config|
     chain.add SidekiqUniqueJobs::Middleware::Client
   end
 
+  SidekiqUniqueJobs::Server.configure(config)
+
   config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
-  config.death_handlers << lambda do |job, ex|
-    digest = job["lock_digest"]
-    p ex
-    p digest
-    p job
-    SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
-  end
 end
 
 Sidekiq.logger       = Sidekiq::Logger.new($stdout)
@@ -52,12 +47,11 @@ Sidekiq.logger.level = :debug
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.configure do |config|
   config.debug_lua       = true
-  config.enabled         = true
   config.lock_info       = true
   config.logger          = Sidekiq.logger
   config.max_history     = 10_000
   config.reaper          = :lua
-  config.reaper_count    = 1_000
+  config.reaper_count    = 100
   config.reaper_interval = 10
   config.reaper_timeout  = 5
 end
