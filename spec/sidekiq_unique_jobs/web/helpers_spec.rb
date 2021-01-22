@@ -13,7 +13,7 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
         def params
           {}
         end
-      end
+      end,
     )
   end
 
@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Web::Helpers do
       {
         "cursor" => "0",
         "prev_cursor" => "1",
-        "bogus" => "hokuspokus"
+        "bogus" => "hokuspokus",
       }
     end
 
