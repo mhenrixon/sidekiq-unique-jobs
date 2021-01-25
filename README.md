@@ -100,7 +100,7 @@ Before v7, the middleware was configured automatically. Since some people report
 
 *NOTE* if you want to use the reaper you also need to configure the server middleware.
 
-[A full and hopefully working example](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/sidekiq.rb#L12)
+[A full example](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/initializers/sidekiq.rb#L12)
 
 ```ruby
 Sidekiq.configure_server do |config|
