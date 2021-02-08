@@ -15,9 +15,15 @@ module SidekiqUniqueJobs
     # @return [Object]
     #
     def load_json(string)
-      return unless string && !string.empty?
+      return if string.nil? || string.empty?
 
       ::JSON.parse(string)
+    end
+
+    def safe_load_json(string)
+      return string if string.is_a?(Hash)
+
+      load_json(string)
     end
 
     #
