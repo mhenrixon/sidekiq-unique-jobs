@@ -174,6 +174,28 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#safe_load_json-class_method" title="safe_load_json (class method)">.<strong>safe_load_json</strong>(string)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -244,12 +266,12 @@
       <pre class="lines">
 
 
-30
-31
-32</pre>
+36
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/json.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/json.rb', line 36</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dump_json'>dump_json</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='rparen'>)</span>
   <span class='op'>::</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_generate'>generate</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='rparen'>)</span>
@@ -326,9 +348,43 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/json.rb', line 17</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_string'>string</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
 
   <span class='op'>::</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="safe_load_json-class_method">
+  
+    .<strong>safe_load_json</strong>(string)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/json.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_safe_load_json'>safe_load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_string'>string</span> <span class='kw'>if</span> <span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -340,7 +396,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Jan 22 16:52:43 2021 by
+  Generated on Mon Feb  8 22:01:51 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>
