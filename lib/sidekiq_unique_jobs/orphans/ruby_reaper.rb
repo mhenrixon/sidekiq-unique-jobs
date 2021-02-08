@@ -52,11 +52,11 @@ module SidekiqUniqueJobs
       # @return [Array<String>] an array of orphaned digests
       #
       def orphans
-        conn.zrevrange(digests.key, 0, -1).each_with_object([]) do |digest, result|
+        conn.zrevrange(digests.key, 0, -1).each_with_object([]) do |digest, memo|
           next if belongs_to_job?(digest)
 
-          result << digest
-          break if result.size >= reaper_count
+          memo << digest
+          break if memo.size >= reaper_count
         end
       end
 
@@ -117,7 +117,7 @@ module SidekiqUniqueJobs
         end
       end
 
-      def active?(digest) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+      def active?(digest) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         Sidekiq.redis do |conn|
           procs = conn.sscan_each("processes").to_a
           return false if procs.empty?
@@ -132,10 +132,12 @@ module SidekiqUniqueJobs
             next unless workers.any?
 
             workers.each_pair do |_tid, job|
-              item = load_json(job)
+              next unless (item = safe_load_json(job))
 
-              return true if item.dig(PAYLOAD, LOCK_DIGEST) == digest
-              return true if considered_active?(item[CREATED_AT])
+              payload = safe_load_json(item[PAYLOAD])
+
+              return true if payload[LOCK_DIGEST] == digest
+              return true if considered_active?(payload[CREATED_AT])
             end
           end
 

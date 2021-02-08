@@ -44,7 +44,7 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def self.call(digests, conn)
+    def self.call(digests, conn = nil)
       new(digests, conn).call
     end
 

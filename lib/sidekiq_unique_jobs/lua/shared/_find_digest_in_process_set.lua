@@ -34,7 +34,7 @@ local function find_digest_in_process_set(digest, threshold)
           end
 
           local job = cjson.decode(jobstr)
-          if job.created_at > threshold then
+          if job.payload.created_at > threshold then
             found = true
             break
           end
