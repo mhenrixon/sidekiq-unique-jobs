@@ -85,6 +85,15 @@ if pttl and pttl > 0 then
 
   log_debug("PEXPIRE", info, pttl)
   redis.call("PEXPIRE", info, pttl)
+else
+  log_debug("PEXPIRE", queued, 1000)
+  redis.call("PEXPIRE", queued, 1000)
+
+  log_debug("PEXPIRE", primed, 1000)
+  redis.call("PEXPIRE", primed, 1000)
+
+  log_debug("PEXPIRE", info, 1000)
+  redis.call("PEXPIRE", info, 1000)
 end
 
 log("Locked")
