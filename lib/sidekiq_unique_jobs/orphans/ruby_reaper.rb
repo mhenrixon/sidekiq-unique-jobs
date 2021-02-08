@@ -52,11 +52,11 @@ module SidekiqUniqueJobs
       # @return [Array<String>] an array of orphaned digests
       #
       def orphans
-        conn.zrevrange(digests.key, 0, -1).each_with_object([]) do |digest, result|
+        conn.zrevrange(digests.key, 0, -1).each_with_object([]) do |digest, memo|
           next if belongs_to_job?(digest)
 
-          result << digest
-          break if result.size >= reaper_count
+          memo << digest
+          break if memo.size >= reaper_count
         end
       end
 

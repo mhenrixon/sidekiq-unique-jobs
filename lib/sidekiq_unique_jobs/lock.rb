@@ -53,7 +53,7 @@ module SidekiqUniqueJobs
     #
     # Locks a job_id
     #
-    # @note intended only for testing purposez
+    # @note intended only for testing purposes
     #
     # @param [String] job_id a sidekiq JID
     # @param [Hash] lock_info information about the lock
@@ -70,6 +70,36 @@ module SidekiqUniqueJobs
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
           conn.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
         end
+      end
+    end
+
+    #
+    # Create the :QUEUED key
+    #
+    # @note intended only for testing purposes
+    #
+    # @param [String] job_id a sidekiq JID
+    #
+    # @return [void]
+    #
+    def queue(job_id)
+      redis do |conn|
+        conn.lpush(key.queued, job_id)
+      end
+    end
+
+    #
+    # Create the :PRIMED key
+    #
+    # @note intended only for testing purposes
+    #
+    # @param [String] job_id a sidekiq JID
+    #
+    # @return [void]
+    #
+    def prime(job_id)
+      redis do |conn|
+        conn.lpush(key.primed, job_id)
       end
     end
 
