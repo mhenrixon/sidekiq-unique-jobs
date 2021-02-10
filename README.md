@@ -903,7 +903,7 @@ RSpec.describe Workers::CoolOne do
 end
 ```
 
-It is recommened to leave the uniqueness testing to the gem maintainers. If you care about how the gem is integration tested have a look at the following specs:
+It is recommended to leave the uniqueness testing to the gem maintainers. If you care about how the gem is integration tested have a look at the following specs:
 
 - [spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_and_while_executing_spec.rb)
 - [spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/spec/integration/sidekiq_unique_jobs/lock/until_executed_spec.rb)
