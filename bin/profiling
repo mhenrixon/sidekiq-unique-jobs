@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Trap interrupts to quit cleanly. See
+# https://twitter.com/mitchellh/status/283014103189053442
+Signal.trap("INT") { abort }
+
+require "bundler/setup"
+require "ruby-prof"
+require "sidekiq-unique-jobs"
+
+SidekiqUniqueJobs.configure do |config|
+  config.reaper_interval = 2
+  config.reaper_timeout  = 1
+  config.reaper_count    = 10000
+end
+
+TASK = SidekiqUniqueJobs::TimerTask.new(SidekiqUniqueJobs::Orphans::Manager.timer_task_options) do
+  SidekiqUniqueJobs::Orphans::Manager.with_logging_context do
+    SidekiqUniqueJobs::Orphans::Manager.redis do |conn|
+      SidekiqUniqueJobs::Orphans::Manager.refresh_reaper_mutex
+      sleep(1)
+    end
+  end
+end
+
+counter = 0
+result  = RubyProf.profile do
+  100.times do
+    SidekiqUniqueJobs::Orphans::Manager.start(TASK)
+  end
+
+  while counter < 60
+    sleep(1)
+
+    counter += 1
+  end
+end
+
+result.exclude_common_methods!
+printer = RubyProf::GraphPrinter.new(result)
+printer.print($stdout, min_percent: 2)

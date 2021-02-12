@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
-  let(:task)     { instance_spy(Concurrent::TimerTask) }
+  let(:task)     { instance_spy(SidekiqUniqueJobs::TimerTask) }
   let(:observer) { instance_spy(SidekiqUniqueJobs::Orphans::Observer) }
 
   describe ".start" do
@@ -301,16 +301,16 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     subject(:task) { described_class.task }
 
     before do
-      allow(Concurrent::TimerTask).to receive(:new).and_call_original
+      allow(SidekiqUniqueJobs::TimerTask).to receive(:new).and_call_original
       allow(described_class).to receive(:with_logging_context).and_yield
       allow(described_class).to receive(:refresh_reaper_mutex).and_return(true)
       allow(SidekiqUniqueJobs::Orphans::Reaper).to receive(:call).and_return(true)
     end
 
     it "initializes a new timer task with the correct arguments" do
-      expect(task).to be_a(Concurrent::TimerTask)
+      expect(task).to be_a(SidekiqUniqueJobs::TimerTask)
 
-      expect(Concurrent::TimerTask).to have_received(:new)
+      expect(SidekiqUniqueJobs::TimerTask).to have_received(:new)
         .with(described_class.timer_task_options)
     end
   end

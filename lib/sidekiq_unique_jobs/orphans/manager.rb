@@ -20,11 +20,13 @@ module SidekiqUniqueJobs
       # Starts a separate thread that periodically reaps orphans
       #
       #
-      # @return [Concurrent::TimerTask] the task that was started
+      # @return [SidekiqUniqueJobs::TimerTask] the task that was started
       #
-      def start # rubocop:disable
+      def start(test_task = nil) # rubocop:disable
         return if disabled?
         return if registered?
+
+        self.task = test_task || default_task
 
         with_logging_context do
           register_reaper_process
@@ -59,7 +61,11 @@ module SidekiqUniqueJobs
       # @return [<type>] <description>
       #
       def task
-        @task ||= Concurrent::TimerTask.new(timer_task_options) do
+        @task ||= default_task
+      end
+
+      def default_task
+        SidekiqUniqueJobs::TimerTask.new(timer_task_options) do
           with_logging_context do
             redis do |conn|
               refresh_reaper_mutex
@@ -67,6 +73,10 @@ module SidekiqUniqueJobs
             end
           end
         end
+      end
+
+      def task=(task)
+        @task = task
       end
 
       #

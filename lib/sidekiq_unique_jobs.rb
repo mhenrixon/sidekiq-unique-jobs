@@ -3,9 +3,10 @@
 require "brpoplpush/redis_script"
 require "concurrent/future"
 require "concurrent/promises"
-require "concurrent/timer_task"
 require "concurrent/map"
 require "concurrent/mutable_struct"
+require 'concurrent/timer_task'
+require 'concurrent/executor/ruby_single_thread_executor'
 require "digest"
 require "digest/sha1"
 require "erb"
@@ -14,6 +15,7 @@ require "json"
 require "pathname"
 require "sidekiq"
 
+require "sidekiq_unique_jobs/timer_task"
 require "sidekiq_unique_jobs/version"
 require "sidekiq_unique_jobs/version_check"
 require "sidekiq_unique_jobs/constants"
