@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
+  # @see [Concurrent::TimerTask] https://www.rubydoc.info/gems/concurrent-ruby/Concurrent/TimerTask
+  #
   class TimerTask < ::Concurrent::TimerTask
     private
 
@@ -19,16 +21,20 @@ module SidekiqUniqueJobs
     end
 
     # @!visibility private
-    def execute_task(completion)
+    def execute_task(completion) # rubocop:disable Metrics/MethodLength
       return nil unless @running.true?
 
-      Concurrent::ScheduledTask.execute(timeout_interval, args: [completion], &method(:timeout_task))
+      Concurrent::ScheduledTask.execute(
+        timeout_interval,
+        args: [completion],
+        &method(:timeout_task) # rubocop:disable Performance/MethodObjectAsBlock
+      )
       @thread_completed = Concurrent::Event.new
 
       @value = @reason  = nil
       @executor.post do
         @value = @task.call(self)
-      rescue Exception => ex
+      rescue Exception => ex # rubocop:disable Lint/RescueException
         @reason = ex
       ensure
         @thread_completed.set
@@ -49,17 +55,16 @@ module SidekiqUniqueJobs
     # @!visibility private
     def timeout_task(completion)
       return unless @running.true?
+      return unless completion.try?
 
-      if completion.try?
-        @executor.kill
-        @executor.wait_for_termination
-        @executor = Concurrent::RubySingleThreadExecutor.new
+      @executor.kill
+      @executor.wait_for_termination
+      @executor = Concurrent::RubySingleThreadExecutor.new
 
-        @thread_completed.set
+      @thread_completed.set
 
-        schedule_next_task
-        observers.notify_observers(Time.now, nil, Concurrent::TimeoutError.new)
-      end
+      schedule_next_task
+      observers.notify_observers(Time.now, nil, Concurrent::TimeoutError.new)
     end
   end
 end
