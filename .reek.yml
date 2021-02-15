@@ -18,6 +18,7 @@ detectors:
     exclude:
       - Sidekiq::JobSet::UniqueExtension#delete_by_value
       - Sidekiq::ScheduledSet::UniqueExtension#delete
+      - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Redis::Hash#entries
   DataClump:
@@ -58,6 +59,9 @@ detectors:
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
       - SidekiqUniqueJobs::Web::Helpers#display_lock_args
+  InstanceVariableAssumption:
+    exclude:
+      - SidekiqUniqueJobs::TimerTask
   IrresponsibleModule:
     enabled: true
   LongParameterList:
@@ -139,6 +143,8 @@ detectors:
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
+      - SidekiqUniqueJobs::TimerTask#execute_task
+      - SidekiqUniqueJobs::TimerTask#timeout_task
       - SidekiqUniqueJobs::UpgradeLocks#call
       - SidekiqUniqueJobs::UpgradeLocks#upgrade_v6_lock
       - SidekiqUniqueJobs::Web#self.registered
@@ -148,6 +154,7 @@ detectors:
       - SidekiqUniqueJobs::LockConfig
       - SidekiqUniqueJobs::Locksmith
       - SidekiqUniqueJobs::Lock::BaseLock
+      - SidekiqUniqueJobs::TimerTask
   TooManyMethods:
     exclude:
       - SidekiqUniqueJobs::Lock::BaseLock
