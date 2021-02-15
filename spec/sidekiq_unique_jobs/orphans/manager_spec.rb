@@ -297,8 +297,8 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     end
   end
 
-  describe "#task" do
-    subject(:task) { described_class.task }
+  describe "#default_task" do
+    subject(:default_task) { described_class.default_task }
 
     before do
       allow(SidekiqUniqueJobs::TimerTask).to receive(:new).and_call_original
@@ -308,7 +308,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     end
 
     it "initializes a new timer task with the correct arguments" do
-      expect(task).to be_a(SidekiqUniqueJobs::TimerTask)
+      expect(default_task).to be_a(SidekiqUniqueJobs::TimerTask)
 
       expect(SidekiqUniqueJobs::TimerTask).to have_received(:new)
         .with(described_class.timer_task_options)

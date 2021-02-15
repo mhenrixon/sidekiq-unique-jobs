@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SidekiqUniqueJobs
   class TimerTask < ::Concurrent::TimerTask
     private
@@ -19,18 +21,17 @@ module SidekiqUniqueJobs
     # @!visibility private
     def execute_task(completion)
       return nil unless @running.true?
+
       Concurrent::ScheduledTask.execute(timeout_interval, args: [completion], &method(:timeout_task))
       @thread_completed = Concurrent::Event.new
 
       @value = @reason  = nil
       @executor.post do
-        begin
-          @value = @task.call(self)
-        rescue Exception => ex
-          @reason = ex
-        ensure
-          @thread_completed.set
-        end
+        @value = @task.call(self)
+      rescue Exception => ex
+        @reason = ex
+      ensure
+        @thread_completed.set
       end
 
       @thread_completed.wait
@@ -39,7 +40,7 @@ module SidekiqUniqueJobs
         schedule_next_task
         time = Time.now
         observers.notify_observers do
-          [time, self.value, @reason]
+          [time, value, @reason]
         end
       end
       nil
@@ -48,6 +49,7 @@ module SidekiqUniqueJobs
     # @!visibility private
     def timeout_task(completion)
       return unless @running.true?
+
       if completion.try?
         @executor.kill
         @executor.wait_for_termination

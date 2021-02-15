@@ -5,8 +5,8 @@ require "concurrent/future"
 require "concurrent/promises"
 require "concurrent/map"
 require "concurrent/mutable_struct"
-require 'concurrent/timer_task'
-require 'concurrent/executor/ruby_single_thread_executor'
+require "concurrent/timer_task"
+require "concurrent/executor/ruby_single_thread_executor"
 require "digest"
 require "digest/sha1"
 require "erb"

@@ -12,12 +12,12 @@ require "sidekiq-unique-jobs"
 SidekiqUniqueJobs.configure do |config|
   config.reaper_interval = 2
   config.reaper_timeout  = 1
-  config.reaper_count    = 10000
+  config.reaper_count    = 10_000
 end
 
 TASK = SidekiqUniqueJobs::TimerTask.new(SidekiqUniqueJobs::Orphans::Manager.timer_task_options) do
   SidekiqUniqueJobs::Orphans::Manager.with_logging_context do
-    SidekiqUniqueJobs::Orphans::Manager.redis do |conn|
+    SidekiqUniqueJobs::Orphans::Manager.redis do |_conn|
       SidekiqUniqueJobs::Orphans::Manager.refresh_reaper_mutex
       sleep(1)
     end
