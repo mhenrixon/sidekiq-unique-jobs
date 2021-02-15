@@ -24,10 +24,12 @@ module SidekiqUniqueJobs
     def execute_task(completion) # rubocop:disable Metrics/MethodLength
       return nil unless @running.true?
 
+      timeout_task = -> { timeout_task(completion) }
+
       Concurrent::ScheduledTask.execute(
         timeout_interval,
         args: [completion],
-        &method(:timeout_task) # rubocop:disable Performance/MethodObjectAsBlock
+        &timeout_task
       )
       @thread_completed = Concurrent::Event.new
 
