@@ -20,6 +20,12 @@ module SidekiqUniqueJobs
       self.observers = Concurrent::Collection::CopyOnNotifyObserverSet.new
     end
 
+    def schedule_next_task(interval = execution_interval)
+      exec_task = ->(completion) { execute_task(completion) }
+      ScheduledTask.execute(interval, args: [Concurrent::Event.new], &exec_task)
+      nil
+    end
+
     # @!visibility private
     def execute_task(completion) # rubocop:disable Metrics/MethodLength
       return nil unless @running.true?
