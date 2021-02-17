@@ -194,7 +194,7 @@ SidekiqUniqueJobs.configure do |config|
   config.reaper          = :ruby # :ruby, :lua or :none/nil
   config.reaper_count    = 1000  # Stop reaping after this many keys
   config.reaper_interval = 600   # Reap orphans every 10 minutes
-  config.reaper_timeout  = 150   # Timeout reaper after 1,5 minutes
+  config.reaper_timeout  = 150   # Timeout reaper after 2.5 minutes
 end
 ```
 
