@@ -22,7 +22,7 @@ module SidekiqUniqueJobs
 
     def schedule_next_task(interval = execution_interval)
       exec_task = ->(completion) { execute_task(completion) }
-      ScheduledTask.execute(interval, args: [Concurrent::Event.new], &exec_task)
+      Concurrent::ScheduledTask.execute(interval, args: [Concurrent::Event.new], &exec_task)
       nil
     end
 
