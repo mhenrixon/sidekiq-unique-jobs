@@ -185,16 +185,16 @@ Configure SidekiqUniqueJobs in an initializer or the sidekiq initializer on appl
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
-  config.debug_lua       = true
-  config.lock_info       = true
-  config.lock_ttl        = 10.minutes
-  config.lock_timeout    = 10.minutes
-  config.logger          = Sidekiq.logger
-  config.max_history     = 10_000
-  config.reaper          = :lua
-  config.reaper_count    = 100
-  config.reaper_interval = 10
-  config.reaper_timeout  = 5
+  config.logger = Sidekiq.logger # default, change at your own discretion
+  config.debug_lua       = false # Turn on when debugging
+  config.lock_info       = false # Turn on when debugging
+  config.lock_ttl        = 600   # Expire locks after 10 minutes
+  config.lock_timeout    = nil   # turn off lock timeout
+  config.max_history     = 0     # Turn on when debugging
+  config.reaper          = :ruby # :ruby, :lua or :none/nil
+  config.reaper_count    = 1000  # Stop reaping after this many keys
+  config.reaper_interval = 600   # Reap orphans every 10 minutes
+  config.reaper_timeout  = 150   # Timeout reaper after 1,5 minutes
 end
 ```
 

@@ -7,7 +7,17 @@ RSpec.describe SidekiqUniqueJobs::Web do
   include Rack::Test::Methods
 
   def app
-    Sidekiq::Web
+    @app ||= Rack::Builder.new do
+      use Rack::Session::Cookie,
+          key: "rack.session",
+          domain: "foo.com",
+          path: "/",
+          expire_after: 2_592_000,
+          secret: "change_me",
+          old_secret: "also_change_me"
+
+      run Sidekiq::Web
+    end
   end
 
   before do

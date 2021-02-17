@@ -18,6 +18,7 @@ gem "timecop"
 gem "yard"
 
 platforms :mri do
+  gem "concurrent-ruby-ext"
   gem "fasterer"
   gem "github_changelog_generator"
   gem "guard"
@@ -30,6 +31,7 @@ platforms :mri do
   gem "reek", ">= 5.3"
   gem "rspec-benchmark"
   gem "rubocop-mhenrixon"
+  gem "ruby-prof", require: false
   gem "simplecov-sublime", "0.21.0", require: false
   gem "travis"
 end
