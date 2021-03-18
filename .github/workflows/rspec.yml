@@ -1,5 +1,7 @@
 name: RSpec
-on: [push pull-request]
+on:
+  push:
+  pull-request:
 jobs:
   coverage:
     services:

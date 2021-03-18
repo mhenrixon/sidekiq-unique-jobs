@@ -1,5 +1,7 @@
 name: Lint
-on: [push pull-request]
+on:
+  push:
+  pull-request:
 jobs:
   rubocop:
     runs-on: ubuntu-latest
