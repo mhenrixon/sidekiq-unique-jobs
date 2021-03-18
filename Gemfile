@@ -12,6 +12,7 @@ gem "github-markup"
 gem "rack-test"
 gem "rake"
 gem "rspec"
+gem 'rspec-html-matchers'
 gem "rspec-its"
 gem "sinatra"
 gem "timecop"
