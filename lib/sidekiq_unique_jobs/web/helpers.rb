@@ -13,7 +13,7 @@ module SidekiqUniqueJobs
       VIEW_PATH    = File.expand_path("../web/views", __dir__).freeze
       #
       # @return [Array<String>] safe params
-      SAFE_CPARAMS = %w[cursor prev_cursor].freeze
+      SAFE_CPARAMS = %w[filter cursor prev_cursor].freeze
 
       extend self
 
