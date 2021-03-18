@@ -2,8 +2,7 @@ name: RSpec
 on:
   pull_request:
   push:
-    only:
-      - master
+    branches: [ master ]
 jobs:
   coverage:
     services:

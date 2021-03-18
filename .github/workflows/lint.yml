@@ -2,8 +2,7 @@ name: Lint
 on:
   pull_request:
   push:
-    only:
-      - master
+    branches: [ master ]
 jobs:
   rubocop:
     runs-on: ubuntu-latest
