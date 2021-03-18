@@ -23,7 +23,6 @@ require "timecop"
 require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
-Redis.exists_returns_integer = true if Redis.respond_to?(:exists_returns_integer=)
 LOGLEVEL = ENV.fetch("LOGLEVEL", "ERROR").upcase
 ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_worker_options
 

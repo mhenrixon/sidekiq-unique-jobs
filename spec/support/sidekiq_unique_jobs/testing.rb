@@ -153,7 +153,13 @@ module SidekiqUniqueJobs
 
       def exists(key)
         redis do |conn|
-          value = conn.exists(key)
+          # TODO: Remove the if statement in the future
+          value =
+            if conn.respond_to?(:exists?)
+              conn.exists?(key)
+            else
+              conn.exists(key)
+            end
           return true  if value.is_a?(TrueClass)
           return false if value.is_a?(FalseClass)
 

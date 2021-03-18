@@ -80,11 +80,13 @@ detectors:
       - Hash#slice
       - Hash#slice!
       - SidekiqUniqueJobs::Logging#logger_respond_to_with_context?
-      - SidekiqUniqueJobs::Server#self.configure
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
+      - SidekiqUniqueJobs::Orphans::RubyReaper#active?
+      - SidekiqUniqueJobs::Redis::Entity#exist?
+      - SidekiqUniqueJobs::Server#self.configure
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#after_unlock_hook
       - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
-      - SidekiqUniqueJobs::SidekiqWorkerMethods#after_unlock_hook
   MissingSafeMethod:
     exclude:
       - Array
