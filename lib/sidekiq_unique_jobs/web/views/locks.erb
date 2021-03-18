@@ -30,19 +30,21 @@
       </tr>
     </thead>
     <% @locks.each do |lock| %>
-    <tr>
-      <td>
-        <form action="<%= root_path %>locks/<%= lock.key %>/delete" method="get">
-          <%= csrf_tag %>
-          <input name="lock" value="<%= h lock.key %>" type="hidden" />
-          <input class="btn btn-danger btn-xs" type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('AreYouSure') %>" />
-        </form>
-      </td>
-      <td><a href="<%= root_path %>locks/<%= lock.key %>"><%= lock.key %></a></td>
-    <td><%= lock.info["lock"] %></th>
-    <td><%= lock.locked.count %></td>
-    <td><%= safe_relative_time(lock.created_at) %></td>
-  </tr>
+    <tbody>
+      <tr class="row">
+        <td>
+          <form action="<%= root_path %>locks/<%= lock.key %>/delete" method="get">
+            <%= csrf_tag %>
+            <input name="lock" value="<%= h lock.key %>" type="hidden" />
+            <input class="btn btn-danger btn-xs" type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('AreYouSure') %>" />
+          </form>
+        </td>
+        <td><a href="<%= root_path %>locks/<%= lock.key %>"><%= lock.key %></a></td>
+      <td><%= lock.info["lock"] %></th>
+      <td><%= lock.locked.count %></td>
+      <td><%= safe_relative_time(lock.created_at) %></td>
+    </tr>
+  </tbody>
   <% end %>
 </table>
 <form action="<%= root_path %>locks/delete_all" method="get">

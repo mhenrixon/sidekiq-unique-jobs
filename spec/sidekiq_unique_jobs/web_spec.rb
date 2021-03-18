@@ -2,9 +2,11 @@
 
 require "sidekiq_unique_jobs/web"
 require "rack/test"
+require "rspec-html-matchers"
 
 RSpec.describe SidekiqUniqueJobs::Web do
   include Rack::Test::Methods
+  include RSpecHtmlMatchers
 
   def app
     @app ||= Rack::Builder.new do
@@ -49,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     get "/changelogs"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
   end
 
   it "can display digests" do
@@ -58,19 +60,29 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     get "/locks"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
     expect(last_response.body).to match("/locks/#{digest_one}")
     expect(last_response.body).to match("/locks/#{digest_two}")
   end
 
   it "can paginate digests" do
-    Array.new(110) do |idx|
+    Array.new(190) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
     end
 
-    get "/locks"
+    get "/locks?filter=*&count=100"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag('div', with: { class: 'table_container'}) do
+      with_tag('tr.row', count: 100)
+    end
+
+    get "/locks?filter=*&cursor=1&prev_cursor=0&count=100"
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag('div', with: { class: 'table_container'}) do
+      with_tag('tr.row', count: 89)
+    end
   end
 
   it "can display digest" do
@@ -79,7 +91,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     get "/locks/#{digest_one}"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
     expect(last_response.body).to match("uniquejobs:9e9b5ce5d423d3ea470977004b50ff84")
   end
 
