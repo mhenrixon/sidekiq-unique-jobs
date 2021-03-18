@@ -188,7 +188,7 @@ module SidekiqUniqueJobs
   # @return [String] a string like `5.0.2`
   #
   def fetch_redis_version
-    redis { |conn| conn.info("server")["redis_version"] }
+    Sidekiq.redis_info["redis_version"]
   end
 
   #
