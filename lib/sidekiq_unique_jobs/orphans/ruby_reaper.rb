@@ -10,7 +10,7 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class RubyReaper < Reaper
-      RUN_SUFFIX = ':RUN'
+      RUN_SUFFIX = ":RUN"
       #
       # @!attribute [r] digests
       #   @return [SidekiqUniqueJobs::Digests] digest collection
