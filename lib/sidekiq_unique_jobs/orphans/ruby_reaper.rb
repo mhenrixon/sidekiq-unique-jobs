@@ -10,6 +10,7 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class RubyReaper < Reaper
+      RUN_SUFFIX = ':RUN'
       #
       # @!attribute [r] digests
       #   @return [SidekiqUniqueJobs::Digests] digest collection
@@ -136,13 +137,17 @@ module SidekiqUniqueJobs
 
               payload = safe_load_json(item[PAYLOAD])
 
-              return true if payload[LOCK_DIGEST] == digest
+              return true if match?(digest, payload[LOCK_DIGEST])
               return true if considered_active?(payload[CREATED_AT])
             end
           end
 
           false
         end
+      end
+
+      def match?(key_one, key_two)
+        key_one.delete_suffix(RUN_SUFFIX) == key_two.delete_suffix(RUN_SUFFIX)
       end
 
       def considered_active?(time_f)
