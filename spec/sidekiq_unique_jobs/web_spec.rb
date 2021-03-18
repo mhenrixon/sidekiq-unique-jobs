@@ -73,15 +73,15 @@ RSpec.describe SidekiqUniqueJobs::Web do
     get "/locks?filter=*&count=100"
 
     expect(last_response).to be_ok
-    expect(last_response.body).to have_tag('div', with: { class: 'table_container'}) do
-      with_tag('tr.row', count: 100)
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      with_tag("tr.row", count: 100)
     end
 
     get "/locks?filter=*&cursor=1&prev_cursor=0&count=100"
 
     expect(last_response).to be_ok
-    expect(last_response.body).to have_tag('div', with: { class: 'table_container'}) do
-      with_tag('tr.row', count: 89)
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      with_tag("tr.row", count: 89)
     end
   end
 
