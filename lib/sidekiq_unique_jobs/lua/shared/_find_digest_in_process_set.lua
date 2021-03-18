@@ -27,7 +27,7 @@ local function find_digest_in_process_set(digest, threshold)
       else
         for i = 1, #jobs, 2 do
           local jobstr = jobs[i +1]
-          if string.find(jobstr, digest) then
+          if string.find(string.gsub(jobstr, ':RUN', ''), string.gsub(digest, ':RUN', '')) then
             log_debug("Found digest", digest, "in:", workers_key)
             found = true
             break
