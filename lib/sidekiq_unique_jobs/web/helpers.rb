@@ -13,7 +13,9 @@ module SidekiqUniqueJobs
       VIEW_PATH    = File.expand_path("../web/views", __dir__).freeze
       #
       # @return [Array<String>] safe params
-      SAFE_CPARAMS = %w[cursor prev_cursor].freeze
+      SAFE_CPARAMS = %w[
+        filter count cursor prev_cursor poll direction
+      ].freeze
 
       extend self
 
@@ -67,10 +69,8 @@ module SidekiqUniqueJobs
       # @return [String] a url safe parameter string
       #
       def cparams(options)
-        # stringify
-        options.transform_keys(&:to_s)
-
-        params.merge(options).map do |key, value|
+        stringified_options = options.transform_keys(&:to_s)
+        params.merge(stringified_options).map do |key, value|
           next unless SAFE_CPARAMS.include?(key)
 
           "#{key}=#{CGI.escape(value.to_s)}"

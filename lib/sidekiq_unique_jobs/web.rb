@@ -19,8 +19,11 @@ module SidekiqUniqueJobs
         @count          = (params[:count] || 100).to_i
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
-        @pagination     = { pattern: @filter, cursor: @current_cursor, page_size: @count }
-        @total_size, @next_cursor, @changelogs = changelog.page(**@pagination)
+        @total_size, @next_cursor, @changelogs = changelog.page(
+          cursor: @current_cursor,
+          pattern: @filter,
+          page_size: @count,
+        )
 
         erb(unique_template(:changelogs))
       end
@@ -36,8 +39,12 @@ module SidekiqUniqueJobs
         @count          = (params[:count] || 100).to_i
         @current_cursor = params[:cursor]
         @prev_cursor    = params[:prev_cursor]
-        @pagination     = { pattern: @filter, cursor: @current_cursor, page_size: @count }
-        @total_size, @next_cursor, @locks = digests.page(**@pagination)
+
+        @total_size, @next_cursor, @locks = digests.page(
+          cursor: @current_cursor,
+          pattern: @filter,
+          page_size: @count,
+        )
 
         erb(unique_template(:locks))
       end

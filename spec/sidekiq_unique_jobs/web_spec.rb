@@ -2,9 +2,11 @@
 
 require "sidekiq_unique_jobs/web"
 require "rack/test"
+require "rspec-html-matchers"
 
 RSpec.describe SidekiqUniqueJobs::Web do
   include Rack::Test::Methods
+  include RSpecHtmlMatchers
 
   def app
     @app ||= Rack::Builder.new do
@@ -31,6 +33,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   let(:digest_one) { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
   let(:digest_two) { "uniquejobs:24c5b03e2d49d765e5dfb2d7c51c5929" }
   let(:lock_type)  { :until_executed }
+  let(:changelog)  { SidekiqUniqueJobs::Changelog.new }
+  let(:digests)    { SidekiqUniqueJobs::Digests.new }
 
   let(:lock_info) do
     { type: lock_type }
@@ -43,13 +47,35 @@ RSpec.describe SidekiqUniqueJobs::Web do
     ]
   end
 
+  it "can paginate changelogs", sidekiq_ver: ">= 6.0" do
+    Array.new(190) do |idx|
+      expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
+    end
+
+    get "/changelogs?filter=*&count=100"
+    _size, next_cursor, changelogs = changelog.page(cursor: 0, page_size: 100, pattern: "*")
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      with_tag("tr.changelog-row", count: changelogs.size)
+    end
+
+    get "/changelogs?filter=*&cursor=#{next_cursor}&prev_cursor=0&count=100"
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      _size, _next_cursor, changelogs = changelog.page(cursor: next_cursor, page_size: 100, pattern: "*")
+      with_tag("tr.changelog-row", count: changelogs.size)
+    end
+  end
+
   it "can display changelog" do
     lock_one.lock(jid_one, lock_info)
     lock_two.lock(jid_two, lock_info)
 
     get "/changelogs"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
   end
 
   it "can display digests" do
@@ -58,19 +84,32 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     get "/locks"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
     expect(last_response.body).to match("/locks/#{digest_one}")
     expect(last_response.body).to match("/locks/#{digest_two}")
   end
 
-  it "can paginate digests" do
-    Array.new(110) do |idx|
+  it "can paginate digests", sidekiq_ver: ">= 6.0" do
+    Array.new(190) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
     end
 
-    get "/locks"
+    get "/locks?filter=*&count=100"
+    _size, next_cursor, locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      with_tag("tr.lock-row", count: locks.size)
+    end
+
+    _size, next_cursor, _locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
+    get "/locks?filter=*&cursor=#{next_cursor}&prev_cursor=0&count=100"
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      _size, _next_cursor, locks = digests.page(cursor: next_cursor, page_size: 100, pattern: "*")
+      with_tag("tr.lock-row", count: locks.size)
+    end
   end
 
   it "can display digest" do
@@ -79,7 +118,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     get "/locks/#{digest_one}"
 
-    expect(last_response.status).to eq(200)
+    expect(last_response).to be_ok
     expect(last_response.body).to match("uniquejobs:9e9b5ce5d423d3ea470977004b50ff84")
   end
 
