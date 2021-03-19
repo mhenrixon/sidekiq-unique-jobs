@@ -65,7 +65,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).to match("/locks/#{digest_two}")
   end
 
-  it "can paginate digests" do
+  it "can paginate digests", sidekiq_ver: ">= 6.0" do
     Array.new(190) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
     end
