@@ -33,7 +33,7 @@ platforms :mri do
   gem "rspec-benchmark"
   gem "rubocop-mhenrixon"
   gem "ruby-prof", require: false
-  gem "simplecov-sublime", "0.21.0", require: false
+  gem "simplecov-sublime", ">= 0.21.2", require: false
   gem "travis"
 end
 
