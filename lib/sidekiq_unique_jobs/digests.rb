@@ -104,8 +104,8 @@ module SidekiqUniqueJobs
         end
 
         [
-          total_size,
-          digests[0], # next_cursor
+          total_size.to_i,
+          digests[0].to_i, # next_cursor
           digests[1].map { |digest, score| Lock.new(digest, time: score) }, # entries
         ]
       end

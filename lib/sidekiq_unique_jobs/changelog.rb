@@ -68,8 +68,8 @@ module SidekiqUniqueJobs
         end
 
         [
-          total_size,
-          result[0], # next_cursor
+          total_size.to_i,
+          result[0].to_i, # next_cursor
           result[1].map { |entry| load_json(entry[0]) }, # entries
         ]
       end

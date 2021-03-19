@@ -193,7 +193,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     let(:page_size) { 1 }
 
     context "when no entries exist" do
-      it { is_expected.to match_array([0, "0", []]) }
+      it { is_expected.to match_array([0, 0, []]) }
     end
 
     context "when entries exist" do

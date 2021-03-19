@@ -33,6 +33,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
   let(:digest_one) { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
   let(:digest_two) { "uniquejobs:24c5b03e2d49d765e5dfb2d7c51c5929" }
   let(:lock_type)  { :until_executed }
+  let(:changelog)  { SidekiqUniqueJobs::Changelog.new }
+  let(:digests)    { SidekiqUniqueJobs::Digests.new }
 
   let(:lock_info) do
     { type: lock_type }
@@ -43,6 +45,28 @@ RSpec.describe SidekiqUniqueJobs::Web do
       a_collection_including(digest_one, kind_of(Float)),
       a_collection_including(digest_two, kind_of(Float)),
     ]
+  end
+
+  it "can paginate changelogs", sidekiq_ver: ">= 6.0" do
+    Array.new(190) do |idx|
+      expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
+    end
+
+    get "/changelogs?filter=*&count=100"
+    _size, next_cursor, changelogs = changelog.page(cursor: 0, page_size: 100, pattern: "*")
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      with_tag("tr.changelog-row", count: changelogs.size)
+    end
+
+    get "/changelogs?filter=*&cursor=#{next_cursor}&prev_cursor=0&count=100"
+
+    expect(last_response).to be_ok
+    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
+      _size, _next_cursor, changelogs = changelog.page(cursor: next_cursor, page_size: 100, pattern: "*")
+      with_tag("tr.changelog-row", count: changelogs.size)
+    end
   end
 
   it "can display changelog" do
@@ -71,17 +95,20 @@ RSpec.describe SidekiqUniqueJobs::Web do
     end
 
     get "/locks?filter=*&count=100"
+    _size, next_cursor, locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
 
     expect(last_response).to be_ok
     expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
-      with_tag("tr.row", count: 100)
+      with_tag("tr.lock-row", count: locks.size)
     end
 
-    get "/locks?filter=*&cursor=1&prev_cursor=0&count=100"
+    _size, next_cursor, _locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
+    get "/locks?filter=*&cursor=#{next_cursor}&prev_cursor=0&count=100"
 
     expect(last_response).to be_ok
     expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
-      with_tag("tr.row", count: 89)
+      _size, _next_cursor, locks = digests.page(cursor: next_cursor, page_size: 100, pattern: "*")
+      with_tag("tr.lock-row", count: locks.size)
     end
   end
 

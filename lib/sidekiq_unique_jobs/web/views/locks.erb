@@ -11,7 +11,7 @@
     <%= t('Filter') %>
     </button>
   </form>
-  <% if @locks.any? && @total_size > @count.to_i %>
+  <% if @locks.any? && @total_size > @count %>
   <div class="col-sm-4">
     <%= erb unique_template(:_paging), locals: { url: "#{root_path}locks" } %>
   </div>
@@ -31,7 +31,7 @@
     </thead>
     <% @locks.each do |lock| %>
     <tbody>
-      <tr class="row">
+      <tr class="lock-row">
         <td>
           <form action="<%= root_path %>locks/<%= lock.key %>/delete" method="get">
             <%= csrf_tag %>
@@ -40,12 +40,12 @@
           </form>
         </td>
         <td><a href="<%= root_path %>locks/<%= lock.key %>"><%= lock.key %></a></td>
-      <td><%= lock.info["lock"] %></th>
-      <td><%= lock.locked.count %></td>
-      <td><%= safe_relative_time(lock.created_at) %></td>
-    </tr>
-  </tbody>
-  <% end %>
+        <td><%= lock.info["lock"] %></td>
+        <td><%= lock.locked.count %></td>
+        <td><%= safe_relative_time(lock.created_at) %></td>
+      </tr>
+    </tbody>
+    <% end %>
 </table>
 <form action="<%= root_path %>locks/delete_all" method="get">
   <input class="btn btn-danger btn-xs" type="submit" name="delete_all" value="<%= t('DeleteAll') %>" data-confirm="<%= t('AreYouSure') %>" />
