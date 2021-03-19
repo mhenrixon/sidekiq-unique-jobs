@@ -152,6 +152,8 @@ module SidekiqUniqueJobs
       end
 
       def match?(key_one, key_two)
+        return false if key_one.nil? || key_two.nil?
+
         key_one.delete_suffix(RUN_SUFFIX) == key_two.delete_suffix(RUN_SUFFIX)
       end
 
