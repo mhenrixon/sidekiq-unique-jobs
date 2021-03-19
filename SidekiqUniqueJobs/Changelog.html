@@ -713,8 +713,8 @@
     <span class='kw'>end</span>
 
     <span class='lbracket'>[</span>
-      <span class='id identifier rubyid_total_size'>total_size</span><span class='comma'>,</span>
-      <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='comment'># next_cursor
+      <span class='id identifier rubyid_total_size'>total_size</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='comment'># next_cursor
 </span>      <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='op'>|</span> <span class='id identifier rubyid_load_json'>load_json</span><span class='lparen'>(</span><span class='id identifier rubyid_entry'>entry</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># entries
 </span>    <span class='rbracket'>]</span>
   <span class='kw'>end</span>
@@ -729,7 +729,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Mar 19 06:56:38 2021 by
+  Generated on Fri Mar 19 12:42:33 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>
