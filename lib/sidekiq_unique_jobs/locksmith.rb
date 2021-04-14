@@ -199,7 +199,7 @@ module SidekiqUniqueJobs
     def primed_async(conn)
       return yield if Concurrent::Promises
                       .future(conn) { |red_con| pop_queued(red_con) }
-                      .value(drift(config.ttl))
+                      .value(drift(config.pttl) / 1000) # Important to reduce time spent waiting
 
       warn_about_timeout
     end
@@ -260,7 +260,7 @@ module SidekiqUniqueJobs
     #
     def brpoplpush(conn)
       # passing timeout 0 to brpoplpush causes it to block indefinitely
-      conn.brpoplpush(key.queued, key.primed, timeout: config.timeout || 0)
+      conn.brpoplpush(key.queued, key.primed, timeout: config.timeout)
     end
 
     #
@@ -299,7 +299,7 @@ module SidekiqUniqueJobs
     # @return [void]
     #
     def write_lock_info(conn)
-      return unless config.lock_info
+      return unless config.lock_info?
 
       conn.set(key.info, lock_info)
     end
@@ -315,7 +315,7 @@ module SidekiqUniqueJobs
       # Add 2 milliseconds to the drift to account for Redis expires
       # precision, which is 1 millisecond, plus 1 millisecond min drift
       # for small TTLs.
-      (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
+      (val.to_f * CLOCK_DRIFT_FACTOR).to_f + 2
     end
 
     #

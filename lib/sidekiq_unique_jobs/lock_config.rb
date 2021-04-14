@@ -71,6 +71,10 @@ module SidekiqUniqueJobs
       @on_server_conflict = job_hash[ON_SERVER_CONFLICT]
     end
 
+    def lock_info?
+      lock_info
+    end
+
     #
     # Indicate if timeout was set
     #
