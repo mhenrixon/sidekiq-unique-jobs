@@ -25,6 +25,7 @@ detectors:
     enabled: true
     exclude:
       - SidekiqUniqueJobs::DeleteOrphan
+      - SidekiqUniqueJobs::Logging
       - SidekiqUniqueJobs::Redis
   DuplicateMethodCall:
     exclude:
@@ -133,6 +134,7 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#lock_async
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::LockTTL#calculate
+      - SidekiqUniqueJobs::Logging#build_message
       - SidekiqUniqueJobs::Logging::Middleware#logging_context
       - SidekiqUniqueJobs::Middleware#call
       - SidekiqUniqueJobs::Server#self.configure

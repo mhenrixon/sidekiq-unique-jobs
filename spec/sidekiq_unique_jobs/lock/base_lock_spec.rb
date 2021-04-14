@@ -4,10 +4,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   let(:lock)     { described_class.new(item, callback) }
   let(:callback) { -> { p "debug" } }
   let(:strategy) { :replace }
+  let(:jid)      { "bogusjobid" }
   let(:item) do
     { "class" => "JustAWorker",
       "queue" => "testqueue",
       "on_conflict" => strategy,
+      "jid" => jid,
       "args" => [{ foo: "bar" }] }
   end
 
@@ -42,6 +44,25 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     end
   end
 
+  describe "#unlock_with_callback" do
+    subject(:unlock_with_callback) { lock.send(:unlock_with_callback) }
+
+    context "when lock can't be unlocked" do
+      before do
+        allow(callback).to receive(:call)
+
+        allow(lock).to receive(:unlock).and_return(false)
+        allow(lock).to receive(:log_warn)
+      end
+
+      it "logs a warning" do
+        expect(unlock_with_callback).not_to eq(jid)
+        expect(callback).not_to have_received(:call)
+        expect(lock).to have_received(:log_warn).with("Might need to be unlocked manually", item)
+      end
+    end
+  end
+
   describe "#callback_safely" do
     subject(:callback_safely) { lock.send(:callback_safely) }
 
@@ -53,7 +74,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
 
       it "logs a warning" do
         expect { callback_safely }.to raise_error(RuntimeError, "Hell")
-        expect(lock).to have_received(:log_warn).with("unlocked successfully but the #after_unlock callback failed!")
+        expect(lock).to have_received(:log_warn).with("Unlocked successfully but the #after_unlock callback failed!", item)
       end
     end
   end

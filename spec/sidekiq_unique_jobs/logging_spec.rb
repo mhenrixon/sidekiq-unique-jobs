@@ -4,6 +4,18 @@ RSpec.describe SidekiqUniqueJobs::Logging do
   let(:logger)  { SidekiqUniqueJobs.logger }
   let(:message) { "A log message" }
   let(:level)   { nil }
+  let(:worker)  { "JustAWorker" }
+  let(:queue)   { "testqueue" }
+  let(:args)    { [{ foo: "bar" }] }
+  let(:jid)     { "jobid" }
+  let(:digest)  { "digestable" }
+  let(:item) do
+    { "class" => worker,
+      "queue" => queue,
+      "args" => args,
+      "jid" => jid,
+      "lock_digest" => digest }
+  end
 
   before do
     allow(logger).to receive(level)
@@ -15,8 +27,11 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     let(:level) { :debug }
 
     it "delegates to logger.debug" do
-      expect(log_debug(message)).to be_nil
-      expect(logger).to have_received(level).with(message)
+      expect(log_debug(message, item)).to be_nil
+      expect(logger).to have_received(level).with(
+        a_string_starting_with(message)
+          .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
+      )
     end
   end
 
@@ -24,8 +39,11 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     let(:level) { :info }
 
     it "delegates to logger.info" do
-      expect(log_info(message)).to be_nil
-      expect(logger).to have_received(level).with(message)
+      expect(log_info(message, item)).to be_nil
+      expect(logger).to have_received(level).with(
+        a_string_starting_with(message)
+          .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
+      )
     end
   end
 
@@ -33,8 +51,11 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     let(:level) { :warn }
 
     it "delegates to logger.warn" do
-      expect(log_warn(message)).to be_nil
-      expect(logger).to have_received(level).with(message)
+      expect(log_warn(message, item)).to be_nil
+      expect(logger).to have_received(level).with(
+        a_string_starting_with(message)
+          .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
+      )
     end
   end
 
@@ -42,8 +63,11 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     let(:level) { :error }
 
     it "delegates to logger.error" do
-      expect(log_error(message)).to be_nil
-      expect(logger).to have_received(level).with(message)
+      expect(log_error(message, item)).to be_nil
+      expect(logger).to have_received(level).with(
+        a_string_starting_with(message)
+          .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
+      )
     end
   end
 
@@ -51,8 +75,11 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     let(:level) { :fatal }
 
     it "delegates to logger.fatal" do
-      expect(log_fatal(message)).to be_nil
-      expect(logger).to have_received(level).with(message)
+      expect(log_fatal(message, item)).to be_nil
+      expect(logger).to have_received(level).with(
+        a_string_starting_with(message)
+          .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
+      )
     end
   end
 

@@ -29,8 +29,9 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_debug(message_or_exception = nil, &block)
-      logger.debug(message_or_exception, &block)
+    def log_debug(message_or_exception = nil, item = nil, &block)
+      message = build_message(message_or_exception, item)
+      logger.debug(message, &block)
       nil
     end
 
@@ -43,8 +44,9 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_info(message_or_exception = nil, &block)
-      logger.info(message_or_exception, &block)
+    def log_info(message_or_exception = nil, item = nil, &block)
+      message = build_message(message_or_exception, item)
+      logger.info(message, &block)
       nil
     end
 
@@ -57,8 +59,9 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_warn(message_or_exception = nil, &block)
-      logger.warn(message_or_exception, &block)
+    def log_warn(message_or_exception = nil, item = nil, &block)
+      message = build_message(message_or_exception, item)
+      logger.warn(message, &block)
       nil
     end
 
@@ -71,8 +74,9 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_error(message_or_exception = nil, &block)
-      logger.error(message_or_exception, &block)
+    def log_error(message_or_exception = nil, item = nil, &block)
+      message = build_message(message_or_exception, item)
+      logger.error(message, &block)
       nil
     end
 
@@ -85,9 +89,25 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_fatal(message_or_exception = nil, &block)
-      logger.fatal(message_or_exception, &block)
+    def log_fatal(message_or_exception = nil, item = nil, &block)
+      message = build_message(message_or_exception, item)
+      logger.fatal(message, &block)
       nil
+    end
+
+    def build_message(message_or_exception, item = nil)
+      return nil if message_or_exception.nil?
+      return message_or_exception if item.nil?
+
+      message = message_or_exception.dup
+      details = item.slice(LOCK, QUEUE, CLASS, JID, LOCK_DIGEST).each_with_object([]) do |(key, value), memo|
+        memo << "#{key}=#{value}"
+      end
+      message << " ("
+      message << details.join(" ")
+      message << ")"
+
+      message
     end
 
     #
@@ -172,7 +192,7 @@ module SidekiqUniqueJobs
     end
 
     def sidekiq_logger_context_method
-      logger.method(:with_context)           if logger_respond_to_with_context?
+      logger.method(:with_context) if logger_respond_to_with_context?
     end
 
     def sidekiq_logging_context_method

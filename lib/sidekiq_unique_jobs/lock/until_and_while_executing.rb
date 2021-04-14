@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
             runtime_lock.execute { return yield }
           end
         else
-          log_warn "couldn't unlock digest: #{item[LOCK_DIGEST]} #{item[JID]}"
+          log_warn("Couldn't unlock digest: #{item[LOCK_DIGEST]}, jid: #{item[JID]}")
         end
       end
 
@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
       def lock_on_failure
         yield
       rescue Exception # rubocop:disable Lint/RescueException
-        log_error("Runtime lock failed to execute job, restoring server lock")
+        log_error("Runtime lock failed to execute job, restoring server lock", item)
         lock
         raise
       end

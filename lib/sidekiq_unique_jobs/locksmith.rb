@@ -199,7 +199,7 @@ module SidekiqUniqueJobs
     def primed_async(conn)
       return yield if Concurrent::Promises
                       .future(conn) { |red_con| pop_queued(red_con) }
-                      .value(drift(config.ttl))
+                      .value(drift(config.pttl) / 1000) # Important to reduce time spent waiting
 
       warn_about_timeout
     end
@@ -220,7 +220,7 @@ module SidekiqUniqueJobs
       enqueue(conn) do
         primed_sync(conn) do
           locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield if locked_token
+          return yield locked_token if locked_token
         end
       end
     end
@@ -235,7 +235,9 @@ module SidekiqUniqueJobs
     # @return [Object] whatever the block returns when lock was acquired
     #
     def primed_sync(conn)
-      return yield if pop_queued(conn)
+      if (popped_jid = pop_queued(conn))
+        return yield popped_jid
+      end
 
       warn_about_timeout
     end
@@ -260,7 +262,7 @@ module SidekiqUniqueJobs
     #
     def brpoplpush(conn)
       # passing timeout 0 to brpoplpush causes it to block indefinitely
-      conn.brpoplpush(key.queued, key.primed, timeout: config.timeout || 0)
+      conn.brpoplpush(key.queued, key.primed, timeout: config.timeout)
     end
 
     #
@@ -288,7 +290,7 @@ module SidekiqUniqueJobs
       return unless queued_token && (validity >= 0 || config.pttl.zero?)
 
       write_lock_info(conn)
-      yield
+      yield queued_token
     end
 
     #
@@ -299,7 +301,7 @@ module SidekiqUniqueJobs
     # @return [void]
     #
     def write_lock_info(conn)
-      return unless config.lock_info
+      return unless config.lock_info?
 
       conn.set(key.info, lock_info)
     end
@@ -315,7 +317,7 @@ module SidekiqUniqueJobs
       # Add 2 milliseconds to the drift to account for Redis expires
       # precision, which is 1 millisecond, plus 1 millisecond min drift
       # for small TTLs.
-      (val.to_i * CLOCK_DRIFT_FACTOR).to_i + 2
+      (val.to_f * CLOCK_DRIFT_FACTOR).to_f + 2
     end
 
     #
