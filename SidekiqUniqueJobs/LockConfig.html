@@ -480,6 +480,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#lock_info%3F-instance_method" title="#lock_info? (instance method)">#<strong>lock_info?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#on_client_conflict-instance_method" title="#on_client_conflict (instance method)">#<strong>on_client_conflict</strong>  &#x21d2; Object </a>
     
 
@@ -1160,18 +1182,18 @@
       <pre class="lines">
 
 
-100
-101
-102
-103
 104
 105
 106
 107
-108</pre>
+108
+109
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 100</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 104</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_errors_as_string'>errors_as_string</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_valid?'>valid?</span>
@@ -1181,6 +1203,58 @@
     <span class='id identifier rubyid_error_msg'>error_msg</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_errors'>errors</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_val'>val</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>: :</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_val'>val</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\t</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
     <span class='id identifier rubyid_error_msg'>error_msg</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock_info?-instance_method">
+  
+    #<strong>lock_info?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+74
+75
+76</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 74</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock_info?'>lock_info?</span>
+  <span class='id identifier rubyid_lock_info'>lock_info</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1212,13 +1286,13 @@
       <pre class="lines">
 
 
-111
-112
-113
-114</pre>
+115
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_on_client_conflict'>on_client_conflict</span>
   <span class='ivar'>@on_client_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>client</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
@@ -1254,13 +1328,13 @@
       <pre class="lines">
 
 
-117
-118
-119
-120</pre>
+121
+122
+123
+124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 121</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_on_server_conflict'>on_server_conflict</span>
   <span class='ivar'>@on_server_conflict</span> <span class='op'>||=</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>server</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_on_conflict'>on_conflict</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span>
@@ -1309,12 +1383,12 @@
       <pre class="lines">
 
 
-90
-91
-92</pre>
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_errors'>errors</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -1362,12 +1436,12 @@
       <pre class="lines">
 
 
-80
-81
-82</pre>
+84
+85
+86</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wait_for_lock?'>wait_for_lock?</span>
   <span class='id identifier rubyid_timeout'>timeout</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
@@ -1382,9 +1456,9 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Mar 19 12:42:34 2021 by
+  Generated on Wed Apr 14 10:39:25 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.2).
+  0.9.26 (ruby-3.0.1).
 </div>
 
     </div>
