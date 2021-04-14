@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
       def lock_on_failure
         yield
       rescue Exception # rubocop:disable Lint/RescueException
-        log_error("Runtime lock failed to execute job, restoring server lock")
+        log_error("Runtime lock failed to execute job, restoring server lock", item)
         lock
         raise
       end

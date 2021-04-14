@@ -124,7 +124,7 @@ module SidekiqUniqueJobs
       attr_reader :attempt
 
       def unlock_with_callback
-        return log_warn("might need to be unlocked manually") unless unlock
+        return log_warn("Might need to be unlocked manually", item) unless unlock
 
         callback_safely
         item[JID]
@@ -134,7 +134,7 @@ module SidekiqUniqueJobs
         callback&.call
         item[JID]
       rescue StandardError
-        log_warn("unlocked successfully but the #after_unlock callback failed!")
+        log_warn("Unlocked successfully but the #after_unlock callback failed!", item)
         raise
       end
 
