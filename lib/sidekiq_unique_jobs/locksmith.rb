@@ -220,7 +220,7 @@ module SidekiqUniqueJobs
       enqueue(conn) do
         primed_sync(conn) do
           locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield if locked_token
+          return yield locked_token if locked_token
         end
       end
     end
@@ -235,7 +235,9 @@ module SidekiqUniqueJobs
     # @return [Object] whatever the block returns when lock was acquired
     #
     def primed_sync(conn)
-      return yield if pop_queued(conn)
+      if (popped_jid = pop_queued(conn))
+        return yield popped_jid
+      end
 
       warn_about_timeout
     end
@@ -288,7 +290,7 @@ module SidekiqUniqueJobs
       return unless queued_token && (validity >= 0 || config.pttl.zero?)
 
       write_lock_info(conn)
-      yield
+      yield queued_token
     end
 
     #
