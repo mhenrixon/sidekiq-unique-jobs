@@ -32,8 +32,10 @@ platforms :mri do
   gem "reek", ">= 5.3"
   gem "rspec-benchmark"
   gem "rubocop-mhenrixon"
-  gem "ruby-prof", require: false
+  gem "ruby-prof", ">= 0.17.0", require: false
   gem "simplecov-sublime", ">= 0.21.2", require: false
+  gem "stackprof", ">= 0.2.9", require: false
+  gem "test-prof"
   gem "travis"
 end
 
