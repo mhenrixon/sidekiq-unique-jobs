@@ -238,42 +238,40 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   end
 
   context "when silence_lock_timeout is false" do
+    let(:logger) { Logger.new("/dev/null") }
+
+    around do |example|
+      SidekiqUniqueJobs.use_config(silence_lock_timeout: false, logger: logger, &example)
+    end
+
     it "warns about not being able to obtain a lock" do
-      SidekiqUniqueJobs.configure do |config|
-        config.silence_lock_timeout = false
-      end
-      allow(SidekiqUniqueJobs.logger).to receive(:warn)
+      allow(logger).to receive(:warn)
 
       locksmith_one.lock do
-        locksmith_two.lock do
-          # NOOP
-        end
+        locksmith_two.lock
       end
 
-      expect(SidekiqUniqueJobs.logger).to have_received(:warn).with(
+      expect(logger).to have_received(:warn).with(
         "Timed out after 0s while waiting for primed token (digest: uniquejobs:randomvalue, job_id: jidmayhem)",
       )
     end
   end
 
   context "when silence_lock_timeout is true" do
+    let(:logger) { Logger.new("/dev/null") }
+
+    around do |example|
+      SidekiqUniqueJobs.use_config(silence_lock_timeout: true, logger: logger, &example)
+    end
+
     it "does not warn about not being able to obtain a lock" do
-      SidekiqUniqueJobs.configure do |config|
-        config.silence_lock_timeout = true
-      end
-      allow(SidekiqUniqueJobs.logger).to receive(:warn)
+      allow(logger).to receive(:warn)
 
       locksmith_one.lock do
-        locksmith_two.lock do
-          # NOOP
-        end
+        locksmith_two.lock
       end
 
-      expect(SidekiqUniqueJobs.logger).not_to have_received(:warn)
-
-      SidekiqUniqueJobs.configure do |config|
-        config.silence_lock_timeout = false
-      end
+      expect(logger).not_to have_received(:warn)
     end
   end
 end
