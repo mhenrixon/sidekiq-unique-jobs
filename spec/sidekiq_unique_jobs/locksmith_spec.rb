@@ -236,4 +236,44 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       expect(did_we_get_in).to be false
     end
   end
+
+  context "when silence_lock_timeout is false" do
+    it "warns about not being able to obtain a lock" do
+      SidekiqUniqueJobs.configure do |config|
+        config.silence_lock_timeout = false
+      end
+      allow(SidekiqUniqueJobs.logger).to receive(:warn)
+
+      locksmith_one.lock do
+        locksmith_two.lock do
+          # NOOP
+        end
+      end
+
+      expect(SidekiqUniqueJobs.logger).to have_received(:warn).with(
+        "Timed out after 0s while waiting for primed token (digest: uniquejobs:randomvalue, job_id: jidmayhem)",
+      )
+    end
+  end
+
+  context "when silence_lock_timeout is true" do
+    it "does not warn about not being able to obtain a lock" do
+      SidekiqUniqueJobs.configure do |config|
+        config.silence_lock_timeout = true
+      end
+      allow(SidekiqUniqueJobs.logger).to receive(:warn)
+
+      locksmith_one.lock do
+        locksmith_two.lock do
+          # NOOP
+        end
+      end
+
+      expect(SidekiqUniqueJobs.logger).not_to have_received(:warn)
+
+      SidekiqUniqueJobs.configure do |config|
+        config.silence_lock_timeout = false
+      end
+    end
+  end
 end

@@ -18,7 +18,8 @@ module SidekiqUniqueJobs
                                                    :reaper_timeout,
                                                    :lock_info,
                                                    :raise_on_config_error,
-                                                   :current_redis_version)
+                                                   :current_redis_version,
+                                                   :silence_lock_timeout)
 
   #
   # Shared class for dealing with gem configuration
@@ -118,6 +119,9 @@ module SidekiqUniqueJobs
     #
     # @return [0.0.0] default redis version is only to avoid NoMethodError on nil
     REDIS_VERSION         = "0.0.0"
+    #
+    # @return [false] silence timeout log output
+    SILENCE_LOCK_TIMEOUT  = false
 
     #
     # Returns a default configuration
@@ -158,6 +162,7 @@ module SidekiqUniqueJobs
     #   reaper_count: 1000,
     #   lock_info: false,
     #   raise_on_config_error: false,
+    #   silence_lock_timeout: false,
     #   }>
     #
     #
@@ -181,6 +186,7 @@ module SidekiqUniqueJobs
         USE_LOCK_INFO,
         RAISE_ON_CONFIG_ERROR,
         REDIS_VERSION,
+        SILENCE_LOCK_TIMEOUT,
       )
     end
 
