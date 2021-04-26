@@ -15,7 +15,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:lock_limit)   { 1 }
   let(:queue)        { "default" }
   let(:worker)       { "UntilExecutedJob" }
-  let(:lock_args)    { ['abc'] }
+  let(:lock_args)    { ["abc"] }
   let(:item_one) do
     {
       "class" => "UntilExecutedJob",
@@ -83,7 +83,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
                 "timeout" => lock_timeout,
                 "ttl" => lock_ttl,
                 "worker" => worker,
-              )
+              ),
             )
           end
         end
@@ -103,7 +103,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
                 "timeout" => lock_timeout,
                 "ttl" => lock_ttl,
                 "worker" => worker,
-              )
+              ),
             )
           end
         end
