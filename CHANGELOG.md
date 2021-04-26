@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.8...HEAD)
+
+**Fixed bugs:**
+
+- lock\_info set to true but no lock info showing up in web ui [\#589](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/589)
+- Fix recording lock\_info [\#599](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/599) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.8) (2021-04-14)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.7...v7.0.8)
