@@ -57,7 +57,6 @@ detectors:
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
       - SidekiqUniqueJobs::Redis::Entity#exist?
-      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
       - SidekiqUniqueJobs::Web::Helpers#cparams
       - SidekiqUniqueJobs::Web::Helpers#display_lock_args
   InstanceVariableAssumption:
@@ -146,7 +145,7 @@ detectors:
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
-      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_class_constantize
+      - SidekiqUniqueJobs#constantize
       - SidekiqUniqueJobs::TimerTask#execute_task
       - SidekiqUniqueJobs::TimerTask#timeout_task
       - SidekiqUniqueJobs::UpgradeLocks#call

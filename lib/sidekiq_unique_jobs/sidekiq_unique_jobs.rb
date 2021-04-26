@@ -236,4 +236,23 @@ module SidekiqUniqueJobs
     lock_config = validate_worker(options)
     raise InvalidWorker, lock_config unless lock_config.errors.empty?
   end
+
+  # Attempt to constantize a string worker_class argument, always
+  # failing back to the original argument when the constant can't be found
+  #
+  # @return [Sidekiq::Worker]
+  def constantize(str)
+    return str.class             if str.is_a?(Sidekiq::Worker) # sidekiq v6.x
+    return str                   unless str.is_a?(String)
+    return Object.const_get(str) unless str.include?("::")
+
+    names = str.split("::")
+    names.shift if names.empty? || names.first.empty?
+
+    names.inject(Object) do |constant, name|
+      # the false flag limits search for name to under the constant namespace
+      #   which mimics Rails' behaviour
+      constant.const_get(name, false)
+    end
+  end
 end

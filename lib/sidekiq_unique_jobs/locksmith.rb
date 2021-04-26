@@ -342,7 +342,7 @@ module SidekiqUniqueJobs
         LIMIT => item[LOCK_LIMIT],
         TIMEOUT => item[LOCK_TIMEOUT],
         TTL => item[LOCK_TTL],
-        LOCK => config.type,
+        TYPE => config.type,
         LOCK_ARGS => item[LOCK_ARGS],
         TIME => now_f,
       )
