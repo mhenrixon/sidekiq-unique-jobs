@@ -13,14 +13,20 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:lock)         { SidekiqUniqueJobs::Lock.new(key) }
   let(:lock_timeout) { 0 }
   let(:lock_limit)   { 1 }
+  let(:queue)        { "default" }
+  let(:worker)       { "UntilExecutedJob" }
+  let(:lock_args)    { ['abc'] }
   let(:item_one) do
     {
+      "class" => "UntilExecutedJob",
       "jid" => jid_one,
-      "lock_digest" => digest,
-      "lock_ttl" => lock_ttl,
       "lock" => lock_type,
-      "lock_timeout" => lock_timeout,
+      "lock_args" => lock_args,
+      "lock_digest" => digest,
       "lock_limit" => lock_limit,
+      "lock_timeout" => lock_timeout,
+      "lock_ttl" => lock_ttl,
+      "queue" => queue,
     }
   end
   let(:item_two) { item_one.merge("jid" => jid_two) }
@@ -64,6 +70,46 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   end
 
   shared_examples_for "a lock" do
+    context "when lock_info is turned on globally" do
+      it "adds a key with information about the lock" do
+        SidekiqUniqueJobs.use_config(lock_info: true) do
+          locksmith_one.lock do
+            expect(lock.info.value).to match(
+              a_hash_including(
+                "limit" => lock_limit,
+                "type" => lock_type.to_s,
+                "lock_args" => lock_args,
+                "queue" => queue,
+                "timeout" => lock_timeout,
+                "ttl" => lock_ttl,
+                "worker" => worker,
+              )
+            )
+          end
+        end
+      end
+    end
+
+    context "when lock_info is turned on in worker" do
+      it "adds a key with information about the lock" do
+        UntilExecutedJob.use_options(lock_info: true) do
+          locksmith_one.lock do
+            expect(lock.info.value).to match(
+              a_hash_including(
+                "limit" => lock_limit,
+                "type" => lock_type.to_s,
+                "lock_args" => lock_args,
+                "queue" => queue,
+                "timeout" => lock_timeout,
+                "ttl" => lock_ttl,
+                "worker" => worker,
+              )
+            )
+          end
+        end
+      end
+    end
+
     it "is unlocked from the start" do
       expect(locksmith_one).not_to be_locked
     end

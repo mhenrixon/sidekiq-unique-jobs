@@ -28,7 +28,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   let(:errors)       { {} }
 
   its(:type)        { is_expected.to eq(lock_type) }
-  its(:worker)      { is_expected.to eq(worker_class) }
+  its(:worker)      { is_expected.to eq(UntilExecutedJob) }
   its(:limit)       { is_expected.to eq(lock_limit) }
   its(:timeout)     { is_expected.to eq(lock_timeout) }
   its(:ttl)         { is_expected.to eq(lock_ttl) }
