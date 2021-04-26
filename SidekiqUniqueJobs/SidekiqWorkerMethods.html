@@ -401,12 +401,12 @@
       <pre class="lines">
 
 
-71
-72
-73</pre>
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
   <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
@@ -587,19 +587,13 @@ failing back to the original argument when the constant can&#39;t be found</p>
 57
 58
 59
-60
-61
-62
-63</pre>
+60</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_worker_class_constantize'>worker_class_constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span> <span class='op'>=</span> <span class='ivar'>@worker_class</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='kw'>if</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span><span class='rparen'>)</span> <span class='comment'># sidekiq v6.x
-</span>  <span class='kw'>return</span> <span class='id identifier rubyid_klazz'>klazz</span> <span class='kw'>unless</span> <span class='id identifier rubyid_klazz'>klazz</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
-
-  <span class='const'>Object</span><span class='period'>.</span><span class='id identifier rubyid_const_get'>const_get</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_constantize'><span class='object_link'><a href="../SidekiqUniqueJobs.html#constantize-class_method" title="SidekiqUniqueJobs.constantize (method)">constantize</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span><span class='rparen'>)</span>
 <span class='kw'>rescue</span> <span class='const'>NameError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ex'>ex</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span>
   <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>uninitialized constant</span><span class='regexp_end'>/</span></span>
@@ -732,9 +726,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Apr 14 10:41:21 2021 by
+  Generated on Mon Apr 26 14:41:43 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.3).
+  0.9.26 (ruby-3.0.1).
 </div>
 
     </div>
