@@ -199,7 +199,7 @@ module SidekiqUniqueJobs
     def primed_async(conn)
       return yield if Concurrent::Promises
                       .future(conn) { |red_con| pop_queued(red_con) }
-                      .value(drift(config.pttl) / 1000) # Important to reduce time spent waiting
+                      .value(add_drift(config.ttl))
 
       warn_about_timeout
     end
@@ -317,7 +317,11 @@ module SidekiqUniqueJobs
       # Add 2 milliseconds to the drift to account for Redis expires
       # precision, which is 1 millisecond, plus 1 millisecond min drift
       # for small TTLs.
-      (val.to_f * CLOCK_DRIFT_FACTOR).to_f + 2
+      (val + 2).to_f * CLOCK_DRIFT_FACTOR
+    end
+
+    def add_drift(val)
+      val + drift(val)
     end
 
     #
