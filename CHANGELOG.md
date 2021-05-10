@@ -2,7 +2,27 @@
 
 ## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.8...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.10...HEAD)
+
+**Closed issues:**
+
+- Timed out after 0s while waiting for primed token [\#601](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/601)
+
+## [v7.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.10) (2021-05-10)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.9...v7.0.10)
+
+**Fixed bugs:**
+
+- Add drift to original value [\#603](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/603) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Nested Sidekiq jobs are not kicked off with until\_and\_while\_executing [\#600](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/600)
+
+## [v7.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.9) (2021-04-26)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.8...v7.0.9)
 
 **Fixed bugs:**
 
