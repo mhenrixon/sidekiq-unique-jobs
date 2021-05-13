@@ -29,6 +29,7 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs::UpdateVersion.call
       SidekiqUniqueJobs::UpgradeLocks.call
       SidekiqUniqueJobs::Orphans::Manager.start
+      SidekiqUniqueJobs::Orphans::ReaperRessurector.start
     end
 
     def self.stop
