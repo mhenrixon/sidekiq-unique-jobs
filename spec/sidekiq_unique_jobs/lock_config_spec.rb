@@ -36,6 +36,14 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   its(:on_conflict) { is_expected.to eq(on_conflict) }
   its(:errors)      { is_expected.to eq({}) }
 
+  describe "#initialize" do
+    context "when worker doesn't exist" do
+      let(:worker_class) { "MyBogusAndNoneExistingWorker" }
+
+      its(:worker) { is_expected.to eq("MyBogusAndNoneExistingWorker") }
+    end
+  end
+
   describe "#wait_for_lock?" do
     subject(:wait_for_lock?) { lock_config.wait_for_lock? }
 
