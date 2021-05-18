@@ -202,7 +202,7 @@
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>7.0.10</span><span class='tstring_end'>&quot;</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>7.0.11</span><span class='tstring_end'>&quot;</span></span></pre></dd>
       
     </dl>
   
@@ -538,6 +538,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Resets configuration to deafult.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#safe_constantize-class_method" title="safe_constantize (class method)">.<strong>safe_constantize</strong>(str)  &#x21d2; Sidekiq::Worker, String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Attempt to constantize a string worker_class argument, always failing back to the original argument when the constant can&#39;t be found.</p>
 </div></span>
   
 </li>
@@ -1750,6 +1773,74 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="safe_constantize-class_method">
+  
+    .<strong>safe_constantize</strong>(str)  &#x21d2; <tt><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt>, <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Attempt to constantize a string worker_class argument, always
+failing back to the original argument when the constant can&#39;t be found</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt>, <tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_unique_jobs.rb', line 263</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_safe_constantize'>safe_constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_constantize'>constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span> <span class='const'>NameError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ex'>ex</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>uninitialized constant</span><span class='regexp_end'>/</span></span>
+    <span class='id identifier rubyid_str'>str</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_raise'>raise</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="strategies-class_method">
   
     .<strong>strategies</strong>  &#x21d2; <tt><span class='object_link'><a href="Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, SidekiqUniqueJobs::Strategy&gt;</tt> 
@@ -2241,9 +2332,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Mon May 10 09:23:58 2021 by
+  Generated on Tue May 18 09:41:51 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.1).
+  0.9.26 (ruby-2.7.2).
 </div>
 
     </div>
