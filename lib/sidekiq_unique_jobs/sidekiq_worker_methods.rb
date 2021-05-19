@@ -49,14 +49,7 @@ module SidekiqUniqueJobs
     #
     # @return [Sidekiq::Worker]
     def worker_class_constantize(klazz = @worker_class)
-      SidekiqUniqueJobs.constantize(klazz)
-    rescue NameError => ex
-      case ex.message
-      when /uninitialized constant/
-        klazz
-      else
-        raise
-      end
+      SidekiqUniqueJobs.safe_constantize(klazz)
     end
 
     #

@@ -1,11 +1,16 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v7.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.11) (2021-05-16)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.10...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.10...v7.0.11)
+
+**Fixed bugs:**
+
+- Constants are not necessary when deleting locks [\#606](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/606) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
+- Sidekiq Pro Sharded Web UI Error \> 7.0.8 [\#605](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/605)
 - Timed out after 0s while waiting for primed token [\#601](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/601)
 
 ## [v7.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.10) (2021-05-10)

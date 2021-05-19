@@ -4,7 +4,7 @@
 # Contains configuration and utility methods that belongs top level
 #
 # @author Mikael Henriksson <mikael@mhenrixon.com>
-module SidekiqUniqueJobs
+module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   include SidekiqUniqueJobs::Connection
   extend SidekiqUniqueJobs::JSON
 
@@ -253,6 +253,21 @@ module SidekiqUniqueJobs
       # the false flag limits search for name to under the constant namespace
       #   which mimics Rails' behaviour
       constant.const_get(name, false)
+    end
+  end
+
+  # Attempt to constantize a string worker_class argument, always
+  # failing back to the original argument when the constant can't be found
+  #
+  # @return [Sidekiq::Worker, String]
+  def safe_constantize(str)
+    constantize(str)
+  rescue NameError => ex
+    case ex.message
+    when /uninitialized constant/
+      str
+    else
+      raise
     end
   end
 end

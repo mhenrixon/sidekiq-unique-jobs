@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
 
     def initialize(job_hash = {})
       @type        = job_hash[LOCK]&.to_sym
-      @worker      = SidekiqUniqueJobs.constantize(job_hash[CLASS])
+      @worker      = SidekiqUniqueJobs.safe_constantize(job_hash[CLASS])
       @limit       = job_hash.fetch(LOCK_LIMIT, 1)
       @timeout     = job_hash.fetch(LOCK_TIMEOUT, 0)
       @ttl         = job_hash.fetch(LOCK_TTL) { job_hash.fetch(LOCK_EXPIRATION, nil) }.to_i
