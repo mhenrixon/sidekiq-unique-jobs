@@ -226,7 +226,7 @@ SidekiqUniqueJobs.config.lock_ttl #=> nil
 
 Set a global lock_ttl to use for all jobs that don't otherwise specify a lock_ttl.
 
-Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.
+Lock TTL decides how long to wait at most before considering a lock to be expired and making it possible to reuse that lock.
 
 ### enabled
 
@@ -336,7 +336,7 @@ sidekiq_options lock_prefix: "uniquejobs" # this is the default value
 
 ### lock_ttl
 
-Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.
+Lock TTL decides how long to wait at most before considering a lock to be expired and making it possible to reuse that lock.
 
 Starting from `v7` the expiration will take place when the job is pushed to the queue.
 
