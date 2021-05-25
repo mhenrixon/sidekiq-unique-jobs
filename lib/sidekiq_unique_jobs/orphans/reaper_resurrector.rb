@@ -22,10 +22,18 @@ module SidekiqUniqueJobs
         return if reaper_disabled?
 
         with_logging_context do
-          log_info("Starting Reaper Resurrector")
-          task.execute
-          task
+          run_task
         end
+      end
+
+      #
+      # Runs reaper resurrector task
+      #
+      # @return [SidekiqUniqueJobs::TimerTask]
+      def run_task
+        log_info("Starting Reaper Resurrector")
+        task.execute
+        task
       end
 
       #

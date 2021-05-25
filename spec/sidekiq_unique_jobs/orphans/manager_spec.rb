@@ -276,7 +276,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       expect { register_reaper_process }.to change { get(SidekiqUniqueJobs::UNIQUE_REAPER) }
         .from(nil).to(frozen_time.to_i.to_s)
 
-      expect(ttl(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_within(40).of(SidekiqUniqueJobs.config.reaper_interval * 2)
+      expect(ttl(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_within(20).of(SidekiqUniqueJobs.config.reaper_interval)
     end
   end
 
@@ -293,7 +293,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
       expect { refresh_reaper_mutex }.to change { get(SidekiqUniqueJobs::UNIQUE_REAPER) }
         .from(nil).to(frozen_time.to_i.to_s)
 
-      expect(ttl(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_within(40).of(SidekiqUniqueJobs.config.reaper_interval * 2)
+      expect(ttl(SidekiqUniqueJobs::UNIQUE_REAPER)).to be_within(20).of(SidekiqUniqueJobs.config.reaper_interval)
     end
   end
 

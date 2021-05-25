@@ -12,7 +12,6 @@ module SidekiqUniqueJobs
 
       DRIFT_FACTOR = 0.02
       REAPERS      = [:ruby, :lua].freeze
-      EXPIRATION_FACTOR = 2
 
       include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Logging
@@ -179,7 +178,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def register_reaper_process
-        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, ex: drift_reaper_interval * EXPIRATION_FACTOR) }
+        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, nx: true, ex: drift_reaper_interval) }
       end
 
       #
@@ -189,7 +188,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def refresh_reaper_mutex
-        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, ex: drift_reaper_interval * EXPIRATION_FACTOR) }
+        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, ex: drift_reaper_interval) }
       end
 
       #
