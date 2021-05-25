@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::Orphans::ReaperRessurector do
+RSpec.describe SidekiqUniqueJobs::Orphans::ReaperResurrector do
   let(:manager) { SidekiqUniqueJobs::Orphans::Manager }
   let(:task)    { instance_spy(SidekiqUniqueJobs::TimerTask) }
 
@@ -20,9 +20,9 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperRessurector do
       allow(described_class).to receive(:log_info).and_return(nil)
     end
 
-    context "when ressurector is disabled" do
+    context "when resurrector is disabled" do
       before do
-        allow(described_class).to receive(:ressurector_disabled?).and_return(true)
+        allow(described_class).to receive(:resurrector_disabled?).and_return(true)
       end
 
       it { is_expected.to eq(nil) }
@@ -36,13 +36,13 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperRessurector do
       it { is_expected.to eq(nil) }
     end
 
-    context "when both ressurector and reaper are enabled?" do
+    context "when both resurrector and reaper are enabled?" do
       it { is_expected.to eq(task) }
 
       it "logs a start message" do
         start
 
-        expect(described_class).to have_received(:log_info).with("Starting Reaper Ressurector")
+        expect(described_class).to have_received(:log_info).with("Starting Reaper Resurrector")
       end
 
       it "executes the task" do
@@ -53,40 +53,40 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperRessurector do
     end
   end
 
-  describe ".ressurector_disabled?" do
-    subject(:ressurector_disabled) { described_class.ressurector_disabled? }
+  describe ".resurrector_disabled?" do
+    subject(:resurrector_disabled) { described_class.resurrector_disabled? }
 
-    context "when ressurector is disabled" do
+    context "when resurrector is disabled" do
       around do |example|
-        SidekiqUniqueJobs.use_config(reaper_ressurector_enabled: false, &example)
+        SidekiqUniqueJobs.use_config(reaper_resurrector_enabled: false, &example)
       end
 
       it { is_expected.to eq(true) }
     end
 
-    context "when ressurector is enabled" do
+    context "when resurrector is enabled" do
       around do |example|
-        SidekiqUniqueJobs.use_config(reaper_ressurector_enabled: true, &example)
+        SidekiqUniqueJobs.use_config(reaper_resurrector_enabled: true, &example)
       end
 
       it { is_expected.to eq(false) }
     end
   end
 
-  describe ".ressurector_enabled?" do
-    subject(:ressurector_enabled) { described_class.ressurector_enabled? }
+  describe ".resurrector_enabled?" do
+    subject(:resurrector_enabled) { described_class.resurrector_enabled? }
 
-    context "when ressurector is disabled" do
+    context "when resurrector is disabled" do
       around do |example|
-        SidekiqUniqueJobs.use_config(reaper_ressurector_enabled: false, &example)
+        SidekiqUniqueJobs.use_config(reaper_resurrector_enabled: false, &example)
       end
 
       it { is_expected.to eq(false) }
     end
 
-    context "when ressurector is enabled" do
+    context "when resurrector is enabled" do
       around do |example|
-        SidekiqUniqueJobs.use_config(reaper_ressurector_enabled: true, &example)
+        SidekiqUniqueJobs.use_config(reaper_resurrector_enabled: true, &example)
       end
 
       it { is_expected.to eq(true) }
@@ -200,16 +200,16 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperRessurector do
 
     let(:expected_options) do
       { run_now: false,
-        execution_interval: SidekiqUniqueJobs.config.reaper_ressurector_interval }
+        execution_interval: SidekiqUniqueJobs.config.reaper_resurrector_interval }
     end
 
     it { is_expected.to eq(expected_options) }
   end
 
-  describe ".reaper_ressurector_interval" do
-    subject(:reaper_ressurector_interval) { described_class.reaper_ressurector_interval }
+  describe ".reaper_resurrector_interval" do
+    subject(:reaper_resurrector_interval) { described_class.reaper_resurrector_interval }
 
-    it { is_expected.to eq(SidekiqUniqueJobs.config.reaper_ressurector_interval) }
+    it { is_expected.to eq(SidekiqUniqueJobs.config.reaper_resurrector_interval) }
   end
 
   describe ".restart_if_dead" do
@@ -254,13 +254,13 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperRessurector do
     context "when logger_context_hash?" do
       let(:requires_hash_context) { true }
 
-      it { is_expected.to eq("uniquejobs" => "reaper-ressurector") }
+      it { is_expected.to eq("uniquejobs" => "reaper-resurrector") }
     end
 
     context "when not logger_context_hash?" do
       let(:requires_hash_context) { false }
 
-      it { is_expected.to eq("uniquejobs=reaper-ressurector") }
+      it { is_expected.to eq("uniquejobs=reaper-resurrector") }
     end
   end
 end

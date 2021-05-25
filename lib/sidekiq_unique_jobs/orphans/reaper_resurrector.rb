@@ -3,7 +3,7 @@
 module SidekiqUniqueJobs
   module Orphans
     # Restarts orphan manager if it is considered dead
-    module ReaperRessurector
+    module ReaperResurrector
       module_function
 
       include SidekiqUniqueJobs::Connection
@@ -13,23 +13,23 @@ module SidekiqUniqueJobs
       REAPERS = [:ruby, :lua].freeze
 
       #
-      # Starts reaper ressurector that watches orphans reaper
+      # Starts reaper resurrector that watches orphans reaper
       #
       # @return [SidekiqUniqueJobs::TimerTask] the task that was started
       #
       def start
-        return if ressurector_disabled?
+        return if resurrector_disabled?
         return if reaper_disabled?
 
         with_logging_context do
-          log_info("Starting Reaper Ressurector")
+          log_info("Starting Reaper Resurrector")
           task.execute
           task
         end
       end
 
       #
-      # The task that runs the ressurector
+      # The task that runs the resurrector
       #
       # @return [SidekiqUniqueJobs::TimerTask]
       def task
@@ -59,21 +59,21 @@ module SidekiqUniqueJobs
       end
 
       #
-      # Checks if ressurector is disabled
+      # Checks if resurrector is disabled
       #
-      # @see ressurector_enabled?
+      # @see resurrector_enabled?
       #
       # @return [true, false]
-      def ressurector_disabled?
-        !ressurector_enabled?
+      def resurrector_disabled?
+        !resurrector_enabled?
       end
 
       #
-      # Checks if ressurector is enabled
+      # Checks if resurrector is enabled
       #
       # @return [true, false]
-      def ressurector_enabled?
-        SidekiqUniqueJobs.config.reaper_ressurector_enabled
+      def resurrector_enabled?
+        SidekiqUniqueJobs.config.reaper_resurrector_enabled
       end
 
       #
@@ -121,7 +121,7 @@ module SidekiqUniqueJobs
       #
       def timer_task_options
         { run_now: false,
-          execution_interval: reaper_ressurector_interval }
+          execution_interval: reaper_resurrector_interval }
       end
 
       #
@@ -133,17 +133,17 @@ module SidekiqUniqueJobs
       #
       def logging_context
         if logger_context_hash?
-          { "uniquejobs" => "reaper-ressurector" }
+          { "uniquejobs" => "reaper-resurrector" }
         else
-          "uniquejobs=reaper-ressurector"
+          "uniquejobs=reaper-resurrector"
         end
       end
 
       #
-      # @see SidekiqUniqueJobs::Config#reaper_ressurector_interval
+      # @see SidekiqUniqueJobs::Config#reaper_resurrector_interval
       #
-      def reaper_ressurector_interval
-        SidekiqUniqueJobs.config.reaper_ressurector_interval
+      def reaper_resurrector_interval
+        SidekiqUniqueJobs.config.reaper_resurrector_interval
       end
 
       def reaper_interval
