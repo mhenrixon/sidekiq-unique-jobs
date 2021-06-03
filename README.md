@@ -567,7 +567,7 @@ You may need to define some custom strategy. You can define it in one project fo
 ```ruby
 # lib/strategies/my_custom_strategy.rb
 module Strategies
-  class MyCustomStrategy < OnConflict::Strategy
+  class MyCustomStrategy < SidekiqUniqueJobs::OnConflict::Strategy
     def call
       # Do something ...
     end
