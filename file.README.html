@@ -310,7 +310,7 @@
 
 <p>Set a global lock_ttl to use for all jobs that don&#39;t otherwise specify a lock_ttl.</p>
 
-<p>Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.</p>
+<p>Lock TTL decides how long to wait at most before considering a lock to be expired and making it possible to reuse that lock.</p>
 
 <h3 id="enabled">enabled</h3>
 
@@ -410,7 +410,7 @@
 
 <h3 id="lock_ttl">lock_ttl</h3>
 
-<p>Lock TTL decides how long to wait after the job has been successfully processed before making it possible to reuse that lock.</p>
+<p>Lock TTL decides how long to wait at most before considering a lock to be expired and making it possible to reuse that lock.</p>
 
 <p>Starting from <code>v7</code> the expiration will take place when the job is pushed to the queue.</p>
 
@@ -622,7 +622,7 @@ always scheduled in the future. Currently only attempting to retry one time.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># lib/strategies/my_custom_strategy.rb
 </span><span class='kw'>module</span> <span class='const'>Strategies</span>
-  <span class='kw'>class</span> <span class='const'>MyCustomStrategy</span> <span class='op'>&lt;</span> <span class='const'>OnConflict</span><span class='op'>::</span><span class='const'>Strategy</span>
+  <span class='kw'>class</span> <span class='const'>MyCustomStrategy</span> <span class='op'>&lt;</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/OnConflict.html" title="SidekiqUniqueJobs::OnConflict (module)">OnConflict</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs/OnConflict/Strategy.html" title="SidekiqUniqueJobs::OnConflict::Strategy (class)">Strategy</a></span></span>
     <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
       <span class='comment'># Do something ...
 </span>    <span class='kw'>end</span>
@@ -968,9 +968,9 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Tue May 18 09:41:51 2021 by
+  Generated on Fri Jun  4 11:27:51 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.2).
+  0.9.26 (ruby-2.7.3).
 </div>
 
     </div>
