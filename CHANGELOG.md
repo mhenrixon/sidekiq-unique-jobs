@@ -1,5 +1,18 @@
 # Changelog
 
+## [v7.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.12) (2021-06-04)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.11...v7.0.12)
+
+**Implemented enhancements:**
+
+- Reduce noise of perfectly valid scenario [\#610](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/610) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- Set correct namespace for custom strategy example [\#609](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/609) ([Wolfer](https://github.com/Wolfer))
+- Clarify the documentation related to lock\_ttl [\#607](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/607) ([donaldpiret](https://github.com/donaldpiret))
+
 ## [v7.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.11) (2021-05-16)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.10...v7.0.11)
