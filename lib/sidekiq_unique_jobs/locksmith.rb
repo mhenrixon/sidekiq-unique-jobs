@@ -336,7 +336,9 @@ module SidekiqUniqueJobs
     end
 
     def warn_about_timeout
-      log_warn("Timed out after #{config.timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+      return unless config.wait_for_lock?
+
+      log_debug("Timed out after #{config.timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
     end
 
     def lock_info
