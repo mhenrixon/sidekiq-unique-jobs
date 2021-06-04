@@ -16,6 +16,8 @@ module SidekiqUniqueJobs
                                                    :reaper_count,
                                                    :reaper_interval,
                                                    :reaper_timeout,
+                                                   :reaper_resurrector_interval,
+                                                   :reaper_resurrector_enabled,
                                                    :lock_info,
                                                    :raise_on_config_error,
                                                    :current_redis_version)
@@ -110,6 +112,14 @@ module SidekiqUniqueJobs
     # @return [10] stop reaper after 10 seconds
     REAPER_TIMEOUT        = 10
     #
+    # @return [3600] check if reaper is dead each 3600 seconds
+    REAPER_RESURRECTOR_INTERVAL = 3600
+
+    #
+    # @return [true] enable reaper resurrector
+    REAPER_RESURRECTOR_ENABLED = true
+
+    #
     # @return [false] while useful it also adds overhead so disable lock_info by default
     USE_LOCK_INFO         = false
     #
@@ -178,6 +188,8 @@ module SidekiqUniqueJobs
         REAPER_COUNT,
         REAPER_INTERVAL,
         REAPER_TIMEOUT,
+        REAPER_RESURRECTOR_INTERVAL,
+        REAPER_RESURRECTOR_ENABLED,
         USE_LOCK_INFO,
         RAISE_ON_CONFIG_ERROR,
         REDIS_VERSION,

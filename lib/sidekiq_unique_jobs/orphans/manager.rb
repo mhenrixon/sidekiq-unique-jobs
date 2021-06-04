@@ -31,6 +31,7 @@ module SidekiqUniqueJobs
         with_logging_context do
           register_reaper_process
           log_info("Starting Reaper")
+
           task.add_observer(Observer.new)
           task.execute
           task
