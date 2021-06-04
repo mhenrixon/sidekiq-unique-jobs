@@ -31,6 +31,7 @@ detectors:
     exclude:
       - Sidekiq#self.use_options
       - SidekiqUniqueJobs#toggle
+      - SidekiqUniqueJobs::Deprecation#self.muted
       - SidekiqUniqueJobs::Lock#del
       - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute

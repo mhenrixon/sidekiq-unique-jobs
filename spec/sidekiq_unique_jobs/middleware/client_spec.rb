@@ -175,30 +175,4 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       expect(key).to have_ttl(8_100)
     end
   end
-
-  it "logs duplicate payload when configured" do
-    allow(Sidekiq.logger).to receive(:warn)
-
-    UntilExecutedJob.use_options(log_duplicate: true) do
-      Array.new(2) do
-        push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
-      end
-    end
-
-    expect(queue_count("customqueue")).to eq(1)
-    expect(Sidekiq.logger).to have_received(:warn).with(/^Already locked with another job_id/)
-  end
-
-  it "does not log duplicate payload without configuration" do
-    allow(Sidekiq.logger).to receive(:warn)
-
-    UntilExecutedJob.use_options(log_duplicate: false) do
-      Array.new(2) do
-        push_item("class" => UntilExecutedJob, "queue" => "customqueue", "args" => [1, 2])
-      end
-    end
-
-    expect(queue_count("customqueue")).to eq(1)
-    expect(SidekiqUniqueJobs.logger).not_to have_received(:warn).with(/^already locked by another job_id/)
-  end
 end

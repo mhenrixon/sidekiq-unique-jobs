@@ -13,6 +13,10 @@ module SidekiqUniqueJobs
     # @!parse include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Logging
 
+    # includes "SidekiqUniqueJobs::Reflectable"
+    # @!parse include SidekiqUniqueJobs::Reflectable
+    include SidekiqUniqueJobs::Reflectable
+
     # includes "SidekiqUniqueJobs::Timing"
     # @!parse include SidekiqUniqueJobs::Timing
     include SidekiqUniqueJobs::Timing
@@ -114,7 +118,9 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!(conn = nil)
-      call_script(:unlock, key.to_a, argv, conn)
+      result = call_script(:unlock, key.to_a, argv, conn)
+      reflect(:unlocked, item) if result == job_id
+      result
     end
 
     # Checks if this instance is considered locked
@@ -178,8 +184,10 @@ module SidekiqUniqueJobs
 
       enqueue(conn) do
         primed_async(conn) do
-          locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield if locked_token == job_id
+          if job_id == call_script(:lock, key.to_a, argv, conn)
+            reflect(:locked, item)
+            return yield job_id
+          end
         end
       end
     ensure
@@ -201,7 +209,7 @@ module SidekiqUniqueJobs
                       .future(conn) { |red_con| pop_queued(red_con) }
                       .value(add_drift(config.ttl))
 
-      warn_about_timeout
+      reflect(:timeout, item) unless config.wait_for_lock?
     end
 
     #
@@ -215,12 +223,14 @@ module SidekiqUniqueJobs
     # @yieldparam [String] job_id a Sidekiq JID
     #
     def lock_sync(conn)
-      return yield if locked?(conn)
+      return yield job_id if locked?(conn)
 
       enqueue(conn) do
         primed_sync(conn) do
-          locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield locked_token if locked_token
+          if job_id == call_script(:lock, key.to_a, argv, conn)
+            reflect(:locked, item)
+            return yield job_id
+          end
         end
       end
     end
@@ -239,7 +249,7 @@ module SidekiqUniqueJobs
         return yield popped_jid
       end
 
-      warn_about_timeout
+      reflect(:timeout, item) unless config.wait_for_lock?
     end
 
     #
@@ -333,12 +343,6 @@ module SidekiqUniqueJobs
     #
     def taken?(conn)
       conn.hexists(key.locked, job_id)
-    end
-
-    def warn_about_timeout
-      return unless config.wait_for_lock?
-
-      log_debug("Timed out after #{config.timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
     end
 
     def lock_info

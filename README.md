@@ -49,7 +49,6 @@
 - [Usage](#usage-1)
   - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
   - [After Unlock Callback](#after-unlock-callback)
-  - [Logging](#logging)
   - [Cleanup Dead Locks](#cleanup-dead-locks)
   - [Other Sidekiq gems](#other-sidekiq-gems)
     - [apartment-sidekiq](#apartment-sidekiq)
@@ -681,21 +680,6 @@ class UniqueJobWithFilterMethod
   end
   ...
 end.
-```
-
-### Logging
-
-To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false
-
-```ruby
-class UniqueJobWithFilterMethod
-  include Sidekiq::Worker
-  sidekiq_options lock: :while_executing,
-                  log_duplicate: true
-
-  ...
-
-end
 ```
 
 ### Cleanup Dead Locks

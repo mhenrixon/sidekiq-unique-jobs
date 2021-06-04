@@ -223,6 +223,16 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
         expect(locksmith_two.lock).to be_falsey
       end
 
+      it "reflects on timeout" do
+        allow(locksmith_two).to receive(:reflect)
+        locksmith_one.lock
+
+        sleep 0.1
+
+        expect(locksmith_two.lock).to be_falsey
+        expect(locksmith_two).to have_received(:reflect).with(:timeout, item_two)
+      end
+
       it "expires the expected keys" do
         locksmith_one.lock
         locksmith_one.unlock
@@ -281,5 +291,32 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
       expect(did_we_get_in).to be false
     end
+  end
+
+  it "reflects" do
+    allow(locksmith_one).to receive(:reflect)
+
+    locksmith_one.lock
+    expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
+
+    locksmith_one.lock { "Reflecting" }
+    expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
+    expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
+  end
+
+  it "does not reflect" do
+    allow(locksmith_two).to receive(:reflect).and_call_original
+
+    expect(locksmith_one.lock).to eq("maaaahjid")
+    expect(locksmith_two.lock).to eq(nil)
+    expect(locksmith_two).to have_received(:reflect).with(:timeout, item_two)
+    expect(locksmith_two).not_to have_received(:reflect).with(:locked, item_two)
+  end
+
+  it "reflects on unlocked" do
+    locksmith_one.lock
+    allow(locksmith_one).to receive(:reflect)
+    locksmith_one.unlock
+    expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
   end
 end

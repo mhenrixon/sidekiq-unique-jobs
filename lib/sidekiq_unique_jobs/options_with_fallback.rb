@@ -29,15 +29,6 @@ module SidekiqUniqueJobs
       !unique_enabled?
     end
 
-    # Should duplicate payloads be logged?
-    #
-    #
-    # @return [true, false, nil]
-    #
-    def log_duplicate?
-      options[LOG_DUPLICATE] || item[LOG_DUPLICATE]
-    end
-
     #
     # A new lock for this Sidekiq Job
     #

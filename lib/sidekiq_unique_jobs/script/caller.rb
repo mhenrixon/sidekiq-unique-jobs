@@ -45,7 +45,9 @@ module SidekiqUniqueJobs
         pool = defined?(redis_pool) ? redis_pool : nil
 
         redis(pool) do |new_conn|
-          do_call(file_name, new_conn, keys, argv)
+          result = do_call(file_name, new_conn, keys, argv)
+          yield if block_given?
+          result
         end
       end
 

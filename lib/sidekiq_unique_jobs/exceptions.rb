@@ -19,6 +19,15 @@ module SidekiqUniqueJobs
   end
 
   #
+  # Raised when no block was given
+  #
+  class NoBlockGiven < SidekiqUniqueJobs::UniqueJobsError; end
+  #
+  # Raised when a notification has been mistyped
+  #
+  class NoSuchNotificationError < UniqueJobsError; end
+
+  #
   # Error raised when trying to add a duplicate lock
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>

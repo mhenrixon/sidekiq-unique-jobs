@@ -7,7 +7,13 @@ module SidekiqUniqueJobs
     # @abstract
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class BaseLock
+      # includes "SidekiqUniqueJobs::Logging"
+      # @!parse include SidekiqUniqueJobs::Logging
       include SidekiqUniqueJobs::Logging
+
+      # includes "SidekiqUniqueJobs::Reflectable"
+      # @!parse include SidekiqUniqueJobs::Reflectable
+      include SidekiqUniqueJobs::Reflectable
 
       #
       # Validates that the sidekiq_options for the worker is valid
