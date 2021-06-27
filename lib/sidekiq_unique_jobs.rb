@@ -15,6 +15,7 @@ require "json"
 require "pathname"
 require "sidekiq"
 
+require "sidekiq_unique_jobs/deprecation"
 require "sidekiq_unique_jobs/reflections"
 require "sidekiq_unique_jobs/reflectable"
 require "sidekiq_unique_jobs/timer_task"

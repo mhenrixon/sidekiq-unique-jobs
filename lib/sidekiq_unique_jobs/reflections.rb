@@ -25,7 +25,7 @@ module SidekiqUniqueJobs
     ].freeze
 
     #
-    # @return [Hash<Symbol, String>] a hash with deprecated notifications
+    # @return [Hash<Symbol, Array<Symbol, String>>] a hash with deprecated notifications
     DEPRECATIONS = {}.freeze
 
     REFLECTIONS.each do |reflection|

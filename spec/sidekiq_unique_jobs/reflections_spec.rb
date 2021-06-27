@@ -13,11 +13,13 @@ RSpec.describe SidekiqUniqueJobs::Reflections do
     before do
       reflections.public_send(reflection, &block)
       allow(block).to receive(:call)
-      dispatch
     end
 
     shared_examples "reflects" do
-      specify { expect(block).to have_received(:call).with(item) }
+      it "on configured reflection" do
+        dispatch
+        expect(block).to have_received(:call).with(item)
+      end
     end
 
     context "when reflecting on :duplicate" do
@@ -84,6 +86,27 @@ RSpec.describe SidekiqUniqueJobs::Reflections do
       let(:reflection) { :unknown_sidekiq_worker }
 
       it_behaves_like "reflects"
+    end
+
+    context "with deprecations" do
+      let(:reflection) { :unlock_failed }
+      let(:deprecations) do
+        {
+          unlock_failed: [:unlock_failed_two, "7.0.14"]
+        }
+      end
+
+      before do
+        stub_const("#{described_class}::DEPRECATIONS", deprecations)
+        allow(SidekiqUniqueJobs::Deprecation).to receive(:warn)
+      end
+
+      it "warns about deprecation" do
+        dispatch
+
+        expect(SidekiqUniqueJobs::Deprecation).to have_received(:warn)
+          .with("#{reflection} is deprecated and will be removed in version 7.0.14. Use unlock_failed_two instead.")
+      end
     end
   end
 end
