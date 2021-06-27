@@ -4,13 +4,11 @@ require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Reflections do
   let(:reflections) { described_class.new }
-  let(:block)       { ->(item) { SidekiqUniqueJobs.logger.debug(item) } }
+  let(:block)       { ->(_item) { "testing" } }
   let(:item)        { { key: "value" } }
 
   describe "#dispatch" do
     subject(:dispatch) { reflections.dispatch(reflection, item) }
-
-    let(:block) { ->(_item) { "testing" } }
 
     before do
       reflections.public_send(reflection, &block)
@@ -46,6 +44,24 @@ RSpec.describe SidekiqUniqueJobs::Reflections do
       it_behaves_like "reflects"
     end
 
+    context "when reflecting on :lock_failed" do
+      let(:reflection) { :lock_failed }
+
+      it_behaves_like "reflects"
+    end
+
+    context "when reflecting on :reschedule_failed" do
+      let(:reflection) { :reschedule_failed }
+
+      it_behaves_like "reflects"
+    end
+
+    context "when reflecting on :rescheduled" do
+      let(:reflection) { :rescheduled }
+
+      it_behaves_like "reflects"
+    end
+
     context "when reflecting on :timeout" do
       let(:reflection) { :timeout }
 
@@ -60,6 +76,12 @@ RSpec.describe SidekiqUniqueJobs::Reflections do
 
     context "when reflecting on :unlocked" do
       let(:reflection) { :unlocked }
+
+      it_behaves_like "reflects"
+    end
+
+    context "when reflecting on :unknown_sidekiq_worker" do
+      let(:reflection) { :unknown_sidekiq_worker }
 
       it_behaves_like "reflects"
     end

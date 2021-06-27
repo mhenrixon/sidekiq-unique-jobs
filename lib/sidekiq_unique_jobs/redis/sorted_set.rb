@@ -26,7 +26,7 @@ module SidekiqUniqueJobs
       #
       # Adds a value to the sorted set
       #
-      # @param [Array<Float, String>, String] the values to add
+      # @param [Array<Float, String>, String] values the values to add
       #
       # @return [Boolean, Integer] <description>
       #

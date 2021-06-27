@@ -6,7 +6,11 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Client
+      # prepend "SidekiqUniqueJobs::Middleware"
+      # @!parse prepends SidekiqUniqueJobs::Middleware
       prepend SidekiqUniqueJobs::Middleware
+      # includes "SidekiqUniqueJobs::Reflectable"
+      # @!parse include SidekiqUniqueJobs::Reflectable
       include SidekiqUniqueJobs::Reflectable
 
       # Calls this client middleware
@@ -26,11 +30,9 @@ module SidekiqUniqueJobs
       private
 
       def lock
-        if (_token = lock_instance.lock)
+        lock_instance.lock do |_locked_jid|
           reflect(:locked, item)
-          yield
-        else
-          reflect(:duplicate, item)
+          return yield
         end
       end
     end

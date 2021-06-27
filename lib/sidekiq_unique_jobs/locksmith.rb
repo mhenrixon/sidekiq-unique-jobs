@@ -89,13 +89,19 @@ module SidekiqUniqueJobs
     #
     # @return [String] the Sidekiq job_id that was locked/queued
     #
-    def lock(&block)
+    def lock
       redis(redis_pool) do |conn|
-        return lock_async(conn, &block) if block
-
-        lock_sync(conn) do
+        lock!(conn, method(:primed_sync)) do
           return job_id
         end
+      end
+    end
+
+    def execute(&block)
+      raise SidekiqUniqueJobs::InvalidArgument, "#execute needs a block" unless block
+
+      redis(redis_pool) do |conn|
+        lock!(conn, method(:primed_async), &block)
       end
     end
 
@@ -140,7 +146,7 @@ module SidekiqUniqueJobs
     # @return [String]
     #
     def to_s
-      "Locksmith##{object_id}(digest=#{key} job_id=#{job_id}, locked=#{locked?})"
+      "Locksmith##{object_id}(digest=#{key} job_id=#{job_id} locked=#{locked?})"
     end
 
     #
@@ -165,33 +171,45 @@ module SidekiqUniqueJobs
 
     attr_reader :redis_pool
 
-    def argv
-      [job_id, config.pttl, config.type, config.limit]
-    end
-
     #
-    # Used for runtime locks that need automatic unlock after yielding
+    # Used to reduce some duplication from the two methods
     #
-    # @param [Redis] conn a redis connection
+    # @param [<type>] conn <description>
+    # @param [<type>] primed_method <description>
     #
-    # @return [nil] when lock was not possible
-    # @return [Object] whatever the block returns when lock was acquired
+    # @return [<type>] <description>
     #
-    # @yieldparam [String] job_id a Sidekiq JID
-    #
-    def lock_async(conn)
+    # @yieldparam [<type>] x <description>
+    # @yieldreturn [<type>] <describe what yield should return>
+    def lock!(conn, primed_method)
       return yield job_id if locked?(conn)
 
       enqueue(conn) do
-        primed_async(conn) do
-          if job_id == call_script(:lock, key.to_a, argv, conn)
-            reflect(:locked, item)
-            return yield job_id
-          end
+        primed_method.call(conn) do
+          return yield job_id if job_id == call_script(:lock, key.to_a, argv, conn)
         end
       end
-    ensure
-      unlock!(conn)
+    end
+
+    #
+    # Prepares all the various lock data
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when redis was already prepared for this lock
+    # @return [yield<String>] when successfully enqueued
+    #
+    def enqueue(conn)
+      queued_token, elapsed = timed do
+        call_script(:queue, key.to_a, argv, conn)
+      end
+
+      validity = config.pttl - elapsed - drift(config.pttl)
+
+      return unless queued_token && (validity >= 0 || config.pttl.zero?)
+
+      write_lock_info(conn)
+      yield queued_token
     end
 
     #
@@ -210,29 +228,6 @@ module SidekiqUniqueJobs
                       .value(add_drift(config.ttl))
 
       reflect(:timeout, item) unless config.wait_for_lock?
-    end
-
-    #
-    # Used for non-runtime locks (no block was given)
-    #
-    # @param [Redis] conn a redis connection
-    #
-    # @return [nil] when lock was not possible
-    # @return [Object] whatever the block returns when lock was acquired
-    #
-    # @yieldparam [String] job_id a Sidekiq JID
-    #
-    def lock_sync(conn)
-      return yield job_id if locked?(conn)
-
-      enqueue(conn) do
-        primed_sync(conn) do
-          if job_id == call_script(:lock, key.to_a, argv, conn)
-            reflect(:locked, item)
-            return yield job_id
-          end
-        end
-      end
     end
 
     #
@@ -283,27 +278,6 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Prepares all the various lock data
-    #
-    # @param [Redis] conn a redis connection
-    #
-    # @return [nil] when redis was already prepared for this lock
-    # @return [yield<String>] when successfully enqueued
-    #
-    def enqueue(conn)
-      queued_token, elapsed = timed do
-        call_script(:queue, key.to_a, argv, conn)
-      end
-
-      validity = config.pttl - elapsed - drift(config.pttl)
-
-      return unless queued_token && (validity >= 0 || config.pttl.zero?)
-
-      write_lock_info(conn)
-      yield queued_token
-    end
-
-    #
     # Writes lock information to redis.
     #   The lock information contains information about worker, queue, limit etc.
     #
@@ -343,6 +317,10 @@ module SidekiqUniqueJobs
     #
     def taken?(conn)
       conn.hexists(key.locked, job_id)
+    end
+
+    def argv
+      [job_id, config.pttl, config.type, config.limit]
     end
 
     def lock_info

@@ -9,6 +9,7 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::SidekiqWorkerMethods
       include SidekiqUniqueJobs::Logging
       include SidekiqUniqueJobs::JSON
+      include SidekiqUniqueJobs::Reflectable
 
       # @param [Hash] item sidekiq job hash
       def initialize(item, redis_pool = nil)
@@ -20,10 +21,13 @@ module SidekiqUniqueJobs
       #   This will mess up sidekiq stats because a new job is created
       def call
         if sidekiq_worker_class?
-          log_info("Rescheduling #{item[LOCK_DIGEST]}")
-          worker_class.perform_in(5, *item[ARGS])
+          if worker_class.perform_in(5, *item[ARGS])
+            reflect(:rescheduled, item)
+          else
+            reflect(:reschedule_failed, item)
+          end
         else
-          log_warn("Skip rescheduling of #{item[LOCK_DIGEST]} because #{worker_class} is not a Sidekiq::Worker")
+          reflect(:unknown_sidekiq_worker, item)
         end
       end
     end

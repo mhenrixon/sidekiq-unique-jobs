@@ -25,7 +25,7 @@ end
 RSpec.shared_examples "an executing lock implementation" do
   context "when job can't be locked" do
     before do
-      allow(process_one.locksmith).to receive(:lock).and_return(nil)
+      allow(process_one.locksmith).to receive(:execute).and_return(nil)
     end
 
     it "does not execute" do
@@ -45,9 +45,9 @@ RSpec.shared_examples "an executing lock implementation" do
     end
 
     it "keeps being locked when an error is raised" do
-      allow(process_one.locksmith).to receive(:lock).and_raise(RuntimeError, "Hell")
+      allow(process_one.locksmith).to receive(:execute).and_raise(RuntimeError, "Hell")
 
-      expect { process_one.execute {} }.to raise_error("Hell")
+      expect { process_one.execute { "hey ho" } }.to raise_error("Hell")
 
       expect(process_one).to be_locked
     end

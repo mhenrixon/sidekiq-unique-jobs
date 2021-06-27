@@ -13,11 +13,27 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class UntilAndWhileExecuting < BaseLock
+      #
+      # Locks a sidekiq job
+      #
+      # @note Will call a conflict strategy if lock can't be achieved.
+      #
+      # @return [String, nil] the locked jid when properly locked, else nil.
+      #
+      # @yield to the caller when given a block
+      #
+      def lock
+        return lock_failed unless (locked_token = locksmith.lock)
+        return yield locked_token if block_given?
+
+        locked_token
+      end
+
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
         if unlock
-          lock_on_failure do
+          ensure_relocked do
             runtime_lock.execute { return yield }
           end
         else
@@ -27,7 +43,7 @@ module SidekiqUniqueJobs
 
       private
 
-      def lock_on_failure
+      def ensure_relocked
         yield
       rescue Exception # rubocop:disable Lint/RescueException
         reflect(:execution_failed, item)

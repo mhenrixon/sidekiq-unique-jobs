@@ -37,7 +37,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     it "outputs a helpful string" do
       expect(to_s).to eq(
         "Locksmith##{locksmith_one.object_id}" \
-        "(digest=#{digest} job_id=#{jid_one}, locked=false)",
+        "(digest=#{digest} job_id=#{jid_one} locked=false)",
       )
     end
   end
@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     it "outputs a helpful string" do
       expect(inspect).to eq(
         "Locksmith##{locksmith_one.object_id}" \
-        "(digest=#{digest} job_id=#{jid_one}, locked=false)",
+        "(digest=#{digest} job_id=#{jid_one} locked=false)",
       )
     end
   end
@@ -128,7 +128,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
     it "executes the given code block" do
       code_executed = false
-      locksmith_one.lock do
+      locksmith_one.execute do
         code_executed = true
       end
       expect(code_executed).to eq(true)
@@ -141,7 +141,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
       context "when given a block" do
         before do
-          allow(locksmith_one).to receive(:lock_async) { block.call }
+          allow(locksmith_one).to receive(:lock!) { block.call }
         end
 
         it "cleans up the lock" do
@@ -154,7 +154,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
       context "when given no block" do
         before do
-          allow(locksmith_one).to receive(:lock_sync) { block.call }
+          allow(locksmith_one).to receive(:lock!) { block.call }
         end
 
         it "cleans up the lock" do
@@ -167,7 +167,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
 
     it "returns the value of the block if block-style locking is used" do
-      block_value = locksmith_one.lock do
+      block_value = locksmith_one.execute do
         42
       end
 
@@ -187,8 +187,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       it "does not block" do
         did_we_get_in = false
 
-        locksmith_one.lock do
-          locksmith_two.lock do
+        locksmith_one.execute do
+          locksmith_two.execute do
             did_we_get_in = true
           end
         end
@@ -197,7 +197,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       end
 
       it "is locked" do
-        locksmith_one.lock do
+        locksmith_one.execute do
           expect(locksmith_one).to be_locked
         end
 
@@ -269,7 +269,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
 
     it "expires keys after unlocking" do
-      locksmith_one.lock do
+      locksmith_one.execute do
         # noop
       end
       keys = unique_keys
@@ -283,8 +283,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     it "blocks other locks" do
       did_we_get_in = false
 
-      locksmith_one.lock do
-        locksmith_two.lock do
+      locksmith_one.execute do
+        locksmith_two.execute do
           did_we_get_in = true
         end
       end
@@ -293,30 +293,30 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
   end
 
-  it "reflects" do
-    allow(locksmith_one).to receive(:reflect)
+  # it "reflects" do
+  #   allow(locksmith_one).to receive(:reflect)
 
-    locksmith_one.lock
-    expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
+  #   locksmith_one.lock
+  #   expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
 
-    locksmith_one.lock { "Reflecting" }
-    expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
-    expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
-  end
+  #   locksmith_one.lock { "Reflecting" }
+  #   expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
+  #   expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
+  # end
 
-  it "does not reflect" do
-    allow(locksmith_two).to receive(:reflect).and_call_original
+  # it "does not reflect" do
+  #   allow(locksmith_two).to receive(:reflect).and_call_original
 
-    expect(locksmith_one.lock).to eq("maaaahjid")
-    expect(locksmith_two.lock).to eq(nil)
-    expect(locksmith_two).to have_received(:reflect).with(:timeout, item_two)
-    expect(locksmith_two).not_to have_received(:reflect).with(:locked, item_two)
-  end
+  #   expect(locksmith_one.lock).to eq("maaaahjid")
+  #   expect(locksmith_two.lock).to eq(nil)
+  #   expect(locksmith_two).to have_received(:reflect).with(:timeout, item_two)
+  #   expect(locksmith_two).not_to have_received(:reflect).with(:locked, item_two)
+  # end
 
-  it "reflects on unlocked" do
-    locksmith_one.lock
-    allow(locksmith_one).to receive(:reflect)
-    locksmith_one.unlock
-    expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
-  end
+  # it "reflects on unlocked" do
+  #   locksmith_one.lock
+  #   allow(locksmith_one).to receive(:reflect)
+  #   locksmith_one.unlock
+  #   expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
+  # end
 end

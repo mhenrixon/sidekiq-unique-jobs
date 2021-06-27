@@ -9,7 +9,20 @@ module SidekiqUniqueJobs
   class Reflections
     #
     # @return [Array<Symbol>] list of notifications
-    REFLECTIONS = [:duplicate, :locked, :unlocked, :error, :execution_failed, :timeout, :unlock_failed].freeze
+    REFLECTIONS = [
+      :after_unlock_callback_failed,
+      :duplicate,
+      :error,
+      :execution_failed,
+      :lock_failed,
+      :locked,
+      :reschedule_failed,
+      :rescheduled,
+      :timeout,
+      :unlock_failed,
+      :unlocked,
+      :unknown_sidekiq_worker,
+    ].freeze
 
     #
     # @return [Hash<Symbol, String>] a hash with deprecated notifications

@@ -29,7 +29,9 @@ module SidekiqUniqueJobs
       #   These locks should only ever be created in the server process.
       # @return [true] always returns true
       def lock
-        true
+        yield item[JID] if block_given?
+
+        item[JID]
       end
 
       # Executes in the Sidekiq server process.
@@ -37,13 +39,13 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         with_logging_context do
-          server_strategy&.call unless locksmith.lock do
+          call_strategy(of: :server) unless locksmith.execute do
             yield
             callback_safely
           end
         end
       ensure
-        locksmith.unlock!
+        locksmith.unlock
       end
 
       private

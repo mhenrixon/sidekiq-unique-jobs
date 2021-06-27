@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
 
     context "when worker raises error in runtime lock" do
       before do
-        allow(runtime_one.locksmith).to receive(:lock).and_raise(RuntimeError, "Hell")
+        allow(runtime_one.locksmith).to receive(:execute).and_raise(RuntimeError, "Hell")
       end
 
       it "always unlocks" do
