@@ -92,7 +92,7 @@ RSpec.describe SidekiqUniqueJobs::Reflections do
       let(:reflection) { :unlock_failed }
       let(:deprecations) do
         {
-          unlock_failed: [:unlock_failed_two, "7.0.14"]
+          unlock_failed: [:unlock_failed_two, "7.0.14"],
         }
       end
 

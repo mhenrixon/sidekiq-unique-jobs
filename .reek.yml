@@ -18,6 +18,7 @@ detectors:
     exclude:
       - Sidekiq::JobSet::UniqueExtension#delete_by_value
       - Sidekiq::ScheduledSet::UniqueExtension#delete
+      - SidekiqUniqueJobs::Lock::BaseLock#call_strategy
       - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Redis::Hash#entries
@@ -126,6 +127,7 @@ detectors:
       - SidekiqUniqueJobs::Digests#entries
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Lock#lock
+      - SidekiqUniqueJobs::Lock::BaseLock#call_strategy
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::LockArgs#filtered_args
       - SidekiqUniqueJobs::LockInfo#set

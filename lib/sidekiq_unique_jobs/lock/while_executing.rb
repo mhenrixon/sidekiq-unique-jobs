@@ -29,9 +29,10 @@ module SidekiqUniqueJobs
       #   These locks should only ever be created in the server process.
       # @return [true] always returns true
       def lock
-        yield item[JID] if block_given?
+        job_id = item[JID]
+        yield job_id if block_given?
 
-        item[JID]
+        job_id
       end
 
       # Executes in the Sidekiq server process.
