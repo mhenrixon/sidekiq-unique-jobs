@@ -34,10 +34,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
   describe "#lock" do
     it "does not lock jobs" do
-      expect(process_one.lock).to eq(true)
+      expect(process_one.lock).to eq(jid_one)
       expect(process_one).not_to be_locked
 
-      expect(process_two.lock).to eq(true)
+      expect(process_two.lock).to eq(jid_two)
       expect(process_two).not_to be_locked
     end
   end
@@ -92,7 +92,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
     context "when worker raises error" do
       before do
-        allow(process_one.locksmith).to receive(:lock).and_raise(RuntimeError, "Hell")
+        allow(process_one.locksmith).to receive(:execute).and_raise(RuntimeError, "Hell")
       end
 
       it "always unlocks" do

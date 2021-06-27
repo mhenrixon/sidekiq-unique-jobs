@@ -7,7 +7,13 @@ module SidekiqUniqueJobs
     # @abstract
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class BaseLock
+      # includes "SidekiqUniqueJobs::Logging"
+      # @!parse include SidekiqUniqueJobs::Logging
       include SidekiqUniqueJobs::Logging
+
+      # includes "SidekiqUniqueJobs::Reflectable"
+      # @!parse include SidekiqUniqueJobs::Reflectable
+      include SidekiqUniqueJobs::Reflectable
 
       #
       # Validates that the sidekiq_options for the worker is valid
@@ -41,10 +47,8 @@ module SidekiqUniqueJobs
       #
       # @yield to the caller when given a block
       #
-      def lock(&block)
-        return call_strategy unless (locked_token = locksmith.lock(&block))
-
-        locked_token
+      def lock
+        raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
       end
 
       # Execute the job in the Sidekiq server processor
@@ -90,23 +94,6 @@ module SidekiqUniqueJobs
 
       private
 
-      def prepare_item
-        return if item.key?(LOCK_DIGEST)
-
-        # The below should only be done to ease testing
-        # in production this will be done by the middleware
-        SidekiqUniqueJobs::Job.prepare(item)
-      end
-
-      def call_strategy
-        @attempt += 1
-        client_strategy.call { lock if replace? }
-      end
-
-      def replace?
-        client_strategy.replace? && attempt < 2
-      end
-
       # @!attribute [r] item
       #   @return [Hash<String, Object>] the Sidekiq job hash
       attr_reader :item
@@ -123,18 +110,42 @@ module SidekiqUniqueJobs
       #   @return [Integer] the current locking attempt
       attr_reader :attempt
 
-      def unlock_with_callback
-        return log_warn("Might need to be unlocked manually", item) unless unlock
+      def prepare_item
+        return if item.key?(LOCK_DIGEST)
 
-        callback_safely
-        item[JID]
+        # The below should only be done to ease testing
+        # in production this will be done by the middleware
+        SidekiqUniqueJobs::Job.prepare(item)
+      end
+
+      def lock_failed
+        reflect(:lock_failed, item)
+        call_strategy(of: :client)
+      end
+
+      def call_strategy(of:) # rubocop:disable Naming/MethodParameterName
+        @attempt += 1
+
+        case of
+        when :client
+          client_strategy.call { lock if replace? }
+        when :server
+          server_strategy.call { lock if replace? }
+        else
+          raise SidekiqUniqueJobs::InvalidArgument,
+                "either `for: :server` or `for: :client` needs to be specified"
+        end
+      end
+
+      def replace?
+        client_strategy.replace? && attempt < 2
       end
 
       def callback_safely
         callback&.call
         item[JID]
       rescue StandardError
-        log_warn("Unlocked successfully but the #after_unlock callback failed!", item)
+        reflect(:after_unlock_callback_failed, item)
         raise
       end
 

@@ -8,10 +8,24 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class UntilExecuting < BaseLock
+      #
+      # Locks a sidekiq job
+      #
+      # @note Will call a conflict strategy if lock can't be achieved.
+      #
+      # @return [String, nil] the locked jid when properly locked, else nil.
+      #
+      def lock
+        return lock_failed unless (job_id = locksmith.lock)
+        return yield job_id if block_given?
+
+        job_id
+      end
+
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        unlock_with_callback
+        callback_safely if unlock
         yield
       end
     end

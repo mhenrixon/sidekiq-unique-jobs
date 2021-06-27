@@ -14,27 +14,53 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
     let(:call) { strategy.call }
 
     before do
-      allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_call_original
+      allow(strategy).to receive(:reflect).and_call_original
     end
 
-    it "schedules a job five seconds from now" do
-      expect { call }.to change { schedule_count }.by(1)
+    context "when pushed" do
+      before do
+        allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_call_original
+      end
 
-      expect(UniqueJobOnConflictReschedule).to have_received(:perform_in)
-        .with(5, *item["args"])
+      it "schedules a job five seconds from now" do
+        expect { call }.to change { schedule_count }.by(1)
+
+        expect(UniqueJobOnConflictReschedule).to have_received(:perform_in)
+          .with(5, *item["args"])
+      end
+
+      it "reflects" do
+        expect { call }.to change { schedule_count }.by(1)
+
+        expect(strategy).to have_received(:reflect)
+          .with(:rescheduled, item)
+      end
+    end
+
+    context "when push fails" do
+      before do
+        allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_return(nil)
+      end
+
+      it "reflects" do
+        expect { call }.to change { schedule_count }.by(0)
+
+        expect(strategy).to have_received(:reflect)
+          .with(:reschedule_failed, item)
+      end
     end
 
     context "when not a sidekiq_worker_class?" do
       before do
         allow(strategy).to receive(:sidekiq_worker_class?).and_return(false)
-        allow(strategy).to receive(:log_warn).and_call_original
+        allow(strategy).to receive(:reflect).and_call_original
       end
 
-      it "logs a helpful warning" do
-        expect { call }.not_to change { schedule_count }.from(0)
+      it "reflects" do
+        expect { call }.to change { schedule_count }.by(0)
 
-        expect(strategy).to have_received(:log_warn)
-          .with("Skip rescheduling of #{lock_digest} because #{worker_class} is not a Sidekiq::Worker")
+        expect(strategy).to have_received(:reflect)
+          .with(:unknown_sidekiq_worker, item)
       end
     end
   end

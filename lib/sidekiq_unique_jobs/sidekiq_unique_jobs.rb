@@ -270,4 +270,25 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
       raise
     end
   end
+
+  #
+  # Collection with notifications
+  #
+  #
+  # @return [Reflections]
+  #
+  def reflections
+    @reflections ||= Reflections.new
+  end
+
+  #
+  # Yields notification stack for sidekiq unique jobs to configure notifications
+  #
+  #
+  # @return [void] <description>
+  #
+  # @yieldparam [Reflections] x used to configure notifications
+  def reflect
+    yield reflections if block_given?
+  end
 end

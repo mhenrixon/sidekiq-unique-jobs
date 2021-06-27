@@ -13,6 +13,10 @@ module SidekiqUniqueJobs
     # @!parse include SidekiqUniqueJobs::Logging
     include SidekiqUniqueJobs::Logging
 
+    # includes "SidekiqUniqueJobs::Reflectable"
+    # @!parse include SidekiqUniqueJobs::Reflectable
+    include SidekiqUniqueJobs::Reflectable
+
     # includes "SidekiqUniqueJobs::Timing"
     # @!parse include SidekiqUniqueJobs::Timing
     include SidekiqUniqueJobs::Timing
@@ -85,13 +89,19 @@ module SidekiqUniqueJobs
     #
     # @return [String] the Sidekiq job_id that was locked/queued
     #
-    def lock(&block)
+    def lock
       redis(redis_pool) do |conn|
-        return lock_async(conn, &block) if block
-
-        lock_sync(conn) do
+        lock!(conn, method(:primed_sync)) do
           return job_id
         end
+      end
+    end
+
+    def execute(&block)
+      raise SidekiqUniqueJobs::InvalidArgument, "#execute needs a block" unless block
+
+      redis(redis_pool) do |conn|
+        lock!(conn, method(:primed_async), &block)
       end
     end
 
@@ -114,7 +124,9 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!(conn = nil)
-      call_script(:unlock, key.to_a, argv, conn)
+      result = call_script(:unlock, key.to_a, argv, conn)
+      reflect(:unlocked, item) if result == job_id
+      result
     end
 
     # Checks if this instance is considered locked
@@ -134,7 +146,7 @@ module SidekiqUniqueJobs
     # @return [String]
     #
     def to_s
-      "Locksmith##{object_id}(digest=#{key} job_id=#{job_id}, locked=#{locked?})"
+      "Locksmith##{object_id}(digest=#{key} job_id=#{job_id} locked=#{locked?})"
     end
 
     #
@@ -159,31 +171,45 @@ module SidekiqUniqueJobs
 
     attr_reader :redis_pool
 
-    def argv
-      [job_id, config.pttl, config.type, config.limit]
-    end
-
     #
-    # Used for runtime locks that need automatic unlock after yielding
+    # Used to reduce some duplication from the two methods
     #
-    # @param [Redis] conn a redis connection
+    # @param [<type>] conn <description>
+    # @param [<type>] primed_method <description>
     #
-    # @return [nil] when lock was not possible
-    # @return [Object] whatever the block returns when lock was acquired
+    # @return [<type>] <description>
     #
-    # @yieldparam [String] job_id a Sidekiq JID
-    #
-    def lock_async(conn)
+    # @yieldparam [<type>] x <description>
+    # @yieldreturn [<type>] <describe what yield should return>
+    def lock!(conn, primed_method)
       return yield job_id if locked?(conn)
 
       enqueue(conn) do
-        primed_async(conn) do
-          locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield if locked_token == job_id
+        primed_method.call(conn) do
+          return yield job_id if job_id == call_script(:lock, key.to_a, argv, conn)
         end
       end
-    ensure
-      unlock!(conn)
+    end
+
+    #
+    # Prepares all the various lock data
+    #
+    # @param [Redis] conn a redis connection
+    #
+    # @return [nil] when redis was already prepared for this lock
+    # @return [yield<String>] when successfully enqueued
+    #
+    def enqueue(conn)
+      queued_token, elapsed = timed do
+        call_script(:queue, key.to_a, argv, conn)
+      end
+
+      validity = config.pttl - elapsed - drift(config.pttl)
+
+      return unless queued_token && (validity >= 0 || config.pttl.zero?)
+
+      write_lock_info(conn)
+      yield queued_token
     end
 
     #
@@ -201,28 +227,7 @@ module SidekiqUniqueJobs
                       .future(conn) { |red_con| pop_queued(red_con) }
                       .value(add_drift(config.ttl))
 
-      warn_about_timeout
-    end
-
-    #
-    # Used for non-runtime locks (no block was given)
-    #
-    # @param [Redis] conn a redis connection
-    #
-    # @return [nil] when lock was not possible
-    # @return [Object] whatever the block returns when lock was acquired
-    #
-    # @yieldparam [String] job_id a Sidekiq JID
-    #
-    def lock_sync(conn)
-      return yield if locked?(conn)
-
-      enqueue(conn) do
-        primed_sync(conn) do
-          locked_token = call_script(:lock, key.to_a, argv, conn)
-          return yield locked_token if locked_token
-        end
-      end
+      reflect(:timeout, item) unless config.wait_for_lock?
     end
 
     #
@@ -239,7 +244,7 @@ module SidekiqUniqueJobs
         return yield popped_jid
       end
 
-      warn_about_timeout
+      reflect(:timeout, item) unless config.wait_for_lock?
     end
 
     #
@@ -270,27 +275,6 @@ module SidekiqUniqueJobs
     #
     def rpoplpush(conn)
       conn.rpoplpush(key.queued, key.primed)
-    end
-
-    #
-    # Prepares all the various lock data
-    #
-    # @param [Redis] conn a redis connection
-    #
-    # @return [nil] when redis was already prepared for this lock
-    # @return [yield<String>] when successfully enqueued
-    #
-    def enqueue(conn)
-      queued_token, elapsed = timed do
-        call_script(:queue, key.to_a, argv, conn)
-      end
-
-      validity = config.pttl - elapsed - drift(config.pttl)
-
-      return unless queued_token && (validity >= 0 || config.pttl.zero?)
-
-      write_lock_info(conn)
-      yield queued_token
     end
 
     #
@@ -335,10 +319,8 @@ module SidekiqUniqueJobs
       conn.hexists(key.locked, job_id)
     end
 
-    def warn_about_timeout
-      return unless config.wait_for_lock?
-
-      log_debug("Timed out after #{config.timeout}s while waiting for primed token (digest: #{key}, job_id: #{job_id})")
+    def argv
+      [job_id, config.pttl, config.type, config.limit]
     end
 
     def lock_info

@@ -29,7 +29,6 @@ module SidekiqUniqueJobs
   LOCK_TIMEOUT          ||= "lock_timeout"
   LOCK_TTL              ||= "lock_ttl"
   LOCK_TYPE             ||= "lock_type"
-  LOG_DUPLICATE         ||= "log_duplicate"
   ON_CLIENT_CONFLICT    ||= "on_client_conflict"
   ON_CONFLICT           ||= "on_conflict"
   ON_SERVER_CONFLICT    ||= "on_server_conflict"

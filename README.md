@@ -12,6 +12,18 @@
 - [Support Me](#support-me)
 - [Requirements](#requirements)
 - [General Information](#general-information)
+- [Reflections \(metrics, logging, etc.\)](#reflections-metrics-logging-etc)
+  - [after_unlock_callback_failed](#after_unlock_callback_failed)
+  - [error](#error)
+  - [execution_failed](#execution_failed)
+  - [lock_failed](#lock_failed)
+  - [locked](#locked)
+  - [reschedule_failed](#reschedule_failed)
+  - [rescheduled](#rescheduled)
+  - [timeout](#timeout)
+  - [unlock_failed](#unlock_failed)
+  - [unlocked](#unlocked)
+  - [unknown_sidekiq_worker](#unknown_sidekiq_worker)
 - [Global Configuration](#global-configuration)
   - [debug_lua](#debug_lua)
   - [lock_timeout](#lock_timeout)
@@ -49,7 +61,6 @@
 - [Usage](#usage-1)
   - [Finer Control over Uniqueness](#finer-control-over-uniqueness)
   - [After Unlock Callback](#after-unlock-callback)
-  - [Logging](#logging)
   - [Cleanup Dead Locks](#cleanup-dead-locks)
   - [Other Sidekiq gems](#other-sidekiq-gems)
     - [apartment-sidekiq](#apartment-sidekiq)
@@ -130,20 +141,16 @@ end
 
 ### Your first worker
 
+The most likely to be used worker is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until the the sidekiq processor has processed the job.
+
 ```ruby
 # frozen_string_literal: true
 
 class UntilExecutedWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :special,
-                  retry: false,
-                  lock: :until_executed,
-                  lock_info: true,
-                  lock_timeout: 0,
-                  lock_prefix: "special",
-                  lock_ttl: 0,
-                  lock_limit: 5
+  sidekiq_options queue: :until_executed,
+                  lock: :until_executed
 
   def perform
     logger.info("cowboy")
@@ -151,7 +158,6 @@ class UntilExecutedWorker
     logger.info("beebop")
   end
 end
-
 ```
 
 You can read more about the worker configuration in [Worker Configuration](#worker-configuration) below.
@@ -178,6 +184,82 @@ See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be s
 See [Interaction w/ Sidekiq](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/How-this-gem-interacts-with-Sidekiq) on how the gem interacts with Sidekiq.
 
 See [Locking & Unlocking](https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking) for an overview of the differences on when the various lock types are locked and unlocked.
+
+## Reflections (metrics, logging, etc.)
+
+To be able to gather some insights on what is going on inside this gem. I provide a reflection API that can be used.
+
+To setup reflections for logging or metrics, use the following API:
+
+```ruby
+
+def extract_log_from_job(message, item)
+  worker    = item['class']
+  args      = item['args']
+  lock_args = item['lock_args']
+  queue     = item['queue']
+  {
+    message: message,
+    worker: worker,
+    args: args,
+    lock_args: lock_args,
+    queue: queue
+  }
+end
+
+SidekiqUniqueJobs.reflect do |on|
+  on.lock_failed do |item|
+    message = extract_log_from_job('Lock Failed', item)
+    Sidekiq.logger.warn(message)
+  end
+end
+```
+
+### after_unlock_callback_failed
+
+This is called when you have configured a custom callback for when a lock has been released.
+
+### error
+
+Not in use yet but will be used deep into the stack to provide a means to catch and report errors inside the gem.
+
+### execution_failed
+
+When the sidekiq processor picks the job of the queue for certain jobs but your job raised an error to the middleware. This will be the reflection. It is probably nothing to worry about. When your worker raises an error, we need to handle some edge cases for until and while executing.
+
+### lock_failed
+
+If we can't achieve a lock, this will be the reflection. It most likely is nothing to worry about. We just couldn't retrieve a lock in a timely fashion.
+
+The biggest reason for this reflection would be to gather metrics on which workers fail the most at the locking step for example.
+
+### locked
+
+For when a lock has been successful. Again, mostly useful for metrics I suppose.
+
+### reschedule_failed
+
+For when the reschedule strategy failed to reschedule the job.
+
+### rescheduled
+
+For when a job was successfully rescheduled
+
+### timeout
+
+This is also mostly useful for reporting/metrics purposes. What this reflection does is signal that the job was configured to wait (`lock_timeout` was configured), but we couldn't retrieve a lock even though we waited for some time.
+
+### unlock_failed
+
+This is not got, this is worth
+
+### unlocked
+
+Also mostly useful for reporting purposes. The job was successfully unlocked.
+
+### unknown_sidekiq_worker
+
+The reason this happens is that the server couldn't find a valid sidekiq worker class. Most likely, that worker isn't intended to be processed by this sidekiq server instance.
 
 ## Global Configuration
 
@@ -681,21 +763,6 @@ class UniqueJobWithFilterMethod
   end
   ...
 end.
-```
-
-### Logging
-
-To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false
-
-```ruby
-class UniqueJobWithFilterMethod
-  include Sidekiq::Worker
-  sidekiq_options lock: :while_executing,
-                  log_duplicate: true
-
-  ...
-
-end
 ```
 
 ### Cleanup Dead Locks

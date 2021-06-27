@@ -22,6 +22,9 @@ require "sidekiq-unique-jobs"
 require "timecop"
 require "sidekiq_unique_jobs/testing"
 
+require "test_prof/recipes/logging"
+require "test_prof/recipes/rspec/sample"
+
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 LOGLEVEL = ENV.fetch("LOGLEVEL", "ERROR").upcase
 ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_worker_options
