@@ -193,11 +193,11 @@ To setup reflections for logging or metrics, use the following API:
 
 ```ruby
 
-def extract_log_from_job(message, item)
-  worker    = item['class']
-  args      = item['args']
-  lock_args = item['lock_args']
-  queue     = item['queue']
+def extract_log_from_job(message, job_hash)
+  worker    = job_hash['class']
+  args      = job_hash['args']
+  lock_args = job_hash['lock_args']
+  queue     = job_hash['queue']
   {
     message: message,
     worker: worker,
@@ -208,8 +208,8 @@ def extract_log_from_job(message, item)
 end
 
 SidekiqUniqueJobs.reflect do |on|
-  on.lock_failed do |item|
-    message = extract_log_from_job('Lock Failed', item)
+  on.lock_failed do |job_hash|
+    message = extract_log_from_job('Lock Failed', job_hash)
     Sidekiq.logger.warn(message)
   end
 end
