@@ -42,43 +42,4 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
       end
     end
   end
-
-  describe "#delete" do
-    subject(:delete) { process_one.delete }
-
-    context "when locked" do
-      context "when expiration is not negative" do
-        it "deletes the lock without fuss" do
-          worker_class.use_options(lock_ttl: nil) do
-            process_one.lock
-            expect { delete }.to change { unique_keys.size }.to(0)
-          end
-        end
-      end
-
-      context "when expiration is positive" do
-        it "does not delete the lock" do
-          worker_class.use_options(lock_ttl: 1000) do
-            process_one.lock
-            expect(unique_keys.size).to eq(3)
-            expect { delete }.not_to change { unique_keys.size }
-          end
-
-          process_one.delete!
-        end
-      end
-    end
-  end
-
-  describe "#delete!" do
-    subject(:delete!) { process_one.delete! }
-
-    context "when locked" do
-      before { process_one.lock }
-
-      it "deletes the lock without fuss" do
-        expect { delete! }.to change { unique_keys.size }.to(0)
-      end
-    end
-  end
 end

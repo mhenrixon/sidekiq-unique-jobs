@@ -32,7 +32,7 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        if unlock
+        if locksmith.unlock
           ensure_relocked do
             runtime_lock.execute { return yield }
           end
@@ -47,7 +47,7 @@ module SidekiqUniqueJobs
         yield
       rescue Exception # rubocop:disable Lint/RescueException
         reflect(:execution_failed, item)
-        lock
+        locksmith.lock
         raise
       end
 

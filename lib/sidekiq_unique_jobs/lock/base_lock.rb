@@ -7,6 +7,8 @@ module SidekiqUniqueJobs
     # @abstract
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class BaseLock
+      extend Forwardable
+
       # includes "SidekiqUniqueJobs::Logging"
       # @!parse include SidekiqUniqueJobs::Logging
       include SidekiqUniqueJobs::Logging
@@ -25,6 +27,10 @@ module SidekiqUniqueJobs
       def self.validate_options(options = {})
         Validator.validate(options)
       end
+
+      # NOTE: Mainly used for a clean testing API
+      #
+      def_delegators :locksmith, :locked?
 
       # @param [Hash] item the Sidekiq job hash
       # @param [Proc] callback the callback to use after unlock
@@ -55,31 +61,6 @@ module SidekiqUniqueJobs
       # @raise [NotImplementedError] needs to be implemented in child class
       def execute
         raise NotImplementedError, "##{__method__} needs to be implemented in #{self.class}"
-      end
-
-      # Unlocks the job from redis
-      # @return [String] sidekiq job id when successful
-      # @return [false] when unsuccessful
-      def unlock
-        locksmith.unlock # Only signal to release the lock
-      end
-
-      # Deletes the job from redis if it is locked.
-      def delete
-        locksmith.delete # Soft delete (don't forcefully remove when expiration is set)
-      end
-
-      # Forcefully deletes the job from redis.
-      #   This is good for jobs when a previous lock was not unlocked
-      def delete!
-        locksmith.delete! # Force delete the lock
-      end
-
-      # Checks if the item has achieved a lock
-      # @return [true] when this jid has locked the job
-      # @return [false] when this jid has not locked the job
-      def locked?
-        locksmith.locked?
       end
 
       #

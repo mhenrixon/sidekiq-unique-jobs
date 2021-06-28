@@ -29,7 +29,7 @@ module SidekiqUniqueJobs
       def execute
         locksmith.execute do
           yield
-          return reflect(:unlock_failed, item) unless unlock
+          return reflect(:unlock_failed, item) unless locksmith.unlock
 
           callback_safely
         end

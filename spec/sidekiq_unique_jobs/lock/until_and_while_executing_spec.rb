@@ -84,8 +84,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
         expect { process_one.execute {} }
           .to raise_error(RuntimeError, "Hell")
 
-        expect(runtime_one.locked?).to eq(false)
-        expect(process_one.locked?).to eq(true)
+        expect(runtime_one).not_to be_locked
+        expect(process_one).to be_locked
       end
     end
   end
