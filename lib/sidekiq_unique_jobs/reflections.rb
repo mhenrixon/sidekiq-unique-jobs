@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
     # @return [Array<Symbol>] list of notifications
     REFLECTIONS = [
       :after_unlock_callback_failed,
+      :debug,
       :duplicate,
       :error,
       :execution_failed,
@@ -19,10 +20,9 @@ module SidekiqUniqueJobs
       :reschedule_failed,
       :rescheduled,
       :timeout,
+      :unknown_sidekiq_worker,
       :unlock_failed,
       :unlocked,
-      :unknown_sidekiq_worker,
-      :debug,
     ].freeze
 
     #
