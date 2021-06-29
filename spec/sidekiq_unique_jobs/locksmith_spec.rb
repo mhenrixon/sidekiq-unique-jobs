@@ -181,6 +181,14 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       expect(locksmith_one).not_to be_locked
     end
 
+    it "allows deletion when call script returns a string" do
+      locksmith_one.lock
+      allow(locksmith_one).to receive(:call_script).and_return("120")
+      locksmith_two.delete!
+
+      expect(locksmith_one).not_to be_locked
+    end
+
     context "when lock_timeout is zero" do
       let(:lock_timeout) { 0 }
 
