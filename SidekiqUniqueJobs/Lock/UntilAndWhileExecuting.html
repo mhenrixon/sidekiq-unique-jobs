@@ -112,7 +112,7 @@
 <li>Unlocks after yielding to the worker&#39;s perform method (see <span class='object_link'><a href="WhileExecuting.html" title="SidekiqUniqueJobs::Lock::WhileExecuting (class)">WhileExecuting</a></span>)</li>
 </ul>
 
-<p>See <span class='object_link'><a href="BaseLock.html#lock-instance_method" title="SidekiqUniqueJobs::Lock::BaseLock#lock (method)">BaseLock#lock</a></span> for more information about the client.
+<p>See <span class='object_link'><a href="#lock-instance_method" title="SidekiqUniqueJobs::Lock::UntilAndWhileExecuting#lock (method)">#lock</a></span> for more information about the client.
 See <span class='object_link'><a href="#execute-instance_method" title="SidekiqUniqueJobs::Lock::UntilAndWhileExecuting#execute (method)">#execute</a></span> for more information about the server</p>
 
 
@@ -174,10 +174,36 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong>(origin: :client) { ... } &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Locks a sidekiq job.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
 
+  
+  
+  
   
   
   
@@ -235,27 +261,124 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <pre class="lines">
 
 
-18
-19
-20
-21
-22
-23
-24
-25
-26</pre>
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
-  <span class='kw'>if</span> <span class='id identifier rubyid_unlock'>unlock</span>
-    <span class='id identifier rubyid_lock_on_failure'>lock_on_failure</span> <span class='kw'>do</span>
-      <span class='id identifier rubyid_runtime_lock'>runtime_lock</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='lbrace'>{</span> <span class='kw'>return</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
-    <span class='kw'>end</span>
-  <span class='kw'>else</span>
-    <span class='id identifier rubyid_log_warn'>log_warn</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Couldn&#39;t unlock digest: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK_DIGEST</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>, jid: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
+    <span class='comment'># ensure_relocked do
+</span>    <span class='id identifier rubyid_runtime_lock'>runtime_lock</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='lbrace'>{</span> <span class='kw'>return</span> <span class='kw'>yield</span> <span class='rbrace'>}</span>
+    <span class='comment'># end
+</span>  <span class='kw'>else</span>
+    <span class='id identifier rubyid_reflect'>reflect</span><span class='lparen'>(</span><span class='symbol'>:unlock_failed</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
+<span class='kw'>rescue</span> <span class='const'>Exception</span> <span class='comment'># rubocop:disable Lint/RescueException
+</span>  <span class='id identifier rubyid_reflect'>reflect</span><span class='lparen'>(</span><span class='symbol'>:execution_failed</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='label'>wait:</span> <span class='int'>2</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_raise'>raise</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock-instance_method">
+  
+    #<strong>lock</strong>(origin: :client) { ... } &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Will call a conflict strategy if lock can&#39;t be achieved.</p>
+</div>
+  </div>
+
+<p>Locks a sidekiq job</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>to the caller when given a block</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the locked jid when properly locked, else nil.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27
+28
+29
+30</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_and_while_executing.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='label'>origin:</span> <span class='symbol'>:client</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_lock_failed'>lock_failed</span><span class='lparen'>(</span><span class='label'>origin:</span> <span class='id identifier rubyid_origin'>origin</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>yield</span> <span class='id identifier rubyid_token'>token</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='id identifier rubyid_token'>token</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -267,7 +390,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Fri Jun  4 11:27:54 2021 by
+  Generated on Tue Jun 29 16:45:53 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.3).
 </div>

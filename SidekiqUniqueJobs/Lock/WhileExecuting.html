@@ -236,7 +236,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong>  &#x21d2; true </a>
+      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong> {|job_id| ... } &#x21d2; true </a>
     
 
     
@@ -391,34 +391,6 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 
   
     <span class="summary_desc"><div class='inline'><p>Logs a message at debug level.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#log_duplicate%3F-instance_method" title="#log_duplicate? (instance method)">#<strong>log_duplicate?</strong>  &#x21d2; true, ... </a>
-    
-
-    
-  </span>
-  
-    <span class="note title not_defined_here">
-      included
-      from <span class='object_link'><a href="../OptionsWithFallback.html#log_duplicate%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#log_duplicate? (method)">OptionsWithFallback</a></span>
-    </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Should duplicate payloads be logged?.</p>
 </div></span>
   
 </li>
@@ -743,6 +715,9 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
   
   
   
+  
+  
+  
   <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
@@ -906,29 +881,29 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <pre class="lines">
 
 
-38
-39
-40
 41
 42
 43
 44
 45
 46
-47</pre>
+47
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_server_strategy'>server_strategy</span><span class='op'>&amp;.</span><span class='id identifier rubyid_call'>call</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_call_strategy'>call_strategy</span><span class='lparen'>(</span><span class='label'>origin:</span> <span class='symbol'>:server</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='kw'>do</span>
       <span class='kw'>yield</span>
-      <span class='id identifier rubyid_callback_safely'>callback_safely</span>
+      <span class='id identifier rubyid_callback_safely'>callback_safely</span> <span class='kw'>if</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
+    <span class='kw'>ensure</span>
+      <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
-<span class='kw'>ensure</span>
-  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock!'>unlock!</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -938,7 +913,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <div class="method_details ">
   <h3 class="signature " id="lock-instance_method">
   
-    #<strong>lock</strong>  &#x21d2; <tt>true</tt> 
+    #<strong>lock</strong> {|job_id| ... } &#x21d2; <tt>true</tt> 
   
 
   
@@ -954,6 +929,19 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 <div class="tags">
   
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>job_id</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -980,13 +968,19 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 
 31
 32
-33</pre>
+33
+34
+35
+36</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span>
-  <span class='kw'>true</span>
+  <span class='id identifier rubyid_job_id'>job_id</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span>
+  <span class='kw'>yield</span> <span class='id identifier rubyid_job_id'>job_id</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='id identifier rubyid_job_id'>job_id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1201,46 +1195,6 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
         &mdash;
         <div class='inline'><p>the message or exception to use for log message</p>
 </div>
-      
-    </li>
-  
-</ul>
-
-</div>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="log_duplicate?-instance_method">
-  
-    #<strong>log_duplicate?</strong>  &#x21d2; <tt>true</tt>, ... 
-  
-
-  
-
-  
-    <span class="not_defined_here">
-      Originally defined in module
-        <span class='object_link'><a href="../OptionsWithFallback.html#log_duplicate%3F-instance_method" title="SidekiqUniqueJobs::OptionsWithFallback#log_duplicate? (method)">OptionsWithFallback</a></span>
-    </span>
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Should duplicate payloads be logged?</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
-      
-      
       
     </li>
   
@@ -1826,7 +1780,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Fri Jun  4 11:27:54 2021 by
+  Generated on Tue Jun 29 16:45:53 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.3).
 </div>

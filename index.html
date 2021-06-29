@@ -75,6 +75,21 @@
 <li><a href="#support-me">Support Me</a></li>
 <li><a href="#requirements">Requirements</a></li>
 <li><a href="#general-information">General Information</a></li>
+<li><a href="#reflections-metrics-logging-etc">Reflections (metrics, logging, etc.)</a>
+
+<ul>
+<li><a href="#after_unlock_callback_failed">after_unlock_callback_failed</a></li>
+<li><a href="#error">error</a></li>
+<li><a href="#execution_failed">execution_failed</a></li>
+<li><a href="#lock_failed">lock_failed</a></li>
+<li><a href="#locked">locked</a></li>
+<li><a href="#reschedule_failed">reschedule_failed</a></li>
+<li><a href="#rescheduled">rescheduled</a></li>
+<li><a href="#timeout">timeout</a></li>
+<li><a href="#unlock_failed">unlock_failed</a></li>
+<li><a href="#unlocked">unlocked</a></li>
+<li><a href="#unknown_sidekiq_worker">unknown_sidekiq_worker</a></li>
+</ul></li>
 <li><a href="#global-configuration">Global Configuration</a>
 
 <ul>
@@ -126,7 +141,6 @@
 <ul>
 <li><a href="#finer-control-over-uniqueness">Finer Control over Uniqueness</a></li>
 <li><a href="#after-unlock-callback">After Unlock Callback</a></li>
-<li><a href="#logging">Logging</a></li>
 <li><a href="#cleanup-dead-locks">Cleanup Dead Locks</a></li>
 <li><a href="#other-sidekiq-gems">Other Sidekiq gems</a></li>
 <li><a href="#apartment-sidekiq">apartment-sidekiq</a></li>
@@ -214,19 +228,15 @@
 
 <h3 id="your-first-worker">Your first worker</h3>
 
+<p>The most likely to be used worker is <code>:until_executed</code>. This type of lock creates a lock from when <code>UntilExecutedWorker.perform_async</code> is called until the the sidekiq processor has processed the job.</p>
+
 <pre class="code ruby"><code class="ruby"><span class='comment'># frozen_string_literal: true
 </span>
 <span class='kw'>class</span> <span class='const'>UntilExecutedWorker</span>
   <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span>
 
-  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>queue:</span> <span class='symbol'>:special</span><span class='comma'>,</span>
-                  <span class='label'>retry:</span> <span class='kw'>false</span><span class='comma'>,</span>
-                  <span class='label'>lock:</span> <span class='symbol'>:until_executed</span><span class='comma'>,</span>
-                  <span class='label'>lock_info:</span> <span class='kw'>true</span><span class='comma'>,</span>
-                  <span class='label'>lock_timeout:</span> <span class='int'>0</span><span class='comma'>,</span>
-                  <span class='label'>lock_prefix:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>special</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
-                  <span class='label'>lock_ttl:</span> <span class='int'>0</span><span class='comma'>,</span>
-                  <span class='label'>lock_limit:</span> <span class='int'>5</span>
+  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>queue:</span> <span class='symbol'>:until_executed</span><span class='comma'>,</span>
+                  <span class='label'>lock:</span> <span class='symbol'>:until_executed</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_perform'>perform</span>
     <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cowboy</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -234,7 +244,6 @@
 </span>    <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>beebop</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span>
-
 </code></pre>
 
 <p>You can read more about the worker configuration in <a href="#worker-configuration">Worker Configuration</a> below.</p>
@@ -266,6 +275,81 @@
 <p>See <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/How-this-gem-interacts-with-Sidekiq">Interaction w/ Sidekiq</a> on how the gem interacts with Sidekiq.</p>
 
 <p>See <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/wiki/Locking-&-Unlocking">Locking &amp; Unlocking</a> for an overview of the differences on when the various lock types are locked and unlocked.</p>
+
+<h2 id="reflections-metrics-logging-etc">Reflections (metrics, logging, etc.)</h2>
+
+<p>To be able to gather some insights on what is going on inside this gem. I provide a reflection API that can be used.</p>
+
+<p>To setup reflections for logging or metrics, use the following API:</p>
+
+<pre class="code ruby"><code class="ruby">
+<span class='kw'>def</span> <span class='id identifier rubyid_extract_log_from_job'>extract_log_from_job</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='id identifier rubyid_job_hash'>job_hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_worker'>worker</span>    <span class='op'>=</span> <span class='id identifier rubyid_job_hash'>job_hash</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>class</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_args'>args</span>      <span class='op'>=</span> <span class='id identifier rubyid_job_hash'>job_hash</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>args</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_lock_args'>lock_args</span> <span class='op'>=</span> <span class='id identifier rubyid_job_hash'>job_hash</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>lock_args</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_queue'>queue</span>     <span class='op'>=</span> <span class='id identifier rubyid_job_hash'>job_hash</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>queue</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='lbrace'>{</span>
+    <span class='label'>message:</span> <span class='id identifier rubyid_message'>message</span><span class='comma'>,</span>
+    <span class='label'>worker:</span> <span class='id identifier rubyid_worker'>worker</span><span class='comma'>,</span>
+    <span class='label'>args:</span> <span class='id identifier rubyid_args'>args</span><span class='comma'>,</span>
+    <span class='label'>lock_args:</span> <span class='id identifier rubyid_lock_args'>lock_args</span><span class='comma'>,</span>
+    <span class='label'>queue:</span> <span class='id identifier rubyid_queue'>queue</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+
+<span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reflect'><span class='object_link'><a href="SidekiqUniqueJobs.html#reflect-class_method" title="SidekiqUniqueJobs.reflect (method)">reflect</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_on'>on</span><span class='op'>|</span>
+  <span class='id identifier rubyid_on'>on</span><span class='period'>.</span><span class='id identifier rubyid_lock_failed'>lock_failed</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_job_hash'>job_hash</span><span class='op'>|</span>
+    <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_extract_log_from_job'>extract_log_from_job</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Lock Failed</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_job_hash'>job_hash</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<h3 id="after_unlock_callback_failed">after_unlock_callback_failed</h3>
+
+<p>This is called when you have configured a custom callback for when a lock has been released.</p>
+
+<h3 id="error">error</h3>
+
+<p>Not in use yet but will be used deep into the stack to provide a means to catch and report errors inside the gem.</p>
+
+<h3 id="execution_failed">execution_failed</h3>
+
+<p>When the sidekiq processor picks the job of the queue for certain jobs but your job raised an error to the middleware. This will be the reflection. It is probably nothing to worry about. When your worker raises an error, we need to handle some edge cases for until and while executing.</p>
+
+<h3 id="lock_failed">lock_failed</h3>
+
+<p>If we can&#39;t achieve a lock, this will be the reflection. It most likely is nothing to worry about. We just couldn&#39;t retrieve a lock in a timely fashion.</p>
+
+<p>The biggest reason for this reflection would be to gather metrics on which workers fail the most at the locking step for example.</p>
+
+<h3 id="locked">locked</h3>
+
+<p>For when a lock has been successful. Again, mostly useful for metrics I suppose.</p>
+
+<h3 id="reschedule_failed">reschedule_failed</h3>
+
+<p>For when the reschedule strategy failed to reschedule the job.</p>
+
+<h3 id="rescheduled">rescheduled</h3>
+
+<p>For when a job was successfully rescheduled</p>
+
+<h3 id="timeout">timeout</h3>
+
+<p>This is also mostly useful for reporting/metrics purposes. What this reflection does is signal that the job was configured to wait (<code>lock_timeout</code> was configured), but we couldn&#39;t retrieve a lock even though we waited for some time.</p>
+
+<h3 id="unlock_failed">unlock_failed</h3>
+
+<p>This is not got, this is worth</p>
+
+<h3 id="unlocked">unlocked</h3>
+
+<p>Also mostly useful for reporting purposes. The job was successfully unlocked.</p>
+
+<h3 id="unknown_sidekiq_worker">unknown_sidekiq_worker</h3>
+
+<p>The reason this happens is that the server couldn&#39;t find a valid sidekiq worker class. Most likely, that worker isn&#39;t intended to be processed by this sidekiq server instance.</p>
 
 <h2 id="global-configuration">Global Configuration</h2>
 
@@ -732,20 +816,6 @@ end
 end.
 </code></pre>
 
-<h3 id="logging">Logging</h3>
-
-<p>To see logging in sidekiq when duplicate payload has been filtered out you can enable on a per worker basis using the sidekiq options. The default value is false</p>
-
-<pre class="code ruby"><code class="ruby">class UniqueJobWithFilterMethod
-  include Sidekiq::Worker
-  sidekiq_options lock: :while_executing,
-                  log_duplicate: true
-
-  ...
-
-end
-</code></pre>
-
 <h3 id="cleanup-dead-locks">Cleanup Dead Locks</h3>
 
 <p>For sidekiq versions before 5.1 a <code>sidekiq_retries_exhausted</code> block is required per worker class. This is deprecated in Sidekiq 6.0</p>
@@ -968,7 +1038,7 @@ already does this.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Fri Jun  4 11:27:51 2021 by
+  Generated on Tue Jun 29 16:45:48 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.3).
 </div>

@@ -173,10 +173,36 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#lock-instance_method" title="#lock (instance method)">#<strong>lock</strong> { ... } &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Locks a sidekiq job.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
 
+  
+  
+  
   
   
   
@@ -234,25 +260,108 @@
       <pre class="lines">
 
 
-15
-16
-17
-18
-19
-20
-21
-22</pre>
+29
+30
+31
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_executed.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_executed.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
-  <span class='id identifier rubyid_lock'>lock</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='kw'>do</span>
     <span class='kw'>yield</span>
-    <span class='id identifier rubyid_unlock_with_callback'>unlock_with_callback</span>
-    <span class='id identifier rubyid_callback_safely'>callback_safely</span>
-    <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>JID</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_unlock_and_callback'>unlock_and_callback</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="lock-instance_method">
+  
+    #<strong>lock</strong> { ... } &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Will call a conflict strategy if lock can&#39;t be achieved.</p>
+</div>
+  </div>
+
+<p>Locks a sidekiq job</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>to the caller when given a block</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the locked jid when properly locked, else nil.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_executed.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_lock'>lock</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_lock_failed'>lock_failed</span><span class='lparen'>(</span><span class='label'>origin:</span> <span class='symbol'>:client</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>yield</span> <span class='id identifier rubyid_token'>token</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='id identifier rubyid_token'>token</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -264,7 +373,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Jun  4 11:27:54 2021 by
+  Generated on Tue Jun 29 16:45:52 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.3).
 </div>

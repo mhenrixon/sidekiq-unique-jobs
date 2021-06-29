@@ -231,29 +231,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#log_duplicate%3F-instance_method" title="#log_duplicate? (instance method)">#<strong>log_duplicate?</strong>  &#x21d2; true, ... </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Should duplicate payloads be logged?.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Hash&lt;String, Object&gt; </a>
     
 
@@ -367,16 +344,16 @@
       <pre class="lines">
 
 
-57
-58
-59
-60
-61
-62
-63</pre>
+48
+49
+50
+51
+52
+53
+54</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 57</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_class'>lock_class</span>
   <span class='ivar'>@lock_class</span> <span class='op'>||=</span> <span class='kw'>begin</span>
@@ -432,12 +409,12 @@
       <pre class="lines">
 
 
-47
-48
-49</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_instance'>lock_instance</span>
   <span class='ivar'>@lock_instance</span> <span class='op'>||=</span> <span class='id identifier rubyid_lock_class'>lock_class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_after_unlock_hook'>after_unlock_hook</span><span class='comma'>,</span> <span class='ivar'>@redis_pool</span><span class='rparen'>)</span>
@@ -485,12 +462,12 @@
       <pre class="lines">
 
 
-71
-72
-73</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lock_type'>lock_type</span>
   <span class='ivar'>@lock_type</span> <span class='op'>||=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOCK</span><span class='rbracket'>]</span>
@@ -541,59 +518,6 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="log_duplicate?-instance_method">
-  
-    #<strong>log_duplicate?</strong>  &#x21d2; <tt>true</tt>, ... 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Should duplicate payloads be logged?</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-37
-38
-39</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 37</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_log_duplicate?'>log_duplicate?</span>
-  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='const'>LOG_DUPLICATE</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'>LOG_DUPLICATE</span><span class='rbracket'>]</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
   <h3 class="signature " id="options-instance_method">
   
     #<strong>options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String, Object&gt;</tt> 
@@ -631,16 +555,16 @@
       <pre class="lines">
 
 
-81
-82
-83
-84
-85
-86
-87</pre>
+72
+73
+74
+75
+76
+77
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 81</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/options_with_fallback.rb', line 72</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span> <span class='op'>||=</span> <span class='kw'>begin</span>
@@ -769,7 +693,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Jun  4 11:27:52 2021 by
+  Generated on Tue Jun 29 16:45:50 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.3).
 </div>

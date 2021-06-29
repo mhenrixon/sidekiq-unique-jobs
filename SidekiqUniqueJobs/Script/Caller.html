@@ -510,7 +510,9 @@
 47
 48
 49
-50</pre>
+50
+51
+52</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 41</span>
@@ -522,7 +524,9 @@
   <span class='id identifier rubyid_pool'>pool</span> <span class='op'>=</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_redis_pool'>redis_pool</span> <span class='op'>:</span> <span class='kw'>nil</span>
 
   <span class='id identifier rubyid_redis'>redis</span><span class='lparen'>(</span><span class='id identifier rubyid_pool'>pool</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_new_conn'>new_conn</span><span class='op'>|</span>
-    <span class='id identifier rubyid_do_call'>do_call</span><span class='lparen'>(</span><span class='id identifier rubyid_file_name'>file_name</span><span class='comma'>,</span> <span class='id identifier rubyid_new_conn'>new_conn</span><span class='comma'>,</span> <span class='id identifier rubyid_keys'>keys</span><span class='comma'>,</span> <span class='id identifier rubyid_argv'>argv</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_do_call'>do_call</span><span class='lparen'>(</span><span class='id identifier rubyid_file_name'>file_name</span><span class='comma'>,</span> <span class='id identifier rubyid_new_conn'>new_conn</span><span class='comma'>,</span> <span class='id identifier rubyid_keys'>keys</span><span class='comma'>,</span> <span class='id identifier rubyid_argv'>argv</span><span class='rparen'>)</span>
+    <span class='kw'>yield</span> <span class='id identifier rubyid_result'>result</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+    <span class='id identifier rubyid_result'>result</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -561,12 +565,12 @@
       <pre class="lines">
 
 
-106
-107
-108</pre>
+108
+109
+110</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 106</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_debug_lua'>debug_lua</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug_lua'>debug_lua</span>
@@ -608,8 +612,6 @@
       <pre class="lines">
 
 
-54
-55
 56
 57
 58
@@ -617,10 +619,12 @@
 60
 61
 62
-63</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 56</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_do_call'>do_call</span><span class='lparen'>(</span><span class='id identifier rubyid_file_name'>file_name</span><span class='comma'>,</span> <span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_keys'>keys</span><span class='comma'>,</span> <span class='id identifier rubyid_argv'>argv</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_argv'>argv</span> <span class='op'>=</span> <span class='id identifier rubyid_argv'>argv</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -843,8 +847,6 @@
       <pre class="lines">
 
 
-84
-85
 86
 87
 88
@@ -853,10 +855,12 @@
 91
 92
 93
-94</pre>
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_extract_args'>extract_args</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span>
@@ -905,12 +909,12 @@
       <pre class="lines">
 
 
-113
-114
-115</pre>
+115
+116
+117</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 113</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_history'>max_history</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max_history'>max_history</span>
@@ -951,12 +955,12 @@
       <pre class="lines">
 
 
-99
-100
-101</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 99</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_now_f'>now_f</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_now_f'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#now_f-class_method" title="SidekiqUniqueJobs.now_f (method)">now_f</a></span></span>
@@ -997,12 +1001,12 @@
       <pre class="lines">
 
 
-120
-121
-122</pre>
+122
+123
+124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 120</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/script/caller.rb', line 122</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redis_version'>redis_version</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_redis_version'><span class='object_link'><a href="../Config.html#redis_version-instance_method" title="SidekiqUniqueJobs::Config#redis_version (method)">redis_version</a></span></span>
@@ -1017,7 +1021,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Jun  4 11:27:52 2021 by
+  Generated on Tue Jun 29 16:45:49 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.3).
 </div>
