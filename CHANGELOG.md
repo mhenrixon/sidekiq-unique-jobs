@@ -1,5 +1,19 @@
 # Changelog
 
+## [v7.1.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.0) (2021-06-29)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.12...v7.1.0)
+
+**Implemented enhancements:**
+
+- Reflections [\#611](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/611) ([mhenrixon](https://github.com/mhenrixon))
+- Start new orphan reaper process if orphan reaper is not running [\#604](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/604) ([Assa1121](https://github.com/Assa1121))
+
+**Fixed bugs:**
+
+- Fix numerous small issues with locking [\#616](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/616) ([mhenrixon](https://github.com/mhenrixon))
+- Allow locksmith delete to work with strings [\#615](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/615) ([pinkahd](https://github.com/pinkahd))
+
 ## [v7.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.12) (2021-06-04)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.11...v7.0.12)
