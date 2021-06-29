@@ -22,6 +22,7 @@ module SidekiqUniqueJobs
       :unlock_failed,
       :unlocked,
       :unknown_sidekiq_worker,
+      :debug,
     ].freeze
 
     #

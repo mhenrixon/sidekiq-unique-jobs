@@ -46,7 +46,7 @@ module SidekiqUniqueJobs
 
         redis(pool) do |new_conn|
           result = do_call(file_name, new_conn, keys, argv)
-          yield if block_given?
+          yield result if block_given?
           result
         end
       end

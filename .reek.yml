@@ -102,6 +102,7 @@ detectors:
       - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Locksmith#create_lock
+      - SidekiqUniqueJobs::Locksmith#lock!
       - SidekiqUniqueJobs::Middleware#self.configure_client
       - SidekiqUniqueJobs::Middleware#self.configure_server
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
@@ -128,6 +129,7 @@ detectors:
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::BaseLock#call_strategy
+      - SidekiqUniqueJobs::Lock::UntilAndWhileExecuting#execute
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::LockArgs#filtered_args
       - SidekiqUniqueJobs::LockInfo#set

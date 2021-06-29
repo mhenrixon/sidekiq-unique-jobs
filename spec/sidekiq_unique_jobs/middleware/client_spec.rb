@@ -165,7 +165,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   end
 
   it "expires the digest when a scheduled job is scheduled at" do
-    expected_expires_at = Time.now.to_i + 15 * 60 - Time.now.utc.to_i
+    expected_expires_at = Time.now.to_i + 15 * 60 - Time.now.to_i
 
     MyUniqueJob.perform_in(expected_expires_at, "mika", "hel")
 

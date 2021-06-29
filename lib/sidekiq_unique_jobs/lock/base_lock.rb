@@ -99,15 +99,22 @@ module SidekiqUniqueJobs
         SidekiqUniqueJobs::Job.prepare(item)
       end
 
-      def lock_failed
+      #
+      # Handle when lock failed
+      #
+      # @param [Symbol] location: :client or :server
+      #
+      # @return [void]
+      #
+      def lock_failed(origin: :client)
         reflect(:lock_failed, item)
-        call_strategy(of: :client)
+        call_strategy(origin: origin)
       end
 
-      def call_strategy(of:) # rubocop:disable Naming/MethodParameterName
+      def call_strategy(origin:)
         @attempt += 1
 
-        case of
+        case origin
         when :client
           client_strategy.call { lock if replace? }
         when :server
@@ -120,6 +127,12 @@ module SidekiqUniqueJobs
 
       def replace?
         client_strategy.replace? && attempt < 2
+      end
+
+      def unlock_and_callback
+        return callback_safely if locksmith.unlock
+
+        reflect(:unlock_failed, item)
       end
 
       def callback_safely

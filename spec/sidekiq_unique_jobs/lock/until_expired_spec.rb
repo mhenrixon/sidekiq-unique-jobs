@@ -1,4 +1,4 @@
-Middleware# frozen_string_literal: true
+# frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   let(:process_one) { described_class.new(item_one, callback) }
