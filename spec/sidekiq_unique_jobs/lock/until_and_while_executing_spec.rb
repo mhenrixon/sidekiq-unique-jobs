@@ -2,10 +2,10 @@
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
   let(:process_one) { described_class.new(item_one, callback) }
-  let(:runtime_one) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_one.dup, callback) }
+  let(:runtime_one) { process_one.send(:runtime_lock) }
 
   let(:process_two) { described_class.new(item_two, callback) }
-  let(:runtime_two) { SidekiqUniqueJobs::Lock::WhileExecuting.new(item_two.dup, callback) }
+  let(:runtime_two) { process_two.send(:runtime_lock) }
 
   let(:jid_one)      { "jid one" }
   let(:jid_two)      { "jid two" }
@@ -29,11 +29,18 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
   end
 
   before do
+    allow(runtime_one).to receive(:reflect).and_call_original
+    allow(runtime_two).to receive(:reflect).and_call_original
     allow(process_one).to receive(:runtime_lock).and_return(runtime_one)
     allow(process_two).to receive(:runtime_lock).and_return(runtime_two)
   end
 
   it_behaves_like "a lock implementation"
+
+  it "does not manipulate the original item" do
+    lock = described_class.new(item_one, callback)
+    expect { lock.send(:runtime_lock) }.not_to change { item_one["lock_digest"] }
+  end
 
   it "has not locked runtime_one" do
     process_one.lock
@@ -84,8 +91,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
         expect { process_one.execute {} }
           .to raise_error(RuntimeError, "Hell")
 
-        expect(runtime_one.locked?).to eq(false)
-        expect(process_one.locked?).to eq(true)
+        expect(process_one).to be_locked
       end
     end
   end

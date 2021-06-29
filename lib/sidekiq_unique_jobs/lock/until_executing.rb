@@ -25,7 +25,7 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        callback_safely if unlock
+        callback_safely if locksmith.unlock
         yield
       end
     end

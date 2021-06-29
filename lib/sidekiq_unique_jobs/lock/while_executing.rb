@@ -40,13 +40,13 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         with_logging_context do
-          call_strategy(of: :server) unless locksmith.execute do
+          call_strategy(origin: :server) unless locksmith.execute do
             yield
-            callback_safely
+            callback_safely if locksmith.unlock
+          ensure
+            locksmith.unlock
           end
         end
-      ensure
-        locksmith.unlock
       end
 
       private
@@ -54,7 +54,9 @@ module SidekiqUniqueJobs
       # This is safe as the base_lock always creates a new digest
       #   The append there for needs to be done every time
       def append_unique_key_suffix
-        item[LOCK_DIGEST] = item[LOCK_DIGEST] + RUN_SUFFIX
+        return if (lock_digest = item[LOCK_DIGEST]).end_with?(RUN_SUFFIX)
+
+        item[LOCK_DIGEST] = lock_digest + RUN_SUFFIX
       end
     end
   end

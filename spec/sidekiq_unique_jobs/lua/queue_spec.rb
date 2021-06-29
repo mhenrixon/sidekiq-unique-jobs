@@ -47,6 +47,7 @@ RSpec.describe "queue.lua" do
         queue
 
         expect(ttl(key.digest)).to eq(lock_ttl)
+        expect(ttl(key.queued)).to eq(lock_ttl)
       end
     end
   end

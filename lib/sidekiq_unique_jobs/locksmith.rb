@@ -89,9 +89,10 @@ module SidekiqUniqueJobs
     #
     # @return [String] the Sidekiq job_id that was locked/queued
     #
-    def lock
+    def lock(wait: nil)
+      method_name = wait ? :primed_async : :primed_sync
       redis(redis_pool) do |conn|
-        lock!(conn, method(:primed_sync)) do
+        lock!(conn, method(method_name), wait) do
           return job_id
         end
       end
@@ -124,12 +125,16 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!(conn = nil)
-      result = call_script(:unlock, key.to_a, argv, conn)
-      reflect(:unlocked, item) if result == job_id
-      result
+      call_script(:unlock, key.to_a, argv, conn) do |unlocked_jid|
+        reflect(:debug, :unlocked, item, unlocked_jid) if unlocked_jid == job_id
+
+        unlocked_jid
+      end
     end
 
     # Checks if this instance is considered locked
+    #
+    # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
     #
     # @return [true, false] true when the :LOCKED hash contains the job_id
     #
@@ -174,19 +179,25 @@ module SidekiqUniqueJobs
     #
     # Used to reduce some duplication from the two methods
     #
-    # @param [<type>] conn <description>
-    # @param [<type>] primed_method <description>
+    # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
+    # @param [Method] primed_method reference to the method to use for getting a primed token
     #
-    # @return [<type>] <description>
-    #
-    # @yieldparam [<type>] x <description>
-    # @yieldreturn [<type>] <describe what yield should return>
-    def lock!(conn, primed_method)
+    # @yieldparam [string] job_id the sidekiq JID
+    # @yieldreturn [void] whatever the calling block returns
+    def lock!(conn, primed_method, wait = nil)
       return yield job_id if locked?(conn)
 
-      enqueue(conn) do
-        primed_method.call(conn) do
-          return yield job_id if job_id == call_script(:lock, key.to_a, argv, conn)
+      enqueue(conn) do |queued_jid|
+        reflect(:debug, item, queued_jid)
+
+        primed_method.call(conn, wait) do |primed_jid|
+          reflect(:debug, :primed, item, primed_jid)
+
+          locked_jid = call_script(:lock, key.to_a, argv, conn)
+          if locked_jid
+            reflect(:debug, :locked, item, locked_jid)
+            return yield job_id
+          end
         end
       end
     end
@@ -200,16 +211,18 @@ module SidekiqUniqueJobs
     # @return [yield<String>] when successfully enqueued
     #
     def enqueue(conn)
-      queued_token, elapsed = timed do
+      queued_jid, elapsed = timed do
         call_script(:queue, key.to_a, argv, conn)
       end
 
-      validity = config.pttl - elapsed - drift(config.pttl)
+      return unless queued_jid
+      return unless [job_id, "1"].include?(queued_jid)
 
-      return unless queued_token && (validity >= 0 || config.pttl.zero?)
+      validity = config.pttl - elapsed - drift(config.pttl)
+      return unless validity >= 0 || config.pttl.zero?
 
       write_lock_info(conn)
-      yield queued_token
+      yield job_id
     end
 
     #
@@ -222,12 +235,12 @@ module SidekiqUniqueJobs
     # @return [nil] when lock was not possible
     # @return [Object] whatever the block returns when lock was acquired
     #
-    def primed_async(conn)
-      return yield if Concurrent::Promises
-                      .future(conn) { |red_con| pop_queued(red_con) }
-                      .value(add_drift(config.ttl))
+    def primed_async(conn, wait = nil, &block)
+      primed_jid = Concurrent::Promises
+                   .future(conn) { |red_con| pop_queued(red_con, wait) }
+                   .value(add_drift(wait || config.ttl))
 
-      reflect(:timeout, item) unless config.wait_for_lock?
+      handle_primed(primed_jid, &block)
     end
 
     #
@@ -239,10 +252,13 @@ module SidekiqUniqueJobs
     # @return [nil] when lock was not possible
     # @return [Object] whatever the block returns when lock was acquired
     #
-    def primed_sync(conn)
-      if (popped_jid = pop_queued(conn))
-        return yield popped_jid
-      end
+    def primed_sync(conn, wait = nil, &block)
+      primed_jid = pop_queued(conn, wait)
+      handle_primed(primed_jid, &block)
+    end
+
+    def handle_primed(primed_jid)
+      return yield job_id if [job_id, "1"].include?(primed_jid)
 
       reflect(:timeout, item) unless config.wait_for_lock?
     end
@@ -254,9 +270,9 @@ module SidekiqUniqueJobs
     #
     # @return [String] a previously enqueued token (now taken off the queue)
     #
-    def pop_queued(conn)
-      if config.wait_for_lock?
-        brpoplpush(conn)
+    def pop_queued(conn, wait = nil)
+      if wait || config.wait_for_lock?
+        brpoplpush(conn, wait)
       else
         rpoplpush(conn)
       end
@@ -265,9 +281,10 @@ module SidekiqUniqueJobs
     #
     # @api private
     #
-    def brpoplpush(conn)
+    def brpoplpush(conn, wait = nil)
+      wait ||= config.timeout
       # passing timeout 0 to brpoplpush causes it to block indefinitely
-      conn.brpoplpush(key.queued, key.primed, timeout: config.timeout)
+      conn.brpoplpush(key.queued, key.primed, timeout: wait)
     end
 
     #

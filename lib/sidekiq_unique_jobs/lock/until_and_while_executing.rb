@@ -22,23 +22,28 @@ module SidekiqUniqueJobs
       #
       # @yield to the caller when given a block
       #
-      def lock
-        return lock_failed unless (locked_token = locksmith.lock)
-        return yield locked_token if block_given?
+      def lock(origin: :client)
+        return lock_failed(origin: origin) unless (token = locksmith.lock)
+        return yield token if block_given?
 
-        locked_token
+        token
       end
 
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        if unlock
-          ensure_relocked do
-            runtime_lock.execute { return yield }
-          end
+        if locksmith.unlock
+          # ensure_relocked do
+          runtime_lock.execute { return yield }
+          # end
         else
           reflect(:unlock_failed, item)
         end
+      rescue Exception # rubocop:disable Lint/RescueException
+        reflect(:execution_failed, item)
+        locksmith.lock(wait: 2)
+
+        raise
       end
 
       private
@@ -47,12 +52,13 @@ module SidekiqUniqueJobs
         yield
       rescue Exception # rubocop:disable Lint/RescueException
         reflect(:execution_failed, item)
-        lock
+        locksmith.lock
+
         raise
       end
 
       def runtime_lock
-        @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item, callback, redis_pool)
+        @runtime_lock ||= SidekiqUniqueJobs::Lock::WhileExecuting.new(item.dup, callback, redis_pool)
       end
     end
   end

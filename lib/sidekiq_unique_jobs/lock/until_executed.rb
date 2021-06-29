@@ -18,10 +18,10 @@ module SidekiqUniqueJobs
       # @yield to the caller when given a block
       #
       def lock
-        return lock_failed unless (job_id = locksmith.lock)
-        return yield job_id if block_given?
+        return lock_failed(origin: :client) unless (token = locksmith.lock)
+        return yield token if block_given?
 
-        job_id
+        token
       end
 
       # Executes in the Sidekiq server process
@@ -29,9 +29,7 @@ module SidekiqUniqueJobs
       def execute
         locksmith.execute do
           yield
-          return reflect(:unlock_failed, item) unless unlock
-
-          callback_safely
+          unlock_and_callback
         end
       end
     end
