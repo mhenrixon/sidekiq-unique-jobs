@@ -1,5 +1,17 @@
 # Changelog
 
+## [v7.1.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.1) (2021-06-30)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.0...v7.1.1)
+
+**Fixed bugs:**
+
+- Fix handling of lock timeout [\#619](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/619) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Max expiration for locks [\#593](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/593)
+
 ## [v7.1.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.0) (2021-06-29)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.12...v7.1.0)
