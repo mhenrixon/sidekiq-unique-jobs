@@ -1444,7 +1444,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock_config.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wait_for_lock?'>wait_for_lock?</span>
-  <span class='id identifier rubyid_timeout'>timeout</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_timeout'>timeout</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span> <span class='op'>||</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_timeout'>timeout</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1456,9 +1456,9 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Jun 29 16:45:51 2021 by
+  Generated on Wed Jun 30 15:19:44 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.3).
+  0.9.26 (ruby-2.7.2).
 </div>
 
     </div>
