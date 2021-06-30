@@ -50,7 +50,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     context "when timeout is nil" do
       let(:lock_timeout) { nil }
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to eq(true) }
     end
 
     context "when timeout is positive?" do
@@ -62,7 +62,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     context "when timeout is zero?" do
       let(:lock_timeout) { 0 }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to eq(false) }
     end
   end
 

@@ -82,7 +82,7 @@ module SidekiqUniqueJobs
     # @return [true,fakse]
     #
     def wait_for_lock?
-      timeout && (timeout.zero? || timeout.positive?)
+      timeout.nil? || timeout.positive?
     end
 
     #
