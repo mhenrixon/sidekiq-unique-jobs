@@ -271,18 +271,21 @@ module SidekiqUniqueJobs
     # @return [String] a previously enqueued token (now taken off the queue)
     #
     def pop_queued(conn, wait = nil)
-      if wait || config.wait_for_lock?
-        brpoplpush(conn, wait)
-      else
+      wait ||= config.timeout if config.wait_for_lock?
+
+      if wait.nil?
         rpoplpush(conn)
+      else
+        brpoplpush(conn, wait)
       end
     end
 
     #
     # @api private
     #
-    def brpoplpush(conn, wait = nil)
-      wait ||= config.timeout
+    def brpoplpush(conn, wait)
+      raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
+
       # passing timeout 0 to brpoplpush causes it to block indefinitely
       conn.brpoplpush(key.queued, key.primed, timeout: wait)
     end
