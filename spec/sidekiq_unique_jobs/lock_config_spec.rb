@@ -44,6 +44,46 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     end
   end
 
+  describe "#limit" do
+    context "when lock_limit is nil" do
+      let(:lock_limit) { nil }
+
+      its(:limit) { is_expected.to be_nil }
+    end
+
+    context "when lock_limit is a string" do
+      let(:lock_limit) { "1" }
+
+      its(:limit) { is_expected.to eq(1) }
+    end
+
+    context "when lock_limit is a number" do
+      let(:lock_limit) { 1 }
+
+      its(:limit) { is_expected.to eq(1) }
+    end
+  end
+
+  describe "#timeout" do
+    context "when lock_timeout is nil" do
+      let(:lock_timeout) { nil }
+
+      its(:timeout) { is_expected.to be_nil }
+    end
+
+    context "when lock_timeout is a string" do
+      let(:lock_timeout) { "1" }
+
+      its(:timeout) { is_expected.to eq(1) }
+    end
+
+    context "when lock_timeout is a number" do
+      let(:lock_timeout) { 1 }
+
+      its(:timeout) { is_expected.to eq(1) }
+    end
+  end
+
   describe "#wait_for_lock?" do
     subject(:wait_for_lock?) { lock_config.wait_for_lock? }
 
@@ -55,6 +95,12 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
 
     context "when timeout is positive?" do
       let(:lock_timeout) { 3 }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when timeout is a positive string?" do
+      let(:lock_timeout) { "3" }
 
       it { is_expected.to eq(true) }
     end
