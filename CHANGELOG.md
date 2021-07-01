@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.1.2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.2) (2021-07-01)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.1...v7.1.2)
+
+**Merged pull requests:**
+
+- Ensure `limit` and `timeout` are always numbers [\#620](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/620) ([pinkahd](https://github.com/pinkahd))
+
 ## [v7.1.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.1) (2021-06-30)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.0...v7.1.1)
