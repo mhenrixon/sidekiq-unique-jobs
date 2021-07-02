@@ -1,10 +1,22 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.2...HEAD)
+
+**Fixed bugs:**
+
+- Documentation fixes [\#622](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/622) ([ursm](https://github.com/ursm))
+
+**Merged pull requests:**
+
+- Improve readme [\#621](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/621) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.2) (2021-07-01)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.1...v7.1.2)
 
-**Merged pull requests:**
+**Fixed bugs:**
 
 - Ensure `limit` and `timeout` are always numbers [\#620](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/620) ([pinkahd](https://github.com/pinkahd))
 
