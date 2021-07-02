@@ -196,7 +196,7 @@ A lock is created when `UntilExecuting.perform_async` is called. Then it is eith
 class UntilExecuting
   include Sidekiq::Workers
 
-  sidekiq_options lock: :until_expired
+  sidekiq_options lock: :until_executing
 
   def perform(id)
     # Do work
@@ -218,7 +218,7 @@ A lock is created when `UntilExecuted.perform_async` is called. Then it is eithe
 class UntilExecuted
   include Sidekiq::Workers
 
-  sidekiq_options lock: :until_expired
+  sidekiq_options lock: :until_executed
 
   def perform(id)
     # Do work
@@ -276,7 +276,7 @@ Tese locks are put on a queue without any type of locking mechanism, the locking
 class WhileExecutingWorker
   include Sidekiq::Workers
 
-  sidekiq_options lock: :until_and_while_executing,
+  sidekiq_options lock: :while_executing,
                   lock_timeout: 2,
                   on_conflict: {
                     server: :raise
