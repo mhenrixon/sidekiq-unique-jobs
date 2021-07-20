@@ -102,7 +102,7 @@ module SidekiqUniqueJobs
       raise SidekiqUniqueJobs::InvalidArgument, "#execute needs a block" unless block
 
       redis(redis_pool) do |conn|
-        lock!(conn, method(:primed_async), &block)
+        lock!(conn, method(:primed_async), config.timeout, &block)
       end
     end
 

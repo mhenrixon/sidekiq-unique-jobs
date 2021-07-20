@@ -288,6 +288,13 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   context "when lock_timeout is 1" do
     let(:lock_timeout) { 1 }
 
+    let(:slow_brpoplpush) do
+      proc do
+        sleep(0.75)
+        locksmith_one.job_id
+      end
+    end
+
     it "blocks other locks" do
       did_we_get_in = false
 
@@ -298,6 +305,18 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       end
 
       expect(did_we_get_in).to be false
+    end
+
+    it "waits for brpoplpush when resolving the promise" do
+      allow(locksmith_one).to receive(:brpoplpush).with(anything, 1, &slow_brpoplpush)
+
+      did_we_get_in = false
+      locksmith_one.execute do
+        did_we_get_in = true
+      end
+
+      expect(locksmith_one).to have_received(:brpoplpush)
+      expect(did_we_get_in).to be true
     end
   end
 
