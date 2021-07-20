@@ -58,5 +58,5 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: 2.2.24
           bundler-cache: true
-      - run: bin/appraisal install --jobs=$(nproc) --retry=$(nproc)
-      - run: bin/appraisal rspec --require spec_helper --tag ~perf
+      - run: bundle exec appraisal install --jobs=$(nproc) --retry=$(nproc)
+      - run: bundle exec appraisal rspec --require spec_helper --tag ~perf
