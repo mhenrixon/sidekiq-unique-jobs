@@ -116,8 +116,8 @@ module SidekiqUniqueJobs
     REAPER_RESURRECTOR_INTERVAL = 3600
 
     #
-    # @return [true] enable reaper resurrector
-    REAPER_RESURRECTOR_ENABLED = true
+    # @return [false] enable reaper resurrector
+    REAPER_RESURRECTOR_ENABLED = false
 
     #
     # @return [false] while useful it also adds overhead so disable lock_info by default

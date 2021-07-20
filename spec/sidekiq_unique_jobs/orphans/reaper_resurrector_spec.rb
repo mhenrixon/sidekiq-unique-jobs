@@ -10,7 +10,9 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperResurrector do
     let(:frozen_time) { Time.new(1982, 6, 8, 14, 15, 34) }
 
     around do |example|
-      Timecop.freeze(frozen_time, &example)
+      Timecop.freeze(frozen_time) do
+        SidekiqUniqueJobs.use_config(reaper_resurrector_enabled: true, &example)
+      end
     end
 
     before do
