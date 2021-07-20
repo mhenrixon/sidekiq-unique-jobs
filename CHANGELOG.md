@@ -2,15 +2,28 @@
 
 ## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.2...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.3...HEAD)
 
 **Fixed bugs:**
 
+- Disable resurrector by default [\#623](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/623) ([mhenrixon](https://github.com/mhenrixon))
 - Documentation fixes [\#622](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/622) ([ursm](https://github.com/ursm))
 
 **Merged pull requests:**
 
 - Improve readme [\#621](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/621) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.1.3](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.3) (2021-07-20)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.2...v7.1.3)
+
+**Fixed bugs:**
+
+- Locks are not released: seeing 'Might need to be unlocked manually" warnings [\#594](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/594)
+
+**Closed issues:**
+
+- Lock until\_and\_while\_executing not working as expected [\#613](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/613)
 
 ## [v7.1.2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.2) (2021-07-01)
 
