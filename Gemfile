@@ -7,12 +7,12 @@ gemspec
 
 LOCAL_GEMS = "Gemfile.local"
 
-gem "appraisal", github: "bibendi/appraisal", branch: "fix/ruby-3"
+gem "appraisal"
 gem "bundler"
 gem "gem-release"
 gem "github-markup"
 gem "rack-test"
-gem "rake"
+gem "rake", "13.0.3"
 gem "rspec"
 gem "rspec-html-matchers"
 gem "rspec-its"
