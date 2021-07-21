@@ -1445,7 +1445,7 @@
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InvalidArgument.html" title="SidekiqUniqueJobs::InvalidArgument (class)">InvalidArgument</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>#execute needs a block</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_block'>block</span>
 
   <span class='id identifier rubyid_redis'>redis</span><span class='lparen'>(</span><span class='id identifier rubyid_redis_pool'>redis_pool</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
-    <span class='id identifier rubyid_lock!'>lock!</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:primed_async</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_lock!'>lock!</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:primed_async</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_timeout'>timeout</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2432,9 +2432,9 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Jul 20 11:22:04 2021 by
+  Generated on Wed Jul 21 09:15:26 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.6.8).
+  0.9.26 (ruby-2.7.4).
 </div>
 
     </div>
