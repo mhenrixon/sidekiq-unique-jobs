@@ -1,10 +1,18 @@
 # Changelog
 
+## [v7.1.5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.5) (2021-07-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.4...v7.1.5)
+
+**Fixed bugs:**
+
+- Fix: UntilAndWhileExecuting [\#627](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/627) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.4) (2021-07-21)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.3...v7.1.4)
 
-**Merged pull requests:**
+**Fixed bugs:**
 
 - Pass lock timeout to primed\_async [\#624](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/624) ([millerjs](https://github.com/millerjs))
 
