@@ -29,6 +29,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       "queue" => queue,
     }
   end
+  let(:key_one)  { locksmith_one.key }
+  let(:key_two)  { locksmith_two.key }
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
   describe "#to_s" do
@@ -288,13 +290,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   context "when lock_timeout is 1" do
     let(:lock_timeout) { 1 }
 
-    let(:slow_brpoplpush) do
-      proc do
-        sleep(0.75)
-        locksmith_one.job_id
-      end
-    end
-
     it "blocks other locks" do
       did_we_get_in = false
 
@@ -308,7 +303,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
 
     it "waits for brpoplpush when resolving the promise" do
-      allow(locksmith_one).to receive(:brpoplpush).with(anything, 1, &slow_brpoplpush)
+      allow(locksmith_one).to receive(:brpoplpush) do
+        sleep(0.75)
+        jid_one
+      end
 
       did_we_get_in = false
       locksmith_one.execute do
