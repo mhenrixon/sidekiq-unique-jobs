@@ -102,7 +102,7 @@ module SidekiqUniqueJobs
       raise SidekiqUniqueJobs::InvalidArgument, "#execute needs a block" unless block
 
       redis(redis_pool) do |conn|
-        lock!(conn, method(:primed_async), config.timeout, &block)
+        lock!(conn, method(:primed_async), &block)
       end
     end
 
@@ -179,6 +179,9 @@ module SidekiqUniqueJobs
     #
     # Used to reduce some duplication from the two methods
     #
+    # @see lock
+    # @see execute
+    #
     # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
     # @param [Method] primed_method reference to the method to use for getting a primed token
     #
@@ -238,7 +241,7 @@ module SidekiqUniqueJobs
     def primed_async(conn, wait = nil, &block)
       primed_jid = Concurrent::Promises
                    .future(conn) { |red_con| pop_queued(red_con, wait) }
-                   .value(add_drift(wait || config.ttl))
+                   .value(add_drift(wait || config.timeout))
 
       handle_primed(primed_jid, &block)
     end

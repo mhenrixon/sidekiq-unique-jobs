@@ -51,7 +51,7 @@ module SidekiqUniqueJobs
       if Process.const_defined?("CLOCK_MONOTONIC")
         Process.clock_gettime(Process::CLOCK_MONOTONIC)
       else
-        Time.now.to_f
+        now_f
       end
     end
   end
