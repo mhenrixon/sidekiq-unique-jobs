@@ -283,7 +283,7 @@
   <span class='kw'>if</span> <span class='const'>Process</span><span class='period'>.</span><span class='id identifier rubyid_const_defined?'>const_defined?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>CLOCK_MONOTONIC</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
     <span class='const'>Process</span><span class='period'>.</span><span class='id identifier rubyid_clock_gettime'>clock_gettime</span><span class='lparen'>(</span><span class='const'>Process</span><span class='op'>::</span><span class='const'>CLOCK_MONOTONIC</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
-    <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span>
+    <span class='id identifier rubyid_now_f'>now_f</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -466,7 +466,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jul 21 09:15:25 2021 by
+  Generated on Wed Jul 28 13:38:29 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.4).
 </div>
