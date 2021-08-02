@@ -18,8 +18,8 @@ module SidekiqUniqueJobs
       # @yield to the caller when given a block
       #
       def lock
-        return lock_failed unless (job_id = locksmith.lock)
-        return yield job_id if block_given?
+        job_id = locksmith.lock || lock_failed
+        return yield job_id if job_id && block_given?
 
         job_id
       end
