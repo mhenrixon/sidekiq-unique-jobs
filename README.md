@@ -268,7 +268,7 @@ end
 
 ### While Executing
 
-Tese locks are put on a queue without any type of locking mechanism, the locking doesn't happen until Sidekiq pops the job from the queue and starts processing it.
+These locks are put on a queue without any type of locking mechanism, the locking doesn't happen until Sidekiq pops the job from the queue and starts processing it.
 
 #### Example worker
 
