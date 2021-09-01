@@ -104,7 +104,7 @@ module SidekiqUniqueJobs
       #
       # @param [Symbol] origin either `:client` or `:server`
       #
-      # @return [void]
+      # @return [String, nil]
       #
       def lock_failed(origin: :client)
         reflect(:lock_failed, item)

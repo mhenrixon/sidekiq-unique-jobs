@@ -9,6 +9,8 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::Timing
 
       # Send jobs to dead queue
+      #
+      # @return [nil]
       def call
         log_info { "Adding dead #{item[CLASS]} job #{item[JID]}" }
 
@@ -17,6 +19,7 @@ module SidekiqUniqueJobs
         else
           push_to_deadset
         end
+        nil
       end
 
       #

@@ -19,6 +19,8 @@ module SidekiqUniqueJobs
 
       # Create a new job from the current one.
       #   This will mess up sidekiq stats because a new job is created
+      #
+      # @return [nil]
       def call
         if sidekiq_worker_class?
           if worker_class.perform_in(5, *item[ARGS])
@@ -29,6 +31,7 @@ module SidekiqUniqueJobs
         else
           reflect(:unknown_sidekiq_worker, item)
         end
+        nil
       end
     end
   end

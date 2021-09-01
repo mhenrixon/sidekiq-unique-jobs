@@ -29,8 +29,7 @@ module SidekiqUniqueJobs
       #
       # Replace the old job in the queue
       #
-      #
-      # @return [void] <description>
+      # @return [String, nil]
       #
       # @yield to retry the lock after deleting the old one
       #

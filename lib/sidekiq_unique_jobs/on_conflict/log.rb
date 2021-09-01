@@ -12,12 +12,13 @@ module SidekiqUniqueJobs
       # Logs an informational message about that the job was not unique
       #
       #
-      # @return [void]
+      # @return [nil]
       #
       def call
         log_info(<<~MESSAGE.chomp)
           Skipping job with id (#{item[JID]}) because lock_digest: (#{item[LOCK_DIGEST]}) already exists
         MESSAGE
+        nil
       end
     end
   end

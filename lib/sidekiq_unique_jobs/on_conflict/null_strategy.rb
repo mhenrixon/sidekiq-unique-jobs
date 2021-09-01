@@ -7,6 +7,7 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class NullStrategy < OnConflict::Strategy
       # Do nothing on conflict
+      #
       # @return [nil]
       def call
         # NOOP
