@@ -27,4 +27,20 @@ RSpec.describe UntilAndWhileExecutingReplaceJob do
       set.each(&:delete)
     end
   end
+
+  it "replaces the previous job successfully when using perform_in" do
+    Sidekiq::Testing.disable! do
+      set = Sidekiq::ScheduledSet.new
+
+      described_class.perform_in(30, "unique", "first argument")
+      expect(set.size).to eq(1)
+      expect(set.first.item["args"]).to eq(["unique", "first argument"])
+
+      described_class.perform_in(30, "unique", "new argument")
+      expect(set.size).to eq(1)
+      expect(set.first.item["args"]).to eq(["unique", "new argument"])
+
+      set.each(&:delete)
+    end
+  end
 end
