@@ -24,8 +24,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "fuubar"
   gem "listen"
-  gem "pry-byebug"
-  gem "pry-rails"
+  gem "debug"
   gem "rspec-rails"
 end
 
