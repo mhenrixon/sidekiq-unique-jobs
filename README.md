@@ -92,10 +92,11 @@ This gem adds unique constraints to sidekiq jobs. The uniqueness is achieved by 
 
 By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen [Conflict Strategy](#conflict-strategy) strategy. Unless a conflict strategy is chosen
 
-This is the documentation for the master branch. You can find the documentation for each release by navigating to its tag.
+This is the documentation for the `main` branch. You can find the documentation for each release by navigating to its tag.
 
 Here are links to some of the old versions
 
+- [v7.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.12)
 - [v6.0.25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v6.0.25)
 - [v5.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10)
 - [v4.0.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18)

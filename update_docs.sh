@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-git checkout master
+git checkout main
 git fetch
 stash_created=0
 
@@ -34,4 +34,4 @@ if [[ $stash_created == 1 ]]; then
   git stash pop
 fi;
 
-git checkout master
+git checkout main
