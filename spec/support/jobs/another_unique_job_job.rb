@@ -2,7 +2,7 @@
 
 # :nocov:
 if Sidekiq.const_defined?("JobRecord")
-  require 'sidekiq/job'
+  require "sidekiq/job"
 
   class AnotherUniqueJobJob
     include Sidekiq::Job
