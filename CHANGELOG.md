@@ -1,5 +1,18 @@
 # Changelog
 
+## [v7.1.6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.6) (2021-09-21)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.5...v7.1.6)
+
+**Closed issues:**
+
+- until\_and\_while\_executing is not running the job at all in sidekiq-unique-jobs 7.1.4 [\#626](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/626)
+
+**Merged pull requests:**
+
+- Necessary upgrades for Sidekiq v6.2.2 [\#639](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/639) ([mhenrixon](https://github.com/mhenrixon))
+- Tese to these in README.md [\#633](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/633) ([carrickr](https://github.com/carrickr))
+
 ## [v7.1.5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.5) (2021-07-28)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.4...v7.1.5)
