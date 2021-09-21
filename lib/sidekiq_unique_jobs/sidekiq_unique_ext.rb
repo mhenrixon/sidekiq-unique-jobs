@@ -68,24 +68,46 @@ module Sidekiq
     prepend UniqueExtension
   end
 
-  # See Sidekiq::Api
-  class Job
-    #
-    # Provides extensions for unlocking jobs that are removed and deleted
-    #
-    # @author Mikael Henriksson <mikael@mhenrixon.com>
-    #
-    module UniqueExtension
+  if Sidekiq.const_defined?("JobRecord")
+    # See Sidekiq::Api
+    class JobRecord
       #
-      # Wraps the original method to ensure locks for the job are deleted
+      # Provides extensions for unlocking jobs that are removed and deleted
       #
-      def delete
-        SidekiqUniqueJobs::Unlockable.delete!(item)
-        super
+      # @author Mikael Henriksson <mikael@mhenrixon.com>
+      #
+      module UniqueExtension
+        #
+        # Wraps the original method to ensure locks for the job are deleted
+        #
+        def delete
+          SidekiqUniqueJobs::Unlockable.delete!(item)
+          super
+        end
       end
-    end
 
-    prepend UniqueExtension
+      prepend UniqueExtension
+    end
+  else
+    # See Sidekiq::Api
+    class Job
+      #
+      # Provides extensions for unlocking jobs that are removed and deleted
+      #
+      # @author Mikael Henriksson <mikael@mhenrixon.com>
+      #
+      module UniqueExtension
+        #
+        # Wraps the original method to ensure locks for the job are deleted
+        #
+        def delete
+          SidekiqUniqueJobs::Unlockable.delete!(item)
+          super
+        end
+      end
+
+      prepend UniqueExtension
+    end
   end
 
   # See Sidekiq::Api

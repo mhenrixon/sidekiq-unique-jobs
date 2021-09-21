@@ -109,6 +109,7 @@ module SidekiqUniqueJobs
       def lock_failed(origin: :client)
         reflect(:lock_failed, item)
         call_strategy(origin: origin)
+        nil
       end
 
       def call_strategy(origin:)
