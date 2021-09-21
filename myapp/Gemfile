@@ -20,11 +20,11 @@ gem "sinatra"
 gem "slim-rails"
 
 group :development, :test do
+  gem "debug"
   gem "dotenv-rails"
   gem "factory_bot_rails"
   gem "fuubar"
   gem "listen"
-  gem "debug"
   gem "rspec-rails"
 end
 
