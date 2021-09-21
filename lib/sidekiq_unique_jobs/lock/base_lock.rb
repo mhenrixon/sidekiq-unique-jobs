@@ -102,7 +102,7 @@ module SidekiqUniqueJobs
       #
       # Handle when lock failed
       #
-      # @param [Symbol] location: :client or :server
+      # @param [Symbol] origin either `:client` or `:server`
       #
       # @return [void]
       #

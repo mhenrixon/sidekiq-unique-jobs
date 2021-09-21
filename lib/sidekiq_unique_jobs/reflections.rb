@@ -42,6 +42,14 @@ module SidekiqUniqueJobs
       @reflections = {}
     end
 
+    #
+    # Dispatch a reflected event
+    #
+    # @param [reflection] reflection the reflected event
+    # @param [Array] args the arguments to provide to the block
+    #
+    # @return [void] <description>
+    #
     def dispatch(reflection, *args)
       if (block = @reflections[reflection])
         block.call(*args)
@@ -55,6 +63,8 @@ module SidekiqUniqueJobs
       elsif misconfigured?(reflection)
         raise NoSuchNotificationError, reflection
       end
+
+      nil
     end
 
     def configured?(reflection)

@@ -196,26 +196,61 @@ module SidekiqUniqueJobs
       )
     end
 
+    #
+    # Set the default_lock_ttl
+    # @deprecated
+    #
+    # @param [Integer] obj value to set (seconds)
+    #
+    # @return [<type>] <description>
+    #
     def default_lock_ttl=(obj)
       warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_ttl=` instead."
       self.lock_ttl = obj
     end
 
+    #
+    # Set new value for default_lock_timeout
+    # @deprecated
+    #
+    # @param [Integer] obj value to set (seconds)
+    #
+    # @return [Integer]
+    #
     def default_lock_timeout=(obj)
       warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_timeout=` instead."
       self.lock_timeout = obj
     end
 
+    #
+    # Default lock TTL (Time To Live)
+    # @deprecated
+    #
+    # @return [nil, Integer] configured value or nil
+    #
     def default_lock_ttl
       warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_ttl` instead."
       lock_ttl
     end
 
+    #
+    # Default Lock Timeout
+    # @deprecated
+    #
+    #
+    # @return [nil, Integer] configured value or nil
+    #
     def default_lock_timeout
       warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_timeout` instead."
       lock_timeout
     end
 
+    #
+    # Memoized variable to get the class name
+    #
+    #
+    # @return [String] name of the class
+    #
     def class_name
       @class_name ||= self.class.name
     end

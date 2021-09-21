@@ -10,10 +10,18 @@ module SidekiqUniqueJobs
     module Manager
       module_function
 
+      #
+      # @return [Float] the amount to add to the reaper interval
       DRIFT_FACTOR = 0.02
+      #
+      # @return [Symbol] allowed reapers (:ruby or :lua)
       REAPERS      = [:ruby, :lua].freeze
 
+      # includes "SidekiqUniqueJobs::Connection"
+      # @!parse include SidekiqUniqueJobs::Connection
       include SidekiqUniqueJobs::Connection
+      # includes "SidekiqUniqueJobs::Logging"
+      # @!parse include SidekiqUniqueJobs::Logging
       include SidekiqUniqueJobs::Logging
 
       #
@@ -65,6 +73,12 @@ module SidekiqUniqueJobs
         @task ||= default_task
       end
 
+      #
+      # A properly configured timer task
+      #
+      #
+      # @return [SidekiqUniqueJobs::TimerTask]
+      #
       def default_task
         SidekiqUniqueJobs::TimerTask.new(timer_task_options) do
           with_logging_context do
@@ -76,6 +90,13 @@ module SidekiqUniqueJobs
         end
       end
 
+      #
+      # Store a task to use for scheduled execution
+      #
+      # @param [SidekiqUniqueJobs::TimerTask] task the task to use
+      #
+      # @return [void]
+      #
       def task=(task)
         @task = task
       end
@@ -201,10 +222,24 @@ module SidekiqUniqueJobs
         redis { |conn| conn.del(UNIQUE_REAPER) }
       end
 
+      #
+      # Reaper interval with a little drift
+      #   Redis isn't exact enough so to give a little bufffer,
+      #   we add a tiny value to the reaper interval.
+      #
+      #
+      # @return [Integer] <description>
+      #
       def drift_reaper_interval
         reaper_interval + (reaper_interval * DRIFT_FACTOR).to_i
       end
 
+      #
+      # Current time (as integer value)
+      #
+      #
+      # @return [Integer]
+      #
       def current_timestamp
         Time.now.to_i
       end

@@ -10,6 +10,8 @@ module SidekiqUniqueJobs
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
     class RubyReaper < Reaper
+      #
+      # @return [String] the suffix for :RUN locks
       RUN_SUFFIX = ":RUN"
       #
       # @!attribute [r] digests

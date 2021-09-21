@@ -25,6 +25,12 @@ module SidekiqUniqueJobs
       config.death_handlers << death_handler
     end
 
+    #
+    # Start the sidekiq unique jobs server process
+    #
+    #
+    # @return [void]
+    #
     def self.start
       SidekiqUniqueJobs::UpdateVersion.call
       SidekiqUniqueJobs::UpgradeLocks.call
@@ -32,6 +38,12 @@ module SidekiqUniqueJobs
       SidekiqUniqueJobs::Orphans::ReaperResurrector.start
     end
 
+    #
+    # Stop the sidekiq unique jobs server process
+    #
+    #
+    # @return [void]
+    #
     def self.stop
       SidekiqUniqueJobs::Orphans::Manager.stop
     end

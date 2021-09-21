@@ -20,6 +20,13 @@ module SidekiqUniqueJobs
       ::JSON.parse(string)
     end
 
+    #
+    # Prevents trying JSON.load from raising errors given argument is a hash
+    #
+    # @param [String, Hash] string the JSON string to parse
+    #
+    # @return [Hash,Array]
+    #
     def safe_load_json(string)
       return string if string.is_a?(Hash)
 

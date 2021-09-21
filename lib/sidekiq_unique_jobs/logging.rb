@@ -92,9 +92,18 @@ module SidekiqUniqueJobs
     def log_fatal(message_or_exception = nil, item = nil, &block)
       message = build_message(message_or_exception, item)
       logger.fatal(message, &block)
+
       nil
     end
 
+    #
+    # Build a log message
+    #
+    # @param [String, Exception] message_or_exception an entry to log
+    # @param [Hash] item the sidekiq job hash
+    #
+    # @return [String] a complete log entry
+    #
     def build_message(message_or_exception, item = nil)
       return nil if message_or_exception.nil?
       return message_or_exception if item.nil?
