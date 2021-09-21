@@ -1,17 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
-  let(:process_one) { described_class.new(item_one, callback) }
-  let(:runtime_one) { process_one.send(:runtime_lock) }
-
-  let(:process_two) { described_class.new(item_two, callback) }
-  let(:runtime_two) { process_two.send(:runtime_lock) }
-
-  let(:jid_one)      { "jid one" }
-  let(:jid_two)      { "jid two" }
-  let(:lock_timeout) { nil }
-  let(:sleepy_time)  { 0 }
-  let(:worker_class) { UntilAndWhileExecutingJob }
+  let(:process_one)  { described_class.new(item_one, callback) }
   let(:unique)       { :until_and_while_executing }
   let(:queue)        { :another_queue }
   let(:args)         { [sleepy_time] }
@@ -26,6 +16,21 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
   end
   let(:item_two) do
     item_one.merge("jid" => jid_two)
+  end
+  let(:runtime_one) { process_one.send(:runtime_lock) }
+
+  let(:process_two) { described_class.new(item_two, callback) }
+  let(:runtime_two) { process_two.send(:runtime_lock) }
+
+  let(:jid_one)      { "jid one" }
+  let(:jid_two)      { "jid two" }
+  let(:lock_timeout) { nil }
+  let(:sleepy_time)  { 0 }
+
+  if Sidekiq.const_defined?("JobRecord")
+    let(:worker_class) { AnotherUniqueJobJob }
+  else
+    let(:worker_class) { UntilAndWhileExecutingJob }
   end
 
   before do

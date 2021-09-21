@@ -8,7 +8,7 @@ if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6"
   begin
     require "pry"
   rescue LoadError
-    puts "Pry unavailable"
+    puts "Pry is unavailable"
   end
 end
 
