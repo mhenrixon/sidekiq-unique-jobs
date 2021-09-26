@@ -20,7 +20,8 @@ RSpec.describe UntilAndWhileExecutingReplaceJob do
       expect(set.size).to eq(1)
       expect(set.first.item["args"]).to eq(["unique", "first argument"])
 
-      described_class.perform_at(Time.now + 30, "unique", "new argument")
+      job_id = described_class.perform_at(Time.now + 30, "unique", "new argument")
+      expect(job_id).not_to be_nil
       expect(set.size).to eq(1)
       expect(set.first.item["args"]).to eq(["unique", "new argument"])
 
@@ -36,7 +37,8 @@ RSpec.describe UntilAndWhileExecutingReplaceJob do
       expect(set.size).to eq(1)
       expect(set.first.item["args"]).to eq(["unique", "first argument"])
 
-      described_class.perform_in(30, "unique", "new argument")
+      job_id = described_class.perform_in(30, "unique", "new argument")
+      expect(job_id).not_to be_nil
       expect(set.size).to eq(1)
       expect(set.first.item["args"]).to eq(["unique", "new argument"])
 
