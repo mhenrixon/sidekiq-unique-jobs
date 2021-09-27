@@ -60,7 +60,7 @@ begin
 rescue LoadError => ex
   puts "RSpec is currently not available"
 
-  task :rubocop do
+  task :rspec do
     puts "Should be running rspec"
   end
 end
@@ -91,8 +91,9 @@ begin
 rescue LoadError => ex
   puts "Yard is currently unavailable"
 
-  task :rspec do
+  task :yard do
     puts "Should be running rspec"
+  end
 end
 
 task default: [:style, :rspec, :yard]

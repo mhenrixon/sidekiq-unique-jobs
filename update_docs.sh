@@ -11,7 +11,8 @@ fi;
 
 git pull --rebase
 
-rake yard
+bundle install
+bin/rake yard
 
 git checkout gh-pages
 
@@ -35,3 +36,4 @@ if [[ $stash_created == 1 ]]; then
 fi;
 
 git checkout main
+bundle install
