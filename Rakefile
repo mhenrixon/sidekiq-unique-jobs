@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 Dir.glob("#{File.expand_path(__dir__)}/lib/tasks/**/*.rake").each { |f| import f }
 
 begin
@@ -20,9 +19,10 @@ begin
     t.fail_on_error = true
     t.verbose       = true
   end
-rescue LoadError => ex
+rescue LoadError
   puts "Reek is currently unavailable"
 
+  desc "Template Reek task"
   task :reek do
     puts "Should be running reek"
   end
@@ -39,14 +39,14 @@ begin
     # task.patterns = changed_files(5)
     task.options = %w[-DEP --format fuubar]
   end
-rescue LoadError => ex
+rescue LoadError
   puts "Rubocop is currently unavailable"
 
+  desc "Template Rubocop task"
   task :rubocop do
     puts "Should be running rubocop"
   end
 end
-
 
 desc "Runs style validations"
 task style: [:reek, :rubocop]
@@ -57,9 +57,10 @@ begin
   RSpec::Core::RakeTask.new(:rspec) do |t|
     t.rspec_opts = "--format Fuubar --format Nc"
   end
-rescue LoadError => ex
+rescue LoadError
   puts "RSpec is currently not available"
 
+  desc "Template RSpec task"
   task :rspec do
     puts "Should be running rspec"
   end
@@ -88,11 +89,12 @@ begin
       --list-undoc
     ]
   end
-rescue LoadError => ex
+rescue LoadError
   puts "Yard is currently unavailable"
 
+  desc "Template Yard task"
   task :yard do
-    puts "Should be running rspec"
+    puts "Should be running yard"
   end
 end
 
