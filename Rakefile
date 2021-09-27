@@ -1,25 +1,31 @@
 # frozen_string_literal: true
 
-require "reek/rake/task"
-require "rspec/core/rake_task"
-require "rubocop/rake_task"
 
 Dir.glob("#{File.expand_path(__dir__)}/lib/tasks/**/*.rake").each { |f| import f }
 
-Reek::Rake::Task.new(:reek) do |t|
-  t.name          = "reek"
-  t.config_file   = ".reek.yml"
-  t.source_files  = "."
-  t.reek_opts     = %w[
-    --line-numbers
-    --color
-    --documentation
-    --progress
-    --single-line
-    --sort-by smelliness
-  ].join(" ")
-  t.fail_on_error = true
-  t.verbose       = true
+begin
+  require "reek/rake/task"
+  Reek::Rake::Task.new(:reek) do |t|
+    t.name          = "reek"
+    t.config_file   = ".reek.yml"
+    t.source_files  = "."
+    t.reek_opts     = %w[
+      --line-numbers
+      --color
+      --documentation
+      --progress
+      --single-line
+      --sort-by smelliness
+    ].join(" ")
+    t.fail_on_error = true
+    t.verbose       = true
+  end
+rescue LoadError => ex
+  puts "Reek is currently unavailable"
+
+  task :reek do
+    puts "Should be running reek"
+  end
 end
 
 def changed_files(pedantry)
@@ -27,39 +33,66 @@ def changed_files(pedantry)
     .split("\n").select { |f| f.match(/(\.rb\z)|Rakefile/) && File.exist?(f) && !f.include?("db") }
 end
 
-RuboCop::RakeTask.new(:rubocop) do |task|
-  # task.patterns = changed_files(5)
-  task.options = %w[-DEP --format fuubar]
+begin
+  require "rubocop/rake_task"
+  RuboCop::RakeTask.new(:rubocop) do |task|
+    # task.patterns = changed_files(5)
+    task.options = %w[-DEP --format fuubar]
+  end
+rescue LoadError => ex
+  puts "Rubocop is currently unavailable"
+
+  task :rubocop do
+    puts "Should be running rubocop"
+  end
 end
+
 
 desc "Runs style validations"
 task style: [:reek, :rubocop]
 
-RSpec::Core::RakeTask.new(:rspec) do |t|
-  t.rspec_opts = "--format Fuubar --format Nc"
+begin
+  require "rspec/core/rake_task"
+
+  RSpec::Core::RakeTask.new(:rspec) do |t|
+    t.rspec_opts = "--format Fuubar --format Nc"
+  end
+rescue LoadError => ex
+  puts "RSpec is currently not available"
+
+  task :rubocop do
+    puts "Should be running rspec"
+  end
 end
 
-require "yard"
-YARD::Rake::YardocTask.new(:yard) do |t|
-  t.files   = %w[lib/sidekiq_unique_jobs/**/*.rb]
-  t.options = %w[
-    --exclude lib/sidekiq_unique_jobs/testing.rb
-    --exclude lib/sidekiq_unique_jobs/web/helpers.rb
-    --exclude lib/redis.rb
-    --no-private
-    --embed-mixins
-    --markup=markdown
-    --markup-provider=redcarpet
-    --readme README.md
-    --files CHANGELOG.md,LICENSE.txt
-  ]
-  t.stats_options = %w[
-    --exclude lib/sidekiq_unique_jobs/testing.rb
-    --exclude lib/sidekiq_unique_jobs/web/helpers.rb
-    --no-private
-    --compact
-    --list-undoc
-  ]
+begin
+  require "yard"
+  YARD::Rake::YardocTask.new(:yard) do |t|
+    t.files   = %w[lib/sidekiq_unique_jobs/**/*.rb]
+    t.options = %w[
+      --exclude lib/sidekiq_unique_jobs/testing.rb
+      --exclude lib/sidekiq_unique_jobs/web/helpers.rb
+      --exclude lib/redis.rb
+      --no-private
+      --embed-mixins
+      --markup=markdown
+      --markup-provider=redcarpet
+      --readme README.md
+      --files CHANGELOG.md,LICENSE.txt
+    ]
+    t.stats_options = %w[
+      --exclude lib/sidekiq_unique_jobs/testing.rb
+      --exclude lib/sidekiq_unique_jobs/web/helpers.rb
+      --no-private
+      --compact
+      --list-undoc
+    ]
+  end
+rescue LoadError => ex
+  puts "Yard is currently unavailable"
+
+  task :rspec do
+    puts "Should be running rspec"
 end
 
 task default: [:style, :rspec, :yard]
