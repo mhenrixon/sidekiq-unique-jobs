@@ -91,6 +91,13 @@ module SidekiqUniqueJobs
       #   @return [Integer] the current locking attempt
       attr_reader :attempt
 
+      #
+      # Eases testing by allowing the lock implementation to add the missing
+      # keys to the job hash.
+      #
+      #
+      # @return [void] the return value should be irrelevant
+      #
       def prepare_item
         return if item.key?(LOCK_DIGEST)
 
@@ -99,6 +106,16 @@ module SidekiqUniqueJobs
         SidekiqUniqueJobs::Job.prepare(item)
       end
 
+      #
+      # Call whatever strategry that has been configured
+      #
+      # @param [Symbol] origin: the origin `:client` or `:server`
+      #
+      # @return [void] the return value is irrelevant
+      #
+      # @yieldparam [void] if a new job id was set and a block is given
+      # @yieldreturn [void] the yield is irrelevant, it only provides a mechanism in
+      #   one specific situation to yield back to the middleware.
       def call_strategy(origin:)
         new_job_id = nil
         strategy   = strategy_for(origin)
