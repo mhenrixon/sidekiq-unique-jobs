@@ -38,6 +38,6 @@ class Issue432Worker
   def log(arguments, action)
     puts "      !!! #{action} #{arguments.inspect} "
     "\at #{Time.now.to_i - redis.get('start').to_i} sec, " \
-    "counter is #{redis.get('counter')}"
+      "counter is #{redis.get('counter')}"
   end
 end

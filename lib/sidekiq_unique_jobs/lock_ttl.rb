@@ -71,7 +71,7 @@ module SidekiqUniqueJobs
       ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
       ttl ||= worker_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
       ttl ||= SidekiqUniqueJobs.config.lock_ttl
-      ttl && ttl.to_i + time_until_scheduled
+      ttl && (ttl.to_i + time_until_scheduled)
     end
   end
 end

@@ -24,7 +24,7 @@ RSpec.describe UntilExpiredJob do
         expect(1).to be_enqueued_in("customqueue")
         described_class.perform_in(3600, 1, 2)
         expect(1).to be_enqueued_in("customqueue")
-        expect(1).to be_scheduled_at(Time.now.to_f + 2 * 60)
+        expect(1).to be_scheduled_at(Time.now.to_f + (2 * 60))
       end
 
       it "rejects new jobs" do
@@ -57,7 +57,7 @@ RSpec.describe UntilExpiredJob do
         expect(1).to be_enqueued_in("customqueue")
         described_class.perform_in(60, 1, 2)
         expect(1).to be_enqueued_in("customqueue")
-        expect(0).to be_scheduled_at(Time.now.to_f + 2 * 60)
+        expect(0).to be_scheduled_at(Time.now.to_f + (2 * 60))
       end
 
       it "rejects new jobs" do

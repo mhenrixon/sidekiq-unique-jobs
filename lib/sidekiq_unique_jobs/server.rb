@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Server
-    DEATH_HANDLER ||= (lambda do |job, _ex|
+    DEATH_HANDLER = (lambda do |job, _ex|
       return unless (digest = job["lock_digest"])
 
       SidekiqUniqueJobs::Digests.new.delete_by_digest(digest)

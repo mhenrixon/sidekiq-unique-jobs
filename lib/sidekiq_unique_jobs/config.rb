@@ -205,7 +205,8 @@ module SidekiqUniqueJobs
     # @return [<type>] <description>
     #
     def default_lock_ttl=(obj)
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_ttl=` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
+           " Please use `#{class_name}#lock_ttl=` instead."
       self.lock_ttl = obj
     end
 
@@ -218,7 +219,8 @@ module SidekiqUniqueJobs
     # @return [Integer]
     #
     def default_lock_timeout=(obj)
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_timeout=` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
+           " Please use `#{class_name}#lock_timeout=` instead."
       self.lock_timeout = obj
     end
 
@@ -229,7 +231,8 @@ module SidekiqUniqueJobs
     # @return [nil, Integer] configured value or nil
     #
     def default_lock_ttl
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_ttl` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
+           " Please use `#{class_name}#lock_ttl` instead."
       lock_ttl
     end
 
@@ -241,7 +244,8 @@ module SidekiqUniqueJobs
     # @return [nil, Integer] configured value or nil
     #
     def default_lock_timeout
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. Please use `#{class_name}#lock_timeout` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
+           " Please use `#{class_name}#lock_timeout` instead."
       lock_timeout
     end
 
