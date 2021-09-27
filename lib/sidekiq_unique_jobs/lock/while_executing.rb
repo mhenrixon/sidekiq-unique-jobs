@@ -40,7 +40,7 @@ module SidekiqUniqueJobs
       # @yield to the worker class perform method
       def execute
         with_logging_context do
-          call_strategy(origin: :server) unless locksmith.execute do
+          return call_strategy(origin: :server) unless locksmith.execute do
             yield
             callback_safely if locksmith.unlock
           ensure

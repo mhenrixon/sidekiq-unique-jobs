@@ -39,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       end
 
       it "logs important information" do
-        call
+        expect(call).to eq(nil)
 
         expect(strategy).to have_received(:log_info).with("Deleted job: #{jid}")
         expect(strategy).to have_received(:log_info).with("Deleted `9` keys for #{lock_digest}")
@@ -56,7 +56,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       end
 
       it "logs important information" do
-        call
+        expect(call).to eq(nil)
 
         expect(strategy).to have_received(:log_info).with("Deleted job: #{jid}")
         expect(strategy).not_to have_received(:log_info).with("Deleted `` keys for #{lock_digest}")
@@ -74,7 +74,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       end
 
       it "does not call block" do
-        call
+        expect(call).to eq(nil)
         expect(block).not_to have_received(:call)
       end
     end
@@ -107,6 +107,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
 
       it "removes the job from the scheduled set" do
         expect { call }.to change { schedule_count }.from(1).to(0)
+        expect(call).to eq(nil)
         expect(block).to have_received(:call)
       end
     end
@@ -116,7 +117,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
 
       it "removes the job from the queue" do
         expect { call }.to change { queue_count(:customqueue) }.from(1).to(0)
-
+        expect(call).to eq(nil)
         expect(block).to have_received(:call)
       end
     end
