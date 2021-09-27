@@ -1,5 +1,21 @@
 # Changelog
 
+## [v7.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.13) (2021-09-27)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.7...v7.0.13)
+
+## [v7.1.7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.7) (2021-09-27)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.6...v7.1.7)
+
+**Implemented enhancements:**
+
+- Styles [\#642](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/642) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- OnConflict::Replace: yield when lock was achieved [\#640](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/640) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.6) (2021-09-21)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.5...v7.1.6)
@@ -125,7 +141,6 @@
 
 **Fixed bugs:**
 
-- lock\_info set to true but no lock info showing up in web ui [\#589](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/589)
 - Fix recording lock\_info [\#599](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/599) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v7.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.8) (2021-04-14)
