@@ -802,7 +802,7 @@ module SidekiqUniqueJobs
         zcard("dead")
       end
 
-      def schedule_count_at(max = Time.now.to_f + 2 * 60)
+      def schedule_count_at(max = Time.now.to_f + (2 * 60))
         zcount("schedule", "-inf", max)
       end
 

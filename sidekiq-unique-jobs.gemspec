@@ -68,10 +68,10 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.5.0"
+  spec.required_ruby_version = ">= 2.5"
 
   spec.add_dependency "brpoplpush-redis_script", "> 0.1.1", "<= 2.0.0"
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
-  spec.add_dependency "sidekiq", ">= 5.0", "< 7.0"
-  spec.add_dependency "thor", ">= 0.20", "< 2.0"
+  spec.add_dependency "sidekiq", ">= 5.0", "< 8.0"
+  spec.add_dependency "thor", ">= 0.20", "< 3.0"
 end
