@@ -43,8 +43,6 @@ module SidekiqUniqueJobs
         end
 
         block&.call
-
-        nil # Ensure we always return nil
       end
 
       #

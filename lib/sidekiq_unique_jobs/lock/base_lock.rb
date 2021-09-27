@@ -99,26 +99,13 @@ module SidekiqUniqueJobs
         SidekiqUniqueJobs::Job.prepare(item)
       end
 
-      #
-      # Handle when lock failed
-      #
-      # @param [Symbol] origin either `:client` or `:server`
-      #
-      # @return [void]
-      #
-      def lock_failed(origin: :client)
-        reflect(:lock_failed, item)
-        call_strategy(origin: origin)
-        nil
-      end
-
       def call_strategy(origin:)
-        strategy = strategy_for(origin)
-        strategy.call { lock if strategy.replace? && @attempt < 2 }
+        new_job_id = nil
+        strategy   = strategy_for(origin)
+        @attempt  += 1
 
-        @attempt += 1
-
-        nil
+        strategy.call { new_job_id = lock if strategy.replace? && @attempt < 2 }
+        yield if new_job_id && block_given?
       end
 
       def unlock_and_callback

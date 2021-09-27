@@ -11,7 +11,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class WhileExecuting < BaseLock
-      RUN_SUFFIX ||= ":RUN"
+      RUN_SUFFIX = ":RUN"
 
       include SidekiqUniqueJobs::OptionsWithFallback
       include SidekiqUniqueJobs::Logging::Middleware
@@ -30,7 +30,7 @@ module SidekiqUniqueJobs
       # @return [true] always returns true
       def lock
         job_id = item[JID]
-        yield job_id if block_given?
+        yield if block_given?
 
         job_id
       end
@@ -38,14 +38,16 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process.
       #   These jobs are locked in the server process not from the client
       # @yield to the worker class perform method
-      def execute
+      def execute(&block)
         with_logging_context do
-          return call_strategy(origin: :server) unless locksmith.execute do
+          executed = locksmith.execute do
             yield
             callback_safely if locksmith.unlock
           ensure
             locksmith.unlock
           end
+
+          call_strategy(origin: :server, &block) unless executed
         end
       end
 
