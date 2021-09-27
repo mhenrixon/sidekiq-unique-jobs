@@ -22,9 +22,15 @@ module SidekiqUniqueJobs
       #
       # @yield to the caller when given a block
       #
-      def lock(origin: :client)
-        return lock_failed(origin: origin) unless (token = locksmith.lock)
-        return yield token if block_given?
+      def lock(origin: :client, &block)
+        unless (token = locksmith.lock)
+          reflect(:lock_failed, item)
+          call_strategy(origin: origin, &block)
+
+          return
+        end
+
+        yield if block
 
         token
       end

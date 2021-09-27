@@ -15,11 +15,17 @@ module SidekiqUniqueJobs
       #
       # @return [String, nil] the locked jid when properly locked, else nil.
       #
-      def lock
-        return lock_failed unless (job_id = locksmith.lock)
-        return yield job_id if block_given?
+      def lock(&block)
+        unless (token = locksmith.lock)
+          reflect(:lock_failed, item)
+          call_strategy(origin: :client, &block)
 
-        job_id
+          return
+        end
+
+        yield if block
+
+        token
       end
 
       # Executes in the Sidekiq server process

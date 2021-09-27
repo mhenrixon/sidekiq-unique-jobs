@@ -91,6 +91,13 @@ module SidekiqUniqueJobs
       #   @return [Integer] the current locking attempt
       attr_reader :attempt
 
+      #
+      # Eases testing by allowing the lock implementation to add the missing
+      # keys to the job hash.
+      #
+      #
+      # @return [void] the return value should be irrelevant
+      #
       def prepare_item
         return if item.key?(LOCK_DIGEST)
 
@@ -100,34 +107,22 @@ module SidekiqUniqueJobs
       end
 
       #
-      # Handle when lock failed
+      # Call whatever strategry that has been configured
       #
-      # @param [Symbol] origin either `:client` or `:server`
+      # @param [Symbol] origin: the origin `:client` or `:server`
       #
-      # @return [void]
+      # @return [void] the return value is irrelevant
       #
-      def lock_failed(origin: :client)
-        reflect(:lock_failed, item)
-        call_strategy(origin: origin)
-        nil
-      end
-
+      # @yieldparam [void] if a new job id was set and a block is given
+      # @yieldreturn [void] the yield is irrelevant, it only provides a mechanism in
+      #   one specific situation to yield back to the middleware.
       def call_strategy(origin:)
-        @attempt += 1
+        new_job_id = nil
+        strategy   = strategy_for(origin)
+        @attempt  += 1
 
-        case origin
-        when :client
-          client_strategy.call { lock if replace? }
-        when :server
-          server_strategy.call { lock if replace? }
-        else
-          raise SidekiqUniqueJobs::InvalidArgument,
-                "either `for: :server` or `for: :client` needs to be specified"
-        end
-      end
-
-      def replace?
-        client_strategy.replace? && attempt < 2
+        strategy.call { new_job_id = lock if strategy.replace? && @attempt < 2 }
+        yield if new_job_id && block_given?
       end
 
       def unlock_and_callback
@@ -142,6 +137,18 @@ module SidekiqUniqueJobs
       rescue StandardError
         reflect(:after_unlock_callback_failed, item)
         raise
+      end
+
+      def strategy_for(origin)
+        case origin
+        when :client
+          client_strategy
+        when :server
+          server_strategy
+        else
+          raise SidekiqUniqueJobs::InvalidArgument,
+                "#origin needs to be either `:server` or `:client`"
+        end
       end
 
       def client_strategy
