@@ -46,10 +46,8 @@ module SidekiqUniqueJobs
     # @return [Class]
     #
     def lock_class
-      @lock_class ||= begin
-        locks.fetch(lock_type.to_sym) do
-          raise UnknownLock, "No implementation for `lock: :#{lock_type}`"
-        end
+      @lock_class ||= locks.fetch(lock_type.to_sym) do
+        raise UnknownLock, "No implementation for `lock: :#{lock_type}`"
       end
     end
 

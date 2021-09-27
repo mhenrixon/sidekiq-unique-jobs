@@ -57,7 +57,8 @@ module SidekiqUniqueJobs
         if DEPRECATIONS.key?(reflection)
           replacement, removal_version = DEPRECATIONS[reflection]
           SidekiqUniqueJobs::Deprecation.warn(
-            "#{reflection} is deprecated and will be removed in version #{removal_version}. Use #{replacement} instead.",
+            "#{reflection} is deprecated and will be removed in version #{removal_version}." \
+            " Use #{replacement} instead.",
           )
         end
       elsif misconfigured?(reflection)

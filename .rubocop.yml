@@ -69,6 +69,10 @@ Naming/FileName:
   Enabled: true
   Exclude:
     - lib/sidekiq-unique-jobs.rb
+    - Gemfile
+    - Rakefile
+    - myapp/Gemfile
+    - myapp/Rakefile
 
 Naming/RescuedExceptionsVariableName:
   PreferredName: ex

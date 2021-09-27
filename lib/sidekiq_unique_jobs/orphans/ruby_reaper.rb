@@ -184,7 +184,7 @@ module SidekiqUniqueJobs
         page_size    = 50
 
         loop do
-          range_start = page * page_size - deleted_size
+          range_start = (page * page_size) - deleted_size
           range_end   = range_start + page_size - 1
           entries     = conn.lrange(queue_key, range_start, range_end)
           page       += 1

@@ -36,7 +36,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       expect(schedule_count).to eq(20)
     end
 
-    it "schedules allows jobs to be scheduled " do
+    it "schedules allows jobs to be scheduled" do
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
         PlainClass.delay_for(x, queue: "default", unique: :while_executing).run(1)
       end
@@ -165,7 +165,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
   end
 
   it "expires the digest when a scheduled job is scheduled at" do
-    expected_expires_at = Time.now.to_i + 15 * 60 - Time.now.to_i
+    expected_expires_at = Time.now.to_i + (15 * 60) - Time.now.to_i
 
     MyUniqueJob.perform_in(expected_expires_at, "mika", "hel")
 

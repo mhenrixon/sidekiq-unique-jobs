@@ -23,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
     end
 
     context "when scheduled" do
-      let(:schedule_time) { Time.now.utc.to_i + 24 * 60 * 60 }
+      let(:schedule_time) { Time.now.utc.to_i + (24 * 60 * 60) }
       let(:now_in_utc)    { Time.now.utc.to_i }
 
       it do
