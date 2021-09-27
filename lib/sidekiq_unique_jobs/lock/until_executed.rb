@@ -8,7 +8,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class UntilExecuted < BaseLock
-      OK ||= "OK"
+      OK = "OK"
 
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method

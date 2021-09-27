@@ -49,12 +49,23 @@ RSpec.describe "Sidekiq::Api" do
     end
   end
 
-  describe Sidekiq::Job::UniqueExtension do
-    it "deletes uniqueness lock on delete" do
-      jid = JustAWorker.perform_async(roo: "baf")
-      expect(unique_keys).not_to match_array([])
-      Sidekiq::Queue.new("testqueue").find_job(jid).delete
-      expect(unique_keys).to match_array([])
+  if Sidekiq.const_defined?("JobRecord")
+    describe Sidekiq::JobRecord::UniqueExtension do
+      it "deletes uniqueness lock on delete" do
+        jid = JustAWorker.perform_async(roo: "baf")
+        expect(unique_keys).not_to match_array([])
+        Sidekiq::Queue.new("testqueue").find_job(jid).delete
+        expect(unique_keys).to match_array([])
+      end
+    end
+  else
+    describe Sidekiq::Job::UniqueExtension do
+      it "deletes uniqueness lock on delete" do
+        jid = JustAWorker.perform_async(roo: "baf")
+        expect(unique_keys).not_to match_array([])
+        Sidekiq::Queue.new("testqueue").find_job(jid).delete
+        expect(unique_keys).to match_array([])
+      end
     end
   end
 

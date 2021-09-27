@@ -74,7 +74,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
 
       it "logs a warning" do
         expect { callback_safely }.to raise_error(RuntimeError, "Hell")
-        expect(lock).to have_received(:log_warn).with("Unlocked successfully but the #after_unlock callback failed!", item)
+        expect(lock).to have_received(:log_warn).with("Unlocked successfully but the #after_unlock callback failed!",
+                                                      item)
       end
     end
   end
