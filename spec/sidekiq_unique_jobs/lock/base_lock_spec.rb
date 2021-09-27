@@ -24,42 +24,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
     end
   end
 
-  describe "#replace?" do
-    subject(:replace?) { lock.send(:replace?, origin) }
-
-    let(:origin) { nil }
-
-    shared_examples "valid replace?" do
-      context "when strategy is not :replace" do
-        let(:strategy) { :log }
-
-        it { is_expected.to eq(false) }
-      end
-
-      context "when attempt is less than 2" do
-        it { is_expected.to eq(true) }
-      end
-
-      context "when attempt is equal to 2" do
-        before { lock.instance_variable_set(:@attempt, 2) }
-
-        it { is_expected.to eq(false) }
-      end
-    end
-
-    context "when origin is :client" do
-      let(:origin) { :client }
-
-      it_behaves_like "valid replace?"
-    end
-
-    context "when origin is :server" do
-      let(:origin) { :server }
-
-      it_behaves_like "valid replace?"
-    end
-  end
-
   describe "#callback_safely" do
     subject(:callback_safely) { lock.send(:callback_safely) }
 

@@ -113,28 +113,12 @@ module SidekiqUniqueJobs
       end
 
       def call_strategy(origin:)
-        case origin
-        when :client
-          client_strategy.call { lock if replace?(origin) }
-        when :server
-          server_strategy.call { lock if replace?(origin) }
-        else
-          raise SidekiqUniqueJobs::InvalidArgument,
-                "either `for: :server` or `for: :client` needs to be specified"
-        end
+        strategy = strategy_for(origin)
+        strategy.call { lock if strategy.replace? && @attempt < 2 }
 
         @attempt += 1
 
         nil
-      end
-
-      def replace?(origin)
-        case origin
-        when :client
-          client_strategy.replace? && attempt < 2
-        when :server
-          server_strategy.replace? && attempt < 2
-        end
       end
 
       def unlock_and_callback
@@ -149,6 +133,18 @@ module SidekiqUniqueJobs
       rescue StandardError
         reflect(:after_unlock_callback_failed, item)
         raise
+      end
+
+      def strategy_for(origin)
+        case origin
+        when :client
+          client_strategy
+        when :server
+          server_strategy
+        else
+          raise SidekiqUniqueJobs::InvalidArgument,
+                "#origin needs to be either `:server` or `:client`"
+        end
       end
 
       def client_strategy
