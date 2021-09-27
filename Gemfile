@@ -19,26 +19,25 @@ gem "timecop"
 gem "yard"
 
 platforms :mri do
-  gem "concurrent-ruby-ext"
-  gem "fasterer"
-  gem "github_changelog_generator"
-  gem "hiredis"
-  gem "redcarpet", "~> 3.4"
-  gem "reek", ">= 5.3"
-  gem "rspec-benchmark"
   gem "rubocop-mhenrixon"
-  gem "ruby-prof", ">= 0.17.0", require: false
-  gem "simplecov-sublime", ">= 0.21.2", require: false
-  gem "stackprof", ">= 0.2.9", require: false
-  gem "test-prof"
-  gem "travis"
 end
 
 if respond_to?(:install_if)
   install_if -> { RUBY_PLATFORM.include?("darwin") } do
+    gem "concurrent-ruby-ext"
+    gem "fasterer"
     gem "fuubar"
+    gem "github_changelog_generator"
+    gem "hiredis"
     gem "pry"
+    gem "redcarpet", "~> 3.4"
+    gem "reek", ">= 5.3"
+    gem "rspec-benchmark"
     gem "rspec-nc"
+    gem "ruby-prof", ">= 0.17.0", require: false
+    gem "simplecov-sublime", ">= 0.21.2", require: false
+    gem "stackprof", ">= 0.2.9", require: false
+    gem "test-prof"
   end
 end
 
