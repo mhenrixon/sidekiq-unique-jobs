@@ -1,17 +1,5 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
-
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.8...HEAD)
-
-**Fixed bugs:**
-
-- Prevent too eager cleanup of lock info [\#645](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/645) ([mhenrixon](https://github.com/mhenrixon))
-
-**Merged pull requests:**
-
-- Update docs [\#644](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/644) ([andypple](https://github.com/andypple))
-
 ## [v7.1.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.8) (2021-10-08)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.13...v7.1.8)
@@ -21,10 +9,15 @@
 - undefined method `delete' for class `Sidekiq::Job' [\#634](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/634)
 - INFO keys not persisted when job is enqueued [\#602](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/602)
 - lock\_info set to true but no lock info showing up in web ui [\#589](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/589)
+- Prevent too eager cleanup of lock info [\#645](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/645) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
 - Compatibility with unreleased Sidekiq 6.3.0 [\#636](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/636)
+
+**Merged pull requests:**
+
+- Update docs [\#644](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/644) ([andypple](https://github.com/andypple))
 
 ## [v7.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.13) (2021-09-27)
 
