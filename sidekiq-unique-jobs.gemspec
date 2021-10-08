@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.post_install_message = <<~POST_INSTALL
     IMPORTANT!
 
-    Automatic configuration of the sidekiq middelware is no longer done.
+    Automatic configuration of the sidekiq middleware is no longer done.
     Please see: https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/README.md#add-the-middleware
 
     This version deprecated the following sidekiq_options
