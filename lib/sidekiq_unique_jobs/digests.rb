@@ -31,7 +31,8 @@ module SidekiqUniqueJobs
     #
     # @param [String] pattern a key pattern to match with
     # @param [Integer] count the maximum number
-    # @return [Array<String>] with unique digests
+    # @return [Hash<String,Float>] Hash mapping of digest matching the given pattern and score
+
     def delete_by_pattern(pattern, count: DEFAULT_COUNT)
       result, elapsed = timed do
         digests = entries(pattern: pattern, count: count).keys
