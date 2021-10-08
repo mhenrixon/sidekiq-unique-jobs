@@ -15,6 +15,7 @@ RSpec.describe "lock.lua" do
   let(:primed)     { redlock.primed }
   let(:locked)     { redlock.locked }
   let(:lock_ttl)   { nil }
+  let(:lock_info)  { true }
   let(:locked_jid) { job_id_one }
   let(:now_f)      { SidekiqUniqueJobs.now_f }
   let(:lock_limit) { 1 }
@@ -23,6 +24,9 @@ RSpec.describe "lock.lua" do
     before do
       call_script(:queue, key.to_a, argv_one)
       rpoplpush(key.queued, key.primed)
+      # The info key is written by the locksmith#write_lock_info directly.
+      # To be able to test the expiration, we need to simulate this.
+      set(key.info, 'bogus')
     end
   end
 
@@ -30,6 +34,7 @@ RSpec.describe "lock.lua" do
     it { expect { lock }.to change { zcard(key.changelog) }.by(1) }
     it { expect { lock }.not_to change { ttl(key.digest) }.from(lock_ttl / 1_000) }
     it { expect { lock }.to change { ttl(key.locked) }.to(lock_ttl / 1_000) }
+    it { expect { lock }.to change { ttl(key.info) }.to(lock_ttl / 1_000) }
     it { expect { lock }.to change { hget(key.locked, job_id_one) }.from(nil) }
     it { expect { lock }.to change { llen(key.queued) }.by(0) }
     it { expect { lock }.to change { llen(key.primed) }.by(-1) }
@@ -40,6 +45,7 @@ RSpec.describe "lock.lua" do
     it { expect { lock }.to change { zcard(key.changelog) }.by(1) }
     it { expect { lock }.not_to change { ttl(key.digest) }.from(-1) }
     it { expect { lock }.to change { ttl(key.locked) }.to(-1) }
+    it { expect { lock }.not_to change { ttl(key.info) }.from(-1) }
     it { expect { lock }.to change { hget(key.locked, job_id_one) }.from(nil) }
     it { expect { lock }.to change { llen(key.queued) }.by(0) }
     it { expect { lock }.to change { llen(key.primed) }.by(-1) }
@@ -55,6 +61,7 @@ RSpec.describe "lock.lua" do
       it { expect { lock }.to change { zcard(key.changelog) }.by(1) }
       it { expect { lock }.not_to change { ttl(key.digest) }.from(lock_ttl / 1_000) }
       it { expect { lock }.to change { ttl(key.locked) }.to(lock_ttl / 1_000) }
+      it { expect { lock }.to change { ttl(key.info) }.to(lock_ttl / 1_000) }
       it { expect { lock }.to change { hget(key.locked, job_id_one) }.from(nil) }
       it { expect { lock }.to change { llen(key.queued) }.by(0) }
       it { expect { lock }.to change { llen(key.primed) }.by(-1) }
@@ -68,6 +75,7 @@ RSpec.describe "lock.lua" do
       it { expect { lock }.not_to change { ttl(key.digest) }.from(-1) }
       it { expect { lock }.to change { ttl(key.locked) }.to(-1) }
       it { expect { lock }.to change { hget(key.locked, job_id_one) }.from(nil) }
+      it { expect { lock }.not_to change { ttl(key.info) }.from(-1) }
       it { expect { lock }.to change { llen(key.queued) }.by(0) }
       it { expect { lock }.to change { llen(key.primed) }.by(-1) }
       it { expect { lock }.to change { zcard("uniquejobs:digests") }.by(1) }

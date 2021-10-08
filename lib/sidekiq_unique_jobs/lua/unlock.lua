@@ -76,11 +76,19 @@ local del_cmd       = "DEL"
 if tonumber(redis_version["major"]) >= 4 then del_cmd =  "UNLINK"; end
 
 if lock_type ~= "until_expired" then
+
   log_debug(del_cmd, digest, info)
   redis.call(del_cmd, digest, info)
 
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)
+end
+
+local locked_count = redis.call("HLEN", locked)
+
+if tonumber(locked_count) < 1 then
+  log_debug(del_cmd, locked)
+  redis.call(del_cmd, locked)
 end
 
 log_debug("LPUSH", queued, "1")
