@@ -26,7 +26,7 @@ RSpec.describe "lock.lua" do
       rpoplpush(key.queued, key.primed)
       # The info key is written by the locksmith#write_lock_info directly.
       # To be able to test the expiration, we need to simulate this.
-      set(key.info, 'bogus')
+      set(key.info, "bogus")
     end
   end
 
