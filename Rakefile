@@ -129,7 +129,7 @@ end
 
 desc "Release a new gem version"
 task :release do
-  sh("./update_docs.sh")
+  # sh("./update_docs.sh")
   sh("bundle install")
   sh("bundle exec gem release --tag --push")
   Rake::Task["changelog"].invoke
