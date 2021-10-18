@@ -1043,7 +1043,7 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 You can find a list of contributors over on [Contributors][]
 
-[Enterprise unique jobs]: https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
+[Enterprise unique jobs]: https://github.com/mperham/sidekiq/wiki/Ent-Unique-Jobs
 [Contributors]: https://github.com/mhenrixon/sidekiq-unique-jobs/graphs/contributors
 [v4.0.18]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18
 [v5.0.10]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
