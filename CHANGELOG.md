@@ -1,5 +1,32 @@
 # Changelog
 
+## [v7.1.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.11) (2021-11-30)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.10...v7.1.11)
+
+**Fixed bugs:**
+
+- Fix ruby reaper edge case [\#661](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/661) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Question: Wait instead of cancelling if it is executing? [\#655](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/655)
+- Expired Locks remain in zset of digests \[using "until\_expired" lock\] [\#653](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/653)
+- \[Q&A\] Performance & Dead Locks [\#652](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/652)
+- Sidekiq 6.3.0 includes Job module that clashes with sidekiq\_unique\_ext.rb class Job [\#651](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/651)
+
+## [v7.1.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.10) (2021-10-18)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.8...v7.1.10)
+
+**Fixed bugs:**
+
+- "IndexError: string not matched" when job is replaced on client [\#635](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/635)
+
+**Merged pull requests:**
+
+- Update URL for Sidekiq's Enterprise unique jobs [\#648](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/648) ([jsantos](https://github.com/jsantos))
+
 ## [v7.1.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.8) (2021-10-08)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.0.13...v7.1.8)
