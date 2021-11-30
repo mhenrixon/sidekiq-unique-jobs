@@ -32,6 +32,28 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
   describe "#orphans" do
     subject(:orphans) { service.orphans }
 
+    context "when reaping more jobs than reaper_count" do
+      let(:digest_one)   { "uniquejobs:digest1" }
+      let(:digest_two)   { "uniquejobs:digest2" }
+      let(:digest_three) { "uniquejobs:digest3" }
+      let(:job_id_one)   { "jobid1" }
+      let(:job_id_two)   { "jobid2" }
+      let(:job_id_three) { "jobid3" }
+
+      before do
+        SidekiqUniqueJobs::Lock.create(digest_one, job_id_one)
+        SidekiqUniqueJobs::Lock.create(digest_two, job_id_two)
+        SidekiqUniqueJobs::Lock.create(digest_three, job_id_three)
+      end
+
+      it "returns the first digest" do
+        SidekiqUniqueJobs.use_config(reaper_count: 1) do
+          expect(orphans.size).to eq(1)
+          expect([digest_one, digest_two, digest_three]).to include(orphans.first)
+        end
+      end
+    end
+
     context "when scheduled" do
       let(:item) { raw_item.merge("at" => Time.now.to_f + 3_600) }
 

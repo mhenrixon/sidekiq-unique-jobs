@@ -59,7 +59,7 @@ module SidekiqUniqueJobs
           next if belongs_to_job?(digest)
 
           memo << digest
-          break if memo.size >= reaper_count
+          break memo if memo.size >= reaper_count
         end
       end
 
