@@ -65,18 +65,12 @@ redis.call("LREM", queued, -1, job_id)
 log_debug("LREM", primed, -1, job_id)
 redis.call("LREM", primed, -1, job_id)
 
-if limit and limit <= 1 and locked_count and locked_count <= 1 then
-  log_debug("ZREM", digests, digest)
-  redis.call("ZREM", digests, digest)
-end
-
 local redis_version = toversion(redisversion)
 local del_cmd       = "DEL"
 
 if tonumber(redis_version["major"]) >= 4 then del_cmd =  "UNLINK"; end
 
 if lock_type ~= "until_expired" then
-
   log_debug(del_cmd, digest, info)
   redis.call(del_cmd, digest, info)
 
@@ -86,9 +80,14 @@ end
 
 local locked_count = redis.call("HLEN", locked)
 
-if tonumber(locked_count) < 1 then
+if locked_count and locked_count < 1 then
   log_debug(del_cmd, locked)
   redis.call(del_cmd, locked)
+end
+
+if limit and limit <= 1 and locked_count and locked_count <= 1 then
+  log_debug("ZREM", digests, digest)
+  redis.call("ZREM", digests, digest)
 end
 
 log_debug("LPUSH", queued, "1")

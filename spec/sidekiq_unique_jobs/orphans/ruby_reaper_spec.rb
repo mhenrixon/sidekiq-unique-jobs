@@ -46,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
         SidekiqUniqueJobs::Lock.create(digest_three, job_id_three)
       end
 
-      it 'returns the first digest' do
+      it "returns the first digest" do
         SidekiqUniqueJobs.use_config(reaper_count: 1) do
           expect(orphans.size).to eq(1)
           expect([digest_one, digest_two, digest_three]).to include(orphans.first)

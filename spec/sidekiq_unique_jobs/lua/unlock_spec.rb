@@ -174,6 +174,7 @@ RSpec.describe "unlock.lua" do
     context "with same job_id", :with_a_lock do
       it "does unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
+                                                        .and change { digests.count }.by(-1)
 
         expect(queued.count).to eq(1)
         expect(queued.entries).to match_array(["1"])
@@ -189,9 +190,7 @@ RSpec.describe "unlock.lua" do
     context "when lock_limit > 1", :with_a_lock, :with_another_lock do
       let(:lock_limit) { 2 }
 
-      it { expect { unlock }.not_to change { digests.entries }.from(key.digest => kind_of(Float)) }
-
-      # it { expect { unlock }.to change { unique_digests.entries }.from([key.digest]) }
+      it { expect { unlock }.not_to change { digests.count }.from(1) }
     end
   end
 end
