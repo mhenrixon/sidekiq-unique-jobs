@@ -1,5 +1,14 @@
 # Changelog
 
+## [v7.1.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.12) (2021-12-01)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.11...v7.1.12)
+
+**Implemented enhancements:**
+
+- Improve Ruby Reaper performance under heavy load [\#663](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/663)
+- Improve reaper performance under heavy load [\#666](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/666) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.11) (2021-11-30)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.10...v7.1.11)
