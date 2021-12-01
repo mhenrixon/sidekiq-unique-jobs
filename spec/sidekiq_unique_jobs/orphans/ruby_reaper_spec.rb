@@ -49,7 +49,8 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
       it "returns the first digest" do
         SidekiqUniqueJobs.use_config(reaper_count: 1) do
           expect(orphans.size).to eq(1)
-          expect([digest_one, digest_two, digest_three]).to include(orphans.first)
+          # This is the first one to be created and should therefor be the only match
+          expect(orphans).to match_array([digest])
         end
       end
     end
