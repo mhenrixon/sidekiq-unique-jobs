@@ -19,7 +19,7 @@ class UntilExecutedJob
     [one, two]
   end
 
-  def after_unlock
+  def after_unlock(item)
     # NO OP
   end
 end

@@ -37,9 +37,9 @@ module SidekiqUniqueJobs
     def after_unlock_hook
       lambda do
         if @worker_class.respond_to?(:after_unlock)
-          @worker_class.after_unlock # instance method in sidekiq v6
+          @worker_class.after_unlock(item) # instance method in sidekiq v6
         elsif worker_class.respond_to?(:after_unlock)
-          worker_class.after_unlock # class method regardless of sidekiq version
+          worker_class.after_unlock(item) # class method regardless of sidekiq version
         end
       end
     end
