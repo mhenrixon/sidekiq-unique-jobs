@@ -9,6 +9,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
+    # rubocop:disable Metrics/ClassLength
     class RubyReaper < Reaper
       #
       # @return [String] the suffix for :RUN locks
@@ -54,15 +55,14 @@ module SidekiqUniqueJobs
       #
       # @return [Array<String>] an array of orphaned digests
       #
-      def orphans
+      def orphans # rubocop:disable Metrics/MethodLength
         page = 0
         per = reaper_count * 2
         orphans = []
         results = conn.zrange(digests.key, page * per, (page + 1) * per)
 
-        while(results.size > 0)
+        while results.size.positive?
           results.each do |digest|
-            p digest
             next if belongs_to_job?(digest)
 
             orphans << digest
@@ -73,9 +73,9 @@ module SidekiqUniqueJobs
 
           page += 1
           results = conn.zrange(digests.key, page * per, (page + 1) * per)
-       end
+        end
 
-       orphans
+        orphans
       end
 
       #
@@ -226,5 +226,6 @@ module SidekiqUniqueJobs
         conn.zscan_each(key, match: "*#{digest}*", count: 1).to_a.any?
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
