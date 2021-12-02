@@ -42,6 +42,7 @@ detectors:
       - SidekiqUniqueJobs::Locksmith#wait_for_primed_token
       - SidekiqUniqueJobs::OnConflict::Reschedule#call
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
+      - SidekiqUniqueJobs::Orphans::RubyReaper#orphans
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#extract_args
       - SidekiqUniqueJobs::Timing#timed
@@ -147,6 +148,7 @@ detectors:
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Orphans::RubyReaper#enqueued?
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
+      - SidekiqUniqueJobs::Orphans::RubyReaper#orphans
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
