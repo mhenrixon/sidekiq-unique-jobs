@@ -38,14 +38,14 @@ module SidekiqUniqueJobs
       lambda do
         if @worker_class.respond_to?(:after_unlock)
           # instance method in sidekiq v6
-          if @worker_class.method(:after_unlock).positive? # arity check to maintain backwards compatibility
+          if @worker_class.method(:after_unlock).arity.positive? # arity check to maintain backwards compatibility
             @worker_class.after_unlock(item)
           else
             @worker_class.after_unlock
           end
         elsif worker_class.respond_to?(:after_unlock)
           # class method regardless of sidekiq version
-          if worker_class.method(:after_unlock).positive? # arity check to maintain backwards compatibility
+          if worker_class.method(:after_unlock).arity.positive? # arity check to maintain backwards compatibility
             worker_class.after_unlock(item)
           else
             worker_class.after_unlock
