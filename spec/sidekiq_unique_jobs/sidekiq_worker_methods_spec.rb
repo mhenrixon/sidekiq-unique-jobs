@@ -40,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
       it { is_expected.to eq(UntilExecutedJob) }
     end
 
-    context "when NameError is caught" do
+    context "when NameError is caught", ruby_ver: "< 3.0" do
       let(:worker_class)  { "UnknownConstant" }
       let(:error_message) { "this class does not exist" }
 
