@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.version     = SidekiqUniqueJobs::VERSION
   spec.authors     = ["Mikael Henriksson"]
   spec.email       = ["mikael@mhenrixon.com"]
-  spec.homepage    = "https://mhenrixon.github.io/sidekiq-unique-jobs"
+  spec.homepage    = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.license     = "MIT"
   spec.summary     = <<~SUMMARY
     Sidekiq middleware that prevents duplicates jobs
@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata["homepage_uri"]      = spec.homepage
   spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
-  spec.metadata["documentation_uri"] = "https://mhenrixon.github.io/sidekiq-unique-jobs"
+  spec.metadata["documentation_uri"] = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/CHANGELOG.md"
 

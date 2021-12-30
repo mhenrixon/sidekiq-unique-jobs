@@ -599,7 +599,7 @@ Expected BadWorker to have valid sidekiq options but found the following problem
 If you are not using RSpec (a lot of people prefer minitest or test unit) you can do something like:
 
 ```ruby
-assert SidekiqUniqueJobs.validate_worker!(BadWorker.get_sidekiq_options)
+assert_raise(InvalidWorker){ SidekiqUniqueJobs.validate_worker!(BadWorker.get_sidekiq_options) }
 ```
 
 ### Uniqueness
