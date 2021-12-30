@@ -81,7 +81,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
     expect(queue_count("customqueue")).to eq(1)
   end
 
-  it "does not queue duplicates when when calling delay" do
+  it "does not queue duplicates when when calling delay", sidekiq_ver: "< 7.0" do
     Array.new(10) { PlainClass.delay(lock: :until_executed, queue: "customqueue").run(1) }
 
     expect(queue_count("customqueue")).to eq(1)
