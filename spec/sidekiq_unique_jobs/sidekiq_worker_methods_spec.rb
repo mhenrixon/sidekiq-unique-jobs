@@ -47,7 +47,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
       before do
         allow(Object).to receive(:const_get)
           .with(worker_class)
-          .and_raise(NameError, error_message)
+          .and_raise(NameError.new(error_message))
       end
 
       it "raises NameError" do
