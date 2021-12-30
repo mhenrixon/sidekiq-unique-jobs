@@ -18,7 +18,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
-          bundler: 2.2.24
+          bundler: 2.3.4
           bundler-cache: true
 
       - name: Install Code Climate reporter
@@ -49,14 +49,14 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        ruby: [2.5, 2.6, 2.7, 3.0]
+        ruby: [2.5, 2.6, 2.7, 3.0, 3.1]
 
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler: 2.2.24
+          bundler: 2.3.4
           bundler-cache: true
       - run: bin/appraisal install --jobs=$(nproc) --retry=$(nproc)
       - run: bin/appraisal rspec --require spec_helper --tag ~perf

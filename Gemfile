@@ -8,7 +8,6 @@ gemspec
 LOCAL_GEMS = "Gemfile.local"
 
 gem "appraisal"
-gem "bundler"
 gem "gem-release"
 gem "github-markup"
 gem "rack-test"
