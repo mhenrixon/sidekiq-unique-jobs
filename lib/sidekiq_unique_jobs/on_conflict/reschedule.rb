@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
       #   This will mess up sidekiq stats because a new job is created
       def call
         if sidekiq_worker_class?
-          if worker_class.perform_in(5, *item[ARGS])
+          if worker_class.set(queue: item["queue"].to_sym).perform_in(5, *item[ARGS])
             reflect(:rescheduled, item)
           else
             reflect(:reschedule_failed, item)
