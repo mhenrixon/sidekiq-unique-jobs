@@ -7,7 +7,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
   let(:item) do
     { "class" => worker_class,
       "lock_digest" => lock_digest,
-      "args" => [1, 2] }
+      "args" => [1, 2],
+      "queue" => "default" }
   end
 
   describe "#call" do
@@ -19,6 +20,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
 
     context "when pushed" do
       before do
+        allow(UniqueJobOnConflictReschedule).to receive(:set).with(queue: :default)
+          .and_return(UniqueJobOnConflictReschedule)
         allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_call_original
       end
 
@@ -39,6 +42,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
 
     context "when push fails" do
       before do
+        allow(UniqueJobOnConflictReschedule).to receive(:set).with(queue: :default)
+          .and_return(UniqueJobOnConflictReschedule)
         allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_return(nil)
       end
 
