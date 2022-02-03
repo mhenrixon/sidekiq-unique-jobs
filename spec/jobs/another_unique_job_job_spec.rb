@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-if Sidekiq.const_defined?("JobRecord")
+if Sidekiq.const_defined?(:JobRecord)
   RSpec.describe AnotherUniqueJobJob do
     it_behaves_like "sidekiq with options" do
       let(:options) do

@@ -68,7 +68,7 @@ module Sidekiq
     prepend UniqueExtension
   end
 
-  if Sidekiq.const_defined?("JobRecord")
+  if Sidekiq.const_defined?(:JobRecord)
     # See Sidekiq::Api
     class JobRecord
       #
