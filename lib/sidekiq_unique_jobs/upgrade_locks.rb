@@ -87,9 +87,9 @@ module SidekiqUniqueJobs
       digest     = grabbed_key.gsub(":GRABBED", "")
       locks      = conn.hgetall(grabbed_key)
 
-      conn.pipelined do
-        conn.hmset(locked_key, *locks.to_a)
-        conn.zadd(DIGESTS, locks.values.first, digest)
+      conn.pipelined do |pipeline|
+        pipeline.hmset(locked_key, *locks.to_a)
+        pipeline.zadd(DIGESTS, locks.values.first, digest)
       end
     end
 
@@ -114,11 +114,11 @@ module SidekiqUniqueJobs
     def batch_delete(*keys)
       return if keys.empty?
 
-      conn.pipelined do
+      conn.pipelined do |pipeline|
         if VersionCheck.satisfied?(redis_version, ">= 4.0.0")
-          conn.unlink(*keys)
+          pipeline.unlink(*keys)
         else
-          conn.del(*keys)
+          pipeline.del(*keys)
         end
       end
     end

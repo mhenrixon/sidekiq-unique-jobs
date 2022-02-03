@@ -96,10 +96,10 @@ module SidekiqUniqueJobs
       #
       def push_to_deadset
         redis do |conn|
-          conn.multi do
-            conn.zadd("dead", now_f, payload)
-            conn.zremrangebyscore("dead", "-inf", now_f - Sidekiq::DeadSet.timeout)
-            conn.zremrangebyrank("dead", 0, -Sidekiq::DeadSet.max_jobs)
+          conn.multi do |pipeline|
+            pipeline.zadd("dead", now_f, payload)
+            pipeline.zremrangebyscore("dead", "-inf", now_f - Sidekiq::DeadSet.timeout)
+            pipeline.zremrangebyrank("dead", 0, -Sidekiq::DeadSet.max_jobs)
           end
         end
       end

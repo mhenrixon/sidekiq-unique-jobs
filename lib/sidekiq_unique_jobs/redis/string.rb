@@ -25,7 +25,8 @@ module SidekiqUniqueJobs
       #
       # @return [true, false]
       #
-      def set(obj)
+      def set(obj, pipeline = nil)
+        return pipeline.set(key, obj) if pipeline
         redis { |conn| conn.set(key, obj) }
       end
 

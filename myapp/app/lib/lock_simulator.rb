@@ -9,13 +9,13 @@ module LockSimulator
     old_digests = Array.new(num) { |n| "uniquejobs:v6-#{n}" }
     Sidekiq.redis do |conn|
       old_digests.each_slice(100) do |chunk|
-        conn.pipelined do
+        conn.pipelined do |pipeline|
           chunk.each do |digest|
             job_id = SecureRandom.hex(12)
-            conn.sadd("unique:keys", digest)
-            conn.set("#{digest}:EXISTS", job_id)
-            conn.rpush("#{digest}:AVAILABLE", digest)
-            conn.hset("#{digest}:GRABBED", job_id, Time.now.to_f)
+            pipeline.sadd("unique:keys", digest)
+            pipeline.set("#{digest}:EXISTS", job_id)
+            pipeline.rpush("#{digest}:AVAILABLE", digest)
+            pipeline.hset("#{digest}:GRABBED", job_id, Time.now.to_f)
           end
         end
       end
@@ -26,20 +26,20 @@ module LockSimulator
     old_digests = Array.new(num) { |n| "uniquejobs:v7-#{n}" }
     Sidekiq.redis do |conn| # rubocop:disable Metrics/BlockLength
       old_digests.each_slice(100) do |chunk|
-        conn.pipelined do
+        conn.pipelined do |pipeline|
           chunk.each do |digest|
             key    = SidekiqUniqueJobs::Key.new(digest)
             job_id = SecureRandom.hex(12)
             now_f  = Time.now.to_f
 
-            conn.set(key.digest, job_id)
-            conn.lpush(key.queued, job_id)
-            conn.lpush(key.primed, job_id)
-            conn.hset(key.locked, job_id, now_f)
-            conn.zadd(key.digests, now_f, key.digest)
-            conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
-            conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
-            conn.set(key.info,
+            pipeline.set(key.digest, job_id)
+            pipeline.lpush(key.queued, job_id)
+            pipeline.lpush(key.primed, job_id)
+            pipeline.hset(key.locked, job_id, now_f)
+            pipeline.zadd(key.digests, now_f, key.digest)
+            pipeline.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
+            pipeline.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
+            pipeline.set(key.info,
                      dump_json(
                        "worker" => "MyCoolJob",
                        "queue" => "default",

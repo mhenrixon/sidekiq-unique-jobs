@@ -87,10 +87,10 @@ module SidekiqUniqueJobs
     #
     def batch_delete(conn)
       digests.each_slice(BATCH_SIZE) do |chunk|
-        conn.pipelined do
+        conn.pipelined do |pipeline|
           chunk.each do |digest|
-            del_digest(conn, digest)
-            conn.zrem(SidekiqUniqueJobs::DIGESTS, digest)
+            del_digest(pipeline, digest)
+            pipeline.zrem(SidekiqUniqueJobs::DIGESTS, digest)
             @count += 1
           end
         end
@@ -99,13 +99,13 @@ module SidekiqUniqueJobs
       @count
     end
 
-    def del_digest(conn, digest)
+    def del_digest(pipeline, digest)
       removable_keys = keys_for_digest(digest)
 
       if VersionCheck.satisfied?(redis_version, ">= 4.0.0")
-        conn.unlink(*removable_keys)
+        pipeline.unlink(*removable_keys)
       else
-        conn.del(*removable_keys)
+        pipeline.del(*removable_keys)
       end
     end
 
