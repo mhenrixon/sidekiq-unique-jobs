@@ -95,9 +95,9 @@ module SidekiqUniqueJobs
     #
     def page(cursor: 0, pattern: SCAN_PATTERN, page_size: 100)
       redis do |conn|
-        total_size, digests = conn.multi do
-          conn.zcard(key)
-          conn.zscan(key, cursor, match: pattern, count: page_size)
+        total_size, digests = conn.multi do |pipeline|
+          pipeline.zcard(key)
+          pipeline.zscan(key, cursor, match: pattern, count: page_size)
         end
 
         [

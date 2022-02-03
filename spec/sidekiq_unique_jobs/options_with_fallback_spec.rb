@@ -161,16 +161,5 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
 
       it { is_expected.to eq(SimpleWorker.get_sidekiq_options) }
     end
-
-    context "when default_worker_options has been configured" do
-      let(:worker_class)           { PlainClass }
-      let(:default_worker_options) { { "lock" => :while_executing } }
-
-      it do
-        Sidekiq.use_options(default_worker_options) do
-          expect(class_options).to include(default_worker_options)
-        end
-      end
-    end
   end
 end

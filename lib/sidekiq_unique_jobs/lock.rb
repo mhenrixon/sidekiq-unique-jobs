@@ -62,13 +62,13 @@ module SidekiqUniqueJobs
     #
     def lock(job_id, lock_info = {})
       redis do |conn|
-        conn.multi do
-          conn.set(key.digest, job_id)
-          conn.hset(key.locked, job_id, now_f)
+        conn.multi do |pipeline|
+          pipeline.set(key.digest, job_id)
+          pipeline.hset(key.locked, job_id, now_f)
           info.set(lock_info)
-          conn.zadd(key.digests, now_f, key.digest)
-          conn.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
-          conn.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
+          pipeline.zadd(key.digests, now_f, key.digest)
+          pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
+          pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
         end
       end
     end

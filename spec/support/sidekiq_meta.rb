@@ -25,11 +25,6 @@ RSpec.configure do |config|
     Sidekiq.redis = redis
     flush_redis
 
-    if SidekiqUniqueJobs::VersionCheck.satisfied?(Sidekiq::VERSION, "< 7.0.0")
-      enable_delay = defined?(Sidekiq::Extensions) && Sidekiq::Extensions.respond_to?(:enable_delay!)
-      Sidekiq::Extensions.enable_delay! if enable_delay
-    end
-
     if (sidekiq = example.metadata.fetch(:sidekiq, :disable))
       sidekiq = :fake if sidekiq == true
       Sidekiq::Testing.send("#{sidekiq}!")
