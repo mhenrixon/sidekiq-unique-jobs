@@ -1,5 +1,30 @@
 # Changelog
 
+## [v7.1.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.13) (2022-02-03)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.12...v7.1.13)
+
+**Implemented enhancements:**
+
+- Prepare for redis 5.0.0 [\#680](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/680) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Fix homepage url [\#667](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/667) ([dal-ioki](https://github.com/dal-ioki))
+
+**Closed issues:**
+
+- Job finished, but lock is not cleared [\#677](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/677)
+- sidekiq\_options lock conflicts with sidekiq-lock gem lock option [\#669](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/669)
+- Slow evalsha causing timeouts [\#668](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/668)
+- Inconsistent documentation for config validation [\#647](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/647)
+
+**Merged pull requests:**
+
+- Bump bundler and friends [\#674](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/674) ([mhenrixon](https://github.com/mhenrixon))
+- readme: fix minitest assertion. [\#672](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/672) ([crondaemon](https://github.com/crondaemon))
+- Pass `item` in `after_unlock` callback [\#665](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/665) ([piloos](https://github.com/piloos))
+
 ## [v7.1.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.12) (2021-12-01)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.11...v7.1.12)
@@ -145,7 +170,7 @@
 **Implemented enhancements:**
 
 - Reflections [\#611](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/611) ([mhenrixon](https://github.com/mhenrixon))
-- Start new orphan reaper process if orphan reaper is not running [\#604](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/604) ([Assa1121](https://github.com/Assa1121))
+- Start new orphan reaper process if orphan reaper is not running [\#604](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/604) ([AlexFlint73](https://github.com/AlexFlint73))
 
 **Fixed bugs:**
 
