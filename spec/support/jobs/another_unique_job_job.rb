@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # :nocov:
-if Sidekiq.const_defined?("JobRecord")
+if Sidekiq.const_defined?(:JobRecord)
   require "sidekiq/job"
 
   class AnotherUniqueJobJob

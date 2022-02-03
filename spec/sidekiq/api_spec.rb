@@ -49,7 +49,7 @@ RSpec.describe "Sidekiq::Api" do
     end
   end
 
-  if Sidekiq.const_defined?("JobRecord")
+  if Sidekiq.const_defined?(:JobRecord)
     describe Sidekiq::JobRecord::UniqueExtension do
       it "deletes uniqueness lock on delete" do
         jid = JustAWorker.perform_async(roo: "baf")

@@ -48,7 +48,7 @@ module SidekiqUniqueJobs
     # @return [Float]
     #
     def clock_stamp
-      if Process.const_defined?("CLOCK_MONOTONIC")
+      if Process.const_defined?(:CLOCK_MONOTONIC)
         Process.clock_gettime(Process::CLOCK_MONOTONIC)
       else
         now_f

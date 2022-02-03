@@ -35,14 +35,6 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
 
       expect(schedule_count).to eq(20)
     end
-
-    it "schedules allows jobs to be scheduled" do
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].each do |x|
-        PlainClass.delay_for(x, queue: "default", unique: :while_executing).run(1)
-      end
-
-      expect(schedule_count).to eq(20)
-    end
   end
 
   it "does not push duplicate messages when unique_args are filtered with a proc" do
@@ -77,12 +69,6 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
         "args" => [1, { type: "value", some: "not used" }],
       )
     end
-
-    expect(queue_count("customqueue")).to eq(1)
-  end
-
-  it "does not queue duplicates when when calling delay", sidekiq_ver: "< 7.0" do
-    Array.new(10) { PlainClass.delay(lock: :until_executed, queue: "customqueue").run(1) }
 
     expect(queue_count("customqueue")).to eq(1)
   end

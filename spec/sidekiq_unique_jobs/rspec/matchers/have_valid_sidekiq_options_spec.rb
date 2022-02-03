@@ -2,7 +2,7 @@
 
 RSpec.describe SidekiqUniqueJobs::RSpec::Matchers::HaveValidSidekiqOptions do
   describe "#matches?" do
-    if Sidekiq.const_defined?("JobRecord")
+    if Sidekiq.const_defined?(:JobRecord)
       context "when sidekiq options are valid" do
         it { expect(AnotherUniqueJob).to have_valid_sidekiq_options }
       end

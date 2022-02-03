@@ -19,14 +19,14 @@ module SimulateLock
 
   def simulate_lock(key, job_id)
     redis do |conn|
-      conn.multi do
-        conn.set(key.digest, job_id)
-        conn.lpush(key.queued, job_id)
-        conn.lpush(key.primed, job_id)
-        conn.hset(key.locked, job_id, now_f)
-        conn.zadd(key.digests, now_f, key.digest)
-        conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
-        conn.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
+      conn.multi do |pipeline|
+        pipeline.set(key.digest, job_id)
+        pipeline.lpush(key.queued, job_id)
+        pipeline.lpush(key.primed, job_id)
+        pipeline.hset(key.locked, job_id, now_f)
+        pipeline.zadd(key.digests, now_f, key.digest)
+        pipeline.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
+        pipeline.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
       end
     end
   end

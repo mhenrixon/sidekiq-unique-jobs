@@ -7,7 +7,7 @@ exclude_paths:
   - myapp
   - spec
   - tmp
-  - vendor/bundle
+  - vendor
 detectors:
   BooleanParameter:
     exclude:
@@ -102,6 +102,7 @@ detectors:
       - SidekiqUniqueJobs::Changelog#entries
       - SidekiqUniqueJobs::Changelog#page
       - SidekiqUniqueJobs::Digests#page
+      - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Locksmith#create_lock
       - SidekiqUniqueJobs::Locksmith#lock!
       - SidekiqUniqueJobs::Middleware#self.configure_client

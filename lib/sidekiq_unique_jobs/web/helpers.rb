@@ -27,7 +27,7 @@ module SidekiqUniqueJobs
       # @return [String] the file contents of the template
       #
       def unique_template(name)
-        File.open(unique_filename(name)).read
+        File.read(unique_filename(name))
       end
 
       #
