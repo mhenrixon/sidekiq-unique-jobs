@@ -65,7 +65,7 @@ module SidekiqUniqueJobs
         conn.multi do |pipeline|
           pipeline.set(key.digest, job_id)
           pipeline.hset(key.locked, job_id, now_f)
-          info.set(lock_info)
+          info.set(lock_info, pipeline)
           pipeline.zadd(key.digests, now_f, key.digest)
           pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
           pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
@@ -123,9 +123,9 @@ module SidekiqUniqueJobs
     #
     def del
       redis do |conn|
-        conn.multi do
-          conn.zrem(DIGESTS, key.digest)
-          conn.del(key.digest, key.queued, key.primed, key.locked, key.info)
+        conn.multi do |pipeline|
+          pipeline.zrem(DIGESTS, key.digest)
+          pipeline.del(key.digest, key.queued, key.primed, key.locked, key.info)
         end
       end
     end

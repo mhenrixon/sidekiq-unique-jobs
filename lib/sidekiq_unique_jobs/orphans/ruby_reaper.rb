@@ -141,14 +141,14 @@ module SidekiqUniqueJobs
           return false if procs.empty?
 
           procs.sort.each do |key|
-            valid, workers = conn.pipelined do
+            valid, workers = conn.pipelined do |pipeline|
               # TODO: Remove the if statement in the future
-              if conn.respond_to?(:exists?)
-                conn.exists?(key)
+              if pipeline.respond_to?(:exists?)
+                pipeline.exists?(key)
               else
-                conn.exists(key)
+                pipeline.exists(key)
               end
-              conn.hgetall("#{key}:workers")
+              pipeline.hgetall("#{key}:workers")
             end
 
             next unless valid

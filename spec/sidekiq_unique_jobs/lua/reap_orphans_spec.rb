@@ -127,11 +127,11 @@ RSpec.describe "reap_orphans.lua" do
 
       before do
         SidekiqUniqueJobs.redis do |conn|
-          conn.multi do
-            conn.sadd("processes", process_key)
-            conn.hset(worker_key, thread_id, dump_json(item))
-            conn.expire(process_key, 60)
-            conn.expire(worker_key, 60)
+          conn.multi do |pipeline|
+            pipeline.sadd("processes", process_key)
+            pipeline.hset(worker_key, thread_id, dump_json(item))
+            pipeline.expire(process_key, 60)
+            pipeline.expire(worker_key, 60)
           end
         end
       end

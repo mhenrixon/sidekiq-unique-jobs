@@ -137,12 +137,12 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           before do
             SidekiqUniqueJobs.redis do |conn|
-              conn.multi do
-                conn.sadd("processes", process_key)
-                conn.set(process_key, "bogus")
-                conn.hset(worker_key, thread_id, dump_json(payload: item.merge(created_at: created_at)))
-                conn.expire(process_key, 60)
-                conn.expire(worker_key, 60)
+              conn.multi do |pipeline|
+                pipeline.sadd("processes", process_key)
+                pipeline.set(process_key, "bogus")
+                pipeline.hset(worker_key, thread_id, dump_json(payload: item.merge(created_at: created_at)))
+                pipeline.expire(process_key, 60)
+                pipeline.expire(worker_key, 60)
               end
             end
           end

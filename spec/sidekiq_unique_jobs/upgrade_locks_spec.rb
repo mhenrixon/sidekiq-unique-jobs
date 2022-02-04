@@ -10,13 +10,13 @@ RSpec.describe SidekiqUniqueJobs::UpgradeLocks do
       before do
         redis do |conn|
           old_digests.each_slice(100) do |chunk|
-            conn.pipelined do
+            conn.pipelined do |pipeline|
               chunk.each do |digest|
                 job_id = SecureRandom.hex(12)
-                conn.sadd("unique:keys", digest)
-                conn.set("#{digest}:EXISTS", job_id)
-                conn.rpush("#{digest}:AVAILABLE", digest)
-                conn.hset("#{digest}:GRABBED", job_id, now_f)
+                pipeline.sadd("unique:keys", digest)
+                pipeline.set("#{digest}:EXISTS", job_id)
+                pipeline.rpush("#{digest}:AVAILABLE", digest)
+                pipeline.hset("#{digest}:GRABBED", job_id, now_f)
               end
             end
           end
