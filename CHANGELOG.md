@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.1.14](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.14) (2022-02-04)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.13...v7.1.14)
+
+**Implemented enhancements:**
+
+- Fix the remaining deprecation warnings [\#681](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/681) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.13) (2022-02-03)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.12...v7.1.13)
