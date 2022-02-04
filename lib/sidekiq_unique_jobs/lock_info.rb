@@ -55,13 +55,13 @@ module SidekiqUniqueJobs
     #
     # @return [Hash]
     #
-    def set(obj)
+    def set(obj, pipeline = nil)
       return unless SidekiqUniqueJobs.config.lock_info
       raise InvalidArgument, "argument `obj` (#{obj}) needs to be a hash" unless obj.is_a?(Hash)
 
       json = dump_json(obj)
       @value = load_json(json)
-      super(json)
+      super(json, pipeline)
       value
     end
   end
