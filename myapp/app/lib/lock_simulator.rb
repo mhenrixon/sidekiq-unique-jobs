@@ -40,16 +40,16 @@ module LockSimulator
             pipeline.zadd(key.changelog, now_f, changelog_entry(key, job_id, "queue.lua", "Queued"))
             pipeline.zadd(key.changelog, now_f, changelog_entry(key, job_id, "lock.lua", "Locked"))
             pipeline.set(key.info,
-                     dump_json(
-                       "worker" => "MyCoolJob",
-                       "queue" => "default",
-                       "limit" => rand(5),
-                       "timeout" => rand(20),
-                       "ttl" => nil,
-                       "lock" => SidekiqUniqueJobs.locks.keys.sample,
-                       "lock_args" => UNIQUE_ARGS.sample(2),
-                       "time" => now_f,
-                     ))
+                         dump_json(
+                           "worker" => "MyCoolJob",
+                           "queue" => "default",
+                           "limit" => rand(5),
+                           "timeout" => rand(20),
+                           "ttl" => nil,
+                           "lock" => SidekiqUniqueJobs.locks.keys.sample,
+                           "lock_args" => UNIQUE_ARGS.sample(2),
+                           "time" => now_f,
+                         ))
           end
         end
       end
