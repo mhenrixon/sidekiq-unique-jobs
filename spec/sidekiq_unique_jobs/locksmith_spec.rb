@@ -34,10 +34,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
   describe "#to_s" do
-    subject(:to_s) { locksmith_one.to_s }
+    subject(:to_string) { locksmith_one.to_s }
 
     it "outputs a helpful string" do
-      expect(to_s).to eq(
+      expect(to_string).to eq(
         "Locksmith##{locksmith_one.object_id}" \
         "(digest=#{digest} job_id=#{jid_one} locked=false)",
       )
