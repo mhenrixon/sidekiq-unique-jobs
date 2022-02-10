@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.1.15](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.15) (2022-02-10)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.14...v7.1.15)
+
+**Merged pull requests:**
+
+- Fixing reschedule when using a non default queue [\#679](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/679) ([bigzed](https://github.com/bigzed))
+
 ## [v7.1.14](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.14) (2022-02-04)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.13...v7.1.14)
