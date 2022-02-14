@@ -241,7 +241,7 @@ module SidekiqUniqueJobs
     def primed_async(conn, wait = nil, &block)
       primed_jid = Concurrent::Promises
                    .future(conn) { |red_con| pop_queued(red_con, wait) }
-                   .value(add_drift(wait || config.timeout))
+                   .value(add_drift(wait || config.timeout || 0))
 
       handle_primed(primed_jid, &block)
     end
