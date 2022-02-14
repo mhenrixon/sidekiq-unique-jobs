@@ -39,7 +39,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
 
     it "keeps lock after executing" do
       process_one.lock
-      process_one.execute {}
+      blk = -> {}
+      process_one.execute(&blk)
       expect(process_one).to be_locked
     end
   end
