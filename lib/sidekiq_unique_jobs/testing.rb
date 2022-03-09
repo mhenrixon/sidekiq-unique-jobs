@@ -29,7 +29,13 @@ module Sidekiq
     yield
   ensure
     default_worker_options.clear
-    self.default_worker_options = DEFAULT_WORKER_OPTIONS
+    self.default_worker_options =
+      if respond_to?(:default_job_options)
+        default_job_options
+      else
+        DEFAULT_WORKER_OPTIONS
+      end
+
     self.default_worker_options = old_options
   end
 
@@ -54,7 +60,13 @@ module Sidekiq
 
         yield
       ensure
-        self.sidekiq_options_hash = Sidekiq::DEFAULT_WORKER_OPTIONS
+        self.sidekiq_options_hash =
+          if Sidekiq.respond_to?(:default_job_options)
+            Sidekiq.default_job_options
+          else
+            DEFAULT_WORKER_OPTIONS
+          end
+
         sidekiq_options(old_options)
       end
 
