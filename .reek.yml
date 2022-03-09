@@ -54,6 +54,7 @@ detectors:
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::InvalidUniqueArguments#initialize
       - SidekiqUniqueJobs::InvalidWorker#initialize
+      - SidekiqUniqueJobs::Locksmith#add_drift
       - SidekiqUniqueJobs::Logging#debug_item
       - SidekiqUniqueJobs::NotUniqueWorker#initialize
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset

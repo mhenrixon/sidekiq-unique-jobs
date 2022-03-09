@@ -328,7 +328,8 @@ module SidekiqUniqueJobs
     end
 
     def add_drift(val)
-      val.to_f + drift(val.to_f)
+      val = val.to_f
+      val + drift(val)
     end
 
     #
