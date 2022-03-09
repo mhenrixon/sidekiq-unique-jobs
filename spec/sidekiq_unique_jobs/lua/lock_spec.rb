@@ -213,7 +213,7 @@ RSpec.describe "lock.lua" do
       it "updates Redis correctly" do
         expect { lock }.to change { zcard(key.changelog) }.by(1)
 
-        expect(lock).to eq(nil)
+        expect(lock).to be_nil
         expect(get(key.digest)).to eq(job_id_two)
 
         expect(queued.count).to eq(0)

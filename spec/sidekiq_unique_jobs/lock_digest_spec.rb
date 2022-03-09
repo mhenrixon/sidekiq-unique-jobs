@@ -101,36 +101,36 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
   describe "#unique_across_queues?" do
     subject(:unique_across_queues?) { digest.unique_across_queues? }
 
-    it { is_expected.to eq(nil) }
+    it { is_expected.to be_nil }
 
     context "when unique_across_queues: true", :with_worker_options do
       let(:worker_options) { { unique_across_queues: true } }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when unique_across_queues: false", :with_worker_options do
       let(:worker_options) { { unique_across_queues: false } }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
   describe "#unique_across_workers?" do
     subject(:unique_across_workers?) { digest.unique_across_workers? }
 
-    it { is_expected.to eq(nil) }
+    it { is_expected.to be_nil }
 
     context "when unique_across_workers: true", :with_worker_options do
       let(:worker_options) { { unique_across_workers: true } }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when unique_across_workers: false", :with_worker_options do
       let(:worker_options) { { unique_across_workers: false } }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 end

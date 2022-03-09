@@ -21,7 +21,7 @@ RSpec.describe "delete_job_by_digest.lua" do
   context "when job doesn't exist" do
     let(:argv) { ["abcdefab"] }
 
-    it { is_expected.to eq(nil) }
+    it { is_expected.to be_nil }
   end
 
   context "when job is retried" do

@@ -61,13 +61,13 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     context "when locksmiths are comparable" do
       let(:comparable_locksmith) { locksmith_one.dup }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when locksmiths are incomparable" do
       let(:comparable_locksmith) { locksmith_two }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -133,7 +133,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       locksmith_one.execute do
         code_executed = true
       end
-      expect(code_executed).to eq(true)
+      expect(code_executed).to be(true)
     end
 
     context "when exceptions is raised" do
@@ -259,7 +259,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
         expect(locksmith_one).to be_locked
         locksmith_one.unlock
         expect(locksmith_one).not_to be_locked
-        expect(locksmith_one.delete).to eq(nil)
+        expect(locksmith_one.delete).to be_nil
 
         expect(locksmith_one).not_to be_locked
       end

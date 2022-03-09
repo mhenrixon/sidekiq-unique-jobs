@@ -20,11 +20,11 @@ RSpec.shared_examples "a lock implementation" do
     end
 
     it "prevents process_two from locking" do
-      expect(process_two.lock).to eq(nil)
+      expect(process_two.lock).to be_nil
     end
 
     it "prevents process_two from executing" do
-      expect(process_two.execute {}).to eq(nil)
+      expect(process_two.execute {}).to be_nil
     end
 
     it "handles lock failures" do
@@ -45,7 +45,7 @@ RSpec.shared_examples "an executing lock implementation" do
     it "does not execute" do
       unset = true
       process_one.execute { unset = false }
-      expect(unset).to eq(true)
+      expect(unset).to be(true)
     end
   end
 
@@ -68,7 +68,7 @@ RSpec.shared_examples "an executing lock implementation" do
 
     it "prevents process_two from locking" do
       process_one.execute do
-        expect(process_two.lock).to eq(nil)
+        expect(process_two.lock).to be_nil
         expect(process_two).not_to be_locked
       end
     end

@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
         allow(strategy).to receive(:delete_job_by_digest).and_return(nil)
       end
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when delete_lock returns 9" do
@@ -39,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       end
 
       it "logs important information" do
-        expect(call).to eq(nil)
+        expect(call).to be_nil
 
         expect(strategy).to have_received(:log_info).with("Deleted job: #{jid}")
         expect(strategy).to have_received(:log_info).with("Deleted `9` keys for #{lock_digest}")
@@ -56,7 +56,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       end
 
       it "logs important information" do
-        expect(call).to eq(nil)
+        expect(call).to be_nil
 
         expect(strategy).to have_received(:log_info).with("Deleted job: #{jid}")
         expect(strategy).not_to have_received(:log_info).with("Deleted `` keys for #{lock_digest}")
@@ -74,7 +74,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       end
 
       it "does not call block" do
-        expect(call).to eq(nil)
+        expect(call).to be_nil
         expect(block).not_to have_received(:call)
       end
     end
@@ -107,7 +107,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
 
       it "removes the job from the scheduled set" do
         expect { call }.to change { schedule_count }.from(1).to(0)
-        expect(call).to eq(nil)
+        expect(call).to be_nil
         expect(block).to have_received(:call)
       end
     end
@@ -117,7 +117,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
 
       it "removes the job from the queue" do
         expect { call }.to change { queue_count(:customqueue) }.from(1).to(0)
-        expect(call).to eq(nil)
+        expect(call).to be_nil
         expect(block).to have_received(:call)
       end
     end
@@ -126,6 +126,6 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
   describe "#replace?" do
     subject { strategy.replace? }
 
-    it { is_expected.to eq(true) }
+    it { is_expected.to be(true) }
   end
 end
