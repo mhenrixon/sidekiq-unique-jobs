@@ -83,6 +83,8 @@ detectors:
     exclude:
       - Hash#slice
       - Hash#slice!
+      - Sidekiq#self.use_options
+      - Sidekiq::Worker::ClassMethods#use_options
       - SidekiqUniqueJobs::Logging#logger_respond_to_with_context?
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
