@@ -95,4 +95,16 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
       end
     end
   end
+
+  describe "#call" do
+    before do
+      stub_const("SidekiqUniqueJobs::Orphans::RubyReaper::MAX_QUEUE_LENGTH", 3)
+      4.times { push_item(item) }
+    end
+    it 'quits early if sidekiq queues are very full' do
+      expect(service).not_to receive(:orphans)
+
+      service.call
+    end
+  end
 end
