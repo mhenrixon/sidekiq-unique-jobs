@@ -111,6 +111,7 @@ detectors:
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Orphans::RubyReaper#enqueued?
+      - SidekiqUniqueJobs::Orphans::RubyReaper#queues_very_full?
       - SidekiqUniqueJobs::UpgradeLocks#keys_for_digest
   RepeatedConditional:
     exclude:

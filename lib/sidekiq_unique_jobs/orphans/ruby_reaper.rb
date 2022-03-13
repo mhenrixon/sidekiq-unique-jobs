@@ -225,13 +225,12 @@ module SidekiqUniqueJobs
         total_queue_size = 0
         Sidekiq.redis do |conn|
           queues(conn) do |queue|
-            queue_size = conn.llen("queue:#{queue}")
-            total_queue_size += queue_size
+            total_queue_size += conn.llen("queue:#{queue}")
 
             return true if total_queue_size > MAX_QUEUE_LENGTH
           end
         end
-        total_queue_size > MAX_QUEUE_LENGTH
+        false
       end
 
       #
