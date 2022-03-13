@@ -59,6 +59,7 @@ detectors:
       - SidekiqUniqueJobs::OnConflict::Reject#push_to_deadset
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
+      - SidekiqUniqueJobs::Orphans::RubyReaper#queues_very_full?
       - SidekiqUniqueJobs::Redis::Entity#exist?
       - SidekiqUniqueJobs::Web::Helpers#cparams
       - SidekiqUniqueJobs::Web::Helpers#display_lock_args
@@ -153,6 +154,7 @@ detectors:
       - SidekiqUniqueJobs::Orphans::RubyReaper#enqueued?
       - SidekiqUniqueJobs::Orphans::RubyReaper#entries
       - SidekiqUniqueJobs::Orphans::RubyReaper#orphans
+      - SidekiqUniqueJobs::Orphans::RubyReaper#queues_very_full?
       - SidekiqUniqueJobs::Profiler#self.stop
       - SidekiqUniqueJobs::Script::Caller#call_script
       - SidekiqUniqueJobs::Script::Caller#extract_args
