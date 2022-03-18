@@ -567,7 +567,7 @@ The reason this happens is that the server couldn't find a valid sidekiq worker 
 
 ### Validating Worker Configuration
 
-Since v7 it is possible to perform some simple validation against your workers sidekiq_options. What it does is scan for some issues that are known to cause problems in production.
+Since v7 it is possible to perform some simple validation against your workers `sidekiq_options`. What it does is scan for some issues that are known to cause problems in production.
 
 Let's take a _bad_ worker:
 
