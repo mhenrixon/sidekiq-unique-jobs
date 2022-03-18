@@ -151,7 +151,7 @@ end
 
 ### Your first worker
 
-The most likely to be used worker is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
+The lock type most likely to be is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
 
 ```ruby
 # frozen_string_literal: true
@@ -159,8 +159,7 @@ The most likely to be used worker is `:until_executed`. This type of lock create
 class UntilExecutedWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :until_executed,
-                  lock: :until_executed
+  sidekiq_options lock: :until_executed
 
   def perform
     logger.info("cowboy")
