@@ -345,9 +345,9 @@ Please not that if you try to override a default lock, an `ArgumentError` will b
 
 ## Conflict Strategy
 
-Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
+Decides how we handle conflict. We can either `reject` the job to the dead queue or `reschedule` it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
-The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
+Furthermore, `log` can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
 
 It is possible for locks to have different conflict strategy for the client and server. This is useful for `:until_and_while_executing`.
 
@@ -393,7 +393,7 @@ queue and retry the lock again.
 This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.
 
-### Reschedule
+### reschedule
 
 ```ruby
 sidekiq_options on_conflict: :reschedule
