@@ -90,7 +90,7 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
 
 This gem adds unique constraints to sidekiq jobs. The uniqueness is achieved by creating a set of keys in redis based off of `queue`, `class`, `args` (in the sidekiq job hash).
 
-By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen [Conflict Strategy](#conflict-strategy) strategy. Unless a conflict strategy is chosen
+By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen [Conflict Strategy](#conflict-strategy) strategy. Unless a conflict strategy is chosen (?)
 
 This is the documentation for the `main` branch. You can find the documentation for each release by navigating to its tag.
 
@@ -604,7 +604,7 @@ assert_raise(InvalidWorker){ SidekiqUniqueJobs.validate_worker!(BadWorker.get_si
 
 ### Uniqueness
 
-This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][]
+This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][](?)
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
