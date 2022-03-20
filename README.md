@@ -90,7 +90,7 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
 
 This gem adds unique constraints to sidekiq jobs. The uniqueness is achieved by creating a set of keys in redis based off of `queue`, `class`, `args` (in the sidekiq job hash).
 
-By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen [Conflict Strategy](#conflict-strategy) strategy. Unless a conflict strategy is chosen
+By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen [Conflict Strategy](#conflict-strategy) strategy. Unless a conflict strategy is chosen (?)
 
 This is the documentation for the `main` branch. You can find the documentation for each release by navigating to its tag.
 
@@ -151,7 +151,7 @@ end
 
 ### Your first worker
 
-The most likely to be used worker is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
+The lock type most likely to be is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
 
 ```ruby
 # frozen_string_literal: true
@@ -159,8 +159,7 @@ The most likely to be used worker is `:until_executed`. This type of lock create
 class UntilExecutedWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :until_executed,
-                  lock: :until_executed
+  sidekiq_options lock: :until_executed
 
   def perform
     logger.info("cowboy")
@@ -346,9 +345,9 @@ Please not that if you try to override a default lock, an `ArgumentError` will b
 
 ## Conflict Strategy
 
-Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
+Decides how we handle conflict. We can either `reject` the job to the dead queue or `reschedule` it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
 
-The last one is log which can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
+Furthermore, `log` can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
 
 It is possible for locks to have different conflict strategy for the client and server. This is useful for `:until_and_while_executing`.
 
@@ -394,7 +393,7 @@ queue and retry the lock again.
 This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.
 
-### Reschedule
+### reschedule
 
 ```ruby
 sidekiq_options on_conflict: :reschedule
@@ -568,7 +567,7 @@ The reason this happens is that the server couldn't find a valid sidekiq worker 
 
 ### Validating Worker Configuration
 
-Since v7 it is possible to perform some simple validation against your workers sidekiq_options. What it does is scan for some issues that are known to cause problems in production.
+Since v7 it is possible to perform some simple validation against your workers `sidekiq_options`. What it does is scan for some issues that are known to cause problems in production.
 
 Let's take a _bad_ worker:
 
@@ -604,7 +603,7 @@ assert_raise(InvalidWorker){ SidekiqUniqueJobs.validate_worker!(BadWorker.get_si
 
 ### Uniqueness
 
-This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][]
+This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][](?)
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
