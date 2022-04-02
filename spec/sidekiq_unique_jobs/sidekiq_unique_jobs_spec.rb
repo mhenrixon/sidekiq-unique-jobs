@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs do
 
     it                 { is_expected.to be_a(SidekiqUniqueJobs::Config) }
     its(:lock_timeout) { is_expected.to eq(0) }
-    its(:enabled)      { is_expected.to eq(true) }
+    its(:enabled)      { is_expected.to be(true) }
     its(:lock_prefix)  { is_expected.to eq("uniquejobs") }
   end
 
@@ -80,13 +80,13 @@ RSpec.describe SidekiqUniqueJobs do
     context "when given a block" do
       it "enables unique jobs within the block" do
         described_class.disable!
-        expect(described_class.enabled?).to eq(false)
+        expect(described_class.enabled?).to be(false)
 
         described_class.enable! do
-          expect(described_class.enabled?).to eq(true)
+          expect(described_class.enabled?).to be(true)
         end
 
-        expect(described_class.enabled?).to eq(false)
+        expect(described_class.enabled?).to be(false)
 
         described_class.enable!
       end
@@ -97,13 +97,13 @@ RSpec.describe SidekiqUniqueJobs do
     context "when given a block" do
       it "disables unique jobs within the block" do
         described_class.enable!
-        expect(described_class.disabled?).to eq(false)
+        expect(described_class.disabled?).to be(false)
 
         described_class.disable! do
-          expect(described_class.disabled?).to eq(true)
+          expect(described_class.disabled?).to be(true)
         end
 
-        expect(described_class.disabled?).to eq(false)
+        expect(described_class.disabled?).to be(false)
       end
     end
   end

@@ -8,19 +8,19 @@ RSpec.describe SidekiqUniqueJobs::VersionCheck do
     let(:constraint)    { ">= 4.0.0" }
 
     context "when given one constraint" do
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when given dual constraints" do
       let(:constraint) { ">= 3.2.5 <= 4.2.1" }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when not satisfied" do
       let(:constraint) { ">= 5.0.0" }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -31,19 +31,19 @@ RSpec.describe SidekiqUniqueJobs::VersionCheck do
     let(:constraint) { ">= 4.0.0" }
 
     context "when given one constraint" do
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when given dual constraints" do
       let(:constraint) { ">= 3.2.5 <= 4.2.1" }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when not satisfied" do
       let(:constraint) { ">= 5.0.0" }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
   end
 
@@ -55,19 +55,19 @@ RSpec.describe SidekiqUniqueJobs::VersionCheck do
     let(:constraint)    { ">= 4.0.0" }
 
     context "when given one constraint" do
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when given dual constraints" do
       let(:constraint) { ">= 3.2.5 <= 4.2.1" }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when not satisfied" do
       let(:constraint) { ">= 5.0.0" }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 end

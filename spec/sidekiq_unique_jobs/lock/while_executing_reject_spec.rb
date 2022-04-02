@@ -80,7 +80,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
       expect { process_one.execute {} }
         .to raise_error(RuntimeError, "Hell")
 
-      expect(process_one.locked?).to eq(false)
+      expect(process_one.locked?).to be(false)
     end
   end
 end

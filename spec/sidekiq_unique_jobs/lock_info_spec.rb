@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::LockInfo do
     end
 
     context "without redis data" do
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
   end
 
@@ -26,11 +26,11 @@ RSpec.describe SidekiqUniqueJobs::LockInfo do
     context "with redis data" do
       before { entity.set(key: "val") }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "without redis data" do
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
   end
 
@@ -40,11 +40,11 @@ RSpec.describe SidekiqUniqueJobs::LockInfo do
     context "with redis data" do
       before { entity.set(key: "val") }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "without redis data" do
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -58,7 +58,7 @@ RSpec.describe SidekiqUniqueJobs::LockInfo do
     end
 
     context "without redis data" do
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe SidekiqUniqueJobs::LockInfo do
         end
       end
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when not given a Hash" do

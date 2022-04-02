@@ -38,7 +38,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     let(:options) { {} }
     let(:item)    { {} }
 
-    it { is_expected.to eq(nil) }
+    it { is_expected.to be_nil }
 
     context 'when options["lock"] is present' do
       let(:options) { { "lock" => "while_executing" } }
@@ -51,7 +51,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
           SidekiqUniqueJobs.disable!(&example)
         end
 
-        it { is_expected.to eq(false) }
+        it { is_expected.to be(false) }
       end
     end
 
@@ -65,7 +65,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
           SidekiqUniqueJobs.disable!(&example)
         end
 
-        it { is_expected.to eq(false) }
+        it { is_expected.to be(false) }
       end
     end
   end

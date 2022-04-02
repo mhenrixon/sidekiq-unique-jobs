@@ -49,7 +49,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
   it "can paginate changelogs", sidekiq_ver: ">= 6.0" do
     Array.new(190) do |idx|
-      expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
+      expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
     end
 
     get "/changelogs?filter=*&count=100"
@@ -91,7 +91,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
   it "can paginate digests", sidekiq_ver: ">= 6.0" do
     Array.new(190) do |idx|
-      expect(MyUniqueJob.perform_async(1, idx)).not_to eq(nil)
+      expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
     end
 
     get "/locks?filter=*&count=100"

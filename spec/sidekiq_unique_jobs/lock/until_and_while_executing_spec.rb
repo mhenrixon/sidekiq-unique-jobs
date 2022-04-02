@@ -81,7 +81,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
         process_two.lock
         unset = true
         process_two.execute { unset = false }
-        expect(unset).to eq(true)
+        expect(unset).to be(true)
       end
     end
 

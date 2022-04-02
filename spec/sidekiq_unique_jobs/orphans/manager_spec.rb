@@ -26,7 +26,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     context "when registered?" do
       before { described_class.register_reaper_process }
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when disabled?" do
@@ -34,7 +34,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         allow(described_class).to receive(:disabled?).and_return(true)
       end
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when NOT registered?" do
@@ -84,7 +84,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         allow(described_class).to receive(:registered?).and_return(false)
       end
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when disabled?" do
@@ -92,7 +92,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         allow(described_class).to receive(:enabled?).and_return(false)
       end
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when registered? and enabled?" do
@@ -131,7 +131,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: :lua, &example)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = :ruby" do
@@ -139,7 +139,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: :ruby, &example)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = :none" do
@@ -147,7 +147,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: :none, &example)
       end
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = nil" do
@@ -155,7 +155,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: nil, &example)
       end
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = false" do
@@ -163,7 +163,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: false, &example)
       end
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -175,7 +175,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: :lua, &example)
       end
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = :ruby" do
@@ -183,7 +183,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: :ruby, &example)
       end
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = :none" do
@@ -191,7 +191,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: :none, &example)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = nil" do
@@ -199,7 +199,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: nil, &example)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when SidekiqUniqueJobs.config.reaper = false" do
@@ -207,7 +207,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
         SidekiqUniqueJobs.use_config(reaper: false, &example)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
   end
 
@@ -217,11 +217,11 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     context "when registered" do
       before { described_class.register_reaper_process }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when unregistered" do
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -231,24 +231,42 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     context "when registered" do
       before { described_class.register_reaper_process }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
 
     context "when unregistered" do
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
   end
 
   describe ".timer_task_options" do
     subject(:timer_task_options) { described_class.timer_task_options }
 
-    let(:expected_options) do
-      { run_now: true,
-        execution_interval: SidekiqUniqueJobs.config.reaper_interval,
-        timeout_interval: SidekiqUniqueJobs.config.reaper_timeout }
+    context "when concurrent version is >= 1.1.10" do
+      before do
+        stub_const("Concurrent::VERSION", "1.1.10")
+      end
+
+      let(:expected_options) do
+        { run_now: true, execution_interval: SidekiqUniqueJobs.config.reaper_interval }
+      end
+
+      it { is_expected.to eq(expected_options) }
     end
 
-    it { is_expected.to eq(expected_options) }
+    context "when concurrent version is < 1.1.10" do
+      before do
+        stub_const("Concurrent::VERSION", "1.1.9")
+      end
+
+      let(:expected_options) do
+        { run_now: true,
+          execution_interval: SidekiqUniqueJobs.config.reaper_interval,
+          timeout_interval: SidekiqUniqueJobs.config.reaper_timeout }
+      end
+
+      it { is_expected.to eq(expected_options) }
+    end
   end
 
   describe ".reaper_interval" do

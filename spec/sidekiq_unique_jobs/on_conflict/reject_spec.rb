@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
   describe "#replace?" do
     subject { strategy.replace? }
 
-    it { is_expected.to eq(false) }
+    it { is_expected.to be(false) }
   end
 
   describe "#call" do
