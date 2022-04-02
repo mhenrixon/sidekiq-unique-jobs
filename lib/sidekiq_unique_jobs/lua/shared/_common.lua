@@ -31,7 +31,7 @@ local function log(message, prev_jid)
   log_debug("ZADD", changelog, current_time, entry);
   redis.call("ZADD", changelog, current_time, entry);
   local total_entries = redis.call("ZCARD", changelog)
-  local removed_entries = redis.call("ZREMRANGEBYRANK", changelog, max_history, -1)
+  local removed_entries = redis.call("ZREMRANGEBYRANK", changelog, 0, -1 * max_history)
   if removed_entries > 0 then
     log_debug("Removing", removed_entries , "entries from changelog (total entries", total_entries, "exceeds max_history:", max_history ..")");
   end
