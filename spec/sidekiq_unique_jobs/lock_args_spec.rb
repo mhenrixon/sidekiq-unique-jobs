@@ -18,7 +18,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     subject(:lock_args_enabled?) { lock_args.lock_args_enabled? }
 
     context "with default worker options", :with_sidekiq_options do
-      let(:sidekiq_options) { { unique: :until_executed, lock_args_method: ->(args) { args[1]["test"] } } }
+      let(:sidekiq_options) { { unique: :until_executed, lock_args_method: ->(args) { args[1] } } }
 
       context "when `lock_args_method: :lock_args` in worker", :with_worker_options do
         let(:worker_options) { { lock_args_method: :lock_args } }

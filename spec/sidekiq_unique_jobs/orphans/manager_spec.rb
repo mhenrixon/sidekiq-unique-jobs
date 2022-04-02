@@ -242,13 +242,31 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
   describe ".timer_task_options" do
     subject(:timer_task_options) { described_class.timer_task_options }
 
-    let(:expected_options) do
-      { run_now: true,
-        execution_interval: SidekiqUniqueJobs.config.reaper_interval,
-        timeout_interval: SidekiqUniqueJobs.config.reaper_timeout }
+    context "when concurrent version is >= 1.1.10" do
+      before do
+        stub_const("Concurrent::VERSION", "1.1.10")
+      end
+
+      let(:expected_options) do
+        { run_now: true, execution_interval: SidekiqUniqueJobs.config.reaper_interval }
+      end
+
+      it { is_expected.to eq(expected_options) }
     end
 
-    it { is_expected.to eq(expected_options) }
+    context "when concurrent version is < 1.1.10" do
+      before do
+        stub_const("Concurrent::VERSION", "1.1.9")
+      end
+
+      let(:expected_options) do
+        { run_now: true,
+          execution_interval: SidekiqUniqueJobs.config.reaper_interval,
+          timeout_interval: SidekiqUniqueJobs.config.reaper_timeout }
+      end
+
+      it { is_expected.to eq(expected_options) }
+    end
   end
 
   describe ".reaper_interval" do
