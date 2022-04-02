@@ -1,5 +1,35 @@
 # Changelog
 
+## [v7.1.16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.16) (2022-04-02)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.15...v7.1.16)
+
+**Implemented enhancements:**
+
+- Abort Ruby Reaper when sidekiq queues are full [\#690](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/690) ([francesmcmullin](https://github.com/francesmcmullin))
+- Quote '3.0' to ensure CI uses Ruby 3.0.x for the 3.0 entry [\#689](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/689) ([petergoldstein](https://github.com/petergoldstein))
+
+**Fixed bugs:**
+
+- Hotfix: Ensure consistent lock args [\#699](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/699) ([mhenrixon](https://github.com/mhenrixon))
+- Expire older changelog entries first [\#698](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/698) ([mhenrixon](https://github.com/mhenrixon))
+- Fix drift [\#688](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/688) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- concurrent-ruby has dropped support for TimerTask timeouts [\#697](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/697)
+- Most recent changelogs are removed first [\#696](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/696)
+- Improve README slightly [\#694](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/694)
+- locksmith.rb:327: NoMethodError:  undefined method `+' for nil:NilClass [\#686](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/686)
+- lock\_timeout cannot be nil [\#675](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/675)
+- Skip reaping when queues are too large [\#670](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/670)
+
+**Merged pull requests:**
+
+- Improve readme [\#695](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/695) ([fwolfst](https://github.com/fwolfst))
+- Add funding\_uri to gemspec [\#693](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/693) ([fwolfst](https://github.com/fwolfst))
+- Fix worker validator [\#685](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/685) ([victorfgs](https://github.com/victorfgs))
+
 ## [v7.1.15](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.15) (2022-02-10)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.14...v7.1.15)
