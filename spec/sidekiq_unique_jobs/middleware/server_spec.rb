@@ -11,7 +11,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, redis_db: 9 do
         jid = UntilExecutedJob.perform_async
         item = Sidekiq::Queue.new(queue).find_job(jid).item
 
-        digest = "uniquejobs:cf51f14f752c9ca8f3cfb0bbebad4abc"
+        digest = "uniquejobs:83062cbd9ecad2e9466effc0f6c35562"
         expect(get(digest)).to eq(jid)
         set(digest, "NOT_DELETED")
 

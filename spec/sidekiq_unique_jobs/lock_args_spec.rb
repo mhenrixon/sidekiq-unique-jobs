@@ -80,7 +80,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     context "when configured globally" do
       it "uses global filter" do
         Sidekiq.use_options(lock_args_method: ->(args) { args.first }) do
-          expect(filter_by_proc).to eq(1)
+          expect(filter_by_proc).to eq("test" => "it")
         end
       end
     end

@@ -36,7 +36,7 @@ module Sidekiq
         DEFAULT_WORKER_OPTIONS
       end
 
-    self.default_worker_options = old_options
+    # self.default_worker_options = old_options
   end
 
   #
