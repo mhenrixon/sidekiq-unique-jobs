@@ -21,13 +21,11 @@ module Sidekiq
   #
   # @param [Hash<Symbol, Object>] tmp_config the temporary config to use
   #
-  def self.use_options(tmp_config = {})
+  def self.use_options(tmp_config = {}) # rubocop:disable Metrics/MethodLength
     if respond_to?(:default_job_options)
-      old_options = default_job_options.dup
       default_job_options.clear
       self.default_job_options = tmp_config
     else
-      old_options = default_worker_options.dup
       default_worker_options.clear
       self.default_worker_options = tmp_config
     end
