@@ -18,7 +18,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     subject(:lock_args_enabled?) { lock_args.lock_args_enabled? }
 
     context "with default worker options", :with_sidekiq_options do
-      let(:sidekiq_options) { { unique: :until_executed, lock_args_method: ->(args) { args[1]["test"] } } }
+      let(:sidekiq_options) { { unique: :until_executed, lock_args_method: ->(args) { args[1] } } }
 
       context "when `lock_args_method: :lock_args` in worker", :with_worker_options do
         let(:worker_options) { { lock_args_method: :lock_args } }
@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
       context "when `lock_args_method: false` in worker", :with_worker_options do
         let(:worker_options) { { lock_args_method: false } }
 
-        it { is_expected.to eq(nil) }
+        it { is_expected.to be_nil }
       end
     end
   end
@@ -155,7 +155,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
       let(:worker_class) { UniqueJobWithNilUniqueArgs }
       let(:args) { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
   end
 end

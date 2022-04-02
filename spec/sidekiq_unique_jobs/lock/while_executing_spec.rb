@@ -59,7 +59,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       process_one.execute do
         unset = true
         process_two.execute { unset = false }
-        expect(unset).to eq(true)
+        expect(unset).to be(true)
       end
 
       expect(callback_one).to have_received(:call).once
@@ -99,7 +99,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
         expect { process_one.execute { raise "Hell" } }
           .to raise_error(RuntimeError, "Hell")
 
-        expect(process_one.locked?).to eq(false)
+        expect(process_one.locked?).to be(false)
       end
     end
   end

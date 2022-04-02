@@ -14,7 +14,7 @@ RSpec.describe "update_version.lua" do
   context "without previous version" do
     it "updates Redis correctly" do
       expect { update_version }.to change { get(live_key) }.to(new_version)
-      expect(get(dead_key)).to eq(nil)
+      expect(get(dead_key)).to be_nil
       expect(update_version).to eq(1)
     end
   end
@@ -37,8 +37,8 @@ RSpec.describe "update_version.lua" do
 
       it "updates Redis correctly" do
         expect { update_version }.not_to change { get(live_key) }.from(new_version)
-        expect(get(dead_key)).to eq(nil)
-        expect(update_version).to eq(nil)
+        expect(get(dead_key)).to be_nil
+        expect(update_version).to be_nil
       end
     end
   end

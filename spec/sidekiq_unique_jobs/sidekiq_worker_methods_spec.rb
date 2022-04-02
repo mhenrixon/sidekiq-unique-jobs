@@ -19,7 +19,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
     context "when worker_class is nil" do
       let(:worker_class) { nil }
 
-      it { is_expected.to eq(nil) }
+      it { is_expected.to be_nil }
     end
 
     context "when worker_class is MyUniqueJob" do
