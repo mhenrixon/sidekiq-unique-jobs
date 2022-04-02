@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
     # The unique arguments to use for creating a lock
     # @return [Array] the arguments filters by the {#filtered_args} method if {#lock_args_enabled?}
     def lock_args
-      @lock_args ||= filtered_args
+      @lock_args ||= filtered_args || []
     end
 
     # Checks if the worker class has enabled lock_args
