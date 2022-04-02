@@ -38,8 +38,8 @@ module SidekiqUniqueJobs
     def initialize(item)
       @item         = item
       @worker_class = item[CLASS]
-      @lock_args    = item.slice(LOCK_ARGS, UNIQUE_ARGS).values.first # TODO: Deprecate UNIQUE_ARGS
-      @lock_prefix  = item.slice(LOCK_PREFIX, UNIQUE_PREFIX).values.first # TODO: Deprecate UNIQUE_PREFIX
+      @lock_args    = item[LOCK_ARGS] || item[UNIQUE_ARGS] # TODO: Deprecate UNIQUE_ARGS
+      @lock_prefix  = item[LOCK_PREFIX] || item[UNIQUE_PREFIX] # TODO: Deprecate UNIQUE_PREFIX
     end
 
     # Memoized lock_digest

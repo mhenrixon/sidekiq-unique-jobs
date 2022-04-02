@@ -67,20 +67,22 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
   describe "#filter_by_proc" do
     subject(:filter_by_proc) { lock_args.filter_by_proc(args) }
 
-    let(:args) { [1, { "test" => "it" }] }
-
     context "when #lock_args_method is a proc" do
-      let(:filter) { ->(args) { args[1]["test"] } }
+      let(:args)   { [1, 2] }
+      let(:filter) { ->(args) { args[1] } }
 
       before { allow(lock_args).to receive(:lock_args_method).and_return(filter) }
 
-      it { is_expected.to eq("it") }
+      it { is_expected.to eq(2) }
     end
 
     context "when configured globally" do
+      let(:args) { %w[abc cde] }
+      let(:filter) { ->(args) { args[1] } }
+
       it "uses global filter" do
-        Sidekiq.use_options(lock_args_method: ->(args) { args.first }) do
-          expect(filter_by_proc).to eq(1)
+        Sidekiq.use_options(lock_args_method: filter) do
+          expect(filter_by_proc).to eq("cde")
         end
       end
     end
