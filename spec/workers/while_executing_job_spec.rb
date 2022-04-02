@@ -20,7 +20,7 @@ RSpec.describe WhileExecutingJob do
     context "when job is already scheduled" do
       it "pushes the job immediately" do
         described_class.perform_in(3600, 1)
-        expect(described_class.perform_async(1)).not_to eq(nil)
+        expect(described_class.perform_async(1)).not_to be_nil
       end
     end
   end

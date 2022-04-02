@@ -90,37 +90,37 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     context "when timeout is nil" do
       let(:lock_timeout) { nil }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when timeout is positive?" do
       let(:lock_timeout) { 3 }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when timeout is a positive string?" do
       let(:lock_timeout) { "3" }
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when timeout is zero?" do
       let(:lock_timeout) { 0 }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 
   describe "#valid?" do
     subject(:valid?) { lock_config.valid? }
 
-    it { is_expected.to eq(true) }
+    it { is_expected.to be(true) }
 
     context "when errors are present" do
       let(:errors) { { any: :thing } }
 
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "concurrent/version"
+
 module SidekiqUniqueJobs
   module Orphans
     #
@@ -108,9 +110,13 @@ module SidekiqUniqueJobs
       # @return [Hash]
       #
       def timer_task_options
-        { run_now: true,
-          execution_interval: reaper_interval,
-          timeout_interval: reaper_timeout }
+        timer_task_options = { run_now: true, execution_interval: reaper_interval }
+
+        if VersionCheck.satisfied?(::Concurrent::VERSION, "< 1.1.10")
+          timer_task_options[:timeout_interval] = reaper_timeout
+        end
+
+        timer_task_options
       end
 
       #

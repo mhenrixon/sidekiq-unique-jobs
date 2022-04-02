@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.metadata["documentation_uri"] = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/CHANGELOG.md"
+  spec.metadata["funding_uri"]       = "https://github.com/mhenrixon/sidekiq-unique-jobs"
 
   spec.post_install_message = <<~POST_INSTALL
     IMPORTANT!

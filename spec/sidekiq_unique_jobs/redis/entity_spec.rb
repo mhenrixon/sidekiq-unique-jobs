@@ -15,11 +15,11 @@ RSpec.describe SidekiqUniqueJobs::Redis::Entity do
         set(key, "bogus")
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
     end
 
     context "when key does not exist" do
-      it { is_expected.to eq(false) }
+      it { is_expected.to be(false) }
     end
   end
 end

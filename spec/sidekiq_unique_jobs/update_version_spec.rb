@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::UpdateVersion do
     context "without previous version" do
       it "updates Redis correctly" do
         expect { call }.to change { get(live_key) }.to(new_version)
-        expect(get(dead_key)).to eq(nil)
+        expect(get(dead_key)).to be_nil
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe SidekiqUniqueJobs::UpdateVersion do
 
         it "updates Redis correctly" do
           expect { call }.not_to change { get(live_key) }.from(new_version)
-          expect(get(dead_key)).to eq(nil)
+          expect(get(dead_key)).to be_nil
         end
       end
     end

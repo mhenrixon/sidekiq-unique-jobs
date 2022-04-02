@@ -40,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_ex
         it "item_one can be executed by server" do
           set = false
           server.call(worker_class, item_one, queue) { set = true }
-          expect(set).to eq(true)
+          expect(set).to be(true)
         end
       end
     end
