@@ -15,6 +15,9 @@ module SidekiqUniqueJobs
       # @return [String] the suffix for :RUN locks
       RUN_SUFFIX = ":RUN"
       #
+      # @return [Integer] the maximum combined length of sidekiq queues for running the reaper
+      MAX_QUEUE_LENGTH = 1000
+      #
       # @!attribute [r] digests
       #   @return [SidekiqUniqueJobs::Digests] digest collection
       attr_reader :digests
@@ -46,6 +49,8 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of reaped locks
       #
       def call
+        return if queues_very_full?
+
         BatchDelete.call(orphans, conn)
       end
 
@@ -210,6 +215,22 @@ module SidekiqUniqueJobs
 
           deleted_size = initial_size - conn.llen(queue_key)
         end
+      end
+
+      # If sidekiq queues are very full, it becomes highly inefficient for the reaper
+      # because it must check every queued job to verify a digest is safe to delete
+      # The reaper checks queued jobs in batches of 50, adding 2 reads per digest
+      # With a queue length of 1,000 jobs, that's over 20 extra reads per digest.
+      def queues_very_full?
+        total_queue_size = 0
+        Sidekiq.redis do |conn|
+          queues(conn) do |queue|
+            total_queue_size += conn.llen("queue:#{queue}")
+
+            return true if total_queue_size > MAX_QUEUE_LENGTH
+          end
+        end
+        false
       end
 
       #
