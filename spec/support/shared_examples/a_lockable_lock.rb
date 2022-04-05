@@ -76,5 +76,12 @@ RSpec.shared_examples "an executing lock implementation" do
     it "prevents process_two from executing" do
       expect { process_two.execute { raise "Hell" } }.not_to raise_error
     end
+
+    it "reflects execution_failed on failure" do
+      allow(process_two).to receive(:reflect).and_call_original
+      process_two.execute { puts "Failed to execute" }
+
+      expect(process_two).to have_received(:reflect).with(:execution_failed, item_two)
+    end
   end
 end
