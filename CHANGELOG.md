@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.17...HEAD)
+
+**Implemented enhancements:**
+
+- Make sure we reflect on execution failure [\#700](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/700) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.1.17](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.17) (2022-04-05)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.16...v7.1.17)
+
 ## [v7.1.16](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.16) (2022-04-02)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.15...v7.1.16)
