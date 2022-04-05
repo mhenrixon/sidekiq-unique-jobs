@@ -47,7 +47,10 @@ module SidekiqUniqueJobs
             locksmith.unlock
           end
 
-          call_strategy(origin: :server, &block) unless executed
+          unless executed
+            reflect(:execution_failed, item)
+            call_strategy(origin: :server, &block)
+          end
         end
       end
 

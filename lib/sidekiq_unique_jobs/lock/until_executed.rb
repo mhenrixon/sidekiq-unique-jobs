@@ -33,10 +33,14 @@ module SidekiqUniqueJobs
       # Executes in the Sidekiq server process
       # @yield to the worker class perform method
       def execute
-        locksmith.execute do
+        executed = locksmith.execute do
           yield
           unlock_and_callback
         end
+
+        reflect(:execution_failed, item) unless executed
+
+        nil
       end
     end
   end

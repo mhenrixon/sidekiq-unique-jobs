@@ -77,9 +77,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       before do
         allow(strategy_one).to receive(:call).and_call_original
         allow(strategy_two).to receive(:call).and_call_original
+        allow(process_two).to receive(:reflect).and_call_original
       end
 
-      it "works" do
+      it "reflects execution_failed" do
         process_one.execute do
           process_two.execute { puts "BOGUS!" }
         end
@@ -87,6 +88,8 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
         expect(callback_one).to have_received(:call).once
         expect(strategy_one).not_to have_received(:call)
         expect(strategy_two).to have_received(:call).once
+
+        expect(process_two).to have_received(:reflect).with(:execution_failed, item_two)
       end
     end
 
@@ -99,7 +102,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
         expect { process_one.execute { raise "Hell" } }
           .to raise_error(RuntimeError, "Hell")
 
-        expect(process_one.locked?).to be(false)
+        expect(process_one).not_to be_locked
       end
     end
   end
