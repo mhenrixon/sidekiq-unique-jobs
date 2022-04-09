@@ -1,5 +1,14 @@
 # Changelog
 
+## [v7.1.19](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.19) (2022-04-09)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.18...v7.1.19)
+
+**Fixed bugs:**
+
+- concurrent-ruby 1.1.10 spikes volume of jobs [\#701](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/701)
+- Reimplement the entire TimerTask as it was [\#702](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/702) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.18](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.18) (2022-04-05)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.17...v7.1.18)
