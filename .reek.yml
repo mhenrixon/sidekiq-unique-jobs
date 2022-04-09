@@ -22,6 +22,7 @@ detectors:
       - SidekiqUniqueJobs::Orphans::Manager#start
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Redis::Hash#entries
+      - SidekiqUniqueJobs::TimerTask#initialize
   DataClump:
     enabled: true
     exclude:
