@@ -123,9 +123,11 @@ Before v7, the middleware was configured automatically. Since some people report
 
 *NOTE* if you want to use the reaper you also need to configure the server middleware.
 
-[A full example](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/initializers/sidekiq.rb#L12)
+The following shows how to modify your `config/initializers/sidekiq.rb` file to use the middleware. [Here is a full example.](https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/initializers/sidekiq.rb#L12)
 
 ```ruby
+require "sidekiq-unique-jobs"
+
 Sidekiq.configure_server do |config|
   config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
 
