@@ -32,7 +32,7 @@ Sidekiq.default_worker_options = {
 }
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
@@ -46,7 +46,7 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
 
   config.client_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Client
@@ -55,7 +55,7 @@ end
 
 SidekiqUniqueJobs.configure do |config|
   config.logger.level = Logger.const_get(LOGLEVEL)
-  config.debug_lua    = %w[1 true].include?(ENV["DEBUG_LUA"])
+  config.debug_lua    = %w[1 true].include?(ENV.fetch("DEBUG_LUA", nil))
   config.max_history  = 10
   config.lock_info    = true
 end

@@ -17,7 +17,7 @@ COMMIT_CHANGELOG_CMD = "git commit -a -m 'Update changelog'"
 desc "Generate a Changelog"
 task :changelog do
   sh("git checkout main")
-  sh(*CHANGELOG_CMD.push(ENV["CHANGELOG_GITHUB_TOKEN"]))
+  sh(*CHANGELOG_CMD.push(ENV.fetch("CHANGELOG_GITHUB_TOKEN", nil)))
   sh(ADD_CHANGELOG_CMD)
   sh(COMMIT_CHANGELOG_CMD)
 end

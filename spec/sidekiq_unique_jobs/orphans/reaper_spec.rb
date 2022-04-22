@@ -46,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
     context "when given a connection" do
       let(:conn)       { instance_spy(ConnectionPool) }
       let(:reaper)     { :ruby }
-      let(:reaper_spy) { instance_spy("SidekiqUniqueJobs::Orphans::Reaper") }
+      let(:reaper_spy) { instance_spy(described_class) }
 
       before do
         allow(reaper_spy).to receive(:call)
