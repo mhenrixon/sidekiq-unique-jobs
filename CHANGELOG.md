@@ -1,5 +1,17 @@
 # Changelog
 
+## [v7.1.20](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.20) (2022-04-22)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.19...v7.1.20)
+
+**Implemented enhancements:**
+
+- Manually handle timeouts [\#706](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/706) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- improve README wrt. middleware config [\#704](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/704) ([slhck](https://github.com/slhck))
+
 ## [v7.1.19](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.19) (2022-04-09)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.18...v7.1.19)
