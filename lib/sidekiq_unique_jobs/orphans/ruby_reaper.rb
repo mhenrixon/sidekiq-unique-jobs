@@ -11,6 +11,8 @@ module SidekiqUniqueJobs
     #
     # rubocop:disable Metrics/ClassLength
     class RubyReaper < Reaper
+      include SidekiqUniqueJobs::Timing
+
       #
       # @return [String] the suffix for :RUN locks
       RUN_SUFFIX = ":RUN"
@@ -31,15 +33,27 @@ module SidekiqUniqueJobs
       attr_reader :retried
 
       #
+      # @!attribute [r] start_time
+      #   @return [Integer] The timestamp this execution started represented as integer
+      attr_reader :start_time
+
+      #
+      # @!attribute [r] timeout_ms
+      #   @return [Integer] The allowed ms before timeout
+      attr_reader :timeout_ms
+
+      #
       # Initialize a new instance of DeleteOrphans
       #
       # @param [Redis] conn a connection to redis
       #
       def initialize(conn)
         super(conn)
-        @digests   = SidekiqUniqueJobs::Digests.new
-        @scheduled = Redis::SortedSet.new(SCHEDULE)
-        @retried   = Redis::SortedSet.new(RETRY)
+        @digests    = SidekiqUniqueJobs::Digests.new
+        @scheduled  = Redis::SortedSet.new(SCHEDULE)
+        @retried    = Redis::SortedSet.new(RETRY)
+        @start_time = time_source.call
+        @timeout_ms = SidekiqUniqueJobs.config.reaper_timeout * 1000
       end
 
       #
@@ -60,7 +74,7 @@ module SidekiqUniqueJobs
       #
       # @return [Array<String>] an array of orphaned digests
       #
-      def orphans # rubocop:disable Metrics/MethodLength
+      def orphans # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
         page = 0
         per = reaper_count * 2
         orphans = []
@@ -68,12 +82,14 @@ module SidekiqUniqueJobs
 
         while results.size.positive?
           results.each do |digest|
+            break if timeout?
             next if belongs_to_job?(digest)
 
             orphans << digest
             break if orphans.size >= reaper_count
           end
 
+          break if timeout?
           break if orphans.size >= reaper_count
 
           page += 1
@@ -81,6 +97,14 @@ module SidekiqUniqueJobs
         end
 
         orphans
+      end
+
+      def timeout?
+        elapsed_ms >= timeout_ms
+      end
+
+      def elapsed_ms
+        time_source.call - start_time
       end
 
       #
