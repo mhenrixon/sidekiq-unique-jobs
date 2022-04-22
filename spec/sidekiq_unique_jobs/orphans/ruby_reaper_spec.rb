@@ -32,6 +32,31 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
   describe "#orphans" do
     subject(:orphans) { service.orphans }
 
+    context "when timeout limit is hit" do
+      let(:digest_one)   { "uniquejobs:digest1" }
+      let(:digest_two)   { "uniquejobs:digest2" }
+      let(:digest_three) { "uniquejobs:digest3" }
+      let(:job_id_one)   { "jobid1" }
+      let(:job_id_two)   { "jobid2" }
+      let(:job_id_three) { "jobid3" }
+
+      before do
+        SidekiqUniqueJobs::Lock.create(digest_one, job_id_one)
+        SidekiqUniqueJobs::Lock.create(digest_two, job_id_two)
+        SidekiqUniqueJobs::Lock.create(digest_three, job_id_three)
+
+        elapsed_ms = service.start_time + service.timeout_ms + 10
+
+        allow(service).to receive(:elapsed_ms).and_return(elapsed_ms)
+        allow(service).to receive(:belongs_to_job?).and_call_original
+      end
+
+      it "does not check for orphans" do
+        expect(orphans).to match_array([])
+        expect(service).not_to have_received(:belongs_to_job?)
+      end
+    end
+
     context "when reaping more jobs than reaper_count" do
       let(:digest_one)   { "uniquejobs:digest1" }
       let(:digest_two)   { "uniquejobs:digest2" }
@@ -97,16 +122,18 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
   end
 
   describe "#call" do
-    before do
-      stub_const("SidekiqUniqueJobs::Orphans::RubyReaper::MAX_QUEUE_LENGTH", 3)
-      4.times { push_item(item) }
-      allow(service).to receive(:orphans).and_call_original
-    end
+    context "when sidekiq queues are full" do
+      before do
+        stub_const("SidekiqUniqueJobs::Orphans::RubyReaper::MAX_QUEUE_LENGTH", 3)
+        4.times { push_item(item) }
+        allow(service).to receive(:orphans).and_call_original
+      end
 
-    it "quits early if sidekiq queues are very full" do
-      service.call
+      it "quits early" do
+        service.call
 
-      expect(service).not_to have_received(:orphans)
+        expect(service).not_to have_received(:orphans)
+      end
     end
   end
 end

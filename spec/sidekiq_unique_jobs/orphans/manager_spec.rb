@@ -261,8 +261,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
 
       let(:expected_options) do
         { run_now: true,
-          execution_interval: SidekiqUniqueJobs.config.reaper_interval,
-          timeout_interval: SidekiqUniqueJobs.config.reaper_timeout }
+          execution_interval: SidekiqUniqueJobs.config.reaper_interval }
       end
 
       it { is_expected.to eq(expected_options) }
@@ -273,12 +272,6 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     subject(:reaper_interval) { described_class.reaper_interval }
 
     it { is_expected.to eq(SidekiqUniqueJobs.config.reaper_interval) }
-  end
-
-  describe ".reaper_timeout" do
-    subject(:reaper_timeout) { described_class.reaper_timeout }
-
-    it { is_expected.to eq(SidekiqUniqueJobs.config.reaper_timeout) }
   end
 
   describe ".register_reaper_process" do

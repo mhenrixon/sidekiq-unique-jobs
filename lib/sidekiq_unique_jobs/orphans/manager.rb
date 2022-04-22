@@ -110,13 +110,7 @@ module SidekiqUniqueJobs
       # @return [Hash]
       #
       def timer_task_options
-        timer_task_options = { run_now: true, execution_interval: reaper_interval }
-
-        if VersionCheck.satisfied?(::Concurrent::VERSION, "< 1.1.10")
-          timer_task_options[:timeout_interval] = reaper_timeout
-        end
-
-        timer_task_options
+        { run_now: true, execution_interval: reaper_interval }
       end
 
       #
@@ -131,13 +125,6 @@ module SidekiqUniqueJobs
       #
       def reaper_interval
         SidekiqUniqueJobs.config.reaper_interval
-      end
-
-      #
-      # @see SidekiqUniqueJobs::Config#reaper_timeout
-      #
-      def reaper_timeout
-        SidekiqUniqueJobs.config.reaper_timeout
       end
 
       #

@@ -5,7 +5,7 @@ require "sidekiq-unique-jobs"
 
 Redis.exists_returns_integer = false
 
-REDIS = Redis.new(url: ENV["REDIS_URL"])
+REDIS = Redis.new(url: ENV.fetch("REDIS_URL", nil))
 
 Sidekiq.default_worker_options = {
   backtrace: true,
@@ -13,7 +13,7 @@ Sidekiq.default_worker_options = {
 }
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
 
   config.client_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Client
@@ -21,7 +21,7 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV["REDIS_URL"], driver: :hiredis }
+  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
