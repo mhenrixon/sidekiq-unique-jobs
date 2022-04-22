@@ -175,6 +175,7 @@ detectors:
       - SidekiqUniqueJobs::LockConfig
       - SidekiqUniqueJobs::Locksmith
       - SidekiqUniqueJobs::Lock::BaseLock
+      - SidekiqUniqueJobs::Orphans::RubyReaper
       - SidekiqUniqueJobs::TimerTask
   TooManyMethods:
     exclude:
@@ -182,6 +183,7 @@ detectors:
       - SidekiqUniqueJobs::Locksmith
       - SidekiqUniqueJobs::Lock
       - SidekiqUniqueJobs::Orphans::Reaper
+      - SidekiqUniqueJobs::Orphans::RubyReaper
   UncommunicativeVariableName:
     exclude:
       - Hash#slice
