@@ -36,10 +36,10 @@ module SidekiqUniqueJobs
 
     # @param [Hash] item a Sidekiq job hash
     def initialize(item)
-      @item         = item
-      @worker_class = item[CLASS]
-      @lock_args    = item[LOCK_ARGS] || item[UNIQUE_ARGS] # TODO: Deprecate UNIQUE_ARGS
-      @lock_prefix  = item[LOCK_PREFIX] || item[UNIQUE_PREFIX] # TODO: Deprecate UNIQUE_PREFIX
+      @item        = item
+      @lock_args   = item[LOCK_ARGS] || item[UNIQUE_ARGS] # TODO: Deprecate UNIQUE_ARGS
+      @lock_prefix = item[LOCK_PREFIX] || item[UNIQUE_PREFIX] # TODO: Deprecate UNIQUE_PREFIX
+      self.job_class = item[CLASS]
     end
 
     # Memoized lock_digest
@@ -67,13 +67,13 @@ module SidekiqUniqueJobs
     # Checks if we should disregard the queue when creating the unique digest
     # @return [true, false]
     def unique_across_queues?
-      item[UNIQUE_ACROSS_QUEUES] || worker_options[UNIQUE_ACROSS_QUEUES]
+      item[UNIQUE_ACROSS_QUEUES] || job_options[UNIQUE_ACROSS_QUEUES]
     end
 
     # Checks if we should disregard the worker when creating the unique digest
     # @return [true, false]
     def unique_across_workers?
-      item[UNIQUE_ACROSS_WORKERS] || worker_options[UNIQUE_ACROSS_WORKERS]
+      item[UNIQUE_ACROSS_WORKERS] || job_options[UNIQUE_ACROSS_WORKERS]
     end
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
   let(:jid_one)      { "jid one" }
   let(:jid_two)      { "jid two" }
-  let(:worker_class) { WhileExecutingJob }
+  let(:job_class)    { WhileExecutingJob }
   let(:unique)       { :while_executing }
   let(:queue)        { :while_executing }
   let(:args)         { %w[array of arguments] }
@@ -14,14 +14,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
   let(:callback_two) { -> {} }
   let(:item_one) do
     { "jid" => jid_one,
-      "class" => worker_class.to_s,
+      "class" => job_class.to_s,
       "queue" => queue,
       "lock" => unique,
       "args" => args }
   end
   let(:item_two) do
     { "jid" => jid_two,
-      "class" => worker_class.to_s,
+      "class" => job_class.to_s,
       "queue" => queue,
       "lock" => unique,
       "args" => args }
@@ -67,7 +67,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
     end
 
     context "when no callback is defined" do
-      let(:worker_class) { WhileExecutingRescheduleJob }
+      let(:job_class) { WhileExecutingRescheduleJob }
       let(:callback_one) { -> { true } }
       let(:callback_two) { nil }
 

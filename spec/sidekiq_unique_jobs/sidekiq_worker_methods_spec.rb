@@ -1,57 +1,57 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
-  let(:custom_worker_class) do
+  let(:custom_job_class) do
     Class.new do
       include SidekiqUniqueJobs::SidekiqWorkerMethods
 
-      def initialize(worker_class)
-        @worker_class = worker_class
+      def initialize(job_class)
+        self.job_class = job_class
       end
     end
   end
 
-  let(:worker) { custom_worker_class.new(worker_class) }
+  let(:job) { custom_job_class.new(job_class) }
 
-  describe "#worker_class_constantize" do
-    subject(:worker_class_constantize) { worker.worker_class_constantize }
+  describe "#job_class_constantize" do
+    subject(:job_class_constantize) { job.job_class_constantize }
 
-    context "when worker_class is nil" do
-      let(:worker_class) { nil }
+    context "when job_class is nil" do
+      let(:job_class) { nil }
 
       it { is_expected.to be_nil }
     end
 
-    context "when worker_class is MyUniqueJob" do
-      let(:worker_class) { MyUniqueJob }
+    context "when job_class is MyUniqueJob" do
+      let(:job_class) { MyUniqueJob }
 
       it { is_expected.to eq(MyUniqueJob) }
     end
 
-    context "when worker_class is instance of UntilExecutedJob" do
-      let(:worker_class) { UntilExecutedJob.new }
+    context "when job_class is instance of UntilExecutedJob" do
+      let(:job_class) { UntilExecutedJob.new }
 
       it { is_expected.to eq(UntilExecutedJob) }
     end
 
-    context "when worker_class is UntilExecutedJob" do
-      let(:worker_class) { "UntilExecutedJob" }
+    context "when job_class is UntilExecutedJob" do
+      let(:job_class) { "UntilExecutedJob" }
 
       it { is_expected.to eq(UntilExecutedJob) }
     end
 
     context "when NameError is caught", ruby_ver: "< 3.0" do
-      let(:worker_class)  { "UnknownConstant" }
+      let(:job_class) { "UnknownConstant" }
       let(:error_message) { "this class does not exist" }
 
       before do
         allow(Object).to receive(:const_get)
-          .with(worker_class)
+          .with(job_class)
           .and_raise(NameError, error_message)
       end
 
       it "raises NameError" do
-        expect { worker_class_constantize }.to raise_error(NameError, error_message)
+        expect { job_class_constantize }.to raise_error(NameError, error_message)
       end
 
       context "when exception.message contains `uninitialized constant`" do
@@ -62,13 +62,13 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
     end
   end
 
-  describe "#worker_options" do
-    subject(:worker_options) { worker.worker_options }
+  describe "#job_options" do
+    subject(:job_options) { job.job_options }
 
-    let(:worker_class) { UniqueJobOnConflictHash }
+    let(:job_class) { UniqueJobOnConflictHash }
 
     it do
-      expect(worker_options).to match(
+      expect(job_options).to match(
         hash_including(
           "lock" => :until_and_while_executing,
           "on_conflict" => {

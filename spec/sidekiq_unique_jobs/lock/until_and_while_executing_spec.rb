@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
   let(:callback)     { -> {} }
   let(:item_one) do
     { "jid" => jid_one,
-      "class" => worker_class.to_s,
+      "class" => job_class.to_s,
       "queue" => queue,
       "lock" => unique,
       "args" => args,
@@ -28,9 +28,9 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
   let(:sleepy_time)  { 0 }
 
   if Sidekiq.const_defined?(:JobRecord)
-    let(:worker_class) { AnotherUniqueJobJob }
+    let(:job_class) { AnotherUniqueJobJob }
   else
-    let(:worker_class) { UntilAndWhileExecutingJob }
+    let(:job_class) { UntilAndWhileExecutingJob }
   end
 
   before do

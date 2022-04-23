@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   # Requires the following methods to be defined in the including class
   #   1. item (required)
   #   2. options (can be nil)
-  #   3. worker_class (required, can be anything)
+  #   3. job_class (required, can be anything)
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   module OptionsWithFallback
     def self.included(base)
@@ -69,8 +69,8 @@ module SidekiqUniqueJobs
     #
     def options
       @options ||= begin
-        opts = default_worker_options.dup
-        opts.merge!(worker_options) if sidekiq_worker_class?
+        opts = default_job_options.dup
+        opts.merge!(job_options) if sidekiq_job_class?
         (opts || {}).stringify_keys
       end
     end

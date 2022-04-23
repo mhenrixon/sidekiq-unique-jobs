@@ -5,50 +5,55 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   module SidekiqWorkerMethods
+    #
+    # @!attribute [r] job_class
+    #   @return [Sidekiq::Worker] The Sidekiq::Worker implementation
+    attr_reader :job_class
+
     # Avoids duplicating worker_class.respond_to? in multiple places
     # @return [true, false]
-    def worker_method_defined?(method_sym)
-      worker_class.respond_to?(method_sym)
+    def job_method_defined?(method_sym)
+      job_class.respond_to?(method_sym)
     end
 
     # Wraps #get_sidekiq_options to always work with a hash
     # @return [Hash] of the worker class sidekiq options
-    def worker_options
-      return {} unless sidekiq_worker_class?
+    def job_options
+      return {} unless sidekiq_job_class?
 
-      worker_class.get_sidekiq_options.deep_stringify_keys
+      job_class.get_sidekiq_options.deep_stringify_keys
     end
 
     # Tests that the
-    # @return [true] if worker_class responds to get_sidekiq_options
-    # @return [false] if worker_class does not respond to get_sidekiq_options
-    def sidekiq_worker_class?
-      worker_method_defined?(:get_sidekiq_options)
+    # @return [true] if job_class responds to get_sidekiq_options
+    # @return [false] if job_class does not respond to get_sidekiq_options
+    def sidekiq_job_class?
+      job_method_defined?(:get_sidekiq_options)
     end
 
-    # The Sidekiq::Worker implementation
-    # @return [Sidekiq::Worker]
-    def worker_class
-      @_worker_class ||= worker_class_constantize # rubocop:disable Naming/MemoizedInstanceVariableName
+    def job_class=(obj)
+      # this is what was originally passed in, it can be an instance or a class depending on sidekiq version
+      @original_job_class = obj
+      @job_class = job_class_constantize(obj)
     end
 
     # The hook to call after a successful unlock
     # @return [Proc]
     def after_unlock_hook # rubocop:disable Metrics/MethodLength
       lambda do
-        if @worker_class.respond_to?(:after_unlock)
+        if @original_job_class.respond_to?(:after_unlock)
           # instance method in sidekiq v6
-          if @worker_class.method(:after_unlock).arity.positive? # arity check to maintain backwards compatibility
-            @worker_class.after_unlock(item)
+          if @original_job_class.method(:after_unlock).arity.positive? # arity check to maintain backwards compatibility
+            @original_job_class.after_unlock(item)
           else
-            @worker_class.after_unlock
+            @original_job_class.after_unlock
           end
-        elsif worker_class.respond_to?(:after_unlock)
+        elsif job_class.respond_to?(:after_unlock)
           # class method regardless of sidekiq version
-          if worker_class.method(:after_unlock).arity.positive? # arity check to maintain backwards compatibility
-            worker_class.after_unlock(item)
+          if job_class.method(:after_unlock).arity.positive? # arity check to maintain backwards compatibility
+            job_class.after_unlock(item)
           else
-            worker_class.after_unlock
+            job_class.after_unlock
           end
         end
       end
@@ -58,7 +63,7 @@ module SidekiqUniqueJobs
     # failing back to the original argument when the constant can't be found
     #
     # @return [Sidekiq::Worker]
-    def worker_class_constantize(klazz = @worker_class)
+    def job_class_constantize(klazz = @job_class)
       SidekiqUniqueJobs.safe_constantize(klazz)
     end
 
@@ -68,8 +73,12 @@ module SidekiqUniqueJobs
     #
     # @return [Hash<Symbol, Object>]
     #
-    def default_worker_options
-      Sidekiq.default_worker_options
+    def default_job_options
+      if Sidekiq.respond_to?(:default_job_options)
+        Sidekiq.default_job_options
+      else
+        Sidekiq.default_worker_options
+      end
     end
   end
 end

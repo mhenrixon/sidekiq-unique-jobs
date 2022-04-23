@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 RSpec.describe Sidekiq::RetrySet do
-  let(:locksmith)       { SidekiqUniqueJobs::Locksmith.new(item) }
-  let(:args)            { [1, 2] }
-  let(:worker_class)    { MyUniqueJob }
-  let(:jid)             { "ajobid" }
-  let(:key)             { SidekiqUniqueJobs::Key.new(unique_digest) }
-  let(:lock)            { :until_executed }
-  let(:lock_ttl)        { 7_200 }
-  let(:queue)           { :customqueue }
-  let(:retry_at)        { Time.now.to_f + 360 }
-  let(:unique_digest)   { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
+  let(:locksmith)     { SidekiqUniqueJobs::Locksmith.new(item) }
+  let(:args)          { [1, 2] }
+  let(:job_class)     { MyUniqueJob }
+  let(:jid)           { "ajobid" }
+  let(:key)           { SidekiqUniqueJobs::Key.new(unique_digest) }
+  let(:lock)          { :until_executed }
+  let(:lock_ttl)      { 7_200 }
+  let(:queue)         { :customqueue }
+  let(:retry_at)      { Time.now.to_f + 360 }
+  let(:unique_digest) { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
   let(:item) do
     {
       "args" => args,
-      "class" => worker_class,
+      "class" => job_class,
       "failed_at" => Time.now.to_f,
       "jid" => jid,
       "lock" => lock,

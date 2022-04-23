@@ -29,10 +29,10 @@ module SidekiqUniqueJobs
     # @yieldparam [<type>] if <description>
     # @yieldreturn [<type>] <describe what yield should return>
     def call(worker_class, item, queue, redis_pool = nil)
-      @worker_class = worker_class
-      @item         = item
-      @queue        = queue
-      @redis_pool   = redis_pool
+      @item       = item
+      @queue      = queue
+      @redis_pool = redis_pool
+      self.job_class = item[CLASS]
       return yield if unique_disabled?
 
       SidekiqUniqueJobs::Job.prepare(item) unless item[LOCK_DIGEST]

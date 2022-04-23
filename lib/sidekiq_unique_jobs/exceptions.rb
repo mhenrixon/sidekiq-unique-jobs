@@ -72,14 +72,14 @@ module SidekiqUniqueJobs
   class InvalidUniqueArguments < UniqueJobsError
     def initialize(options)
       given            = options[:given]
-      worker_class     = options[:worker_class]
+      job_class        = options[:job_class]
       lock_args_method = options[:lock_args_method]
-      lock_args_meth   = worker_class.method(lock_args_method)
+      lock_args_meth   = job_class.method(lock_args_method)
       num_args         = lock_args_meth.arity
       source_location  = lock_args_meth.source_location
 
       super(
-        "#{worker_class}##{lock_args_method} takes #{num_args} arguments, received #{given.inspect}" \
+        "#{job_class}##{lock_args_method} takes #{num_args} arguments, received #{given.inspect}" \
         "\n\n" \
         "   #{source_location.join(':')}"
       )

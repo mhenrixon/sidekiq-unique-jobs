@@ -30,8 +30,8 @@ module SidekiqUniqueJobs
     # @option item [String] :class the class of the sidekiq worker
     # @option item [Float] :at the unix time the job is scheduled at
     def initialize(item)
-      @item         = item
-      @worker_class = item[CLASS]
+      @item = item
+      self.job_class = item[CLASS]
     end
 
     #
@@ -42,9 +42,9 @@ module SidekiqUniqueJobs
     # @return [Integer, nil]
     #
     def calculate
-      timeout = default_worker_options[LOCK_TIMEOUT]
+      timeout = default_job_options[LOCK_TIMEOUT]
       timeout = default_lock_timeout if default_lock_timeout
-      timeout = worker_options[LOCK_TIMEOUT] if worker_options.key?(LOCK_TIMEOUT)
+      timeout = job_options[LOCK_TIMEOUT] if job_options.key?(LOCK_TIMEOUT)
       timeout
     end
 

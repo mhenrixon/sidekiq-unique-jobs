@@ -4,23 +4,23 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
   let(:process_one) { described_class.new(item_one, callback) }
   let(:process_two) { described_class.new(item_two, callback) }
 
-  let(:jid_one)      { "jid one" }
-  let(:jid_two)      { "jid two" }
-  let(:worker_class) { UntilExpiredJob }
-  let(:unique)       { :until_expired }
-  let(:queue)        { :rejecting }
-  let(:args)         { %w[array of arguments] }
-  let(:callback)     { -> {} }
+  let(:jid_one)   { "jid one" }
+  let(:jid_two)   { "jid two" }
+  let(:job_class) { UntilExpiredJob }
+  let(:unique)    { :until_expired }
+  let(:queue)     { :rejecting }
+  let(:args)      { %w[array of arguments] }
+  let(:callback)  { -> {} }
   let(:item_one) do
     { "jid" => jid_one,
-      "class" => worker_class.to_s,
+      "class" => job_class.to_s,
       "queue" => queue,
       "lock" => unique,
       "args" => args }
   end
   let(:item_two) do
     { "jid" => jid_two,
-      "class" => worker_class.to_s,
+      "class" => job_class.to_s,
       "queue" => queue,
       "lock" => unique,
       "args" => args }
