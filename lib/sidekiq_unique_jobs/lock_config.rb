@@ -13,9 +13,9 @@ module SidekiqUniqueJobs
     #   @return [Symbol] the type of lock
     attr_reader :type
     #
-    # @!attribute [r] worker
-    #   @return [Symbol] the worker class
-    attr_reader :worker
+    # @!attribute [r] job
+    #   @return [Symbol] the job class
+    attr_reader :job
     #
     # @!attribute [r] limit
     #   @return [Integer] the number of simultaneous locks
@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
 
     def initialize(job_hash = {})
       @type        = job_hash[LOCK]&.to_sym
-      @worker      = SidekiqUniqueJobs.safe_constantize(job_hash[CLASS])
+      @job         = SidekiqUniqueJobs.safe_constantize(job_hash[CLASS])
       @limit       = job_hash.fetch(LOCK_LIMIT, 1)&.to_i
       @timeout     = job_hash.fetch(LOCK_TIMEOUT, 0)&.to_i
       @ttl         = job_hash.fetch(LOCK_TTL) { job_hash.fetch(LOCK_EXPIRATION, nil) }.to_i

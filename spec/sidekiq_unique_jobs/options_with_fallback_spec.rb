@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
-  let(:options_with_fallback) { class_with_options.new(item, options, worker_class) }
+  let(:options_with_fallback) { class_with_options.new(item, options, job_class) }
   let(:options)               { nil }
-  let(:worker_class)          { "UntilExecutedJob" }
+  let(:job_class)             { "UntilExecutedJob" }
   let(:queue)                 { "default" }
   let(:jid)                   { "maaaahjid" }
   let(:unique)                { :until_executed }
@@ -12,7 +12,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     {
       "jid" => jid,
       "queue" => queue,
-      "class" => worker_class,
+      "class" => job_class,
       "lock" => unique,
       "args" => args,
     }
@@ -22,18 +22,18 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
     Class.new do
       include SidekiqUniqueJobs::OptionsWithFallback
 
-      attr_reader :item, :worker_class
+      attr_reader :item, :job_class
 
-      def initialize(item, options, worker_class = nil)
-        @item         = item
-        @options      = options
-        @worker_class = worker_class
+      def initialize(item, options, job_class = nil)
+        @item     = item
+        @options  = options
+        @job_class = job_class
       end
     end
   end
 
   describe "#unique_enabled?" do
-    subject { options_with_fallback.unique_enabled? }
+    subject(:unique_enabled?) { options_with_fallback.unique_enabled? }
 
     let(:options) { {} }
     let(:item)    { {} }
@@ -71,7 +71,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   end
 
   describe "#unique_disabled?" do
-    subject { options_with_fallback.unique_disabled? }
+    subject(:unique_disabled?) { options_with_fallback.unique_disabled? }
 
     let(:options) { {} }
     let(:item)    { {} }
@@ -136,7 +136,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   end
 
   describe "#lock_type" do
-    subject { options_with_fallback.lock_type }
+    subject(:lock_type) { options_with_fallback.lock_type }
 
     context 'when options["lock"] is while_executing' do
       let(:options) { { "lock" => "while_executing" } }
@@ -156,8 +156,8 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
   describe "#options" do
     subject(:class_options) { options_with_fallback.options }
 
-    context "when worker_class respond_to get_sidekiq_options" do
-      let(:worker_class) { SimpleWorker }
+    context "when job_class respond_to get_sidekiq_options" do
+      let(:job_class) { SimpleWorker }
 
       it { is_expected.to eq(SimpleWorker.get_sidekiq_options) }
     end

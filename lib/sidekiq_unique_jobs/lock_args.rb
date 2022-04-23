@@ -26,9 +26,9 @@ module SidekiqUniqueJobs
 
     # @param [Hash] item a Sidekiq job hash
     def initialize(item)
-      @item         = item
-      @worker_class = item[CLASS]
-      @args         = item[ARGS]
+      @item = item
+      @args = item[ARGS]
+      self.job_class = item[CLASS]
     end
 
     # The unique arguments to use for creating a lock
@@ -83,31 +83,31 @@ module SidekiqUniqueJobs
 
     # Filters unique arguments by method configured in the sidekiq worker
     # @param [Array] args the arguments passed to the sidekiq worker
-    # @return [Array] unfiltered unless {#worker_method_defined?}
+    # @return [Array] unfiltered unless {#job_method_defined?}
     # @return [Array] with the filtered arguments
     def filter_by_symbol(args)
-      return args unless worker_method_defined?(lock_args_method)
+      return args unless job_method_defined?(lock_args_method)
 
-      worker_class.send(lock_args_method, args)
+      job_class.send(lock_args_method, args)
     rescue ArgumentError
       raise SidekiqUniqueJobs::InvalidUniqueArguments,
             given: args,
-            worker_class: worker_class,
+            job_class: job_class,
             lock_args_method: lock_args_method
     end
 
     # The method to use for filtering unique arguments
     def lock_args_method
-      @lock_args_method ||= worker_options.slice(LOCK_ARGS_METHOD, UNIQUE_ARGS_METHOD).values.first
-      @lock_args_method ||= :lock_args if worker_method_defined?(:lock_args)
-      @lock_args_method ||= :unique_args if worker_method_defined?(:unique_args)
+      @lock_args_method ||= job_options.slice(LOCK_ARGS_METHOD, UNIQUE_ARGS_METHOD).values.first
+      @lock_args_method ||= :lock_args if job_method_defined?(:lock_args)
+      @lock_args_method ||= :unique_args if job_method_defined?(:unique_args)
       @lock_args_method ||= default_lock_args_method
     end
 
     # The global worker options defined in Sidekiq directly
     def default_lock_args_method
-      default_worker_options[LOCK_ARGS_METHOD] ||
-        default_worker_options[UNIQUE_ARGS_METHOD]
+      default_job_options[LOCK_ARGS_METHOD] ||
+        default_job_options[UNIQUE_ARGS_METHOD]
     end
 
     #
@@ -116,8 +116,12 @@ module SidekiqUniqueJobs
     #
     # @return [Hash<String, Object>]
     #
-    def default_worker_options
-      @default_worker_options ||= Sidekiq.default_worker_options.stringify_keys
+    def default_job_options
+      @default_job_options ||= if Sidekiq.respond_to?(:default_job_options)
+        Sidekiq.default_job_options.stringify_keys
+      else
+        Sidekiq.default_worker_options.stringify_keys
+      end
     end
   end
 end

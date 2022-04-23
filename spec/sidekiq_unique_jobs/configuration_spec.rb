@@ -4,7 +4,7 @@
 RSpec.describe SidekiqUniqueJobs do
   describe "define custom lock strategies" do
     subject(:middleware_call) do
-      SidekiqUniqueJobs::Middleware::Client.new.call(worker_class, item, queue) do
+      SidekiqUniqueJobs::Middleware::Client.new.call(job_class, item, queue) do
         true
       end
     end
@@ -38,7 +38,7 @@ RSpec.describe SidekiqUniqueJobs do
         "lock" => lock_type,
       }
     end
-    let(:worker_class) { foobar_job }
+    let(:job_class) { foobar_job }
 
     context "when the lock is not defined" do
       it "raises SidekiqUniqueJobs::UnknownLock" do

@@ -11,10 +11,10 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
   let(:queue)        { "customqueue" }
   let(:lock_ttl)     { 7_200 }
   let(:lock_timeout) { 0 }
-  let(:worker_class) { MyUniqueJob }
+  let(:job_class)    { MyUniqueJob }
   let(:item) do
     SidekiqUniqueJobs::Job.prepare(
-      "class" => worker_class,
+      "class" => job_class,
       "queue" => queue,
       "args" => args,
       "lock_ttl" => lock_ttl,

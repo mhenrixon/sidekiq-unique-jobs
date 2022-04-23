@@ -4,12 +4,12 @@ require "sidekiq/worker"
 require "sidekiq-unique-jobs"
 
 RSpec.describe SidekiqUniqueJobs::Middleware::Client, "#call" do
-  subject(:call) { middleware.call(worker_class, item, queue, &block) }
+  subject(:call) { middleware.call(job_class, item, queue, &block) }
 
-  let(:middleware)   { described_class.new }
-  let(:block)        { -> { @inside_block_value = true } }
-  let(:worker_class) { SimpleWorker }
-  let(:queue)        { "default" }
+  let(:middleware) { described_class.new }
+  let(:block)      { -> { @inside_block_value = true } }
+  let(:job_class)  { SimpleWorker }
+  let(:queue)      { "default" }
   let(:item) do
     { "class" => SimpleWorker,
       "queue" => queue,

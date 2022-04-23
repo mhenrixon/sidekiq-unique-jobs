@@ -8,14 +8,14 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_ex
   let(:jid_two)      { "jid two" }
   let(:lock_timeout) { nil }
   let(:sleepy_time)  { 0 }
-  let(:worker_class) { UntilAndWhileExecutingJob }
+  let(:job_class)    { UntilAndWhileExecutingJob }
   let(:unique)       { :until_and_while_executing }
   let(:queue)        { :another_queue }
   let(:args)         { [sleepy_time] }
   let(:callback)     { -> {} }
   let(:item_one) do
     { "jid" => jid_one,
-      "class" => worker_class.to_s,
+      "class" => job_class.to_s,
       "queue" => queue,
       "lock" => unique,
       "args" => args,
@@ -39,7 +39,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_ex
       context "when processing takes 0 seconds" do
         it "item_one can be executed by server" do
           set = false
-          server.call(worker_class, item_one, queue) { set = true }
+          server.call(job_class, item_one, queue) { set = true }
           expect(set).to be(true)
         end
       end

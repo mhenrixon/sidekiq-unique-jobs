@@ -8,7 +8,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   let(:item) do
     {
       lock: lock_type,
-      class: worker_class,
+      class: job_class,
       lock_limit: lock_limit,
       lock_timeout: lock_timeout,
       lock_ttl: lock_ttl,
@@ -19,7 +19,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   end
 
   let(:lock_type)    { :until_executed }
-  let(:worker_class) { "UntilExecutedJob" }
+  let(:job_class)    { "UntilExecutedJob" }
   let(:lock_limit)   { 2 }
   let(:lock_timeout) { 5 }
   let(:lock_ttl)     { 2000 }
@@ -28,7 +28,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
   let(:errors)       { {} }
 
   its(:type)        { is_expected.to eq(lock_type) }
-  its(:worker)      { is_expected.to eq(UntilExecutedJob) }
+  its(:job)         { is_expected.to eq(UntilExecutedJob) }
   its(:limit)       { is_expected.to eq(lock_limit) }
   its(:timeout)     { is_expected.to eq(lock_timeout) }
   its(:ttl)         { is_expected.to eq(lock_ttl) }
@@ -38,9 +38,9 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
 
   describe "#initialize" do
     context "when worker doesn't exist" do
-      let(:worker_class) { "MyBogusAndNoneExistingWorker" }
+      let(:job_class) { "MyBogusAndNoneExistingWorker" }
 
-      its(:worker) { is_expected.to eq("MyBogusAndNoneExistingWorker") }
+      its(:job) { is_expected.to eq("MyBogusAndNoneExistingWorker") }
     end
   end
 

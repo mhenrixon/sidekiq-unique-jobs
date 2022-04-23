@@ -8,11 +8,11 @@ RSpec.shared_context "with global config", with_global_config: true do
   end
 end
 
-RSpec.shared_context "with worker options", with_worker_options: true do
-  let(:worker_options) { {} }
+RSpec.shared_context "with job options", with_job_options: true do
+  let(:job_options) { {} }
 
   around do |example|
-    worker_class.use_options(worker_options, &example)
+    job_class.use_options(job_options, &example)
   end
 end
 

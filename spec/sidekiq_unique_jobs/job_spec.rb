@@ -4,13 +4,13 @@ require "spec_helper"
 
 RSpec.describe SidekiqUniqueJobs::Job do
   let(:job) do
-    { "class" => worker_class,
+    { "class" => job_class,
       "queue" => queue,
       "args" => args }
   end
-  let(:worker_class) { MyUniqueJob }
-  let(:queue)        { "anotherqueue" }
-  let(:args)         { [1, 2] }
+  let(:job_class) { MyUniqueJob }
+  let(:queue)     { "anotherqueue" }
+  let(:args)      { [1, 2] }
 
   describe ".prepare" do
     subject(:prepare) { described_class.prepare(job) }
@@ -18,7 +18,7 @@ RSpec.describe SidekiqUniqueJobs::Job do
     it "adds required hash data" do
       expect(prepare).to eq(
         {
-          "class" => worker_class,
+          "class" => job_class,
           "queue" => queue,
           "args" => [1, 2],
           "lock_timeout" => MyUniqueJob.get_sidekiq_options["lock_timeout"].to_i,
@@ -31,9 +31,9 @@ RSpec.describe SidekiqUniqueJobs::Job do
     end
 
     context "when there is a hash in on_conflict" do
-      let(:worker_class) { UniqueJobOnConflictHash }
+      let(:job_class) { UniqueJobOnConflictHash }
 
-      let(:job) { worker_class.get_sidekiq_options }
+      let(:job) { job_class.get_sidekiq_options }
 
       it "stringifies the on_conflict hash" do
         expect(prepare).to match(

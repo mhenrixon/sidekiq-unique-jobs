@@ -14,14 +14,14 @@ module SidekiqUniqueJobs
       # @param [Hash] item sidekiq job hash
       def initialize(item, redis_pool = nil)
         super(item, redis_pool)
-        @worker_class = item[CLASS]
+        self.job_class = item[CLASS]
       end
 
       # Create a new job from the current one.
       #   This will mess up sidekiq stats because a new job is created
       def call
-        if sidekiq_worker_class?
-          if worker_class.set(queue: item["queue"].to_sym).perform_in(5, *item[ARGS])
+        if sidekiq_job_class?
+          if job_class.set(queue: item["queue"].to_sym).perform_in(5, *item[ARGS])
             reflect(:rescheduled, item)
           else
             reflect(:reschedule_failed, item)

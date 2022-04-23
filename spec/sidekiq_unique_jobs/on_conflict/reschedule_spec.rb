@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
-  let(:strategy)     { described_class.new(item) }
-  let(:lock_digest)  { "uniquejobs:random-digest-value" }
-  let(:worker_class) { "UniqueJobOnConflictReschedule" }
+  let(:strategy)    { described_class.new(item) }
+  let(:lock_digest) { "uniquejobs:random-digest-value" }
+  let(:job_class)   { "UniqueJobOnConflictReschedule" }
   let(:item) do
-    { "class" => worker_class,
+    { "class" => job_class,
       "lock_digest" => lock_digest,
       "args" => [1, 2],
       "queue" => "default" }
@@ -57,9 +57,9 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
       end
     end
 
-    context "when not a sidekiq_worker_class?" do
+    context "when not a sidekiq_job_class?" do
       before do
-        allow(strategy).to receive(:sidekiq_worker_class?).and_return(false)
+        allow(strategy).to receive(:sidekiq_job_class?).and_return(false)
         allow(strategy).to receive(:reflect).and_call_original
       end
 

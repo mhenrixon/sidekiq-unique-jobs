@@ -33,8 +33,8 @@ module SidekiqUniqueJobs
     # @option item [String] :class the class of the sidekiq worker
     # @option item [Float] :at the unix time the job is scheduled at
     def initialize(item)
-      @item         = item
-      @worker_class = item[CLASS]
+      @item = item
+      self.job_class = item[CLASS]
     end
 
     #
@@ -67,9 +67,9 @@ module SidekiqUniqueJobs
     #
     def calculate
       ttl = item[LOCK_TTL]
-      ttl ||= worker_options[LOCK_TTL]
+      ttl ||= job_options[LOCK_TTL]
       ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
-      ttl ||= worker_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
+      ttl ||= job_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
       ttl ||= SidekiqUniqueJobs.config.lock_ttl
       ttl && (ttl.to_i + time_until_scheduled)
     end

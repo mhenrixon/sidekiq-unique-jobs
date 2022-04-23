@@ -26,10 +26,17 @@ Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 LOGLEVEL = ENV.fetch("LOGLEVEL", "ERROR").upcase
 ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_worker_options
 
-Sidekiq.default_worker_options = {
-  backtrace: true,
-  retry: true,
-}
+if Sidekiq.respond_to?(:default_job_options)
+  Sidekiq.default_job_options = {
+    backtrace: true,
+    retry: true,
+  }
+else
+  Sidekiq.default_worker_options = {
+    backtrace: true,
+    retry: true,
+  }
+end
 
 Sidekiq.configure_server do |config|
   config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::LockArgs do
-  let(:lock_args)    { described_class.new(item) }
-  let(:worker_class) { UntilExecutedJob }
-  let(:class_name)   { worker_class.to_s }
-  let(:queue)        { "myqueue" }
-  let(:args)         { [[1, 2]] }
+  let(:lock_args)  { described_class.new(item) }
+  let(:job_class)  { UntilExecutedJob }
+  let(:class_name) { job_class.to_s }
+  let(:queue)      { "myqueue" }
+  let(:args)       { [[1, 2]] }
   let(:item) do
     {
       "class" => class_name,
@@ -17,17 +17,17 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
   describe "#lock_args_enabled?" do
     subject(:lock_args_enabled?) { lock_args.lock_args_enabled? }
 
-    context "with default worker options", :with_sidekiq_options do
+    context "with default job options", :with_sidekiq_options do
       let(:sidekiq_options) { { unique: :until_executed, lock_args_method: ->(args) { args[1] } } }
 
-      context "when `lock_args_method: :lock_args` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args_method: :lock_args } }
+      context "when `lock_args_method: :lock_args` in worker", :with_job_options do
+        let(:job_options) { { lock_args_method: :lock_args } }
 
         it { is_expected.to eq(:lock_args) }
       end
 
-      context "when `lock_args_method: false` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args_method: false } }
+      context "when `lock_args_method: false` in worker", :with_job_options do
+        let(:job_options) { { lock_args_method: false } }
 
         it { is_expected.to be_a(Proc) }
       end
@@ -36,14 +36,14 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     context "when disabled in default_worker_options", :with_sidekiq_options do
       let(:sidekiq_options) { { unique: false, lock_args_method: nil } }
 
-      context "when `lock_args_method: :lock_args` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args_method: :lock_args } }
+      context "when `lock_args_method: :lock_args` in worker", :with_job_options do
+        let(:job_options) { { lock_args_method: :lock_args } }
 
         it { is_expected.to eq(:lock_args) }
       end
 
-      context "when `lock_args_method: false` in worker", :with_worker_options do
-        let(:worker_options) { { lock_args_method: false } }
+      context "when `lock_args_method: false` in worker", :with_job_options do
+        let(:job_options) { { lock_args_method: false } }
 
         it { is_expected.to be_nil }
       end
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     end
 
     context "when configured globally" do
-      let(:args) { %w[abc cde] }
+      let(:args)   { %w[abc cde] }
       let(:filter) { ->(args) { args[1] } }
 
       it "uses global filter" do
@@ -92,7 +92,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     subject(:filter_by_symbol) { lock_args.filter_by_symbol(args) }
 
     context "when filter is a working symbol" do
-      let(:worker_class)  { UniqueJobWithFilterMethod }
+      let(:job_class)     { UniqueJobWithFilterMethod }
       let(:args)          { ["name", 2, { "whatever" => nil, "type" => "test" }] }
       let(:filtered_args) { %w[name test] }
 
@@ -100,8 +100,8 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     end
 
     context "when worker takes conditional parameters" do
-      let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
-      let(:args)         { [1] }
+      let(:job_class) { UniqueJobWithoutUniqueArgsParameter }
+      let(:args)      { [1] }
 
       it "raises a descriptive error" do
         expect { filter_by_symbol }
@@ -131,8 +131,8 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
     end
 
     context "when workers lock_args method doesn't take parameters" do
-      let(:worker_class) { UniqueJobWithoutUniqueArgsParameter }
-      let(:args)         { ["name", 2, { "whatever" => nil, "type" => "test" }] }
+      let(:job_class) { UniqueJobWithoutUniqueArgsParameter }
+      let(:args)      { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
       it "raises a descriptive error" do
         expect { filter_by_symbol }
@@ -146,16 +146,16 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
       end
     end
 
-    context "when @worker_class does not respond_to lock_args_method" do
-      let(:worker_class) { UniqueJobWithNoUniqueArgsMethod }
-      let(:args)         { ["name", 2, { "whatever" => nil, "type" => "test" }] }
+    context "when @job_class does not respond_to lock_args_method" do
+      let(:job_class) { UniqueJobWithNoUniqueArgsMethod }
+      let(:args)      { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
       it { is_expected.to eq(args) }
     end
 
     context "when workers lock_args method returns nil" do
-      let(:worker_class) { UniqueJobWithNilUniqueArgs }
-      let(:args) { ["name", 2, { "whatever" => nil, "type" => "test" }] }
+      let(:job_class) { UniqueJobWithNilUniqueArgs }
+      let(:args)      { ["name", 2, { "whatever" => nil, "type" => "test" }] }
 
       it { is_expected.to be_nil }
     end
