@@ -93,8 +93,10 @@ detectors:
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
       - SidekiqUniqueJobs::Redis::Entity#exist?
       - SidekiqUniqueJobs::Server#self.configure
+      - SidekiqUniqueJobs::LockArgs#default_job_options
       - SidekiqUniqueJobs::SidekiqWorkerMethods#after_unlock_hook
-      - SidekiqUniqueJobs::SidekiqWorkerMethods#worker_method_defined?
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#job_method_defined?
+      - SidekiqUniqueJobs::SidekiqWorkerMethods#default_job_options
       - SidekiqUniqueJobs::Web::Helpers#redirect_to
   MissingSafeMethod:
     exclude:
