@@ -1,5 +1,17 @@
 # Changelog
 
+## [v7.1.21](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.21) (2022-04-23)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.20...v7.1.21)
+
+**Implemented enhancements:**
+
+- Prepare for Sidekiq v7 [\#707](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/707) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- DEPRECATION WARNING: default\_worker\_options is deprecated and will be removed from Sidekiq 7.0 \(use default\_job\_options instead\) \(called from notify\_agents at /Users/hackeron/Development/Tether/timeline/app/models/user.rb:303\) [\#705](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/705)
+
 ## [v7.1.20](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.20) (2022-04-22)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.19...v7.1.20)
