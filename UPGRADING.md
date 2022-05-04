@@ -21,8 +21,10 @@ SidekiqUniqueJobs.reflect do |on|
   end
 
   # This means your code broke and we caught the execption to provide this reflection for you. It allows your to gather metrics and details about the error. Those details allow you to act on it as you see fit.
-  on.execution_failed do |job_hash|
-    logger.warn(job_hash.merge(message: "Execution failed"))
+  on.execution_failed do |job_hash, exception = nil|
+    message = "Execution failed"
+    message = message + "(#{exception.message})" if exception
+    logger.warn(job_hash.merge(message: message)
   end
 
   # Failed to acquire lock in a timely fashion

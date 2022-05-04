@@ -191,12 +191,12 @@ module SidekiqUniqueJobs
       return yield job_id if locked?(conn)
 
       enqueue(conn) do |queued_jid|
-        reflect(:debug, item, queued_jid)
+        reflect(:debug, :queued, item, queued_jid)
 
         primed_method.call(conn, wait) do |primed_jid|
           reflect(:debug, :primed, item, primed_jid)
-
           locked_jid = call_script(:lock, key.to_a, argv, conn)
+
           if locked_jid
             reflect(:debug, :locked, item, locked_jid)
             return yield job_id
