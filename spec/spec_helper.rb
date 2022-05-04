@@ -67,6 +67,17 @@ SidekiqUniqueJobs.configure do |config|
   config.lock_info    = true
 end
 
+EVENTS = {}.freeze
+
+SidekiqUniqueJobs.reflect do |on|
+  if ENV["REFLECT_DEBUG"]
+    on.debug do |event, item, event_jid|
+      EVENTS[item["lock_digest"]] ||= []
+      EVENTS[item["lock_digest"]] << { event: event, item: item, event_jid: event_jid }
+    end
+  end
+end
+
 require "sidekiq/redis_connection"
 
 Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].sort.each { |f| require f }
@@ -95,6 +106,10 @@ RSpec.configure do |config|
   config.include SidekiqUniqueJobs::Testing
 
   Kernel.srand config.seed
+
+  config.after(:suite) do
+    p EVENTS if ENV["REFLECT_DEBUG"]
+  end
 end
 
 RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 10_000

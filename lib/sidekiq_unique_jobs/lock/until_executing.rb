@@ -33,6 +33,9 @@ module SidekiqUniqueJobs
       def execute
         callback_safely if locksmith.unlock
         yield
+      rescue StandardError => ex
+        reflect(:execution_failed, item, ex)
+        locksmith.lock(wait: 1)
       end
     end
   end

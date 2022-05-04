@@ -41,5 +41,25 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuting do
         expect(process_one).not_to be_locked
       end
     end
+
+    context "when error is raised" do
+      let(:block) { -> { raise "Hell" } }
+
+      it "locks the job again" do
+        process_one.lock
+        process_one.execute(&block)
+        expect(process_one).to be_locked
+      end
+
+      it "reflects execution failed" do
+        allow(process_one).to receive(:reflect)
+
+        process_one.lock
+        process_one.execute(&block)
+
+        expect(process_one).to have_received(:reflect)
+          .with(:execution_failed, item_one, kind_of(RuntimeError))
+      end
+    end
   end
 end
