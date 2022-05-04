@@ -1,5 +1,19 @@
 # Changelog
 
+## [v7.1.22](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.22) (2022-05-04)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.21...v7.1.22)
+
+**Fixed bugs:**
+
+- Failed jobs waiting to be retried are not considered when fetching uniqueness [\#394](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/394)
+- fix\(locksmith\): execute to yield without arguments [\#710](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/710) ([mhenrixon](https://github.com/mhenrixon))
+- fix: re:lock until\_executing on worker failure [\#709](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/709) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Reviwing: Failed jobs waiting to be retried are not considered when fetching uniqueness [\#708](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/708)
+
 ## [v7.1.21](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.21) (2022-04-23)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.20...v7.1.21)
@@ -407,7 +421,6 @@
 - Tasks run once, and then there is no launch [\#464](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/464)
 - Jobs executing and immediately returning [\#418](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/418)
 - until\_and\_while\_executing + sidekiq retry mechanism [\#395](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/395)
-- Failed jobs waiting to be retried are not considered when fetching uniqueness [\#394](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/394)
 - Fix that :PRIMED keys are seemingly not removed [\#574](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/574) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
