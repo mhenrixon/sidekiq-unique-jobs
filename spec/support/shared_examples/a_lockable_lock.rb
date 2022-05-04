@@ -83,5 +83,13 @@ RSpec.shared_examples "an executing lock implementation" do
 
       expect(process_two).to have_received(:reflect).with(:execution_failed, item_two)
     end
+
+    it "yields without arguments" do
+      process_one.lock
+      process_one.execute {}
+      blk = -> {}
+
+      expect { process_one.execute(&blk) }.not_to raise_error
+    end
   end
 end
