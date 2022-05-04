@@ -66,6 +66,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       expect(callback_two).not_to have_received(:call)
     end
 
+    it "yields without arguments" do
+      process_one.lock
+      process_one.execute {}
+      blk = -> {}
+
+      expect { process_one.execute(&blk) }.not_to raise_error
+    end
+
     context "when no callback is defined" do
       let(:job_class) { WhileExecutingRescheduleJob }
       let(:callback_one) { -> { true } }

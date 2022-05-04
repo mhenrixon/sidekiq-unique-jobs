@@ -188,7 +188,7 @@ module SidekiqUniqueJobs
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
     def lock!(conn, primed_method, wait = nil)
-      return yield job_id if locked?(conn)
+      return yield if locked?(conn)
 
       enqueue(conn) do |queued_jid|
         reflect(:debug, :queued, item, queued_jid)
@@ -199,7 +199,7 @@ module SidekiqUniqueJobs
 
           if locked_jid
             reflect(:debug, :locked, item, locked_jid)
-            return yield job_id
+            return yield
           end
         end
       end

@@ -85,6 +85,14 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
       end
     end
 
+    it "yields without arguments" do
+      process_one.lock
+      process_one.execute {}
+      blk = -> {}
+
+      expect { process_one.execute(&blk) }.not_to raise_error
+    end
+
     context "when worker raises error in runtime lock" do
       before do
         allow(runtime_one.locksmith).to receive(:execute).and_raise(RuntimeError, "Hell")
