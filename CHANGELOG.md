@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.1.23](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.23) (2022-05-23)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.22...v7.1.23)
+
+**Fixed bugs:**
+
+- fix: raise on error [\#712](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/712) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.22](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.22) (2022-05-04)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.21...v7.1.22)
