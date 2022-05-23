@@ -143,6 +143,7 @@ detectors:
       - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::BaseLock#call_strategy
       - SidekiqUniqueJobs::Lock::UntilAndWhileExecuting#execute
+      - SidekiqUniqueJobs::Lock::UntilExecuting#execute
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
       - SidekiqUniqueJobs::LockArgs#filtered_args
       - SidekiqUniqueJobs::LockInfo#set

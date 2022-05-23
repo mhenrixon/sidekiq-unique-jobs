@@ -36,6 +36,7 @@ module SidekiqUniqueJobs
       rescue StandardError => ex
         reflect(:execution_failed, item, ex)
         locksmith.lock(wait: 1)
+        raise
       end
     end
   end

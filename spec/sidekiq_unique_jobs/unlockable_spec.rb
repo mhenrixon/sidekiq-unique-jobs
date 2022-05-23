@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
 
     specify do
       expect { push_item(item) }.to change { unique_keys.size }.by(3)
-      expect { delete }.to change { unique_keys.size }.by(0)
+      expect { delete }.not_to change { unique_keys.size }
     end
   end
 
