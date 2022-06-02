@@ -71,18 +71,6 @@ module Sidekiq
 
         sidekiq_options(old_options)
       end
-
-      #
-      # Clears the jobs for this worker and removes all locks
-      #
-      def clear
-        jobs.each do |job|
-          SidekiqUniqueJobs::Unlockable.unlock(job)
-        end
-
-        Sidekiq::Queues[queue].clear
-        jobs.clear
-      end
     end
 
     #
@@ -110,8 +98,31 @@ module Sidekiq
 
         SidekiqUniqueJobs::Digests.new.delete_by_pattern("*", count: 10_000)
       end
+
+      #
+      # Prepends deletion of locks to clear
+      #
+      module ClassMethods
+        #
+        # Clears the jobs for this worker and removes all locks
+        #
+        def clear
+          jobs.each do |job|
+            SidekiqUniqueJobs::Unlockable.unlock(job)
+          end
+
+          super
+        end
+      end
     end
 
     prepend Overrides
+
+    #
+    # Prepends methods to Sidekiq::Worker
+    #
+    module ClassMethods
+      prepend Overrides::ClassMethods
+    end
   end
 end
