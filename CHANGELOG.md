@@ -1,5 +1,17 @@
 # Changelog
 
+## [v7.1.24](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.24) (2022-06-09)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.23...v7.1.24)
+
+**Implemented enhancements:**
+
+- Chore: Sidekiq 6.5 compatibility [\#715](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/715) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- Use sidekiq/testing `Worker.clear` API in sidekiq\_unique\_jobs/testing [\#713](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/713) ([dsander](https://github.com/dsander))
+
 ## [v7.1.23](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.23) (2022-05-23)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.22...v7.1.23)
