@@ -17,7 +17,6 @@ require "rspec/its"
 
 require "sidekiq"
 require "sidekiq/api"
-require "sidekiq/util"
 require "sidekiq-unique-jobs"
 require "timecop"
 require "sidekiq_unique_jobs/testing"
