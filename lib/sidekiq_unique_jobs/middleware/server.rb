@@ -6,6 +6,8 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Server
+      include Sidekiq::ClientMiddleware if defined?(Sidekiq::ServerMiddleware)
+
       # prepend "SidekiqUniqueJobs::Middleware"
       # @!parse prepends SidekiqUniqueJobs::Middleware
       prepend SidekiqUniqueJobs::Middleware
