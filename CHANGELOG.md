@@ -1,5 +1,13 @@
 # Changelog
 
+## [v7.1.25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.25) (2022-06-13)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.24...v7.1.25)
+
+**Fixed bugs:**
+
+- Fix: Include the correct middleware [\#716](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/716) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v7.1.24](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.24) (2022-06-09)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.23...v7.1.24)
