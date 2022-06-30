@@ -39,7 +39,9 @@ module SidekiqUniqueJobs
         self.task = test_task || default_task
 
         with_logging_context do
-          register_reaper_process
+          got_lock = register_reaper_process
+          return unless got_lock
+
           log_info("Starting Reaper")
 
           task.add_observer(Observer.new)
