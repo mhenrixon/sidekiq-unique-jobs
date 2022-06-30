@@ -65,7 +65,7 @@ RSpec.describe "lock.lua" do
       it { expect { lock }.to change { hget(key.locked, job_id_one) }.from(nil) }
       it { expect { lock }.to change { llen(key.queued) }.by(0) }
       it { expect { lock }.to change { llen(key.primed) }.by(-1) }
-      it { expect { lock }.to change { zcard("uniquejobs:digests") }.by(1) }
+      it { expect { lock }.to change { zcard("uniquejobs:expiring_digests") }.by(1) }
     end
 
     context "when given lock_ttl nil" do

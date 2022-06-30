@@ -66,6 +66,11 @@ module SidekiqUniqueJobs
         return if queues_very_full?
 
         BatchDelete.call(orphans, conn)
+        BatchDelete.call(expired_digests, conn)
+      end
+
+      def expired_digests
+        conn.zrangebyscore(EXPIRING_DIGESTS, 0, @start_time)
       end
 
       #

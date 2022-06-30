@@ -12,6 +12,7 @@ RSpec.describe "reap_orphans.lua" do
   let(:redis_keys) do
     [
       SidekiqUniqueJobs::DIGESTS,
+      SidekiqUniqueJobs::EXPIRING_DIGESTS,
       SidekiqUniqueJobs::SCHEDULE,
       SidekiqUniqueJobs::RETRY,
     ]

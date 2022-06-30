@@ -1,9 +1,10 @@
 redis.replicate_commands()
 
 -------- BEGIN keys ---------
-local digests_set  = KEYS[1]
-local schedule_set = KEYS[2]
-local retry_set    = KEYS[3]
+local digests_set          = KEYS[1]
+local expiring_digests_set = KEYS[2]
+local schedule_set         = KEYS[3]
+local retry_set            = KEYS[4]
 --------  END keys  ---------
 
 -------- BEGIN argv ---------
@@ -89,6 +90,33 @@ repeat
 
   index = index + per
 until index >= total or del_count >= reaper_count
+
+if del_count < reaper_count then
+  index = 0
+  total = redis.call("ZCOUNT", expiring_digests_set, 0, current_time)
+  repeat
+    local digests = redis.call("ZRANGEBYSCORE", expiring_digests_set, 0, current_time, "LIMIT", index, index + per -1)
+
+    for _, digest in pairs(digests) do
+      local queued     = digest .. ":QUEUED"
+      local primed     = digest .. ":PRIMED"
+      local locked     = digest .. ":LOCKED"
+      local info       = digest .. ":INFO"
+      local run_digest = digest .. ":RUN"
+      local run_queued = digest .. ":RUN:QUEUED"
+      local run_primed = digest .. ":RUN:PRIMED"
+      local run_locked = digest .. ":RUN:LOCKED"
+      local run_info   = digest .. ":RUN:INFO"
+
+      redis.call(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
+
+      redis.call("ZREM", expiring_digests_set, digest)
+      del_count = del_count + 1
+    end
+
+    index = index + per
+  until index >= total or del_count >= reaper_count
+end
 
 log_debug("END")
 return del_count

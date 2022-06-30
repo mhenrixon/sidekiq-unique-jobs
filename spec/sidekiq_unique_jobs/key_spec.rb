@@ -27,6 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Key do
         #{digest_one}:INFO
         uniquejobs:changelog
         uniquejobs:digests
+        uniquejobs:expiring_digests
       ],
     )
   end

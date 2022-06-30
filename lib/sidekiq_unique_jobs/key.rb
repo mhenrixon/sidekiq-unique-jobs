@@ -33,6 +33,10 @@ module SidekiqUniqueJobs
     # @!attribute [r] digests
     #   @return [String] the zset with locked digests
     attr_reader :digests
+    #
+    # @!attribute [r] expiring_digests
+    #   @return [String] the zset with locked expiring_digests
+    attr_reader :expiring_digests
 
     #
     # Initialize a new Key
@@ -40,13 +44,14 @@ module SidekiqUniqueJobs
     # @param [String] digest the digest to use as key
     #
     def initialize(digest)
-      @digest    = digest
-      @queued    = suffixed_key("QUEUED")
-      @primed    = suffixed_key("PRIMED")
-      @locked    = suffixed_key("LOCKED")
-      @info      = suffixed_key("INFO")
-      @changelog = CHANGELOGS
-      @digests   = DIGESTS
+      @digest           = digest
+      @queued           = suffixed_key("QUEUED")
+      @primed           = suffixed_key("PRIMED")
+      @locked           = suffixed_key("LOCKED")
+      @info             = suffixed_key("INFO")
+      @changelog        = CHANGELOGS
+      @digests          = DIGESTS
+      @expiring_digests = EXPIRING_DIGESTS
     end
 
     #
@@ -81,7 +86,7 @@ module SidekiqUniqueJobs
     # @return [Array] an ordered array with all keys
     #
     def to_a
-      [digest, queued, primed, locked, info, changelog, digests]
+      [digest, queued, primed, locked, info, changelog, digests, expiring_digests]
     end
 
     private

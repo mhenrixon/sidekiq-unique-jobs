@@ -1,11 +1,12 @@
 -------- BEGIN keys ---------
-local digest    = KEYS[1]
-local queued    = KEYS[2]
-local primed    = KEYS[3]
-local locked    = KEYS[4]
-local info      = KEYS[5]
-local changelog = KEYS[6]
-local digests   = KEYS[7]
+local digest           = KEYS[1]
+local queued           = KEYS[2]
+local primed           = KEYS[3]
+local locked           = KEYS[4]
+local info             = KEYS[5]
+local changelog        = KEYS[6]
+local digests          = KEYS[7]
+local expiring_digests = KEYS[8]
 -------- END keys ---------
 
 
@@ -57,8 +58,13 @@ if limit_exceeded then
   return nil
 end
 
-log_debug("ZADD", digests, current_time, digest)
-redis.call("ZADD", digests, current_time, digest)
+if lock_type == "until_expired" and pttl and pttl > 0 then
+  log_debug("ZADD", expiring_digests, current_time + pttl, digest)
+  redis.call("ZADD", expiring_digests, current_time + pttl, digest)
+else
+  log_debug("ZADD", digests, current_time, digest)
+  redis.call("ZADD", digests, current_time, digest)
+end
 
 log_debug("HSET", locked, job_id, current_time)
 redis.call("HSET", locked, job_id, current_time)
