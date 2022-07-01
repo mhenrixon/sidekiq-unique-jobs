@@ -91,15 +91,6 @@ module Sidekiq
       end
 
       #
-      # Clears all jobs for this worker and removes all locks
-      #
-      def clear_all
-        super
-
-        SidekiqUniqueJobs::Digests.new.delete_by_pattern("*", count: 10_000)
-      end
-
-      #
       # Prepends deletion of locks to clear
       #
       module ClassMethods
@@ -124,5 +115,21 @@ module Sidekiq
     module ClassMethods
       prepend Overrides::ClassMethods
     end
+
+    #
+    # Prepends singleton methods to Sidekiq::Worker
+    #
+    module SignletonOverrides
+      #
+      # Clears all jobs for this worker and removes all locks
+      #
+      def clear_all
+        super
+
+        SidekiqUniqueJobs::Digests.new.delete_by_pattern("*", count: 10_000)
+      end
+    end
+
+    singleton_class.prepend SignletonOverrides
   end
 end
