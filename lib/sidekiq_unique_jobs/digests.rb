@@ -14,8 +14,8 @@ module SidekiqUniqueJobs
     # @return [String] the default pattern to use for matching
     SCAN_PATTERN  = "*"
 
-    def initialize
-      super(DIGESTS)
+    def initialize(digests_key = DIGESTS)
+      super(digests_key)
     end
 
     #

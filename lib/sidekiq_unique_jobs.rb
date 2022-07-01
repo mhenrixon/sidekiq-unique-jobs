@@ -72,6 +72,7 @@ require "sidekiq_unique_jobs/sidekiq_unique_ext"
 require "sidekiq_unique_jobs/on_conflict"
 require "sidekiq_unique_jobs/changelog"
 require "sidekiq_unique_jobs/digests"
+require "sidekiq_unique_jobs/expiring_digests"
 
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"

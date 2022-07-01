@@ -69,7 +69,7 @@ RSpec.describe "unlock.lua" do
       it { expect { unlock }.to change { llen(key.primed) }.by(0) }
       it { expect { unlock }.not_to change { ttl(key.locked) } }
       it { expect { unlock }.not_to change { hget(key.locked, job_id_one) } }
-      it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
+      it { expect { unlock }.not_to change { zcard(key.expiring_digests) } }
     end
 
     context "when given lock_ttl nil" do

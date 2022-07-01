@@ -52,6 +52,16 @@ module SidekiqUniqueJobs
       end
 
       #
+      # The collection of digests
+      #
+      #
+      # @return [SidekiqUniqueJobs::ExpiringDigests] the sorted set with expiring digests
+      #
+      def expiring_digests
+        @expiring_digests ||= SidekiqUniqueJobs::ExpiringDigests.new
+      end
+
+      #
       # The collection of changelog entries
       #
       #

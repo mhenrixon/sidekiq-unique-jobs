@@ -51,6 +51,7 @@ detectors:
   FeatureEnvy:
     exclude:
       - SidekiqUniqueJobs::BatchDelete#batch_delete
+      - SidekiqUniqueJobs::Cli#list_entries
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::Digests#page
       - SidekiqUniqueJobs::InvalidUniqueArguments#initialize

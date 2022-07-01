@@ -68,7 +68,14 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.5" do
     subject(:list) { capture(:stdout) { described_class.start(%w[list * --count 1000]) } }
 
     context "when no digests exist" do
-      it { is_expected.to eq("Found 0 digests matching '#{pattern}':\n") }
+      it do
+        expect(list).to eq <<~HEADER
+          Searching for regular digests
+          Found 0 digests matching '#{pattern}':
+          Searching for expiring digests
+          Found 0 digests matching '#{pattern}':
+        HEADER
+      end
     end
 
     context "when a key exists" do
