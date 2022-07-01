@@ -234,6 +234,7 @@ module SidekiqUniqueJobs
 
         loop do
           range_start = (page * page_size) - deleted_size
+
           range_end   = range_start + page_size - 1
           entries     = conn.lrange(queue_key, range_start, range_end)
           page       += 1
@@ -243,6 +244,9 @@ module SidekiqUniqueJobs
           entries.each(&block)
 
           deleted_size = initial_size - conn.llen(queue_key)
+
+          # The queue is growing, not shrinking, just keep looping
+          deleted_size = 0 if deleted_size.negative?
         end
       end
 
