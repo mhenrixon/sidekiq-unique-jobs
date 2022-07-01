@@ -135,5 +135,28 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
         expect(service).not_to have_received(:orphans)
       end
     end
+
+    context "when a lock is until_expired" do
+      let(:lock_info) do
+        {
+          "job_id" => job_id,
+          "limit" => 1,
+          "lock" => :until_expired,
+          "time" => now_f,
+          "timeout" => nil,
+          "ttl" => 1,
+          "lock_args" => [],
+          "worker" => "MyUniqueJob",
+        }
+      end
+
+      it "clears the lock" do
+        expect(redis { |conn| conn.zcard(SidekiqUniqueJobs::EXPIRING_DIGESTS) }).to eq 1
+        sleep 2
+        service.call
+
+        expect(redis { |conn| conn.zcard(SidekiqUniqueJobs::EXPIRING_DIGESTS) }).to eq 0
+      end
+    end
   end
 end

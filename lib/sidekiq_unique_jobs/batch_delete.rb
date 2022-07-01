@@ -91,6 +91,7 @@ module SidekiqUniqueJobs
           chunk.each do |digest|
             del_digest(pipeline, digest)
             pipeline.zrem(SidekiqUniqueJobs::DIGESTS, digest)
+            pipeline.zrem(SidekiqUniqueJobs::EXPIRING_DIGESTS, digest)
             @count += 1
           end
         end
