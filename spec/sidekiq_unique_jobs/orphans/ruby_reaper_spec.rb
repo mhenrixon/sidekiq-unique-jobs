@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
         SidekiqUniqueJobs::Lock.create(digest_two, job_id_two)
         SidekiqUniqueJobs::Lock.create(digest_three, job_id_three)
 
-        elapsed_ms = service.start_time + service.timeout_ms + 10
+        elapsed_ms = service.start_source + service.timeout_ms + 10
 
         allow(service).to receive(:elapsed_ms).and_return(elapsed_ms)
         allow(service).to receive(:belongs_to_job?).and_call_original
@@ -150,12 +150,18 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
         }
       end
 
+      before do
+        # NOTE: The below makes sure that the timing is way of in the future
+        #   which allows the spec to pass and consider existing locks as `old`
+        allow(service).to receive(:start_time).and_return(Time.now + 100_000)
+      end
+
       it "clears the lock" do
-        expect(redis { |conn| conn.zcard(SidekiqUniqueJobs::EXPIRING_DIGESTS) }).to eq 1
-        sleep 2
+        expect(zcard(SidekiqUniqueJobs::EXPIRING_DIGESTS)).to eq 1
+
         service.call
 
-        expect(redis { |conn| conn.zcard(SidekiqUniqueJobs::EXPIRING_DIGESTS) }).to eq 0
+        expect(zcard(SidekiqUniqueJobs::EXPIRING_DIGESTS)).to eq 0
       end
     end
   end

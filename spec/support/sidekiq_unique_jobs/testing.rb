@@ -831,6 +831,10 @@ module SidekiqUniqueJobs
                               SidekiqUniqueJobs::EXPIRING_DIGESTS]
     end
 
+    def expired_keys
+      zrange(SidekiqUniqueJobs::EXPIRING_DIGESTS, 0, -1)
+    end
+
     def changelogs
       @changelogs || SidekiqUniqueJobs::Changelog.new
     end
@@ -869,6 +873,10 @@ module SidekiqUniqueJobs
           hash[redis_key] = hgetall(redis_key).to_h
         end
       end
+    end
+
+    def now
+      SidekiqUniqueJobs.now
     end
 
     def now_f
