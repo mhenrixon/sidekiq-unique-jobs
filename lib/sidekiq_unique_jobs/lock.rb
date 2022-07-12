@@ -66,7 +66,7 @@ module SidekiqUniqueJobs
           pipeline.set(key.digest, job_id)
           pipeline.hset(key.locked, job_id, now_f)
           info.set(lock_info, pipeline)
-          pipeline.zadd(key.digests, now_f, key.digest)
+          add_digest_to_set(pipeline, lock_info)
           pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
           pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
         end
@@ -320,6 +320,23 @@ module SidekiqUniqueJobs
         message: message,
         time: now_f,
       )
+    end
+
+    #
+    # Add the digest to the correct sorted set
+    #
+    # @param [Object] pipeline a redis pipeline object for issue commands
+    # @param [Hash] lock_info the lock info relevant to the digest
+    #
+    # @return [nil]
+    #
+    def add_digest_to_set(pipeline, lock_info)
+      digest_string = key.digest
+      if lock_info["lock"] == :until_expired
+        pipeline.zadd(key.expiring_digests, now_f + lock_info["ttl"], digest_string)
+      else
+        pipeline.zadd(key.digests, now_f, digest_string)
+      end
     end
   end
 end
