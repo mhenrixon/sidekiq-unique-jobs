@@ -34,8 +34,13 @@ module SidekiqUniqueJobs
 
       #
       # @!attribute [r] start_time
-      #   @return [Integer] The timestamp this execution started represented as integer
+      #   @return [Integer] The timestamp this execution started represented as Time (used for locks)
       attr_reader :start_time
+
+      #
+      # @!attribute [r] start_time
+      #   @return [Integer] The clock stamp this execution started represented as integer (used for redis compatibility as it is more accurate than time)
+      attr_reader :start_source
 
       #
       # @!attribute [r] timeout_ms
@@ -49,11 +54,12 @@ module SidekiqUniqueJobs
       #
       def initialize(conn)
         super(conn)
-        @digests    = SidekiqUniqueJobs::Digests.new
-        @scheduled  = Redis::SortedSet.new(SCHEDULE)
-        @retried    = Redis::SortedSet.new(RETRY)
-        @start_time = time_source.call
-        @timeout_ms = SidekiqUniqueJobs.config.reaper_timeout * 1000
+        @digests      = SidekiqUniqueJobs::Digests.new
+        @scheduled    = Redis::SortedSet.new(SCHEDULE)
+        @retried      = Redis::SortedSet.new(RETRY)
+        @start_time   = Time.now
+        @start_source = time_source.call
+        @timeout_ms   = SidekiqUniqueJobs.config.reaper_timeout * 1000
       end
 
       #
@@ -65,12 +71,18 @@ module SidekiqUniqueJobs
       def call
         return if queues_very_full?
 
-        BatchDelete.call(orphans, conn)
         BatchDelete.call(expired_digests, conn)
+        BatchDelete.call(orphans, conn)
       end
 
       def expired_digests
-        conn.zrangebyscore(EXPIRING_DIGESTS, 0, @start_time)
+        max_score = (start_time - reaper_timeout).to_f
+
+        if VersionCheck.satisfied?(redis_version, ">= 6.2.0")
+          conn.zrange(EXPIRING_DIGESTS, 0, max_score, byscore: true)
+        else
+          conn.zrangebyscore(EXPIRING_DIGESTS, 0, max_score, -1)
+        end
       end
 
       #
@@ -109,7 +121,7 @@ module SidekiqUniqueJobs
       end
 
       def elapsed_ms
-        time_source.call - start_time
+        time_source.call - start_source
       end
 
       #
