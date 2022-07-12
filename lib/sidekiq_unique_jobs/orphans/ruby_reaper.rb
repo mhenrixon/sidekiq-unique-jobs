@@ -79,10 +79,10 @@ module SidekiqUniqueJobs
       def expired_digests
         max_score = (start_time - reaper_timeout).to_f
 
-        if VersionCheck.satisfied?(redis_version, ">= 6.2.0")
+        if VersionCheck.satisfied?(redis_version, ">= 6.2.0") && VersionCheck.satisfied?(::Redis::VERSION, ">= 4.6.0")
           conn.zrange(EXPIRING_DIGESTS, 0, max_score, byscore: true)
         else
-          conn.zrangebyscore(EXPIRING_DIGESTS, 0, max_score, -1)
+          conn.zrangebyscore(EXPIRING_DIGESTS, 0, max_score)
         end
       end
 
