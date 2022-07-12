@@ -39,7 +39,8 @@ module SidekiqUniqueJobs
 
       #
       # @!attribute [r] start_time
-      #   @return [Integer] The clock stamp this execution started represented as integer (used for redis compatibility as it is more accurate than time)
+      #   @return [Integer] The clock stamp this execution started represented as integer
+      #      (used for redis compatibility as it is more accurate than time)
       attr_reader :start_source
 
       #
