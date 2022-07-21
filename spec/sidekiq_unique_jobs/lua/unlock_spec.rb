@@ -35,26 +35,36 @@ RSpec.describe "unlock.lua" do
   end
 
   shared_examples "unlock with ttl" do
-    it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
-    it { expect { unlock }.to change { ttl(key.digest) }.to(-2) }
+    it { expect { unlock }.to change { unique_keys }.to(%w[uniquejobs:digest:QUEUED]) }
     it { expect { unlock }.to change { llen(key.queued) }.by(1) }
+
     it { expect { unlock }.to change { llen(key.primed) }.by(0) }
+
     it { expect { unlock }.to change { ttl(key.locked) }.to(-2) }
     it { expect { unlock }.to change { hget(key.locked, job_id_one) }.to(nil) }
+
+    it { expect { unlock }.to change { ttl(key.digest) }.to(-2) }
     it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
     it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(Float)).to({}) }
+
+    it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
   end
 
   shared_examples "unlock without ttl" do
-    it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
-    it { expect { unlock }.to change { ttl(key.digest) }.from(-1).to(-2) }
+    it { expect { unlock }.to change { unique_keys }.to(%w[uniquejobs:digest:QUEUED]) }
     it { expect { unlock }.to change { lrange(key.queued, -1, 0) }.to(["1"]) }
     it { expect { unlock }.to change { llen(key.queued) }.by(1) }
+
     it { expect { unlock }.to change { llen(key.primed) }.by(0) }
+
     it { expect { unlock }.to change { ttl(key.locked) }.to(-2) }
     it { expect { unlock }.to change { hget(key.locked, job_id_one) }.to(nil) }
+
+    it { expect { unlock }.to change { ttl(key.digest) }.from(-1).to(-2) }
     it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
     it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(Float)).to({}) }
+
+    it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
   end
 
   context "with lock: :until_expired", :with_a_lock do
