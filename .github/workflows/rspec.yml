@@ -6,6 +6,8 @@ on:
 jobs:
   coverage:
     services:
+      toxiproxy:
+        image: ghcr.io/shopify/toxiproxy
       redis:
         image: redis:latest
         ports:
@@ -39,6 +41,8 @@ jobs:
 
   tests:
     services:
+      toxiproxy:
+        image: ghcr.io/shopify/toxiproxy
       redis:
         image: redis:latest
         ports:
