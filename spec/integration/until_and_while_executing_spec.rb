@@ -3,12 +3,14 @@
 RSpec.describe "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting" do
   before do
     digests.delete_by_pattern("*")
+    toxic_redis_url = ENV["CI"] ? "toxiproxy:21212" : "localhost:21212"
+    redis_url       = ENV["CI"] ? ENV["REDIS_URL"] : "localhost:6379"
 
     Toxiproxy.populate([
                          {
                            name: :redis,
-                           listen: "localhost:21212",
-                           upstream: "localhost:6379",
+                           listen: toxic_redis_url,
+                           upstream: redis_url,
                          },
                        ])
 
