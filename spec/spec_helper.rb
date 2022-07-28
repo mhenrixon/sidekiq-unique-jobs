@@ -107,6 +107,16 @@ RSpec.configure do |config|
 
   Kernel.srand config.seed
 
+  config.before(:each) do
+    Sidekiq.configure_server do |config|
+      config.redis = { port: 6379, driver: :hiredis }
+    end
+
+    Sidekiq.configure_client do |config|
+      config.redis = { port: 6379, driver: :hiredis }
+    end
+  end
+
   config.after(:suite) do
     p EVENTS if ENV["REFLECT_DEBUG"]
   end

@@ -25,6 +25,16 @@ RSpec.describe "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting" do
     Sidekiq.configure_client do |config|
       config.redis = { port: 21_212, db: 9 }
     end
+
+    # SidekiqUniqueJobs.reflect do |on|
+    #   on.debug do |action, item, action_jid = nil, timeouts: {}|
+    #     if timeouts.keys.any?
+    #       p "Timeouts for #{item['lock_digest']}: brpoplpush_timeout: #{timeouts[:brpoplpush_timeout]}, concurrent_timeout: #{timeouts[:concurrent_timeout]}"
+    #     else
+    #       p "Performed #{action} for #{item['lock_digest']} with jid #{action_jid}"
+    #     end
+    #   end
+    # end
   end
 
   context "when latency is high" do

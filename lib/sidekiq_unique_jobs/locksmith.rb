@@ -32,6 +32,7 @@ module SidekiqUniqueJobs
     #
     # @return [Float] used to take into consideration the inaccuracy of redis timestamps
     CLOCK_DRIFT_FACTOR = 0.01
+    NETWORK_FACTOR = 0.04
 
     #
     # @!attribute [r] key
@@ -90,9 +91,8 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock(wait: nil)
-      method_name = wait ? :primed_async : :primed_sync
       redis(redis_pool) do |conn|
-        lock!(conn, method(method_name), wait) do
+        lock!(conn, wait) do
           return job_id
         end
       end
@@ -102,7 +102,7 @@ module SidekiqUniqueJobs
       raise SidekiqUniqueJobs::InvalidArgument, "#execute needs a block" unless block
 
       redis(redis_pool) do |conn|
-        lock!(conn, method(:primed_async), &block)
+        lock!(conn, &block)
       end
     end
 
@@ -183,17 +183,17 @@ module SidekiqUniqueJobs
     # @see execute
     #
     # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
-    # @param [Method] primed_method reference to the method to use for getting a primed token
+    # @param [nil, Integer, Float] time to wait before timeout
     #
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
-    def lock!(conn, primed_method, wait = nil)
+    def lock!(conn, wait = nil, &block)
       return yield if locked?(conn)
 
       enqueue(conn) do |queued_jid|
         reflect(:debug, :queued, item, queued_jid)
 
-        primed_method.call(conn, wait) do |primed_jid|
+        primed_async(conn, wait) do |primed_jid|
           reflect(:debug, :primed, item, primed_jid)
           locked_jid = call_script(:lock, key.to_a, argv, conn)
 
@@ -239,9 +239,17 @@ module SidekiqUniqueJobs
     # @return [Object] whatever the block returns when lock was acquired
     #
     def primed_async(conn, wait = nil, &block)
+      timeout = (wait || config.timeout).to_i
+      timeout = 1 if timeout.zero?
+
+      brpoplpush_timeout = timeout
+      concurrent_timeout = add_drift(timeout)
+
+      reflect(:debug, :timeouts, item, timeouts: { brpoplpush_timeout: brpoplpush_timeout, concurrent_timeout: concurrent_timeout })
+
       primed_jid = Concurrent::Promises
-                   .future(conn) { |red_con| pop_queued(red_con, wait) }
-                   .value(add_drift(wait || config.timeout))
+                   .future(conn) { |red_con| pop_queued(red_con, timeout) }
+                   .value()
 
       handle_primed(primed_jid, &block)
     end
@@ -273,11 +281,11 @@ module SidekiqUniqueJobs
     #
     # @return [String] a previously enqueued token (now taken off the queue)
     #
-    def pop_queued(conn, wait = nil)
+    def pop_queued(conn, wait = 1)
       wait ||= config.timeout if config.wait_for_lock?
 
       if wait.nil?
-        rpoplpush(conn)
+        brpoplpush(conn, 1)
       else
         brpoplpush(conn, wait)
       end

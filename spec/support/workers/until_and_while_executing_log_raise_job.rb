@@ -14,6 +14,6 @@ class UntilAndWhileExecutingLogRaiseJob
                   }
 
   def perform(key)
-    puts "I am runing now with #{key}"
+    # Slow processing
   end
 end
