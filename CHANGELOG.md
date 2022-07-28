@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.26...HEAD)
+
+**Closed issues:**
+
+- Memory bloat / dangling keys / reaper not cleaning orphans [\#637](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/637)
+
+## [v7.1.26](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.26) (2022-07-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.25...v7.1.26)
+
+**Implemented enhancements:**
+
+- Fix\(until\_expired\): Fix test and implementation [\#725](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/725) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Fix\(until\_and\_while\_executing\): Improve timeouts slightly [\#728](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/728) ([mhenrixon](https://github.com/mhenrixon))
+- Fix\(unlock\): Delete primed keys on last entry [\#726](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/726) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- Ensure batch delete removes expiring locks [\#724](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/724) ([francesmcmullin](https://github.com/francesmcmullin))
+- Chore: Update dependencies [\#722](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/722) ([mhenrixon](https://github.com/mhenrixon))
+- Move until\_expired digests to separate zset [\#721](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/721) ([francesmcmullin](https://github.com/francesmcmullin))
+- Avoid skipping ranges when looping through queues [\#720](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/720) ([francesmcmullin](https://github.com/francesmcmullin))
+- Bump actions/checkout from 2 to 3 [\#718](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/718) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add Dependabot for GitHub Actions [\#717](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/717) ([petergoldstein](https://github.com/petergoldstein))
+- Fix Sidekiq::Worker.clear\_all override not being applied [\#714](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/714) ([dsander](https://github.com/dsander))
+
 ## [v7.1.25](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.25) (2022-06-13)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.24...v7.1.25)
