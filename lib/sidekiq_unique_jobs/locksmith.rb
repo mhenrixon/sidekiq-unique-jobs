@@ -91,8 +91,9 @@ module SidekiqUniqueJobs
     # @return [String] the Sidekiq job_id that was locked/queued
     #
     def lock(wait: nil)
+      method_name = wait ? :primed_async : :primed_sync
       redis(redis_pool) do |conn|
-        lock!(conn, wait) do
+        lock!(conn, method(method_name), wait) do
           return job_id
         end
       end
@@ -102,7 +103,7 @@ module SidekiqUniqueJobs
       raise SidekiqUniqueJobs::InvalidArgument, "#execute needs a block" unless block
 
       redis(redis_pool) do |conn|
-        lock!(conn, &block)
+        lock!(conn, method(:primed_async), &block)
       end
     end
 
@@ -183,17 +184,18 @@ module SidekiqUniqueJobs
     # @see execute
     #
     # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
+    # @param [Method] primed_method reference to the method to use for getting a primed token
     # @param [nil, Integer, Float] time to wait before timeout
     #
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
-    def lock!(conn, wait = nil)
+    def lock!(conn, primed_method, wait = nil)
       return yield if locked?(conn)
 
       enqueue(conn) do |queued_jid|
         reflect(:debug, :queued, item, queued_jid)
 
-        primed_async(conn, wait) do |primed_jid|
+        primed_method.call(conn, wait) do |primed_jid|
           reflect(:debug, :primed, item, primed_jid)
           locked_jid = call_script(:lock, key.to_a, argv, conn)
 
@@ -286,7 +288,7 @@ module SidekiqUniqueJobs
       wait ||= config.timeout if config.wait_for_lock?
 
       if wait.nil?
-        brpoplpush(conn, 1)
+        rpoplpush(conn)
       else
         brpoplpush(conn, wait)
       end
