@@ -4,7 +4,7 @@ RSpec.describe "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting" do
   before do
     digests.delete_by_pattern("*")
     toxic_redis_url = ENV["CI"] ? "toxiproxy:21212" : "localhost:21212"
-    redis_url       = ENV["CI"] ? ENV["REDIS_URL"] : "localhost:6379"
+    redis_url       = ENV["CI"] ? ENV.fetch("REDIS_URL", nil) : "localhost:6379"
 
     Toxiproxy.host = "http://toxiproxy:8474" if ENV["CI"]
     Toxiproxy.populate([
@@ -29,7 +29,9 @@ RSpec.describe "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting" do
     # SidekiqUniqueJobs.reflect do |on|
     #   on.debug do |action, item, action_jid = nil, timeouts: {}|
     #     if timeouts.keys.any?
-    #       p "Timeouts for #{item['lock_digest']}: brpoplpush_timeout: #{timeouts[:brpoplpush_timeout]}, concurrent_timeout: #{timeouts[:concurrent_timeout]}"
+    #       p "Timeouts for #{item['lock_digest']}: "
+    #       p " => brpoplpush_timeout: #{timeouts[:brpoplpush_timeout]}"
+    #       p " => concurrent_timeout: #{timeouts[:concurrent_timeout]}"
     #     else
     #       p "Performed #{action} for #{item['lock_digest']} with jid #{action_jid}"
     #     end

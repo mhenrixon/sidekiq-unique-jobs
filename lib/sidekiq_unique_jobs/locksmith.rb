@@ -187,7 +187,7 @@ module SidekiqUniqueJobs
     #
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
-    def lock!(conn, wait = nil, &block)
+    def lock!(conn, wait = nil)
       return yield if locked?(conn)
 
       enqueue(conn) do |queued_jid|
@@ -245,11 +245,12 @@ module SidekiqUniqueJobs
       brpoplpush_timeout = timeout
       concurrent_timeout = add_drift(timeout)
 
-      reflect(:debug, :timeouts, item, timeouts: { brpoplpush_timeout: brpoplpush_timeout, concurrent_timeout: concurrent_timeout })
+      reflect(:debug, :timeouts, item,
+              timeouts: { brpoplpush_timeout: brpoplpush_timeout, concurrent_timeout: concurrent_timeout })
 
       primed_jid = Concurrent::Promises
                    .future(conn) { |red_con| pop_queued(red_con, timeout) }
-                   .value()
+                   .value
 
       handle_primed(primed_jid, &block)
     end

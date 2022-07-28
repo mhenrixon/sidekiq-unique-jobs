@@ -107,13 +107,13 @@ RSpec.configure do |config|
 
   Kernel.srand config.seed
 
-  config.before(:each) do
-    Sidekiq.configure_server do |config|
-      config.redis = { port: 6379, driver: :hiredis }
+  config.before do
+    Sidekiq.configure_server do |conf|
+      conf.redis = { port: 6379, driver: :hiredis }
     end
 
-    Sidekiq.configure_client do |config|
-      config.redis = { port: 6379, driver: :hiredis }
+    Sidekiq.configure_client do |conf|
+      conf.redis = { port: 6379, driver: :hiredis }
     end
   end
 
