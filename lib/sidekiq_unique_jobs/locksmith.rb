@@ -32,6 +32,7 @@ module SidekiqUniqueJobs
     #
     # @return [Float] used to take into consideration the inaccuracy of redis timestamps
     CLOCK_DRIFT_FACTOR = 0.01
+    NETWORK_FACTOR = 0.04
 
     #
     # @!attribute [r] key
@@ -184,6 +185,7 @@ module SidekiqUniqueJobs
     #
     # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
     # @param [Method] primed_method reference to the method to use for getting a primed token
+    # @param [nil, Integer, Float] time to wait before timeout
     #
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
@@ -239,9 +241,18 @@ module SidekiqUniqueJobs
     # @return [Object] whatever the block returns when lock was acquired
     #
     def primed_async(conn, wait = nil, &block)
+      timeout = (wait || config.timeout).to_i
+      timeout = 1 if timeout.zero?
+
+      brpoplpush_timeout = timeout
+      concurrent_timeout = add_drift(timeout)
+
+      reflect(:debug, :timeouts, item,
+              timeouts: { brpoplpush_timeout: brpoplpush_timeout, concurrent_timeout: concurrent_timeout })
+
       primed_jid = Concurrent::Promises
-                   .future(conn) { |red_con| pop_queued(red_con, wait) }
-                   .value(add_drift(wait || config.timeout))
+                   .future(conn) { |red_con| pop_queued(red_con, timeout) }
+                   .value
 
       handle_primed(primed_jid, &block)
     end
@@ -273,7 +284,7 @@ module SidekiqUniqueJobs
     #
     # @return [String] a previously enqueued token (now taken off the queue)
     #
-    def pop_queued(conn, wait = nil)
+    def pop_queued(conn, wait = 1)
       wait ||= config.timeout if config.wait_for_lock?
 
       if wait.nil?

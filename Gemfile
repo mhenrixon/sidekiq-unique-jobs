@@ -21,6 +21,7 @@ gem "rubocop-mhenrixon"
 gem "simplecov-sublime", ">= 0.21.2", require: false
 gem "sinatra"
 gem "timecop"
+gem "toxiproxy"
 gem "yard"
 
 platforms :mri do

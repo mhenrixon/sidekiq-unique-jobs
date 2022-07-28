@@ -16,6 +16,7 @@ gem "rubocop-mhenrixon"
 gem "simplecov-sublime", ">= 0.21.2", require: false
 gem "sinatra"
 gem "timecop"
+gem "toxiproxy"
 gem "yard"
 gem "sidekiq", "~> 6.1.0"
 
