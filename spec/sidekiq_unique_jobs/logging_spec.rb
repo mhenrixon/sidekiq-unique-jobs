@@ -33,6 +33,15 @@ RSpec.describe SidekiqUniqueJobs::Logging do
           .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
       )
     end
+
+    context "when logging is disabled" do
+      it "logs nothing" do
+        SidekiqUniqueJobs.use_config(logger_enabled: false) do
+          log_debug(message, item)
+          expect(logger).not_to have_received(level)
+        end
+      end
+    end
   end
 
   describe "#log_info" do
@@ -44,6 +53,15 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         a_string_starting_with(message)
           .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
       )
+    end
+
+    context "when logging is disabled" do
+      it "logs nothing" do
+        SidekiqUniqueJobs.use_config(logger_enabled: false) do
+          log_info(message, item)
+          expect(logger).not_to have_received(level)
+        end
+      end
     end
   end
 
@@ -57,6 +75,15 @@ RSpec.describe SidekiqUniqueJobs::Logging do
           .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
       )
     end
+
+    context "when logging is disabled" do
+      it "logs nothing" do
+        SidekiqUniqueJobs.use_config(logger_enabled: false) do
+          log_warn(message, item)
+          expect(logger).not_to have_received(level)
+        end
+      end
+    end
   end
 
   describe "#log_error" do
@@ -69,6 +96,15 @@ RSpec.describe SidekiqUniqueJobs::Logging do
           .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
       )
     end
+
+    context "when logging is disabled" do
+      it "logs nothing" do
+        SidekiqUniqueJobs.use_config(logger_enabled: false) do
+          log_error(message, item)
+          expect(logger).not_to have_received(level)
+        end
+      end
+    end
   end
 
   describe "#log_fatal" do
@@ -80,6 +116,15 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         a_string_starting_with(message)
           .and(ending_with("(queue=#{queue} class=#{worker} jid=#{jid} lock_digest=#{digest})")),
       )
+    end
+
+    context "when logging is disabled" do
+      it "logs nothing" do
+        SidekiqUniqueJobs.use_config(logger_enabled: false) do
+          log_fatal(message, item)
+          expect(logger).not_to have_received(level)
+        end
+      end
     end
   end
 

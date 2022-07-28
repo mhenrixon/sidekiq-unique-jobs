@@ -30,6 +30,8 @@ module SidekiqUniqueJobs
     # @yield [String, Exception] the message or exception to use for log message
     #
     def log_debug(message_or_exception = nil, item = nil, &block)
+      return unless logging?
+
       message = build_message(message_or_exception, item)
       logger.debug(message, &block)
       nil
@@ -45,6 +47,8 @@ module SidekiqUniqueJobs
     # @yield [String, Exception] the message or exception to use for log message
     #
     def log_info(message_or_exception = nil, item = nil, &block)
+      return unless logging?
+
       message = build_message(message_or_exception, item)
       logger.info(message, &block)
       nil
@@ -60,6 +64,8 @@ module SidekiqUniqueJobs
     # @yield [String, Exception] the message or exception to use for log message
     #
     def log_warn(message_or_exception = nil, item = nil, &block)
+      return unless logging?
+
       message = build_message(message_or_exception, item)
       logger.warn(message, &block)
       nil
@@ -75,6 +81,8 @@ module SidekiqUniqueJobs
     # @yield [String, Exception] the message or exception to use for log message
     #
     def log_error(message_or_exception = nil, item = nil, &block)
+      return unless logging?
+
       message = build_message(message_or_exception, item)
       logger.error(message, &block)
       nil
@@ -90,6 +98,8 @@ module SidekiqUniqueJobs
     # @yield [String, Exception] the message or exception to use for log message
     #
     def log_fatal(message_or_exception = nil, item = nil, &block)
+      return unless logging?
+
       message = build_message(message_or_exception, item)
       logger.fatal(message, &block)
 
@@ -217,6 +227,10 @@ module SidekiqUniqueJobs
                   " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md"
 
       yield
+    end
+
+    def logging?
+      SidekiqUniqueJobs.logging?
     end
   end
 end

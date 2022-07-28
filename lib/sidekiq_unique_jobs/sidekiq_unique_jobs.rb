@@ -72,6 +72,16 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   end
 
   #
+  # Check if logging is enabled
+  #
+  #
+  # @return [true, false]
+  #
+  def logging?
+    config.logger_enabled
+  end
+
+  #
   # Temporarily use another configuration and reset to the old config after yielding
   #
   # @param [Hash] tmp_config the temporary configuration to use

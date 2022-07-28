@@ -31,7 +31,7 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
   - [raise](#raise)
   - [reject](#reject)
   - [replace](#replace)
-  - [Reschedule](#reschedule)
+  - [reschedule](#reschedule)
   - [Custom Strategies](#custom-strategies)
   - [3 Cleanup Dead Locks](#3-cleanup-dead-locks)
 - [Debugging](#debugging)
@@ -610,6 +610,7 @@ This has been probably the most confusing part of this gem. People get really co
 ```ruby
 SidekiqUniqueJobs.configure do |config|
   config.enabled = !Rails.env.test?
+  config.logger_enabled = !Rails.env.test?
 end
 ```
 
@@ -736,6 +737,7 @@ Configure SidekiqUniqueJobs in an initializer or the sidekiq initializer on appl
 ```ruby
 SidekiqUniqueJobs.configure do |config|
   config.logger = Sidekiq.logger # default, change at your own discretion
+  config.logger_enabled  = true # default, disable for test environments
   config.debug_lua       = false # Turn on when debugging
   config.lock_info       = false # Turn on when debugging
   config.lock_ttl        = 600   # Expire locks after 10 minutes

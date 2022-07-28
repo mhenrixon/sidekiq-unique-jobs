@@ -8,6 +8,7 @@ module SidekiqUniqueJobs
                                                    :enabled,
                                                    :lock_prefix,
                                                    :logger,
+                                                   :logger_enabled,
                                                    :locks,
                                                    :strategies,
                                                    :debug_lua,
@@ -90,6 +91,9 @@ module SidekiqUniqueJobs
     #
     # @return [nil]
     LOCK_TTL              = nil
+    #
+    # @return [true,false] by default false (don't disable logger)
+    LOGGER_ENABLED        = true
     #
     # @return [true] by default the gem is enabled
     ENABLED               = true
@@ -180,6 +184,7 @@ module SidekiqUniqueJobs
         ENABLED,
         PREFIX,
         Sidekiq.logger,
+        LOGGER_ENABLED,
         LOCKS,
         STRATEGIES,
         DEBUG_LUA,
