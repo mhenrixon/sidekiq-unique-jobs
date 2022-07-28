@@ -85,6 +85,11 @@ if locked_count and locked_count < 1 then
   redis.call(del_cmd, locked)
 end
 
+if redis.call("LLEN", primed) == 0 then
+  log_debug(del_cmd, primed)
+  redis.call(del_cmd, primed)
+end
+
 if limit and limit <= 1 and locked_count and locked_count <= 1 then
   log_debug("ZREM", digests, digest)
   redis.call("ZREM", digests, digest)
