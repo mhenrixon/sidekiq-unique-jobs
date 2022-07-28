@@ -19,6 +19,7 @@ require "sidekiq"
 require "sidekiq/api"
 require "sidekiq-unique-jobs"
 require "timecop"
+require "toxiproxy"
 require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
@@ -38,7 +39,7 @@ else
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
+  config.redis = { port: 6379, driver: :hiredis }
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
@@ -52,7 +53,7 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
+  config.redis = { port: 6379, driver: :hiredis }
 
   config.client_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Client
@@ -105,6 +106,16 @@ RSpec.configure do |config|
   config.include SidekiqUniqueJobs::Testing
 
   Kernel.srand config.seed
+
+  config.before do
+    Sidekiq.configure_server do |conf|
+      conf.redis = { port: 6379, driver: :hiredis }
+    end
+
+    Sidekiq.configure_client do |conf|
+      conf.redis = { port: 6379, driver: :hiredis }
+    end
+  end
 
   config.after(:suite) do
     p EVENTS if ENV["REFLECT_DEBUG"]

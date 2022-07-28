@@ -6,6 +6,11 @@ on:
 jobs:
   coverage:
     services:
+      toxiproxy:
+        image: ghcr.io/shopify/toxiproxy
+        ports:
+          - 8474:8474
+          - 21212:21212
       redis:
         image: redis:latest
         ports:
@@ -18,7 +23,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
-          bundler: 2.3.6
+          bundler: 2.3.19
           bundler-cache: true
 
       - name: Install Code Climate reporter
@@ -39,6 +44,11 @@ jobs:
 
   tests:
     services:
+      toxiproxy:
+        image: ghcr.io/shopify/toxiproxy
+        ports:
+          - 8474:8474
+          - 21212:21212
       redis:
         image: redis:latest
         ports:
@@ -56,7 +66,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler: 2.3.4
+          bundler: 2.3.19
           bundler-cache: true
       - run: bin/appraisal install --jobs=$(nproc) --retry=$(nproc)
       - run: bin/appraisal rspec --require spec_helper --tag ~perf

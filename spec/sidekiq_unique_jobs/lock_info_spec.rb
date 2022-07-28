@@ -68,13 +68,11 @@ RSpec.describe SidekiqUniqueJobs::LockInfo do
     let(:obj) { nil }
 
     context "when SidekiqUniqueJobs.config.lock_info = false" do
-      around do |example|
+      it "returns nil" do
         SidekiqUniqueJobs.use_config(lock_info: false) do
-          example.run
+          expect(set).to be_nil
         end
       end
-
-      it { is_expected.to be_nil }
     end
 
     context "when not given a Hash" do
