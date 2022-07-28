@@ -8,6 +8,9 @@ jobs:
     services:
       toxiproxy:
         image: ghcr.io/shopify/toxiproxy
+        ports:
+          - 8474:8474
+          - 21212:21212
       redis:
         image: redis:latest
         ports:
