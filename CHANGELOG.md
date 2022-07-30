@@ -2,10 +2,27 @@
 
 ## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.26...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.27...HEAD)
+
+**Fixed bugs:**
+
+- Unique Jobs Not Running with Version 7.1.26  [\#730](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/730)
+
+## [v7.1.27](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.27) (2022-07-30)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.26...v7.1.27)
+
+**Implemented enhancements:**
+
+- Feat\(logging\): Allow disabling logging [\#729](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/729) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Fix\(namespace\): Prevent self-conflict when redis-namespace is present [\#732](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/732) ([mhenrixon](https://github.com/mhenrixon))
 
 **Closed issues:**
 
+- Disable logging in Rails testing [\#727](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/727)
 - Memory bloat / dangling keys / reaper not cleaning orphans [\#637](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/637)
 
 ## [v7.1.26](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.26) (2022-07-28)
