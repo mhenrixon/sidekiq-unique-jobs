@@ -38,6 +38,7 @@ detectors:
       - SidekiqUniqueJobs::Lock#del
       - SidekiqUniqueJobs::Lock#lock
       - SidekiqUniqueJobs::Lock::WhileExecuting#execute
+      - SidekiqUniqueJobs::Locksmith#brpoplpush
       - SidekiqUniqueJobs::Locksmith#enqueue
       - SidekiqUniqueJobs::Locksmith#lock_sync
       - SidekiqUniqueJobs::Locksmith#set_lock_info
@@ -91,6 +92,7 @@ detectors:
       - Sidekiq#self.use_options
       - Sidekiq::Worker::ClassMethods#use_options
       - SidekiqUniqueJobs::LockArgs#default_job_options
+      - SidekiqUniqueJobs::Locksmith#brpoplpush
       - SidekiqUniqueJobs::Logging#logger_respond_to_with_context?
       - SidekiqUniqueJobs::OnConflict::Reject#deadset_kill?
       - SidekiqUniqueJobs::Orphans::RubyReaper#active?
