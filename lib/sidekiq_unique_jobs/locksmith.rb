@@ -298,10 +298,15 @@ module SidekiqUniqueJobs
     # @api private
     #
     def brpoplpush(conn, wait)
-      raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
-
       # passing timeout 0 to brpoplpush causes it to block indefinitely
-      conn.brpoplpush(key.queued, key.primed, timeout: wait)
+      raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
+      return conn.brpoplpush(key.queued, key.primed, wait) if conn.class.to_s == "Redis::Namespace"
+
+      if VersionCheck.satisfied?(redis_version, ">= 6.2.0") && conn.respond_to?(:blmove)
+        conn.blmove(key.queued, key.primed, "RIGHT", "LEFT", timeout: wait)
+      else
+        conn.brpoplpush(key.queued, key.primed, timeout: wait)
+      end
     end
 
     #
@@ -369,6 +374,10 @@ module SidekiqUniqueJobs
         LOCK_ARGS => item[LOCK_ARGS],
         TIME => now_f,
       )
+    end
+
+    def redis_version
+      @redis_version ||= SidekiqUniqueJobs.config.redis_version
     end
   end
 end
