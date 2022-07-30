@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 unless ENV.fetch("CI", false)
+  # require "redis-namespace"
+
   RSpec.describe "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting" do
     before do
       digests.delete_by_pattern("*")
@@ -20,10 +22,12 @@ unless ENV.fetch("CI", false)
       end
 
       Sidekiq.configure_server do |config|
+        # config.redis = { port: 21_212, db: 9, namespace: "foo" }
         config.redis = { port: 21_212, db: 9 }
       end
 
       Sidekiq.configure_client do |config|
+        # config.redis = { port: 21_212, db: 9, namespace: "foo" }
         config.redis = { port: 21_212, db: 9 }
       end
 
