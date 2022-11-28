@@ -364,7 +364,7 @@ sidekiq_options lock: :until_and_while_executing,
 sidekiq_options on_conflict: :log
 ```
 
-This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line about that this is job is a duplicate of another.
+This strategy is intended to be used with `UntilExecuted` and `UntilExpired`. It will log a line that this job is a duplicate of another.
 
 ### raise
 
