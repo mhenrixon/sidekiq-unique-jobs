@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v7.1.29](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.29) (2022-12-03)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.28...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.28...v7.1.29)
 
 **Fixed bugs:**
 
