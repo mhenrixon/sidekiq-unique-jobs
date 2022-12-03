@@ -32,7 +32,7 @@ module SidekiqUniqueJobs
       @item       = item
       @queue      = queue
       @redis_pool = redis_pool
-      self.job_class = item[CLASS]
+      self.job_class = worker_class
       return yield if unique_disabled?
 
       SidekiqUniqueJobs::Job.prepare(item) unless item[LOCK_DIGEST]
