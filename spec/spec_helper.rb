@@ -39,7 +39,7 @@ else
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { port: 6379, driver: :hiredis }
+  config.redis = { port: 6379 }
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
@@ -53,7 +53,7 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { port: 6379, driver: :hiredis }
+  config.redis = { port: 6379 }
 
   config.client_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Client
@@ -109,11 +109,11 @@ RSpec.configure do |config|
 
   config.before do
     Sidekiq.configure_server do |conf|
-      conf.redis = { port: 6379, driver: :hiredis }
+      conf.redis = { port: 6379 }
     end
 
     Sidekiq.configure_client do |conf|
-      conf.redis = { port: 6379, driver: :hiredis }
+      conf.redis = { port: 6379 }
     end
   end
 

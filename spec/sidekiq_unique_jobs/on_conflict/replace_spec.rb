@@ -2,7 +2,7 @@
 
 RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
   let(:strategy)    { described_class.new(item) }
-  let(:lock_digest) { "uniquejobs:0781b1f587a9a8d08773f21ed752caed" }
+  let(:lock_digest) { "uniquejobs:a1d714a6dacd9fcfe0aa6274af3d5ab4" }
   let(:block)       { -> { p "Hello" } }
   let(:digest)      { digests.entries.first }
 

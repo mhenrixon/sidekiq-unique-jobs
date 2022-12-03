@@ -33,10 +33,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
         allow(lock).to receive(:reflect)
       end
 
-      it "reflects" do
-      end
-
-      it "logs a warning" do
+      it "reflects a warning" do
         expect { callback_safely }.to raise_error(RuntimeError, "Hell")
         expect(lock).to have_received(:reflect).with(:after_unlock_callback_failed, item)
       end

@@ -6,7 +6,7 @@ RSpec.describe "Sidekiq::Api" do
       "queue" => "testqueue",
       "args" => [{ foo: "bar" }] }
   end
-  let(:lock_digest) { "uniquejobs:577db3c4fc72230bf2c256faa708a083" }
+  let(:lock_digest) { "uniquejobs:1fa0458e74c76c7029b1f4f00bc59ec9" }
   let(:key)         { SidekiqUniqueJobs::Key.new(lock_digest) }
 
   describe Sidekiq::SortedEntry::UniqueExtension do
