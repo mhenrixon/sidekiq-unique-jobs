@@ -21,8 +21,8 @@ Layout/LineLength:
     - myapp/db/**/*.rb
     - myapp/config/initializers/devise.rb
 
-# Layout/LineContinuationLeadingSpace:
-#   Enabled: false
+Layout/LineContinuationLeadingSpace:
+  Enabled: false
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
