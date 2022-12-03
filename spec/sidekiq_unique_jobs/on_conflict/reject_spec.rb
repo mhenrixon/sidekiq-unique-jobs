@@ -4,7 +4,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
   include_context "with a stubbed locksmith"
   let(:strategy) { described_class.new(item) }
   let(:deadset)  { instance_spy(Sidekiq::DeadSet) }
-  let(:payload)  { instance_spy("payload") } # rubocop:disable RSpec/VerifiedDoubleReference
+  let(:payload)  { instance_spy("payload") }
   let(:item) do
     { "jid" => "maaaahjid",
       "class" => "WhileExecutingRejectJob",

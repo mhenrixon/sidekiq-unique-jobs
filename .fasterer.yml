@@ -21,3 +21,6 @@ speedups:
 
 exclude_paths:
   - 'spec/**/*.rb'
+  - 'vendor/**/*.rb'
+  - 'gemfiles/**/*.rb'
+
