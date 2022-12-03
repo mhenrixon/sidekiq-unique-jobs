@@ -10,8 +10,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, redis_db: 9 do
       it "does not unlock keys it does not own" do
         jid = UntilExecutedJob.perform_async
         item = Sidekiq::Queue.new(queue).find_job(jid).item
-
-        digest = "uniquejobs:cf51f14f752c9ca8f3cfb0bbebad4abc"
+        digest = "uniquejobs:41459093fde370420ea1d1f446b60281"
         expect(get(digest)).to eq(jid)
         set(digest, "NOT_DELETED")
 

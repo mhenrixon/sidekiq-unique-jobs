@@ -51,7 +51,7 @@ module SidekiqUniqueJobs
     # Creates a namespaced unique digest based on the {#digestable_hash} and the {#lock_prefix}
     # @return [String] a unique digest
     def create_digest
-      digest = OpenSSL::Digest::MD5.hexdigest(dump_json(digestable_hash))
+      digest = OpenSSL::Digest::MD5.hexdigest(dump_json(digestable_hash.sort))
       "#{lock_prefix}:#{digest}"
     end
 

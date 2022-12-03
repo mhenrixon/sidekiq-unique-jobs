@@ -372,7 +372,13 @@ module SidekiqUniqueJobs
       end
 
       def sadd(key, member)
-        redis { |conn| conn.sadd(key, member) }
+        redis do |conn|
+          if conn.respond_to?(:sadd?)
+            conn.sadd?(key, member)
+          else
+            conn.sadd(key, member)
+          end
+        end
       end
 
       def srem(key, member)

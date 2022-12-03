@@ -6,16 +6,16 @@ RSpec.describe SidekiqUniqueJobs::Digests do
   shared_context "with a regular job" do
     let(:expected_keys) do
       {
-        "uniquejobs:0781b1f587a9a8d08773f21ed752caed" => kind_of(Float),
-        "uniquejobs:09b3a42f77a75865bf27ac44e66bb4ef" => kind_of(Float),
-        "uniquejobs:1c4c0bf2a8a1006c7610e4ef1f965f34" => kind_of(Float),
-        "uniquejobs:236feda848cfbb1ae32d4d9af666349e" => kind_of(Float),
-        "uniquejobs:77d1e23f18943bc048b48a01b85af0b3" => kind_of(Float),
-        "uniquejobs:9fcaaf3e873f101a8d79e00e89bb3b36" => kind_of(Float),
-        "uniquejobs:a47040c19b3741eaf912a96cd8bee728" => kind_of(Float),
-        "uniquejobs:c85f45d715232cfff0505fb85ca92659" => kind_of(Float),
-        "uniquejobs:cb5be91a66b83435281c23fe489f22b5" => kind_of(Float),
-        "uniquejobs:e74bebbf569d620397688fded62c85d6" => kind_of(Float),
+        "uniquejobs:191cc66e8db74a712ca80180d846a8c0" => kind_of(Float),
+        "uniquejobs:70091c2e18d6b45cd1a257a7b77c1dc0" => kind_of(Float),
+        "uniquejobs:72254d80583af0f3cf1ff3cd8271c532" => kind_of(Float),
+        "uniquejobs:7f1a663f444e9629ed73893541564351" => kind_of(Float),
+        "uniquejobs:a1d714a6dacd9fcfe0aa6274af3d5ab4" => kind_of(Float),
+        "uniquejobs:b9d8a7667ef91f07e9c5a735e08e0891" => kind_of(Float),
+        "uniquejobs:ced55fba57e2d67b2422cacbe08896f4" => kind_of(Float),
+        "uniquejobs:e284198d560db35309c4d1b49e325645" => kind_of(Float),
+        "uniquejobs:e3544c3ca5a5b28141a1d161c70d04cb" => kind_of(Float),
+        "uniquejobs:eb82e9e8057a8912a3f970c8768975f7" => kind_of(Float),
       }
     end
 
@@ -73,7 +73,7 @@ RSpec.describe SidekiqUniqueJobs::Digests do
     context "with a regular job" do
       include_context "with a regular job"
 
-      let(:digest) { "uniquejobs:e74bebbf569d620397688fded62c85d6" }
+      let(:digest) { "uniquejobs:a1d714a6dacd9fcfe0aa6274af3d5ab4" }
 
       before do
         allow(digests).to receive(:log_info)

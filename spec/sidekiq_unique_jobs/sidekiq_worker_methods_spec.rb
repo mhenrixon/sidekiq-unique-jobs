@@ -45,6 +45,7 @@ RSpec.describe SidekiqUniqueJobs::SidekiqWorkerMethods do
       let(:error_message) { "this class does not exist" }
 
       before do
+        allow(Object).to receive(:const_get).and_call_original
         allow(Object).to receive(:const_get)
           .with(job_class)
           .and_raise(NameError, error_message)

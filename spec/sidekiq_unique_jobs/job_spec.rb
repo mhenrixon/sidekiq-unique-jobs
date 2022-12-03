@@ -24,7 +24,7 @@ RSpec.describe SidekiqUniqueJobs::Job do
           "lock_timeout" => MyUniqueJob.get_sidekiq_options["lock_timeout"].to_i,
           "lock_ttl" => MyUniqueJob.get_sidekiq_options["lock_ttl"],
           "lock_args" => args,
-          "lock_digest" => "uniquejobs:149ef752a5776e0bd05929b8f0e33250",
+          "lock_digest" => "uniquejobs:6b6835a019cad7c2a7a4e53e20a9184c",
           "lock_prefix" => "uniquejobs",
         },
       )
