@@ -2,11 +2,32 @@
 
 ## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.27...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.28...HEAD)
+
+**Fixed bugs:**
+
+- fix\(digests\): ensure consistent digests [\#743](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/743) ([mhenrixon](https://github.com/mhenrixon))
+
+**Merged pull requests:**
+
+- fix\(after\_unlock\): regression from \#707 [\#737](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/737) ([adamcreekroad](https://github.com/adamcreekroad))
+
+## [v7.1.28](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.28) (2022-11-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.27...v7.1.28)
 
 **Fixed bugs:**
 
 - Unique Jobs Not Running with Version 7.1.26  [\#730](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/730)
+
+**Closed issues:**
+
+- Error "undefined method `redis\_info' for Sidekiq:Module" on upgrade  [\#740](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/740)
+- spammed by `Nothing to delete; exiting` during spec [\#733](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/733)
+
+**Merged pull requests:**
+
+- sentence correction [\#744](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/744) ([SupriyaMedankar](https://github.com/SupriyaMedankar))
 
 ## [v7.1.27](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.27) (2022-07-30)
 
