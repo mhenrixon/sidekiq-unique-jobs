@@ -25,6 +25,20 @@ RSpec.describe "core_ext.rb" do
     end
   end
 
+  describe "ExtendedHash" do
+    before do
+      stub_const("ExtendedHash", Hash)
+    end
+
+    let(:hash) { ExtendedHash[:test, :me, :not, :me] }
+
+    describe "#deep_transform_keys" do
+      subject(:deep_transform_keys) { hash.deep_transform_keys(&:to_s) }
+
+      it { is_expected.to be_a(ExtendedHash) }
+    end
+  end
+
   describe Array do
     let(:array)         { [1, 2, nil, last_argument] }
     let(:last_argument) { Object.new }
