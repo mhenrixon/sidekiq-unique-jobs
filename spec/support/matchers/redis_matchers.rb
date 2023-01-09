@@ -3,8 +3,8 @@
 require "rspec/expectations"
 
 RSpec::Matchers.define :have_enqueued do |number_of_jobs|
-  SidekiqUniqueJobs.redis do |_conn|
-    # @actual = conn.call(:llen, "queue:#{queue}")
+  SidekiqUniqueJobs.redis do |conn|
+    # @actual = conn.llen("queue:#{queue}")
 
     match do |queue|
       @actual = queue_count(queue)
@@ -16,7 +16,7 @@ end
 
 RSpec::Matchers.define :be_enqueued_in do |queue|
   SidekiqUniqueJobs.redis do |conn|
-    @actual = conn.call(:llen, "queue:#{queue}")
+    @actual = conn.llen("queue:#{queue}")
     match do |count_in_queue|
       @expected = count_in_queue
       expect(@actual).to eq(@expected)
@@ -26,7 +26,7 @@ end
 
 RSpec::Matchers.define :be_scheduled do |_queue|
   SidekiqUniqueJobs.redis do |conn|
-    @actual = conn.call(:llen, "queue:schedule")
+    @actual = conn.llen("queue:schedule")
     match do |count_in_queue|
       @expected = count_in_queue
       expect(@actual).to eq(@expected)
@@ -36,7 +36,7 @@ end
 
 RSpec::Matchers.define :be_scheduled_at do |time|
   SidekiqUniqueJobs.redis do |conn|
-    @actual = conn.call(:zcount, "schedule", -1, time)
+    @actual = conn.zcount("schedule", -1, time)
     match do |count_in_queue|
       @expected = count_in_queue
       @actual == @expected

@@ -198,7 +198,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [String] a string like `5.0.2`
   #
   def fetch_redis_version
-    Sidekiq.redis_info["redis_version"]
+    Sidekiq.default_configuration.redis_info["redis_version"]
   end
 
   #

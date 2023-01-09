@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "sidekiq-unique-jobs"
 
 RSpec.describe SidekiqUniqueJobs::Middleware::Client, "#call" do

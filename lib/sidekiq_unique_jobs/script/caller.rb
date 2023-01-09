@@ -54,14 +54,9 @@ module SidekiqUniqueJobs
       # Only used to reduce a little bit of duplication
       # @see call_script
       def do_call(file_name, conn, keys, argv)
-        argv = argv.dup.concat([
-                                 now_f,
-                                 debug_lua,
-                                 max_history,
-                                 file_name,
-                                 redis_version,
-                               ])
-        Script.execute(file_name, conn, keys: keys, argv: argv)
+        argv = argv.dup.push(now_f, debug_lua, max_history, file_name, redis_version)
+
+        Script.execute(file_name, conn, keys: keys, argv: normalize_argv(argv))
       end
 
       #
@@ -121,6 +116,18 @@ module SidekiqUniqueJobs
       #
       def redis_version
         SidekiqUniqueJobs.config.redis_version
+      end
+
+      def normalize_argv(argv)
+        argv.each_with_index do |item, index|
+          if item.is_a?(FalseClass)
+            argv[index] = 0
+          elsif item.is_a?(TrueClass)
+            argv[index] = 1
+          elsif item.is_a?(NilClass)
+            argv[index] = 0
+          end
+        end
       end
     end
   end

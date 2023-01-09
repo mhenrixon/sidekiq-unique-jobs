@@ -796,7 +796,8 @@ module SidekiqUniqueJobs
         ::Sidekiq::Client.push(item)
       end
 
-      def queue_count(queue)
+      def
+        queue_count(queue)
         redis { |conn| conn.llen("queue:#{queue}") }
       end
 
