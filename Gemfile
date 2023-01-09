@@ -27,7 +27,6 @@ gem "yard"
 
 platforms :mri do
   gem "concurrent-ruby-ext"
-  gem "hiredis"
 end
 
 if respond_to?(:install_if)

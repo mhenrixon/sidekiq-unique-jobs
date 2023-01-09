@@ -19,11 +19,10 @@ gem "sinatra"
 gem "timecop"
 gem "toxiproxy"
 gem "yard"
-gem "sidekiq", "~> 5.1.0"
+gem "sidekiq", "~> 7.0.0"
 
 platforms :mri do
   gem "concurrent-ruby-ext"
-  gem "hiredis"
 end
 
 gemspec path: "../"

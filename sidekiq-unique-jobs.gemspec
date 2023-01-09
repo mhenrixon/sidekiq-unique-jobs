@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
 
       - sidekiq_options lock_args_method: :method_name
 
-    This is also true for `Sidekiq.default_worker_options`
+    This is also true for `Sidekiq.default_job_options`
 
     We also deprecated the global configuration options:
       - default_lock_ttl
@@ -74,7 +74,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "brpoplpush-redis_script", "> 0.1.1", "<= 2.0.0"
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
   spec.add_dependency "redis", "< 5.0"
-  spec.add_dependency "sidekiq", ">= 5.0", "< 7.0"
+  spec.add_dependency "sidekiq", ">= 7.0.0", "< 8.0.0"
   spec.add_dependency "thor", ">= 0.20", "< 3.0"
   spec.metadata = {
     "rubygems_mfa_required" => "true",
