@@ -247,8 +247,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.mapped_msetnx(hash) }
       end
 
-      def mget(*keys, &blk)
-        redis { |conn| conn.mget(*keys, &blk) }
+      def mget(...)
+        redis { |conn| conn.mget(...) }
       end
 
       def mapped_mget(*keys)
@@ -589,8 +589,8 @@ module SidekiqUniqueJobs
         redis(&:subscribed?)
       end
 
-      def subscribe(*channels, &block)
-        redis { |conn| conn.subscribe(*channels, &block) }
+      def subscribe(...)
+        redis { |conn| conn.subscribe(...) }
       end
 
       def subscribe_with_timeout(timeout, *channels, &block)
@@ -601,8 +601,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.unsubscribe(*channels) }
       end
 
-      def psubscribe(*channels, &block)
-        redis { |conn| conn.psubscribe(*channels, &block) }
+      def psubscribe(...)
+        redis { |conn| conn.psubscribe(...) }
       end
 
       def psubscribe_with_timeout(timeout, *channels, &block)

@@ -120,12 +120,11 @@ module SidekiqUniqueJobs
 
       def normalize_argv(argv)
         argv.each_with_index do |item, index|
-          if item.is_a?(FalseClass)
+          case item
+          when FalseClass, NilClass
             argv[index] = 0
-          elsif item.is_a?(TrueClass)
+          when TrueClass
             argv[index] = 1
-          elsif item.is_a?(NilClass)
-            argv[index] = 0
           end
         end
       end

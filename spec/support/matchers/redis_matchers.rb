@@ -3,7 +3,7 @@
 require "rspec/expectations"
 
 RSpec::Matchers.define :have_enqueued do |number_of_jobs|
-  SidekiqUniqueJobs.redis do |conn|
+  SidekiqUniqueJobs.redis do |_conn|
     # @actual = conn.llen("queue:#{queue}")
 
     match do |queue|

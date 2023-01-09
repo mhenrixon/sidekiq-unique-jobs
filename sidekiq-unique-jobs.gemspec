@@ -69,7 +69,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.5"
+  spec.required_ruby_version = ">= 2.7"
 
   spec.add_dependency "brpoplpush-redis_script", "> 0.1.1", "<= 2.0.0"
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
