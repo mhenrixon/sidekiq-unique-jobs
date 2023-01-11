@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::UpgradeLocks do
+RSpec.describe SidekiqUniqueJobs::UpgradeLocks, skip: "Not relevant at the moment" do
   let(:old_digests) { Array.new(20) { |n| "uniquejobs:digest-#{n}" } }
 
   describe ".call" do

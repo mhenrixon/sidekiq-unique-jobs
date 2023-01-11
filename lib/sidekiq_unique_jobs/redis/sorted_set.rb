@@ -17,7 +17,7 @@ module SidekiqUniqueJobs
       # @return [Hash] when given with_scores: true
       #
       def entries(with_scores: true)
-        entrys = redis { |conn| conn.zrange(key, 0, -1, with_scores: with_scores) }
+        entrys = redis { |conn| conn.zrange(key, 0, -1, withscores: with_scores) }
         return entrys unless with_scores
 
         entrys.each_with_object({}) { |pair, hash| hash[pair[0]] = pair[1] }
@@ -33,7 +33,7 @@ module SidekiqUniqueJobs
       def add(values)
         redis do |conn|
           if values.is_a?(Array)
-            conn.zadd(key, values)
+            conn.zadd(key, *values)
           else
             conn.zadd(key, now_f, values)
           end

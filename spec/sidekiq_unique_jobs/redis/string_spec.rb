@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Redis::String do
-  let(:entity) { described_class.new(key) }
+  let(:entity) { described_class.new(key.digest) }
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:digest) { "digest:#{SecureRandom.hex(12)}" }
   let(:job_id) { SecureRandom.hex(12) }

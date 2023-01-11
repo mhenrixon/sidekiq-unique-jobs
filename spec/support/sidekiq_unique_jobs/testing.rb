@@ -67,8 +67,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.flushdb(options) }
       end
 
-      def info(cmd = nil)
-        redis { |conn| conn.info(cmd) }
+      def info(_cmd = nil)
+        redis(&:info)
       end
 
       def lastsave

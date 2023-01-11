@@ -49,7 +49,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       push_item(
         "class" => MyUniqueJobWithFilterProc,
         "queue" => "customqueue",
-        "args" => [1, { type: "value", some: "not used" }],
+        "args" => [1, { "type" => "value", "some" => "not used" }],
       )
     end
 
@@ -67,7 +67,7 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Client, redis_db: 1 do
       push_item(
         "class" => MyUniqueJobWithFilterMethod,
         "queue" => "customqueue",
-        "args" => [1, { type: "value", some: "not used" }],
+        "args" => [1, { "type" => "value", "some" => "not used" }],
       )
     end
 

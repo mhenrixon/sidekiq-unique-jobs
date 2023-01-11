@@ -356,7 +356,7 @@ module SidekiqUniqueJobs
     # @return [true, false]
     #
     def taken?(conn)
-      conn.hexists(key.locked, job_id)
+      conn.hexists(key.locked, job_id) != 0
     end
 
     def argv

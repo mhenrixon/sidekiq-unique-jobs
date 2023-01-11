@@ -70,7 +70,7 @@ module SidekiqUniqueJobs
         [
           total_size.to_i,
           result[0].to_i, # next_cursor
-          result[1].map { |entry| load_json(entry[0]) }, # entries
+          result[1].map { |entry| load_json(entry) },
         ]
       end
     end

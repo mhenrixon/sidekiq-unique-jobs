@@ -184,7 +184,7 @@ module SidekiqUniqueJobs
 
       def active?(digest) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         Sidekiq.redis do |conn|
-          procs = conn.sscan_each("processes").to_a
+          procs = conn.sscan("processes").to_a
           return false if procs.empty?
 
           procs.sort.each do |key|
@@ -235,7 +235,7 @@ module SidekiqUniqueJobs
       # @yield queues one at a time
       #
       def queues(conn, &block)
-        conn.sscan_each("queues", &block)
+        conn.sscan("queues").each(&block)
       end
 
       def entries(conn, queue, &block) # rubocop:disable Metrics/MethodLength
@@ -290,7 +290,7 @@ module SidekiqUniqueJobs
       # @return [false] when missing
       #
       def in_sorted_set?(key, digest)
-        conn.zscan_each(key, match: "*#{digest}*", count: 1).to_a.any?
+        conn.zscan(key, match: "*#{digest}*", count: 1).to_a.any?
       end
     end
     # rubocop:enable Metrics/ClassLength
