@@ -339,8 +339,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.brpop(*args) }
       end
 
-      def brpoplpush(source, destination, options = {})
-        redis { |conn| conn.brpoplpush(source, destination, **options) }
+      def brpoplpush(source, destination, wait = 1)
+        redis { |conn| conn.brpoplpush(source, destination, wait) }
       end
 
       def lindex(key, index)

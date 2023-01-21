@@ -20,7 +20,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
 
     it "adds a new entry" do
       expect { add }.to change { entity.entries.size }.by(1)
-      expect(add).to be(true)
+      expect(add).to be == 1
     end
   end
 

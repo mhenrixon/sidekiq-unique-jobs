@@ -127,8 +127,8 @@ RSpec.describe "queue.lua" do
         expect(llen(key.queued)).to eq(0) # There should be no keys available to be locked
         expect(llen(key.primed)).to eq(0)
         expect(exists(key.locked)).to be(true)
-        expect(hexists(key.locked, job_id_two)).to be(true)
-        expect(hexists(key.locked, job_id_one)).to be(false)
+        expect(hexists(key.locked, job_id_two)).to be(1)
+        expect(hexists(key.locked, job_id_one)).to be(0)
       end
     end
 
@@ -144,8 +144,8 @@ RSpec.describe "queue.lua" do
         expect(lrange(key.queued, 0, -1)).to match_array([job_id_one])
         expect(llen(key.primed)).to eq(0)
         expect(exists(key.locked)).to be(true)
-        expect(hexists(key.locked, job_id_two)).to be(true)
-        expect(hexists(key.locked, job_id_one)).to be(false)
+        expect(hexists(key.locked, job_id_two)).to be(1)
+        expect(hexists(key.locked, job_id_one)).to be(0)
       end
     end
   end

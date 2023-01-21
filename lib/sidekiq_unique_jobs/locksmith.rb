@@ -248,7 +248,10 @@ module SidekiqUniqueJobs
       concurrent_timeout = add_drift(timeout)
 
       reflect(:debug, :timeouts, item,
-              timeouts: { brpoplpush_timeout: brpoplpush_timeout, concurrent_timeout: concurrent_timeout })
+              timeouts: {
+                brpoplpush_timeout: brpoplpush_timeout,
+                concurrent_timeout: concurrent_timeout
+              })
 
       primed_jid = Concurrent::Promises
                    .future(conn) { |red_con| pop_queued(red_con, timeout) }
@@ -300,7 +303,6 @@ module SidekiqUniqueJobs
     def brpoplpush(conn, wait)
       # passing timeout 0 to brpoplpush causes it to block indefinitely
       raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
-      return conn.brpoplpush(key.queued, key.primed, wait) if conn.class.to_s == "Redis::Namespace"
 
       conn.blmove(key.queued, key.primed, "RIGHT", "LEFT", timeout: wait)
     end

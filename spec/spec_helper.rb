@@ -68,7 +68,7 @@ SidekiqUniqueJobs.configure do |config|
   config.lock_info    = true
 end
 
-EVENTS = {}.freeze
+EVENTS = {}
 
 SidekiqUniqueJobs.reflect do |on|
   if ENV["REFLECT_DEBUG"]

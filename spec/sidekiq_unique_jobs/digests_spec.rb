@@ -6,16 +6,16 @@ RSpec.describe SidekiqUniqueJobs::Digests do
   shared_context "with a regular job" do
     let(:expected_keys) do
       {
-        "uniquejobs:191cc66e8db74a712ca80180d846a8c0" => kind_of(Float),
-        "uniquejobs:70091c2e18d6b45cd1a257a7b77c1dc0" => kind_of(Float),
-        "uniquejobs:72254d80583af0f3cf1ff3cd8271c532" => kind_of(Float),
-        "uniquejobs:7f1a663f444e9629ed73893541564351" => kind_of(Float),
-        "uniquejobs:a1d714a6dacd9fcfe0aa6274af3d5ab4" => kind_of(Float),
-        "uniquejobs:b9d8a7667ef91f07e9c5a735e08e0891" => kind_of(Float),
-        "uniquejobs:ced55fba57e2d67b2422cacbe08896f4" => kind_of(Float),
-        "uniquejobs:e284198d560db35309c4d1b49e325645" => kind_of(Float),
-        "uniquejobs:e3544c3ca5a5b28141a1d161c70d04cb" => kind_of(Float),
-        "uniquejobs:eb82e9e8057a8912a3f970c8768975f7" => kind_of(Float),
+        "uniquejobs:191cc66e8db74a712ca80180d846a8c0" => kind_of(String),
+        "uniquejobs:70091c2e18d6b45cd1a257a7b77c1dc0" => kind_of(String),
+        "uniquejobs:72254d80583af0f3cf1ff3cd8271c532" => kind_of(String),
+        "uniquejobs:7f1a663f444e9629ed73893541564351" => kind_of(String),
+        "uniquejobs:a1d714a6dacd9fcfe0aa6274af3d5ab4" => kind_of(String),
+        "uniquejobs:b9d8a7667ef91f07e9c5a735e08e0891" => kind_of(String),
+        "uniquejobs:ced55fba57e2d67b2422cacbe08896f4" => kind_of(String),
+        "uniquejobs:e284198d560db35309c4d1b49e325645" => kind_of(String),
+        "uniquejobs:e3544c3ca5a5b28141a1d161c70d04cb" => kind_of(String),
+        "uniquejobs:eb82e9e8057a8912a3f970c8768975f7" => kind_of(String),
       }
     end
 
@@ -29,26 +29,26 @@ RSpec.describe SidekiqUniqueJobs::Digests do
   shared_context "with an until_and_while_executing job" do
     let(:expected_keys) do
       {
-        "uniquejobs:test1" => kind_of(Float),
-        "uniquejobs:test1:RUN" => kind_of(Float),
-        "uniquejobs:test10" => kind_of(Float),
-        "uniquejobs:test10:RUN" => kind_of(Float),
-        "uniquejobs:test2" => kind_of(Float),
-        "uniquejobs:test2:RUN" => kind_of(Float),
-        "uniquejobs:test3" => kind_of(Float),
-        "uniquejobs:test3:RUN" => kind_of(Float),
-        "uniquejobs:test4" => kind_of(Float),
-        "uniquejobs:test4:RUN" => kind_of(Float),
-        "uniquejobs:test5" => kind_of(Float),
-        "uniquejobs:test5:RUN" => kind_of(Float),
-        "uniquejobs:test6" => kind_of(Float),
-        "uniquejobs:test6:RUN" => kind_of(Float),
-        "uniquejobs:test7" => kind_of(Float),
-        "uniquejobs:test7:RUN" => kind_of(Float),
-        "uniquejobs:test8" => kind_of(Float),
-        "uniquejobs:test8:RUN" => kind_of(Float),
-        "uniquejobs:test9" => kind_of(Float),
-        "uniquejobs:test9:RUN" => kind_of(Float),
+        "uniquejobs:test1" => kind_of(String),
+        "uniquejobs:test1:RUN" => kind_of(String),
+        "uniquejobs:test10" => kind_of(String),
+        "uniquejobs:test10:RUN" => kind_of(String),
+        "uniquejobs:test2" => kind_of(String),
+        "uniquejobs:test2:RUN" => kind_of(String),
+        "uniquejobs:test3" => kind_of(String),
+        "uniquejobs:test3:RUN" => kind_of(String),
+        "uniquejobs:test4" => kind_of(String),
+        "uniquejobs:test4:RUN" => kind_of(String),
+        "uniquejobs:test5" => kind_of(String),
+        "uniquejobs:test5:RUN" => kind_of(String),
+        "uniquejobs:test6" => kind_of(String),
+        "uniquejobs:test6:RUN" => kind_of(String),
+        "uniquejobs:test7" => kind_of(String),
+        "uniquejobs:test7:RUN" => kind_of(String),
+        "uniquejobs:test8" => kind_of(String),
+        "uniquejobs:test8:RUN" => kind_of(String),
+        "uniquejobs:test9" => kind_of(String),
+        "uniquejobs:test9:RUN" => kind_of(String),
       }
     end
 

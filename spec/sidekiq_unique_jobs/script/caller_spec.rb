@@ -47,7 +47,7 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller do
       end
 
       context "with conn" do
-        let(:redis) { Redis.new }
+        let(:redis) { Sidekiq::RedisClientAdapter::CompatClient.new(port: 6379) }
 
         it_behaves_like "script gets called with the correct arguments"
       end
@@ -63,7 +63,7 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller do
       end
 
       context "with conn" do
-        let(:redis) { Redis.new }
+        let(:redis) { Sidekiq::RedisClientAdapter::CompatClient.new(port: 6379) }
 
         it_behaves_like "script gets called with the correct arguments"
       end

@@ -7,7 +7,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
   let(:with_scores) { nil }
 
   describe "#entries" do
-    subject(:entries) { entity.entries(withscores: with_scores) }
+    subject(:entries) { entity.entries(with_scores: with_scores) }
 
     context "without entries" do
       it { is_expected.to match_array([]) }
@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     context "when given a string entries" do
       let(:values) { "abcdef" }
 
-      it { is_expected.to be == true }
+      it { is_expected.to be == 1 }
     end
   end
 
