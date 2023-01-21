@@ -116,11 +116,7 @@ module SidekiqUniqueJobs
       return if keys.empty?
 
       conn.pipelined do |pipeline|
-        if VersionCheck.satisfied?(redis_version, ">= 4.0.0")
-          pipeline.unlink(*keys)
-        else
-          pipeline.del(*keys)
-        end
+        pipeline.unlink(*keys)
       end
     end
 

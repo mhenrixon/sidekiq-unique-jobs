@@ -9,6 +9,17 @@ module SidekiqUniqueJobs
     #
     class SortedSet < Entity
       #
+      # @return [Integer] the number of matches to return by default
+      DEFAULT_COUNT = 1_000
+      #
+      # @return [String] the default pattern to use for matching
+      SCAN_PATTERN  = "*"
+
+      #
+      # @return [Array<Integer, Interger, Array]
+      EMPTY_RESPONSE = [0, nil, []].freeze
+
+      #
       # Return entries for this sorted set
       #
       # @param [true,false] with_scores true return

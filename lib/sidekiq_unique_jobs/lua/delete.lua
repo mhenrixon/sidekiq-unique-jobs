@@ -33,15 +33,12 @@ log_debug("BEGIN delete", digest)
 
 local redis_version  = toversion(redisversion)
 local count          = 0
-local del_cmd        = "DEL"
 
 log_debug("ZREM", digests, digest)
 count = count + redis.call("ZREM", digests, digest)
 
-if redis_version["major"] >= 4 then del_cmd = "UNLINK"; end
-
-log_debug(del_cmd, digest, queued, primed, locked, info)
-count = count + redis.call(del_cmd, digest, queued, primed, locked, info)
+log_debug("UNLINK", digest, queued, primed, locked, info)
+count = count + redis.call("UNLINK", digest, queued, primed, locked, info)
 
 
 log("Deleted (" .. count .. ") keys")

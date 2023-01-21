@@ -103,11 +103,7 @@ module SidekiqUniqueJobs
     def del_digest(pipeline, digest)
       removable_keys = keys_for_digest(digest)
 
-      if VersionCheck.satisfied?(redis_version, ">= 4.0.0")
-        pipeline.unlink(*removable_keys)
-      else
-        pipeline.del(*removable_keys)
-      end
+      pipeline.unlink(*removable_keys)
     end
 
     def keys_for_digest(digest)

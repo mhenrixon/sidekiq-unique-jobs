@@ -87,21 +87,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
       kill_job_with_options
     end
 
-    it "calls deadset.kill with options hash", sidekiq_ver: ">= 5.1.0" do
+    it "calls deadset.kill with options hash" do
       expect(deadset).to have_received(:kill).with(payload, notify_failure: false)
-    end
-  end
-
-  describe "#kill_job_without_options" do
-    subject(:kill_job_without_options) { strategy.kill_job_without_options }
-
-    before do
-      allow(deadset).to receive(:kill)
-      kill_job_without_options
-    end
-
-    it "calls deadset.kill without options hash", sidekiq_ver: ">= 5.0.0 && < 5.1.0" do
-      expect(deadset).to have_received(:kill).with(payload)
     end
   end
 end
