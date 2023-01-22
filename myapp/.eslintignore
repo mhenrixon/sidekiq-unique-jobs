@@ -1,0 +1,16 @@
+/app/javascript/controllers/index.js
+/.git/
+/.bundle/
+/.github/
+/bin/
+/coverage/
+/db/
+/lib/
+/log/
+/node_modules/
+/public/
+/spec/
+/storage/
+/tmp/
+/vendor/bundle/
+/vendor/ruby/

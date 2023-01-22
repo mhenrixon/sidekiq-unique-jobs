@@ -1,41 +1,53 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "~> 2.7"
+ruby "~> 3.2"
 
-gem "bigdecimal"
-gem "coverband"
-gem "devise"
-gem "hiredis"
-gem "json"
+gem "rails"
+
 gem "pg"
 gem "puma"
+
+gem "bootsnap"
+gem "devise"
+gem "json"
 gem "rack-protection"
-gem "rails", ">= 6.0"
 gem "redis"
-gem "sidekiq", "~> 6.1"
+gem "sidekiq"
 gem "sidekiq-unique-jobs", path: ".."
 gem "sinatra"
 gem "slim-rails"
 
+gem "cssbundling-rails"
+gem "importmap-rails"
+gem "sprockets-rails"
+gem "stimulus-rails"
+gem "turbo-rails"
+
 group :development, :test do
-  gem "debug"
   gem "dotenv-rails"
   gem "factory_bot_rails"
   gem "fuubar"
   gem "listen"
+  gem "pry-rails"
   gem "rspec-rails"
 end
 
 group :development do
+  gem "erb_lint", require: false
   gem "rubocop"
   gem "rubocop-mhenrixon"
   gem "rubocop-performance"
   gem "rubocop-rails"
+  gem "rubocop-rake"
   gem "rubocop-rspec"
 end
 
 group :test do
-  gem "capybara"
+  gem "capybara", require: false
+  gem "capybara-playwright-driver"
 end
+
+gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]

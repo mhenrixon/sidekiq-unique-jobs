@@ -1,0 +1,54 @@
+<div class="w-full max-w-xs">
+    <h2 class="font-hairline mb-6 text-center">Change Your Password</h2>
+
+    <%= form_for(resource,
+                 as: resource_name,
+                 url: user_password_path(resource_name),
+                 html: {
+                         method: :put,
+                         class: "bg-white mb-4 px-8 pt-6 pb-8 rounded shadow-md"
+                 }
+        ) do |f| %>
+
+        <%#= render "devise/shared/error_messages", resource: resource %>
+
+        <%= devise_error_messages! %>
+
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="mb-4">
+            <%= f.label :password, "New Password",
+                        class: "block font-bold mb-2 text-gray-700 text-sm"
+            %>
+            <% if @minimum_password_length %>
+                <small><em class="text-gray-600">(<%= @minimum_password_length %> characters minimum)</em></small>
+            <% end %>
+            <%= f.password_field :password,
+                                 autofocus: true,
+                                 autocomplete: "new-password",
+                                 class: "appearance-none border leading-tight focus:outline-none px-3 py-2 rounded shadow focus:shadow-outline text-gray-700 w-full"
+            %>
+        </div>
+
+        <div class="mb-4">
+            <%= f.label :password_confirmation,
+                        "Confirm New Password",
+                        class: "block font-bold mb-2 text-gray-700 text-sm"
+            %>
+            <%= f.password_field :password_confirmation,
+                                 autocomplete: "off",
+                                 class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            %>
+        </div>
+
+        <div class="mb-4">
+            <%= f.submit "Change My Password",
+                         class: "button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" 
+            %>
+        </div>
+
+        <%= render "devise/shared/links" %>
+    <% end %>
+
+    <%= render "devise/shared/form_footer" %>
+</div>

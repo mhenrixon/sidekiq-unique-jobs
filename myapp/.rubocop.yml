@@ -1,14 +1,8 @@
-inherit_from: ../.rubocop.yml
+inherit_from:
+  - ../.rubocop.yml
 
 require:
   - rubocop-performance
+  - rubocop-rake
+  - rubocop-rails
   - rubocop-rspec
-
-inherit_mode:
-  merge:
-    - Exclude
-
-AllCops:
-  Exclude:
-    - 'bin/*'
-    - '**/.keep'

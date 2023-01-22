@@ -1,0 +1,39 @@
+---
+EnableDefaultLinters: true
+glob: "**/*.{html,text,js}{+*,}.erb"
+exclude:
+  - 'vendor/**/*'
+  - 'node_modules/**/*'
+  - 'app/views/static/**/*'
+linters:
+  ErbSafety:
+    enabled: true
+  FinalNewline:
+    enabled: true
+  Rubocop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
+      Layout/InitialIndentation:
+        Enabled: false
+      Layout/LineLength:
+        Enabled: false
+      Layout/TrailingEmptyLines:
+        Enabled: false
+      Layout/TrailingWhitespace:
+        Enabled: false
+      Naming/FileName:
+        Enabled: false
+      Style/FrozenStringLiteralComment:
+        Enabled: false
+      Lint/UselessAssignment:
+        Enabled: false
+      Rails/OutputSafety:
+        Enabled: false
+      Lint/MissingCopEnableDirective:
+        Enabled: false
+      Lint/RedundantCopEnableDirective:
+        Enabled: false
+      Style/RedundantEach:
+        Enabled: false
