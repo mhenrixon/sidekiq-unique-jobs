@@ -42,20 +42,20 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
   let(:expected_digests) do
     [
-      a_collection_including(digest_one, kind_of(Float)),
-      a_collection_including(digest_two, kind_of(Float)),
+      a_collection_including(digest_one, kind_of(String)),
+      a_collection_including(digest_two, kind_of(String)),
     ]
   end
 
-  it "can paginate changelogs", sidekiq_ver: ">= 6.0" do
+  it "can paginate changelogs" do
     Array.new(190) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
     end
 
     get "/changelogs?filter=*&count=100"
     _size, next_cursor, changelogs = changelog.page(cursor: 0, page_size: 100, pattern: "*")
-
     expect(last_response).to be_ok
+
     expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
       with_tag("tr.changelog-row", count: changelogs.size)
     end
@@ -89,7 +89,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).to match("/locks/#{digest_two}")
   end
 
-  it "can paginate digests", sidekiq_ver: ">= 6.0" do
+  it "can paginate digests" do
     Array.new(190) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
     end
@@ -141,7 +141,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     expect(digests.entries).to contain_exactly(
       a_collection_including(
-        digest_two, kind_of(Float)
+        digest_two, kind_of(String)
       ),
     )
   end

@@ -23,7 +23,7 @@ RSpec.describe "reap_orphans.lua" do
   let(:job_id)     { "job_id" }
   let(:item)       { raw_item }
   let(:created_at) { (Time.now - 1000).to_f }
-  let(:threshold)  { [Time.now - SidekiqUniqueJobs.config.reaper_timeout] }
+  let(:threshold)  { [(Time.now - SidekiqUniqueJobs.config.reaper_timeout).to_f] }
   let(:raw_item) do
     {
       "class" => MyUniqueJob,

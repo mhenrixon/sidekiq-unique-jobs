@@ -12,33 +12,6 @@ module SidekiqUniqueJobs
       def call
         log_info { "Adding dead #{item[CLASS]} job #{item[JID]}" }
 
-        if deadset_kill?
-          deadset_kill
-        else
-          push_to_deadset
-        end
-      end
-
-      #
-      # Sidekiq version compatibility check
-      # @api private
-      #
-      #
-      # @return [true, false] depending on if Sidekiq::Deadset responds to kill
-      #
-      def deadset_kill?
-        deadset.respond_to?(:kill)
-      end
-
-      #
-      # Use Sidekiqs built in Sidekiq::DeadSet#kill
-      #   to get rid of the job
-      # @api private
-      #
-      #
-      # @return [void]
-      #
-      def deadset_kill
         if kill_with_options?
           kill_job_with_options
         else
@@ -86,22 +59,6 @@ module SidekiqUniqueJobs
       #
       def deadset
         @deadset ||= Sidekiq::DeadSet.new
-      end
-
-      #
-      # Used for compatibility with older Sidekiq versions
-      #
-      #
-      # @return [void]
-      #
-      def push_to_deadset
-        redis do |conn|
-          conn.multi do |pipeline|
-            pipeline.zadd("dead", now_f, payload)
-            pipeline.zremrangebyscore("dead", "-inf", now_f - Sidekiq::DeadSet.timeout)
-            pipeline.zremrangebyrank("dead", 0, -Sidekiq::DeadSet.max_jobs)
-          end
-        end
       end
 
       #

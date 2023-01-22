@@ -80,11 +80,11 @@ module SidekiqUniqueJobs
       #
       def cparams(options)
         stringified_options = options.transform_keys(&:to_s)
-        params.merge(stringified_options).map do |key, value|
+        params.merge(stringified_options).filter_map do |key, value|
           next unless SAFE_CPARAMS.include?(key)
 
           "#{key}=#{CGI.escape(value.to_s)}"
-        end.compact.join("&")
+        end.join("&")
       end
 
       #

@@ -3,5 +3,5 @@
 module SidekiqUniqueJobs
   #
   # @return [String] the current SidekiqUniqueJobs version
-  VERSION = "7.1.30"
+  VERSION = "8.0.0"
 end

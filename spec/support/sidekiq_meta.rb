@@ -2,27 +2,18 @@
 
 require "sidekiq/testing"
 
-def sidekiq_redis_driver
-  if RUBY_ENGINE == "ruby"
-    require "hiredis"
-    :hiredis
-  else
-    :ruby
-  end
-end
-
 RSpec.configure do |config|
   config.before do |example|
     redis_db = example.metadata.fetch(:redis_db, 0)
     redis_url = "redis://localhost/#{redis_db}"
-    redis_options = { url: redis_url, driver: sidekiq_redis_driver }
-    redis = Sidekiq::RedisConnection.create(redis_options)
+    redis_options = { url: redis_url, driver: :ruby }
+    # redis = Sidekiq::RedisConnection.create(redis_options)
 
     Sidekiq.configure_client do |sidekiq_config|
       sidekiq_config.redis = redis_options
     end
 
-    Sidekiq.redis = redis
+    # allow(Sidekiq).to receive(:redis).and_yield(redis.with)
     flush_redis
 
     if (sidekiq = example.metadata.fetch(:sidekiq, :disable))

@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
-  class UpgradeLocks # rubocop:disable Metrics/ClassLength
+  class UpgradeLocks
     #
     # @return [Integer] the number of keys to batch upgrade
     BATCH_SIZE = 100
@@ -56,9 +56,9 @@ module SidekiqUniqueJobs
 
         log_info("Start - Upgrading Locks")
 
-        upgrade_v6_locks
-        delete_unused_v6_keys
-        delete_supporting_v6_keys
+        # upgrade_v6_locks
+        # delete_unused_v6_keys
+        # delete_supporting_v6_keys
 
         conn.hset(upgraded_key, version, now_f)
         log_info("Done - Upgrading Locks")
@@ -75,10 +75,11 @@ module SidekiqUniqueJobs
 
     def upgrade_v6_locks
       log_info("Start - Converting v6 locks to v7")
-      conn.scan_each(match: "*:GRABBED", count: BATCH_SIZE) do |grabbed_key|
+      conn.scan(match: "*:GRABBED", count: BATCH_SIZE).each do |grabbed_key|
         upgrade_v6_lock(grabbed_key)
         @count += 1
       end
+
       log_info("Done - Converting v6 locks to v7")
     end
 
@@ -115,11 +116,7 @@ module SidekiqUniqueJobs
       return if keys.empty?
 
       conn.pipelined do |pipeline|
-        if VersionCheck.satisfied?(redis_version, ">= 4.0.0")
-          pipeline.unlink(*keys)
-        else
-          pipeline.del(*keys)
-        end
+        pipeline.unlink(*keys)
       end
     end
 

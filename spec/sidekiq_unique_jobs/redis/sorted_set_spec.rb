@@ -42,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     context "when given a string entries" do
       let(:values) { "abcdef" }
 
-      it { is_expected.to be == true }
+      it { is_expected.to be == 1 }
     end
   end
 

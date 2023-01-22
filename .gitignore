@@ -21,3 +21,5 @@ tmp/
 /gemfiles/vendor/
 /vendor/
 /myapp/vendor/bundle/
+/.bundle/
+/.tool-versions

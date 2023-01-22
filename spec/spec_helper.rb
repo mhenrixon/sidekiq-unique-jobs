@@ -24,14 +24,15 @@ require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
 LOGLEVEL = ENV.fetch("LOGLEVEL", "ERROR").upcase
-ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_worker_options
 
 if Sidekiq.respond_to?(:default_job_options)
+  ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_job_options
   Sidekiq.default_job_options = {
     backtrace: true,
     retry: true,
   }
 else
+  ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_worker_options
   Sidekiq.default_worker_options = {
     backtrace: true,
     retry: true,
@@ -67,7 +68,7 @@ SidekiqUniqueJobs.configure do |config|
   config.lock_info    = true
 end
 
-EVENTS = {}.freeze
+EVENTS = {} # rubocop:disable Style/MutableConstant
 
 SidekiqUniqueJobs.reflect do |on|
   if ENV["REFLECT_DEBUG"]

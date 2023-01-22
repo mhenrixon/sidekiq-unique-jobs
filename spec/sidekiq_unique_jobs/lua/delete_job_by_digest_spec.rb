@@ -25,6 +25,7 @@ RSpec.describe "delete_job_by_digest.lua" do
   end
 
   context "when job is retried" do
+    let(:digest) { "bogus" }
     let(:job_id) { "abcdefab" }
     let(:job)    { dump_json(item) }
     let(:item) do
@@ -34,30 +35,30 @@ RSpec.describe "delete_job_by_digest.lua" do
         "queue" => queue,
         "jid" => job_id,
         "retry_count" => 2,
-        "failed_at" => Time.now.to_f,
+        "failed_at" => (Time.now - (24 * 60)).to_f.to_s,
         "lock_digest" => digest,
       }
     end
 
-    before { zadd("retry", Time.now.to_f.to_s, job) }
-
     it "removes the job from the retry set" do
+      zadd("retry", (Time.now + (24 * 60)).to_f.to_s, job)
+
       expect { delete_job_by_digest }.to change { retry_count }.from(1).to(0)
     end
   end
 
   context "when job is scheduled" do
-    before { MyUniqueJob.perform_in(2000, 1, 1) }
-
     it "removes the job from the scheduled set" do
+      MyUniqueJob.perform_in(2000, 1, 1)
+
       expect { delete_job_by_digest }.to change { schedule_count }.from(1).to(0)
     end
   end
 
   context "when job is enqueued" do
-    before { MyUniqueJob.perform_async(1, 1) }
-
     it "removes the job from the queue" do
+      MyUniqueJob.perform_async(1, 1)
+
       expect { delete_job_by_digest }.to change { queue_count(queue) }.from(1).to(0)
     end
   end

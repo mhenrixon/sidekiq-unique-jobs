@@ -12,7 +12,6 @@ gem "gem-release"
 gem "github-markup"
 gem "rack-test"
 gem "rake", "13.0.3"
-gem "redis-namespace"
 gem "reek", ">= 5.3"
 gem "rspec"
 gem "rspec-benchmark"
@@ -27,7 +26,6 @@ gem "yard"
 
 platforms :mri do
   gem "concurrent-ruby-ext"
-  gem "hiredis"
 end
 
 if respond_to?(:install_if)

@@ -37,9 +37,6 @@ local total     = redis.call("ZCARD", digests_set)
 local index     = 0
 local del_count = 0
 local redis_ver = toversion(redisversion)
-local del_cmd   = "DEL"
-
-if tonumber(redis_ver["major"]) >= 4 then del_cmd = "UNLINK"; end
 
 repeat
   log_debug("Interating through:", digests_set, "for orphaned locks")
@@ -81,7 +78,7 @@ repeat
       local run_locked = digest .. ":RUN:LOCKED"
       local run_info   = digest .. ":RUN:INFO"
 
-      redis.call(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
+      redis.call("UNLINK", digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
 
       redis.call("ZREM", digests_set, digest)
       del_count = del_count + 1
@@ -108,7 +105,7 @@ if del_count < reaper_count then
       local run_locked = digest .. ":RUN:LOCKED"
       local run_info   = digest .. ":RUN:INFO"
 
-      redis.call(del_cmd, digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
+      redis.call("UNLINK", digest, queued, primed, locked, info, run_digest, run_queued, run_primed, run_locked, run_info)
 
       redis.call("ZREM", expiring_digests_set, digest)
       del_count = del_count + 1

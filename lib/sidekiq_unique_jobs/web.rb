@@ -5,7 +5,6 @@ require_relative "web/helpers"
 module SidekiqUniqueJobs
   # Utility module to help manage unique keys in redis.
   # Useful for deleting keys that for whatever reason wasn't deleted
-  #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Web
     def self.registered(app) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -17,8 +16,8 @@ module SidekiqUniqueJobs
         @filter         = params[:filter] || "*"
         @filter         = "*" if @filter == ""
         @count          = (params[:count] || 100).to_i
-        @current_cursor = params[:cursor]
-        @prev_cursor    = params[:prev_cursor]
+        @current_cursor = params[:cursor].to_i
+        @prev_cursor    = params[:prev_cursor].to_i
         @total_size, @next_cursor, @changelogs = changelog.page(
           cursor: @current_cursor,
           pattern: @filter,
@@ -37,8 +36,8 @@ module SidekiqUniqueJobs
         @filter         = params[:filter] || "*"
         @filter         = "*" if @filter == ""
         @count          = (params[:count] || 100).to_i
-        @current_cursor = params[:cursor]
-        @prev_cursor    = params[:prev_cursor]
+        @current_cursor = params[:cursor].to_i
+        @prev_cursor    = params[:prev_cursor].to_i
 
         @total_size, @next_cursor, @locks = digests.page(
           cursor: @current_cursor,
@@ -53,8 +52,8 @@ module SidekiqUniqueJobs
         @filter         = params[:filter] || "*"
         @filter         = "*" if @filter == ""
         @count          = (params[:count] || 100).to_i
-        @current_cursor = params[:cursor]
-        @prev_cursor    = params[:prev_cursor]
+        @current_cursor = params[:cursor].to_i
+        @prev_cursor    = params[:prev_cursor].to_i
 
         @total_size, @next_cursor, @locks = expiring_digests.page(
           cursor: @current_cursor,

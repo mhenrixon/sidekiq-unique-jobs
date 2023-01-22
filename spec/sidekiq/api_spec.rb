@@ -11,17 +11,17 @@ RSpec.describe "Sidekiq::Api" do
 
   describe Sidekiq::SortedEntry::UniqueExtension do
     it "deletes uniqueness lock on delete" do
-      expect(JustAWorker.perform_in(60 * 60 * 3, foo: "bar")).to be_truthy
+      expect(JustAWorker.perform_in(60 * 60 * 3, "foo" => "bar")).to be_truthy
       expect(unique_keys).not_to match_array([])
 
       Sidekiq::ScheduledSet.new.each(&:delete)
       expect(unique_keys).to match_array([])
 
-      expect(JustAWorker.perform_in(60 * 60 * 3, boo: "far")).to be_truthy
+      expect(JustAWorker.perform_in(60 * 60 * 3, "boo" => "far")).to be_truthy
     end
 
     it "deletes uniqueness lock on remove_job" do
-      expect(JustAWorker.perform_in(60 * 60 * 3, foo: "bar")).to be_truthy
+      expect(JustAWorker.perform_in(60 * 60 * 3, "foo" => "bar")).to be_truthy
       expect(unique_keys).not_to match_array([])
 
       Sidekiq::ScheduledSet.new.each do |entry|
@@ -45,14 +45,14 @@ RSpec.describe "Sidekiq::Api" do
         end
       end
       expect(unique_keys).to match_array([])
-      expect(JustAWorker.perform_in(60 * 60 * 3, boo: "far")).to be_truthy
+      expect(JustAWorker.perform_in(60 * 60 * 3, "boo" => "far")).to be_truthy
     end
   end
 
   if Sidekiq.const_defined?(:JobRecord)
     describe Sidekiq::JobRecord::UniqueExtension do
       it "deletes uniqueness lock on delete" do
-        jid = JustAWorker.perform_async(roo: "baf")
+        jid = JustAWorker.perform_async("roo" => "baf")
         expect(unique_keys).not_to match_array([])
         Sidekiq::Queue.new("testqueue").find_job(jid).delete
         expect(unique_keys).to match_array([])
@@ -61,7 +61,7 @@ RSpec.describe "Sidekiq::Api" do
   else
     describe Sidekiq::Job::UniqueExtension do
       it "deletes uniqueness lock on delete" do
-        jid = JustAWorker.perform_async(roo: "baf")
+        jid = JustAWorker.perform_async("roo" => "baf")
         expect(unique_keys).not_to match_array([])
         Sidekiq::Queue.new("testqueue").find_job(jid).delete
         expect(unique_keys).to match_array([])
@@ -71,7 +71,7 @@ RSpec.describe "Sidekiq::Api" do
 
   describe Sidekiq::Queue::UniqueExtension do
     it "deletes uniqueness locks on clear" do
-      JustAWorker.perform_async(oob: "far")
+      JustAWorker.perform_async("oob" => "far")
       expect(unique_keys).not_to match_array([])
       Sidekiq::Queue.new("testqueue").clear
       expect(unique_keys).to match_array([])
@@ -80,7 +80,7 @@ RSpec.describe "Sidekiq::Api" do
 
   describe Sidekiq::JobSet::UniqueExtension do
     it "deletes uniqueness locks on clear" do
-      JustAWorker.perform_in(60 * 60 * 3, roo: "fab")
+      JustAWorker.perform_in(60 * 60 * 3, "roo" => "fab")
       expect(unique_keys).not_to match_array([])
       Sidekiq::JobSet.new("schedule").clear
       expect(unique_keys).to match_array([])
@@ -89,14 +89,14 @@ RSpec.describe "Sidekiq::Api" do
 
   describe Sidekiq::ScheduledSet::UniqueExtension do
     it "deletes uniqueness locks on clear" do
-      JustAWorker.perform_in(60 * 60 * 3, roo: "fab")
+      JustAWorker.perform_in(60 * 60 * 3, "roo" => "fab")
       expect(unique_keys).not_to match_array([])
       Sidekiq::ScheduledSet.new.clear
       expect(unique_keys).to match_array([])
     end
 
     it "deletes uniqueness locks on delete_by_score" do
-      JustAWorker.perform_in(60 * 60 * 3, roo: "fab")
+      JustAWorker.perform_in(60 * 60 * 3, "roo" => "fab")
       expect(unique_keys).not_to match_array([])
       scheduled_set = Sidekiq::ScheduledSet.new
       scheduled_set.each do |job|

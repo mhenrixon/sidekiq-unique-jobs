@@ -13,7 +13,7 @@ Sidekiq.default_worker_options = {
 }
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
+  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :ruby }
 
   config.client_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Client
@@ -21,7 +21,7 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :hiredis }
+  config.redis = { url: ENV.fetch("REDIS_URL", nil), driver: :ruby }
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server

@@ -67,8 +67,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.flushdb(options) }
       end
 
-      def info(cmd = nil)
-        redis { |conn| conn.info(cmd) }
+      def info(_cmd = nil)
+        redis(&:info)
       end
 
       def lastsave
@@ -135,12 +135,12 @@ module SidekiqUniqueJobs
         redis { |conn| conn.dump(key) }
       end
 
-      def restore(key, ttl, serialized_value, options = {})
-        redis { |conn| conn.restore(key, ttl, serialized_value, options) }
+      def restore(key, ttl, serialized_value, **options)
+        redis { |conn| conn.restore(key, ttl, serialized_value, **options) }
       end
 
-      def migrate(key, options)
-        redis { |conn| conn.migrate(key, options) }
+      def migrate(key, **options)
+        redis { |conn| conn.migrate(key, **options) }
       end
 
       def del(*keys)
@@ -187,8 +187,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.renamenx(old_name, new_name) }
       end
 
-      def sort(key, options = {})
-        redis { |conn| conn.sort(key, options) }
+      def sort(key, **options)
+        redis { |conn| conn.sort(key, **options) }
       end
 
       def type(key)
@@ -215,7 +215,7 @@ module SidekiqUniqueJobs
         redis { |conn| conn.incrbyfloat(key, increment) }
       end
 
-      def set(key, value, options = {})
+      def set(key, value, **options)
         redis { |conn| conn.set(key, value, **options) }
       end
 
@@ -247,8 +247,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.mapped_msetnx(hash) }
       end
 
-      def mget(*keys, &blk)
-        redis { |conn| conn.mget(*keys, &blk) }
+      def mget(...)
+        redis { |conn| conn.mget(...) }
       end
 
       def mapped_mget(*keys)
@@ -339,8 +339,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.brpop(*args) }
       end
 
-      def brpoplpush(source, destination, options = {})
-        redis { |conn| conn.brpoplpush(source, destination, **options) }
+      def brpoplpush(source, destination, wait = 1)
+        redis { |conn| conn.brpoplpush(source, destination, wait) }
       end
 
       def lindex(key, index)
@@ -465,12 +465,12 @@ module SidekiqUniqueJobs
         redis { |conn| conn.zscore(key, member) }
       end
 
-      def zrange(key, start, stop, options = {})
-        redis { |conn| conn.zrange(key, start, stop, options) }
+      def zrange(key, start, stop, **options)
+        redis { |conn| conn.zrange(key, start, stop, **options) }
       end
 
-      def zrevrange(key, start, stop, options = {})
-        redis { |conn| conn.zrevrange(key, start, stop, options) }
+      def zrevrange(key, start, stop, **options)
+        redis { |conn| conn.zrevrange(key, start, stop, **options) }
       end
 
       def zrank(key, member)
@@ -489,20 +489,20 @@ module SidekiqUniqueJobs
         redis { |conn| conn.zlexcount(key, min, max) }
       end
 
-      def zrangebylex(key, min, max, options = {})
-        redis { |conn| conn.zrangebylex(key, min, max, options) }
+      def zrangebylex(key, min, max, **options)
+        redis { |conn| conn.zrangebylex(key, min, max, **options) }
       end
 
-      def zrevrangebylex(key, max, min, options = {})
-        redis { |conn| conn.zrevrangebylex(key, max, min, options) }
+      def zrevrangebylex(key, max, min, **options)
+        redis { |conn| conn.zrevrangebylex(key, max, min, **options) }
       end
 
-      def zrangebyscore(key, min, max, options = {})
-        redis { |conn| conn.zrangebyscore(key, min, max, options) }
+      def zrangebyscore(key, min, max, **options)
+        redis { |conn| conn.zrangebyscore(key, min, max, **options) }
       end
 
-      def zrevrangebyscore(key, max, min, options = {})
-        redis { |conn| conn.zrevrangebyscore(key, max, min, options) }
+      def zrevrangebyscore(key, max, min, **options)
+        redis { |conn| conn.zrevrangebyscore(key, max, min, **options) }
       end
 
       def zremrangebyscore(key, min, max)
@@ -513,12 +513,12 @@ module SidekiqUniqueJobs
         redis { |conn| conn.zcount(key, min, max) }
       end
 
-      def zinterstore(destination, keys, options = {})
-        redis { |conn| conn.zinterstore(destination, keys, options) }
+      def zinterstore(destination, keys, **options)
+        redis { |conn| conn.zinterstore(destination, keys, **options) }
       end
 
-      def zunionstore(destination, keys, options = {})
-        redis { |conn| conn.zunionstore(destination, keys, options) }
+      def zunionstore(destination, keys, **options)
+        redis { |conn| conn.zunionstore(destination, keys, **options) }
       end
 
       def hlen(key)
@@ -589,8 +589,8 @@ module SidekiqUniqueJobs
         redis(&:subscribed?)
       end
 
-      def subscribe(*channels, &block)
-        redis { |conn| conn.subscribe(*channels, &block) }
+      def subscribe(...)
+        redis { |conn| conn.subscribe(...) }
       end
 
       def subscribe_with_timeout(timeout, *channels, &block)
@@ -601,8 +601,8 @@ module SidekiqUniqueJobs
         redis { |conn| conn.unsubscribe(*channels) }
       end
 
-      def psubscribe(*channels, &block)
-        redis { |conn| conn.psubscribe(*channels, &block) }
+      def psubscribe(...)
+        redis { |conn| conn.psubscribe(...) }
       end
 
       def psubscribe_with_timeout(timeout, *channels, &block)
@@ -641,36 +641,36 @@ module SidekiqUniqueJobs
         redis(&:discard)
       end
 
-      def scan(cursor, options = {})
-        redis { |conn| conn.scan(cursor, options) }
+      def scan(cursor, **options)
+        redis { |conn| conn.scan(cursor, **options) }
       end
 
-      def scan_each(options = {}, &block)
+      def scan_each(**options, &block)
         redis { |conn| conn.scan_each(options, &block) }
       end
 
-      def hscan(key, cursor, options = {})
-        redis { |conn| conn.hscan(key, cursor, options) }
+      def hscan(key, cursor, **options)
+        redis { |conn| conn.hscan(key, cursor, **options) }
       end
 
-      def hscan_each(key, options = {}, &block)
-        redis { |conn| conn.hscan_each(key, options, &block) }
+      def hscan_each(key, **options, &block)
+        redis { |conn| conn.hscan_each(key, **options, &block) }
       end
 
-      def zscan(key, cursor, options = {})
-        redis { |conn| conn.zscan(key, cursor, options) }
+      def zscan(key, cursor, **options)
+        redis { |conn| conn.zscan(key, cursor, **options) }
       end
 
-      def zscan_each(key, options = {}, &block)
-        redis { |conn| conn.zscan_each(key, options, &block) }
+      def zscan_each(key, **options, &block)
+        redis { |conn| conn.zscan_each(key, **options, &block) }
       end
 
-      def sscan(key, cursor, options = {})
-        redis { |conn| conn.sscan(key, cursor, options) }
+      def sscan(key, cursor, **options)
+        redis { |conn| conn.sscan(key, cursor, **options) }
       end
 
-      def sscan_each(key, options = {}, &block)
-        redis { |conn| conn.sscan_each(key, options, &block) }
+      def sscan_each(key, **options, &block)
+        redis { |conn| conn.sscan_each(key, **options, &block) }
       end
 
       def pfadd(key, member)
@@ -796,7 +796,8 @@ module SidekiqUniqueJobs
         ::Sidekiq::Client.push(item)
       end
 
-      def queue_count(queue)
+      def
+        queue_count(queue)
         redis { |conn| conn.llen("queue:#{queue}") }
       end
 

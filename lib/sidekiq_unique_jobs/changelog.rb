@@ -7,13 +7,6 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Changelog < Redis::SortedSet
-    #
-    # @return [Integer] the number of matches to return by default
-    DEFAULT_COUNT = 1_000
-    #
-    # @return [String] the default pattern to use for matching
-    SCAN_PATTERN  = "*"
-
     def initialize
       super(CHANGELOGS)
     end
@@ -42,12 +35,8 @@ module SidekiqUniqueJobs
     # @return [Array<Hash>] an array of entries
     #
     def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
-      options = {}
-      options[:match] = pattern
-      options[:count] = count
-
       redis do |conn|
-        conn.zscan_each(key, **options).to_a.map { |entry| load_json(entry[0]) }
+        conn.zscan(key, match: pattern, count: count).to_a.map { |entry| load_json(entry[0]) }
       end
     end
 
@@ -67,10 +56,11 @@ module SidekiqUniqueJobs
           pipeline.zscan(key, cursor, match: pattern, count: page_size)
         end
 
+        # NOTE: When debugging, check the last item in the returned array.
         [
           total_size.to_i,
-          result[0].to_i, # next_cursor
-          result[1].map { |entry| load_json(entry[0]) }, # entries
+          result[0].to_i,  # next_cursor
+          result[1].map { |entry| load_json(entry) }.select { |entry| entry.is_a?(Hash) },
         ]
       end
     end

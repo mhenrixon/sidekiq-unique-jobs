@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::LockInfo do
-  subject(:entity) { described_class.new(key) }
+  subject(:entity) { described_class.new(key.digest) }
 
   let(:key)    { SidekiqUniqueJobs::Key.new(digest) }
   let(:digest) { "digest:#{SecureRandom.hex(12)}" }

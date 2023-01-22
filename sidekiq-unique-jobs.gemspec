@@ -29,35 +29,6 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/CHANGELOG.md"
   spec.metadata["funding_uri"]       = "https://github.com/mhenrixon/sidekiq-unique-jobs"
 
-  spec.post_install_message = <<~POST_INSTALL
-    IMPORTANT!
-
-    Automatic configuration of the sidekiq middleware is no longer done.
-    Please see: https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/README.md#add-the-middleware
-
-    This version deprecated the following sidekiq_options
-
-      - sidekiq_options lock_args: :method_name
-
-    It is now configured with:
-
-      - sidekiq_options lock_args_method: :method_name
-
-    This is also true for `Sidekiq.default_worker_options`
-
-    We also deprecated the global configuration options:
-      - default_lock_ttl
-      - default_lock_ttl=
-      - default_lock_timeout
-      - default_lock_timeout=
-
-    The new methods to use are:
-      - lock_ttl
-      - lock_ttl=
-      - lock_timeout
-      - lock_timeout=
-  POST_INSTALL
-
   spec.bindir        = "bin"
   spec.executables   = %w[uniquejobs]
 
@@ -69,13 +40,12 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.5"
+  spec.required_ruby_version = ">= 2.7"
 
   spec.add_dependency "brpoplpush-redis_script", "> 0.1.1", "<= 2.0.0"
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
-  spec.add_dependency "redis", "< 5.0"
-  spec.add_dependency "sidekiq", ">= 5.0", "< 7.0"
-  spec.add_dependency "thor", ">= 0.20", "< 3.0"
+  spec.add_dependency "sidekiq", ">= 7.0.0", "< 8.0.0"
+  spec.add_dependency "thor", ">= 1.0", "< 3.0"
   spec.metadata = {
     "rubygems_mfa_required" => "true",
   }

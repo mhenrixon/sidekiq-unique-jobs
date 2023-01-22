@@ -154,7 +154,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
           context "when digest has :RUN suffix" do
             let(:lock) { SidekiqUniqueJobs::Lock.create("#{digest}:RUN", job_id, lock_info) }
 
-            context "that matches current digest", sidekiq_ver: ">= 5.0" do # rubocop:disable RSpec/NestedGroups
+            context "that matches current digest" do # rubocop:disable RSpec/NestedGroups
               let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
 
               it "keeps the digest" do
@@ -164,7 +164,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             end
           end
 
-          context "that matches current digest", sidekiq_ver: ">= 5.0" do
+          context "that matches current digest" do
             context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
               let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
 

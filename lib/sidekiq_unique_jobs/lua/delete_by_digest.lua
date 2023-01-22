@@ -25,14 +25,11 @@ local redisversion = tostring(ARGV[5])
 --------  BEGIN delete_by_digest.lua --------
 local counter       = 0
 local redis_version = toversion(redisversion)
-local del_cmd       = "DEL"
 
 log_debug("BEGIN delete_by_digest:", digest)
 
-if redis_version["major"] >= 4 then del_cmd = "UNLINK"; end
-
-log_debug(del_cmd, digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
-counter = redis.call(del_cmd, digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+log_debug("UNLINK", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
+counter = redis.call("UNLINK", digest, queued, primed, locked, run_digest, run_queued, run_primed, run_locked)
 
 log_debug("ZREM", digests, digest)
 redis.call("ZREM", digests, digest)

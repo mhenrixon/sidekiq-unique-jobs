@@ -45,7 +45,7 @@ RSpec.describe "unlock.lua" do
 
     it { expect { unlock }.to change { ttl(key.digest) }.to(-2) }
     it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
-    it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(Float)).to({}) }
+    it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(String)).to({}) }
 
     it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
   end
@@ -62,7 +62,7 @@ RSpec.describe "unlock.lua" do
 
     it { expect { unlock }.to change { ttl(key.digest) }.from(-1).to(-2) }
     it { expect { unlock }.to change { zcard(key.digests) }.by(-1) }
-    it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(Float)).to({}) }
+    it { expect { unlock }.to change { digests.entries }.from(key.digest => kind_of(String)).to({}) }
 
     it { expect { unlock }.to change { zcard(key.changelog) }.by(1) }
   end
