@@ -250,9 +250,10 @@ module SidekiqUniqueJobs
       reflect(:debug, :timeouts, item,
               timeouts: {
                 brpoplpush_timeout: brpoplpush_timeout,
-                concurrent_timeout: concurrent_timeout
+                concurrent_timeout: concurrent_timeout,
               })
 
+      # NOTE: When debugging, change .value to .value!
       primed_jid = Concurrent::Promises
                    .future(conn) { |red_con| pop_queued(red_con, timeout) }
                    .value
@@ -304,7 +305,7 @@ module SidekiqUniqueJobs
       # passing timeout 0 to brpoplpush causes it to block indefinitely
       raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
 
-      conn.blmove(key.queued, key.primed, "RIGHT", "LEFT", timeout: wait)
+      conn.blmove(key.queued, key.primed, "RIGHT", "LEFT", wait)
     end
 
     #
