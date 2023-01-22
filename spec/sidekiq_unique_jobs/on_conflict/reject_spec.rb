@@ -26,39 +26,11 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
   describe "#call" do
     subject(:call) { strategy.call }
 
-    context "when deadset_kill?" do
-      before do
-        allow(strategy).to receive(:deadset_kill?).and_return(true)
-        allow(strategy).to receive(:deadset_kill)
-        call
-      end
-
-      it "calls deadset_kill" do
-        expect(strategy).to have_received(:deadset_kill)
-      end
-    end
-
-    context "when not deadset_kill?" do
-      before do
-        allow(strategy).to receive(:deadset_kill?).and_return(false)
-        allow(strategy).to receive(:push_to_deadset)
-        call
-      end
-
-      it "calls push_to_deadset" do
-        expect(strategy).to have_received(:push_to_deadset)
-      end
-    end
-  end
-
-  describe "#deadset_kill" do
-    subject(:deadset_kill) { strategy.deadset_kill }
-
     context "when kill_with_options?" do
       before do
         allow(strategy).to receive(:kill_with_options?).and_return(true)
         allow(strategy).to receive(:kill_job_with_options)
-        deadset_kill
+        call
       end
 
       it "calls kill_job_with_options" do
@@ -70,7 +42,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
       before do
         allow(strategy).to receive(:kill_with_options?).and_return(false)
         allow(strategy).to receive(:kill_job_without_options)
-        deadset_kill
+        call
       end
 
       it "calls kill_job_without_options" do

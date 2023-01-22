@@ -58,17 +58,6 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecutingReject do
     context "when Sidekiq::DeadSet respond to kill" do
       it_behaves_like "rejects job to deadset"
     end
-
-    context "when Sidekiq::DeadSet does not respond to kill" do
-      let(:strategy) { SidekiqUniqueJobs::OnConflict::Reject.new(item_two) }
-
-      before do
-        allow(strategy).to receive(:deadset_kill?).and_return(false)
-        allow(process_two).to receive(:server_strategy).and_return(strategy)
-      end
-
-      it_behaves_like "rejects job to deadset"
-    end
   end
 
   context "when worker raises error" do
