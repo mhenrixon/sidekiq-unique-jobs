@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
-  class UpgradeLocks # rubocop:disable Metrics/ClassLength
+  class UpgradeLocks
     #
     # @return [Integer] the number of keys to batch upgrade
     BATCH_SIZE = 100

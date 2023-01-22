@@ -54,8 +54,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     get "/changelogs?filter=*&count=100"
     _size, next_cursor, changelogs = changelog.page(cursor: 0, page_size: 100, pattern: "*")
-
     expect(last_response).to be_ok
+
     expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
       with_tag("tr.changelog-row", count: changelogs.size)
     end
