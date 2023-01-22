@@ -7,13 +7,6 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Digests < Redis::SortedSet
-    #
-    # @return [Integer] the number of matches to return by default
-    DEFAULT_COUNT = 1_000
-    #
-    # @return [String] the default pattern to use for matching
-    SCAN_PATTERN  = "*"
-
     def initialize(digests_key = DIGESTS)
       super(digests_key)
     end
@@ -77,11 +70,7 @@ module SidekiqUniqueJobs
     # @return [Array<String>] an array of digests matching the given pattern
     #
     def entries(pattern: SCAN_PATTERN, count: DEFAULT_COUNT)
-      options = {}
-      options[:match] = pattern
-      options[:count] = count
-
-      redis { |conn| conn.zscan(key, **options).to_a }.to_h
+      redis { |conn| conn.zscan(key, match: pattern, count: count).to_a }.to_h
     end
 
     #
@@ -100,6 +89,7 @@ module SidekiqUniqueJobs
           pipeline.zscan(key, cursor, match: pattern, count: page_size)
         end
 
+        # NOTE: When debugging, check the last item in the returned array.
         [
           total_size.to_i,
           digests[0].to_i, # next_cursor

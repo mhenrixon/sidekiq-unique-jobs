@@ -16,10 +16,6 @@ module SidekiqUniqueJobs
       SCAN_PATTERN  = "*"
 
       #
-      # @return [Array<Integer, Interger, Array]
-      EMPTY_RESPONSE = [0, nil, []].freeze
-
-      #
       # Return entries for this sorted set
       #
       # @param [true,false] with_scores true return
