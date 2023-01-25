@@ -4,13 +4,11 @@ class UntilExecutedJob
   include Sidekiq::Job
 
   sidekiq_options lock: :until_executed,
-                  lock_info: true,
-                  lock_timeout: 0,
-                  lock_limit: 5
+                  lock_info: true
 
   def perform
     logger.info("cowboy")
-    sleep(1) # hardcore processing
+    sleep(2) # hardcore processing
     logger.info("beebop")
   end
 end
