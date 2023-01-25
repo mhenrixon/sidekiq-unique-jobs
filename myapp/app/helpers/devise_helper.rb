@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+# rubocop:disable Metrics/MethodLength
 # devise helper
 module DeviseHelper
   def devise_error_messages!
@@ -11,7 +11,7 @@ module DeviseHelper
     sentence = I18n.t(
       "errors.messages.not_saved",
       count: resource.errors.count,
-      resource: resource.class.model_name.human.downcase
+      resource: resource.class.model_name.human.downcase,
     )
 
     html = <<-HTML
@@ -21,7 +21,7 @@ module DeviseHelper
       </div>
     HTML
 
-    html.html_safe
+    html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
   def devise_simple_error_messages!
@@ -49,7 +49,7 @@ module DeviseHelper
       HTML
     end
 
-    html.html_safe
+    html.html_safe # rubocop:disable Rails/OutputSafety
   end
 end
-# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+# rubocop:enable Metrics/MethodLength

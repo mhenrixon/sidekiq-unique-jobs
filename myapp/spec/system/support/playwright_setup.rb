@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-BROWSERS = %i[
-  chrome
-  firefox
-  webkit
+BROWSERS = [
+  :chrome,
+  :firefox,
+  :webkit,
 ].freeze
 HEADLESS = %w[1 true].include?(ENV.fetch("HEADLESS", "true"))
 BROWSER  = ENV.fetch("BROWSER", :webkit).to_sym

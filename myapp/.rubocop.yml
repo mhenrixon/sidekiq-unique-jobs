@@ -1,8 +1,42 @@
 inherit_from:
   - ../.rubocop.yml
 
+AllCops:
+  Include:
+    - "myapp/**/*"
+    - "**/*.rb"
+
 require:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rails
   - rubocop-rspec
+
+Layout/LineLength:
+  Exclude:
+    - db/**/*.rb
+    - config/initializers/devise.rb
+
+Metrics/MethodLength:
+  Max: 13
+  Exclude:
+    - db/**/*.rb
+    - config/initializers/devise.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - "db/**/*.rb"
+
+Naming/FileName:
+  Exclude:
+    - Gemfile
+    - Rakefile
+    - Gemfile
+    - Rakefile
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - "**/*.rb"

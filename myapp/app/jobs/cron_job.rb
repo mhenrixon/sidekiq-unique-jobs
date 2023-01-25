@@ -8,8 +8,8 @@ class CronJob
                   on_conflict: :reschedule
 
   def perform
-    puts "hello"
+    Rails.logger.debug "hello"
     sleep 1
-    puts "bye"
+    Rails.logger.debug "bye"
   end
 end

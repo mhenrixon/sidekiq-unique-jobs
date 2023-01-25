@@ -3,7 +3,7 @@
 require "system_helper"
 
 RSpec.describe "Static pages", driver: :null do
-  let(:page) { @playwright_page }
+  let(:page) { @playwright_page } # rubocop:disable RSpec/InstanceVariable
 
   it "can browse" do
     page.goto(root_path)

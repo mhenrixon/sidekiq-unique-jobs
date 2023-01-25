@@ -10,7 +10,7 @@ user = User.create(
   email: "mikael@mhenrixon.com",
   password: "Abc123!!",
   password_confirmation: "Abc123!!",
-  admin: true
+  admin: true,
 )
 
 user.confirm

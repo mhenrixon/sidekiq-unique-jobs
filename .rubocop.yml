@@ -2,6 +2,11 @@ inherit_gem:
   rubocop-mhenrixon:
     - config/default.yml
 
+require:
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
@@ -10,16 +15,12 @@ AllCops:
   Exclude:
     - "**/*.erb"
     - "**/*.lua"
-    - '**/vendor/**/*'
+    - "**/vendor/**/*"
+    - "myapp/**/*"
     - "bin/bench"
 
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
-
-Layout/LineLength:
-  Exclude:
-    - myapp/db/**/*.rb
-    - myapp/config/initializers/devise.rb
 
 Layout/LineContinuationLeadingSpace:
   Enabled: false
@@ -44,16 +45,9 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Max: 7
 
-Metrics/MethodLength:
-  Max: 13
-  Exclude:
-    - myapp/db/**/*.rb
-    - myapp/config/initializers/devise.rb
-
 Metrics/BlockLength:
   Enabled: true
   Exclude:
-    - "myapp/db/**/*.rb"
     - "**/spec/**/*.rb"
     - "**/*.rake"
     - "Rakefile"
@@ -74,8 +68,6 @@ Naming/FileName:
     - lib/sidekiq-unique-jobs.rb
     - Gemfile
     - Rakefile
-    - myapp/Gemfile
-    - myapp/Rakefile
 
 Naming/RescuedExceptionsVariableName:
   PreferredName: ex
@@ -139,7 +131,6 @@ Style/Documentation:
   Enabled: true
   Exclude:
     - "examples/**/*.rb"
-    - "myapp/**/*.rb"
     - "bin/**/*.rb"
     - "lib/sidekiq_unique_jobs/testing.rb"
     - "lib/sidekiq_unique_jobs/core_ext.rb"
