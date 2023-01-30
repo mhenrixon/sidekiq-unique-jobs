@@ -1,5 +1,23 @@
 # Changelog
 
+## [v8.0.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.0) (2023-01-30)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.29...v8.0.0)
+
+**Implemented enhancements:**
+
+- chore\(deps\): upgrade rails app [\#753](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/753) ([mhenrixon](https://github.com/mhenrixon))
+- feat: sidekiq v7 support [\#751](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/751) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Support for redis 5 [\#752](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/752)
+- while\_executing jobs being dropped [\#749](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/749)
+
+**Merged pull requests:**
+
+- fix: backport the fix for the return value of \#deep\_transform\_keys [\#750](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/750) ([fixtheclouds](https://github.com/fixtheclouds))
+
 ## [v7.1.29](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.29) (2022-12-03)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.28...v7.1.29)
