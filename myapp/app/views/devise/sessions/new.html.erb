@@ -1,0 +1,60 @@
+<div class="w-full max-w-xs">
+    <h1 class="font-hairline mb-6 text-center">Log In</h1>
+
+    <%= form_for(resource,
+                 as: resource_name,
+                 url: session_path(resource_name),
+                 html: {
+                         class: "bg-white mb-4 px-8 pt-6 pb-8 rounded shadow-md"
+                 }
+        ) do |f| %>
+
+        <%= devise_simple_error_messages! %>
+
+        <% if flash.present? %>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <p class="font-bold">Oops!</p>
+                <%- flash.each do |name, msg| -%>
+                    <%= content_tag :p,
+                                    msg.humanize,
+                                    id: "flash_#{name}" if msg.is_a?(String) %>
+                <%- end -%>
+            </div>
+        <% end %>
+
+        <div class="mb-4">
+            <%= f.label :email, class: "block text-gray-700 text-sm font-bold mb-2" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                              class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight foucs:outline-none focus:shadow-outline"
+            %>
+        </div>
+
+        <div class="mb-4">
+            <%= f.label :password, class: "block text-gray-700 text-sm font-bold mb-2" %>
+            <%= f.password_field :password,
+                                 autocomplete: "current-password",
+                                 class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+            <div class="mb-4">
+                <%= f.check_box :remember_me, class: "mr-2 leading-tight" %>
+                <%= f.label :remember_me,
+                            class: "align-baseline inline-block text-gray-700 text-sm"
+                %>
+            </div>
+        <% end %>
+
+        <div class="mb-4">
+            <%= f.submit "Log in",
+                         class: "button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+            %>
+        </div>
+
+        <%= render "devise/shared/links" %>
+
+    <% end %>
+
+    <%= render "devise/shared/form_footer" %>
+</div>

@@ -6,5 +6,11 @@
 # Examples:
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-user = User.create(email: "mikael@mhenrixon.com", password: "Abc123!!", password_confirmation: "Abc123!!", admin: true)
+user = User.create(
+  email: "mikael@mhenrixon.com",
+  password: "Abc123!!",
+  password_confirmation: "Abc123!!",
+  admin: true,
+)
+
 user.confirm

@@ -3,11 +3,9 @@
 require "sidekiq"
 require "sidekiq-unique-jobs"
 
-Redis.exists_returns_integer = false
-
 REDIS = Redis.new(url: ENV.fetch("REDIS_URL", nil))
 
-Sidekiq.default_worker_options = {
+Sidekiq.default_job_options = {
   backtrace: true,
   retry: true,
 }
@@ -34,9 +32,6 @@ Sidekiq.configure_server do |config|
   SidekiqUniqueJobs::Server.configure(config)
 end
 
-Sidekiq.logger       = Sidekiq::Logger.new($stdout)
-Sidekiq.logger.level = :debug
-Sidekiq.log_format   = :json if Sidekiq.respond_to?(:log_format)
 SidekiqUniqueJobs.configure do |config|
   config.debug_lua       = false # true for debugging
   config.lock_info       = false # true for debugging
@@ -46,4 +41,3 @@ SidekiqUniqueJobs.configure do |config|
   config.reaper_interval = 10    # Reap every 10 seconds
   config.reaper_timeout  = 5     # Give the reaper 5 seonds to finish
 end
-Dir[Rails.root.join("app", "workers", "**", "*.rb")].sort.each { |worker| require worker }

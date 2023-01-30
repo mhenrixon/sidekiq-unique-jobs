@@ -23,3 +23,4 @@ tmp/
 /myapp/vendor/bundle/
 /.bundle/
 /.tool-versions
+/myapp/yarn-error.log

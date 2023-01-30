@@ -1,0 +1,40 @@
+{
+  "name": "app",
+  "engines": {
+    "node": "19.x",
+    "npm": "9.x",
+    "yarn": "1.x"
+  },
+  "private": "true",
+  "scripts": {
+    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify --postcss",
+    "lint:css": "stylelint './app/assets/stylesheets/**/*.css'",
+    "lint:js": "eslint . --ext .js,.json"
+  },
+  "nodulePath": "./app/javascript/libraries",
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "0.4.2",
+    "@tailwindcss/forms": "0.5.3",
+    "@tailwindcss/line-clamp": "0.4.2",
+    "@tailwindcss/typography": "0.5.9",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
+    "postcss-import": "^15.1.0",
+    "standard": "^17.0.0",
+    "tailwindcss": "^3.2.4",
+    "trix": "^2.0.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "eslint": "^8.31.0",
+    "eslint-plugin": "^1.0.1",
+    "eslint-plugin-import": "^2.27.3",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "jsonlint": "^1.6.3",
+    "playwright": "1.29.2",
+    "stylelint": "^14.16.1",
+    "stylelint-config-standard": "^29.0.0"
+  }
+}

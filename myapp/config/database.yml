@@ -5,7 +5,7 @@ defaults: &defaults
   port: <%= ENV.fetch('DB_PORT') { 5432 } %>
   username: <%= ENV.fetch('DB_USERNAME') { system("whoami") } %>
   password: <%= ENV.fetch('DB_PASSWORD') { nil } %>
-  pool: 25
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 
 development:
   <<: *defaults

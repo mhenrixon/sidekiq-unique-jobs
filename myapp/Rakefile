@@ -3,6 +3,58 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-require File.expand_path("config/application", __dir__)
+require_relative "config/application"
 
 Rails.application.load_tasks
+
+desc "Run ERBLint"
+task :erblint do # rubocop:disable Rails/RakeEnvironment
+  sh("bin/erblint --lint-all")
+end
+
+desc "Fix ERBLint"
+task "erblint:fix" do # rubocop:disable Rails/RakeEnvironment
+  sh("bin/erblint --lint-all -a")
+end
+
+desc "Run ESLint"
+task :eslint do # rubocop:disable Rails/RakeEnvironment
+  sh("yarn lint:js")
+end
+
+desc "Fix ESLint problems"
+task "eslint:fix" do # rubocop:disable Rails/RakeEnvironment
+  sh("yarn lint:js --fix")
+end
+
+desc "Run ESLint"
+task :stylelint do # rubocop:disable Rails/RakeEnvironment
+  sh("yarn lint:css")
+end
+
+desc "Fix ESLint problems"
+task "stylelint:fix" do # rubocop:disable Rails/RakeEnvironment
+  sh("yarn lint:css --fix")
+end
+
+multitask lint: [:erblint, :eslint, :stylelint]
+
+multitask "lint:fix" => %w[
+  erblint:fix
+  eslint:fix
+  stylelint:fix
+]
+
+multitask "lint:fixall" => %w[
+  erblint:fix
+  eslint:fix
+  stylelint:fix
+]
+
+multitask ci: [
+  :erblint,
+  :eslint,
+  :rubocop,
+  :spec,
+  :stylelint,
+]

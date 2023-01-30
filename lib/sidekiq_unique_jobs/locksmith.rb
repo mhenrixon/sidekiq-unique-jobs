@@ -240,7 +240,7 @@ module SidekiqUniqueJobs
     # @return [nil] when lock was not possible
     # @return [Object] whatever the block returns when lock was acquired
     #
-    def primed_async(conn, wait = nil, &block)
+    def primed_async(conn, wait = nil, &block) # rubocop:disable Metrics/MethodLength
       timeout = (wait || config.timeout).to_i
       timeout = 1 if timeout.zero?
 
