@@ -217,7 +217,7 @@ module SidekiqUniqueJobs
 
       #
       # Reaper interval with a little drift
-      #   Redis isn't exact enough so to give a little bufffer,
+      #   Redis isn't exact enough so to give a little buffer,
       #   we add a tiny value to the reaper interval.
       #
       #
