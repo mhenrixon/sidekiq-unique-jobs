@@ -195,7 +195,7 @@ module SidekiqUniqueJobs
               else
                 pipeline.exists(key)
               end
-              pipeline.hgetall("#{key}:workers")
+              pipeline.hgetall("#{key}:work")
             end
 
             next unless valid

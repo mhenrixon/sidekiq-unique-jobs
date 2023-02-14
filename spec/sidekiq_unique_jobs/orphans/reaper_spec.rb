@@ -131,7 +131,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         context "with job in process" do
           let(:process_key)    { "process-id" }
           let(:thread_id)      { "thread-id" }
-          let(:worker_key)     { "#{process_key}:workers" }
+          let(:worker_key)     { "#{process_key}:work" }
           let(:created_at)     { (Time.now - reaper_timeout).to_f }
           let(:reaper_timeout) { SidekiqUniqueJobs.config.reaper_timeout }
 
