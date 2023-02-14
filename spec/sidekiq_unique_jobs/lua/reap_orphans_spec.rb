@@ -124,7 +124,7 @@ RSpec.describe "reap_orphans.lua" do
     context "with job" do
       let(:process_key) { "process-id" }
       let(:thread_id)   { "thread-id" }
-      let(:worker_key)  { "#{process_key}:workers" }
+      let(:worker_key)  { "#{process_key}:work" }
 
       before do
         SidekiqUniqueJobs.redis do |conn|
