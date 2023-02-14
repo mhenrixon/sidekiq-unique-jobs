@@ -1,5 +1,19 @@
 # Changelog
 
+## [v8.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.1) (2023-02-14)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.0...v8.0.1)
+
+**Closed issues:**
+
+- TypeError: Unsupported command argument type: ActiveSupport::Duration [\#754](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/754)
+- Incompatibility with Sidekiq 7 [\#736](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/736)
+
+**Merged pull requests:**
+
+- Fix active worker detection by using correct keys [\#756](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/756) ([dodo121](https://github.com/dodo121))
+- Fix minor typo in drift\_reaper\_interval comment [\#755](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/755) ([lazyatom](https://github.com/lazyatom))
+
 ## [v8.0.0](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.0) (2023-01-30)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.29...v8.0.0)
