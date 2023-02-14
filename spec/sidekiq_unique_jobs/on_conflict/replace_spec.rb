@@ -3,7 +3,7 @@
 RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
   let(:strategy)    { described_class.new(item) }
   let(:lock_digest) { "uniquejobs:a1d714a6dacd9fcfe0aa6274af3d5ab4" }
-  let(:block)       { -> { p "Hello" } }
+  let(:block)       { -> { p "Hello" } } # rubocop:disable Lint/Debugger
   let(:digest)      { digests.entries.first }
 
   let(:item) do
