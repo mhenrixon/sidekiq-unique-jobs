@@ -47,7 +47,10 @@ module SidekiqUniqueJobs
     #
     def initialize(key, time: nil)
       @key        = get_key(key)
-      @created_at = time.is_a?(Float) ? time : time.to_f
+      time = time.is_a?(Float) ? time : time.to_f
+      if time.nonzero?
+        @created_at = time
+      end
     end
 
     #
