@@ -6,7 +6,7 @@ local dead_version = KEYS[2]
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
-local debug_lua    = tonumber(ARGV[6]) == "1"
+local debug_lua    = tostring(ARGV[6]) == "1"
 local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
 local redisversion = ARGV[9]
