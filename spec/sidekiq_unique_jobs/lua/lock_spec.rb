@@ -157,7 +157,7 @@ RSpec.describe "lock.lua" do
       expect(primed.count).to eq(0)
 
       expect(locked.count).to eq(1)
-      expect(locked.entries).to match_array([job_id_one])
+      expect(locked.entries).to contain_exactly(job_id_one)
       expect(locked[job_id_one].to_f).to be_within(0.5).of(now_f)
     end
   end
@@ -176,7 +176,7 @@ RSpec.describe "lock.lua" do
       expect(primed.count).to eq(0)
 
       expect(locked.count).to eq(1)
-      expect(locked.entries).to match_array([job_id_one])
+      expect(locked.entries).to contain_exactly(job_id_one)
       expect(locked[job_id_one].to_f).to be_within(0.5).of(now_f)
     end
   end
@@ -197,7 +197,7 @@ RSpec.describe "lock.lua" do
       expect(primed.count).to eq(0)
 
       expect(locked.count).to eq(1)
-      expect(locked.entries).to match_array([job_id_one])
+      expect(locked.entries).to contain_exactly(job_id_one)
       expect(locked[job_id_one].to_f).to be_within(0.5).of(now_f)
     end
   end
@@ -220,7 +220,7 @@ RSpec.describe "lock.lua" do
         expect(primed.count).to eq(0)
 
         expect(locked.count).to eq(1)
-        expect(locked.entries).to match_array([job_id_two])
+        expect(locked.entries).to contain_exactly(job_id_two)
         expect(locked[job_id_two].to_f).to be_within(0.5).of(now_f)
       end
     end
@@ -247,7 +247,7 @@ RSpec.describe "lock.lua" do
         expect(primed.count).to eq(0)
 
         expect(locked.count).to eq(2)
-        expect(locked.entries).to match_array([job_id_two, job_id_one])
+        expect(locked.entries).to contain_exactly(job_id_two, job_id_one)
         expect(locked[job_id_two].to_f).to be_within(0.5).of(now_f)
         expect(locked[job_id_one].to_f).to be_within(0.5).of(now_f)
       end
@@ -272,7 +272,7 @@ RSpec.describe "lock.lua" do
       expect(primed.count).to eq(0)
 
       expect(locked.count).to eq(1)
-      expect(locked.entries).to match_array([job_id_one])
+      expect(locked.entries).to contain_exactly(job_id_one)
       expect(locked[job_id_one].to_f).to be_within(0.5).of(now_f)
     end
   end
