@@ -46,11 +46,11 @@ module SidekiqUniqueJobs
     # @param [Timstamp, Float] time nil optional timestamp to initiate this lock with
     #
     def initialize(key, time: nil)
-      @key        = get_key(key)
+      @key = get_key(key)
       time = time.is_a?(Float) ? time : time.to_f
-      if time.nonzero?
-        @created_at = time
-      end
+      return unless time.nonzero?
+
+      @created_at = time
     end
 
     #
