@@ -146,6 +146,8 @@ module SidekiqUniqueJobs
       # @return [String] a html safe string with relative time information
       #
       def safe_relative_time(time)
+        return unless time
+
         time = parse_time(time)
 
         relative_time(time)
