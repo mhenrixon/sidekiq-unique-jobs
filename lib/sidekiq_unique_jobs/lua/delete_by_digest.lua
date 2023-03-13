@@ -12,7 +12,7 @@ local digests    = KEYS[9]
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[1])
-local debug_lua    = ARGV[2] == "true"
+local debug_lua    = tostring(ARGV[2]) == "1"
 local max_history  = tonumber(ARGV[3])
 local script_name  = tostring(ARGV[4]) .. ".lua"
 local redisversion = tostring(ARGV[5])

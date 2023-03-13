@@ -9,11 +9,6 @@ local function toversion(version)
   }
 end
 
-local function toboolean(val)
-  val = tostring(val)
-  return val == "1" or val == "true"
-end
-
 local function log_debug( ... )
   if debug_lua ~= true then return end
 

@@ -14,7 +14,7 @@ local threshold    = tonumber(ARGV[2])
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[3])
-local debug_lua    = ARGV[4] == "true"
+local debug_lua    = tostring(ARGV[4]) == "1"
 local max_history  = tonumber(ARGV[5])
 local script_name  = ARGV[6] .. ".lua"
 local redisversion = ARGV[7]
