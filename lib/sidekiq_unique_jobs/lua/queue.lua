@@ -19,7 +19,7 @@ local limit     = tonumber(ARGV[4])
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[5])
-local debug_lua    = ARGV[6] == "true"
+local debug_lua    = tonumber(ARGV[6]) == "1"
 local max_history  = tonumber(ARGV[7])
 local script_name  = tostring(ARGV[8]) .. ".lua"
 ---------  END injected arguments ---------

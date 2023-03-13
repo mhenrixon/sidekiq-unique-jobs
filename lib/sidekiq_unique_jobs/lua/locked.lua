@@ -14,7 +14,7 @@ local job_id = ARGV[1]
 
 --------  BEGIN injected arguments --------
 local current_time = tonumber(ARGV[2])
-local debug_lua    = ARGV[3] == "true"
+local debug_lua    = tonumber(ARGV[3]) == "1"
 local max_history  = tonumber(ARGV[4])
 local script_name  = tostring(ARGV[5]) .. ".lua"
 ---------  END injected arguments ---------
