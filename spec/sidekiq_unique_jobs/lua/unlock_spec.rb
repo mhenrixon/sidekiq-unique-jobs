@@ -176,7 +176,7 @@ RSpec.describe "unlock.lua" do
         expect(primed.count).to be == 0
 
         expect(locked.count).to be == 1
-        expect(locked.entries).to match_array([job_id_two])
+        expect(locked.entries).to contain_exactly(job_id_two)
         expect(locked[job_id_two].to_f).to be_within(0.5).of(now_f)
       end
     end
@@ -187,12 +187,12 @@ RSpec.describe "unlock.lua" do
                                                         .and change { digests.count }.by(-1)
 
         expect(queued.count).to eq(1)
-        expect(queued.entries).to match_array(["1"])
+        expect(queued.entries).to contain_exactly("1")
 
         expect(primed.count).to be == 0
 
         expect(locked.count).to be == 0
-        expect(locked.entries).to match_array([])
+        expect(locked.entries).to eq([])
         expect(locked[job_id_one]).to be_nil
       end
     end

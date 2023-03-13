@@ -149,7 +149,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     let(:count)   { nil }
 
     context "when no entries exist" do
-      it { is_expected.to match_array([]) }
+      it { is_expected.to eq([]) }
     end
 
     context "when entries exist" do
@@ -174,13 +174,13 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
         }
       end
 
-      it { is_expected.to match_array([locked_entry, queued_entry]) }
+      it { is_expected.to contain_exactly(locked_entry, queued_entry) }
 
       context "when given count 1" do
         let(:count) { 1 }
 
         # count only is considered per iteration, this would have iterated twice
-        it { is_expected.to match_array([locked_entry, queued_entry]) }
+        it { is_expected.to contain_exactly(locked_entry, queued_entry) }
       end
     end
   end
@@ -193,7 +193,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     let(:page_size) { 1 }
 
     context "when no entries exist" do
-      it { is_expected.to match_array([0, 0, []]) }
+      it { is_expected.to contain_exactly(0, 0, []) }
     end
 
     context "when entries exist" do
@@ -221,7 +221,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
         }
       end
 
-      it { is_expected.to match_array([2, anything, a_collection_including(kind_of(Hash))]) }
+      it { is_expected.to contain_exactly(2, anything, a_collection_including(kind_of(Hash))) }
     end
   end
 end
