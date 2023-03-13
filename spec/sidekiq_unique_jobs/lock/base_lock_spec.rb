@@ -2,7 +2,7 @@
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   let(:lock)     { described_class.new(item, callback) }
-  let(:callback) { -> { p "debug" } } # rubocop:disable Lint/Debugger
+  let(:callback) { -> { p "debug" } }
   let(:strategy) { :replace }
   let(:jid)      { "bogusjobid" }
   let(:item) do
