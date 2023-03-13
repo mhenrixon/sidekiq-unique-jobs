@@ -1,5 +1,21 @@
 # Changelog
 
+## [v8.0.2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.2) (2023-03-13)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.1...v8.0.2)
+
+**Closed issues:**
+
+- Missing v7.1 branch? [\#757](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/757)
+- Allow one running job but at most one job in the queue [\#748](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/748)
+
+**Merged pull requests:**
+
+- update debug\_lua check to match passed in arg type [\#765](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/765) ([JeremiahChurch](https://github.com/JeremiahChurch))
+- fix rubocop [\#764](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/764) ([JeremiahChurch](https://github.com/JeremiahChurch))
+- Hide lock info debug suggestion on lock page if it's already enabled. [\#763](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/763) ([JeremiahChurch](https://github.com/JeremiahChurch))
+- fix lock & changelog times on web interface [\#762](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/762) ([JeremiahChurch](https://github.com/JeremiahChurch))
+
 ## [v8.0.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.1) (2023-02-14)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.0...v8.0.1)

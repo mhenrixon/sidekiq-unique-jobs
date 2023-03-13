@@ -8,6 +8,7 @@ gemspec
 LOCAL_GEMS = "Gemfile.local"
 
 gem "appraisal"
+gem "faraday-retry"
 gem "gem-release"
 gem "github-markup"
 gem "rack-test"
