@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
     let(:with_values) { nil }
 
     context "without entries" do
-      it { is_expected.to match_array([]) }
+      it { is_expected.to eq([]) }
     end
 
     context "with entries" do
@@ -23,7 +23,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Hash do
       context "when with_values: false" do
         let(:with_values) { false }
 
-        it { is_expected.to match_array([job_id]) }
+        it { is_expected.to contain_exactly(job_id) }
       end
 
       context "when with_values: true" do

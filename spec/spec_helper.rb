@@ -46,7 +46,7 @@ Sidekiq.configure_server do |config|
     chain.add SidekiqUniqueJobs::Middleware::Server
   end
 
-  config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash } # rubocop:disable Lint/Debugger
+  config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
   config.death_handlers << lambda do |job, _ex|
     digest = job["lock_digest"]
     SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
@@ -119,7 +119,7 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    p EVENTS if ENV["REFLECT_DEBUG"] # rubocop:disable Lint/Debugger
+    p EVENTS if ENV["REFLECT_DEBUG"]
   end
 end
 
