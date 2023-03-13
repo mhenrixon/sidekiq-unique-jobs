@@ -52,7 +52,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
       end
 
       it "does not check for orphans" do
-        expect(orphans).to match_array([])
+        expect(orphans).to eq([])
         expect(service).not_to have_received(:belongs_to_job?)
       end
     end
@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
         SidekiqUniqueJobs.use_config(reaper_count: 1) do
           expect(orphans.size).to eq(1)
           # This is the first one to be created and should therefor be the only match
-          expect(orphans).to match_array([digest])
+          expect(orphans).to contain_exactly(digest)
         end
       end
     end
@@ -84,13 +84,13 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
       let(:item) { raw_item.merge("at" => Time.now.to_f + 3_600) }
 
       context "without scheduled job" do
-        it { is_expected.to match_array([digest]) }
+        it { is_expected.to contain_exactly(digest) }
       end
 
       context "with scheduled job" do
         before { push_item(item) }
 
-        it { is_expected.to match_array([]) }
+        it { is_expected.to eq([]) }
       end
     end
 
@@ -98,25 +98,25 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
       let(:item) { raw_item.merge("retry_count" => 2, "failed_at" => now_f) }
 
       context "without job in retry" do
-        it { is_expected.to match_array([digest]) }
+        it { is_expected.to contain_exactly(digest) }
       end
 
       context "with job in retry" do
         before { zadd("retry", Time.now.to_f.to_s, dump_json(item)) }
 
-        it { is_expected.to match_array([]) }
+        it { is_expected.to eq([]) }
       end
     end
 
     context "when digest exists in a queue" do
       context "without enqueued job" do
-        it { is_expected.to match_array([digest]) }
+        it { is_expected.to contain_exactly(digest) }
       end
 
       context "with enqueued job" do
         before { push_item(item) }
 
-        it { is_expected.to match_array([]) }
+        it { is_expected.to eq([]) }
       end
     end
   end
