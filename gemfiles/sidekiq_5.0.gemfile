@@ -3,11 +3,11 @@
 source "https://rubygems.org"
 
 gem "appraisal"
+gem "faraday-retry"
 gem "gem-release"
 gem "github-markup"
 gem "rack-test"
 gem "rake", "13.0.3"
-gem "redis-namespace"
 gem "reek", ">= 5.3"
 gem "rspec"
 gem "rspec-benchmark"
