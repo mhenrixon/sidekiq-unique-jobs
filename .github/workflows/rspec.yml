@@ -1,4 +1,4 @@
-name: RSpec
+name: ci
 on:
   pull_request:
   push:
@@ -42,7 +42,7 @@ jobs:
           COV=true bin/rspec --require spec_helper --tag ~perf
           ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
 
-  tests:
+  rspec:
     services:
       toxiproxy:
         image: ghcr.io/shopify/toxiproxy
