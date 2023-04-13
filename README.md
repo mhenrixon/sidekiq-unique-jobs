@@ -547,7 +547,7 @@ This is also mostly useful for reporting/metrics purposes. What this reflection 
 
 ### unlock_failed
 
-This is not got, this is worth
+This means that the server middleware could not unlock your job and the lock is kept (potentially preventing subsequent jobs from being pushed or processed).
 
 ### unlocked
 
