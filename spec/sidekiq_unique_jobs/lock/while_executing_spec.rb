@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
     context "when no callback is defined" do
       let(:job_class) { WhileExecutingRescheduleJob }
       let(:callback_one) { -> { true } }
-      let(:callback_two) { nil }
+      let(:callback_two) { -> { true } }
 
       let(:strategy_one) { process_one.send(:server_strategy) }
       let(:strategy_two) { process_two.send(:server_strategy) }
@@ -85,19 +85,25 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
       before do
         allow(strategy_one).to receive(:call).and_call_original
         allow(strategy_two).to receive(:call).and_call_original
+        allow(process_one).to receive(:reflect).and_call_original
         allow(process_two).to receive(:reflect).and_call_original
       end
 
       it "reflects execution_failed" do
         process_one.execute do
           process_two.execute { puts "BOGUS!" }
+          # NOTE: Below looks weird but tests that
+          #   the result from process_two (which is nil) isn't considered.
+          jid_one
         end
 
+        expect(process_one).not_to have_received(:reflect).with(:execution_failed, item_one)
         expect(callback_one).to have_received(:call).once
         expect(strategy_one).not_to have_received(:call)
-        expect(strategy_two).to have_received(:call).once
 
         expect(process_two).to have_received(:reflect).with(:execution_failed, item_two)
+        expect(callback_two).not_to have_received(:call)
+        expect(strategy_two).to have_received(:call).once
       end
     end
 
