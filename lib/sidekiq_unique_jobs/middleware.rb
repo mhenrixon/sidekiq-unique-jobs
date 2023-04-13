@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
     # This method runs before (prepended) the actual middleware implementation.
     #   This is done to reduce duplication
     #
-    # @param [Sidekiq::Worker] worker_class
+    # @param [Sidekiq::Job] worker_class
     # @param [Hash] item a sidekiq job hash
     # @param [String] queue name of the queue
     # @param [ConnectionPool] redis_pool only used for compatility reasons

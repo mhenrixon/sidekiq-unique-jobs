@@ -250,9 +250,9 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # Attempt to constantize a string worker_class argument, always
   # failing back to the original argument when the constant can't be found
   #
-  # @return [Sidekiq::Worker]
+  # @return [Sidekiq::Job]
   def constantize(str)
-    return str.class             if str.is_a?(Sidekiq::Worker) # sidekiq v6.x
+    return str.class             if str.is_a?(Sidekiq::Job) # sidekiq v6.x
     return str                   unless str.is_a?(String)
     return Object.const_get(str) unless str.include?("::")
 
@@ -269,7 +269,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # Attempt to constantize a string worker_class argument, always
   # failing back to the original argument when the constant can't be found
   #
-  # @return [Sidekiq::Worker, String]
+  # @return [Sidekiq::Job, String]
   def safe_constantize(str)
     constantize(str)
   rescue NameError => ex
