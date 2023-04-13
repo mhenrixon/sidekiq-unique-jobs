@@ -35,6 +35,7 @@ module SidekiqUniqueJobs
       def execute
         executed = locksmith.execute do
           yield
+        ensure
           unlock_and_callback
         end
 
