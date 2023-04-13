@@ -70,8 +70,6 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of reaped locks
       #
       def call
-        return if queues_very_full?
-
         BatchDelete.call(expired_digests, conn)
         BatchDelete.call(orphans, conn)
       end
@@ -185,12 +183,7 @@ module SidekiqUniqueJobs
 
           procs.sort.each do |key|
             valid, workers = conn.pipelined do |pipeline|
-              # TODO: Remove the if statement in the future
-              if pipeline.respond_to?(:exists?)
-                pipeline.exists?(key)
-              else
-                pipeline.exists(key)
-              end
+              pipeline.exists(key)
               pipeline.hgetall("#{key}:work")
             end
 
@@ -286,7 +279,7 @@ module SidekiqUniqueJobs
       # @return [false] when missing
       #
       def in_sorted_set?(key, digest)
-        conn.zscan(key, match: "*#{digest}*", count: 1).to_a.any?
+        conn.zscan(key, match: "*#{digest}*", count: 1000).to_a.any?
       end
     end
     # rubocop:enable Metrics/ClassLength

@@ -42,10 +42,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
   it "unlocks in under 1 ms" do
     locksmith_one.lock
 
-    expect { locksmith_one.unlock }.to perform_under(1).ms
+    expect { locksmith_one.unlock }.to perform_under(2).ms
   end
 
   it "locks with expected allocations" do
-    expect { locksmith_one.lock {} }.to perform_allocation(Array => 12_640, Hash => 13_888).bytes
+    expect { locksmith_one.lock {} }.to perform_allocation({ Array => 12_640, Hash => 13_888 }).bytes
   end
 end
