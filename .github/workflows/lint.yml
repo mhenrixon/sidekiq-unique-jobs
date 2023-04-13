@@ -1,4 +1,4 @@
-name: Lint
+name: ci
 on:
   pull_request:
   push:
