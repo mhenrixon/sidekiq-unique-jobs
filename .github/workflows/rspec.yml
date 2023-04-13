@@ -23,7 +23,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
-          bundler: 2.4.2
+          bundler: 2.4.12
           bundler-cache: true
 
       - name: Install Code Climate reporter
@@ -66,7 +66,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler: 2.4.2
+          bundler: 2.4.12
           bundler-cache: true
+      - run: bundle install --gemfile='./gemfiles/sidekiq_7.0.gemfile' --retry 1
       - run: bin/appraisal install --jobs=$(nproc) --retry=$(nproc)
       - run: bin/appraisal rspec --require spec_helper --tag ~perf
