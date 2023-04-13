@@ -37,6 +37,7 @@ if respond_to?(:install_if)
     gem "pry"
     gem "redcarpet", "~> 3.4"
     gem "rspec-nc"
+    gem "solargraph"
     gem "ruby-prof", ">= 0.17.0", require: false
     gem "stackprof", ">= 0.2.9", require: false
     gem "test-prof"
