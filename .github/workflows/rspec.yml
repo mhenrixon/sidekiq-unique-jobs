@@ -60,6 +60,8 @@ jobs:
       fail-fast: true
       matrix:
         ruby: [2.7, '3.0', 3.1, 3.2]
+        gemfile:
+          - sidekiq_7.0
 
     steps:
       - uses: actions/checkout@v3
@@ -68,6 +70,4 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: 2.4.12
           bundler-cache: true
-      - run: bundle install --gemfile='./gemfiles/sidekiq_7.0.gemfile' --retry 1
-      - run: bin/appraisal install --jobs=$(nproc) --retry=$(nproc)
-      - run: bin/appraisal rspec --require spec_helper --tag ~perf
+      - run: bin/rspec --require spec_helper --tag ~perf
