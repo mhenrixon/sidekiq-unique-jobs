@@ -41,17 +41,27 @@ module SidekiqUniqueJobs
     #   Also deletes the :AVAILABLE, :EXPIRED etc keys
     #
     # @param [String] digest a unique digest to delete
-    def delete_by_digest(digest) # rubocop:disable Metrics/MethodLength
+    # @param queuetime [Boolean] Whether to delete queue locks.
+    # @param runtime [Boolean] Whether to delete run locks.
+    def delete_by_digest(digest, queuetime: true, runtime: true) # rubocop:disable Metrics/MethodLength
       result, elapsed = timed do
+        queue = queuetime ? digest : ""
+        queue_queued = queuetime ? "#{digest}:QUEUED" : ""
+        queue_primed = queuetime ? "#{digest}:PRIMED" : ""
+        queue_locked = queuetime ? "#{digest}:LOCKED" : ""
+        run = runtime ? "#{digest}:RUN" : ""
+        run_queued = runtime ? "#{digest}:RUN:QUEUED" : ""
+        run_primed = runtime ? "#{digest}:RUN:PRIMED" : ""
+        run_locked = runtime ? "#{digest}:RUN:LOCKED" : ""
         call_script(:delete_by_digest, [
-                      digest,
-                      "#{digest}:QUEUED",
-                      "#{digest}:PRIMED",
-                      "#{digest}:LOCKED",
-                      "#{digest}:RUN",
-                      "#{digest}:RUN:QUEUED",
-                      "#{digest}:RUN:PRIMED",
-                      "#{digest}:RUN:LOCKED",
+                      queue,
+                      queue_queued,
+                      queue_primed,
+                      queue_locked,
+                      run,
+                      run_queued,
+                      run_primed,
+                      run_locked,
                       key,
                     ])
       end
