@@ -312,7 +312,7 @@ module SidekiqUniqueJobs
     # @api private
     #
     def rpoplpush(conn)
-      conn.rpoplpush(key.queued, key.primed)
+      conn.lmove(key.queued, key.primed, "RIGHT", "LEFT")
     end
 
     #
