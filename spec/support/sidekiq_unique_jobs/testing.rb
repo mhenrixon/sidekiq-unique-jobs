@@ -328,7 +328,7 @@ module SidekiqUniqueJobs
       end
 
       def rpoplpush(source, destination)
-        redis { |conn| conn.rpoplpush(source, destination) }
+        redis { |conn| conn.lmove(source, destination, "RIGHT", "LEFT") }
       end
 
       def blpop(*args)
