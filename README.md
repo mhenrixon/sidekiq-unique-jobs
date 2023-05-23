@@ -45,11 +45,11 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
     - [reschedule_failed](#reschedule_failed)
     - [rescheduled](#rescheduled)
     - [timeout](#timeout)
-  - [unlock_failed](#unlock_failed)
-  - [unlocked](#unlocked)
-  - [unknown_sidekiq_worker](#unknown_sidekiq_worker)
-    - [Show Locks](#show-locks)
-    - [Show Lock](#show-lock)
+    - [unlock_failed](#unlock_failed)
+    - [unlocked](#unlocked)
+    - [unknown_sidekiq_worker](#unknown_sidekiq_worker)
+  - [Show Locks](#show-locks)
+  - [Show Lock](#show-lock)
 - [Testing](#testing)
   - [Validating Worker Configuration](#validating-worker-configuration)
   - [Uniqueness](#uniqueness)
@@ -545,23 +545,23 @@ For when a job was successfully rescheduled
 
 This is also mostly useful for reporting/metrics purposes. What this reflection does is signal that the job was configured to wait (`lock_timeout` was configured), but we couldn't retrieve a lock even though we waited for some time.
 
-### unlock_failed
+#### unlock_failed
 
 This means that the server middleware could not unlock your job and the lock is kept (potentially preventing subsequent jobs from being pushed or processed).
 
-### unlocked
+#### unlocked
 
 Also mostly useful for reporting purposes. The job was successfully unlocked.
 
-### unknown_sidekiq_worker
+#### unknown_sidekiq_worker
 
 The reason this happens is that the server couldn't find a valid sidekiq worker class. Most likely, that worker isn't intended to be processed by this sidekiq server instance.
 
-#### Show Locks
+### Show Locks
 
 ![Locks](assets/unique_digests_1.png)
 
-#### Show Lock
+### Show Lock
 
 ![Lock](assets/unique_digests_2.png)
 

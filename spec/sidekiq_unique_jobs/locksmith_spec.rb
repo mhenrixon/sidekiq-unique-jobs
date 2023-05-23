@@ -338,10 +338,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   #   expect(locksmith_two).not_to have_received(:reflect).with(:locked, item_two)
   # end
 
-  # it "reflects on unlocked" do
-  #   locksmith_one.lock
-  #   allow(locksmith_one).to receive(:reflect)
-  #   locksmith_one.unlock
-  #   expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
-  # end
+  it "reflects on unlocked" do
+    locksmith_one.lock
+    allow(locksmith_one).to receive(:reflect)
+    locksmith_one.unlock
+    expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
+  end
 end
