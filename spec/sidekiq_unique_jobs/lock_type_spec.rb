@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::LockType do
   end
 
   describe "#call" do
-    subject { lock_calculator.call }
+    subject(:calculated_lock) { lock_calculator.call }
 
     it { is_expected.to eq(lock) }
 
@@ -23,17 +23,14 @@ RSpec.describe SidekiqUniqueJobs::LockType do
 
       it "is expected to equal the job class' lock option" do
         expect(MyUniqueJob.sidekiq_options["lock"]).to eq(:until_executed)
-        expect(subject).to eq(:until_executed)
+        expect(calculated_lock).to eq(:until_executed)
       end
 
       context "when job class sidekiq options lock is nil" do
-        before do
-          expect(MyUniqueJob).to receive(:get_sidekiq_options).and_return({})
-        end
-
         it "uses the Sidekiq default job options" do
-          expect(lock_calculator).to receive(:default_job_options).and_return({ "lock" => :until_executing })
-          expect(subject).to eq(:until_executing)
+          allow(MyUniqueJob).to receive(:get_sidekiq_options).and_return({})
+          allow(lock_calculator).to receive(:default_job_options).and_return({ "lock" => :until_executing })
+          expect(calculated_lock).to eq(:until_executing)
         end
       end
     end
