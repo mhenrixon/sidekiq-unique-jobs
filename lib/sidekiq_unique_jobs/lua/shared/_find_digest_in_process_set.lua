@@ -15,7 +15,7 @@ local function find_digest_in_process_set(digest, threshold)
     log_debug("Found number of processes:", #processes, "next cursor:", next_process_cursor)
 
     for _, process in ipairs(processes) do
-      local workers_key = process .. ":workers"
+      local workers_key = process .. ":work"
       log_debug("searching in process set:", process,
                 "for digest:", digest,
                 "cursor:", process_cursor)
