@@ -1,5 +1,44 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.3...HEAD)
+
+**Closed issues:**
+
+- Redis has deprecated the `rpoplpush`command [\#793](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/793)
+- Deprecation Warning: Use of rpoplpush command in Redis [\#792](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/792)
+- Logging::Middleware.context can include empty string as key when lock is not set in job hash [\#785](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/785)
+
+## [v8.0.3](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.3) (2023-05-27)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.2...v8.0.3)
+
+**Implemented enhancements:**
+
+- chore\(ci\): improve matrix [\#775](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/775) ([mhenrixon](https://github.com/mhenrixon))
+- chore\(ci\): better ci job output [\#772](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/772) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Add unlocked reflect to locksmith unlock! [\#783](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/783) ([ttstarck](https://github.com/ttstarck))
+- fix\(locksmith\): replace deprecated rpoplpush w/lmove [\#781](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/781) ([GabrielaGuedes](https://github.com/GabrielaGuedes))
+- fix\(unlock\): ensure callback and unlock [\#771](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/771) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- `unlocked` reflection is never called [\#782](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/782)
+- Migrate away from deprecated Redis commands [\#780](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/780)
+- `while_executing` with `on_conflict: :reschedule` reschedules job when unlock fails [\#770](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/770)
+- Redis server v6.0 compatibility [\#769](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/769)
+- Locks not removed after worker finishes [\#758](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/758)
+
+**Merged pull requests:**
+
+- Add lock to item when lock\_type is pulled from Job class sidekiq options [\#786](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/786) ([ttstarck](https://github.com/ttstarck))
+- Fix rubocop failure by expecting array to be empty [\#784](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/784) ([GabrielaGuedes](https://github.com/GabrielaGuedes))
+- fix\(doc\): improve information on unlock\_failed [\#776](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/776) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v8.0.2](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.2) (2023-03-13)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.1...v8.0.2)
