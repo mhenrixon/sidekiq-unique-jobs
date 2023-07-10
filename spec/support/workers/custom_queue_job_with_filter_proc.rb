@@ -2,7 +2,7 @@
 
 # :nocov:
 
-require_relative "./custom_queue_job"
+require_relative "custom_queue_job"
 
 class CustomQueueJobWithFilterProc < CustomQueueJob
   # slightly contrived example of munging args to the
