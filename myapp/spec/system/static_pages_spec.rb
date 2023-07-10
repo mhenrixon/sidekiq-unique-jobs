@@ -2,12 +2,9 @@
 
 require "system_helper"
 
-RSpec.describe "Static pages", driver: :null do
-  let(:page) { @playwright_page } # rubocop:disable RSpec/InstanceVariable
-
+RSpec.describe "Static pages", type: :system do
   it "can browse" do
-    page.goto(root_path)
-    welcome_text = page.text_content(".landing")
-    expect(welcome_text).to match("Welcome")
+    visit "/"
+    expect(page).to have_selector(".landing", text: "Welcome")
   end
 end

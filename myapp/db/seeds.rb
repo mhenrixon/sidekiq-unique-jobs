@@ -6,11 +6,10 @@
 # Examples:
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-user = User.create(
-  email: "mikael@mhenrixon.com",
+user = User.create_with(
   password: "Abc123!!",
   password_confirmation: "Abc123!!",
   admin: true,
-)
+).find_or_create_by!(email: "mikael@mhenrixon.com")
 
-user.confirm
+user.confirm unless user.confirmed?

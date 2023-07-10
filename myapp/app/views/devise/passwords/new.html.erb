@@ -5,8 +5,8 @@
                  as: resource_name,
                  url: password_path(resource_name),
                  html: {
-                         method: :post,
-                         class: "bg-white mb-4 px-8 pt-6 pb-8 rounded shadow-md"
+                   method: :post,
+                   class: "bg-white mb-4 px-8 pt-6 pb-8 rounded shadow-md",
                  }) do |f| %>
 
         <%#= render "devise/shared/error_messages", resource: resource %>
@@ -15,8 +15,7 @@
         <div class="mb-4">
             <%= f.label :email, class: "block font-bold mb-2 text-gray-700 text-sm" %>
             <%= f.email_field :email, autofocus: true, autocomplete: "email",
-                              class: "appearance-none border leading-tight focus:outline-none px-3 py-2 rounded shadow focus:shadow-outline text-gray-700 w-full"
-            %>
+                                      class: "appearance-none border leading-tight focus:outline-none px-3 py-2 rounded shadow focus:shadow-outline text-gray-700 w-full" %>
         </div>
 
         <div class="mb-4">
