@@ -21,3 +21,6 @@ tmp/
 /gemfiles/vendor/
 /vendor/
 /myapp/vendor/bundle/
+/.bundle/
+/myapp/node_modules/
+/myapp/yarn-error.log

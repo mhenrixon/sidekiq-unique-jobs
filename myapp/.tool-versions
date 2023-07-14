@@ -1,0 +1,4 @@
+ruby 3.2.2
+nodejs 19.1.0
+yarn 1.22.19
+direnv 2.32.2

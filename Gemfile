@@ -32,12 +32,10 @@ end
 
 if respond_to?(:install_if)
   install_if -> { RUBY_PLATFORM.include?("darwin") } do
-    gem "fasterer"
     gem "fuubar"
     gem "github_changelog_generator"
     gem "pry"
     gem "redcarpet", "~> 3.4"
-    gem "rspec-nc"
     gem "ruby-prof", ">= 0.17.0", require: false
     gem "stackprof", ">= 0.2.9", require: false
     gem "test-prof"

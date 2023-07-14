@@ -55,7 +55,7 @@ module SidekiqUniqueJobs
     # The type of lock for this worker
     #
     #
-    # @return [Symbol]
+    # @return [Symbol, NilClass]
     #
     def lock_type
       @lock_type ||= options[LOCK] || item[LOCK]

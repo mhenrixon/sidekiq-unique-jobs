@@ -63,9 +63,11 @@ m = Module.new do
   end
 
   def bundler_version
+    # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     @bundler_version ||=
       env_var_version || cli_arg_version ||
       lockfile_version
+    # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
   end
 
   def bundler_requirement

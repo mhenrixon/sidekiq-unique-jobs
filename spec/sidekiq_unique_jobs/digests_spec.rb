@@ -129,7 +129,7 @@ RSpec.describe SidekiqUniqueJobs::Digests do
 
     it "deletes all matching digests" do
       expect(delete_by_pattern).to be_a(Integer)
-      expect(digests.entries).to match_array([])
+      expect(digests.entries).to be_empty
     end
 
     it "logs performance info" do

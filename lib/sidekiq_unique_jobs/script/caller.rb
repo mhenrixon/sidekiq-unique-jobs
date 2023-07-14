@@ -54,13 +54,13 @@ module SidekiqUniqueJobs
       # Only used to reduce a little bit of duplication
       # @see call_script
       def do_call(file_name, conn, keys, argv)
-        argv = argv.dup.concat([
-                                 now_f,
-                                 debug_lua,
-                                 max_history,
-                                 file_name,
-                                 redis_version,
-                               ])
+        argv = argv.dup.push(
+          now_f,
+          debug_lua,
+          max_history,
+          file_name,
+          redis_version,
+        )
         Script.execute(file_name, conn, keys: keys, argv: argv)
       end
 

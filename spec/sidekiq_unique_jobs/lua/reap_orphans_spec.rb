@@ -61,7 +61,7 @@ RSpec.describe "reap_orphans.lua" do
     context "without scheduled job" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
-        expect(unique_keys).to match_array([])
+        expect(unique_keys).to be_empty
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
-        expect(unique_keys).not_to match_array([])
+        expect(unique_keys).not_to be_empty
       end
     end
   end
@@ -81,7 +81,7 @@ RSpec.describe "reap_orphans.lua" do
     context "without job in retry" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
-        expect(unique_keys).to match_array([])
+        expect(unique_keys).to be_empty
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
-        expect(unique_keys).not_to match_array([])
+        expect(unique_keys).not_to be_empty
       end
     end
   end
@@ -99,7 +99,7 @@ RSpec.describe "reap_orphans.lua" do
     context "without enqueued job" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
-        expect(unique_keys).to match_array([])
+        expect(unique_keys).to be_empty
       end
     end
 
@@ -108,7 +108,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
-        expect(unique_keys).not_to match_array([])
+        expect(unique_keys).not_to be_empty
       end
     end
   end
@@ -117,14 +117,14 @@ RSpec.describe "reap_orphans.lua" do
     context "without job" do
       it "keeps the digest" do
         expect { reap_orphans }.to change { digests.count }.by(-1)
-        expect(unique_keys).to match_array([])
+        expect(unique_keys).to be_empty
       end
     end
 
     context "with job" do
       let(:process_key) { "process-id" }
       let(:thread_id)   { "thread-id" }
-      let(:worker_key)  { "#{process_key}:workers" }
+      let(:worker_key)  { "#{process_key}:work" }
 
       before do
         SidekiqUniqueJobs.redis do |conn|
@@ -143,7 +143,7 @@ RSpec.describe "reap_orphans.lua" do
 
       it "keeps the digest" do
         expect { reap_orphans }.not_to change { digests.count }.from(1)
-        expect(unique_keys).not_to match_array([])
+        expect(unique_keys).not_to be_empty
       end
     end
   end

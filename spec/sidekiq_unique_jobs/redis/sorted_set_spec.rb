@@ -19,7 +19,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
       context "when given with_scores: false" do
         let(:with_scores) { false }
 
-        it { is_expected.to match_array([job_id]) }
+        it { is_expected.to contain_exactly(job_id) }
       end
 
       context "when given with_scores: true" do

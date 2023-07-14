@@ -11,6 +11,7 @@ module SidekiqUniqueJobs
     # @return [Hash] the job hash
     def prepare(item)
       stringify_on_conflict_hash(item)
+      add_lock_type(item)
       add_lock_timeout(item)
       add_lock_ttl(item)
       add_digest(item)
@@ -53,6 +54,10 @@ module SidekiqUniqueJobs
 
     def add_lock_prefix(item)
       item[LOCK_PREFIX] ||= SidekiqUniqueJobs.config.lock_prefix
+    end
+
+    def add_lock_type(item)
+      item[LOCK] ||= SidekiqUniqueJobs::LockType.call(item)
     end
   end
 end

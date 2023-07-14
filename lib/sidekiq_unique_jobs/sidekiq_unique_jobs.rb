@@ -17,7 +17,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [SidekiqUniqueJobs::Config] the gem configuration
   #
   def config
-    @config ||= reset!
+    @config ||= reset! # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
   end
 
   #
@@ -108,7 +108,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [SidekiqUniqueJobs::Config] a default gem configuration
   #
   def reset!
-    @config = SidekiqUniqueJobs::Config.default
+    @config = SidekiqUniqueJobs::Config.default # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
   end
 
   #
@@ -288,7 +288,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [Reflections]
   #
   def reflections
-    @reflections ||= Reflections.new
+    @reflections ||= Reflections.new # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
   end
 
   #

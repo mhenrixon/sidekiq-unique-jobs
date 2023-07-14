@@ -21,6 +21,7 @@ RSpec.describe SidekiqUniqueJobs::Job do
           "class" => job_class,
           "queue" => queue,
           "args" => [1, 2],
+          "lock" => :until_executed,
           "lock_timeout" => MyUniqueJob.get_sidekiq_options["lock_timeout"].to_i,
           "lock_ttl" => MyUniqueJob.get_sidekiq_options["lock_ttl"],
           "lock_args" => args,

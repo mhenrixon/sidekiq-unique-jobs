@@ -112,7 +112,7 @@ module SidekiqUniqueJobs
 
     def keys_for_digest(digest)
       [digest, "#{digest}:RUN"].each_with_object([]) do |key, digest_keys|
-        digest_keys.concat([key])
+        digest_keys.push(key)
         digest_keys.concat(SUFFIXES.map { |suffix| "#{key}:#{suffix}" })
       end
     end

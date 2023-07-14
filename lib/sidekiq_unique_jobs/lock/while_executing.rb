@@ -42,9 +42,8 @@ module SidekiqUniqueJobs
         with_logging_context do
           executed = locksmith.execute do
             yield
-            callback_safely if locksmith.unlock
           ensure
-            locksmith.unlock
+            unlock_and_callback
           end
 
           unless executed
