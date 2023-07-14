@@ -127,7 +127,10 @@ module SidekiqUniqueJobs
     #
     def unlock!(conn = nil)
       call_script(:unlock, key.to_a, argv, conn) do |unlocked_jid|
-        reflect(:debug, :unlocked, item, unlocked_jid) if unlocked_jid == job_id
+        if unlocked_jid == job_id
+          reflect(:debug, :unlocked, item, unlocked_jid)
+          reflect(:unlocked, item)
+        end
 
         unlocked_jid
       end
@@ -248,8 +251,12 @@ module SidekiqUniqueJobs
       concurrent_timeout = add_drift(timeout)
 
       reflect(:debug, :timeouts, item,
-              timeouts: { brpoplpush_timeout: brpoplpush_timeout, concurrent_timeout: concurrent_timeout })
+              timeouts: {
+                brpoplpush_timeout: brpoplpush_timeout,
+                concurrent_timeout: concurrent_timeout,
+              })
 
+      # NOTE: When debugging, change .value to .value!
       primed_jid = Concurrent::Promises
                    .future(conn) { |red_con| pop_queued(red_con, timeout) }
                    .value
@@ -300,7 +307,10 @@ module SidekiqUniqueJobs
     def brpoplpush(conn, wait)
       # passing timeout 0 to brpoplpush causes it to block indefinitely
       raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
-      return conn.brpoplpush(key.queued, key.primed, wait) if conn.instance_of?(::Redis::Namespace)
+
+      if defined?(::Redis::Namespace) && conn.instance_of?(::Redis::Namespace)
+        return conn.brpoplpush(key.queued, key.primed, wait)
+      end
 
       if VersionCheck.satisfied?(redis_version, ">= 6.2.0") && conn.respond_to?(:blmove)
         conn.blmove(key.queued, key.primed, "RIGHT", "LEFT", timeout: wait)
