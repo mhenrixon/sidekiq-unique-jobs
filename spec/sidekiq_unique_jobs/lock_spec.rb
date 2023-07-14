@@ -45,7 +45,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
 
     it "creates all expected keys in redis" do
       create
-      expect(keys).to match_array([key.digest, key.locked, key.info, key.changelog, key.digests])
+      expect(keys).to contain_exactly(key.digest, key.locked, key.info, key.changelog, key.digests)
       expect(create.locked_jids).to include(job_id)
     end
   end
@@ -60,7 +60,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
     context "when locks exists" do
       before { simulate_lock(key, job_id) }
 
-      it { is_expected.to match_array([job_id]) }
+      it { is_expected.to contain_exactly(job_id) }
     end
   end
 
@@ -70,7 +70,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
     it "creates keys and adds job_id to locked hash" do
       expect { lock }.to change { entity.locked_jids }.to([job_id])
 
-      expect(keys).to match_array([key.digest, key.locked, key.info, key.changelog, key.digests])
+      expect(keys).to contain_exactly(key.digest, key.locked, key.info, key.changelog, key.digests)
     end
   end
 
@@ -82,7 +82,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
     it "creates keys and adds job_id to locked hash" do
       expect { lock }.to change { entity.locked_jids }.to([job_id])
       del
-      expect(keys).not_to match_array([key.digest, key.locked, key.info, key.changelog, key.digests])
+      expect(keys).not_to contain_exactly(key.digest, key.locked, key.info, key.changelog, key.digests)
     end
   end
 
@@ -115,7 +115,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
         }
       end
 
-      it { is_expected.to match_array([locked_entry, queued_entry]) }
+      it { is_expected.to contain_exactly(locked_entry, queued_entry) }
     end
   end
 end

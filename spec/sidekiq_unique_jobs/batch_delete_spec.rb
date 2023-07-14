@@ -26,8 +26,8 @@ RSpec.describe SidekiqUniqueJobs::BatchDelete do
       call
 
       locks.all? do |lock|
-        expect(lock.all_jids).to match_array([])
-        expect(unique_keys).to match_array([])
+        expect(lock.all_jids).to be_empty
+        expect(unique_keys).to be_empty
       end
     end
   end

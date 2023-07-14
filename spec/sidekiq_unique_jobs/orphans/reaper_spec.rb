@@ -68,7 +68,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         context "without scheduled job" do
           it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
-            expect(unique_keys).to match_array([])
+            expect(unique_keys).to be_empty
           end
         end
 
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           it "keeps the digest" do
             expect { call }.not_to change { digests.count }.from(1)
-            expect(unique_keys).not_to match_array([])
+            expect(unique_keys).not_to be_empty
           end
         end
       end
@@ -88,7 +88,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         context "without job in retry" do
           it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
-            expect(unique_keys).to match_array([])
+            expect(unique_keys).to be_empty
           end
         end
 
@@ -97,7 +97,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           it "keeps the digest" do
             expect { call }.not_to change { digests.count }.from(1)
-            expect(unique_keys).not_to match_array([])
+            expect(unique_keys).not_to be_empty
           end
         end
       end
@@ -106,7 +106,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         context "without enqueued job" do
           it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
-            expect(unique_keys).to match_array([])
+            expect(unique_keys).to be_empty
           end
         end
 
@@ -115,7 +115,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           it "keeps the digest" do
             expect { call }.not_to change { digests.count }.from(1)
-            expect(unique_keys).not_to match_array([])
+            expect(unique_keys).not_to be_empty
           end
         end
       end
@@ -124,7 +124,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         context "without job in process" do
           it "deletes the digest" do
             expect { call }.to change { digests.count }.by(-1)
-            expect(unique_keys).to match_array([])
+            expect(unique_keys).to be_empty
           end
         end
 
@@ -159,7 +159,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
-                expect(unique_keys).not_to match_array([])
+                expect(unique_keys).not_to be_empty
               end
             end
           end
@@ -170,7 +170,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
-                expect(unique_keys).not_to match_array([])
+                expect(unique_keys).not_to be_empty
               end
             end
 
@@ -179,7 +179,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
-                expect(unique_keys).not_to match_array([])
+                expect(unique_keys).not_to be_empty
               end
             end
           end
@@ -192,7 +192,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
               it "deletes the digest" do
                 expect { call }.to change { digests.count }.by(-1)
-                expect(unique_keys).to match_array([])
+                expect(unique_keys).to be_empty
               end
             end
 
@@ -201,7 +201,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
-                expect(unique_keys).not_to match_array([])
+                expect(unique_keys).not_to be_empty
               end
             end
           end

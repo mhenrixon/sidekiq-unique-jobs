@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::Set do
     context "with entries" do
       before { sadd(digest, job_id) }
 
-      it { is_expected.to match_array([job_id]) }
+      it { is_expected.to contain_exactly(job_id) }
     end
   end
 

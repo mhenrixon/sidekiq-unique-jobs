@@ -67,7 +67,7 @@ RSpec.describe "queue.lua" do
         expect(get(key.digest)).to eq(job_id_two)
         expect(pttl(key.digest)).to eq(-1) # key exists without pttl
         expect(llen(key.queued)).to eq(1)
-        expect(lrange(key.queued, 0, -1)).to match_array([job_id_two])
+        expect(lrange(key.queued, 0, -1)).to contain_exactly(job_id_two)
         expect(rpop(key.queued)).to eq(job_id_two)
         expect(exists(key.primed)).to be(false)
         expect(exists(key.locked)).to be(false)
@@ -84,7 +84,7 @@ RSpec.describe "queue.lua" do
         expect(get(key.digest)).to eq(job_id_one)
         expect(pttl(key.digest)).to eq(-1) # key exists without pttl
         expect(llen(key.queued)).to eq(2)
-        expect(lrange(key.queued, 0, -1)).to match_array([job_id_two, job_id_one])
+        expect(lrange(key.queued, 0, -1)).to contain_exactly(job_id_two, job_id_one)
         expect(rpop(key.queued)).to eq(job_id_two)
         expect(exists(key.primed)).to be(false)
         expect(exists(key.locked)).to be(false)
@@ -104,7 +104,7 @@ RSpec.describe "queue.lua" do
       expect(get(key.digest)).to eq(job_id_one)
       expect(pttl(key.digest)).to eq(-1) # key exists without pttl
       expect(llen(key.queued)).to eq(1)
-      expect(lrange(key.queued, 0, -1)).to match_array([job_id_one])
+      expect(lrange(key.queued, 0, -1)).to contain_exactly(job_id_one)
       expect(rpop(key.queued)).to eq(job_id_one)
       expect(exists(key.primed)).to be(false)
       expect(exists(key.locked)).to be(false)
@@ -141,7 +141,7 @@ RSpec.describe "queue.lua" do
         expect(queue).to eq(job_id_one)
         expect(get(key.digest)).to eq(job_id_one)
         expect(llen(key.queued)).to eq(1) # There should be no keys available to be locked
-        expect(lrange(key.queued, 0, -1)).to match_array([job_id_one])
+        expect(lrange(key.queued, 0, -1)).to contain_exactly(job_id_one)
         expect(llen(key.primed)).to eq(0)
         expect(exists(key.locked)).to be(true)
         expect(hexists(key.locked, job_id_two)).to be(true)
