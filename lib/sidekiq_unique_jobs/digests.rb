@@ -7,6 +7,16 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Digests < Redis::SortedSet
+    #
+    # @return [Integer] the number of matches to return by default
+    DEFAULT_COUNT = 1_000
+    #
+    # @return [String] the default pattern to use for matching
+    SCAN_PATTERN  = "*"
+    #
+    # @return [Array(String, String, String, String)] The empty runtime or queuetime keys.
+    EMPTY_KEYS_SEGMENT = ["", "", "", ""].freeze
+
     def initialize(digests_key = DIGESTS)
       super(digests_key)
     end
@@ -43,27 +53,12 @@ module SidekiqUniqueJobs
     # @param [String] digest a unique digest to delete
     # @param queuetime [Boolean] Whether to delete queue locks.
     # @param runtime [Boolean] Whether to delete run locks.
-    def delete_by_digest(digest, queuetime: true, runtime: true) # rubocop:disable Metrics/MethodLength
+    def delete_by_digest(digest, queuetime: true, runtime: true)
       result, elapsed = timed do
-        queue = queuetime ? digest : ""
-        queue_queued = queuetime ? "#{digest}:QUEUED" : ""
-        queue_primed = queuetime ? "#{digest}:PRIMED" : ""
-        queue_locked = queuetime ? "#{digest}:LOCKED" : ""
-        run = runtime ? "#{digest}:RUN" : ""
-        run_queued = runtime ? "#{digest}:RUN:QUEUED" : ""
-        run_primed = runtime ? "#{digest}:RUN:PRIMED" : ""
-        run_locked = runtime ? "#{digest}:RUN:LOCKED" : ""
-        call_script(:delete_by_digest, [
-                      queue,
-                      queue_queued,
-                      queue_primed,
-                      queue_locked,
-                      run,
-                      run_queued,
-                      run_primed,
-                      run_locked,
-                      key,
-                    ])
+        call_script(
+          :delete_by_digest,
+          queuetime_keys(queuetime ? digest : nil) + runtime_keys(runtime ? digest : nil) + [key],
+        )
       end
 
       log_info("#{__method__}(#{digest}) completed in #{elapsed}ms")
@@ -106,6 +101,34 @@ module SidekiqUniqueJobs
           digests[1].map { |digest, score| Lock.new(digest, time: score) }, # entries
         ]
       end
+    end
+
+    private
+
+    # @param digest [String, nil] The digest to form runtime keys from.
+    # @return [Array(String, String, String, String)] The list of runtime keys or empty strings if +digest+ was +nil+.
+    def runtime_keys(digest)
+      return EMPTY_KEYS_SEGMENT unless digest
+
+      [
+        "#{digest}:RUN",
+        "#{digest}:RUN:QUEUED",
+        "#{digest}:RUN:PRIMED",
+        "#{digest}:RUN:LOCKED",
+      ]
+    end
+
+    # @param digest [String, nil] The digest to form queuetime keys from.
+    # @return [Array(String, String, String, String)] The list of queuetime keys or empty strings if +digest+ was +nil+.
+    def queuetime_keys(digest)
+      return EMPTY_KEYS_SEGMENT unless digest
+
+      [
+        digest,
+        "#{digest}:QUEUED",
+        "#{digest}:PRIMED",
+        "#{digest}:LOCKED",
+      ]
     end
   end
 end
