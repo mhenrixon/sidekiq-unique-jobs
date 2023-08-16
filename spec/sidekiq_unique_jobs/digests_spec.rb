@@ -141,4 +141,16 @@ RSpec.describe SidekiqUniqueJobs::Digests do
         )
     end
   end
+
+  describe "#page" do
+    include_context "with a regular job"
+  
+    it "returns the correct amount of results" do
+      total_size, _cursor, locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
+
+      expect(locks.size).to be(total_size)
+      expect(locks.size).to be(expected_keys.size)
+      expect(expected_keys.keys).to match_array(locks.map(&:key).map(&:digest))
+    end
+  end
 end
