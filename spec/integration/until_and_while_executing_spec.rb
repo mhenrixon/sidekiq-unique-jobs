@@ -4,14 +4,14 @@ unless ENV.fetch("CI", false)
   RSpec.describe "SidekiqUniqueJobs::Lock::UntilAndWhileExecuting" do
     before do
       digests.delete_by_pattern("*")
-      toxic_redis_url = ENV["CI"] ? "toxiproxy:21212" : "localhost:21212"
-      redis_url       = ENV["CI"] ? ENV.fetch("REDIS_URL", nil) : "localhost:6379"
+      toxi_redis_url = ENV.fetch("TOXI_REDIS_URL", "localhost:21212")
+      redis_url      = ENV.fetch("REDIS_URL", "localhost:6379")
 
-      Toxiproxy.host = "http://toxiproxy:8474" if ENV["CI"]
+      Toxiproxy.host = ENV.fetch("TOXI_PROXY_HOST", nil)
       Toxiproxy.populate([
                            {
                              name: :redis,
-                             listen: toxic_redis_url,
+                             listen: toxi_redis_url,
                              upstream: redis_url,
                            },
                          ])
