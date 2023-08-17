@@ -33,9 +33,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       let(:jid) { "bogus" }
 
       before do
-        allow(strategy).to receive(:delete_job_by_digest).and_return(jid)
+        allow(strategy).to receive_messages(delete_job_by_digest: jid, delete_lock: 9)
         allow(strategy).to receive(:log_info).and_call_original
-        allow(strategy).to receive(:delete_lock).and_return(9)
       end
 
       it "logs important information" do
@@ -50,9 +49,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       let(:jid) { "bogus" }
 
       before do
-        allow(strategy).to receive(:delete_job_by_digest).and_return(jid)
+        allow(strategy).to receive_messages(delete_job_by_digest: jid, delete_lock: nil)
         allow(strategy).to receive(:log_info).and_call_original
-        allow(strategy).to receive(:delete_lock).and_return(nil)
       end
 
       it "logs important information" do
@@ -68,9 +66,8 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Replace do
       let(:block) { nil }
 
       before do
-        allow(strategy).to receive(:delete_job_by_digest).and_return(jid)
+        allow(strategy).to receive_messages(delete_job_by_digest: jid, delete_lock: nil)
         allow(strategy).to receive(:log_info).and_call_original
-        allow(strategy).to receive(:delete_lock).and_return(nil)
       end
 
       it "does not call block" do

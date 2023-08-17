@@ -5,7 +5,8 @@ require "sidekiq/testing"
 RSpec.configure do |config|
   config.before do |example|
     redis_db = example.metadata.fetch(:redis_db, 0)
-    redis_url = "redis://localhost/#{redis_db}"
+    redis_host = ENV.fetch("REDIS_HOST", "localhost")
+    redis_url = "redis://#{redis_host}/#{redis_db}"
     redis_options = { url: redis_url, driver: :ruby }
     # redis = Sidekiq::RedisConnection.create(redis_options)
 

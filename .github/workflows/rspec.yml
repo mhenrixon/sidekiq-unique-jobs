@@ -70,4 +70,8 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: 2.4.12
           bundler-cache: true
-      - run: bin/rspec --require spec_helper --tag ~perf
+      - run: >-
+          REDIS_HOST=localhost
+          TOXI_REDIS_URL=toxiproxy:21212
+          TOXI_PROXY_HOST=http://toxiproxy:8474
+          bin/rspec --require spec_helper --tag ~perf
