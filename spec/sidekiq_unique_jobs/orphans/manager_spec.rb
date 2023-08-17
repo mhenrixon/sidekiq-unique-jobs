@@ -16,11 +16,9 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     before do
       allow(SidekiqUniqueJobs::Orphans::Observer).to receive(:new).and_return(observer)
 
-      allow(described_class).to receive(:task).and_return(task)
+      allow(described_class).to receive_messages(task: task, log_info: nil)
       allow(task).to receive(:add_observer).with(observer)
       allow(task).to receive(:execute)
-
-      allow(described_class).to receive(:log_info).and_return(nil)
     end
 
     context "when registered?" do
@@ -72,11 +70,9 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Manager do
     before do
       allow(SidekiqUniqueJobs::Orphans::Observer).to receive(:new).and_return(observer)
 
-      allow(described_class).to receive(:task).and_return(task)
+      allow(described_class).to receive_messages(task: task, log_info: nil)
       allow(task).to receive(:add_observer).with(observer)
       allow(task).to receive(:execute)
-
-      allow(described_class).to receive(:log_info).and_return(nil)
     end
 
     context "when unregistered?" do

@@ -10,8 +10,7 @@ RSpec.shared_examples "an executing lock with error handling" do
 
   before do
     allow(lock).to receive(:locked?).and_return(initially_locked?, locked?)
-    allow(lock).to receive(:unlock).and_return(true)
-    allow(lock).to receive(:delete).and_return(true)
+    allow(lock).to receive_messages(unlock: true, delete: true)
     allow(callback).to receive(:call).and_call_original
     allow(block).to receive(:call).and_call_original
     allow(lock).to receive(:log_warn)
