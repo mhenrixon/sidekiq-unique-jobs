@@ -42,6 +42,7 @@ module SidekiqUniqueJobs
         with_logging_context do
           executed = locksmith.execute do
             yield
+            item[JID]
           ensure
             unlock_and_callback
           end
