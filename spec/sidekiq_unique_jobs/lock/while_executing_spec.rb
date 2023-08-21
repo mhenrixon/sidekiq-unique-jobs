@@ -91,10 +91,10 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
       it "reflects execution_failed" do
         process_one.execute do
-          process_two.execute {
+          process_two.execute do
             puts "BOGUS!"
             nil
-          }
+          end
 
           nil
         end
