@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::LockDigest, perf: true do
-  let(:lock_digest)  { described_class.new(item) }
-  let(:job_class)    { UntilExecutedJob }
-  let(:class_name)   { worker_class.to_s }
-  let(:queue)        { "myqueue" }
-  let(:args)         { [[1, 2]] }
+  let(:service)    { described_class.new(item) }
+  let(:job_class)  { UntilExecutedJob }
+  let(:class_name) { job_class.to_s }
+  let(:queue)      { "myqueue" }
+  let(:args)       { [[1, 2]] }
   let(:item) do
     {
       "class" => class_name,
@@ -15,7 +15,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, perf: true do
   end
 
   describe "#lock_digest" do
-    subject(:lock_digest) { lock_digest.lock_digest }
+    subject(:lock_digest) { service.lock_digest }
 
     it "performs in under 0.1 ms" do
       expect { lock_digest }.to perform_under(0.1).ms

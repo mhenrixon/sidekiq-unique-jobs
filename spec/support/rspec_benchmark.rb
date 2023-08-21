@@ -9,6 +9,8 @@ begin
   end
 
   RSpec::Benchmark.configure do |config|
+    config.run_in_subprocess = false
+    config.disable_gc = false
     config.samples = 10
   end
 rescue LoadError
