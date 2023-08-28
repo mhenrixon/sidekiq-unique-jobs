@@ -13,8 +13,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
   end
 
   before do
-    allow(strategy).to receive(:deadset).and_return(deadset)
-    allow(strategy).to receive(:payload).and_return(payload)
+    allow(strategy).to receive_messages(deadset: deadset, payload: payload)
   end
 
   describe "#replace?" do

@@ -16,10 +16,8 @@ RSpec.describe SidekiqUniqueJobs::Orphans::ReaperResurrector do
     end
 
     before do
-      allow(described_class).to receive(:task).and_return(task)
+      allow(described_class).to receive_messages(task: task, log_info: nil)
       allow(task).to receive(:execute)
-
-      allow(described_class).to receive(:log_info).and_return(nil)
     end
 
     context "when resurrector is disabled" do
