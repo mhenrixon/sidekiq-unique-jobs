@@ -91,10 +91,12 @@ RSpec.describe SidekiqUniqueJobs::Lock::WhileExecuting do
 
       it "reflects execution_failed" do
         process_one.execute do
-          process_two.execute { puts "BOGUS!" }
-          # NOTE: Below looks weird but tests that
-          #   the result from process_two (which is nil) isn't considered.
-          jid_one
+          process_two.execute do
+            puts "BOGUS!"
+            nil
+          end
+
+          nil
         end
 
         expect(process_one).not_to have_received(:reflect).with(:execution_failed, item_one)
