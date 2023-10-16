@@ -26,6 +26,21 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
         allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_call_original
       end
 
+      context "when schedule_in is set to ten seconds" do
+        around do |block|
+          UniqueJobOnConflictReschedule.use_options(schedule_in: 10) do
+            block.call
+          end
+        end
+
+        it "schedules a job ten seconds from now" do
+          expect { call }.to change { schedule_count }.by(1)
+
+          expect(UniqueJobOnConflictReschedule).to have_received(:perform_in)
+            .with(10, *item["args"])
+        end
+      end
+
       it "schedules a job five seconds from now" do
         expect { call }.to change { schedule_count }.by(1)
 
