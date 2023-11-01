@@ -79,7 +79,7 @@ module SidekiqUniqueJobs
       def expired_digests
         max_score = (start_time - reaper_timeout).to_f
 
-        conn.zrange(EXPIRING_DIGESTS, 0, max_score, byscore: true)
+        conn.zrange(EXPIRING_DIGESTS, 0, max_score, "byscore")
       end
 
       #

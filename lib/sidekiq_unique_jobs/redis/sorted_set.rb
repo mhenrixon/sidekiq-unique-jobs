@@ -24,10 +24,11 @@ module SidekiqUniqueJobs
       # @return [Hash] when given with_scores: true
       #
       def entries(with_scores: true)
-        entrys = redis { |conn| conn.zrange(key, 0, -1, withscores: with_scores) }
-        return entrys unless with_scores
+        return redis { |conn| conn.zrange(key, 0, -1) } unless with_scores
 
-        entrys.each_with_object({}) { |pair, hash| hash[pair[0]] = pair[1] }
+        redis { |conn| conn.zrange(key, 0, -1, "withscores") }.each_with_object({}) do |pair, hash|
+          hash[pair[0]] = pair[1]
+        end
       end
 
       #
