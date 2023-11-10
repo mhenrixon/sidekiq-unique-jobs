@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
+# rubocop:disable RSpec/SpecFilePathFormat, RSpec/FilePath
+RSpec.describe SidekiqUniqueJobs::Locksmith, :perf do
   let(:locksmith_one)   { described_class.new(item_one) }
   let(:locksmith_two)   { described_class.new(item_two) }
 
@@ -49,3 +50,4 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
     expect { locksmith_one.lock {} }.to perform_allocation(Array => 12_640, Hash => 13_888).bytes
   end
 end
+# rubocop:enable RSpec/SpecFilePathFormat, RSpec/FilePath
