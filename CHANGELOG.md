@@ -1,5 +1,18 @@
 # Changelog
 
+## [v8.0.5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.5) (2023-11-11)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.4...v8.0.5)
+
+**Merged pull requests:**
+
+- Bump @babel/traverse from 7.22.8 to 7.23.3 in /myapp [\#819](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/819) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump postcss from 8.4.21 to 8.4.31 in /myapp [\#811](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/811) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix: `while_executing` should not invoke conflict strategy when the job was successfully executed \[v8\] [\#810](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/810) ([cuzik](https://github.com/cuzik))
+- Bump actions/checkout from 3 to 4 [\#808](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/808) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump semver from 6.3.0 to 6.3.1 in /myapp [\#798](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/798) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Because `replace` is a client strategy, it should only remove client locks aka queue locks. [\#778](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/778) ([bigzed](https://github.com/bigzed))
+
 ## [v8.0.4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.4) (2023-11-11)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.30...v8.0.4)
