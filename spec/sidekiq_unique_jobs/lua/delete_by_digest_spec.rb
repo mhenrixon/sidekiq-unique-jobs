@@ -40,12 +40,12 @@ RSpec.describe "delete_by_digest.lua" do
   it "deletes the expected keys from redis" do
     expect(delete_by_digest).to eq(8)
 
-    expect(queued.count).to be == 0
-    expect(primed.count).to be == 0
-    expect(locked.count).to be == 0
+    expect(queued.count).to eq 0
+    expect(primed.count).to eq 0
+    expect(locked.count).to eq 0
 
-    expect(run_queued.count).to be == 0
-    expect(run_primed.count).to be == 0
-    expect(run_locked.count).to be == 0
+    expect(run_queued.count).to eq 0
+    expect(run_primed.count).to eq 0
+    expect(run_locked.count).to eq 0
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/FilePath
+# rubocop:disable RSpec/SpecFilePathFormat, RSpec/FilePath
 RSpec.describe SidekiqUniqueJobs do
   describe "define custom lock strategies" do
     subject(:middleware_call) do
@@ -65,4 +65,4 @@ RSpec.describe SidekiqUniqueJobs do
     end
   end
 end
-# rubocop:enable RSpec/FilePath
+# rubocop:enable RSpec/SpecFilePathFormat, RSpec/FilePath

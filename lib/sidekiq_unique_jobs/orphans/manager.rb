@@ -192,7 +192,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def register_reaper_process
-        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, nx: true, ex: drift_reaper_interval) }
+        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, "nx", "ex", drift_reaper_interval) }
       end
 
       #
@@ -202,7 +202,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def refresh_reaper_mutex
-        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, ex: drift_reaper_interval) }
+        redis { |conn| conn.set(UNIQUE_REAPER, current_timestamp, "ex", drift_reaper_interval) }
       end
 
       #

@@ -36,13 +36,13 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     context "when given an array of arrays" do
       let(:values) { [[1.0, "string"], [2.0, "other"]] }
 
-      it { is_expected.to be == 2 }
+      it { is_expected.to eq 2 }
     end
 
     context "when given a string entries" do
       let(:values) { "abcdef" }
 
-      it { is_expected.to be == 1 }
+      it { is_expected.to eq 1 }
     end
   end
 
@@ -50,13 +50,13 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     subject(:count) { entity.count }
 
     context "without entries" do
-      it { is_expected.to be == 0 }
+      it { is_expected.to eq 0 }
     end
 
     context "with entries" do
       before { zadd(digest, now_f, job_id) }
 
-      it { is_expected.to be == 1 }
+      it { is_expected.to eq 1 }
     end
   end
 
@@ -64,7 +64,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     subject(:clear) { entity.clear }
 
     context "without entries" do
-      it { is_expected.to be == 0 }
+      it { is_expected.to eq 0 }
     end
 
     context "with entries" do
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
         zcard(digest)
       end
 
-      it { is_expected.to be == 100 }
+      it { is_expected.to eq 100 }
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe SidekiqUniqueJobs::Redis::SortedSet do
     context "with entries" do
       before { zadd(digest, now_f, job_id) }
 
-      it { is_expected.to be == 0 }
+      it { is_expected.to eq 0 }
     end
   end
 end
