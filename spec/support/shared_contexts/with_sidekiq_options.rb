@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_context "with global config", with_global_config: true do
+RSpec.shared_context "with global config", :with_global_config do
   let(:global_config) { {} }
 
   around do |example|
@@ -8,7 +8,7 @@ RSpec.shared_context "with global config", with_global_config: true do
   end
 end
 
-RSpec.shared_context "with job options", with_job_options: true do
+RSpec.shared_context "with job options", :with_job_options do
   let(:job_options) { {} }
 
   around do |example|
@@ -16,7 +16,7 @@ RSpec.shared_context "with job options", with_job_options: true do
   end
 end
 
-RSpec.shared_context "with sidekiq options", with_sidekiq_options: true do |**_options|
+RSpec.shared_context "with sidekiq options", :with_sidekiq_options do |**_options|
   let(:sidekiq_options) { {} }
 
   around do |example|

@@ -1,11 +1,41 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v8.0.4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.4) (2023-11-11)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.3...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.30...v8.0.4)
+
+**Implemented enhancements:**
+
+- fix: ignore reek for now [\#818](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/818) ([mhenrixon](https://github.com/mhenrixon))
+- fix\(ci\): allow tests to run in docker [\#805](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/805) ([Earlopain](https://github.com/Earlopain))
+- chore\(deps\): bump'n lint'n such [\#797](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/797) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Sidekiq 7: Unsupported command argument type: TrueClass [\#816](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/816)
+- fix\(web\): don't show bogus lock digests [\#804](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/804) ([Earlopain](https://github.com/Earlopain))
 
 **Closed issues:**
 
+- register\_reaper\_process nx: true crash Sidekiq on startup [\#817](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/817)
+- Should client middleware also be added to the Sidekiq server config? [\#803](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/803)
+- 8.0.1 Time on locks & changelog UI is incorrect/wrong [\#761](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/761)
+- Job executed twice when reaper runs [\#738](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/738)
+
+**Merged pull requests:**
+
+- fix: Sidekiq 7.2 throws TypeError: Unsupported command argument type: TrueClass when using byscore: true  [\#815](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/815) ([Amnesthesia](https://github.com/Amnesthesia))
+- Add sidekiq\_option for on-conflict-reschedule perform\_in time [\#813](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/813) ([mgmarlow](https://github.com/mgmarlow))
+- Handle strategy fallbacks properly [\#809](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/809) ([matejrisek](https://github.com/matejrisek))
+- Fix CI status badge [\#802](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/802) ([tagliala](https://github.com/tagliala))
+
+## [v7.1.30](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.30) (2023-07-17)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.3...v7.1.30)
+
+**Closed issues:**
+
+- Release new gem version with "fix replace deprecated rpoplpush w/lmove" [\#795](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/795)
 - Redis has deprecated the `rpoplpush`command [\#793](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/793)
 - Deprecation Warning: Use of rpoplpush command in Redis [\#792](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/792)
 - Logging::Middleware.context can include empty string as key when lock is not set in job hash [\#785](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/785)

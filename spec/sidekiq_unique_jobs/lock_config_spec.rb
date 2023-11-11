@@ -146,6 +146,12 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
 
       it { is_expected.to eq(:replace) }
     end
+
+    context "when on_conflict is defined only for server" do
+      let(:on_conflict) { { server: :log } }
+
+      it { is_expected.to be_nil }
+    end
   end
 
   describe "#on_server_conflict" do
@@ -157,6 +163,12 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
       let(:on_conflict) { { client: :replace, server: :reschedule } }
 
       it { is_expected.to eq(:reschedule) }
+    end
+
+    context "when on_conflict is defined only for client" do
+      let(:on_conflict) { { client: :log } }
+
+      it { is_expected.to be_nil }
     end
   end
 end

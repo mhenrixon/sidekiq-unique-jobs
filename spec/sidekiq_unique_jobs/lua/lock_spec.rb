@@ -20,7 +20,7 @@ RSpec.describe "lock.lua" do
   let(:now_f)      { SidekiqUniqueJobs.now_f }
   let(:lock_limit) { 1 }
 
-  shared_context "with a primed key", with_primed_key: true do
+  shared_context "with a primed key", :with_primed_key do
     before do
       call_script(:queue, key.to_a, argv_one)
       rpoplpush(key.queued, key.primed)
