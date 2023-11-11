@@ -65,7 +65,7 @@ module SidekiqUniqueJobs
       # @return [Integer] the number of keys deleted
       #
       def delete_lock
-        digests.delete_by_digest(lock_digest)
+        digests.delete_by_digest(lock_digest, runtime: false)
       end
 
       #
