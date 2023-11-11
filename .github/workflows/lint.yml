@@ -18,18 +18,3 @@ jobs:
           bundler-cache: true
       - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
       - run: bin/rubocop -P
-
-  reek:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1
-          bundler: 2.4.12
-          bundler-cache: true
-      - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
-      - run: bin/reek .

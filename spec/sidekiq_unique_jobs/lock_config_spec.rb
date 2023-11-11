@@ -148,7 +148,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     end
 
     context "when on_conflict is defined only for server" do
-      let(:on_conflict) { {server: :log}}
+      let(:on_conflict) { { server: :log } }
 
       it { is_expected.to be_nil }
     end
@@ -166,7 +166,7 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     end
 
     context "when on_conflict is defined only for client" do
-      let(:on_conflict) { {client: :log}}
+      let(:on_conflict) { { client: :log } }
 
       it { is_expected.to be_nil }
     end
