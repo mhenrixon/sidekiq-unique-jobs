@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     # Utility module for reducing the number of uses of logger.
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
@@ -13,12 +13,12 @@ module SidekiqUniqueJobs
       #
       # A convenience method for using the configured gem logger
       #
-      # @see RedisScript#.logger
+      # @see Script#.logger
       #
       # @return [Logger]
       #
       def logger
-        SidekiqUniqueJobs::RedisScript.logger
+        SidekiqUniqueJobs::Script.logger
       end
 
       #

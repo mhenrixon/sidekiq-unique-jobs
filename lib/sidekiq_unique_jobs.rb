@@ -15,7 +15,7 @@ require "pathname"
 require "redis_client"
 require "sidekiq"
 
-require "sidekiq_unique_jobs/redis_script"
+require "sidekiq_unique_jobs/script"
 
 require "sidekiq_unique_jobs/deprecation"
 require "sidekiq_unique_jobs/reflections"

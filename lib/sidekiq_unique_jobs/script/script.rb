@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     # Interface to dealing with .lua files
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>

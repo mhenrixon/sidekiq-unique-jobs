@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     #
     # Misconfiguration is raised when gem is misconfigured
     #

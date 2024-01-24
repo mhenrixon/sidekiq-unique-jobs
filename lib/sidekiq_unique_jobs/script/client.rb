@@ -1,12 +1,12 @@
-# frozen_string_literal: true
+ # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     # Interface to dealing with .lua files
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class Client
-      include SidekiqUniqueJobs::RedisScript::Timing
+      include SidekiqUniqueJobs::Script::Timing
 
       #
       # @!attribute [r] logger
@@ -47,7 +47,7 @@ module SidekiqUniqueJobs
 
         logger.debug("Executed #{script_name}.lua in #{elapsed}ms")
         result
-      rescue ::Redis::CommandError => ex
+      rescue ::RedisClient::CommandError => ex
         handle_error(script_name, conn, ex) do
           execute(script_name, conn, keys: keys, argv: argv)
         end
@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
       #
       # Handle errors to allow retrying errors that need retrying
       #
-      # @param [Redis::CommandError] ex exception to handle
+      # @param [RedisClient::CommandError] ex exception to handle
       #
       # @return [void]
       #
@@ -84,7 +84,7 @@ module SidekiqUniqueJobs
 
       def handle_busy(conn)
         scripts.kill(conn)
-      rescue ::Redis::CommandError => ex
+      rescue ::RedisClient::CommandError => ex
         logger.warn(ex)
       ensure
         yield

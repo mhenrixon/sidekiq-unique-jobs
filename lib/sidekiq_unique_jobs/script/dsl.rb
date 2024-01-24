@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     # Interface to dealing with .lua files
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
       #
       module ClassMethods
         def execute(file_name, conn, keys: [], argv: [])
-          SidekiqUniqueJobs::RedisScript::Client
+          SidekiqUniqueJobs::Script::Client
             .new(config)
             .execute(file_name, conn, keys: keys, argv: argv)
         end
@@ -47,7 +47,7 @@ module SidekiqUniqueJobs
         # The current configuration (See: {.configure} on how to configure)
         #
         #
-        # @return [RedisScript::Config] the gem configuration
+        # @return [Script::Config] the gem configuration
         #
         def config
           MUTEX.synchronize do

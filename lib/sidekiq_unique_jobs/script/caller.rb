@@ -56,7 +56,7 @@ module SidekiqUniqueJobs
       def do_call(file_name, conn, keys, argv)
         argv = argv.dup.push(now_f, debug_lua, max_history, file_name, redis_version)
 
-        Script.execute(file_name, conn, keys: keys, argv: normalize_argv(argv))
+        SidekiqUniqueJobs::Script.execute(file_name, conn, keys: keys, argv: normalize_argv(argv))
       end
 
       #

@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   # Interface to dealing with .lua files
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
-  module RedisScript
+  module Script
     #
     # Class Template provides LUA script partial template rendering
     #

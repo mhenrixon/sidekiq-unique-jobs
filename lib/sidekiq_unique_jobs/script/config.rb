@@ -1,7 +1,7 @@
-# frozen_string_literal: true
+ # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     #
     # Class holding gem configuration
     #

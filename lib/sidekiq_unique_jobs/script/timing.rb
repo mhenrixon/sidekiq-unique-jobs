@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  module RedisScript
+  module Script
     # Handles timing> of things
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
