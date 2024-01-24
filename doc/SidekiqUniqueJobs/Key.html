@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Key
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -210,6 +210,34 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Returns the value of attribute digests.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#expiring_digests-instance_method" title="#expiring_digests (instance method)">#<strong>expiring_digests</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute expiring_digests.</p>
 </div></span>
   
 </li>
@@ -506,27 +534,29 @@
       <pre class="lines">
 
 
-42
-43
-44
-45
 46
 47
 48
 49
-50</pre>
+50
+51
+52
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
-  <span class='ivar'>@digest</span>    <span class='op'>=</span> <span class='id identifier rubyid_digest'>digest</span>
-  <span class='ivar'>@queued</span>    <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>QUEUED</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@primed</span>    <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>PRIMED</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@locked</span>    <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>LOCKED</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@info</span>      <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>INFO</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@changelog</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#CHANGELOGS-constant" title="SidekiqUniqueJobs::CHANGELOGS (constant)">CHANGELOGS</a></span></span>
-  <span class='ivar'>@digests</span>   <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#DIGESTS-constant" title="SidekiqUniqueJobs::DIGESTS (constant)">DIGESTS</a></span></span>
+  <span class='ivar'>@digest</span>           <span class='op'>=</span> <span class='id identifier rubyid_digest'>digest</span>
+  <span class='ivar'>@queued</span>           <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>QUEUED</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@primed</span>           <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>PRIMED</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@locked</span>           <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>LOCKED</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@info</span>             <span class='op'>=</span> <span class='id identifier rubyid_suffixed_key'>suffixed_key</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>INFO</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@changelog</span>        <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#CHANGELOGS-constant" title="SidekiqUniqueJobs::CHANGELOGS (constant)">CHANGELOGS</a></span></span>
+  <span class='ivar'>@digests</span>          <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#DIGESTS-constant" title="SidekiqUniqueJobs::DIGESTS (constant)">DIGESTS</a></span></span>
+  <span class='ivar'>@expiring_digests</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#EXPIRING_DIGESTS-constant" title="SidekiqUniqueJobs::EXPIRING_DIGESTS (constant)">EXPIRING_DIGESTS</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -658,6 +688,48 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_digests'>digests</span>
   <span class='ivar'>@digests</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="expiring_digests-instance_method">
+  
+    #<strong>expiring_digests</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute expiring_digests.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_expiring_digests'>expiring_digests</span>
+  <span class='ivar'>@expiring_digests</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -896,12 +968,12 @@
       <pre class="lines">
 
 
-74
-75
-76</pre>
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_digest'>digest</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_digest'>digest</span>
@@ -942,12 +1014,12 @@
       <pre class="lines">
 
 
-63
-64
-65</pre>
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_digest'>digest</span>
@@ -999,15 +1071,15 @@
       <pre class="lines">
 
 
-83
-84
-85</pre>
+88
+89
+90</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_a'>to_a</span>
-  <span class='lbracket'>[</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='id identifier rubyid_queued'>queued</span><span class='comma'>,</span> <span class='id identifier rubyid_primed'>primed</span><span class='comma'>,</span> <span class='id identifier rubyid_locked'>locked</span><span class='comma'>,</span> <span class='id identifier rubyid_info'>info</span><span class='comma'>,</span> <span class='id identifier rubyid_changelog'>changelog</span><span class='comma'>,</span> <span class='id identifier rubyid_digests'>digests</span><span class='rbracket'>]</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='id identifier rubyid_queued'>queued</span><span class='comma'>,</span> <span class='id identifier rubyid_primed'>primed</span><span class='comma'>,</span> <span class='id identifier rubyid_locked'>locked</span><span class='comma'>,</span> <span class='id identifier rubyid_info'>info</span><span class='comma'>,</span> <span class='id identifier rubyid_changelog'>changelog</span><span class='comma'>,</span> <span class='id identifier rubyid_digests'>digests</span><span class='comma'>,</span> <span class='id identifier rubyid_expiring_digests'>expiring_digests</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1052,12 +1124,12 @@
       <pre class="lines">
 
 
-58
-59
-60</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/key.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_digest'>digest</span>
@@ -1072,9 +1144,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:06 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:23 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

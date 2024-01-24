@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::SidekiqWorkerMethods
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -76,7 +76,7 @@
   
   <dl>
     <dt>Included in:</dt>
-    <dd><span class='object_link'><a href="LockArgs.html" title="SidekiqUniqueJobs::LockArgs (class)">LockArgs</a></span>, <span class='object_link'><a href="LockDigest.html" title="SidekiqUniqueJobs::LockDigest (class)">LockDigest</a></span>, <span class='object_link'><a href="LockTTL.html" title="SidekiqUniqueJobs::LockTTL (class)">LockTTL</a></span>, <span class='object_link'><a href="LockTimeout.html" title="SidekiqUniqueJobs::LockTimeout (class)">LockTimeout</a></span>, <span class='object_link'><a href="OnConflict/Reschedule.html" title="SidekiqUniqueJobs::OnConflict::Reschedule (class)">OnConflict::Reschedule</a></span></dd>
+    <dd><span class='object_link'><a href="LockArgs.html" title="SidekiqUniqueJobs::LockArgs (class)">LockArgs</a></span>, <span class='object_link'><a href="LockDigest.html" title="SidekiqUniqueJobs::LockDigest (class)">LockDigest</a></span>, <span class='object_link'><a href="LockTTL.html" title="SidekiqUniqueJobs::LockTTL (class)">LockTTL</a></span>, <span class='object_link'><a href="LockTimeout.html" title="SidekiqUniqueJobs::LockTimeout (class)">LockTimeout</a></span>, <span class='object_link'><a href="LockType.html" title="SidekiqUniqueJobs::LockType (class)">LockType</a></span>, <span class='object_link'><a href="OnConflict/Reschedule.html" title="SidekiqUniqueJobs::OnConflict::Reschedule (class)">OnConflict::Reschedule</a></span></dd>
   </dl>
   
 
@@ -117,6 +117,37 @@
 
 
 
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#job_class-instance_method" title="#job_class (instance method)">#<strong>job_class</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute job_class.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
 
 
 
@@ -154,7 +185,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#default_worker_options-instance_method" title="#default_worker_options (instance method)">#<strong>default_worker_options</strong>  &#x21d2; Hash&lt;Symbol, Object&gt; </a>
+      <a href="#default_job_options-instance_method" title="#default_job_options (instance method)">#<strong>default_job_options</strong>  &#x21d2; Hash&lt;Symbol, Object&gt; </a>
     
 
     
@@ -177,53 +208,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#sidekiq_worker_class%3F-instance_method" title="#sidekiq_worker_class? (instance method)">#<strong>sidekiq_worker_class?</strong>  &#x21d2; true, false </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Tests that the.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#worker_class-instance_method" title="#worker_class (instance method)">#<strong>worker_class</strong>  &#x21d2; Sidekiq::Worker </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The Sidekiq::Worker implementation.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#worker_class_constantize-instance_method" title="#worker_class_constantize (instance method)">#<strong>worker_class_constantize</strong>(klazz = @worker_class)  &#x21d2; Sidekiq::Worker </a>
+      <a href="#job_class_constantize-instance_method" title="#job_class_constantize (instance method)">#<strong>job_class_constantize</strong>(klazz = @job_class)  &#x21d2; Sidekiq::Worker </a>
     
 
     
@@ -246,7 +231,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#worker_method_defined%3F-instance_method" title="#worker_method_defined? (instance method)">#<strong>worker_method_defined?</strong>(method_sym)  &#x21d2; true, false </a>
+      <a href="#job_method_defined%3F-instance_method" title="#job_method_defined? (instance method)">#<strong>job_method_defined?</strong>(method_sym)  &#x21d2; true, false </a>
     
 
     
@@ -269,7 +254,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#worker_options-instance_method" title="#worker_options (instance method)">#<strong>worker_options</strong>  &#x21d2; Hash </a>
+      <a href="#job_options-instance_method" title="#job_options (instance method)">#<strong>job_options</strong>  &#x21d2; Hash </a>
     
 
     
@@ -289,9 +274,79 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sidekiq_job_class%3F-instance_method" title="#sidekiq_job_class? (instance method)">#<strong>sidekiq_job_class?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Tests that the.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="job_class=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="job_class-instance_method">
+  
+    #<strong>job_class</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute job_class.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+11
+12
+13</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 11</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_job_class'>job_class</span>
+  <span class='ivar'>@job_class</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
 
   <div id="instance_method_details" class="method_details_list">
@@ -336,26 +391,46 @@
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
 42
 43
 44
-45</pre>
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 42</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_after_unlock_hook'>after_unlock_hook</span>
-  <span class='id identifier rubyid_lambda'>lambda</span> <span class='kw'>do</span>
-    <span class='kw'>if</span> <span class='ivar'>@worker_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span>
-      <span class='ivar'>@worker_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span> <span class='comment'># instance method in sidekiq v6
-</span>    <span class='kw'>elsif</span> <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span> <span class='comment'># class method regardless of sidekiq version
-</span>    <span class='kw'>end</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_after_unlock_hook'>after_unlock_hook</span> <span class='comment'># rubocop:disable Metrics/MethodLength
+</span>  <span class='id identifier rubyid_lambda'>lambda</span> <span class='kw'>do</span>
+    <span class='kw'>if</span> <span class='ivar'>@original_job_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span>
+      <span class='comment'># instance method in sidekiq v6
+</span>      <span class='kw'>if</span> <span class='ivar'>@original_job_class</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_arity'>arity</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='comment'># arity check to maintain backwards compatibility
+</span>        <span class='ivar'>@original_job_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+      <span class='kw'>else</span>
+        <span class='ivar'>@original_job_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span>
+      <span class='kw'>end</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span>
+      <span class='comment'># class method regardless of sidekiq version
+</span>      <span class='kw'>if</span> <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:after_unlock</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_arity'>arity</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='comment'># arity check to maintain backwards compatibility
+</span>        <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_after_unlock'>after_unlock</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -364,9 +439,9 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="default_worker_options-instance_method">
+  <h3 class="signature " id="default_job_options-instance_method">
   
-    #<strong>default_worker_options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, Object&gt;</tt> 
+    #<strong>default_job_options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;Symbol, Object&gt;</tt> 
   
 
   
@@ -401,15 +476,23 @@
       <pre class="lines">
 
 
-61
-62
-63</pre>
+76
+77
+78
+79
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 76</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
-  <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_default_job_options'>default_job_options</span>
+  <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:default_job_options</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_job_options'>default_job_options</span>
+  <span class='kw'>else</span>
+    <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_worker_options'>default_worker_options</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -417,132 +500,9 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="sidekiq_worker_class?-instance_method">
+  <h3 class="signature " id="job_class_constantize-instance_method">
   
-    #<strong>sidekiq_worker_class?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Tests that the</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>if worker_class responds to get_sidekiq_options</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>false</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>if worker_class does not respond to get_sidekiq_options</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-25
-26
-27</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 25</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_sidekiq_worker_class?'>sidekiq_worker_class?</span>
-  <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='symbol'>:get_sidekiq_options</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="worker_class-instance_method">
-  
-    #<strong>worker_class</strong>  &#x21d2; <tt><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>The Sidekiq::Worker implementation</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-31
-32
-33</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 31</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_worker_class'>worker_class</span>
-  <span class='ivar'>@_worker_class</span> <span class='op'>||=</span> <span class='id identifier rubyid_worker_class_constantize'>worker_class_constantize</span> <span class='comment'># rubocop:disable Naming/MemoizedInstanceVariableName
-</span><span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="worker_class_constantize-instance_method">
-  
-    #<strong>worker_class_constantize</strong>(klazz = @worker_class)  &#x21d2; <tt><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt> 
+    #<strong>job_class_constantize</strong>(klazz = @job_class)  &#x21d2; <tt><span class='object_link'><a href="../Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Sidekiq::Worker</a></span></tt> 
   
 
   
@@ -578,14 +538,14 @@ failing back to the original argument when the constant can&#39;t be found</p>
       <pre class="lines">
 
 
-51
-52
-53</pre>
+66
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 66</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_worker_class_constantize'>worker_class_constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span> <span class='op'>=</span> <span class='ivar'>@worker_class</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_job_class_constantize'>job_class_constantize</span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span> <span class='op'>=</span> <span class='ivar'>@job_class</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_safe_constantize'><span class='object_link'><a href="../SidekiqUniqueJobs.html#safe_constantize-class_method" title="SidekiqUniqueJobs.safe_constantize (method)">safe_constantize</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_klazz'>klazz</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -594,9 +554,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="worker_method_defined?-instance_method">
+  <h3 class="signature " id="job_method_defined?-instance_method">
   
-    #<strong>worker_method_defined?</strong>(method_sym)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+    #<strong>job_method_defined?</strong>(method_sym)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
   
 
   
@@ -631,15 +591,15 @@ failing back to the original argument when the constant can&#39;t be found</p>
       <pre class="lines">
 
 
-10
-11
-12</pre>
+15
+16
+17</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 10</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 15</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_worker_method_defined?'>worker_method_defined?</span><span class='lparen'>(</span><span class='id identifier rubyid_method_sym'>method_sym</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_method_sym'>method_sym</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_job_method_defined?'>job_method_defined?</span><span class='lparen'>(</span><span class='id identifier rubyid_method_sym'>method_sym</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_method_sym'>method_sym</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -647,9 +607,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="worker_options-instance_method">
+  <h3 class="signature " id="job_options-instance_method">
   
-    #<strong>worker_options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt> 
+    #<strong>job_options</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt> 
   
 
   
@@ -688,19 +648,89 @@ failing back to the original argument when the constant can&#39;t be found</p>
       <pre class="lines">
 
 
-16
-17
-18
-19
-20</pre>
+21
+22
+23
+24
+25</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 16</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 21</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_worker_options'>worker_options</span>
-  <span class='kw'>return</span> <span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_sidekiq_worker_class?'>sidekiq_worker_class?</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_job_options'>job_options</span>
+  <span class='kw'>return</span> <span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_sidekiq_job_class?'>sidekiq_job_class?</span>
 
-  <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='period'>.</span><span class='id identifier rubyid_deep_stringify_keys'>deep_stringify_keys</span>
+  <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='period'>.</span><span class='id identifier rubyid_deep_stringify_keys'>deep_stringify_keys</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sidekiq_job_class?-instance_method">
+  
+    #<strong>sidekiq_job_class?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Tests that the</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>if job_class responds to get_sidekiq_options</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>if job_class does not respond to get_sidekiq_options</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/sidekiq_worker_methods.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sidekiq_job_class?'>sidekiq_job_class?</span>
+  <span class='id identifier rubyid_job_method_defined?'>job_method_defined?</span><span class='lparen'>(</span><span class='symbol'>:get_sidekiq_options</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -712,9 +742,9 @@ failing back to the original argument when the constant can&#39;t be found</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:06 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:23 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

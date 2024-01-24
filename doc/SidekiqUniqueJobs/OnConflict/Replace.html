@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::OnConflict::Replace
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -689,7 +689,7 @@
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/on_conflict/replace.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_lock'>delete_lock</span>
-  <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'>delete_by_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_lock_digest'>lock_digest</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'>delete_by_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_lock_digest'>lock_digest</span><span class='comma'>,</span> <span class='label'>runtime:</span> <span class='kw'>false</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -758,9 +758,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:09 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:26 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::UntilExecuting
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -259,7 +259,11 @@
 33
 34
 35
-36</pre>
+36
+37
+38
+39
+40</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_executing.rb', line 33</span>
@@ -267,6 +271,10 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span>
   <span class='id identifier rubyid_callback_safely'>callback_safely</span> <span class='kw'>if</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
   <span class='kw'>yield</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ex'>ex</span>
+  <span class='id identifier rubyid_reflect'>reflect</span><span class='lparen'>(</span><span class='symbol'>:execution_failed</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span><span class='lparen'>(</span><span class='label'>wait:</span> <span class='int'>1</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -360,9 +368,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:09 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:26 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

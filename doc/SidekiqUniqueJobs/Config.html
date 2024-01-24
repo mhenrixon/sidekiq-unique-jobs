@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Config
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -445,6 +445,38 @@
 </div>
         </dt>
         <dd><pre class="code"><span class='kw'>nil</span></pre></dd>
+      
+        <dt id="LOGGER_ENABLED-constant" class="">LOGGER_ENABLED =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Returns by default false (don&#39;t disable logger).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>by default false (don&#39;t disable logger)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>true</span></pre></dd>
       
         <dt id="ENABLED-constant" class="">ENABLED =
           <div class="docstring">
@@ -1153,10 +1185,6 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-176
-177
-178
-179
 180
 181
 182
@@ -1174,10 +1202,15 @@ raise_on_config_error: false,
 194
 195
 196
-197</pre>
+197
+198
+199
+200
+201
+202</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 176</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 180</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default'>default</span> <span class='comment'># rubocop:disable Metrics/MethodLength
 </span>  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
@@ -1186,6 +1219,7 @@ raise_on_config_error: false,
     <span class='const'><span class='object_link'><a href="#ENABLED-constant" title="SidekiqUniqueJobs::Config::ENABLED (constant)">ENABLED</a></span></span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="#PREFIX-constant" title="SidekiqUniqueJobs::Config::PREFIX (constant)">PREFIX</a></span></span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="#LOGGER_ENABLED-constant" title="SidekiqUniqueJobs::Config::LOGGER_ENABLED (constant)">LOGGER_ENABLED</a></span></span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="#LOCKS-constant" title="SidekiqUniqueJobs::Config::LOCKS (constant)">LOCKS</a></span></span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="#STRATEGIES-constant" title="SidekiqUniqueJobs::Config::STRATEGIES (constant)">STRATEGIES</a></span></span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="#DEBUG_LUA-constant" title="SidekiqUniqueJobs::Config::DEBUG_LUA (constant)">DEBUG_LUA</a></span></span><span class='comma'>,</span>
@@ -1299,16 +1333,16 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-275
-276
-277
-278
-279
 280
-281</pre>
+281
+282
+283
+284
+285
+286</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 275</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 280</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_lock'>add_lock</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_klass'>klass</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_lock_sym'>lock_sym</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1409,16 +1443,16 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-294
-295
-296
-297
-298
 299
-300</pre>
+300
+301
+302
+303
+304
+305</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 294</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 299</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_strategy'>add_strategy</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_klass'>klass</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_strategy_sym'>strategy_sym</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1474,12 +1508,12 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-258
-259
-260</pre>
+263
+264
+265</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 258</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 263</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_class_name'>class_name</span>
   <span class='ivar'>@class_name</span> <span class='op'>||=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
@@ -1532,14 +1566,14 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-246
-247
-248
-249
-250</pre>
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 246</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 251</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_timeout'>default_lock_timeout</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated.</span><span class='tstring_end'>&quot;</span></span> \
@@ -1609,14 +1643,14 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-221
-222
-223
-224
-225</pre>
+226
+227
+228
+229
+230</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 221</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 226</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_timeout='>default_lock_timeout=</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated.</span><span class='tstring_end'>&quot;</span></span> \
@@ -1671,14 +1705,14 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-233
-234
-235
-236
-237</pre>
+238
+239
+240
+241
+242</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 233</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 238</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_ttl'>default_lock_ttl</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated.</span><span class='tstring_end'>&quot;</span></span> \
@@ -1752,14 +1786,14 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-207
-208
-209
-210
-211</pre>
+212
+213
+214
+215
+216</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 207</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 212</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_lock_ttl='>default_lock_ttl=</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[DEPRECATION] `</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_class_name'>class_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is deprecated.</span><span class='tstring_end'>&quot;</span></span> \
@@ -1813,13 +1847,13 @@ raise_on_config_error: false,
       <pre class="lines">
 
 
-308
-309
-310
-311</pre>
+313
+314
+315
+316</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 308</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/config.rb', line 313</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redis_version'>redis_version</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_current_redis_version'>current_redis_version</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_fetch_redis_version'><span class='object_link'><a href="../SidekiqUniqueJobs.html#fetch_redis_version-class_method" title="SidekiqUniqueJobs.fetch_redis_version (method)">fetch_redis_version</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_current_redis_version'>current_redis_version</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#REDIS_VERSION-constant" title="SidekiqUniqueJobs::Config::REDIS_VERSION (constant)">REDIS_VERSION</a></span></span>
@@ -1835,9 +1869,9 @@ raise_on_config_error: false,
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:06 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:24 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

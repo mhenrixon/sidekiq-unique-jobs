@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::WhileExecuting
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -332,7 +332,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol </a>
+      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol, NilClass </a>
     
 
     
@@ -972,7 +972,10 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 49
 50
 51
-52</pre>
+52
+53
+54
+55</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/while_executing.rb', line 41</span>
@@ -981,12 +984,15 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
   <span class='id identifier rubyid_with_logging_context'>with_logging_context</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_executed'>executed</span> <span class='op'>=</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='kw'>do</span>
       <span class='kw'>yield</span>
-      <span class='id identifier rubyid_callback_safely'>callback_safely</span> <span class='kw'>if</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
+      <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#JID-constant" title="SidekiqUniqueJobs::JID (constant)">JID</a></span></span><span class='rbracket'>]</span>
     <span class='kw'>ensure</span>
-      <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
+      <span class='id identifier rubyid_unlock_and_callback'>unlock_and_callback</span>
     <span class='kw'>end</span>
 
-    <span class='id identifier rubyid_call_strategy'>call_strategy</span><span class='lparen'>(</span><span class='label'>origin:</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_executed'>executed</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_executed'>executed</span>
+      <span class='id identifier rubyid_reflect'>reflect</span><span class='lparen'>(</span><span class='symbol'>:execution_failed</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_call_strategy'>call_strategy</span><span class='lparen'>(</span><span class='label'>origin:</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1145,7 +1151,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
       <div class="method_details ">
   <h3 class="signature " id="lock_type-instance_method">
   
-    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt> 
+    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt>, <tt>NilClass</tt> 
   
 
   
@@ -1171,7 +1177,7 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
     <li>
       
       
-        <span class='type'>(<tt>Symbol</tt>)</span>
+        <span class='type'>(<tt>Symbol</tt>, <tt>NilClass</tt>)</span>
       
       
       
@@ -1851,9 +1857,9 @@ See <span class='object_link'><a href="#execute-instance_method" title="SidekiqU
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:09 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:26 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

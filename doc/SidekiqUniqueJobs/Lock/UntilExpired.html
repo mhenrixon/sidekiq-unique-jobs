@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Lock::UntilExpired
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -257,13 +257,17 @@
 
 35
 36
-37</pre>
+37
+38
+39</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/lock/until_expired.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_executed'>executed</span> <span class='op'>=</span> <span class='id identifier rubyid_locksmith'>locksmith</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_reflect'>reflect</span><span class='lparen'>(</span><span class='symbol'>:execution_failed</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_executed'>executed</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -374,9 +378,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:09 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:25 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

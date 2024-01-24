@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Cli
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -374,8 +374,6 @@ rubocop:disable Style/OptionalBooleanParameter</p>
       <pre class="lines">
 
 
-32
-33
 34
 35
 36
@@ -386,16 +384,14 @@ rubocop:disable Style/OptionalBooleanParameter</p>
 41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/cli.rb', line 32</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/cli.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_max_count'>max_count</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:dry_run</span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_max_count'>max_count</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_say'>say</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Would delete </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='embexpr_end'>}</span><span class='tstring_content'> digests matching &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_pattern'>pattern</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_count_entries_for_del'>count_entries_for_del</span><span class='lparen'>(</span><span class='id identifier rubyid_max_count'>max_count</span><span class='comma'>,</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
-    <span class='id identifier rubyid_deleted_count'>deleted_count</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_pattern'>delete_by_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_max_count'>max_count</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_say'>say</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Deleted </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_deleted_count'>deleted_count</span><span class='embexpr_end'>}</span><span class='tstring_content'> digests matching &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_pattern'>pattern</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_del_entries'>del_entries</span><span class='lparen'>(</span><span class='id identifier rubyid_max_count'>max_count</span><span class='comma'>,</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -432,15 +428,19 @@ rubocop:disable Style/OptionalBooleanParameter</p>
 23
 24
 25
-26</pre>
+26
+27
+28</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/cli.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_entries'>entries</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_say'>say</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Found </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='embexpr_end'>}</span><span class='tstring_content'> digests matching &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_pattern'>pattern</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;:</span><span class='tstring_end'>&quot;</span></span>
-  <span class='id identifier rubyid_print_in_columns'>print_in_columns</span><span class='lparen'>(</span><span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
+  <span class='id identifier rubyid_max_count'>max_count</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_say'>say</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Searching for regular digests</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_list_entries'>list_entries</span><span class='lparen'>(</span><span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_max_count'>max_count</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_say'>say</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Searching for expiring digests</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_list_entries'>list_entries</span><span class='lparen'>(</span><span class='id identifier rubyid_expiring_digests'>expiring_digests</span><span class='period'>.</span><span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_max_count'>max_count</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -452,9 +452,9 @@ rubocop:disable Style/OptionalBooleanParameter</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:06 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:23 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

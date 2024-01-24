@@ -6,7 +6,7 @@
 <title>
   Module: Sidekiq::Worker::ClassMethods
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -71,6 +71,11 @@
   
   
   
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Overrides/ClassMethods.html" title="Sidekiq::Worker::Overrides::ClassMethods (module)">Overrides::ClassMethods</a></span></dd>
+  </dl>
+  
   
 
   
@@ -78,14 +83,16 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/sidekiq_unique_jobs/testing.rb</dd>
+    <dd>lib/sidekiq_unique_jobs/testing.rb<span class="defines">,<br />
+  lib/sidekiq_unique_jobs/testing.rb</span>
+</dd>
   </dl>
   
 </div>
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    <p>Adds class methods to Sidekiq::Worker</p>
+    <p>Prepends methods to Sidekiq::Worker</p>
 
 
   </div>
@@ -116,6 +123,11 @@
 
     
   </span>
+  
+    <span class="note title not_defined_here">
+      included
+      from <span class='object_link'><a href="Overrides/ClassMethods.html#clear-instance_method" title="Sidekiq::Worker::Overrides::ClassMethods#clear (method)">Overrides::ClassMethods</a></span>
+    </span>
   
   
   
@@ -158,6 +170,8 @@
   
 
 
+  
+  
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
@@ -172,6 +186,11 @@
   
 
   
+    <span class="not_defined_here">
+      Originally defined in module
+        <span class='object_link'><a href="Overrides/ClassMethods.html#clear-instance_method" title="Sidekiq::Worker::Overrides::ClassMethods#clear (method)">Overrides::ClassMethods</a></span>
+    </span>
+  
 </h3><div class="docstring">
   <div class="discussion">
     <p>Clears the jobs for this worker and removes all locks</p>
@@ -182,35 +201,7 @@
 <div class="tags">
   
 
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-64
-65
-66
-67
-68
-69
-70
-71</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 64</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_clear'>clear</span>
-  <span class='id identifier rubyid_jobs'>jobs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_job'>job</span><span class='op'>|</span>
-    <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs/Unlockable.html" title="SidekiqUniqueJobs::Unlockable (module)">Unlockable</a></span></span><span class='period'>.</span><span class='id identifier rubyid_unlock'><span class='object_link'><a href="../../SidekiqUniqueJobs/Unlockable.html#unlock-class_method" title="SidekiqUniqueJobs::Unlockable.unlock (method)">unlock</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
-
-  <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>Queues</span><span class='lbracket'>[</span><span class='id identifier rubyid_queue'>queue</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
-  <span class='id identifier rubyid_jobs'>jobs</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
+</div>
 </div>
     
       <div class="method_details ">
@@ -266,18 +257,24 @@
       <pre class="lines">
 
 
-51
-52
-53
-54
-55
-56
-57
-58
-59</pre>
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_use_options'>use_options</span><span class='lparen'>(</span><span class='id identifier rubyid_tmp_config'>tmp_config</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_old_options'>old_options</span> <span class='op'>=</span> <span class='id identifier rubyid_sidekiq_options_hash'>sidekiq_options_hash</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
@@ -285,7 +282,13 @@
 
   <span class='kw'>yield</span>
 <span class='kw'>ensure</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sidekiq_options_hash'>sidekiq_options_hash</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'>DEFAULT_WORKER_OPTIONS</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sidekiq_options_hash'>sidekiq_options_hash</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:default_job_options</span><span class='rparen'>)</span>
+      <span class='const'><span class='object_link'><a href="../../Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_job_options'>default_job_options</span>
+    <span class='kw'>else</span>
+      <span class='const'>DEFAULT_WORKER_OPTIONS</span>
+    <span class='kw'>end</span>
+
   <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span><span class='lparen'>(</span><span class='id identifier rubyid_old_options'>old_options</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -298,9 +301,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:05 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:23 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>

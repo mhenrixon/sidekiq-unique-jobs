@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Web
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -153,7 +153,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/MethodLength, Metrics/AbcSize.</p>
+    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity.</p>
 </div></span>
   
 </li>
@@ -179,7 +179,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>rubocop:disable Metrics/MethodLength, Metrics/AbcSize</p>
+    <p>rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity</p>
 
 
   </div>
@@ -193,6 +193,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
       <pre class="lines">
 
 
+10
 11
 12
 13
@@ -258,12 +259,29 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 73
 74
 75
-76</pre>
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web.rb', line 11</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/web.rb', line 10</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_registered'>registered</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_registered'>registered</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 </span>  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_helpers'>helpers</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="" title="SidekiqUniqueJobs::Web (module)">Web</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Helpers.html" title="SidekiqUniqueJobs::Web::Helpers (module)">Helpers</a></span></span>
   <span class='kw'>end</span>
@@ -272,8 +290,8 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
     <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:filter</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span>
     <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='ivar'>@filter</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
     <span class='ivar'>@count</span>          <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>100</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
-    <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span>
-    <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span>
+    <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
     <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@changelogs</span> <span class='op'>=</span> <span class='id identifier rubyid_changelog'>changelog</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span>
       <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span>
       <span class='label'>pattern:</span> <span class='ivar'>@filter</span><span class='comma'>,</span>
@@ -292,8 +310,8 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
     <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:filter</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span>
     <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='ivar'>@filter</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
     <span class='ivar'>@count</span>          <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>100</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
-    <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span>
-    <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span>
+    <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
 
     <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@locks</span> <span class='op'>=</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span>
       <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span>
@@ -304,8 +322,25 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
     <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:locks</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
+  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/expiring_locks</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:filter</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span>
+    <span class='ivar'>@filter</span>         <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='ivar'>@filter</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+    <span class='ivar'>@count</span>          <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>100</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='ivar'>@current_cursor</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:cursor</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='ivar'>@prev_cursor</span>    <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:prev_cursor</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+
+    <span class='ivar'>@total_size</span><span class='comma'>,</span> <span class='ivar'>@next_cursor</span><span class='comma'>,</span> <span class='ivar'>@locks</span> <span class='op'>=</span> <span class='id identifier rubyid_expiring_digests'>expiring_digests</span><span class='period'>.</span><span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span>
+      <span class='label'>cursor:</span> <span class='ivar'>@current_cursor</span><span class='comma'>,</span>
+      <span class='label'>pattern:</span> <span class='ivar'>@filter</span><span class='comma'>,</span>
+      <span class='label'>page_size:</span> <span class='ivar'>@count</span><span class='comma'>,</span>
+    <span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_erb'>erb</span><span class='lparen'>(</span><span class='id identifier rubyid_unique_template'>unique_template</span><span class='lparen'>(</span><span class='symbol'>:locks</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
   <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks/delete_all</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_pattern'>delete_by_pattern</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_expiring_digests'>expiring_digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_pattern'>delete_by_pattern</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:locks</span>
   <span class='kw'>end</span>
 
@@ -318,6 +353,7 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 
   <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/locks/:digest/delete</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_digests'>digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'>delete_by_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:digest</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_expiring_digests'>expiring_digests</span><span class='period'>.</span><span class='id identifier rubyid_delete_by_digest'>delete_by_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:digest</span><span class='rbracket'>]</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='symbol'>:locks</span>
   <span class='kw'>end</span>
 
@@ -339,9 +375,9 @@ Useful for deleting keys that for whatever reason wasn&#39;t deleted</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Sep 27 15:29:05 2021 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-3.0.2).
+  Generated on Wed Jan 24 10:57:23 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.3.0).
 </div>
 
     </div>
