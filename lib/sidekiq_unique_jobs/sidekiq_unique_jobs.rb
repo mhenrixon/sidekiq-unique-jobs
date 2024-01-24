@@ -186,7 +186,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
       yield config
     else
       options.each do |key, val|
-        config.send("#{key}=", val)
+        config.send(:"#{key}=", val)
       end
     end
   end

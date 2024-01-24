@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
-require "brpoplpush/redis_script"
+require "concurrent/executor/ruby_single_thread_executor"
 require "concurrent/future"
-require "concurrent/promises"
 require "concurrent/map"
 require "concurrent/mutable_struct"
+require "concurrent/promises"
 require "concurrent/timer_task"
-require "concurrent/executor/ruby_single_thread_executor"
 require "digest"
 require "digest/sha1"
 require "erb"
 require "forwardable"
 require "json"
 require "pathname"
+require "redis_client"
 require "sidekiq"
+
+require "sidekiq_unique_jobs/redis_script"
 
 require "sidekiq_unique_jobs/deprecation"
 require "sidekiq_unique_jobs/reflections"

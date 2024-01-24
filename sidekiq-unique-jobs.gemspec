@@ -42,7 +42,6 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.7"
 
-  spec.add_dependency "brpoplpush-redis_script", "> 0.1.1", "<= 2.0.0"
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
   spec.add_dependency "sidekiq", ">= 7.0.0", "< 8.0.0"
   spec.add_dependency "thor", ">= 1.0", "< 3.0"

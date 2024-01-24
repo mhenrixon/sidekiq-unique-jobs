@@ -75,8 +75,8 @@ module SidekiqUniqueJobs
         redis(&:lastsave)
       end
 
-      def monitor(&block)
-        redis { |conn| conn.monitor(&block) }
+      def monitor(...)
+        redis { |conn| conn.monitor(...) }
       end
 
       def save

@@ -2,6 +2,7 @@
 
 require "sidekiq_unique_jobs/web"
 require "rack/test"
+require "rack/session"
 require "rspec-html-matchers"
 
 RSpec.describe SidekiqUniqueJobs::Web do
@@ -15,8 +16,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
           domain: "foo.com",
           path: "/",
           expire_after: 2_592_000,
-          secret: "change_me",
-          old_secret: "also_change_me"
+          secret: "change_me" * 10,
+          old_secret: "also_change_me" * 10
 
       run Sidekiq::Web
     end

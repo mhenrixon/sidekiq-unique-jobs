@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Script
-    include Brpoplpush::RedisScript::DSL
+    include SidekiqUniqueJobs::RedisScript::DSL
 
     configure do |config|
       config.scripts_path = Pathname.new(__FILE__).dirname.join("lua")
