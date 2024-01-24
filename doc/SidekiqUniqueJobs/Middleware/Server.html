@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Middleware::Server
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -89,7 +89,7 @@
   
   <dl>
       <dt>Includes:</dt>
-      <dd>Sidekiq::ServerMiddleware, <span class='object_link'><a href="../Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">SidekiqUniqueJobs::Middleware</a></span></dd>
+      <dd><span class='object_link'><a href="../Middleware.html" title="SidekiqUniqueJobs::Middleware (module)">SidekiqUniqueJobs::Middleware</a></span></dd>
   </dl>
   
   
@@ -292,7 +292,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol, NilClass </a>
+      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol </a>
     
 
     
@@ -695,7 +695,6 @@
   
   
   
-  
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
     
@@ -898,12 +897,12 @@
       <pre class="lines">
 
 
-26
-27
-28</pre>
+24
+25
+26</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware/server.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/middleware/server.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='op'>*</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_lock_instance'>lock_instance</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1000,7 +999,7 @@
       <div class="method_details ">
   <h3 class="signature " id="lock_type-instance_method">
   
-    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt>, <tt>NilClass</tt> 
+    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt> 
   
 
   
@@ -1026,7 +1025,7 @@
     <li>
       
       
-        <span class='type'>(<tt>Symbol</tt>, <tt>NilClass</tt>)</span>
+        <span class='type'>(<tt>Symbol</tt>)</span>
       
       
       
@@ -1706,9 +1705,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:25 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:09 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

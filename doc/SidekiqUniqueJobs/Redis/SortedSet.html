@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Redis::SortedSet
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -130,81 +130,6 @@
   <h2>Direct Known Subclasses</h2>
   <p class="children"><span class='object_link'><a href="../Changelog.html" title="SidekiqUniqueJobs::Changelog (class)">Changelog</a></span>, <span class='object_link'><a href="../Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></p>
 </div>
-
-  
-    <h2>
-      Constant Summary
-      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
-    </h2>
-
-    <dl class="constants">
-      
-        <dt id="DEFAULT_COUNT-constant" class="">DEFAULT_COUNT =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Returns the number of matches to return by default.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Integer</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the number of matches to return by default</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='int'>1_000</span></pre></dd>
-      
-        <dt id="SCAN_PATTERN-constant" class="">SCAN_PATTERN =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Returns the default pattern to use for matching.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="String.html" title="SidekiqUniqueJobs::Redis::String (class)">String</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the default pattern to use for matching</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span></pre></dd>
-      
-    </dl>
-  
 
 
 
@@ -444,23 +369,23 @@
       <pre class="lines">
 
 
-41
-42
-43
-44
-45
-46
-47
-48
-49</pre>
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add'>add</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Array.html" title="Array (class)">Array</a></span></span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zadd'>zadd</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zadd'>zadd</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
     <span class='kw'>else</span>
       <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zadd'>zadd</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_now_f'>now_f</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
@@ -513,12 +438,12 @@
       <pre class="lines">
 
 
-79
-80
-81</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clear'>clear</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zremrangebyrank'>zremrangebyrank</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_count'>count</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -570,12 +495,12 @@
       <pre class="lines">
 
 
-89
-90
-91</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_count'>count</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zcard'>zcard</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -661,23 +586,21 @@
       <pre class="lines">
 
 
-26
-27
-28
-29
-30
-31
-32</pre>
+19
+20
+21
+22
+23
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 19</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='label'>with_scores:</span> <span class='kw'>true</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zrange'>zrange</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='op'>-</span><span class='int'>1</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_with_scores'>with_scores</span>
+  <span class='id identifier rubyid_entrys'>entrys</span> <span class='op'>=</span> <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zrange'>zrange</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='op'>-</span><span class='int'>1</span><span class='comma'>,</span> <span class='label'>with_scores:</span> <span class='id identifier rubyid_with_scores'>with_scores</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_entrys'>entrys</span> <span class='kw'>unless</span> <span class='id identifier rubyid_with_scores'>with_scores</span>
 
-  <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zrange'>zrange</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='op'>-</span><span class='int'>1</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>withscores</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_pair'>pair</span><span class='comma'>,</span> <span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
-    <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_pair'>pair</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pair'>pair</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span>
-  <span class='kw'>end</span>
+  <span class='id identifier rubyid_entrys'>entrys</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pair'>pair</span><span class='comma'>,</span> <span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span> <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_pair'>pair</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pair'>pair</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -741,12 +664,12 @@
       <pre class="lines">
 
 
-58
-59
-60</pre>
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rank'>rank</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zrank'>zrank</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -813,12 +736,12 @@
       <pre class="lines">
 
 
-69
-70
-71</pre>
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 69</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/sorted_set.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_score'>score</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zscore'>zscore</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -833,9 +756,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:25 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:08 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

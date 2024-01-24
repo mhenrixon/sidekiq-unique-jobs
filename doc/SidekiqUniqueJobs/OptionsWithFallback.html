@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::OptionsWithFallback
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -97,7 +97,7 @@
 <ol>
 <li>item (required)</li>
 <li>options (can be nil)</li>
-<li>job_class (required, can be anything)</li>
+<li>worker_class (required, can be anything)</li>
 </ol>
 
 
@@ -185,7 +185,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol, NilClass </a>
+      <a href="#lock_type-instance_method" title="#lock_type (instance method)">#<strong>lock_type</strong>  &#x21d2; Symbol </a>
     
 
     
@@ -423,7 +423,7 @@
       <div class="method_details ">
   <h3 class="signature " id="lock_type-instance_method">
   
-    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt>, <tt>NilClass</tt> 
+    #<strong>lock_type</strong>  &#x21d2; <tt>Symbol</tt> 
   
 
   
@@ -444,7 +444,7 @@
     <li>
       
       
-        <span class='type'>(<tt>Symbol</tt>, <tt>NilClass</tt>)</span>
+        <span class='type'>(<tt>Symbol</tt>)</span>
       
       
       
@@ -564,8 +564,8 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span> <span class='op'>||=</span> <span class='kw'>begin</span>
-    <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='id identifier rubyid_default_job_options'>default_job_options</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
-    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_job_options'>job_options</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_sidekiq_job_class?'>sidekiq_job_class?</span>
+    <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='id identifier rubyid_default_worker_options'>default_worker_options</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
+    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_worker_options'>worker_options</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_sidekiq_worker_class?'>sidekiq_worker_class?</span>
     <span class='lparen'>(</span><span class='id identifier rubyid_opts'>opts</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -689,9 +689,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:23 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:06 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

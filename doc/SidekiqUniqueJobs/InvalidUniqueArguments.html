@@ -6,7 +6,7 @@
 <title>
   Exception: SidekiqUniqueJobs::InvalidUniqueArguments
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -222,14 +222,14 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_given'>given</span>            <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:given</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_job_class'>job_class</span>        <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:job_class</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_worker_class'>worker_class</span>     <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:worker_class</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_lock_args_method'>lock_args_method</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:lock_args_method</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_lock_args_meth'>lock_args_meth</span>   <span class='op'>=</span> <span class='id identifier rubyid_job_class'>job_class</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='id identifier rubyid_lock_args_method'>lock_args_method</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_lock_args_meth'>lock_args_meth</span>   <span class='op'>=</span> <span class='id identifier rubyid_worker_class'>worker_class</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='id identifier rubyid_lock_args_method'>lock_args_method</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_num_args'>num_args</span>         <span class='op'>=</span> <span class='id identifier rubyid_lock_args_meth'>lock_args_meth</span><span class='period'>.</span><span class='id identifier rubyid_arity'>arity</span>
   <span class='id identifier rubyid_source_location'>source_location</span>  <span class='op'>=</span> <span class='id identifier rubyid_lock_args_meth'>lock_args_meth</span><span class='period'>.</span><span class='id identifier rubyid_source_location'>source_location</span>
 
   <span class='kw'>super</span><span class='lparen'>(</span>
-    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_job_class'>job_class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_lock_args_method'>lock_args_method</span><span class='embexpr_end'>}</span><span class='tstring_content'> takes </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_num_args'>num_args</span><span class='embexpr_end'>}</span><span class='tstring_content'> arguments, received </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_given'>given</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> \
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_worker_class'>worker_class</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_lock_args_method'>lock_args_method</span><span class='embexpr_end'>}</span><span class='tstring_content'> takes </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_num_args'>num_args</span><span class='embexpr_end'>}</span><span class='tstring_content'> arguments, received </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_given'>given</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> \
     <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\n</span><span class='tstring_end'>&quot;</span></span> \
     <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>   </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_source_location'>source_location</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
   <span class='rparen'>)</span>
@@ -245,9 +245,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:24 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:07 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Redis::String
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -194,7 +194,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#set-instance_method" title="#set (instance method)">#<strong>set</strong>(obj, pipeline = nil)  &#x21d2; true, false </a>
+      <a href="#set-instance_method" title="#set (instance method)">#<strong>set</strong>(obj)  &#x21d2; true, false </a>
     
 
     
@@ -317,12 +317,12 @@
       <pre class="lines">
 
 
-46
-47
-48</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/string.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/string.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_count'>count</span>
   <span class='id identifier rubyid_exist?'>exist?</span> <span class='op'>?</span> <span class='int'>1</span> <span class='op'>:</span> <span class='int'>0</span>
@@ -357,12 +357,12 @@
       <pre class="lines">
 
 
-37
-38
-39</pre>
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/string.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/string.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_del'>del</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -375,7 +375,7 @@
       <div class="method_details ">
   <h3 class="signature " id="set-instance_method">
   
-    #<strong>set</strong>(obj, pipeline = nil)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+    #<strong>set</strong>(obj)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
   
 
   
@@ -431,16 +431,12 @@
 
 28
 29
-30
-31
-32</pre>
+30</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/redis/string.rb', line 28</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='comma'>,</span> <span class='id identifier rubyid_pipeline'>pipeline</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='id identifier rubyid_pipeline'>pipeline</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_pipeline'>pipeline</span>
-
+<span class='kw'>def</span> <span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -506,9 +502,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:25 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:08 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

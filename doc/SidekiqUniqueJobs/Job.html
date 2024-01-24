@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Job
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -173,7 +173,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adds lock, timeout, expiration, lock_args, lock_prefix, and lock_digest to the sidekiq job hash.</p>
+    <span class="summary_desc"><div class='inline'><p>Adds timeout, expiration, lock_args, lock_prefix and lock_digest to the sidekiq job hash.</p>
 </div></span>
   
 </li>
@@ -228,7 +228,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adds lock, timeout, expiration, lock_args, lock_prefix, and lock_digest to the sidekiq job hash.</p>
+    <span class="summary_desc"><div class='inline'><p>Adds timeout, expiration, lock_args, lock_prefix and lock_digest to the sidekiq job hash.</p>
 </div></span>
   
 </li>
@@ -285,16 +285,16 @@
       <pre class="lines">
 
 
+21
 22
 23
 24
 25
 26
-27
-28</pre>
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_prefix'>add_lock_prefix</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -319,7 +319,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Adds lock, timeout, expiration, lock_args, lock_prefix, and lock_digest to the sidekiq job hash</p>
+    <p>Adds timeout, expiration, lock_args, lock_prefix and lock_digest to the sidekiq job hash</p>
 
 
   </div>
@@ -355,15 +355,13 @@
 14
 15
 16
-17
-18</pre>
+17</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prepare'>prepare</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_stringify_on_conflict_hash'>stringify_on_conflict_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_add_lock_type'>add_lock_type</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_timeout'>add_lock_timeout</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_ttl'>add_lock_ttl</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -421,16 +419,16 @@
       <pre class="lines">
 
 
+21
 22
 23
 24
 25
 26
-27
-28</pre>
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_prefix'>add_lock_prefix</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -455,7 +453,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Adds lock, timeout, expiration, lock_args, lock_prefix, and lock_digest to the sidekiq job hash</p>
+    <p>Adds timeout, expiration, lock_args, lock_prefix and lock_digest to the sidekiq job hash</p>
 
 
   </div>
@@ -491,15 +489,13 @@
 14
 15
 16
-17
-18</pre>
+17</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/job.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prepare'>prepare</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_stringify_on_conflict_hash'>stringify_on_conflict_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_add_lock_type'>add_lock_type</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_timeout'>add_lock_timeout</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_lock_ttl'>add_lock_ttl</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_digest'>add_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
@@ -514,9 +510,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:23 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:05 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

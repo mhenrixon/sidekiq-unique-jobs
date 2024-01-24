@@ -6,7 +6,7 @@
 <title>
   Module: SidekiqUniqueJobs::Logging
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -457,23 +457,23 @@
       <pre class="lines">
 
 
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
 117
 118
 119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130</pre>
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 107</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_message'>build_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -561,16 +561,12 @@
 33
 34
 35
-36
-37
-38</pre>
+36</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_debug'>log_debug</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_logging?'>logging?</span>
-
   <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_build_message'>build_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>nil</span>
@@ -643,20 +639,16 @@
       <pre class="lines">
 
 
-83
-84
-85
-86
-87
-88
-89</pre>
+77
+78
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_error'>log_error</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_logging?'>logging?</span>
-
   <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_build_message'>build_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>nil</span>
@@ -729,21 +721,17 @@
       <pre class="lines">
 
 
-100
-101
-102
-103
-104
-105
-106
-107</pre>
+92
+93
+94
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 100</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 92</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_fatal'>log_fatal</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_logging?'>logging?</span>
-
   <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_build_message'>build_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_fatal'>fatal</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 
@@ -817,20 +805,16 @@
       <pre class="lines">
 
 
+47
+48
 49
 50
-51
-52
-53
-54
-55</pre>
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_info'>log_info</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_logging?'>logging?</span>
-
   <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_build_message'>build_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>nil</span>
@@ -903,20 +887,16 @@
       <pre class="lines">
 
 
-66
-67
-68
-69
-70
-71
-72</pre>
+62
+63
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 66</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_warn'>log_warn</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_logging?'>logging?</span>
-
   <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_build_message'>build_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_or_exception'>message_or_exception</span><span class='comma'>,</span> <span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='kw'>nil</span>
@@ -1041,12 +1021,12 @@
       <pre class="lines">
 
 
-166
-167
-168</pre>
+156
+157
+158</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 166</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 156</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logging_context'>logging_context</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotImplementedError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'> needs to be implemented in </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -1094,12 +1074,12 @@
       <pre class="lines">
 
 
-156
-157
-158</pre>
+146
+147
+148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 156</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_configured_loggers_context'>with_configured_loggers_context</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger_method'>logger_method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_logging_context'>logging_context</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1151,16 +1131,16 @@
       <pre class="lines">
 
 
-140
-141
-142
-143
-144
-145
-146</pre>
+130
+131
+132
+133
+134
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 140</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/logging.rb', line 130</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_logging_context'>with_logging_context</span>
   <span class='id identifier rubyid_with_configured_loggers_context'>with_configured_loggers_context</span> <span class='kw'>do</span>
@@ -1179,9 +1159,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:23 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:05 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Digests
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -128,11 +128,7 @@
   
 </ul>
 
-</div><div id="subclasses">
-  <h2>Direct Known Subclasses</h2>
-  <p class="children"><span class='object_link'><a href="ExpiringDigests.html" title="SidekiqUniqueJobs::ExpiringDigests (class)">ExpiringDigests</a></span></p>
 </div>
-
   
     <h2>
       Constant Summary
@@ -205,38 +201,6 @@
         </dt>
         <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span></pre></dd>
       
-        <dt id="EMPTY_KEYS_SEGMENT-constant" class="">EMPTY_KEYS_SEGMENT =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Returns The empty runtime or queuetime keys.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span>(String, String, String, String)</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>The empty runtime or queuetime keys.</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
-      
     </dl>
   
 
@@ -280,7 +244,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#delete_by_digest-instance_method" title="#delete_by_digest (instance method)">#<strong>delete_by_digest</strong>(digest, queuetime: true, runtime: true)  &#x21d2; Object </a>
+      <a href="#delete_by_digest-instance_method" title="#delete_by_digest (instance method)">#<strong>delete_by_digest</strong>(digest)  &#x21d2; Object </a>
     
 
     
@@ -303,7 +267,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#delete_by_pattern-instance_method" title="#delete_by_pattern (instance method)">#<strong>delete_by_pattern</strong>(pattern, count: DEFAULT_COUNT)  &#x21d2; Hash&lt;String,Float&gt; </a>
+      <a href="#delete_by_pattern-instance_method" title="#delete_by_pattern (instance method)">#<strong>delete_by_pattern</strong>(pattern, count: DEFAULT_COUNT)  &#x21d2; Array&lt;String&gt; </a>
     
 
     
@@ -349,7 +313,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(digests_key = DIGESTS)  &#x21d2; Digests </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>  &#x21d2; Digests </a>
     
 
     
@@ -415,7 +379,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(digests_key = DIGESTS)  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></tt> 
+    #<strong>initialize</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></tt> 
   
 
   
@@ -437,15 +401,15 @@
       <pre class="lines">
 
 
-20
-21
-22</pre>
+17
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 17</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_digests_key'>digests_key</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#DIGESTS-constant" title="SidekiqUniqueJobs::DIGESTS (constant)">DIGESTS</a></span></span><span class='rparen'>)</span>
-  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_digests_key'>digests_key</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../SidekiqUniqueJobs.html#DIGESTS-constant" title="SidekiqUniqueJobs::DIGESTS (constant)">DIGESTS</a></span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -503,12 +467,12 @@
       <pre class="lines">
 
 
-29
-30
-31</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add'>add</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zadd'>zadd</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_now_f'>now_f</span><span class='comma'>,</span> <span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -521,7 +485,7 @@
       <div class="method_details ">
   <h3 class="signature " id="delete_by_digest-instance_method">
   
-    #<strong>delete_by_digest</strong>(digest, queuetime: true, runtime: true)  &#x21d2; <tt>Object</tt> 
+    #<strong>delete_by_digest</strong>(digest)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -554,40 +518,6 @@
       
     </li>
   
-    <li>
-      
-        <span class='name'>queuetime</span>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-        <em class="default">(defaults to: <tt>true</tt>)</em>
-      
-      
-        &mdash;
-        <div class='inline'><p>Whether to delete queue locks.</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>runtime</span>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-        <em class="default">(defaults to: <tt>true</tt>)</em>
-      
-      
-        &mdash;
-        <div class='inline'><p>Whether to delete run locks.</p>
-</div>
-      
-    </li>
-  
 </ul>
 
 
@@ -597,6 +527,12 @@
       <pre class="lines">
 
 
+50
+51
+52
+53
+54
+55
 56
 57
 58
@@ -608,17 +544,25 @@
 64
 65
 66
-67</pre>
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 50</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_delete_by_digest'>delete_by_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='label'>queuetime:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>runtime:</span> <span class='kw'>true</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_elapsed'>elapsed</span> <span class='op'>=</span> <span class='id identifier rubyid_timed'>timed</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span>
-      <span class='symbol'>:delete_by_digest</span><span class='comma'>,</span>
-      <span class='id identifier rubyid_queuetime_keys'>queuetime_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_queuetime'>queuetime</span> <span class='op'>?</span> <span class='id identifier rubyid_digest'>digest</span> <span class='op'>:</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>+</span> <span class='id identifier rubyid_runtime_keys'>runtime_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_runtime'>runtime</span> <span class='op'>?</span> <span class='id identifier rubyid_digest'>digest</span> <span class='op'>:</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>+</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_delete_by_digest'>delete_by_digest</span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength
+</span>  <span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_elapsed'>elapsed</span> <span class='op'>=</span> <span class='id identifier rubyid_timed'>timed</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_call_script'>call_script</span><span class='lparen'>(</span><span class='symbol'>:delete_by_digest</span><span class='comma'>,</span> <span class='lbracket'>[</span>
+                  <span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:QUEUED</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:PRIMED</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:LOCKED</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:RUN</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:RUN:QUEUED</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:RUN:PRIMED</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>:RUN:LOCKED</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                  <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span>
+                <span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_log_info'>log_info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_digest'>digest</span><span class='embexpr_end'>}</span><span class='tstring_content'>) completed in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_elapsed'>elapsed</span><span class='embexpr_end'>}</span><span class='tstring_content'>ms</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -633,7 +577,7 @@
       <div class="method_details ">
   <h3 class="signature " id="delete_by_pattern-instance_method">
   
-    #<strong>delete_by_pattern</strong>(pattern, count: DEFAULT_COUNT)  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String,Float&gt;</tt> 
+    #<strong>delete_by_pattern</strong>(pattern, count: DEFAULT_COUNT)  &#x21d2; <tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span>&lt;String&gt;</tt> 
   
 
   
@@ -690,12 +634,12 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>&lt;String,Float&gt;</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span>&lt;String&gt;</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>Hash mapping of digest matching the given pattern and score</p>
+        <div class='inline'><p>with unique digests</p>
 </div>
       
     </li>
@@ -708,19 +652,19 @@
       <pre class="lines">
 
 
+35
+36
+37
+38
 39
 40
 41
 42
 43
-44
-45
-46
-47
-48</pre>
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_by_pattern'>delete_by_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='const'><span class='object_link'><a href="#DEFAULT_COUNT-constant" title="SidekiqUniqueJobs::Digests::DEFAULT_COUNT (constant)">DEFAULT_COUNT</a></span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_elapsed'>elapsed</span> <span class='op'>=</span> <span class='id identifier rubyid_timed'>timed</span> <span class='kw'>do</span>
@@ -817,15 +761,31 @@
       <pre class="lines">
 
 
-77
 78
-79</pre>
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 78</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_entries'>entries</span><span class='lparen'>(</span><span class='label'>pattern:</span> <span class='const'><span class='object_link'><a href="#SCAN_PATTERN-constant" title="SidekiqUniqueJobs::Digests::SCAN_PATTERN (constant)">SCAN_PATTERN</a></span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='const'><span class='object_link'><a href="#DEFAULT_COUNT-constant" title="SidekiqUniqueJobs::Digests::DEFAULT_COUNT (constant)">DEFAULT_COUNT</a></span></span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zscan'>zscan</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='label'>match:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_count'>count</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:match</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pattern'>pattern</span>
+  <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:count</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_count'>count</span>
+
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_redis'>redis</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zscan_each'>zscan_each</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='comma'>,</span> <span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+    <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_entry'>entry</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_entry'>entry</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -929,37 +889,35 @@
       <pre class="lines">
 
 
-90
-91
-92
-93
-94
-95
-96
-97
-98
 99
 100
 101
 102
 103
-104</pre>
+104
+105
+106
+107
+108
+109
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/digests.rb', line 99</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_page'>page</span><span class='lparen'>(</span><span class='label'>cursor:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>pattern:</span> <span class='const'><span class='object_link'><a href="#SCAN_PATTERN-constant" title="SidekiqUniqueJobs::Digests::SCAN_PATTERN (constant)">SCAN_PATTERN</a></span></span><span class='comma'>,</span> <span class='label'>page_size:</span> <span class='int'>100</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_redis'>redis</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
-    <span class='id identifier rubyid_total_size'>total_size</span><span class='comma'>,</span> <span class='id identifier rubyid_digests'>digests</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_multi'>multi</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_pipeline'>pipeline</span><span class='op'>|</span>
-      <span class='id identifier rubyid_pipeline'>pipeline</span><span class='period'>.</span><span class='id identifier rubyid_zcard'>zcard</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pipeline'>pipeline</span><span class='period'>.</span><span class='id identifier rubyid_zscan'>zscan</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_cursor'>cursor</span><span class='comma'>,</span> <span class='label'>match:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_page_size'>page_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_total_size'>total_size</span><span class='comma'>,</span> <span class='id identifier rubyid_digests'>digests</span> <span class='op'>=</span> <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_multi'>multi</span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zcard'>zcard</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_zscan'>zscan</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_cursor'>cursor</span><span class='comma'>,</span> <span class='label'>match:</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='id identifier rubyid_page_size'>page_size</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
 
-    <span class='comment'># NOTE: When debugging, check the last item in the returned array.
-</span>    <span class='lbracket'>[</span>
+    <span class='lbracket'>[</span>
       <span class='id identifier rubyid_total_size'>total_size</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
       <span class='id identifier rubyid_digests'>digests</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='comment'># next_cursor
-</span>      <span class='id identifier rubyid_digests'>digests</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each_slice'>each_slice</span><span class='lparen'>(</span><span class='int'>2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='id identifier rubyid_score'>score</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Lock.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='label'>time:</span> <span class='id identifier rubyid_score'>score</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># entries
+</span>      <span class='id identifier rubyid_digests'>digests</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='id identifier rubyid_score'>score</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="Lock.html" title="SidekiqUniqueJobs::Lock (class)">Lock</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Lock.html#initialize-instance_method" title="SidekiqUniqueJobs::Lock#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_digest'>digest</span><span class='comma'>,</span> <span class='label'>time:</span> <span class='id identifier rubyid_score'>score</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># entries
 </span>    <span class='rbracket'>]</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -973,9 +931,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:24 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:06 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

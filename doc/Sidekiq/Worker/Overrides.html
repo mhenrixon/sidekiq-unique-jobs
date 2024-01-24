@@ -6,7 +6,7 @@
 <title>
   Module: Sidekiq::Worker::Overrides
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -98,17 +98,7 @@
 <div class="tags">
   
 
-</div><h2>Defined Under Namespace</h2>
-<p class="children">
-  
-    
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Overrides/ClassMethods.html" title="Sidekiq::Worker::Overrides::ClassMethods (module)">ClassMethods</a></span>
-    
-  
-    
-  
-</p>
-
+</div>
 
 
 
@@ -122,6 +112,29 @@
     </h2>
 
     <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clear_all-instance_method" title="#clear_all (instance method)">#<strong>clear_all</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Clears all jobs for this worker and removes all locks.</p>
+</div></span>
+  
+</li>
+
       
         <li class="public ">
   <span class="summary_signature">
@@ -156,7 +169,51 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="sidekiq_options-instance_method">
+  <h3 class="signature first" id="clear_all-instance_method">
+  
+    #<strong>clear_all</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Clears all jobs for this worker and removes all locks</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+94
+95
+96
+97
+98</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 94</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clear_all'>clear_all</span>
+  <span class='kw'>super</span>
+
+  <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs/Digests.html" title="SidekiqUniqueJobs::Digests (class)">Digests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../../SidekiqUniqueJobs/Digests.html#initialize-instance_method" title="SidekiqUniqueJobs::Digests#initialize (method)">new</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_by_pattern'><span class='object_link'><a href="../../SidekiqUniqueJobs/Digests.html#delete_by_pattern-instance_method" title="SidekiqUniqueJobs::Digests#delete_by_pattern (method)">delete_by_pattern</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>count:</span> <span class='int'>10_000</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sidekiq_options-instance_method">
   
     #<strong>sidekiq_options</strong>(options = {})  &#x21d2; <tt>void</tt> 
   
@@ -201,14 +258,14 @@
       <pre class="lines">
 
 
+85
+86
 87
 88
-89
-90
-91</pre>
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/testing.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate_worker!'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#validate_worker!-class_method" title="SidekiqUniqueJobs.validate_worker! (method)">validate_worker!</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="../../SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="../../SidekiqUniqueJobs.html#config-class_method" title="SidekiqUniqueJobs.config (method)">config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_raise_on_config_error'>raise_on_config_error</span>
@@ -225,9 +282,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:23 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:05 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

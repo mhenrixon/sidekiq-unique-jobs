@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -59,7 +59,7 @@
 
       <div id="content"><div id='filecontents'><h1 id="sidekiquniquejobs">SidekiqUniqueJobs</h1>
 
-<p><a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> <img src="https://github.com/mhenrixon/sidekiq-unique-jobs/actions/workflows/rspec.yml/badge.svg?branch=main" alt="Build Status"> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.svg" alt="Code Climate"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg" alt="Test Coverage"></a></p>
+<p><a href="https://gitter.im/mhenrixon/sidekiq-unique-jobs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img src="https://badges.gitter.im/mhenrixon/sidekiq-unique-jobs.svg" alt="Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs"></a> <img src="https://github.com/mhenrixon/sidekiq-unique-jobs/actions/workflows/rspec.yml/badge.svg?branch=master" alt="Build Status"> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs.svg" alt="Code Climate"></a> <a href="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/coverage"><img src="https://codeclimate.com/github/mhenrixon/sidekiq-unique-jobs/badges/coverage.svg" alt="Test Coverage"></a></p>
 
 <h2 id="support-me">Support Me</h2>
 
@@ -99,7 +99,7 @@
 <li><a href="#raise">raise</a></li>
 <li><a href="#reject">reject</a></li>
 <li><a href="#replace">replace</a></li>
-<li><a href="#reschedule">reschedule</a></li>
+<li><a href="#reschedule">Reschedule</a></li>
 <li><a href="#custom-strategies">Custom Strategies</a></li>
 <li><a href="#3-cleanup-dead-locks">3 Cleanup Dead Locks</a></li>
 </ul></li>
@@ -169,7 +169,7 @@
 
 <p>This gem adds unique constraints to sidekiq jobs. The uniqueness is achieved by creating a set of keys in redis based off of <code>queue</code>, <code>class</code>, <code>args</code> (in the sidekiq job hash).</p>
 
-<p>By default, only one lock for a given hash can be acquired. What happens when a lock can&#39;t be acquired is governed by a chosen <a href="#conflict-strategy">Conflict Strategy</a> strategy. Unless a conflict strategy is chosen (?)</p>
+<p>By default, only one lock for a given hash can be acquired. What happens when a lock can&#39;t be acquired is governed by a chosen <a href="#conflict-strategy">Conflict Strategy</a> strategy. Unless a conflict strategy is chosen</p>
 
 <p>This is the documentation for the <code>main</code> branch. You can find the documentation for each release by navigating to its tag.</p>
 
@@ -202,11 +202,9 @@
 
 <p><em>NOTE</em> if you want to use the reaper you also need to configure the server middleware.</p>
 
-<p>The following shows how to modify your <code>config/initializers/sidekiq.rb</code> file to use the middleware. <a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/initializers/sidekiq.rb#L12">Here is a full example.</a></p>
+<p><a href="https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/myapp/config/initializers/sidekiq.rb#L12">A full example</a></p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>sidekiq-unique-jobs</span><span class='tstring_end'>&quot;</span></span>
-
-<span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_server'>configure_server</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_redis'>redis</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>url:</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>REDIS_URL</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>driver:</span> <span class='symbol'>:hiredis</span> <span class='rbrace'>}</span>
 
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_middleware'>client_middleware</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chain'>chain</span><span class='op'>|</span>
@@ -231,14 +229,15 @@
 
 <h3 id="your-first-worker">Your first worker</h3>
 
-<p>The lock type most likely to be is <code>:until_executed</code>. This type of lock creates a lock from when <code>UntilExecutedWorker.perform_async</code> is called until right after <code>UntilExecutedWorker.new.perform</code> has been called.</p>
+<p>The most likely to be used worker is <code>:until_executed</code>. This type of lock creates a lock from when <code>UntilExecutedWorker.perform_async</code> is called until right after <code>UntilExecutedWorker.new.perform</code> has been called.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># frozen_string_literal: true
 </span>
 <span class='kw'>class</span> <span class='const'>UntilExecutedWorker</span>
   <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Sidekiq/Worker.html" title="Sidekiq::Worker (module)">Worker</a></span></span>
 
-  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>lock:</span> <span class='symbol'>:until_executed</span>
+  <span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>queue:</span> <span class='symbol'>:until_executed</span><span class='comma'>,</span>
+                  <span class='label'>lock:</span> <span class='symbol'>:until_executed</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_perform'>perform</span>
     <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cowboy</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -421,9 +420,9 @@
 
 <h2 id="conflict-strategy">Conflict Strategy</h2>
 
-<p>Decides how we handle conflict. We can either <code>reject</code> the job to the dead queue or <code>reschedule</code> it. Both are useful for jobs that absolutely need to run and have been configured to use the lock <code>WhileExecuting</code> that is used only by the sidekiq server process.</p>
+<p>Decides how we handle conflict. We can either reject the job to the dead queue or reschedule it. Both are useful for jobs that absolutely need to run and have been configured to use the lock <code>WhileExecuting</code> that is used only by the sidekiq server process.</p>
 
-<p>Furthermore, <code>log</code> can be be used with the lock <code>UntilExecuted</code> and <code>UntilExpired</code>. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.</p>
+<p>The last one is log which can be be used with the lock <code>UntilExecuted</code> and <code>UntilExpired</code>. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.</p>
 
 <p>It is possible for locks to have different conflict strategy for the client and server. This is useful for <code>:until_and_while_executing</code>.</p>
 
@@ -436,7 +435,7 @@
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:log</span>
 </code></pre>
 
-<p>This strategy is intended to be used with <code>UntilExecuted</code> and <code>UntilExpired</code>. It will log a line that this job is a duplicate of another.</p>
+<p>This strategy is intended to be used with <code>UntilExecuted</code> and <code>UntilExpired</code>. It will log a line about that this is job is a duplicate of another.</p>
 
 <h3 id="raise">raise</h3>
 
@@ -464,7 +463,7 @@ queue and retry the lock again.</p>
 <p>This is slightly dangerous and should probably only be used for jobs that are
 always scheduled in the future. Currently only attempting to retry one time.</p>
 
-<h3 id="reschedule">reschedule</h3>
+<h3 id="reschedule">Reschedule</h3>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sidekiq_options'>sidekiq_options</span> <span class='label'>on_conflict:</span> <span class='symbol'>:reschedule</span>
 </code></pre>
@@ -606,23 +605,23 @@ already does this.</p>
 
 <p>This is also mostly useful for reporting/metrics purposes. What this reflection does is signal that the job was configured to wait (<code>lock_timeout</code> was configured), but we couldn&#39;t retrieve a lock even though we waited for some time.</p>
 
-<h4 id="unlock_failed">unlock_failed</h4>
+<h3 id="unlock_failed">unlock_failed</h3>
 
-<p>This means that the server middleware could not unlock your job and the lock is kept (potentially preventing subsequent jobs from being pushed or processed).</p>
+<p>This is not got, this is worth</p>
 
-<h4 id="unlocked">unlocked</h4>
+<h3 id="unlocked">unlocked</h3>
 
 <p>Also mostly useful for reporting purposes. The job was successfully unlocked.</p>
 
-<h4 id="unknown_sidekiq_worker">unknown_sidekiq_worker</h4>
+<h3 id="unknown_sidekiq_worker">unknown_sidekiq_worker</h3>
 
 <p>The reason this happens is that the server couldn&#39;t find a valid sidekiq worker class. Most likely, that worker isn&#39;t intended to be processed by this sidekiq server instance.</p>
 
-<h3 id="show-locks">Show Locks</h3>
+<h4 id="show-locks">Show Locks</h4>
 
 <p><img src="assets/unique_digests_1.png" alt="Locks"></p>
 
-<h3 id="show-lock">Show Lock</h3>
+<h4 id="show-lock">Show Lock</h4>
 
 <p><img src="assets/unique_digests_2.png" alt="Lock"></p>
 
@@ -630,7 +629,7 @@ already does this.</p>
 
 <h3 id="validating-worker-configuration">Validating Worker Configuration</h3>
 
-<p>Since v7 it is possible to perform some simple validation against your workers <code>sidekiq_options</code>. What it does is scan for some issues that are known to cause problems in production.</p>
+<p>Since v7 it is possible to perform some simple validation against your workers sidekiq_options. What it does is scan for some issues that are known to cause problems in production.</p>
 
 <p>Let&#39;s take a <em>bad</em> worker:</p>
 
@@ -658,16 +657,15 @@ already does this.</p>
 
 <p>If you are not using RSpec (a lot of people prefer minitest or test unit) you can do something like:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_assert_raise'>assert_raise</span><span class='lparen'>(</span><span class='const'>InvalidWorker</span><span class='rparen'>)</span><span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate_worker!'><span class='object_link'><a href="SidekiqUniqueJobs.html#validate_worker!-class_method" title="SidekiqUniqueJobs.validate_worker! (method)">validate_worker!</a></span></span><span class='lparen'>(</span><span class='const'>BadWorker</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_assert'>assert</span> <span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_validate_worker!'><span class='object_link'><a href="SidekiqUniqueJobs.html#validate_worker!-class_method" title="SidekiqUniqueJobs.validate_worker! (method)">validate_worker!</a></span></span><span class='lparen'>(</span><span class='const'>BadWorker</span><span class='period'>.</span><span class='id identifier rubyid_get_sidekiq_options'>get_sidekiq_options</span><span class='rparen'>)</span>
 </code></pre>
 
 <h3 id="uniqueness">Uniqueness</h3>
 
-<p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: <a href="https://github.com/mperham/sidekiq/wiki/Ent-Unique-Jobs">Enterprise unique jobs</a>(?)</p>
+<p>This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: <a href="https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs">Enterprise unique jobs</a></p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='op'>!</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_test?'>test?</span>
-  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger_enabled'>logger_enabled</span> <span class='op'>=</span> <span class='op'>!</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_test?'>test?</span>
 <span class='kw'>end</span>
 </code></pre>
 
@@ -791,7 +789,6 @@ already does this.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="SidekiqUniqueJobs.html" title="SidekiqUniqueJobs (module)">SidekiqUniqueJobs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="SidekiqUniqueJobs.html#configure-class_method" title="SidekiqUniqueJobs.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Sidekiq.html" title="Sidekiq (module)">Sidekiq</a></span></span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span> <span class='comment'># default, change at your own discretion
-</span>  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger_enabled'>logger_enabled</span>  <span class='op'>=</span> <span class='kw'>true</span> <span class='comment'># default, disable for test environments
 </span>  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_debug_lua'>debug_lua</span>       <span class='op'>=</span> <span class='kw'>false</span> <span class='comment'># Turn on when debugging
 </span>  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_lock_info'>lock_info</span>       <span class='op'>=</span> <span class='kw'>false</span> <span class='comment'># Turn on when debugging
 </span>  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_lock_ttl'>lock_ttl</span>        <span class='op'>=</span> <span class='int'>600</span>   <span class='comment'># Expire locks after 10 minutes
@@ -1084,9 +1081,9 @@ end.
 </div></div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:22 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:05 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>

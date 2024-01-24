@@ -6,7 +6,7 @@
 <title>
   Class: SidekiqUniqueJobs::Reflections
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.26
   
 </title>
 
@@ -505,8 +505,8 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/sidekiq_unique_jobs/reflections.rb', line 53</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_dispatch'>dispatch</span><span class='lparen'>(</span><span class='id identifier rubyid_reflection'>reflection</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/MethodLength
-</span>  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_block'>block</span> <span class='op'>=</span> <span class='ivar'>@reflections</span><span class='lbracket'>[</span><span class='id identifier rubyid_reflection'>reflection</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_dispatch'>dispatch</span><span class='lparen'>(</span><span class='id identifier rubyid_reflection'>reflection</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_block'>block</span> <span class='op'>=</span> <span class='ivar'>@reflections</span><span class='lbracket'>[</span><span class='id identifier rubyid_reflection'>reflection</span><span class='rbracket'>]</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
 
     <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="#DEPRECATIONS-constant" title="SidekiqUniqueJobs::Reflections::DEPRECATIONS (constant)">DEPRECATIONS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='id identifier rubyid_reflection'>reflection</span><span class='rparen'>)</span>
@@ -584,9 +584,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Jan 24 10:57:25 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-3.3.0).
+  Generated on Mon Sep 27 15:29:08 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-3.0.2).
 </div>
 
     </div>
