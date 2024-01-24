@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
   spec.metadata["documentation_uri"] = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
-  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/CHANGELOG.md"
+  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/main/CHANGELOG.md"
   spec.metadata["funding_uri"]       = "https://github.com/mhenrixon/sidekiq-unique-jobs"
 
   spec.bindir        = "bin"
