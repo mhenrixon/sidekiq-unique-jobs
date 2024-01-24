@@ -1,5 +1,33 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.6...HEAD)
+
+**Closed issues:**
+
+- No 'Changelog' link is being displayed on https://rubygems.org/gems/sidekiq-unique-jobs [\#825](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/825)
+
+## [v8.0.6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.6) (2024-01-24)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.5...v8.0.6)
+
+**Implemented enhancements:**
+
+- Returning same job id [\#814](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/814)
+- fix: various minor issues [\#826](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/826) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- should respond to `has_valid_sidekiq_options?` [\#822](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/822)
+- Reaper manager registration is subject to race conditions [\#801](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/801)
+- `while_executing` with `on_conflict: :reschedule` Reschedule job after job execution  [\#800](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/800)
+- Large retry queue causes reaper to run too slow [\#759](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/759)
+
+**Merged pull requests:**
+
+- fix: skip unless reaper was registered [\#820](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/820) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v8.0.5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.5) (2023-11-11)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.4...v8.0.5)
@@ -15,7 +43,7 @@
 
 ## [v8.0.4](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.4) (2023-11-11)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.30...v8.0.4)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.31...v8.0.4)
 
 **Implemented enhancements:**
 
@@ -31,9 +59,6 @@
 **Closed issues:**
 
 - register\_reaper\_process nx: true crash Sidekiq on startup [\#817](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/817)
-- Should client middleware also be added to the Sidekiq server config? [\#803](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/803)
-- 8.0.1 Time on locks & changelog UI is incorrect/wrong [\#761](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/761)
-- Job executed twice when reaper runs [\#738](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/738)
 
 **Merged pull requests:**
 
@@ -41,6 +66,16 @@
 - Add sidekiq\_option for on-conflict-reschedule perform\_in time [\#813](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/813) ([mgmarlow](https://github.com/mgmarlow))
 - Handle strategy fallbacks properly [\#809](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/809) ([matejrisek](https://github.com/matejrisek))
 - Fix CI status badge [\#802](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/802) ([tagliala](https://github.com/tagliala))
+
+## [v7.1.31](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.31) (2023-08-28)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.30...v7.1.31)
+
+**Closed issues:**
+
+- Should client middleware also be added to the Sidekiq server config? [\#803](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/803)
+- 8.0.1 Time on locks & changelog UI is incorrect/wrong [\#761](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/761)
+- Job executed twice when reaper runs [\#738](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/738)
 
 ## [v7.1.30](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.30) (2023-07-17)
 
