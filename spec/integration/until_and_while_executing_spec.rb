@@ -7,7 +7,7 @@ unless ENV.fetch("CI", false)
       toxi_redis_url = ENV.fetch("TOXI_REDIS_URL", "localhost:21212")
       redis_url      = ENV.fetch("REDIS_URL", "localhost:6379")
 
-      Toxiproxy.host = ENV.fetch("TOXI_PROXY_HOST", nil)
+      Toxiproxy.host = ENV.fetch("TOXI_PROXY_HOST", "http://127.0.0.1:8474")
       Toxiproxy.populate([
                            {
                              name: :redis,

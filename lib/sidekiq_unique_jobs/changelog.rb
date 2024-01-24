@@ -59,7 +59,7 @@ module SidekiqUniqueJobs
         # NOTE: When debugging, check the last item in the returned array.
         [
           total_size.to_i,
-          result[0].to_i,  # next_cursor
+          result[0].to_i, # next_cursor
           result[1].map { |entry| load_json(entry) }.select { |entry| entry.is_a?(Hash) },
         ]
       end

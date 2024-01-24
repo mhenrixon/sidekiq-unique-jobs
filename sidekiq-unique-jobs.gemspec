@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
   spec.metadata["documentation_uri"] = "https://github.com/mhenrixon/sidekiq-unique-jobs"
   spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
-  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/master/CHANGELOG.md"
+  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/main/CHANGELOG.md"
   spec.metadata["funding_uri"]       = "https://github.com/mhenrixon/sidekiq-unique-jobs"
 
   spec.bindir        = "bin"
@@ -42,7 +42,6 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.7"
 
-  spec.add_dependency "brpoplpush-redis_script", "> 0.1.1", "<= 2.0.0"
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
   spec.add_dependency "sidekiq", ">= 7.0.0", "< 8.0.0"
   spec.add_dependency "thor", ">= 1.0", "< 3.0"
