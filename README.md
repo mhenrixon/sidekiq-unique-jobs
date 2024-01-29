@@ -582,8 +582,6 @@ end
 #spec/workers/bad_worker_spec.rb
 
 require "sidekiq_unique_jobs/testing"
-#OR
-require "sidekiq_unique_jobs/rspec/matchers"
 
 RSpec.describe BadWorker do
   specify { expect(described_class).to have_valid_sidekiq_options }
