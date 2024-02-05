@@ -52,7 +52,7 @@ RSpec.describe SidekiqUniqueJobs::Script::Logging do
     end
 
     it "delegates to logger" do
-      expect(logging.send("log_#{level}".to_sym, message)).to be_nil
+      expect(logging.send(:"log_#{level}", message)).to be_nil
       expect(logger).to have_received(level).with(message)
     end
   end

@@ -34,13 +34,9 @@ RSpec.describe SidekiqUniqueJobs::Script::Client, "#execute" do
   context "when error is raised" do
     before do
       allow(SidekiqUniqueJobs::Script::Scripts).to receive(:fetch).with(config.scripts_path).and_return(scripts)
-      allow(scripts).to receive(:delete).and_return(true)
-      allow(scripts).to receive(:kill).and_return(true)
-      allow(scripts).to receive(:load).and_return(true)
-      allow(scripts).to receive(:fetch).and_return(script)
+      allow(scripts).to receive_messages(delete: true, kill: true, load: true, fetch: script)
 
-      allow(client.logger).to receive(:warn).and_return(true)
-      allow(client.logger).to receive(:debug).and_return(true)
+      allow(client.logger).to receive_messages(warn: true, debug: true)
 
       call_count = 0
       allow(scripts).to receive(:execute) do
