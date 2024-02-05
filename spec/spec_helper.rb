@@ -23,7 +23,11 @@ require "toxiproxy"
 require "sidekiq_unique_jobs/testing"
 
 Sidekiq.log_format = :json if Sidekiq.respond_to?(:log_format)
-LOGLEVEL = ENV.fetch("LOGLEVEL", "ERROR").upcase
+LOGLEVEL     = ENV.fetch("LOGLEVEL", "ERROR").upcase
+SUPPORT_DIR  = Pathname.new(File.join(File.dirname(__FILE__), "support"))
+SCRIPTS_PATH = SUPPORT_DIR.join("lua")
+
+Dir[SUPPORT_DIR.join("**", "*.rb")].sort.each { |f| require f }
 
 if Sidekiq.respond_to?(:default_job_options)
   ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_job_options

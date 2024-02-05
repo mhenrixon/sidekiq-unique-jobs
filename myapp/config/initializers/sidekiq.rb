@@ -3,7 +3,7 @@
 require "sidekiq"
 require "sidekiq-unique-jobs"
 
-REDIS = Redis.new(url: ENV.fetch("REDIS_URL", nil))
+REDIS = RedisClient.new(url: ENV.fetch("REDIS_URL", nil))
 
 Sidekiq.default_job_options = {
   backtrace: true,

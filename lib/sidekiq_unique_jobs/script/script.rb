@@ -66,12 +66,7 @@ module SidekiqUniqueJobs
       end
 
       def load(conn)
-        @sha =
-          if conn.respond_to?(:namespace)
-            conn.redis.script(:load, source)
-          else
-            conn.script(:load, source)
-          end
+        @sha = conn.script(:load, source)
 
         self
       end

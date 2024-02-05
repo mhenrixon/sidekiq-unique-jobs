@@ -814,7 +814,7 @@ In my benchmarks deleting 1000 orphaned locks with lua performs around 65% faste
 
 On the other hand if I increase it to 10 000 orphaned locks per cleanup (`reaper_count: 10_0000`) then redis starts throwing:
 
-> BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)
+> BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (RedisClient::CommandError)
 
 If you want to disable the reaper set it to `:none`, `nil` or `false`. Actually, any value that isn't `:ruby` or `:lua` will disable the reaping.
 
