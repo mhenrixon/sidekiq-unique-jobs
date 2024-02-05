@@ -13,11 +13,11 @@ module SidekiqUniqueJobs
       end
 
       app.get "/changelogs" do
-        @filter         = params[:filter] || "*"
+        @filter         = h(params[:filter] || "*")
         @filter         = "*" if @filter == ""
-        @count          = (params[:count] || 100).to_i
-        @current_cursor = params[:cursor].to_i
-        @prev_cursor    = params[:prev_cursor].to_i
+        @count          = h(params[:count] || 100).to_i
+        @current_cursor = h(params[:cursor]).to_i
+        @prev_cursor    = h(params[:prev_cursor]).to_i
         @total_size, @next_cursor, @changelogs = changelog.page(
           cursor: @current_cursor,
           pattern: @filter,
@@ -33,11 +33,11 @@ module SidekiqUniqueJobs
       end
 
       app.get "/locks" do
-        @filter         = params[:filter] || "*"
+        @filter         = h(params[:filter]) || "*"
         @filter         = "*" if @filter == ""
-        @count          = (params[:count] || 100).to_i
-        @current_cursor = params[:cursor].to_i
-        @prev_cursor    = params[:prev_cursor].to_i
+        @count          = h(params[:count] || 100).to_i
+        @current_cursor = h(params[:cursor]).to_i
+        @prev_cursor    = h(params[:prev_cursor]).to_i
 
         @total_size, @next_cursor, @locks = digests.page(
           cursor: @current_cursor,
@@ -49,11 +49,11 @@ module SidekiqUniqueJobs
       end
 
       app.get "/expiring_locks" do
-        @filter         = params[:filter] || "*"
+        @filter         = h(params[:filter]) || "*"
         @filter         = "*" if @filter == ""
-        @count          = (params[:count] || 100).to_i
-        @current_cursor = params[:cursor].to_i
-        @prev_cursor    = params[:prev_cursor].to_i
+        @count          = h(params[:count] || 100).to_i
+        @current_cursor = h(params[:cursor]).to_i
+        @prev_cursor    = h(params[:prev_cursor]).to_i
 
         @total_size, @next_cursor, @locks = expiring_digests.page(
           cursor: @current_cursor,
@@ -71,20 +71,20 @@ module SidekiqUniqueJobs
       end
 
       app.get "/locks/:digest" do
-        @digest = params[:digest]
+        @digest = h(params[:digest])
         @lock   = SidekiqUniqueJobs::Lock.new(@digest)
 
         erb(unique_template(:lock))
       end
 
       app.get "/locks/:digest/delete" do
-        digests.delete_by_digest(params[:digest])
-        expiring_digests.delete_by_digest(params[:digest])
+        digests.delete_by_digest(h(params[:digest]))
+        expiring_digests.delete_by_digest(h(params[:digest]))
         redirect_to :locks
       end
 
       app.get "/locks/:digest/jobs/:job_id/delete" do
-        @digest = params[:digest]
+        @digest = h(params[:digest])
         @lock   = SidekiqUniqueJobs::Lock.new(@digest)
         @lock.unlock(params[:job_id])
 
