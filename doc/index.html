@@ -861,7 +861,7 @@ already does this.</p>
 <p>On the other hand if I increase it to 10 000 orphaned locks per cleanup (<code>reaper_count: 10_0000</code>) then redis starts throwing:</p>
 
 <blockquote>
-<p>BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (Redis::CommandError)</p>
+<p>BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE. (RedisClient::CommandError)</p>
 </blockquote>
 
 <p>If you want to disable the reaper set it to <code>:none</code>, <code>nil</code> or <code>false</code>. Actually, any value that isn&#39;t <code>:ruby</code> or <code>:lua</code> will disable the reaping.</p>

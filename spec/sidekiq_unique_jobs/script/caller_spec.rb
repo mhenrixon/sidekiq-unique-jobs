@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::Script::Caller do
     let(:keys)             { [unique_key] }
     let(:argv)             { [jid, max_lock_time] }
     let(:script_arguments) { [keys, argv, redis] }
-    let(:redis)            { Redis.new }
+    let(:redis)            { RedisClient.new }
     let(:scriptsha)        { "abcdefab" }
     let(:script_name)      { :acquire_lock }
     let(:error_message)    { "Some interesting error" }

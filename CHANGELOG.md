@@ -938,7 +938,7 @@
 **Fixed bugs:**
 
 - V7 - `on_conflict:` no longer accepts a Hash [\#495](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/495)
-- Brpoplpush::RedisScript::LuaError: WRONGTYPE Operation against a key holding the wrong kind of value [\#491](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/491)
+- SidekiqUniqueJobs::Script::LuaError: WRONGTYPE Operation against a key holding the wrong kind of value [\#491](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/491)
 - Lua script bug [\#489](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/489)
 - Reaper will delete locks for running jobs [\#488](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/488)
 - Fix access to hash members [\#496](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/496) ([mhenrixon](https://github.com/mhenrixon))
@@ -1691,7 +1691,7 @@
 - deprecation warnings with redis-namespace 2.0 [\#212](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/212)
 - Unclear docs / examples for unique\_args [\#211](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/211)
 - Jobs Console fails to launch [\#208](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/208)
-- Util.del Redis::CommandError: ERR syntax error [\#207](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/207)
+- Util.del RedisClient::CommandError: ERR syntax error [\#207](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/207)
 - version 4.0.19 [\#206](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/206)
 - Job.delete does not remove lock in all circumstances [\#205](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/205)
 - disappearing jobs - known issue in conjunction with other extensions? [\#202](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/202)
@@ -1881,7 +1881,7 @@
 
 -  Rails + Sidekiq will go bezerk after sidekiq-unique-jobs testing check. [\#128](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/128)
 -  NoMethodError: undefined method `to\_sym' for true:TrueClass [\#125](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/125)
-- Redis::CommandError: ERR unknown command 'eval' [\#124](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/124)
+- RedisClient::CommandError: ERR unknown command 'eval' [\#124](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/124)
 
 **Merged pull requests:**
 
@@ -1944,7 +1944,7 @@
 
 **Closed issues:**
 
-- 3.0.14 Error: ERR wrong number of arguments for 'set' command \(Redis::CommandError\) [\#104](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/104)
+- 3.0.14 Error: ERR wrong number of arguments for 'set' command \(RedisClient::CommandError\) [\#104](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/104)
 - Testing [\#103](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/103)
 - Active Job [\#102](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/102)
 - Why is SidekiqUnique behaviour applied to regular Workers?  [\#100](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/100)

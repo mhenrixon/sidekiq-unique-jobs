@@ -12,12 +12,21 @@ AllCops:
   TargetRubyVersion: 2.7
   Include:
     - "examples/**/*.rb"
+    - "*.rb"
   Exclude:
     - "**/*.erb"
+    - "**/.DS_Store"
     - "**/*.lua"
-    - "**/vendor/**/*"
+    - "assets/**/*"
+    - "bin/**/*"
+    - "doc/**/*"
+    - "docs/**/*"
+    - "lib/sidekiq_unique_jobs/lua/**/*"
+    - "lib/sidekiq_unique_jobs/web/views/**/*"
+    - "lib/tasks/**/*"
     - "myapp/**/*"
-    - "bin/bench"
+    - "Sidekiq/**/*"
+    - "vendor/**/*"
 
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
