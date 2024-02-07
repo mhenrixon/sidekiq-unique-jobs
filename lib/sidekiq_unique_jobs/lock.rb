@@ -33,9 +33,9 @@ module SidekiqUniqueJobs
     #
     # @return [Lock] a newly lock that has been locked
     #
-    def self.create(digest, job_id, lock_info = {})
-      lock = new(digest, time: Timing.now_f)
-      lock.lock(job_id, lock_info)
+    def self.create(digest, job_id, lock_info = {}, time: Timing.now_f, score: nil)
+      lock = new(digest, time: time)
+      lock.lock(job_id, lock_info, score)
       lock
     end
 
@@ -63,15 +63,16 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def lock(job_id, lock_info = {})
+    def lock(job_id, lock_info = {}, score = nil)
+      score ||= now_f
       redis do |conn|
         conn.multi do |pipeline|
           pipeline.set(key.digest, job_id)
           pipeline.hset(key.locked, job_id, now_f)
           info.set(lock_info, pipeline)
-          add_digest_to_set(pipeline, lock_info)
-          pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "queue.lua", "Queued"))
-          pipeline.zadd(key.changelog, now_f, changelog_json(job_id, "lock.lua", "Locked"))
+          add_digest_to_set(pipeline, lock_info, score)
+          pipeline.zadd(key.changelog, score, changelog_json(job_id, "queue.lua", "Queued"))
+          pipeline.zadd(key.changelog, score, changelog_json(job_id, "lock.lua", "Locked"))
         end
       end
     end
@@ -333,12 +334,14 @@ module SidekiqUniqueJobs
     #
     # @return [nil]
     #
-    def add_digest_to_set(pipeline, lock_info)
+    def add_digest_to_set(pipeline, lock_info, score = nil)
+      score ||= now_f
       digest_string = key.digest
+
       if lock_info["lock"] == :until_expired
-        pipeline.zadd(key.expiring_digests, now_f + lock_info["ttl"], digest_string)
+        pipeline.zadd(key.expiring_digests, score + lock_info["ttl"], digest_string)
       else
-        pipeline.zadd(key.digests, now_f, digest_string)
+        pipeline.zadd(key.digests, score, digest_string)
       end
     end
   end

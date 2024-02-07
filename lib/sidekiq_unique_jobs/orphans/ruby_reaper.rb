@@ -14,6 +14,9 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::Timing
 
       #
+      # @return [Integer] a best guess of Sidekiq::Launcher::BEAT_PAUSE
+      SIDEKIQ_BEAT_PAUSE = 10
+      #
       # @return [String] the suffix for :RUN locks
       RUN_SUFFIX = ":RUN"
       #
@@ -74,12 +77,28 @@ module SidekiqUniqueJobs
 
         BatchDelete.call(expired_digests, conn)
         BatchDelete.call(orphans, conn)
+
+        # orphans.each_slice(500) do |chunk|
+        #   conn.pipelined do |pipeline|
+        #     chunk.each do |digest|
+        #       next if belongs_to_job?(digest)
+
+        #       pipeline.zadd(ORPHANED_DIGESTS, now_f, digest)
+        #     end
+        #   end
+        # end
       end
 
       def expired_digests
-        max_score = (start_time - reaper_timeout).to_f
-
         conn.zrange(EXPIRING_DIGESTS, 0, max_score, "byscore")
+      end
+
+      def orphaned_digests
+        conn.zrange(ORPHANED_DIGESTS, 0, max_score, "byscore")
+      end
+
+      def max_score
+        (start_time - reaper_timeout - SIDEKIQ_BEAT_PAUSE).to_f
       end
 
       #
@@ -89,10 +108,10 @@ module SidekiqUniqueJobs
       # @return [Array<String>] an array of orphaned digests
       #
       def orphans # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-        page = 0
-        per = reaper_count * 2
         orphans = []
-        results = conn.zrange(digests.key, page * per, (page + 1) * per)
+        page    = 0
+        per     = reaper_count * 2
+        results = digests.byscore(0, max_score, offset: page * per, count: (page + 1) * per)
 
         while results.size.positive?
           results.each do |digest|
@@ -107,7 +126,7 @@ module SidekiqUniqueJobs
           break if orphans.size >= reaper_count
 
           page += 1
-          results = conn.zrange(digests.key, page * per, (page + 1) * per)
+          results = digests.byscore(0, max_score, offset: page * per, count: (page + 1) * per)
         end
 
         orphans
@@ -218,7 +237,7 @@ module SidekiqUniqueJobs
       end
 
       def considered_active?(time_f)
-        (Time.now - reaper_timeout).to_f < time_f
+        max_score < time_f
       end
 
       #

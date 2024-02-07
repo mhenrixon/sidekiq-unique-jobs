@@ -9,7 +9,7 @@ module SidekiqUniqueJobs
   class BatchDelete
     #
     # @return [Integer] the default batch size
-    BATCH_SIZE = 100
+    BATCH_SIZE = 500
 
     #
     # @return [Array<String>] Supported key suffixes

@@ -48,6 +48,14 @@ module SidekiqUniqueJobs
         end
       end
 
+      def byscore(min, max, offset: nil, count: nil)
+        redis do |conn|
+          return conn.zrange(key, min, max, "byscore") unless offset && count
+
+          conn.zrange(key, min, max, "byscore", "limit", offset, count)
+        end
+      end
+
       #
       # Return the zrak of the member
       #

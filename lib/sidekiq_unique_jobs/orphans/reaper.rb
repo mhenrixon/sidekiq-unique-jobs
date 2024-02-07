@@ -27,6 +27,7 @@ module SidekiqUniqueJobs
         none: SidekiqUniqueJobs::Orphans::NullReaper,
         nil => SidekiqUniqueJobs::Orphans::NullReaper,
         false => SidekiqUniqueJobs::Orphans::NullReaper,
+        true => SidekiqUniqueJobs::Orphans::RubyReaper,
       }.freeze
 
       #
