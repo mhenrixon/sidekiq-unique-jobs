@@ -19,15 +19,15 @@ module SidekiqUniqueJobs
     # This method runs before (prepended) the actual middleware implementation.
     #   This is done to reduce duplication
     #
-    # @param [Sidekiq::Worker] worker_class
+    # @param [Sidekiq::Job] worker_class
     # @param [Hash] item a sidekiq job hash
     # @param [String] queue name of the queue
     # @param [ConnectionPool] redis_pool only used for compatility reasons
     #
-    # @return [yield<super>] <description>
+    # @return [yield<super>] call the rest of the middleware stack
     #
-    # @yieldparam [<type>] if <description>
-    # @yieldreturn [<type>] <describe what yield should return>
+    # @yieldparam [void] if uniquejobs is disable
+    # @yieldreturn [void] delegate back to other sidekiq middleware
     def call(worker_class, item, queue, redis_pool = nil)
       @item       = item
       @queue      = queue
@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
       self.job_class = worker_class
       return yield if unique_disabled?
 
-      SidekiqUniqueJobs::Job.prepare(item) unless item[LOCK_DIGEST]
+      SidekiqUniqueJobs::Job.prepare(item)
 
       with_logging_context do
         super

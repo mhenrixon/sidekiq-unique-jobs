@@ -3,7 +3,7 @@
 # :nocov:
 
 class AnotherUniqueJob
-  include Sidekiq::Worker
+  include Sidekiq::Job
   sidekiq_options backtrace: 10,
                   lock: :until_executed,
                   queue: :working2,

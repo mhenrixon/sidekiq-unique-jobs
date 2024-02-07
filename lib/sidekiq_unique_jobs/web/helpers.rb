@@ -133,7 +133,7 @@ module SidekiqUniqueJobs
       #
       # @return [String] a html safe string with relative time information
       #
-      def relative_time(time)
+      def _relative_time(time)
         stamp = time.getutc.iso8601
         %(<time class="ltr" dir="ltr" title="#{stamp}" datetime="#{stamp}">#{time}</time>)
       end
@@ -145,12 +145,12 @@ module SidekiqUniqueJobs
       #
       # @return [String] a html safe string with relative time information
       #
-      def safe_relative_time(time)
+      def _safe_relative_time(time)
         return unless time
 
         time = parse_time(time)
 
-        relative_time(time)
+        _relative_time(time)
       end
 
       #

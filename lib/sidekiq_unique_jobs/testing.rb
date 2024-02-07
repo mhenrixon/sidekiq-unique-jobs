@@ -42,11 +42,11 @@ module Sidekiq
   end
 
   #
-  # See Sidekiq::Worker in Sidekiq gem for more details
+  # See Sidekiq::Job in Sidekiq gem for more details
   #
   module Worker
     #
-    # Adds class methods to Sidekiq::Worker
+    # Adds class methods to Sidekiq::Job
     #
     module ClassMethods
       #
@@ -110,14 +110,14 @@ module Sidekiq
     prepend Overrides
 
     #
-    # Prepends methods to Sidekiq::Worker
+    # Prepends methods to Sidekiq::Job
     #
     module ClassMethods
       prepend Overrides::ClassMethods
     end
 
     #
-    # Prepends singleton methods to Sidekiq::Worker
+    # Prepends singleton methods to Sidekiq::Job
     #
     module SignletonOverrides
       #

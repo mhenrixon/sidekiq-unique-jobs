@@ -3,7 +3,7 @@
 # :nocov:
 
 class WithoutArgumentJob
-  include Sidekiq::Worker
+  include Sidekiq::Job
   sidekiq_options lock: :until_executed
 
   def perform

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  # Module with convenience methods for the Sidekiq::Worker class
+  # Module with convenience methods for the Sidekiq::Job class
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   module SidekiqWorkerMethods
     #
     # @!attribute [r] job_class
-    #   @return [Sidekiq::Worker] The Sidekiq::Worker implementation
+    #   @return [Sidekiq::Job] The Sidekiq::Job implementation
     attr_reader :job_class
 
     # Avoids duplicating worker_class.respond_to? in multiple places
@@ -62,7 +62,7 @@ module SidekiqUniqueJobs
     # Attempt to constantize a string worker_class argument, always
     # failing back to the original argument when the constant can't be found
     #
-    # @return [Sidekiq::Worker]
+    # @return [Sidekiq::Job]
     def job_class_constantize(klazz = @job_class)
       SidekiqUniqueJobs.safe_constantize(klazz)
     end

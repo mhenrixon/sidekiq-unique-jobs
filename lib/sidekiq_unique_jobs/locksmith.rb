@@ -258,8 +258,8 @@ module SidekiqUniqueJobs
 
       # NOTE: When debugging, change .value to .value!
       primed_jid = Concurrent::Promises
-                   .future(conn) { |red_con| pop_queued(red_con, timeout) }
-                   .value
+        .future(conn) { |red_con| pop_queued(red_con, timeout) }
+        .value
 
       handle_primed(primed_jid, &block)
     end

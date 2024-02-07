@@ -65,7 +65,7 @@
         <% @lock.locked_jids(with_values: true).each do |job_id, time| %>
         <tr>
           <td><%= job_id %></td>
-          <td><%= safe_relative_time(time.to_f) %></td>
+          <td><%= _safe_relative_time(time.to_f) %></td>
           <td>
             <form action="<%= root_path %>locks/<%= @lock.key %>/jobs/<%= job_id %>/delete" method="get">
               <%= csrf_tag %>
@@ -92,7 +92,7 @@
       <tbody>
         <% @lock.changelogs.each do |entry| %>
         <tr>
-          <td scope="row"><%= safe_relative_time(entry["time"].to_f) %></td>
+          <td scope="row"><%= _safe_relative_time(entry["time"].to_f) %></td>
           <td><%= entry["job_id"] %></td>
           <td><%= entry["message"] %></td>
           <td><%= entry["script"] %></td>

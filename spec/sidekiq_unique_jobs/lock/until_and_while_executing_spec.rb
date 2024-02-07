@@ -27,11 +27,7 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
   let(:lock_timeout) { nil }
   let(:sleepy_time)  { 0 }
 
-  if Sidekiq.const_defined?(:JobRecord)
-    let(:job_class) { AnotherUniqueJobJob }
-  else
-    let(:job_class) { UntilAndWhileExecutingJob }
-  end
+  let(:job_class) { AnotherUniqueJobJob }
 
   before do
     allow(runtime_one).to receive(:reflect).and_call_original

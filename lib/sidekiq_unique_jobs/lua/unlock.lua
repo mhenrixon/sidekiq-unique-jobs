@@ -75,21 +75,28 @@ if lock_type ~= "until_expired" then
   redis.call("HDEL", locked, job_id)
 end
 
-local locked_count = redis.call("HLEN", locked)
-
-if locked_count and locked_count < 1 then
-  log_debug("UNLINK", locked)
-  redis.call("UNLINK", locked)
-end
-
 if redis.call("LLEN", primed) == 0 then
   log_debug("UNLINK", primed)
   redis.call("UNLINK", primed)
 end
 
-if limit and limit <= 1 and locked_count and locked_count <= 1 then
-  log_debug("ZREM", digests, digest)
-  redis.call("ZREM", digests, digest)
+local locked_count = redis.call("HLEN", locked)
+
+if locked_count < 1 then
+  log_debug("UNLINK", locked)
+  redis.call("UNLINK", locked)
+end
+
+if limit then
+  if limit <= 1 and locked_count <= 1 then
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  end
+else
+  if locked_count <= 1 then
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  end
 end
 
 log_debug("LPUSH", queued, "1")

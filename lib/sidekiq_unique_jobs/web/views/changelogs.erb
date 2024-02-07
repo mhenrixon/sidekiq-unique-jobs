@@ -42,7 +42,7 @@
       <tbody>
         <% @changelogs.each do |changelog| %>
           <tr  class="changelog-row">
-            <td><%= safe_relative_time(changelog['time']) || "bogus" %></td>
+            <td><%= _safe_relative_time(changelog['time']) || "bogus" %></td>
             <td><%= changelog["digest"] %></td>
             <td><%= changelog["script"] %></td>
             <td><%= changelog["job_id"] %></td>

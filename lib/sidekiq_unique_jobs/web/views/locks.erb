@@ -46,7 +46,7 @@
             <td><a href="<%= root_path %>locks/<%= lock.key %>"><%= lock.key %></a></td>
             <td><%= lock.info["lock"] %></td>
             <td><%= lock.locked.count %></td>
-            <td><%= safe_relative_time(lock.created_at) %></td>
+            <td><%= _safe_relative_time(lock.created_at) %></td>
           </tr>
         </tbody>
       <% end %>
