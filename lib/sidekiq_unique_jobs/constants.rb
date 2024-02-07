@@ -15,6 +15,7 @@ module SidekiqUniqueJobs
   DEAD_VERSION          = "uniquejobs:dead"
   DIGESTS               = "uniquejobs:digests"
   EXPIRING_DIGESTS      = "uniquejobs:expiring_digests"
+  ORPHANED_DIGESTS      = "uniquejobs:orphaned_digests"
   ERRORS                = "errors"
   JID                   = "jid"
   LIMIT                 = "limit"
