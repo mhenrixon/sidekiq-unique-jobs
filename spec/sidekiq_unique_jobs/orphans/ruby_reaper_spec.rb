@@ -5,7 +5,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
   let(:digest)   { "uniquejobs:digest" }
   let(:job_id)   { "job_id" }
   let(:item)     { raw_item }
-  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info, score: score) }
+  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info: lock_info, score: score) }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => digest } }
   let(:lock_info) do
     {

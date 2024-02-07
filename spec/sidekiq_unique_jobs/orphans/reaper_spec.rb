@@ -5,7 +5,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
   let(:digest)   { "uniquejobs:digest" }
   let(:job_id)   { "job_id" }
   let(:item)     { raw_item }
-  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info, score: score) }
+  let(:lock)     { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info: lock_info, score: score) }
   let(:raw_item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => digest } }
 
   let(:score) do
@@ -161,7 +161,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
           end
 
           context "when digest has :RUN suffix" do
-            let(:lock) { SidekiqUniqueJobs::Lock.create("#{digest}:RUN", job_id, lock_info) }
+            let(:lock) { SidekiqUniqueJobs::Lock.create("#{digest}:RUN", job_id, lock_info: lock_info) }
 
             context "that matches current digest" do # rubocop:disable RSpec/NestedGroups
               let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }

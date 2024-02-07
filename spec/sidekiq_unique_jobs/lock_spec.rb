@@ -41,7 +41,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
   its(:to_s)    { is_expected.to eq(expected_string) }
 
   describe ".create" do
-    subject(:create) { described_class.create(key, job_id, lock_info) }
+    subject(:create) { described_class.create(key, job_id, lock_info: lock_info) }
 
     it "creates all expected keys in redis" do
       create
@@ -77,7 +77,7 @@ RSpec.describe SidekiqUniqueJobs::Lock do
   describe "#del" do
     subject(:del) { lock.del }
 
-    let(:lock) { described_class.create(key, job_id, info) }
+    let(:lock) { described_class.create(key, job_id, lock_info: info) }
 
     it "creates keys and adds job_id to locked hash" do
       expect { lock }.to change { entity.locked_jids }.to([job_id])

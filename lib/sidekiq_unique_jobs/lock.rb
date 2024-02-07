@@ -33,7 +33,7 @@ module SidekiqUniqueJobs
     #
     # @return [Lock] a newly lock that has been locked
     #
-    def self.create(digest, job_id, lock_info = {}, time: Timing.now_f, score: nil)
+    def self.create(digest, job_id, lock_info: {}, time: Timing.now_f, score: nil)
       lock = new(digest, time: time)
       lock.lock(job_id, lock_info, score)
       lock

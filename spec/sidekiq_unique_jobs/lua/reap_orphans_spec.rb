@@ -19,7 +19,7 @@ RSpec.describe "reap_orphans.lua" do
   end
   let(:argv)       { [100, threshold] }
   let(:digest)     { "uniquejobs:digest" }
-  let(:lock)       { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info) }
+  let(:lock)       { SidekiqUniqueJobs::Lock.create(digest, job_id, lock_info: lock_info) }
   let(:job_id)     { "job_id" }
   let(:item)       { raw_item }
   let(:created_at) { (Time.now - 1000).to_f }
