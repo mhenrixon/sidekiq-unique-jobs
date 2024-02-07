@@ -13,8 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1
-          bundler: 2.4.12
+          ruby-version: 3.2
           bundler-cache: true
       - run: bin/bundle --jobs=$(nproc) --retry=$(nproc)
       - run: bin/rubocop -P
