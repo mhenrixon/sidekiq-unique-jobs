@@ -22,7 +22,7 @@ module SidekiqUniqueJobs
       #
       # @return [Hash<Symbol, SidekiqUniqueJobs::Orphans::Reaper] the current implementation of reapers
       REAPERS = {
-        lua: SidekiqUniqueJobs::Orphans::LuaReaper,
+        lua: SidekiqUniqueJobs::Orphans::RubyReaper,
         ruby: SidekiqUniqueJobs::Orphans::RubyReaper,
         none: SidekiqUniqueJobs::Orphans::NullReaper,
         nil => SidekiqUniqueJobs::Orphans::NullReaper,
