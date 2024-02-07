@@ -184,7 +184,7 @@ RSpec.describe "unlock.lua" do
     context "with same job_id", :with_a_lock do
       it "does unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
-                                                        .and change { digests.count }.by(-1)
+          .and change { digests.count }.by(-1)
 
         expect(queued.count).to eq(1)
         expect(queued.entries).to contain_exactly("1")

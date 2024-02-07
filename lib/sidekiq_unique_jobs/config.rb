@@ -67,10 +67,10 @@ module SidekiqUniqueJobs
     # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available default locks
     LOCKS =
       LOCKS_WHEN_BUSY.dup
-                     .merge(LOCKS_WHILE_ENQUEUED.dup)
-                     .merge(LOCKS_WITHOUT_UNLOCK.dup)
-                     .merge(LOCKS_FROM_PUSH_TO_PROCESSED.dup)
-                     .freeze
+        .merge(LOCKS_WHILE_ENQUEUED.dup)
+        .merge(LOCKS_WITHOUT_UNLOCK.dup)
+        .merge(LOCKS_FROM_PUSH_TO_PROCESSED.dup)
+        .freeze
 
     #
     # @return [Hash<Symbol, SidekiqUniqueJobs::OnConflict::Strategy] all available default strategies
