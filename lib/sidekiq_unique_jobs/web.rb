@@ -85,8 +85,9 @@ module SidekiqUniqueJobs
 
       app.get "/locks/:digest/jobs/:job_id/delete" do
         @digest = h(params[:digest])
+        @job_id = h(params[:job_id])
         @lock   = SidekiqUniqueJobs::Lock.new(@digest)
-        @lock.unlock(params[:job_id])
+        @lock.unlock(@job_id)
 
         redirect_to "locks/#{@lock.key}"
       end
