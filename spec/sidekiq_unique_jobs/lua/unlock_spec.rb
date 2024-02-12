@@ -18,7 +18,7 @@ RSpec.describe "unlock.lua" do
   let(:locked_jid) { job_id_one }
   let(:lock_limit) { 1 }
 
-  shared_context "with a lock", with_a_lock: true do
+  shared_context "with a lock", :with_a_lock do
     before do
       call_script(:queue, key.to_a, argv_one)
       rpoplpush(key.queued, key.primed)
@@ -172,10 +172,10 @@ RSpec.describe "unlock.lua" do
       it "does not unlock" do
         expect { unlock }.to change { changelogs.count }.by(1)
 
-        expect(queued.count).to be == 0
-        expect(primed.count).to be == 0
+        expect(queued.count).to eq 0
+        expect(primed.count).to eq 0
 
-        expect(locked.count).to be == 1
+        expect(locked.count).to eq 1
         expect(locked.entries).to contain_exactly(job_id_two)
         expect(locked[job_id_two].to_f).to be_within(0.5).of(now_f)
       end
@@ -189,9 +189,9 @@ RSpec.describe "unlock.lua" do
         expect(queued.count).to eq(1)
         expect(queued.entries).to contain_exactly("1")
 
-        expect(primed.count).to be == 0
+        expect(primed.count).to eq 0
 
-        expect(locked.count).to be == 0
+        expect(locked.count).to eq 0
         expect(locked.entries).to be_empty
         expect(locked[job_id_one]).to be_nil
       end

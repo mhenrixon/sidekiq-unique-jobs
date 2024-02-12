@@ -27,7 +27,7 @@ RSpec.configure do |config|
 
     if (sidekiq = example.metadata.fetch(:sidekiq, :disable))
       sidekiq = :fake if sidekiq == true
-      Sidekiq::Testing.send("#{sidekiq}!")
+      Sidekiq::Testing.send(:"#{sidekiq}!")
     end
 
     if (sidekiq_ver = example.metadata[:sidekiq_ver])
