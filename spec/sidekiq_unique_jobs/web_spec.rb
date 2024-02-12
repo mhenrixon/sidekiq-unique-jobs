@@ -16,7 +16,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
           path: "/",
           expire_after: 2_592_000,
           secret: "change_me" * 16,
-          old_secret: "also_change_me"  * 16
+          old_secret: "also_change_me" * 16
 
       run Sidekiq::Web
     end

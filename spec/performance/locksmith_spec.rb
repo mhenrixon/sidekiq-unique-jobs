@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SidekiqUniqueJobs::Locksmith, perf: true do
+RSpec.describe SidekiqUniqueJobs::Locksmith, :perf do
   let(:locksmith_one)   { described_class.new(item_one) }
   let(:locksmith_two)   { described_class.new(item_two) }
 

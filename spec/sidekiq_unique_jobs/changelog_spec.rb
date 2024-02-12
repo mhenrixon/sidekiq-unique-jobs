@@ -39,14 +39,14 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
 
       it "clears out all entries" do
         expect { clear }.to change { entity.entries.size }.by(-1)
-        expect(clear).to be == 1
+        expect(clear).to eq 1
       end
     end
 
     context "without entries" do
       it "returns 0 (zero)" do
         expect { clear }.not_to change { entity.entries.size }
-        expect(clear).to be == 0
+        expect(clear).to eq 0
       end
     end
   end
@@ -55,13 +55,13 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     subject(:exist?) { entity.exist? }
 
     context "when no entries exist" do
-      it { is_expected.to be == false }
+      it { is_expected.to be false }
     end
 
     context "when entries exist" do
       before { simulate_lock(key, job_id) }
 
-      it { is_expected.to be == true }
+      it { is_expected.to be true }
     end
   end
 
@@ -69,13 +69,13 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     subject(:pttl) { entity.pttl }
 
     context "when no entries exist" do
-      it { is_expected.to be == -2 }
+      it { is_expected.to eq(-2) }
     end
 
     context "when entries exist without expiration" do
       before { simulate_lock(key, job_id) }
 
-      it { is_expected.to be == -1 }
+      it { is_expected.to eq(-1) }
     end
 
     context "when entries exist with expiration" do
@@ -92,13 +92,13 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     subject(:ttl) { entity.ttl }
 
     context "when no entries exist" do
-      it { is_expected.to be == -2 }
+      it { is_expected.to eq(-2) }
     end
 
     context "when entries exist without expiration" do
       before { simulate_lock(key, job_id) }
 
-      it { is_expected.to be == -1 }
+      it { is_expected.to eq(-1) }
     end
 
     context "when entries exist with expiration" do
@@ -107,7 +107,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
         expire(key.changelog, 600)
       end
 
-      it { is_expected.to be == 600 }
+      it { is_expected.to eq 600 }
     end
   end
 
@@ -115,7 +115,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     subject(:expires?) { entity.expires? }
 
     context "when no entries exist" do
-      it { is_expected.to be == false }
+      it { is_expected.to be false }
     end
 
     context "when entries exist" do
@@ -124,7 +124,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
         expire(key.changelog, 600)
       end
 
-      it { is_expected.to be == true }
+      it { is_expected.to be true }
     end
   end
 
@@ -132,13 +132,13 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
     subject(:count) { entity.count }
 
     context "when no entries exist" do
-      it { is_expected.to be == 0 }
+      it { is_expected.to eq 0 }
     end
 
     context "when entries exist" do
       before { simulate_lock(key, job_id) }
 
-      it { is_expected.to be == 2 }
+      it { is_expected.to eq 2 }
     end
   end
 

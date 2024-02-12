@@ -24,13 +24,13 @@ RSpec.describe SidekiqUniqueJobs::Redis::Set do
     subject(:count) { entity.count }
 
     context "without entries" do
-      it { is_expected.to be == 0 }
+      it { is_expected.to eq 0 }
     end
 
     context "with entries" do
       before { sadd(digest, job_id) }
 
-      it { is_expected.to be == 1 }
+      it { is_expected.to eq 1 }
     end
   end
 end

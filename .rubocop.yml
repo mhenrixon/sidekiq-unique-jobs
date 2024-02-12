@@ -135,6 +135,13 @@ RSpec/RepeatedExample:
   Exclude:
     - spec/sidekiq_unique_jobs/unique_args_spec.rb
 
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - spec/performance/lock_digest_spec.rb
+    - spec/performance/locksmith_spec.rb
+    - spec/sidekiq_unique_jobs/configuration_spec.rb
+    - spec/sidekiq_unique_jobs/middleware/server/until_and_while_executing_spec.rb
+
 Style/Documentation:
   Enabled: true
   Exclude:
