@@ -1,5 +1,13 @@
 # Changelog
 
+## [v8.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.9) (2024-02-12)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.8...v8.0.9)
+
+**Fixed bugs:**
+
+- fix\(rce\): prevent remot code execution [\#833](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/833) ([mhenrixon](https://github.com/mhenrixon))
+
 ## [v8.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.8) (2024-02-12)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.7...v8.0.8)
