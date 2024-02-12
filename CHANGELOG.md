@@ -1,5 +1,23 @@
 # Changelog
 
+## [v8.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.8) (2024-02-12)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.7...v8.0.8)
+
+**Implemented enhancements:**
+
+- fix: ensure a new lock isn't conflicting with itself [\#830](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/830) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- until\_and\_while\_executing not entering perform method on initial run [\#824](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/824)
+- fix\(digest\): write digest on middleware call [\#774](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/774) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- incompatibility with sidekiq-failures [\#790](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/790)
+- Jobs queued during existing job inherit lock digest [\#766](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/766)
+
 ## [v8.0.7](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.7) (2024-02-05)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.6...v8.0.7)
@@ -396,7 +414,6 @@
 
 - Job finished, but lock is not cleared [\#677](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/677)
 - sidekiq\_options lock conflicts with sidekiq-lock gem lock option [\#669](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/669)
-- Slow evalsha causing timeouts [\#668](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/668)
 - Inconsistent documentation for config validation [\#647](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/647)
 
 **Merged pull requests:**
