@@ -5,6 +5,8 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Server
+    #
+    # @return [Proc] returns a default death handler for the gem to cleanup dead locks
     DEATH_HANDLER = (lambda do |job, _ex|
       return unless (digest = job["lock_digest"])
 

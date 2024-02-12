@@ -188,7 +188,7 @@ module SidekiqUniqueJobs
     #
     # @param [Sidekiq::RedisConnection, ConnectionPool] conn the redis connection
     # @param [Method] primed_method reference to the method to use for getting a primed token
-    # @param [nil, Integer, Float] time to wait before timeout
+    # @param [nil, Integer, Float] wait time to wait before timeout
     #
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns

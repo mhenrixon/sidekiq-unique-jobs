@@ -11,6 +11,8 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     class WhileExecuting < BaseLock
+      #
+      # @return [String] returns :RUN
       RUN_SUFFIX = ":RUN"
 
       include SidekiqUniqueJobs::OptionsWithFallback

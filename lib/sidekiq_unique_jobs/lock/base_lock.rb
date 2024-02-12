@@ -109,7 +109,7 @@ module SidekiqUniqueJobs
       #
       # Call whatever strategry that has been configured
       #
-      # @param [Symbol] origin: the origin `:client` or `:server`
+      # @param [Symbol] origin the origin `:client` or `:server`
       #
       # @return [void] the return value is irrelevant
       #
