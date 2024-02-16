@@ -59,12 +59,12 @@ module SidekiqUniqueJobs
         redis { |conn| conn.debug(*args) }
       end
 
-      def flushall(options = nil)
-        redis { |conn| conn.flushall(options) }
+      def flushall(...)
+        redis { |conn| conn.flushall(...) }
       end
 
-      def flushdb(options = nil)
-        redis { |conn| conn.flushdb(options) }
+      def flushdb(...)
+        redis { |conn| conn.flushdb(...) }
       end
 
       def info(_cmd = nil)
