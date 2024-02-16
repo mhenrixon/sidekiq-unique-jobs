@@ -6,6 +6,7 @@
 
 **Fixed bugs:**
 
+- note: The RCE vulnerability was a false alarm, `sidekiq-unique-jobs` was not vulnerable to RCE. You can find additional information in the PR linked below.
 - fix\(rce\): prevent remot code execution [\#833](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/833) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v8.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.8) (2024-02-12)
