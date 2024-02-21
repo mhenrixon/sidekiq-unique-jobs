@@ -10,6 +10,7 @@ RSpec.describe "queue.lua" do
       lock_pttl,
       lock_type,
       lock_limit,
+      lock_score,
     ]
   end
   let(:digest)     { "uniquejobs:digest" }
@@ -21,6 +22,7 @@ RSpec.describe "queue.lua" do
   let(:locked_jid) { job_id }
   let(:lock_limit) { 1 }
   let(:now_f)      { SidekiqUniqueJobs.now_f }
+  let(:lock_score) { now_f.to_s }
 
   before do
     flush_redis
@@ -54,7 +56,7 @@ RSpec.describe "queue.lua" do
 
   context "when queued by another job_id" do
     before do
-      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit])
+      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit, lock_score])
     end
 
     context "with lock_limit 1" do
@@ -94,7 +96,7 @@ RSpec.describe "queue.lua" do
 
   context "when queued by same job_id" do
     before do
-      call_script(:queue, key.to_a, [job_id_one, lock_pttl, lock_type, lock_limit])
+      call_script(:queue, key.to_a, [job_id_one, lock_pttl, lock_type, lock_limit, lock_score])
     end
 
     it "stores the right keys in redis" do
@@ -113,9 +115,9 @@ RSpec.describe "queue.lua" do
 
   context "when primed by another job_id" do
     before do
-      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit])
+      call_script(:queue, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit, lock_score])
       rpoplpush(key.queued, key.primed)
-      call_script(:lock, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit])
+      call_script(:lock, key.to_a, [job_id_two, lock_pttl, lock_type, lock_limit, lock_score])
     end
 
     context "with lock_limit 1" do

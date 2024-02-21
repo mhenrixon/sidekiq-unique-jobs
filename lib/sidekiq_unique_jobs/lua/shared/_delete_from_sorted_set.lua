@@ -1,19 +1,29 @@
 local function delete_from_sorted_set(name, digest)
-  local per   = 50
-  local total = redis.call("zcard", name)
-  local index = 0
-  local result
+  local score  = redis.call("ZSCORE", "uniquejobs:digests", digest)
+  local total  = redis.call("ZCARD", name)
+  local per    = 50
 
-  while (index < total) do
-    local items = redis.call("ZRANGE", name, index, index + per -1)
+  for offset = 0, total, per do
+    local items
+
+    if score then
+      items = redis.call("ZRANGE", name, score, "+inf", "BYSCORE", "LIMIT", offset, per)
+    else
+      items = redis.call("ZRANGE", name, offset, offset + per -1)
+    end
+
+    if #items == 0 then
+      break
+    end
+
     for _, item in pairs(items) do
       if string.find(item, digest) then
         redis.call("ZREM", name, item)
-        result = item
-        break
+
+        return item
       end
     end
-    index = index + per
   end
-  return result
+
+  return nil
 end

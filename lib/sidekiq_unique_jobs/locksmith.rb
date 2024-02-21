@@ -82,7 +82,7 @@ module SidekiqUniqueJobs
     # Deletes the lock regardless of if it has a pttl set
     #
     def delete!
-      call_script(:delete, key.to_a, [job_id, config.pttl, config.type, config.limit]).to_i.positive?
+      call_script(:delete, key.to_a, argv).to_i.positive?
     end
 
     #
@@ -362,7 +362,11 @@ module SidekiqUniqueJobs
     end
 
     def argv
-      [job_id, config.pttl, config.type, config.limit]
+      [job_id, config.pttl, config.type, config.limit, lock_score]
+    end
+
+    def lock_score
+      item[AT].to_s
     end
 
     def lock_info
@@ -375,6 +379,7 @@ module SidekiqUniqueJobs
         TYPE => config.type,
         LOCK_ARGS => item[LOCK_ARGS],
         TIME => now_f,
+        AT => item[AT],
       )
     end
 

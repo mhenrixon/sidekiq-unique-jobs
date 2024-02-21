@@ -9,6 +9,7 @@ RSpec.describe "delete.lua" do
       lock_ttl,
       lock_type,
       lock_limit,
+      lock_score,
     ]
   end
   let(:job_id)     { "jobid" }
@@ -22,6 +23,8 @@ RSpec.describe "delete.lua" do
   let(:lock_ttl)   { nil }
   let(:locked_jid) { job_id }
   let(:lock_limit) { 1 }
+  let(:now_f)      { SidekiqUniqueJobs.now_f }
+  let(:lock_score) { now_f.to_s }
 
   context "when queued" do
     before do

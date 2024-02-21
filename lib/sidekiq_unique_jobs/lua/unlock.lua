@@ -10,19 +10,20 @@ local digests   = KEYS[7]
 
 
 -------- BEGIN lock arguments ---------
-local job_id    = ARGV[1]
-local pttl      = tonumber(ARGV[2])
-local lock_type = ARGV[3]
-local limit     = tonumber(ARGV[4])
+local job_id     = ARGV[1]
+local pttl       = tonumber(ARGV[2])
+local lock_type  = ARGV[3]
+local limit      = tonumber(ARGV[4])
+local lock_score = ARGV[5]
 -------- END lock arguments -----------
 
 
 --------  BEGIN injected arguments --------
-local current_time = tonumber(ARGV[5])
-local debug_lua    = tostring(ARGV[6]) == "1"
-local max_history  = tonumber(ARGV[7])
-local script_name  = tostring(ARGV[8]) .. ".lua"
-local redisversion = ARGV[9]
+local current_time = tonumber(ARGV[6])
+local debug_lua    = tostring(ARGV[7]) == "1"
+local max_history  = tonumber(ARGV[8])
+local script_name  = tostring(ARGV[9]) .. ".lua"
+local redisversion = ARGV[10]
 ---------  END injected arguments ---------
 
 
