@@ -3,8 +3,8 @@
 RSpec.describe "unlock.lua" do
   subject(:unlock) { call_script(:unlock, key.to_a, argv_one) }
 
-  let(:argv_one)   { [job_id_one, lock_ttl, lock_type, lock_limit] }
-  let(:argv_two)   { [job_id_two, lock_ttl, lock_type, lock_limit] }
+  let(:argv_one)   { [job_id_one, lock_ttl, lock_type, lock_limit, lock_score] }
+  let(:argv_two)   { [job_id_two, lock_ttl, lock_type, lock_limit, lock_score] }
   let(:job_id_one) { "job_id_one" }
   let(:job_id_two) { "job_id_two" }
   let(:lock_type)  { :until_executed }
@@ -17,6 +17,7 @@ RSpec.describe "unlock.lua" do
   let(:lock_ttl)   { nil }
   let(:locked_jid) { job_id_one }
   let(:lock_limit) { 1 }
+  let(:lock_score) { now_f.to_s }
 
   shared_context "with a lock", :with_a_lock do
     before do
