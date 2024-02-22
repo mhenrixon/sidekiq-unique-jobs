@@ -4,7 +4,7 @@
 RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
   let(:lock_digest)  { described_class.new(item) }
   let(:job_class)    { UntilExecutedJob }
-  let(:class_name)   { worker_class.to_s }
+  let(:class_name)   { job_class.to_s }
   let(:queue)        { "myqueue" }
   let(:args)         { [[1, 2]] }
   let(:item) do
@@ -16,10 +16,10 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
   end
 
   describe "#lock_digest" do
-    subject(:lock_digest) { lock_digest.lock_digest }
+    subject(:mygest) { lock_digest.lock_digest }
 
     it "performs in under 0.1 ms" do
-      expect { lock_digest }.to perform_under(0.1).ms
+      expect { mygest }.to perform_under(0.1).ms
     end
 
     context "when args are empty" do
@@ -28,7 +28,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
       let(:args)                { [] }
 
       it "performs in under 0.1 ms" do
-        expect { lock_digest }.to perform_under(0.1).ms
+        expect { mygest }.to perform_under(0.1).ms
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
       let(:args) { [1, 2, { "type" => "it" }] }
 
       it "performs in under 0.1 ms" do
-        expect { lock_digest }.to perform_under(0.1).ms
+        expect { mygest }.to perform_under(0.1).ms
       end
     end
 
@@ -46,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
       let(:args) { [1, 2, { "type" => "it" }] }
 
       it "performs in under 0.1 ms" do
-        expect { lock_digest }.to perform_under(0.1).ms
+        expect { mygest }.to perform_under(0.1).ms
       end
     end
   end
