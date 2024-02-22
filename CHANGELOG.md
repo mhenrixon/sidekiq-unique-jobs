@@ -1,12 +1,33 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.10...HEAD)
+
+**Merged pull requests:**
+
+- tweak changelog for 8.0.9 [\#836](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/836) ([Earlopain](https://github.com/Earlopain))
+- Add digest scores for faster deletes in sorted sets [\#835](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/835) ([ezekg](https://github.com/ezekg))
+
+## [v8.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.10) (2024-02-22)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.33...v8.0.10)
+
+**Closed issues:**
+
+- until\_and\_while\_executing and lock\_ttl: jobs silently dropped [\#788](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/788)
+- Slow evalsha causing timeouts [\#668](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/668)
+
+## [v7.1.33](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.33) (2024-02-12)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.9...v7.1.33)
+
 ## [v8.0.9](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.9) (2024-02-12)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.8...v8.0.9)
 
 **Fixed bugs:**
 
-- note: The RCE vulnerability was a false alarm, `sidekiq-unique-jobs` was not vulnerable to RCE. You can find additional information in the PR linked below.
 - fix\(rce\): prevent remot code execution [\#833](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/833) ([mhenrixon](https://github.com/mhenrixon))
 
 ## [v8.0.8](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.8) (2024-02-12)
@@ -50,7 +71,7 @@
 
 ## [v8.0.6](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.6) (2024-01-24)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.5...v8.0.6)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v7.1.32...v8.0.6)
 
 **Implemented enhancements:**
 
@@ -60,13 +81,20 @@
 **Closed issues:**
 
 - should respond to `has_valid_sidekiq_options?` [\#822](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/822)
-- Reaper manager registration is subject to race conditions [\#801](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/801)
 - `while_executing` with `on_conflict: :reschedule` Reschedule job after job execution  [\#800](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/800)
 - Large retry queue causes reaper to run too slow [\#759](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/759)
 
 **Merged pull requests:**
 
 - fix: skip unless reaper was registered [\#820](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/820) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v7.1.32](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.32) (2023-11-11)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.5...v7.1.32)
+
+**Closed issues:**
+
+- Reaper manager registration is subject to race conditions [\#801](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/801)
 
 ## [v8.0.5](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.5) (2023-11-11)
 
