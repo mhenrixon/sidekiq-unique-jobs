@@ -402,7 +402,7 @@ always scheduled in the future. Currently only attempting to retry one time.
 sidekiq_options on_conflict: :reschedule
 ```
 
-This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds. This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
+This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds (this delay can be configured via `sidekiq_options schedule_in: {seconds}`). This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
 
 ### Custom Strategies
 
