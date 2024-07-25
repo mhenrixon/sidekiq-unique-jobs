@@ -63,6 +63,7 @@ jobs:
           - sidekiq_7.0
           - sidekiq_7.1
           - sidekiq_7.2
+          - sidekiq_7.3
 
     steps:
       - uses: actions/checkout@v4

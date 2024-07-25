@@ -5,9 +5,9 @@
 class AnotherUniqueJob
   include Sidekiq::Job
   sidekiq_options backtrace: 10,
-                  lock: :until_executed,
-                  queue: :working2,
-                  retry: 1
+    lock: :until_executed,
+    queue: :working2,
+    retry: 1
 
   def perform(args)
     args

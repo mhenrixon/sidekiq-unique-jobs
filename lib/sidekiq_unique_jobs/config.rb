@@ -2,26 +2,29 @@
 
 module SidekiqUniqueJobs
   # ThreadSafe config exists to be able to document the config class without errors
-  ThreadSafeConfig = Concurrent::MutableStruct.new("ThreadSafeConfig",
-                                                   :lock_timeout,
-                                                   :lock_ttl,
-                                                   :enabled,
-                                                   :lock_prefix,
-                                                   :logger,
-                                                   :logger_enabled,
-                                                   :locks,
-                                                   :strategies,
-                                                   :debug_lua,
-                                                   :max_history,
-                                                   :reaper,
-                                                   :reaper_count,
-                                                   :reaper_interval,
-                                                   :reaper_timeout,
-                                                   :reaper_resurrector_interval,
-                                                   :reaper_resurrector_enabled,
-                                                   :lock_info,
-                                                   :raise_on_config_error,
-                                                   :current_redis_version)
+  ThreadSafeConfig = Concurrent::MutableStruct.new(
+    "ThreadSafeConfig",
+    :lock_timeout,
+    :lock_ttl,
+    :enabled,
+    :lock_prefix,
+    :logger,
+    :logger_enabled,
+    :locks,
+    :strategies,
+    :debug_lua,
+    :max_history,
+    :reaper,
+    :reaper_count,
+    :reaper_interval,
+    :reaper_timeout,
+    :reaper_resurrector_interval,
+    :reaper_resurrector_enabled,
+    :lock_info,
+    :raise_on_config_error,
+    :current_redis_version,
+    :digest_algorithm,
+  )
 
   #
   # Shared class for dealing with gem configuration
@@ -118,11 +121,9 @@ module SidekiqUniqueJobs
     #
     # @return [3600] check if reaper is dead each 3600 seconds
     REAPER_RESURRECTOR_INTERVAL = 3600
-
     #
     # @return [false] enable reaper resurrector
     REAPER_RESURRECTOR_ENABLED = false
-
     #
     # @return [false] while useful it also adds overhead so disable lock_info by default
     USE_LOCK_INFO         = false
@@ -132,6 +133,9 @@ module SidekiqUniqueJobs
     #
     # @return [0.0.0] default redis version is only to avoid NoMethodError on nil
     REDIS_VERSION         = "0.0.0"
+    #
+    # @return [:legacy] default digest algorithm :modern or :legacy
+    DIGEST_ALGORITHM      = :legacy
 
     #
     # Returns a default configuration
@@ -198,6 +202,7 @@ module SidekiqUniqueJobs
         USE_LOCK_INFO,
         RAISE_ON_CONFIG_ERROR,
         REDIS_VERSION,
+        DIGEST_ALGORITHM,
       )
     end
 
@@ -210,8 +215,8 @@ module SidekiqUniqueJobs
     # @return [<type>] <description>
     #
     def default_lock_ttl=(obj)
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
-           " Please use `#{class_name}#lock_ttl=` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. " \
+           "Please use `#{class_name}#lock_ttl=` instead."
       self.lock_ttl = obj
     end
 
@@ -224,8 +229,8 @@ module SidekiqUniqueJobs
     # @return [Integer]
     #
     def default_lock_timeout=(obj)
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
-           " Please use `#{class_name}#lock_timeout=` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. " \
+           "Please use `#{class_name}#lock_timeout=` instead."
       self.lock_timeout = obj
     end
 
@@ -236,8 +241,8 @@ module SidekiqUniqueJobs
     # @return [nil, Integer] configured value or nil
     #
     def default_lock_ttl
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
-           " Please use `#{class_name}#lock_ttl` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. " \
+           "Please use `#{class_name}#lock_ttl` instead."
       lock_ttl
     end
 
@@ -249,8 +254,8 @@ module SidekiqUniqueJobs
     # @return [nil, Integer] configured value or nil
     #
     def default_lock_timeout
-      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated." \
-           " Please use `#{class_name}#lock_timeout` instead."
+      warn "[DEPRECATION] `#{class_name}##{__method__}` is deprecated. " \
+           "Please use `#{class_name}#lock_timeout` instead."
       lock_timeout
     end
 
@@ -302,6 +307,21 @@ module SidekiqUniqueJobs
 
       new_strategies = strategies.dup.merge(strategy_sym => klass).freeze
       self.strategies = new_strategies
+    end
+
+    #
+    # Sets digest_algorithm to either :modern or :legacy
+    #
+    # @param [Symbol] value
+    #
+    # @return [Symbol] the new value
+    #
+    def digest_algorithm=(value)
+      unless [:modern, :legacy].include?(value)
+        raise ArgumentError, "Invalid digest algorithm: #{value} (should be :modern or :legacy)"
+      end
+
+      super
     end
 
     #

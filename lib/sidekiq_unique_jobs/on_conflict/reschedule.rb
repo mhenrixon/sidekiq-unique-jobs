@@ -13,7 +13,7 @@ module SidekiqUniqueJobs
 
       # @param [Hash] item sidekiq job hash
       def initialize(item, redis_pool = nil)
-        super(item, redis_pool)
+        super
         self.job_class = item[CLASS]
       end
 

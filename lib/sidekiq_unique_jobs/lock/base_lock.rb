@@ -147,7 +147,7 @@ module SidekiqUniqueJobs
           server_strategy
         else
           raise SidekiqUniqueJobs::InvalidArgument,
-                "#origin needs to be either `:server` or `:client`"
+            "#origin needs to be either `:server` or `:client`"
         end
       end
 

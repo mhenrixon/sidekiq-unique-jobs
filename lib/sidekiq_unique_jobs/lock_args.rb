@@ -91,9 +91,9 @@ module SidekiqUniqueJobs
       job_class.send(lock_args_method, args)
     rescue ArgumentError
       raise SidekiqUniqueJobs::InvalidUniqueArguments,
-            given: args,
-            job_class: job_class,
-            lock_args_method: lock_args_method
+        given: args,
+        job_class: job_class,
+        lock_args_method: lock_args_method
     end
 
     # The method to use for filtering unique arguments

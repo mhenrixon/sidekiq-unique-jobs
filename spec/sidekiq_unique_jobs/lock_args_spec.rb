@@ -108,8 +108,8 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
           .to raise_error(
             SidekiqUniqueJobs::InvalidUniqueArguments,
             a_string_starting_with(
-              "UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments," \
-              " received [1]",
+              "UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments, " \
+              "received [1]",
             ),
           )
       end
@@ -122,8 +122,8 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
             .to raise_error(
               SidekiqUniqueJobs::InvalidUniqueArguments,
               a_string_starting_with(
-                "UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments," \
-                " received []",
+                "UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments, " \
+                "received []",
               ),
             )
         end
@@ -139,8 +139,8 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
           .to raise_error(
             SidekiqUniqueJobs::InvalidUniqueArguments,
             a_string_starting_with(
-              'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments,' \
-              ' received ["name", 2, {"whatever"=>nil, "type"=>"test"}]', \
+              'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments, ' \
+              'received ["name", 2, {"whatever"=>nil, "type"=>"test"}]', \
             ),
           )
       end

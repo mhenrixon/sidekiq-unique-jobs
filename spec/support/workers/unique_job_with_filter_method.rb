@@ -5,10 +5,10 @@
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
   sidekiq_options backtrace: 10,
-                  lock: :while_executing,
-                  queue: :customqueue,
-                  retry: 1,
-                  lock_args_method: :lock_args
+    lock: :while_executing,
+    queue: :customqueue,
+    retry: 1,
+    lock_args_method: :lock_args
 
   def perform(*)
     # NO-OP

@@ -7,7 +7,7 @@ RSpec.describe UntilAndWhileExecutingReplaceJob do
         "queue" => :working,
         "retry" => true,
         "lock" => :until_and_while_executing,
-        "on_conflict" => { client: :replace, server: :reschedule },
+        "on_conflict" => { "client" => :replace, "server" => :reschedule },
       }
     end
   end

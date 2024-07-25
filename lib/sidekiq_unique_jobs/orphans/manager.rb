@@ -32,7 +32,8 @@ module SidekiqUniqueJobs
       #
       # @return [SidekiqUniqueJobs::TimerTask] the task that was started
       #
-      def start(test_task = nil) # rubocop:disable
+      # rubocop:disable
+      def start(test_task = nil)
         return if disabled?
         return if registered?
 

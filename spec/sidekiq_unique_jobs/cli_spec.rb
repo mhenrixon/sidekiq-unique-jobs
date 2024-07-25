@@ -37,9 +37,9 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.5" do
             jobs  del PATTERN
 
           Options:
-            -d, [--dry-run], [--no-dry-run]  # set to false to perform deletion
-            -c, [--count=N]                  # The max number of digests to return
-                                             # Default: 1000
+            -d, [--dry-run], [--no-dry-run], [--skip-dry-run]  # set to false to perform deletion
+            -c, [--count=N]                                    # The max number of digests to return
+                                                               # Default: 1000
 
           deletes unique digests from redis by pattern
         HEADER

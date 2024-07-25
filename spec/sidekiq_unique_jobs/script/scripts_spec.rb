@@ -59,6 +59,6 @@ RSpec.describe SidekiqUniqueJobs::Script::Scripts do
   describe "#kill" do
     subject(:kill) { scripts.kill(redis) }
 
-    specify { expect { kill }.to raise_error(RedisClient::CommandError, "NOTBUSY No scripts in execution right now.") }
+    specify { expect { kill }.to raise_error(RedisClient::CommandError, /NOTBUSY/) }
   end
 end

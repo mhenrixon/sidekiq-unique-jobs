@@ -9,12 +9,12 @@ unless ENV.fetch("CI", false)
 
       Toxiproxy.host = ENV.fetch("TOXI_PROXY_HOST", "http://127.0.0.1:8474")
       Toxiproxy.populate([
-                           {
-                             name: :redis,
-                             listen: toxi_redis_url,
-                             upstream: redis_url,
-                           },
-                         ])
+        {
+          name: :redis,
+          listen: toxi_redis_url,
+          upstream: redis_url,
+        },
+      ])
       Sidekiq::Testing.server_middleware do |chain|
         chain.add SidekiqUniqueJobs::Middleware::Server
       end

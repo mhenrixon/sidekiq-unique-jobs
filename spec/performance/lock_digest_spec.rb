@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/SpecFilePathFormat, RSpec/FilePath
+# rubocop:disable RSpec/SpecFilePathFormat
 RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
   let(:lock_digest)  { described_class.new(item) }
   let(:job_class)    { UntilExecutedJob }
@@ -51,4 +51,4 @@ RSpec.describe SidekiqUniqueJobs::LockDigest, :perf do
     end
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat, RSpec/FilePath
+# rubocop:enable RSpec/SpecFilePathFormat
