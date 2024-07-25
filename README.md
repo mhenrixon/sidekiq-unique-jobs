@@ -59,6 +59,7 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
     - [sidekiq-global_id](#sidekiq-global_id)
     - [sidekiq-status](#sidekiq-status)
   - [Global Configuration](#global-configuration)
+    - [digest_algorithm](#digest_algorithm)
     - [debug_lua](#debug_lua)
     - [lock_timeout](#lock_timeout)
     - [lock_ttl](#lock_ttl)
@@ -734,17 +735,29 @@ Configure SidekiqUniqueJobs in an initializer or the sidekiq initializer on appl
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
-  config.logger = Sidekiq.logger # default, change at your own discretion
-  config.logger_enabled  = true # default, disable for test environments
-  config.debug_lua       = false # Turn on when debugging
-  config.lock_info       = false # Turn on when debugging
-  config.lock_ttl        = 600   # Expire locks after 10 minutes
-  config.lock_timeout    = nil   # turn off lock timeout
-  config.max_history     = 0     # Turn on when debugging
-  config.reaper          = :ruby # :ruby, :lua or :none/nil
-  config.reaper_count    = 1000  # Stop reaping after this many keys
-  config.reaper_interval = 600   # Reap orphans every 10 minutes
-  config.reaper_timeout  = 150   # Timeout reaper after 2.5 minutes
+  config.logger = Sidekiq.logger    # default, change at your own discretion
+  config.logger_enabled   = true    # default, disable for test environments
+  config.debug_lua        = false   # Turn on when debugging
+  config.lock_info        = false   # Turn on when debugging
+  config.lock_ttl         = 600     # Expire locks after 10 minutes
+  config.lock_timeout     = nil     # turn off lock timeout
+  config.max_history      = 0       # Turn on when debugging
+  config.reaper           = :ruby   # :ruby, :lua or :none/nil
+  config.reaper_count     = 1000    # Stop reaping after this many keys
+  config.reaper_interval  = 600     # Reap orphans every 10 minutes
+  config.reaper_timeout   = 150     # Timeout reaper after 2.5 minutes
+  config.digest_algorithm = :modern # Timeout reaper after 2.5 minutes
+end
+```
+#### digest_algorithm
+
+For backwards compatibility this one is set to `:legacy` by the default. If you happen to run into issues with FIPS being enabled on your redis server you might want to set this to `:modern`.
+
+See: https://github.com/mhenrixon/sidekiq-unique-jobs/issues/848 for explanation
+
+```ruby
+SidekiqUniqueJobs.configure do |config|
+  config.digest_algorithm = :modern # Timeout reaper after 2.5 minutes
 end
 ```
 

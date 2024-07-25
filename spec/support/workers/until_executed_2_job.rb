@@ -9,10 +9,10 @@
 class UntilExecuted2Job
   include Sidekiq::Worker
   sidekiq_options backtrace: 10,
-                  lock: :until_executed,
-                  lock_timeout: 0,
-                  queue: :working,
-                  retry: 1
+    lock: :until_executed,
+    lock_timeout: 0,
+    queue: :working,
+    retry: 1
 
   def perform(one, two)
     [one, two]

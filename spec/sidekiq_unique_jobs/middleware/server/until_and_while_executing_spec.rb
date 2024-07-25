@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/SpecFilePathFormat, RSpec/FilePath, RSpec/DescribeMethod
+# rubocop:disable RSpec/SpecFilePathFormat, RSpec/DescribeMethod
 RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_executing" do
   let(:server) { described_class.new }
 
@@ -46,4 +46,4 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, "lock: :until_and_while_ex
     end
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat, RSpec/FilePath, RSpec/DescribeMethod
+# rubocop:enable RSpec/SpecFilePathFormat, RSpec/DescribeMethod

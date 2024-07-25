@@ -12,12 +12,12 @@ RSpec.describe SidekiqUniqueJobs::Web do
   def app
     @app ||= Rack::Builder.new do
       use Rack::Session::Cookie,
-          key: "rack.session",
-          domain: "foo.com",
-          path: "/",
-          expire_after: 2_592_000,
-          secret: "change_me" * 10,
-          old_secret: "also_change_me" * 10
+        key: "rack.session",
+        domain: "foo.com",
+        path: "/",
+        expire_after: 2_592_000,
+        secret: "change_me" * 10,
+        old_secret: "also_change_me" * 10
 
       run Sidekiq::Web
     end

@@ -15,8 +15,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
     it "warns about deprecation" do
       set_config
       expect(config).to have_received(:warn).with(
-        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_ttl=` is deprecated." \
-        " Please use `SidekiqUniqueJobs::Config#lock_ttl=` instead.",
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_ttl=` is deprecated. " \
+        "Please use `SidekiqUniqueJobs::Config#lock_ttl=` instead.",
       )
       expect(config.lock_ttl).to eq(new_value)
     end
@@ -34,8 +34,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
     it "warns about deprecation" do
       set_config
       expect(config).to have_received(:warn).with(
-        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_timeout=` is deprecated." \
-        " Please use `SidekiqUniqueJobs::Config#lock_timeout=` instead.",
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_timeout=` is deprecated. " \
+        "Please use `SidekiqUniqueJobs::Config#lock_timeout=` instead.",
       )
       expect(config.lock_timeout).to eq(new_value)
     end
@@ -51,8 +51,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
     it "warns about deprecation" do
       get_config
       expect(config).to have_received(:warn).with(
-        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_ttl` is deprecated." \
-        " Please use `SidekiqUniqueJobs::Config#lock_ttl` instead.",
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_ttl` is deprecated. " \
+        "Please use `SidekiqUniqueJobs::Config#lock_ttl` instead.",
       )
       expect(config.lock_ttl).to eq(get_config)
     end
@@ -68,8 +68,8 @@ RSpec.describe SidekiqUniqueJobs::Config do
     it "warns about deprecation" do
       get_config
       expect(config).to have_received(:warn).with(
-        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_timeout` is deprecated." \
-        " Please use `SidekiqUniqueJobs::Config#lock_timeout` instead.",
+        "[DEPRECATION] `SidekiqUniqueJobs::Config#default_lock_timeout` is deprecated. " \
+        "Please use `SidekiqUniqueJobs::Config#lock_timeout` instead.",
       )
       expect(config.lock_timeout).to eq(get_config)
     end

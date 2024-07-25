@@ -35,7 +35,7 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
         let(:digest_two) { described_class.new(another_item) }
 
         context "with the same unique args" do
-          let(:another_item) { item }
+          let(:another_item) { item.dup }
 
           it "equals to lock_digest for that item" do
             expect(lock_digest).to eq(digest_two.lock_digest)
@@ -52,18 +52,40 @@ RSpec.describe SidekiqUniqueJobs::LockDigest do
       end
     end
 
-    context "when digest is a proc" do
-      let(:job_class) { MyUniqueJobWithFilterProc }
-      let(:args)      { [1, 2, { "type" => "it" }] }
+    context "when digest_algorithm is :legacy" do
+      context "when digest is a proc" do
+        let(:job_class) { MyUniqueJobWithFilterProc }
+        let(:args)      { [1, 2, { "type" => "it" }] }
 
-      it_behaves_like "unique digest"
+        it_behaves_like "unique digest"
+      end
+
+      context "when unique_args is a symbol" do
+        let(:job_class) { MyUniqueJobWithFilterMethod }
+        let(:args) { [1, 2, { "type" => "it" }] }
+
+        it_behaves_like "unique digest"
+      end
     end
 
-    context "when unique_args is a symbol" do
-      let(:job_class) { MyUniqueJobWithFilterMethod }
-      let(:args) { [1, 2, { "type" => "it" }] }
+    context "when digest_algorithm is :modern" do
+      around do |example|
+        SidekiqUniqueJobs.use_config(digest_algorithm: :modern, &example)
+      end
 
-      it_behaves_like "unique digest"
+      context "when digest is a proc" do
+        let(:job_class) { MyUniqueJobWithFilterProc }
+        let(:args)      { [1, 2, { "type" => "it" }] }
+
+        it_behaves_like "unique digest"
+      end
+
+      context "when unique_args is a symbol" do
+        let(:job_class) { MyUniqueJobWithFilterMethod }
+        let(:args) { [1, 2, { "type" => "it" }] }
+
+        it_behaves_like "unique digest"
+      end
     end
   end
 

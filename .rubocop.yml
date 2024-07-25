@@ -27,9 +27,23 @@ AllCops:
     - "myapp/**/*"
     - "Sidekiq/**/*"
     - "vendor/**/*"
+Layout/ArgumentAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
 
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/HashAlignment:
+  EnforcedColonStyle: key
+  EnforcedHashRocketStyle: key
+  EnforcedLastArgumentHashStyle: always_inspect
 
 Layout/LineContinuationLeadingSpace:
   Enabled: false
@@ -115,7 +129,13 @@ RSpec/ExpectActual:
 RSpec/ExpectChange:
   EnforcedStyle: block
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
+  Enabled: true
+  Exclude:
+    - spec/performance/locksmith_spec.rb
+    - spec/performance/lock_digest_spec.rb
+
+RSpec/SpecFilePathSuffix:
   Enabled: true
   Exclude:
     - spec/performance/locksmith_spec.rb

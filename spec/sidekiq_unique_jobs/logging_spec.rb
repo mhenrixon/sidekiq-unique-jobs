@@ -177,8 +177,8 @@ RSpec.describe SidekiqUniqueJobs::Logging do
         with_configured_loggers_context {}
 
         expect(logger).to have_received(:warn).with(
-          "Don't know how to setup the logging context. Please open a feature request:" \
-          " https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md",
+          "Don't know how to setup the logging context. Please open a feature request: " \
+          "https://github.com/mhenrixon/sidekiq-unique-jobs/issues/new?template=feature_request.md",
         )
       end
     end

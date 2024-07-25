@@ -87,7 +87,7 @@ module Sidekiq
       def sidekiq_options(options = {})
         SidekiqUniqueJobs.validate_worker!(options) if SidekiqUniqueJobs.config.raise_on_config_error
 
-        super(options)
+        super
       end
 
       #

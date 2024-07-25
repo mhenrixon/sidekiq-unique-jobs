@@ -57,7 +57,7 @@ module SidekiqUniqueJobs
       # @param [Redis] conn a connection to redis
       #
       def initialize(conn)
-        super(conn)
+        super
         @digests      = SidekiqUniqueJobs::Digests.new
         @scheduled    = Redis::SortedSet.new(SCHEDULE)
         @retried      = Redis::SortedSet.new(RETRY)

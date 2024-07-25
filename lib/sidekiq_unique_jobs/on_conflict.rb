@@ -33,8 +33,8 @@ module SidekiqUniqueJobs
 
       strategies.fetch(strategy.to_sym) do
         SidekiqUniqueJobs.logger.warn(
-          "No matching implementation for strategy: #{strategy}, returning OnConflict::NullStrategy." \
-          " Available strategies are (#{strategies.inspect})",
+          "No matching implementation for strategy: #{strategy}, returning OnConflict::NullStrategy. " \
+          "Available strategies are (#{strategies.inspect})",
         )
 
         OnConflict::NullStrategy

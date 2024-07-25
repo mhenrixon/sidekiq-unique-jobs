@@ -251,10 +251,10 @@ module SidekiqUniqueJobs
       concurrent_timeout = add_drift(timeout)
 
       reflect(:debug, :timeouts, item,
-              timeouts: {
-                brpoplpush_timeout: brpoplpush_timeout,
-                concurrent_timeout: concurrent_timeout,
-              })
+        timeouts: {
+          brpoplpush_timeout: brpoplpush_timeout,
+          concurrent_timeout: concurrent_timeout,
+        })
 
       # NOTE: When debugging, change .value to .value!
       primed_jid = Concurrent::Promises

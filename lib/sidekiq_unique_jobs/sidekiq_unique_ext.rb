@@ -60,7 +60,7 @@ module Sidekiq
       #
       def delete(score, job_id)
         entry = find_job(job_id)
-        SidekiqUniqueJobs::Unlockable.delete!(entry.item) if super(score, job_id)
+        SidekiqUniqueJobs::Unlockable.delete!(entry.item) if super
         entry
       end
     end
@@ -132,7 +132,7 @@ module Sidekiq
       # @param [String] value a sidekiq job hash
       #
       def delete_by_value(name, value)
-        SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(value)) if super(name, value)
+        SidekiqUniqueJobs::Unlockable.delete!(Sidekiq.load_json(value)) if super
       end
     end
 

@@ -5,7 +5,7 @@
 class ReallySimpleWorker
   include Sidekiq::Worker
   sidekiq_options lock: :until_executed,
-                  queue: :bogus
+    queue: :bogus
 
   def perform(args)
     sleep 5

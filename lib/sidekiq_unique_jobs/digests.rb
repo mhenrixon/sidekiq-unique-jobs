@@ -18,7 +18,7 @@ module SidekiqUniqueJobs
     EMPTY_KEYS_SEGMENT = ["", "", "", ""].freeze
 
     def initialize(digests_key = DIGESTS)
-      super(digests_key)
+      super
     end
 
     #

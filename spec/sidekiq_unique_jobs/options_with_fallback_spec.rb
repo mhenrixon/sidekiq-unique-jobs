@@ -130,7 +130,7 @@ RSpec.describe SidekiqUniqueJobs::OptionsWithFallback do
       it do
         expect { lock_class }
           .to raise_error(SidekiqUniqueJobs::UnknownLock,
-                          "No implementation for `lock: :until_unknown`")
+            "No implementation for `lock: :until_unknown`")
       end
     end
   end

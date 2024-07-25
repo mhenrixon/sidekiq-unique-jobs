@@ -80,8 +80,8 @@ module SidekiqUniqueJobs
 
       super(
         "#{job_class}##{lock_args_method} takes #{num_args} arguments, received #{given.inspect}" \
-        "\n\n" \
-        "   #{source_location.join(':')}"
+        "\n\n   " \
+        "#{source_location.join(':')}"
       )
     end
   end

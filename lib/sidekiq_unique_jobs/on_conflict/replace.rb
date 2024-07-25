@@ -21,7 +21,7 @@ module SidekiqUniqueJobs
       # @param [Hash] item sidekiq job hash
       #
       def initialize(item, redis_pool = nil)
-        super(item, redis_pool)
+        super
         @queue       = item[QUEUE]
         @lock_digest = item[LOCK_DIGEST]
       end
@@ -54,8 +54,8 @@ module SidekiqUniqueJobs
       #
       def delete_job_by_digest
         call_script(:delete_job_by_digest,
-                    keys: ["#{QUEUE}:#{queue}", SCHEDULE, RETRY],
-                    argv: [lock_digest])
+          keys: ["#{QUEUE}:#{queue}", SCHEDULE, RETRY],
+          argv: [lock_digest])
       end
 
       #

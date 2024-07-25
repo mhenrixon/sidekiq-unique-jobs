@@ -4,10 +4,10 @@ RSpec.describe UntilAndWhileExecutingRejectJob do
   it_behaves_like "sidekiq with options" do
     let(:options) do
       {
+        "lock" => :until_and_while_executing,
+        "on_conflict" => { "client" => :reject, "server" => :reject },
         "queue" => :working,
         "retry" => true,
-        "lock" => :until_and_while_executing,
-        "on_conflict" => { client: :reject, server: :reject },
       }
     end
   end
