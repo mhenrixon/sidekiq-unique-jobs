@@ -61,12 +61,12 @@ module SidekiqUniqueJobs
           page_size: @count,
         )
 
-        erb(unique_template(:locks))
+        erb(unique_template(:expiring_locks))
       end
 
       app.get "/locks/delete_all" do
         digests.delete_by_pattern("*", count: digests.count)
-        expiring_digests.delete_by_pattern("*", count: digests.count)
+        expiring_digests.delete_by_pattern("*", count: expiring_digests.count)
         redirect_to :locks
       end
 
