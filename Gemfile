@@ -7,7 +7,7 @@ gemspec
 
 LOCAL_GEMS = "Gemfile.local"
 
-gem "appraisal"
+gem "appraisal", github: "thoughtbot/appraisal"
 gem "faraday-retry"
 gem "gem-release"
 gem "github-markup"
