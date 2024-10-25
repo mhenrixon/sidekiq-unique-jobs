@@ -775,7 +775,7 @@ Turning on debug_lua will allow the lua scripts to output debug information abou
 SidekiqUniqueJobs.config.lock_timeout #=> 0
 ```
 
-Set a global lock_timeout to use for all jobs that don't otherwise specify a lock_timeout.
+Set a global lock_timeout (in seconds) to use for all jobs that don't otherwise specify a lock_timeout.
 
 Lock timeout decides how long to wait for acquiring the lock. A value of nil means to wait indefinitely for a lock resource to become available.
 
@@ -785,7 +785,7 @@ Lock timeout decides how long to wait for acquiring the lock. A value of nil mea
 SidekiqUniqueJobs.config.lock_ttl #=> nil
 ```
 
-Set a global lock_ttl to use for all jobs that don't otherwise specify a lock_ttl.
+Set a global lock_ttl (in seconds) to use for all jobs that don't otherwise specify a lock_ttl.
 
 Lock TTL decides how long to wait at most before considering a lock to be expired and making it possible to reuse that lock.
 
