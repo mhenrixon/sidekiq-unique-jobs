@@ -154,7 +154,7 @@ end
 
 ### Your first worker
 
-The lock type most likely to be is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
+The lock type most likely to be used is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
 
 ```ruby
 # frozen_string_literal: true
