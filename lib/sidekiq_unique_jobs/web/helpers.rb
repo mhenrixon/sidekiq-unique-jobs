@@ -116,7 +116,7 @@ module SidekiqUniqueJobs
       #
       # @return a redirect to the new subpath
       #
-      def redirect_to(subpath)
+      def safe_redirect_to(subpath)
         if respond_to?(:to)
           # Sinatra-based web UI
           redirect to(subpath)
@@ -169,6 +169,26 @@ module SidekiqUniqueJobs
         else
           Time.parse(time.to_s)
         end
+      end
+
+      # Copied from sidekiq for compatibility with older versions
+
+      # stuff after ? or form input
+      # uses String keys, no Symbols!
+      def safe_url_params(key)
+        return url_params(key) if Sidekiq::MAJOR >= 8
+
+        warn { "URL parameter `#{key}` should be accessed via String, not Symbol (at #{caller(3..3).first})" } if key.is_a?(Symbol)
+        request.params[key.to_s]
+      end
+
+      # variables embedded in path, `/metrics/:name`
+      # uses Symbol keys, no Strings!
+      def safe_route_params(key)
+        return route_params(key) if Sidekiq::MAJOR >= 8
+
+        warn { "Route parameter `#{key}` should be accessed via Symbol, not String (at #{caller(3..3).first})" } if key.is_a?(String)
+        env["rack.route_params"][key.to_sym]
       end
     end
   end
