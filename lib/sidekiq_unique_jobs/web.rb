@@ -108,8 +108,6 @@ begin
     Sidekiq::Web.tabs["Expiring Locks"] = "expiring_locks"
     Sidekiq::Web.tabs["Changelogs"]     = "changelogs"
   end
-
-  Sidekiq::Web.settings.locales << File.join(File.dirname(__FILE__), "locales")
 rescue NameError, LoadError => e
   SidekiqUniqueJobs.logger.error(e)
 end
