@@ -28,7 +28,8 @@ module SidekiqUniqueJobs
       # @return [false] when Sidekiq::Deadset#kill does not take multiple arguments
       #
       def kill_with_options?
-        Sidekiq::DeadSet.instance_method(:kill).arity > 1
+        kill_arity = Sidekiq::DeadSet.instance_method(:kill).arity
+        kill_arity > 1 || kill_arity < -1
       end
 
       #
