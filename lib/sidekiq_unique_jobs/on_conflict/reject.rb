@@ -29,6 +29,14 @@ module SidekiqUniqueJobs
       #
       def kill_with_options?
         kill_arity = Sidekiq::DeadSet.instance_method(:kill).arity
+        # Method#arity returns:
+        #   1. a nonnegative number for methods that take a fixed number of arguments.
+        #   2. A negative number if it takes a variable number of arguments.
+        # Keyword arguments are considered a single argument, and are considered optional unless one of the kwargs is
+        # required.
+        # Therefore, to determine if `Sidekiq::DeadSet#kill` accepts options beyond the single positional payload
+        # argument, we need to check whether the absolute value of the arity is greater than 1.
+        # See: https://apidock.com/ruby/Method/arity
         kill_arity > 1 || kill_arity < -1
       end
 
