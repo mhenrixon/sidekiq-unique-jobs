@@ -89,7 +89,7 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
 
 ## Introduction
 
-This gem adds unique constraints to sidekiq jobs. The uniqueness is achieved by creating a set of keys in redis based off of `queue`, `class`, `args` (in the sidekiq job hash).
+This gem adds unique constraints to Sidekiq jobs. The uniqueness is achieved by creating a set of keys in redis based off of `queue`, `class`, `args` (in the Sidekiq job hash).
 
 By default, only one lock for a given hash can be acquired. What happens when a lock can't be acquired is governed by a chosen [Conflict Strategy](#conflict-strategy) strategy. Unless a conflict strategy is chosen (?)
 
@@ -109,7 +109,7 @@ Here are links to some of the old versions
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'sidekiq-unique-jobs'
+gem "sidekiq-unique-jobs"
 ```
 
 And then execute:
@@ -154,7 +154,7 @@ end
 
 ### Your first worker
 
-The lock type most likely to be is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
+The lock type most likely to be used is `:until_executed`. This type of lock creates a lock from when `UntilExecutedWorker.perform_async` is called until right after `UntilExecutedWorker.new.perform` has been called.
 
 ```ruby
 # frozen_string_literal: true
@@ -185,7 +185,7 @@ You can read more about the worker configuration in [Worker Configuration](#work
 - [ActiveJob officially not supported][48]
 - [redis-namespace officially not supported][49]
 
-See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right sidekiq version).
+See [Sidekiq requirements][24] for detailed requirements of Sidekiq itself (be sure to check the right `sidekiq` version).
 
 ## Locks
 
@@ -348,7 +348,7 @@ Please not that if you try to override a default lock, an `ArgumentError` will b
 
 ## Conflict Strategy
 
-Decides how we handle conflict. We can either `reject` the job to the dead queue or `reschedule` it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the sidekiq server process.
+Decides how we handle conflict. We can either `reject` the job to the dead queue or `reschedule` it. Both are useful for jobs that absolutely need to run and have been configured to use the lock `WhileExecuting` that is used only by the Sidekiq server process.
 
 Furthermore, `log` can be be used with the lock `UntilExecuted` and `UntilExpired`. Now we write a log entry saying the job could not be pushed because it is a duplicate of another job with the same arguments.
 
@@ -402,7 +402,7 @@ always scheduled in the future. Currently only attempting to retry one time.
 sidekiq_options on_conflict: :reschedule
 ```
 
-This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds (this delay can be configured via `sidekiq_options schedule_in: {seconds}`). This will mess up the sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
+This strategy is intended to be used with `WhileExecuting` and will delay the job to be tried again in 5 seconds (this delay can be configured via `sidekiq_options schedule_in: {seconds}`). This will mess up the Sidekiq stats but will prevent exceptions from being logged and confuse your sysadmins.
 
 ### Custom Strategies
 
@@ -441,12 +441,12 @@ Please not that if you try to override a default lock, an `ArgumentError` will b
 
 ### 3 Cleanup Dead Locks
 
-For sidekiq versions < 5.1 a `sidekiq_retries_exhausted` block is required per worker class. This is deprecated in Sidekiq 6.0
+For `sidekiq` versions < 5.1 a `sidekiq_retries_exhausted` block is required per worker class. This is deprecated in Sidekiq 6.0
 
 ```ruby
 class MyWorker
   sidekiq_retries_exhausted do |msg, _ex|
-    digest = msg['lock_digest']
+    digest = msg["lock_digest"]
     SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
   end
 end
@@ -457,7 +457,7 @@ Starting in v5.1, Sidekiq can also fire a global callback when a job dies: In ve
 ```ruby
 Sidekiq.configure_server do |config|
   config.death_handlers << ->(job, _ex) do
-    digest = job['lock_digest']
+    digest = job["lock_digest"]
     SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
   end
 end
@@ -473,11 +473,11 @@ To use the web extension you need to require it in your routes.
 
 ```ruby
 #app/config/routes.rb
-require 'sidekiq_unique_jobs/web'
-mount Sidekiq::Web, at: '/sidekiq'
+require "sidekiq_unique_jobs/web"
+mount Sidekiq::Web, at: "/sidekiq"
 ```
 
-There is no need to `require 'sidekiq/web'` since `sidekiq_unique_jobs/web`
+There is no need to `require "sidekiq/web"` since `sidekiq_unique_jobs/web`
 already does this.
 
 To filter/search for keys we can use the wildcard `*`. If we have a unique digest `'uniquejobs:9e9b5ce5d423d3ea470977004b50ff84` we can search for it by enter `*ff84` and it should return all digests that end with `ff84`.
@@ -491,10 +491,10 @@ To setup reflections for logging or metrics, use the following API:
 ```ruby
 
 def extract_log_from_job(message, job_hash)
-  worker    = job_hash['class']
-  args      = job_hash['args']
-  lock_args = job_hash['lock_args']
-  queue     = job_hash['queue']
+  worker    = job_hash["class"]
+  args      = job_hash["args"]
+  lock_args = job_hash["lock_args"]
+  queue     = job_hash["queue"]
   {
     message: message,
     worker: worker,
@@ -506,7 +506,7 @@ end
 
 SidekiqUniqueJobs.reflect do |on|
   on.lock_failed do |job_hash|
-    message = extract_log_from_job('Lock Failed', job_hash)
+    message = extract_log_from_job("Lock Failed", job_hash)
     Sidekiq.logger.warn(message)
   end
 end
@@ -556,7 +556,7 @@ Also mostly useful for reporting purposes. The job was successfully unlocked.
 
 #### unknown_sidekiq_worker
 
-The reason this happens is that the server couldn't find a valid sidekiq worker class. Most likely, that worker isn't intended to be processed by this sidekiq server instance.
+The reason this happens is that the server couldn't find a valid Sidekiq worker class. Most likely, that worker isn't intended to be processed by this Sidekiq server instance.
 
 ### Show Locks
 
@@ -604,7 +604,7 @@ assert_raise(InvalidWorker){ SidekiqUniqueJobs.validate_worker!(BadWorker.get_si
 
 ### Uniqueness
 
-This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I there for decided to do what Mike is doing for sidekiq enterprise. Read the section about unique jobs: [Enterprise unique jobs][](?)
+This has been probably the most confusing part of this gem. People get really confused with how unreliable the unique jobs have been. I therefore decided to do what Mike is doing for Sidekiq Enterprise. Read the section about unique jobs: [Enterprise unique jobs][](?)
 
 ```ruby
 SidekiqUniqueJobs.configure do |config|
@@ -613,7 +613,7 @@ SidekiqUniqueJobs.configure do |config|
 end
 ```
 
-If you truly wanted to test the sidekiq client push you could do something like below. Note that it will only work for the jobs that lock when the client pushes the job to redis (UntilExecuted, UntilAndWhileExecuting and UntilExpired).
+If you truly wanted to test the `sidekiq` client push you could do something like below. Note that it will only work for the jobs that lock when the client pushes the job to redis (UntilExecuted, UntilAndWhileExecuting and UntilExpired).
 
 ```ruby
 require "sidekiq_unique_jobs/testing"
@@ -625,7 +625,7 @@ RSpec.describe Workers::CoolOne do
 
   # ... your tests that don't test uniqueness
 
-  context 'when Sidekiq::Testing.disabled?' do
+  context "when Sidekiq::Testing.disabled?" do
     before do
       Sidekiq::Testing.disable!
       Sidekiq.redis(&:flushdb)
@@ -635,7 +635,7 @@ RSpec.describe Workers::CoolOne do
       Sidekiq.redis(&:flushdb)
     end
 
-    it 'prevents duplicate jobs from being scheduled' do
+    it "prevents duplicate jobs from being scheduled" do
       SidekiqUniqueJobs.use_config(enabled: true) do
         expect(described_class.perform_in(3600, 1)).not_to eq(nil)
         expect(described_class.perform_async(1)).to eq(nil)
@@ -821,7 +821,7 @@ This is a log that can be accessed by a lock to see what happened for that lock.
 SidekiqUniqueJobs.config.reaper #=> :ruby
 ```
 
-If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. There for the batch size (controlled by the `reaper_count` setting) needs to be reduced.
+If using the orphans cleanup process it is critical to be aware of the following. The `:ruby` job is much slower but the `:lua` job locks redis while executing. While doing intense processing it is best to avoid locking redis with a lua script. Therefore the batch size (controlled by the `reaper_count` setting) needs to be reduced.
 
 In my benchmarks deleting 1000 orphaned locks with lua performs around 65% faster than deleting 1000 keys in ruby.
 
@@ -926,13 +926,13 @@ This is mainly intended for `Worker.set(queue: :another).perform_async`.
 class Worker
   include Sidekiq::Worker
 
-  sidekiq_options unique_across_queues: true, queue: 'default'
+  sidekiq_options unique_across_queues: true, queue: "default"
 
   def perform(args); end
 end
 ```
 
-Now if you push override the queue with `Worker.set(queue: 'another').perform_async(1)` it will still be considered unique when compared to `Worker.perform_async(1)` (that was actually pushed to the queue `default`).
+Now if you push override the queue with `Worker.set(queue: "another").perform_async(1)` it will still be considered unique when compared to `Worker.perform_async(1)` (that was actually pushed to the queue `default`).
 
 #### unique_across_workers
 
@@ -942,7 +942,7 @@ This configuration option is slightly misleading. It doesn't disregard the worke
 class WorkerOne
   include Sidekiq::Worker
 
-  sidekiq_options unique_across_workers: true, queue: 'default'
+  sidekiq_options unique_across_workers: true, queue: "default"
 
   def perform(args); end
 end
@@ -950,14 +950,14 @@ end
 class WorkerTwo
   include Sidekiq::Worker
 
-  sidekiq_options unique_across_workers: true, queue: 'default'
+  sidekiq_options unique_across_workers: true, queue: "default"
 
   def perform(args); end
 end
 
 
 WorkerOne.perform_async(1)
-# => 'the jobs unique id'
+# => "the jobs unique id"
 
 WorkerTwo.perform_async(1)
 # => nil because WorkerOne just stole the lock
@@ -1049,7 +1049,7 @@ There is a [![Join the chat at https://gitter.im/mhenrixon/sidekiq-unique-jobs](
 
 1. Fork it
 1. Create your feature branch (`git checkout -b my-new-feature`)
-1. Commit your changes (`git commit -am 'Add some feature'`)
+1. Commit your changes (`git commit -am "Add some feature"`)
 1. Push to the branch (`git push origin my-new-feature`)
 1. Create new Pull Request
 
