@@ -18,7 +18,7 @@ gem "sinatra"
 gem "timecop"
 gem "toxiproxy"
 gem "yard"
-gem "sidekiq", "8.0.0.beta1"
+gem "sidekiq", "~> 8.0.0"
 
 platforms :mri do
   gem "concurrent-ruby-ext"
