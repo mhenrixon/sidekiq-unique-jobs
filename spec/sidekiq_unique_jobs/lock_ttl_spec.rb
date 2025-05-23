@@ -6,7 +6,7 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
   let(:job_class_name)  { "MyUniqueJob" }
   let(:schedule_time)   { nil }
   let(:job_options) do
-    { "lock": :until_executed, "lock_ttl": 7_200, "queue": :customqueue, "retry": 10 }
+    { lock: :until_executed, lock_ttl: 7_200, queue: :customqueue, retry: 10 }
   end
 
   before do
@@ -45,21 +45,21 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
   describe "#calculate" do
     subject(:calculate) { calculator.calculate }
 
-    context 'when no lock_ttl is set' do
+    context "when no lock_ttl is set" do
       let(:item) { { "class" => job_class_name, "lock_ttl" => nil } }
-      let(:job_options) { { "lock": 'until_expired', "lock_ttl" => nil } }
-      
-      it 'returns the default lock_ttl' do
+      let(:job_options) { { lock: "until_expired", "lock_ttl" => nil } }
+
+      it "returns the default lock_ttl" do
         expect(calculate).to eq(SidekiqUniqueJobs.config.lock_ttl)
       end
 
-      it 'returns nil' do
+      it "returns nil" do
         SidekiqUniqueJobs.config.lock_ttl = nil
         expect(calculate).to be_nil
       end
     end
 
-    context 'when item lock_ttl is numeric' do
+    context "when item lock_ttl is numeric" do
       let(:item) { { "class" => job_class_name, "lock_ttl" => 10 } }
 
       it do
@@ -67,7 +67,7 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
       end
     end
 
-    context 'when item lock_ttl is a string' do
+    context "when item lock_ttl is a string" do
       let(:item) { { "class" => job_class_name, "lock_ttl" => "10" } }
 
       it do
@@ -75,7 +75,7 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
       end
     end
 
-    context 'when item lock_ttl is a proc' do
+    context "when item lock_ttl is a proc" do
       let(:item) { { "class" => job_class_name, "lock_ttl" => ->(_args) { 20 } } }
 
       it do
@@ -83,9 +83,9 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
       end
     end
 
-    context 'when item lock_ttl is a function symbol' do
+    context "when item lock_ttl is a function symbol" do
       let(:job_class_name) { "MyOtherUniqueJob" }
-      let(:item) { { "class" => job_class_name, "lock_ttl" => :ttl_fn } }
+      let(:item)           { { "class" => job_class_name, "lock_ttl" => :ttl_fn } }
 
       it do
         stub_const(
@@ -94,9 +94,9 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
             def self.ttl_fn(_args)
               99
             end
-          end
+          end,
         )
-        
+
         expect(calculate).to eq(99)
       end
     end

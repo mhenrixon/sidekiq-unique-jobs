@@ -74,18 +74,23 @@ module SidekiqUniqueJobs
 
       return unless ttl
 
-      timing = case ttl
-           when String, Numeric
-             ttl.to_i
-           when Proc
-             ttl.call(item[ARGS])
-           when Symbol
-             job_class.send(ttl, item[ARGS])
-           else
-             return nil
-           end
+      timing = timing(ttl)
+      return unless timing
 
       timing.to_i + time_until_scheduled
+    end
+
+    private
+
+    def timing(ttl)
+      case ttl
+      when String, Numeric
+        ttl
+      when Proc
+        ttl.call(item[ARGS])
+      when Symbol
+        job_class.send(ttl, item[ARGS])
+      end
     end
   end
 end
