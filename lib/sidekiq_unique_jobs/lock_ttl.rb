@@ -71,7 +71,21 @@ module SidekiqUniqueJobs
       ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
       ttl ||= job_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
       ttl ||= SidekiqUniqueJobs.config.lock_ttl
-      ttl && (ttl.to_i + time_until_scheduled)
+
+      return unless ttl
+
+      timing = case ttl
+           when String, Numeric
+             ttl.to_i
+           when Proc
+             ttl.call(item[ARGS])
+           when Symbol
+             job_class.send(ttl, item[ARGS])
+           else
+             return nil
+           end
+
+      timing.to_i + time_until_scheduled
     end
   end
 end
