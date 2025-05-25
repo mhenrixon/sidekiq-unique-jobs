@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "objspace"
+require "memory_profiler"
+require "sidekiq"
+require "sidekiq-unique-jobs"
+
+# Configure Sidekiq and SidekiqUniqueJobs
+Sidekiq.configure_client do |config|
+  config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+end
+
+SidekiqUniqueJobs.configure do |config|
+  config.debug_lua = false
+  config.max_history = 10
+  config.lock_info = true
+end
+
+# Clear Redis
+SidekiqUniqueJobs.redis do |conn|
+  conn.flushdb
+end
+
+# Helper methods
+def create_item(jid: SecureRandom.hex(12), 
+                worker_class: "UniqueJobTest", 
+                queue: "default", 
+                lock_type: "until_executed", 
+                args: ["arg1", "arg2"], 
+                lock_timeout: 0, 
+                lock_ttl: nil, 
+                lock_limit: 1)
+  item = {
+    "jid" => jid,
+    "class" => worker_class,
+    "queue" => queue,
+    "lock" => lock_type,
+    "args" => args,
+    "lock_args" => args,
+    "lock_timeout" => lock_timeout,
+    "lock_ttl" => lock_ttl,
+    "lock_limit" => lock_limit,
+  }
+  SidekiqUniqueJobs::Job.prepare(item)
+  item
+end
+
+puts "=== Memory Analysis ==="
+
+# Analyze a single lock creation
+puts "\n1. Single lock creation and unlocking"
+report = MemoryProfiler.report do
+  item = create_item
+  locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+  locksmith.lock
+  locksmith.unlock
+end
+
+puts report.pretty_print(scale_bytes: true, detailed_report: false)
+
+# Analyze object creation with multiple locks
+puts "\n2. Multiple lock creations (10 locks)"
+report = MemoryProfiler.report do
+  10.times do |i|
+    item = create_item(jid: "jid_#{i}", args: ["arg_#{i}"])
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
+  end
+end
+
+puts report.pretty_print(scale_bytes: true, detailed_report: false)
+
+# Analyze where memory is being allocated in Locksmith
+puts "\n3. Detailed allocation tracking for a single Locksmith instance"
+report = MemoryProfiler.report do
+  item = create_item
+  SidekiqUniqueJobs::Locksmith.new(item)
+end
+
+puts report.pretty_print(scale_bytes: true, detailed_report: true, 
+                         filter_results: [/SidekiqUniqueJobs::Locksmith/, 
+                                           /SidekiqUniqueJobs::Key/])
+
+# Analyze Redis interaction memory usage
+puts "\n4. Memory usage during Redis script execution"
+report = MemoryProfiler.report do
+  item = create_item
+  locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+  # Use the public lock method which internally calls the script
+  locksmith.lock
+end
+
+puts report.pretty_print(scale_bytes: true, detailed_report: true,
+                         filter_results: [/Script/, /Redis/])
+
+# Check the size of the key data structure
+puts "\n5. Memory usage of Key object"
+item = create_item
+key = SidekiqUniqueJobs::Key.new(item["lock_digest"])
+key_size = ObjectSpace.memsize_of(key)
+puts "SidekiqUniqueJobs::Key object size: #{key_size} bytes"
+
+redis_size = 0
+SidekiqUniqueJobs.redis do |conn|
+  if conn.respond_to?(:connection)
+    redis_size = ObjectSpace.memsize_of(conn.connection)
+    puts "Redis connection object size: #{redis_size} bytes"
+  end
+end
