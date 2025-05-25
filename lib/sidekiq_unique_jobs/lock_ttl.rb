@@ -66,12 +66,34 @@ module SidekiqUniqueJobs
     # @return [Integer] the number of seconds to live
     #
     def calculate
-      ttl = item[LOCK_TTL]
-      ttl ||= job_options[LOCK_TTL]
-      ttl ||= item[LOCK_EXPIRATION] # TODO: Deprecate at some point
-      ttl ||= job_options[LOCK_EXPIRATION] # TODO: Deprecate at some point
-      ttl ||= SidekiqUniqueJobs.config.lock_ttl
-      ttl && (ttl.to_i + time_until_scheduled)
+      ttl = fetch_ttl
+      return unless ttl
+
+      timing = calculate_timing(ttl)
+      return unless timing
+
+      timing.to_i + time_until_scheduled
+    end
+
+    private
+
+    def fetch_ttl
+      item[LOCK_TTL] ||
+        job_options[LOCK_TTL] ||
+        item[LOCK_EXPIRATION] || # TODO: Deprecate at some point
+        job_options[LOCK_EXPIRATION] || # TODO: Deprecate at some point
+        SidekiqUniqueJobs.config.lock_ttl
+    end
+
+    def calculate_timing(ttl)
+      case ttl
+      when String, Numeric
+        ttl
+      when Proc
+        ttl.call(item[ARGS])
+      when Symbol
+        job_class.send(ttl, item[ARGS])
+      end
     end
   end
 end
