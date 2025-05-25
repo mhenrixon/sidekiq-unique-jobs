@@ -44,7 +44,7 @@ RSpec.describe SidekiqUniqueJobs do
     end
 
     context "when configured explicitly" do
-      let(:another_logger) { Logger.new("/dev/null") }
+      let(:another_logger) { Logger.new(File::NULL) }
 
       around do |exmpl|
         described_class.use_config(logger: another_logger) do
@@ -58,7 +58,7 @@ RSpec.describe SidekiqUniqueJobs do
 
   describe ".logger=" do
     let(:original_logger) { Sidekiq.logger }
-    let(:another_logger)  { Logger.new("/dev/null") }
+    let(:another_logger)  { Logger.new(File::NULL) }
 
     it "changes the SidekiqUniqueJobs.logger" do
       expect { described_class.logger = another_logger }

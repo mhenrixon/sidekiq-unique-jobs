@@ -162,7 +162,7 @@ RSpec.describe SidekiqUniqueJobs::Logging do
     end
 
     context "when logger does not support context" do
-      let(:logger)          { Logger.new("/dev/null") }
+      let(:logger)          { Logger.new(File::NULL) }
       let(:logging_context) { { "fuu" => "bar" } }
 
       before do

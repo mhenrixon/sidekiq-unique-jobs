@@ -9,7 +9,6 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
-    # rubocop:disable Metrics/ClassLength
     class RubyReaper < Reaper
       include SidekiqUniqueJobs::Timing
 
@@ -107,7 +106,7 @@ module SidekiqUniqueJobs
       #
       # @return [Array<String>] an array of orphaned digests
       #
-      def orphans # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+      def orphans
         orphans = []
         page    = 0
         per     = reaper_count * 2
@@ -197,7 +196,7 @@ module SidekiqUniqueJobs
         end
       end
 
-      def active?(digest) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def active?(digest)
         Sidekiq.redis do |conn|
           procs = conn.sscan("processes").to_a
           return false if procs.empty?
@@ -253,7 +252,7 @@ module SidekiqUniqueJobs
         conn.sscan("queues").each(&block)
       end
 
-      def entries(conn, queue, &block) # rubocop:disable Metrics/MethodLength
+      def entries(conn, queue, &block)
         queue_key    = "queue:#{queue}"
         initial_size = conn.llen(queue_key)
         deleted_size = 0

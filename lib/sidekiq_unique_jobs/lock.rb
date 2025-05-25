@@ -6,7 +6,7 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
-  class Lock # rubocop:disable Metrics/ClassLength
+  class Lock
     # includes "SidekiqUniqueJobs::Connection"
     # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection

@@ -14,7 +14,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
         message: "Added from test",
         job_id: job_id,
         digest: digest,
-        script: __FILE__.to_s,
+        script: __FILE__,
       }
     end
 
@@ -33,7 +33,7 @@ RSpec.describe SidekiqUniqueJobs::Changelog do
           message: "Added from test",
           job_id: job_id,
           digest: digest,
-          script: __FILE__.to_s,
+          script: __FILE__,
         )
       end
 

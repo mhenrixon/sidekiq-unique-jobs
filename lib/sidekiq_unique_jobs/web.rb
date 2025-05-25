@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
   # Useful for deleting keys that for whatever reason wasn't deleted
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   module Web
-    def self.registered(app) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def self.registered(app)
       app.helpers Web::Helpers
 
       app.get "/changelogs" do
@@ -19,7 +19,7 @@ module SidekiqUniqueJobs
         @total_size, @next_cursor, @changelogs = changelog.page(
           cursor: @current_cursor,
           pattern: @filter,
-          page_size: @count
+          page_size: @count,
         )
 
         erb(unique_template(:changelogs))
@@ -40,7 +40,7 @@ module SidekiqUniqueJobs
         @total_size, @next_cursor, @locks = digests.page(
           cursor: @current_cursor,
           pattern: @filter,
-          page_size: @count
+          page_size: @count,
         )
 
         erb(unique_template(:locks))
@@ -56,7 +56,7 @@ module SidekiqUniqueJobs
         @total_size, @next_cursor, @locks = expiring_digests.page(
           cursor: @current_cursor,
           pattern: @filter,
-          page_size: @count
+          page_size: @count,
         )
 
         erb(unique_template(:locks))
@@ -99,8 +99,12 @@ begin
 
   if Sidekiq::MAJOR >= 8
     Sidekiq::Web.configure do |config|
-      config.register_extension(SidekiqUniqueJobs::Web, name: "unique_jobs", tab: ["Locks", "Expiring Locks", "Changelogs"],
-                                                        index: %w[locks/ expiring_locks/ changelogs/])
+      config.register_extension(
+        SidekiqUniqueJobs::Web,
+        name: "unique_jobs",
+        tab: ["Locks", "Expiring Locks", "Changelogs"],
+        index: %w[locks/ expiring_locks/ changelogs/],
+      )
     end
   else
     Sidekiq::Web.register(SidekiqUniqueJobs::Web)
@@ -108,6 +112,6 @@ begin
     Sidekiq::Web.tabs["Expiring Locks"] = "expiring_locks"
     Sidekiq::Web.tabs["Changelogs"]     = "changelogs"
   end
-rescue NameError, LoadError => e
-  SidekiqUniqueJobs.logger.error(e)
+rescue NameError, LoadError => ex
+  SidekiqUniqueJobs.logger.error(ex)
 end

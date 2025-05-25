@@ -50,7 +50,7 @@ module SidekiqUniqueJobs
     #
     # @return [void] <description>
     #
-    def dispatch(reflection, *args) # rubocop:disable Metrics/MethodLength
+    def dispatch(reflection, *args)
       if (block = @reflections[reflection])
         block.call(*args)
 
