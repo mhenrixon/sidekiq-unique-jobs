@@ -96,7 +96,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     end
 
     get "/locks?filter=*&count=100"
-    _size, next_cursor, locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
+    _size, _, locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
 
     expect(last_response).to be_ok
     expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do

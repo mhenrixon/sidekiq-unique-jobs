@@ -64,10 +64,10 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reject do
   end
 
   describe "#kill_with_options?" do
-    it 'works when Sidekiq::DeadSet#kill takes an optional kwarg hash' do
-      kill_method = ->(payload, opts = {}) { false }
+    it "works when Sidekiq::DeadSet#kill takes an optional kwarg hash" do
+      kill_method = ->(_payload, _opts = {}) { false }
       allow(Sidekiq::DeadSet).to receive(:instance_method).with(:kill).and_return(kill_method)
-      expect(strategy.kill_with_options?).to eq(true)
+      expect(strategy.kill_with_options?).to be(true)
     end
   end
 end

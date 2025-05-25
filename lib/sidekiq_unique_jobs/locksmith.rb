@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
-  class Locksmith # rubocop:disable Metrics/ClassLength
+  class Locksmith
     # includes "SidekiqUniqueJobs::Connection"
     # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
@@ -243,7 +243,7 @@ module SidekiqUniqueJobs
     # @return [nil] when lock was not possible
     # @return [Object] whatever the block returns when lock was acquired
     #
-    def primed_async(conn, wait = nil, &block) # rubocop:disable Metrics/MethodLength
+    def primed_async(conn, wait = nil, &block)
       timeout = (wait || config.timeout).to_i
       timeout = 1 if timeout.zero?
 

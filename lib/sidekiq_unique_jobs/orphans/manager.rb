@@ -32,7 +32,6 @@ module SidekiqUniqueJobs
       #
       # @return [SidekiqUniqueJobs::TimerTask] the task that was started
       #
-      # rubocop:disable
       def start(test_task = nil)
         return if disabled?
         return if registered?
@@ -74,7 +73,7 @@ module SidekiqUniqueJobs
       # @return [<type>] <description>
       #
       def task
-        @task ||= default_task # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
+        @task ||= default_task # rubocop:disable ThreadSafety/ClassInstanceVariable
       end
 
       #
@@ -102,7 +101,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def task=(task)
-        @task = task # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
+        @task = task # rubocop:disable ThreadSafety/ClassInstanceVariable
       end
 
       #

@@ -39,7 +39,7 @@ module SidekiqUniqueJobs
 
     # The hook to call after a successful unlock
     # @return [Proc]
-    def after_unlock_hook # rubocop:disable Metrics/MethodLength
+    def after_unlock_hook
       lambda do
         if @original_job_class.respond_to?(:after_unlock)
           # instance method in sidekiq v6

@@ -30,7 +30,6 @@ module SidekiqUniqueJobs
   # Shared class for dealing with gem configuration
   #
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
-  # rubocop:disable Metrics/ClassLength
   class Config < ThreadSafeConfig
     #
     # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available queued locks
@@ -181,7 +180,7 @@ module SidekiqUniqueJobs
     #
     # @return [SidekiqUniqueJobs::Config] a default configuration
     #
-    def self.default # rubocop:disable Metrics/MethodLength
+    def self.default
       new(
         LOCK_TIMEOUT,
         LOCK_TTL,

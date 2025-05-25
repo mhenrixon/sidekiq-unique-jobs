@@ -140,7 +140,7 @@ RSpec.describe SidekiqUniqueJobs::LockArgs do
             SidekiqUniqueJobs::InvalidUniqueArguments,
             a_string_starting_with(
               'UniqueJobWithoutUniqueArgsParameter#unique_args takes 0 arguments, ' \
-              'received ["name", 2, {"whatever"=>nil, "type"=>"test"}]', \
+              'received ["name", 2, {"whatever"=>nil, "type"=>"test"}]',
             ),
           )
       end
