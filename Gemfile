@@ -7,6 +7,12 @@ gemspec
 
 LOCAL_GEMS = "Gemfile.local"
 
+gem "ostruct"
+gem "base64"
+gem "mutex_m"
+gem "bigdecimal"
+gem "benchmark"
+
 gem "appraisal", github: "thoughtbot/appraisal"
 gem "faraday-retry"
 gem "gem-release"
