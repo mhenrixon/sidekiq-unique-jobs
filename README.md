@@ -511,7 +511,7 @@ I would strongly suggest you let this gem test uniqueness. If you care about how
 
 You can find a list of contributors over on [Contributors][]
 
-[v5.0.10]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10.
+[v5.0.10]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v5.0.10
 [v4.0.18]: https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v4.0.18
 [Sidekiq requirements]: https://github.com/mperham/sidekiq#requirements
 [Enterprise unique jobs]: https://www.dailydrip.com/topics/sidekiq/drips/sidekiq-enterprise-unique-jobs
