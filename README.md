@@ -239,7 +239,7 @@ This lock behaves identically to the [Until Executed](#until-executed) except fo
 class UntilExpired
   include Sidekiq::Workers
 
-  sidekiq_options lock: :until_expired, lock_ttl: 1.day
+  sidekiq_options lock: :until_expired, lock_ttl: 1.day.to_i
 
   def perform
     # Do work
