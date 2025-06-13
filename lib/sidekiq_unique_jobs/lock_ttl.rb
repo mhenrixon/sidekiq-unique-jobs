@@ -93,6 +93,8 @@ module SidekiqUniqueJobs
         ttl.call(item[ARGS])
       when Symbol
         job_class.send(ttl, item[ARGS])
+      else
+        raise ArgumentError, "#{ttl.class} is not supported for lock_ttl"
       end
     end
   end

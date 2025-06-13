@@ -99,6 +99,14 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
 
         expect(calculate).to eq(99)
       end
+
+      context "when item lock_ttl is a another one" do
+        let(:item) { { "class" => job_class_name, "lock_ttl" => (0..1) } }
+
+        it "raise ArgumentError" do
+          expect { calculate }.to raise_error(ArgumentError, "Range is not supported for lock_ttl")
+        end
+      end
     end
   end
 
