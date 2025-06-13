@@ -42,7 +42,7 @@ SidekiqUniqueJobs.reflect do |on|
     logger.debug(job_hash.merge(message: "Reschedule failed"))
   end
 
-  # When your conflict strategy is to reschedule and it failed
+  # When your conflict strategy is to reschedule and it was successful
   # Mostly for metrics I guess
   on.rescheduled do |job_hash|
     logger.debug(job_hash.merge(message: "Reschedule success"))
