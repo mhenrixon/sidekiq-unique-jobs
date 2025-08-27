@@ -197,7 +197,7 @@ A lock is created when `UntilExecuting.perform_async` is called. Then it is eith
 
 ```ruby
 class UntilExecuting
-  include Sidekiq::Workers
+  include Sidekiq::Worker
 
   sidekiq_options lock: :until_executing
 
@@ -219,7 +219,7 @@ A lock is created when `UntilExecuted.perform_async` is called. Then it is eithe
 
 ```ruby
 class UntilExecuted
-  include Sidekiq::Workers
+  include Sidekiq::Worker
 
   sidekiq_options lock: :until_executed
 
@@ -237,7 +237,7 @@ This lock behaves identically to the [Until Executed](#until-executed) except fo
 
 ```ruby
 class UntilExpired
-  include Sidekiq::Workers
+  include Sidekiq::Worker
 
   sidekiq_options lock: :until_expired, lock_ttl: 1.day.to_i
 
@@ -255,7 +255,7 @@ This lock is a combination of two locks (`:until_executing` and `:while_executin
 
 ```ruby
 class UntilAndWhileExecutingWorker
-  include Sidekiq::Workers
+  include Sidekiq::Worker
 
   sidekiq_options lock: :until_and_while_executing,
                   lock_timeout: 2,
@@ -277,7 +277,7 @@ These locks are put on a queue without any type of locking mechanism, the lockin
 
 ```ruby
 class WhileExecutingWorker
-  include Sidekiq::Workers
+  include Sidekiq::Worker
 
   sidekiq_options lock: :while_executing,
                   lock_timeout: 2,
