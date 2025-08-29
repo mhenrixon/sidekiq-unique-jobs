@@ -58,8 +58,8 @@ if limit_exceeded then
   return nil
 end
 
-log_debug("ZADD", expiring_digests, current_time + pttl, digest)
-redis.call("ZADD", expiring_digests, current_time + pttl, digest)
+log_debug("ZADD", expiring_digests, current_time + pttl/1000, digest)
+redis.call("ZADD", expiring_digests, current_time + pttl/1000, digest)
 
 log_debug("HSET", locked, job_id, current_time)
 redis.call("HSET", locked, job_id, current_time)
