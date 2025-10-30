@@ -13,6 +13,7 @@ gem "mutex_m"
 gem "bigdecimal"
 gem "benchmark"
 
+gem "activesupport"
 gem "appraisal", github: "thoughtbot/appraisal"
 gem "faraday-retry"
 gem "gem-release"

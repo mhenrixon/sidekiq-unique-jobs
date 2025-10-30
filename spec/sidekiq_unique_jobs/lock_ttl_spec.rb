@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/numeric/time'
+
 RSpec.describe SidekiqUniqueJobs::LockTTL do
   let(:item)            { { "class" => job_class_name, "at" => schedule_time } }
   let(:calculator)      { described_class.new(item) }
@@ -64,6 +66,14 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
 
       it do
         expect(calculate).to eq(10)
+      end
+    end
+
+    context "when item lock_ttl is active_support duration" do
+      let(:item) { { "class" => job_class_name, "lock_ttl" => 10.minutes } }
+
+      it do
+        expect(calculate).to eq(600)
       end
     end
 

@@ -87,7 +87,7 @@ module SidekiqUniqueJobs
 
     def calculate_timing(ttl)
       case ttl
-      when String, Numeric
+      when String, Numeric, ActiveSupport::Duration
         ttl
       when Proc
         ttl.call(item[ARGS])
