@@ -298,7 +298,12 @@ Benchmark.ips do |x|
     item = prepare_job(create_item)
     callback = -> { raise StandardError, "callback error" }
     lock = SidekiqUniqueJobs::Lock::BaseLock.new(item, callback)
-    lock.send(:callback_safely)
+    # On main branch, callback_safely re-raises. On improved branch, it doesn't.
+    begin
+      lock.send(:callback_safely)
+    rescue StandardError
+      # Expected on main branch
+    end
   end
 
   x.compare!
