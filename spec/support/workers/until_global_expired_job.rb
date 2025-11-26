@@ -4,6 +4,7 @@
 
 class UntilGlobalExpiredJob
   include Sidekiq::Worker
+
   sidekiq_options lock: :until_expired
 
   def perform(arg)

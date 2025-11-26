@@ -47,5 +47,20 @@ RSpec.describe SidekiqUniqueJobs::Job do
         )
       end
     end
+
+    context "when lock_prefix is set" do
+      let(:job) do
+        super().merge("lock_prefix" => "custom_prefix")
+      end
+
+      it "uses the custom lock_prefix" do
+        expect(prepare).to match(
+          hash_including(
+            "lock_prefix" => "custom_prefix",
+            "lock_digest" => "custom_prefix:6b6835a019cad7c2a7a4e53e20a9184c",
+          ),
+        )
+      end
+    end
   end
 end

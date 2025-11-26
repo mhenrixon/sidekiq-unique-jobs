@@ -4,7 +4,7 @@
 # Contains configuration and utility methods that belongs top level
 #
 # @author Mikael Henriksson <mikael@mhenrixon.com>
-module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
+module SidekiqUniqueJobs
   include SidekiqUniqueJobs::Connection
   extend SidekiqUniqueJobs::JSON
 
@@ -17,7 +17,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [SidekiqUniqueJobs::Config] the gem configuration
   #
   def config
-    @config ||= reset! # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
+    @config ||= reset! # rubocop:disable ThreadSafety/ClassInstanceVariable
   end
 
   #
@@ -108,7 +108,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [SidekiqUniqueJobs::Config] a default gem configuration
   #
   def reset!
-    @config = SidekiqUniqueJobs::Config.default # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
+    @config = SidekiqUniqueJobs::Config.default # rubocop:disable ThreadSafety/ClassInstanceVariable
   end
 
   #
@@ -288,7 +288,7 @@ module SidekiqUniqueJobs # rubocop:disable Metrics/ModuleLength
   # @return [Reflections]
   #
   def reflections
-    @reflections ||= Reflections.new # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
+    @reflections ||= Reflections.new # rubocop:disable ThreadSafety/ClassInstanceVariable
   end
 
   #

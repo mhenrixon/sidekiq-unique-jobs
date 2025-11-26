@@ -1,0 +1,371 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Benchmark script to measure performance improvements in the optimization branch
+# Run this on both the main branch and the optimized branch to compare
+
+# Load benchmark gems BEFORE bundler/setup (they're not in Gemfile)
+begin
+  require "benchmark/ips"
+  require "benchmark/memory"
+rescue LoadError => e
+  abort <<~ERROR
+    Missing benchmark gems. Please install them first:
+
+      gem install benchmark-ips benchmark-memory --no-document
+
+    Then run this script again.
+
+    Error: #{e.message}
+  ERROR
+end
+
+# Now setup bundler for project gems
+require "bundler/setup"
+
+require "sidekiq"
+require "sidekiq-unique-jobs"
+require "concurrent"
+
+# Configure Sidekiq and SidekiqUniqueJobs
+Sidekiq.configure_client do |config|
+  config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+end
+
+SidekiqUniqueJobs.configure do |config|
+  config.debug_lua = false
+  config.max_history = 10
+  config.lock_info = false
+  config.logger_enabled = false
+  config.reaper_count = 1_000
+end
+
+# Flush Redis before benchmarking
+SidekiqUniqueJobs.redis { |conn| conn.flushdb }
+
+puts "=" * 80
+puts "SIDEKIQ UNIQUE JOBS - PERFORMANCE IMPROVEMENTS BENCHMARK"
+puts "=" * 80
+puts "Ruby Version: #{RUBY_VERSION}"
+puts "Redis Version: #{SidekiqUniqueJobs.redis { |conn| conn.info['redis_version'] }}"
+puts "Sidekiq Version: #{Sidekiq::VERSION}"
+puts "SidekiqUniqueJobs Version: #{SidekiqUniqueJobs::VERSION}"
+puts "Git Branch: #{`git rev-parse --abbrev-ref HEAD`.chomp}"
+puts "Git Commit: #{`git rev-parse --short HEAD`.chomp}"
+puts "=" * 80
+
+# Helper methods
+def create_item(jid: SecureRandom.hex(12),
+                worker_class: "UniqueJobTest",
+                queue: "default",
+                lock_type: "until_executed",
+                args: ["arg1", "arg2"],
+                lock_timeout: 0,
+                lock_ttl: nil)
+  {
+    "jid" => jid,
+    "class" => worker_class,
+    "queue" => queue,
+    "lock" => lock_type,
+    "args" => args,
+    "lock_args" => args,
+    "lock_timeout" => lock_timeout,
+    "lock_ttl" => lock_ttl,
+    "on_client_conflict" => :reject,
+    "on_server_conflict" => :reject
+  }
+end
+
+def prepare_job(item)
+  SidekiqUniqueJobs::Job.prepare(item)
+  item
+end
+
+def random_args
+  [SecureRandom.hex(8), { "type" => SecureRandom.hex(4) }]
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 1: Non-Blocking Lock Acquisition (until_executing)"
+puts "Improvement: Changed from wait:1 to wait:0 in exception handling"
+puts "=" * 80
+
+Benchmark.ips do |x|
+  x.config(time: 5, warmup: 2)
+
+  x.report("lock with failure simulation") do
+    item = prepare_job(create_item(lock_type: "until_executing"))
+    lock = SidekiqUniqueJobs::Lock::UntilExecuting.new(item, -> {})
+
+    # Lock and execute with simulated failure
+    lock.lock do
+      begin
+        lock.execute { raise StandardError, "simulated error" }
+      rescue StandardError
+        # Expected error
+      end
+    end
+  end
+
+  x.report("lock and unlock - normal flow") do
+    item = prepare_job(create_item(lock_type: "until_executing"))
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
+  end
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 2: Orphan Reaper Performance (Lua Script Optimization)"
+puts "Improvements: Cached digest transformations, short-circuit breaks, ZSCAN count"
+puts "=" * 80
+
+# Setup: Create test data for orphan reaper
+COUNT = 1_000
+DIGESTS = COUNT.times.map { |n| "digest-#{n}" }
+JOB_IDS = COUNT.times.map { |n| "jid-#{n}" }
+
+# Create some legitimate jobs in different queues and schedules
+100.times do |i|
+  item = prepare_job(create_item(
+    jid: JOB_IDS[i],
+    args: [i, i],
+    queue: "custom-#{i % 10}"
+  ))
+
+  if (i % 10).zero?
+    # Add some scheduled jobs
+    item["at"] = Time.now.to_f + (i * 60)
+    Sidekiq::Client.push(item)
+  else
+    # Regular jobs
+    Sidekiq::Client.push(item)
+  end
+end
+
+# Create orphaned locks (locks without corresponding jobs)
+100.times do |i|
+  digest = "orphaned-#{SecureRandom.hex(12)}"
+  jid = SecureRandom.hex(12)
+  SidekiqUniqueJobs::Lock.create(digest, jid)
+end
+
+Benchmark.ips do |x|
+  x.config(time: 10, warmup: 2)
+
+  x.report("orphan reaper (lua)") do
+    begin
+      SidekiqUniqueJobs.redis do |conn|
+        SidekiqUniqueJobs::Script::Caller.call_script(
+          :reap_orphans,
+          conn,
+          keys: [
+            SidekiqUniqueJobs::DIGESTS,
+            SidekiqUniqueJobs::SCHEDULE,
+            SidekiqUniqueJobs::RETRY
+          ],
+          argv: [SidekiqUniqueJobs.config.reaper_count]
+        )
+      end
+    rescue RedisClient::CommandError => e
+      # Script errors are expected when no orphans to reap
+      nil
+    end
+  end
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 3: Lock TTL Calculation (Scheduled Jobs)"
+puts "Improvement: Prevent negative TTL values with clamping"
+puts "=" * 80
+
+Benchmark.ips do |x|
+  x.config(time: 5, warmup: 2)
+
+  # Job scheduled in the future
+  x.report("TTL calc - future job") do
+    item = create_item(lock_ttl: 3600)
+    item["at"] = Time.now.to_f + 7200 # 2 hours from now
+    SidekiqUniqueJobs::LockTTL.calculate(item)
+  end
+
+  # Job scheduled in the past (edge case we fixed)
+  x.report("TTL calc - overdue job") do
+    item = create_item(lock_ttl: 3600)
+    item["at"] = Time.now.to_f - 300 # 5 minutes ago (overdue)
+    SidekiqUniqueJobs::LockTTL.calculate(item)
+  end
+
+  # Job with no schedule
+  x.report("TTL calc - immediate job") do
+    item = create_item(lock_ttl: 3600)
+    SidekiqUniqueJobs::LockTTL.calculate(item)
+  end
+
+  x.compare!
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 4: Scripts Class Operations"
+puts "Improvement: Simplified using Concurrent::Map#fetch_or_store"
+puts "=" * 80
+
+script_path = Pathname.new(File.expand_path("../../lib/sidekiq_unique_jobs/lua", __FILE__))
+
+Benchmark.ips do |x|
+  x.config(time: 5, warmup: 2)
+
+  x.report("script fetch (cached)") do
+    scripts = SidekiqUniqueJobs::Script::Scripts.fetch(script_path)
+    SidekiqUniqueJobs.redis do |conn|
+      scripts.fetch(:lock, conn)
+    end
+  end
+
+  x.report("locksmith lock/unlock") do
+    item = prepare_job(create_item)
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
+  end
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 5: Concurrent Lock Operations (Thread Safety)"
+puts "Improvement: Thread-safe config access with mutex"
+puts "=" * 80
+
+def concurrent_lock_test(count, threads)
+  pool = Concurrent::FixedThreadPool.new(threads)
+  completed = Concurrent::AtomicFixnum.new(0)
+  locked = Concurrent::AtomicFixnum.new(0)
+
+  count.times do |i|
+    pool.post do
+      begin
+        item = prepare_job(create_item(args: random_args))
+        locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+
+        if locksmith.lock
+          locked.increment
+          locksmith.unlock
+        end
+        completed.increment
+      rescue => e
+        puts "Error in thread #{i}: #{e.message}" if ENV["DEBUG"]
+      end
+    end
+  end
+
+  sleep 0.1 until completed.value >= count
+  pool.shutdown
+  pool.wait_for_termination(10)
+
+  locked.value
+end
+
+Benchmark.ips do |x|
+  x.config(time: 10, warmup: 2)
+
+  x.report("100 locks - 10 threads") do
+    concurrent_lock_test(100, 10)
+  end
+
+  x.report("500 locks - 20 threads") do
+    concurrent_lock_test(500, 20)
+  end
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 6: Callback Exception Handling"
+puts "Improvement: Don't re-raise callback exceptions after unlock"
+puts "=" * 80
+
+Benchmark.ips do |x|
+  x.config(time: 5, warmup: 2)
+
+  x.report("callback - success") do
+    item = prepare_job(create_item)
+    callback = -> { true }
+    lock = SidekiqUniqueJobs::Lock::BaseLock.new(item, callback)
+    lock.send(:callback_safely)
+  end
+
+  x.report("callback - with exception") do
+    item = prepare_job(create_item)
+    callback = -> { raise StandardError, "callback error" }
+    lock = SidekiqUniqueJobs::Lock::BaseLock.new(item, callback)
+    # On main branch, callback_safely re-raises. On improved branch, it doesn't.
+    begin
+      lock.send(:callback_safely)
+    rescue StandardError
+      # Expected on main branch
+    end
+  end
+
+  x.compare!
+end
+
+puts "\n" + "=" * 80
+puts "BENCHMARK 7: Blocking Redis Operations"
+puts "Improvement: Cap blocking wait at MAX_BLOCKING_WAIT (5 seconds)"
+puts "=" * 80
+
+Benchmark.ips do |x|
+  x.config(time: 5, warmup: 2)
+
+  x.report("lock with wait: 0") do
+    item = prepare_job(create_item(lock_timeout: 0))
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock(wait: 0)
+    locksmith.unlock
+  end
+
+  x.report("lock with wait: 1") do
+    item = prepare_job(create_item(lock_timeout: 1))
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock(wait: 1)
+    locksmith.unlock
+  end
+end
+
+# Memory benchmarks
+puts "\n" + "=" * 80
+puts "MEMORY BENCHMARK: Lock Operations"
+puts "=" * 80
+
+Benchmark.memory do |x|
+  x.report("100 lock/unlock cycles") do
+    100.times do
+      item = prepare_job(create_item(args: random_args))
+      locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+      locksmith.lock
+      locksmith.unlock
+    end
+  end
+
+  x.report("100 lock with execute") do
+    100.times do
+      item = prepare_job(create_item(args: random_args))
+      locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+      locksmith.execute { true }
+    end
+  end
+
+  x.compare!
+end
+
+# Clean up Redis
+SidekiqUniqueJobs.redis { |conn| conn.flushdb }
+
+puts "\n" + "=" * 80
+puts "BENCHMARK COMPLETE!"
+puts "=" * 80
+puts "\nTo compare branches:"
+puts "1. Run this script on main branch: git checkout main && bin/benchmark_improvements > results_main.txt"
+puts "2. Run this script on your branch: git checkout <branch> && bin/benchmark_improvements > results_branch.txt"
+puts "3. Compare the results!"
+puts "=" * 80

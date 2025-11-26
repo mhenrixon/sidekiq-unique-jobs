@@ -1,18 +1,15 @@
-inherit_gem:
-  rubocop-mhenrixon:
-    - config/default.yml
-
-require:
+plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-thread_safety
 
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
   Include:
-    - "examples/**/*.rb"
-    - "*.rb"
+    - "**/examples/**/*.rb"
+    - "**/*.rb"
   Exclude:
     - "**/*.erb"
     - "**/.DS_Store"
@@ -27,6 +24,7 @@ AllCops:
     - "myapp/**/*"
     - "Sidekiq/**/*"
     - "vendor/**/*"
+
 Layout/ArgumentAlignment:
   Enabled: true
   EnforcedStyle: with_fixed_indentation
@@ -65,22 +63,8 @@ Lint/SuppressedException:
 Lint/UselessAssignment:
   Enabled: true
 
-Metrics/AbcSize:
-  Max: 38
-
-Metrics/CyclomaticComplexity:
-  Max: 7
-
-Metrics/BlockLength:
-  Enabled: true
-  Exclude:
-    - "**/spec/**/*.rb"
-    - "**/*.rake"
-    - "Rakefile"
-    - "*.gemspec"
-
-Metrics/PerceivedComplexity:
-  Max: 8
+Metrics:
+  Enabled: false
 
 Naming/AccessorMethodName:
   Enabled: true
@@ -162,8 +146,9 @@ RSpec/RepeatedExample:
 Style/Documentation:
   Enabled: true
   Exclude:
-    - "examples/**/*.rb"
-    - "bin/**/*.rb"
+    - "examples/**/*"
+    - "bin/**/*"
+    - "spec/**/*"
     - "lib/sidekiq_unique_jobs/testing.rb"
     - "lib/sidekiq_unique_jobs/core_ext.rb"
     - "lib/sidekiq_unique_jobs/sidekiq_unique_ext.rb"
@@ -207,7 +192,8 @@ Style/GlobalVars:
 Style/ModuleFunction:
   Enabled: false
 
-ThreadSafety/InstanceVariableInClassMethod:
+ThreadSafety/ClassInstanceVariable:
   Exclude:
+    - lib/sidekiq_unique_jobs/web.rb
     - lib/sidekiq_unique_jobs/web.rb
 

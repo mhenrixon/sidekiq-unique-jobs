@@ -30,8 +30,11 @@ module SidekiqUniqueJobs
   # Shared class for dealing with gem configuration
   #
   # @author Mauro Berlanda <mauro.berlanda@gmail.com>
-  # rubocop:disable Metrics/ClassLength
   class Config < ThreadSafeConfig
+    def initialize(*)
+      super
+      @redis_version_mutex = Mutex.new
+    end
     #
     # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available queued locks
     LOCKS_WHILE_ENQUEUED = {
@@ -181,7 +184,7 @@ module SidekiqUniqueJobs
     #
     # @return [SidekiqUniqueJobs::Config] a default configuration
     #
-    def self.default # rubocop:disable Metrics/MethodLength
+    def self.default
       new(
         LOCK_TIMEOUT,
         LOCK_TTL,
@@ -327,11 +330,20 @@ module SidekiqUniqueJobs
     #
     # The current version of redis
     #
+    # Thread-safe: Uses mutex to prevent multiple threads from fetching version simultaneously
     #
     # @return [String] a version string eg. `5.0.1`
     #
     def redis_version
-      self.current_redis_version = SidekiqUniqueJobs.fetch_redis_version if current_redis_version == REDIS_VERSION
+      # Fast path: if already fetched, return immediately without locking
+      return current_redis_version if current_redis_version != REDIS_VERSION
+
+      # Slow path: fetch version with mutex protection
+      @redis_version_mutex.synchronize do
+        # Double-check inside mutex in case another thread just fetched it
+        self.current_redis_version = SidekiqUniqueJobs.fetch_redis_version if current_redis_version == REDIS_VERSION
+      end
+
       current_redis_version
     end
   end

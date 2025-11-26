@@ -32,7 +32,18 @@ local function find_digest_in_queues(digest)
             break
           end
         end
+
+        -- Short-circuit: Stop scanning this queue's batches after finding match
+        if found then
+          break
+        end
+
         index = index + per
+      end
+
+      -- Short-circuit: Stop scanning remaining queues after finding match
+      if found then
+        break
       end
     end
 

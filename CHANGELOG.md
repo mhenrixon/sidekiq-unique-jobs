@@ -1,13 +1,30 @@
 # Changelog
 
-## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+## [v8.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.11) (2025-05-25)
 
-[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.10...HEAD)
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.10...v8.0.11)
+
+**Implemented enhancements:**
+
+- chore: address recent rubocop changes [\#880](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/880) ([mhenrixon](https://github.com/mhenrixon))
+- feat\(digest\): allow modern algorithm [\#853](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/853) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Your paypal link doesn't work [\#876](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/876)
+- Replace MD5 with SHA256+ [\#848](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/848)
+- NoMethodError: undefined method `\[\]' for true:TrueClass [\#643](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/643)
 
 **Merged pull requests:**
 
-- tweak changelog for 8.0.9 [\#836](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/836) ([Earlopain](https://github.com/Earlopain))
-- Add digest scores for faster deletes in sorted sets [\#835](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/835) ([ezekg](https://github.com/ezekg))
+- Add support for lock\_ttl to be a Proc/class method [\#879](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/879) ([brayden-onesignal](https://github.com/brayden-onesignal))
+- Move from Sidekiq 8 beta to released version [\#872](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/872) ([jukra](https://github.com/jukra))
+- update Reject\#kill\_with\_options? for Ruby 3 kwargs [\#868](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/868) ([stathis-alexander](https://github.com/stathis-alexander))
+- Remove redundant include to locales \(for Sidekiq 8\) [\#867](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/867) ([jukra](https://github.com/jukra))
+- Support for Sidekiq 8 [\#866](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/866) ([jukra](https://github.com/jukra))
+- 📝 Improve README.md [\#860](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/860) ([jaredsmithse](https://github.com/jaredsmithse))
+- mention ttl and timeout unit \(seconds\) in README [\#859](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/859) ([fwolfst](https://github.com/fwolfst))
+- Add a note to README on `schedule_in` option for `reschedule` conflict strategy [\#849](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/849) ([vittorius](https://github.com/vittorius))
 
 ## [v8.0.10](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.10) (2024-02-22)
 
@@ -17,6 +34,11 @@
 
 - until\_and\_while\_executing and lock\_ttl: jobs silently dropped [\#788](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/788)
 - Slow evalsha causing timeouts [\#668](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/668)
+
+**Merged pull requests:**
+
+- tweak changelog for 8.0.9 [\#836](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/836) ([Earlopain](https://github.com/Earlopain))
+- Add digest scores for faster deletes in sorted sets [\#835](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/835) ([ezekg](https://github.com/ezekg))
 
 ## [v7.1.33](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.1.33) (2024-02-12)
 
@@ -512,7 +534,7 @@
 
 **Merged pull requests:**
 
-- Update docs [\#644](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/644) ([andypple](https://github.com/andypple))
+- Update docs [\#644](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/644) ([ruzig](https://github.com/ruzig))
 
 ## [v7.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v7.0.13) (2021-09-27)
 
@@ -2166,7 +2188,6 @@
 - Attempt to constantize String `worker_class` arguments passed to client middleware [\#17](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/17) ([disbelief](https://github.com/disbelief))
 - Compatibility with Sidekiq 2.12.1 Scheduled Jobs [\#16](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/16) ([lsimoneau](https://github.com/lsimoneau))
 - Allow worker to specify which arguments to include in uniquing hash [\#12](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/12) ([sax](https://github.com/sax))
-- Add support for unique when using Sidekiq's delay function [\#11](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/11) ([eduardosasso](https://github.com/eduardosasso))
 - Adding the unique prefix option [\#8](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/8) ([KensoDev](https://github.com/KensoDev))
 - Remove unnecessary log messages [\#7](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/7) ([marclennox](https://github.com/marclennox))
 
@@ -2180,7 +2201,6 @@
 
 **Merged pull requests:**
 
-- Fix multiple bugs, cleaned up dependencies, and added a feature [\#4](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/4) ([kemper-blinq](https://github.com/kemper-blinq))
 - Dependency on sidekiq 2.2.0 and up [\#3](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/3) ([philostler](https://github.com/philostler))
 
 ## [v2.2.1](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v2.2.1) (2012-08-19)

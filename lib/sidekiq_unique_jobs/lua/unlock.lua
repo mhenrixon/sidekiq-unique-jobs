@@ -42,12 +42,25 @@ local locked_count = redis.call("HLEN", locked)
 ---------  Begin unlock.lua ---------
 log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 
-log_debug("HEXISTS", locked, job_id)
-if redis.call("HEXISTS", locked, job_id) == 0 then
-  -- TODO: Improve orphaned lock detection
+-- Always clean up this job's queued/primed entries first
+-- This prevents orphaned entries even if job doesn't hold the lock
+log_debug("LREM", queued, -1, job_id)
+redis.call("LREM", queued, -1, job_id)
+
+log_debug("LREM", primed, -1, job_id)
+redis.call("LREM", primed, -1, job_id)
+
+-- Check if this job actually holds the lock
+local holds_lock = redis.call("HEXISTS", locked, job_id) == 1
+log_debug("HEXISTS", locked, job_id, "=>", holds_lock)
+
+if not holds_lock then
+  -- Job doesn't hold the lock - check if this is an orphaned lock scenario
   if queued_count == 0 and primed_count == 0 and locked_count == 0 then
-    log_debug("Orphaned lock")
+    log_debug("Orphaned lock - cleaning up")
+    -- Continue with cleanup below
   else
+    -- Other jobs still hold locks for this digest
     local result = ""
     for i,v in ipairs(redis.call("HKEYS", locked)) do
       result = result .. v .. ","
@@ -55,16 +68,11 @@ if redis.call("HEXISTS", locked, job_id) == 0 then
     result = locked .. " (" .. result .. ")"
     log("Yielding to: " .. result)
     log_debug("Yielding to", result, locked, "by job", job_id)
-    return nil
+    -- Still return job_id to indicate cleanup completed
+    -- Caller already removed from queued/primed
+    return job_id
   end
 end
-
--- Just in case something went wrong
-log_debug("LREM", queued, -1, job_id)
-redis.call("LREM", queued, -1, job_id)
-
-log_debug("LREM", primed, -1, job_id)
-redis.call("LREM", primed, -1, job_id)
 
 local redis_version = toversion(redisversion)
 

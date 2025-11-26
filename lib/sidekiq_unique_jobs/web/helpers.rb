@@ -178,7 +178,11 @@ module SidekiqUniqueJobs
       def safe_url_params(key)
         return url_params(key) if Sidekiq::MAJOR >= 8
 
-        warn { "URL parameter `#{key}` should be accessed via String, not Symbol (at #{caller(3..3).first})" } if key.is_a?(Symbol)
+        if key.is_a?(Symbol)
+          warn do
+            "URL parameter `#{key}` should be accessed via String, not Symbol (at #{caller(3..3).first})"
+          end
+        end
         request.params[key.to_s]
       end
 
@@ -187,7 +191,11 @@ module SidekiqUniqueJobs
       def safe_route_params(key)
         return route_params(key) if Sidekiq::MAJOR >= 8
 
-        warn { "Route parameter `#{key}` should be accessed via Symbol, not String (at #{caller(3..3).first})" } if key.is_a?(String)
+        if key.is_a?(String)
+          warn do
+            "Route parameter `#{key}` should be accessed via Symbol, not String (at #{caller(3..3).first})"
+          end
+        end
         env["rack.route_params"][key.to_sym]
       end
     end

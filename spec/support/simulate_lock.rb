@@ -4,6 +4,7 @@ require "concurrent/array"
 
 module SimulateLock
   extend self
+
   @items = Concurrent::Array.new
   include SidekiqUniqueJobs::Timing
 
@@ -44,7 +45,7 @@ module SimulateLock
   def lock_until_executed(digest, jid, ttl = nil, **options)
     lock(
       parse_item(
-        **options.merge(digest: digest, jid: jid, lock_type: :until_executed, ttl: ttl),
+        **options, digest: digest, jid: jid, lock_type: :until_executed, ttl: ttl,
       ),
     )
   end
@@ -52,7 +53,7 @@ module SimulateLock
   def lock_until_expired(digest, jid, ttl, **options)
     lock(
       parse_item(
-        **options.merge(digest: digest, jid: jid, lock_type: :until_expired, ttl: ttl),
+        **options, digest: digest, jid: jid, lock_type: :until_expired, ttl: ttl,
       ),
     )
   end
@@ -60,12 +61,12 @@ module SimulateLock
   def lock_until_and_while_executing(digest, jid, ttl = nil, **options)
     lock(
       parse_item(
-        **options.merge(digest: digest, jid: jid, lock_type: :until_and_while_executing, ttl: ttl),
+        **options, digest: digest, jid: jid, lock_type: :until_and_while_executing, ttl: ttl,
       ),
     )
     lock(
       parse_item(
-        **options.merge(digest: "#{digest}:RUN", jid: jid, lock_type: :until_and_while_executing, ttl: ttl),
+        **options, digest: "#{digest}:RUN", jid: jid, lock_type: :until_and_while_executing, ttl: ttl,
       ),
     )
   end
@@ -73,7 +74,7 @@ module SimulateLock
   def lock_while_executing(digest, jid, ttl = nil, **options)
     lock(
       parse_item(
-        **options.merge(digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl),
+        **options, digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl,
       ),
     )
   end
@@ -81,12 +82,12 @@ module SimulateLock
   def runtime_lock(digest, jid, ttl = nil, **options)
     lock(
       parse_item(
-        **options.merge(digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl),
+        **options, digest: digest, jid: jid, lock_type: :while_executing, ttl: ttl,
       ),
     )
     lock(
       parse_item(
-        **options.merge(digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl),
+        **options, digest: "#{digest}:RUN", jid: jid, lock_type: :while_executing, ttl: ttl,
       ),
     )
   end

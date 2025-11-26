@@ -35,7 +35,7 @@ module SidekiqUniqueJobs
         yield
       rescue StandardError => ex
         reflect(:execution_failed, item, ex)
-        locksmith.lock(wait: 1)
+        locksmith.lock(wait: 0)
         raise
       end
     end

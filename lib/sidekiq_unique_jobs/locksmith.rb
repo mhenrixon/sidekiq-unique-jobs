@@ -4,7 +4,7 @@ module SidekiqUniqueJobs
   # Lock manager class that handles all the various locks
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
-  class Locksmith # rubocop:disable Metrics/ClassLength
+  class Locksmith
     # includes "SidekiqUniqueJobs::Connection"
     # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
@@ -33,6 +33,11 @@ module SidekiqUniqueJobs
     # @return [Float] used to take into consideration the inaccuracy of redis timestamps
     CLOCK_DRIFT_FACTOR = 0.01
     NETWORK_FACTOR = 0.04
+
+    #
+    # @return [Integer] Maximum wait time for blocking Redis operations (in seconds)
+    #   Prevents blocking web requests indefinitely when used in client middleware
+    MAX_BLOCKING_WAIT = 5
 
     #
     # @!attribute [r] key
@@ -81,9 +86,11 @@ module SidekiqUniqueJobs
     #
     # Deletes the lock regardless of if it has a pttl set
     #
+    # rubocop:disable Naming/PredicateMethod
     def delete!
       call_script(:delete, key.to_a, argv).to_i.positive?
     end
+    # rubocop:enable Naming/PredicateMethod
 
     #
     # Create a lock for the Sidekiq job
@@ -243,7 +250,7 @@ module SidekiqUniqueJobs
     # @return [nil] when lock was not possible
     # @return [Object] whatever the block returns when lock was acquired
     #
-    def primed_async(conn, wait = nil, &block) # rubocop:disable Metrics/MethodLength
+    def primed_async(conn, wait = nil, &block)
       timeout = (wait || config.timeout).to_i
       timeout = 1 if timeout.zero?
 
@@ -259,8 +266,9 @@ module SidekiqUniqueJobs
       # NOTE: When debugging, change .value to .value!
       primed_jid = Concurrent::Promises
         .future(conn) { |red_con| pop_queued(red_con, timeout) }
-        .value
+        .value(concurrent_timeout) # Timeout to prevent indefinite blocking
 
+      # If promise times out, primed_jid will be nil
       handle_primed(primed_jid, &block)
     end
 
@@ -307,6 +315,16 @@ module SidekiqUniqueJobs
     def brpoplpush(conn, wait)
       # passing timeout 0 to brpoplpush causes it to block indefinitely
       raise InvalidArgument, "wait must be an integer" unless wait.is_a?(Integer)
+      raise InvalidArgument, "wait must be positive" if wait.negative?
+
+      # Cap the wait time to prevent blocking requests too long
+      # This is especially important when called from client middleware
+      if wait > MAX_BLOCKING_WAIT
+        log_debug(
+          "Capping blocking wait from #{wait}s to #{MAX_BLOCKING_WAIT}s to prevent long request blocks",
+        )
+        wait = MAX_BLOCKING_WAIT
+      end
 
       conn.blmove(key.queued, key.primed, "RIGHT", "LEFT", wait)
     end

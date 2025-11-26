@@ -53,7 +53,7 @@ module SidekiqUniqueJobs
     end
 
     def add_lock_prefix(item)
-      item[LOCK_PREFIX] = SidekiqUniqueJobs.config.lock_prefix
+      item[LOCK_PREFIX] ||= SidekiqUniqueJobs.config.lock_prefix
     end
 
     def add_lock_type(item)

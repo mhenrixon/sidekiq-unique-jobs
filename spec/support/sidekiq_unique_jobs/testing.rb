@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
-    # rubocop:disable Naming/MethodParameterName, Metrics/ModuleLength
+    # rubocop:disable Naming/MethodParameterName
     # :nodoc:
     # :nocov:
     module Redis
@@ -753,7 +753,7 @@ module SidekiqUniqueJobs
         redis { |conn| conn.xack(key, group, *ids) }
       end
 
-      def xclaim(key, group, consumer, min_idle_time, *ids, **opts) # rubocop:disable Metrics/ParameterLists
+      def xclaim(key, group, consumer, min_idle_time, *ids, **opts)
         redis { |conn| conn.xclaim(key, group, consumer, min_idle_time, *ids, **opts) }
       end
 
