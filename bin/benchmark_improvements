@@ -224,15 +224,11 @@ Benchmark.ips do |x|
     end
   end
 
-  x.report("script execute") do
-    scripts = SidekiqUniqueJobs::Script::Scripts.fetch(script_path)
+  x.report("locksmith lock/unlock") do
     item = prepare_job(create_item)
-    item["at"] = Time.now.to_f # Add schedule time for lock_score
-    SidekiqUniqueJobs.redis do |conn|
-      key = SidekiqUniqueJobs::Key.new(item["lock_digest"])
-      # Use proper argv format: [jid, pttl, type, limit, lock_score]
-      scripts.execute(:lock, conn, keys: key.to_a, argv: [item["jid"], 0, "client", 1, item["at"].to_s])
-    end
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
   end
 end
 
