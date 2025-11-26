@@ -4,6 +4,7 @@
 
 class LongRunningJob
   include Sidekiq::Worker
+
   sidekiq_options lock: :until_and_while_executing,
     lock_ttl: 7_200,
     queue: :customqueue,

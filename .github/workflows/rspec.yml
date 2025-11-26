@@ -25,22 +25,6 @@ jobs:
           ruby-version: 3.2
           bundler-cache: true
 
-      - name: Install Code Climate reporter
-        run: |
-          sudo curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          sudo chmod +x ./cc-test-reporter
-      - name: Generate Coverage
-        env:
-          CC_TEST_REPORTER_ID: 88e524e8f638efe690def7a6e2c72b1a9db5cdfa74548921b734d609a5858ee5
-        run: |
-          export GIT_BRANCH=${GITHUB_REF#refs/heads/}
-          export GIT_COMMIT_SHA=${GITHUB_SHA}
-          echo $GIT_BRANCH
-          echo $GIT_COMMIT_SHA
-          ./cc-test-reporter before-build
-          COV=true bin/rspec --require spec_helper --tag ~perf
-          ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
-
   rspec:
     services:
       toxiproxy:

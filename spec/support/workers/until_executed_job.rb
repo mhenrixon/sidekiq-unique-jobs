@@ -8,6 +8,7 @@
 #
 class UntilExecutedJob
   include Sidekiq::Worker
+
   sidekiq_options backtrace: 10,
     lock: :until_executed,
     lock_ttl: 5_000,

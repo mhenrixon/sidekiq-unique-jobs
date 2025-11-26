@@ -144,7 +144,10 @@ module SidekiqUniqueJobs
       #   1. It checks the scheduled set
       #   2. It checks the retry set
       #   3. It goes through all queues
+      #   4. It checks active processes
       #
+      # Note: Uses early returns for short-circuit evaluation.
+      # We can't pipeline ZSCAN operations as they're iterative.
       #
       # @param [String] digest the digest to search for
       #
@@ -152,7 +155,17 @@ module SidekiqUniqueJobs
       # @return [false] when no job was found for this digest
       #
       def belongs_to_job?(digest)
-        scheduled?(digest) || retried?(digest) || enqueued?(digest) || active?(digest)
+        # Short-circuit: Return immediately if found in scheduled set
+        return true if scheduled?(digest)
+
+        # Short-circuit: Return immediately if found in retry set
+        return true if retried?(digest)
+
+        # Short-circuit: Return immediately if found in any queue
+        return true if enqueued?(digest)
+
+        # Last check: active processes
+        active?(digest)
       end
 
       #
@@ -218,7 +231,9 @@ module SidekiqUniqueJobs
             workers.each_pair do |_tid, job|
               next unless (item = safe_load_json(job))
 
-              payload = safe_load_json(item[PAYLOAD])
+              next unless (raw_payload = item[PAYLOAD])
+
+              payload = safe_load_json(raw_payload)
 
               return true if match?(digest, payload[LOCK_DIGEST])
               return true if considered_active?(payload[CREATED_AT])
@@ -296,6 +311,9 @@ module SidekiqUniqueJobs
       #
       # Checks a sorted set for the existance of this digest
       #
+      # Note: Must use pattern matching because sorted sets contain job JSON strings,
+      # not just digests. The digest is embedded in the JSON as the "lock_digest" field.
+      # ZSCORE won't work here as we need to search within the member content.
       #
       # @param [String] key the key for the sorted set
       # @param [String] digest the digest to scan for
@@ -304,7 +322,8 @@ module SidekiqUniqueJobs
       # @return [false] when missing
       #
       def in_sorted_set?(key, digest)
-        conn.zscan(key, match: "*#{digest}*", count: 1).to_a.any?
+        # Increased count from 1 to 50 for better throughput
+        conn.zscan(key, match: "*#{digest}*", count: 50).to_a.any?
       end
     end
     # rubocop:enable Metrics/ClassLength

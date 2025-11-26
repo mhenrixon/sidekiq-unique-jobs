@@ -4,6 +4,7 @@ require "concurrent/array"
 
 module SimulateLock
   extend self
+
   @items = Concurrent::Array.new
   include SidekiqUniqueJobs::Timing
 

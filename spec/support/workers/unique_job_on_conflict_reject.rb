@@ -4,6 +4,7 @@
 
 class UniqueJobOnConflictReject
   include Sidekiq::Worker
+
   sidekiq_options lock: :while_executing,
     queue: :customqueue,
     on_conflict: :reject

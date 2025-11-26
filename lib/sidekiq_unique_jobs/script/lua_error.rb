@@ -88,9 +88,11 @@ module SidekiqUniqueJobs
       end
 
       # :nocov:
+      # rubocop:disable Naming/PredicateMethod
       def line_from_gem(line)
         line.split(":").first.include?(LIB_PATH)
       end
+      # rubocop:enable Naming/PredicateMethod
     end
   end
 end
