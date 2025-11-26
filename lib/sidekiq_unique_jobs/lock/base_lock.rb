@@ -134,9 +134,13 @@ module SidekiqUniqueJobs
       def callback_safely
         callback&.call
         item[JID]
-      rescue StandardError
-        reflect(:after_unlock_callback_failed, item)
-        raise
+      rescue StandardError => ex
+        reflect(:after_unlock_callback_failed, item, ex)
+        # Don't re-raise: lock is already unlocked, can't rollback
+        # Re-raising would cause job retry with lock already released
+        # leading to potential double execution
+        log_warn("After unlock callback failed: #{ex.class} - #{ex.message}")
+        item[JID]
       end
 
       def strategy_for(origin)
