@@ -59,8 +59,8 @@ if limit_exceeded then
 end
 
 if lock_type == "until_expired" and pttl and pttl > 0 then
-  log_debug("ZADD", expiring_digests, current_time + pttl, digest)
-  redis.call("ZADD", expiring_digests, current_time + pttl, digest)
+  log_debug("ZADD", expiring_digests, current_time + pttl/1000, digest)
+  redis.call("ZADD", expiring_digests, current_time + pttl/1000, digest)
 else
   log_debug("ZADD", digests, current_time, digest)
   redis.call("ZADD", digests, current_time, digest)
