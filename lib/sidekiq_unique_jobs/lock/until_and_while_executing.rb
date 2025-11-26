@@ -45,7 +45,7 @@ module SidekiqUniqueJobs
         else
           reflect(:unlock_failed, item)
         end
-      rescue StandardError => e
+      rescue StandardError
         reflect(:execution_failed, item)
         # Re-acquire the "until" lock to prevent duplicates while job is in retry
         # Use non-blocking lock attempt to avoid hanging on shutdown
@@ -58,7 +58,7 @@ module SidekiqUniqueJobs
 
       def ensure_relocked
         yield
-      rescue StandardError => e
+      rescue StandardError
         reflect(:execution_failed, item)
         # Re-acquire the "until" lock to prevent duplicates while job is in retry
         locksmith.lock(wait: 0)
