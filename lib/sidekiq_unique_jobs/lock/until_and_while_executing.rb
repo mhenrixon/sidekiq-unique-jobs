@@ -45,9 +45,11 @@ module SidekiqUniqueJobs
         else
           reflect(:unlock_failed, item)
         end
-      rescue Exception # rubocop:disable Lint/RescueException
+      rescue StandardError => e
         reflect(:execution_failed, item)
-        locksmith.lock(wait: 2)
+        # Re-acquire the "until" lock to prevent duplicates while job is in retry
+        # Use non-blocking lock attempt to avoid hanging on shutdown
+        locksmith.lock(wait: 0)
 
         raise
       end
@@ -56,9 +58,10 @@ module SidekiqUniqueJobs
 
       def ensure_relocked
         yield
-      rescue Exception # rubocop:disable Lint/RescueException
+      rescue StandardError => e
         reflect(:execution_failed, item)
-        locksmith.lock
+        # Re-acquire the "until" lock to prevent duplicates while job is in retry
+        locksmith.lock(wait: 0)
 
         raise
       end
