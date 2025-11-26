@@ -4,6 +4,7 @@
 
 class UniqueJobWithFilterMethod
   include Sidekiq::Worker
+
   sidekiq_options backtrace: 10,
     lock: :while_executing,
     queue: :customqueue,
