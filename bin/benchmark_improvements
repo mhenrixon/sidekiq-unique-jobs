@@ -4,32 +4,24 @@
 # Benchmark script to measure performance improvements in the optimization branch
 # Run this on both the main branch and the optimized branch to compare
 
-require "bundler/setup"
+# Load benchmark gems BEFORE bundler/setup (they're not in Gemfile)
+begin
+  require "benchmark/ips"
+  require "benchmark/memory"
+rescue LoadError => e
+  abort <<~ERROR
+    Missing benchmark gems. Please install them first:
 
-# Ensure required gems are available
-dependencies = {
-  "benchmark-ips" => "benchmark/ips",
-  "benchmark-memory" => "benchmark/memory"
-}
+      gem install benchmark-ips benchmark-memory --no-document
 
-dependencies.each do |gem_name, require_path|
-  begin
-    require require_path
-  rescue LoadError
-    puts "Installing #{gem_name} for benchmarking..."
-    system("gem install #{gem_name} --no-document") || abort("Failed to install #{gem_name}")
+    Then run this script again.
 
-    # Clear and reload gem paths to make newly installed gem available
-    Gem.clear_paths
-
-    # Try requiring again
-    begin
-      require require_path
-    rescue LoadError
-      abort("Failed to load #{gem_name} even after installation. Try running: gem install #{gem_name}")
-    end
-  end
+    Error: #{e.message}
+  ERROR
 end
+
+# Now setup bundler for project gems
+require "bundler/setup"
 
 require "sidekiq"
 require "sidekiq-unique-jobs"
