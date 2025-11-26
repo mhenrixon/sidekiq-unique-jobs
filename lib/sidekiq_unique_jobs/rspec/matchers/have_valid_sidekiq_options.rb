@@ -43,7 +43,7 @@ module SidekiqUniqueJobs
       #
       # @return [HaveValidSidekiqOptions] an RSpec matcher
       #
-      def have_valid_sidekiq_options(*args) # rubocop:disable Naming/PredicateName
+      def have_valid_sidekiq_options(*args)
         HaveValidSidekiqOptions.new(*args)
       end
     end

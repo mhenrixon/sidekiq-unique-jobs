@@ -230,12 +230,13 @@ module SidekiqUniqueJobs
 
             workers.each_pair do |_tid, job|
               next unless (item = safe_load_json(job))
-              if (raw_payload = item[PAYLOAD])
-                payload = safe_load_json(raw_payload)
 
-                return true if match?(digest, payload[LOCK_DIGEST])
-                return true if considered_active?(payload[CREATED_AT])
-              end
+              next unless (raw_payload = item[PAYLOAD])
+
+              payload = safe_load_json(raw_payload)
+
+              return true if match?(digest, payload[LOCK_DIGEST])
+              return true if considered_active?(payload[CREATED_AT])
             end
           end
 
