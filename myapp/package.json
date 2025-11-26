@@ -33,7 +33,7 @@
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-node": "^11.1.0",
     "jsonlint": "^1.6.3",
-    "playwright": "1.35.1",
+    "playwright": "1.55.1",
     "stylelint": "^15.10.1",
     "stylelint-config-standard": "^34.0.0"
   }
