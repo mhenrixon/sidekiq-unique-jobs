@@ -144,7 +144,10 @@ module SidekiqUniqueJobs
       #   1. It checks the scheduled set
       #   2. It checks the retry set
       #   3. It goes through all queues
+      #   4. It checks active processes
       #
+      # Note: Uses early returns for short-circuit evaluation.
+      # We can't pipeline ZSCAN operations as they're iterative.
       #
       # @param [String] digest the digest to search for
       #
@@ -152,10 +155,16 @@ module SidekiqUniqueJobs
       # @return [false] when no job was found for this digest
       #
       def belongs_to_job?(digest)
+        # Short-circuit: Return immediately if found in scheduled set
         return true if scheduled?(digest)
+
+        # Short-circuit: Return immediately if found in retry set
         return true if retried?(digest)
+
+        # Short-circuit: Return immediately if found in any queue
         return true if enqueued?(digest)
 
+        # Last check: active processes
         active?(digest)
       end
 
