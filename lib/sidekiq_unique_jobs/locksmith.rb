@@ -86,9 +86,11 @@ module SidekiqUniqueJobs
     #
     # Deletes the lock regardless of if it has a pttl set
     #
+    # rubocop:disable Naming/PredicateMethod
     def delete!
       call_script(:delete, key.to_a, argv).to_i.positive?
     end
+    # rubocop:enable Naming/PredicateMethod
 
     #
     # Create a lock for the Sidekiq job

@@ -19,9 +19,11 @@ RSpec.describe SidekiqUniqueJobs do
 
     let(:custom_lock) do
       Class.new(SidekiqUniqueJobs::Lock::BaseLock) do
+        # rubocop:disable Naming/PredicateMethod
         def lock
           true
         end
+        # rubocop:enable Naming/PredicateMethod
       end
     end
 
