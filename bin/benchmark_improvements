@@ -18,7 +18,16 @@ dependencies.each do |gem_name, require_path|
   rescue LoadError
     puts "Installing #{gem_name} for benchmarking..."
     system("gem install #{gem_name} --no-document") || abort("Failed to install #{gem_name}")
-    require require_path
+
+    # Clear and reload gem paths to make newly installed gem available
+    Gem.clear_paths
+
+    # Try requiring again
+    begin
+      require require_path
+    rescue LoadError
+      abort("Failed to load #{gem_name} even after installation. Try running: gem install #{gem_name}")
+    end
   end
 end
 
