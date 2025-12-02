@@ -4,6 +4,7 @@
 
 class UniqueJobWithNilUniqueArgs
   include Sidekiq::Worker
+
   sidekiq_options backtrace: true,
     lock: :until_executed,
     queue: :customqueue,

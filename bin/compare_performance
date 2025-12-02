@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# frozen_string_literal: false
+
+# Script to compare performance between two git branches
+# Usage: bin/compare_performance [base_branch] [comparison_branch]
+#
+# Example:
+#   bin/compare_performance main improved-exception-handling
+#
+# If no branches specified, compares current branch with main
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+RESULTS_DIR="$PROJECT_DIR/tmp/benchmark_results"
+
+# Color output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Default branches
+BASE_BRANCH="${1:-main}"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+COMPARISON_BRANCH="${2:-$CURRENT_BRANCH}"
+
+echo -e "${BLUE}================================================================================================${NC}"
+echo -e "${BLUE}PERFORMANCE COMPARISON${NC}"
+echo -e "${BLUE}================================================================================================${NC}"
+echo -e "Base branch:       ${GREEN}$BASE_BRANCH${NC}"
+echo -e "Comparison branch: ${GREEN}$COMPARISON_BRANCH${NC}"
+echo -e "${BLUE}================================================================================================${NC}"
+echo ""
+
+# Create results directory
+mkdir -p "$RESULTS_DIR"
+
+# Save current branch
+ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Function to run benchmark on a branch
+run_benchmark() {
+  local branch=$1
+  local output_file=$2
+
+  echo -e "${YELLOW}Switching to branch: $branch${NC}"
+  git checkout "$branch" 2>&1 | grep -v "Already on"
+
+  echo -e "${YELLOW}Running benchmarks on $branch...${NC}"
+  echo -e "${BLUE}This may take several minutes...${NC}"
+
+  # Ensure bundle is up to date
+  bundle install --quiet
+
+  # Run the benchmark
+  "$SCRIPT_DIR/benchmark_improvements" > "$output_file" 2>&1
+
+  echo -e "${GREEN}✓ Benchmark complete for $branch${NC}"
+  echo -e "  Results saved to: $output_file"
+  echo ""
+}
+
+# Run benchmarks on both branches
+echo -e "${BLUE}================================================================================================${NC}"
+echo -e "${BLUE}STEP 1: Running benchmark on base branch ($BASE_BRANCH)${NC}"
+echo -e "${BLUE}================================================================================================${NC}"
+run_benchmark "$BASE_BRANCH" "$RESULTS_DIR/results_${BASE_BRANCH}.txt"
+
+echo -e "${BLUE}================================================================================================${NC}"
+echo -e "${BLUE}STEP 2: Running benchmark on comparison branch ($COMPARISON_BRANCH)${NC}"
+echo -e "${BLUE}================================================================================================${NC}"
+run_benchmark "$COMPARISON_BRANCH" "$RESULTS_DIR/results_${COMPARISON_BRANCH}.txt"
+
+# Return to original branch
+echo -e "${YELLOW}Returning to original branch: $ORIGINAL_BRANCH${NC}"
+git checkout "$ORIGINAL_BRANCH" 2>&1 | grep -v "Already on"
+echo ""
+
+# Display results summary
+echo -e "${BLUE}================================================================================================${NC}"
+echo -e "${BLUE}RESULTS SUMMARY${NC}"
+echo -e "${BLUE}================================================================================================${NC}"
+echo ""
+
+# Extract key metrics from both result files
+echo -e "${GREEN}Key Performance Metrics:${NC}"
+echo ""
+
+# Function to extract IPS (iterations per second) for a benchmark
+extract_ips() {
+  local file=$1
+  local benchmark=$2
+  grep -A 1 "$benchmark" "$file" | grep -oP '\d+\.\d+k? i/s' | head -1 || echo "N/A"
+}
+
+# Compare specific benchmarks
+echo -e "${YELLOW}1. Lock with failure simulation:${NC}"
+BASE_IPS=$(extract_ips "$RESULTS_DIR/results_${BASE_BRANCH}.txt" "lock with failure simulation")
+COMP_IPS=$(extract_ips "$RESULTS_DIR/results_${COMPARISON_BRANCH}.txt" "lock with failure simulation")
+echo -e "   $BASE_BRANCH:       $BASE_IPS"
+echo -e "   $COMPARISON_BRANCH: $COMP_IPS"
+echo ""
+
+echo -e "${YELLOW}2. Orphan reaper (lua):${NC}"
+BASE_IPS=$(extract_ips "$RESULTS_DIR/results_${BASE_BRANCH}.txt" "orphan reaper (lua)")
+COMP_IPS=$(extract_ips "$RESULTS_DIR/results_${COMPARISON_BRANCH}.txt" "orphan reaper (lua)")
+echo -e "   $BASE_BRANCH:       $BASE_IPS"
+echo -e "   $COMPARISON_BRANCH: $COMP_IPS"
+echo ""
+
+echo -e "${YELLOW}3. TTL calc - overdue job:${NC}"
+BASE_IPS=$(extract_ips "$RESULTS_DIR/results_${BASE_BRANCH}.txt" "TTL calc - overdue job")
+COMP_IPS=$(extract_ips "$RESULTS_DIR/results_${COMPARISON_BRANCH}.txt" "TTL calc - overdue job")
+echo -e "   $BASE_BRANCH:       $BASE_IPS"
+echo -e "   $COMPARISON_BRANCH: $COMP_IPS"
+echo ""
+
+echo -e "${YELLOW}4. Script fetch (cached):${NC}"
+BASE_IPS=$(extract_ips "$RESULTS_DIR/results_${BASE_BRANCH}.txt" "script fetch (cached)")
+COMP_IPS=$(extract_ips "$RESULTS_DIR/results_${COMPARISON_BRANCH}.txt" "script fetch (cached)")
+echo -e "   $BASE_BRANCH:       $BASE_IPS"
+echo -e "   $COMPARISON_BRANCH: $COMP_IPS"
+echo ""
+
+echo -e "${BLUE}================================================================================================${NC}"
+echo -e "${GREEN}Full results available at:${NC}"
+echo -e "  Base:       $RESULTS_DIR/results_${BASE_BRANCH}.txt"
+echo -e "  Comparison: $RESULTS_DIR/results_${COMPARISON_BRANCH}.txt"
+echo ""
+echo -e "${BLUE}To view detailed results:${NC}"
+echo -e "  cat $RESULTS_DIR/results_${BASE_BRANCH}.txt"
+echo -e "  cat $RESULTS_DIR/results_${COMPARISON_BRANCH}.txt"
+echo ""
+echo -e "${BLUE}To view side-by-side comparison:${NC}"
+echo -e "  diff -y $RESULTS_DIR/results_${BASE_BRANCH}.txt $RESULTS_DIR/results_${COMPARISON_BRANCH}.txt | less"
+echo -e "${BLUE}================================================================================================${NC}"

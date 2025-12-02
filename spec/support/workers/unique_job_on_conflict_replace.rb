@@ -4,6 +4,7 @@
 
 class UniqueJobOnConflictReplace
   include Sidekiq::Worker
+
   sidekiq_options lock: :until_executing,
     queue: :customqueue,
     on_conflict: :replace

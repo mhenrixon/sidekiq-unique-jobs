@@ -40,13 +40,15 @@ module SidekiqUniqueJobs
     #
     # Calculates the time until the job is scheduled starting from now
     #
+    # @note Ensures result is never negative to prevent TTL calculation issues
     #
-    # @return [Integer] the number of seconds until job is scheduled
+    # @return [Integer] the number of seconds until job is scheduled (>= 0)
     #
     def time_until_scheduled
       return 0 unless scheduled_at
 
-      scheduled_at.to_i - Time.now.utc.to_i
+      # Clamp to 0 to prevent negative values if job is already overdue
+      [0, scheduled_at.to_i - Time.now.utc.to_i].max
     end
 
     # The time a job is scheduled

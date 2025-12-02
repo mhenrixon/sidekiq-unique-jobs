@@ -1,3 +1,3 @@
-nodejs 20.4.0
-yarn 1.22.19
-direnv 2.32.2
+bun 1.3.3
+nodejs 25.4.0
+yarn 1.22.21

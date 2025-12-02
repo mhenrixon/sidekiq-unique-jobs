@@ -28,19 +28,25 @@ module SidekiqUniqueJobs
       end
 
       #
+      # Maximum number of retries for script execution errors
+      #
+      MAX_RETRIES = 3
+
+      #
       # Execute a lua script with the provided script_name
       #
       # @note this method is recursive if we need to load a lua script
-      #   that wasn't previously loaded.
+      #   that wasn't previously loaded. Limited to MAX_RETRIES to prevent stack overflow.
       #
       # @param [Symbol] script_name the name of the script to execute
       # @param [Redis] conn the redis connection to use for execution
       # @param [Array<String>] keys script keys
       # @param [Array<Object>] argv script arguments
+      # @param [Integer] retries number of retries remaining (internal use)
       #
       # @return value from script
       #
-      def execute(script_name, conn, keys: [], argv: [])
+      def execute(script_name, conn, keys: [], argv: [], retries: MAX_RETRIES)
         result, elapsed = timed do
           scripts.execute(script_name, conn, keys: keys, argv: argv)
         end
@@ -48,8 +54,10 @@ module SidekiqUniqueJobs
         logger.debug("Executed #{script_name}.lua in #{elapsed}ms")
         result
       rescue ::RedisClient::CommandError => ex
+        raise if retries <= 0
+
         handle_error(script_name, conn, ex) do
-          execute(script_name, conn, keys: keys, argv: argv)
+          execute(script_name, conn, keys: keys, argv: argv, retries: retries - 1)
         end
       end
 

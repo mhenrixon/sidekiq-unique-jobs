@@ -11,42 +11,16 @@ module SidekiqUniqueJobs
       SCRIPT_PATHS = Concurrent::Map.new
 
       #
-      # Fetch a scripts configuration for path
+      # Fetch or create a scripts configuration for path
+      #
+      # Uses Concurrent::Map#fetch_or_store for thread-safe lazy initialization
       #
       # @param [Pathname] root_path the path to scripts
       #
       # @return [Scripts] a collection of scripts
       #
       def self.fetch(root_path)
-        if (scripts = SCRIPT_PATHS.get(root_path))
-          return scripts
-        end
-
-        create(root_path)
-      end
-
-      #
-      # Create a new scripts collection based on path
-      #
-      # @param [Pathname] root_path the path to scripts
-      #
-      # @return [Scripts] a collection of scripts
-      #
-      def self.create(root_path)
-        scripts = new(root_path)
-        store(scripts)
-      end
-
-      #
-      # Store the scripts collection in memory
-      #
-      # @param [Scripts] scripts the path to scripts
-      #
-      # @return [Scripts] the scripts instance that was stored
-      #
-      def self.store(scripts)
-        SCRIPT_PATHS.put(scripts.root_path, scripts)
-        scripts
+        SCRIPT_PATHS.fetch_or_store(root_path) { new(root_path) }
       end
 
       #
@@ -66,35 +40,57 @@ module SidekiqUniqueJobs
         @root_path = path
       end
 
+      #
+      # Fetch or load a script by name
+      #
+      # Uses Concurrent::Map#fetch_or_store for thread-safe lazy loading
+      #
+      # @param [Symbol, String] name the script name
+      # @param [Redis] conn the redis connection
+      #
+      # @return [Script] the loaded script
+      #
       def fetch(name, conn)
-        if (script = scripts.get(name.to_sym))
-          return script
-        end
-
-        load(name, conn)
+        scripts.fetch_or_store(name.to_sym) { load(name, conn) }
       end
 
+      #
+      # Load a script from disk, store in Redis, and cache in memory
+      #
+      # @param [Symbol, String] name the script name
+      # @param [Redis] conn the redis connection
+      #
+      # @return [Script] the loaded script
+      #
       def load(name, conn)
         script = Script.load(name, root_path, conn)
         scripts.put(name.to_sym, script)
-
         script
       end
 
+      #
+      # Delete a script from the collection
+      #
+      # @param [Script, Symbol, String] script the script or script name to delete
+      #
+      # @return [Script, nil] the deleted script
+      #
       def delete(script)
-        if script.is_a?(Script)
-          scripts.delete(script.name)
-        else
-          scripts.delete(script.to_sym)
-        end
+        key = script.is_a?(Script) ? script.name : script.to_sym
+        scripts.delete(key)
       end
 
+      #
+      # Kill a running Redis script
+      #
+      # @param [Redis] conn the redis connection
+      #
+      # @return [String] Redis response
+      #
       def kill(conn)
-        if conn.respond_to?(:namespace)
-          conn.redis.script(:kill)
-        else
-          conn.script(:kill)
-        end
+        # Handle both namespaced and non-namespaced Redis connections
+        redis = conn.respond_to?(:namespace) ? conn.redis : conn
+        redis.script(:kill)
       end
 
       #
