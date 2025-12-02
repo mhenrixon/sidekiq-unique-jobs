@@ -86,15 +86,19 @@ module SidekiqUniqueJobs
     end
 
     def calculate_timing(ttl)
-      case ttl
-      when String, Numeric, ActiveSupport::Duration
+      if Object.const_defined?('ActiveSupport::Duration') && ttl.is_a?(ActiveSupport::Duration)
         ttl
-      when Proc
-        ttl.call(item[ARGS])
-      when Symbol
-        job_class.send(ttl, item[ARGS])
       else
-        raise ArgumentError, "#{ttl.class} is not supported for lock_ttl"
+        case ttl
+        when String, Numeric
+          ttl
+        when Proc
+          ttl.call(item[ARGS])
+        when Symbol
+          job_class.send(ttl, item[ARGS])
+        else
+          raise ArgumentError, "#{ttl.class} is not supported for lock_ttl"
+        end
       end
     end
   end
