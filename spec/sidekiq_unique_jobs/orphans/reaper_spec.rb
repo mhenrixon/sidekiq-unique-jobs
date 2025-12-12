@@ -141,7 +141,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
           let(:process_key)    { "process-id" }
           let(:thread_id)      { "thread-id" }
           let(:worker_key)     { "#{process_key}:work" }
-          let(:created_at)     { (Time.now - reaper_timeout).to_f }
+          let(:created_at)     { ((Time.now.to_f - reaper_timeout) * 1000).to_i }
           let(:reaper_timeout) { SidekiqUniqueJobs.config.reaper_timeout }
 
           before do
@@ -164,7 +164,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             let(:lock) { SidekiqUniqueJobs::Lock.create("#{digest}:RUN", job_id, lock_info: lock_info) }
 
             context "that matches current digest" do # rubocop:disable RSpec/NestedGroups
-              let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
+              let(:created_at) { ((Time.now.to_f - reaper_timeout + 100) * 1000).to_i }
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
@@ -175,7 +175,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
 
           context "that matches current digest" do
             context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
-              let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
+              let(:created_at) { ((Time.now.to_f - (reaper_timeout + 100)) * 1000).to_i }
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
@@ -184,7 +184,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             end
 
             context "and created_at is recent" do # rubocop:disable RSpec/NestedGroups
-              let(:created_at) { Time.now.to_f }
+              let(:created_at) { (Time.now.to_f * 1000).to_i }
 
               it "keeps the digest" do
                 expect { call }.not_to change { digests.count }.from(1)
@@ -193,24 +193,50 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
             end
           end
 
-          context "that does not match current digest" do
-            let(:item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => "uniquejobs:d2" } }
+          context "if sidekiq < 8" do
+            context "that does not match current digest" do # rubocop:disable RSpec/NestedGroups
+              let(:item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => "uniquejobs:d2" } }
 
-            context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
-              let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
+              context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
+                let(:created_at) { (Time.now - (reaper_timeout + 100)).to_f }
 
-              it "deletes the digest" do
-                expect { call }.to change { digests.count }.by(-1)
-                expect(unique_keys).to eq([])
+                it "deletes the digest" do
+                  expect { call }.to change { digests.count }.by(-1)
+                  expect(unique_keys).to eq([])
+                end
+              end
+
+              context "and created_at is recent" do # rubocop:disable RSpec/NestedGroups
+                let(:created_at) { Time.now.to_f }
+
+                it "keeps the digest" do
+                  expect { call }.not_to change { digests.count }.from(1)
+                  expect(unique_keys).not_to eq([])
+                end
               end
             end
+          end
 
-            context "and created_at is recent" do # rubocop:disable RSpec/NestedGroups
-              let(:created_at) { Time.now.to_f }
+          context "if sidekiq >= 8" do
+            context "that does not match current digest" do # rubocop:disable RSpec/NestedGroups
+              let(:item) { { "class" => MyUniqueJob, "args" => [], "jid" => job_id, "lock_digest" => "uniquejobs:d2" } }
 
-              it "keeps the digest" do
-                expect { call }.not_to change { digests.count }.from(1)
-                expect(unique_keys).not_to eq([])
+              context "and created_at is old" do # rubocop:disable RSpec/NestedGroups
+                let(:created_at) { ((Time.now.to_f - (reaper_timeout + 100)) * 1000).to_i }
+
+                it "deletes the digest" do
+                  expect { call }.to change { digests.count }.by(-1)
+                  expect(unique_keys).to eq([])
+                end
+              end
+
+              context "and created_at is recent" do # rubocop:disable RSpec/NestedGroups
+                let(:created_at) { (Time.now.to_f * 1000).to_i }
+
+                it "keeps the digest" do
+                  expect { call }.not_to change { digests.count }.from(1)
+                  expect(unique_keys).not_to eq([])
+                end
               end
             end
           end
