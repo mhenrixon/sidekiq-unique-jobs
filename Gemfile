@@ -16,6 +16,7 @@ gem "irb"
 gem "mutex_m"
 gem "ostruct"
 
+gem "activesupport"
 gem "appraisal"
 gem "faraday-retry"
 gem "gem-release"
