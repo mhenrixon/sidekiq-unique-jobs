@@ -331,8 +331,7 @@ module SidekiqUniqueJobs
       # @return [false] when missing
       #
       def in_sorted_set?(key, digest)
-        # Increased count from 1 to 50 for better throughput
-        conn.zscan(key, match: "*#{digest}*", count: 50).to_a.any?
+        conn.zscan(key, match: "*#{digest}*", count: 1).to_a.any?
       end
     end
     # rubocop:enable Metrics/ClassLength
