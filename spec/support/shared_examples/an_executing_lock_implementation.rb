@@ -43,7 +43,7 @@ RSpec.shared_examples "an executing lock implementation" do
 
     it "reflects execution_failed on failure" do
       allow(process_two).to receive(:reflect).and_call_original
-      process_two.execute { puts "Failed to execute" }
+      process_two.execute {}
 
       expect(process_two).to have_received(:reflect).with(:execution_failed, item_two)
     end
