@@ -71,6 +71,7 @@ Want to show me some ❤️ for the hard work I do on this gem? You can use the 
     - [reaper_interval](#reaper_interval)
     - [reaper_timeout](#reaper_timeout)
     - [lock_prefix](#lock_prefix)
+    - [locksmith_executor](#locksmith_executor)
   - [lock_info](#lock_info)
   - [Worker Configuration](#worker-configuration)
     - [lock_info](#lock_info-1)
@@ -876,6 +877,23 @@ SidekiqUniqueJobs.config.lock_info #=> false
 ```
 
 Using lock info will create an additional key for the lock with a json object containing information about the lock. This will be presented in the web interface and might help track down why some jobs are getting stuck.
+
+#### locksmith_executor
+
+```ruby
+SidekiqUniqueJobs.configure do |config|
+  config.locksmith_executor = Concurrent::ThreadPoolExecutor.new(
+    min_threads: 1,
+    max_threads: 10,
+    max_queue: 20,
+    fallback_policy: :caller_runs,
+  )
+end
+```
+
+The thread pool executor used to run async lock operations inside `Locksmith`. 
+
+Set this if you want full control over the pool — for example to share an executor across the process or to tune the limits of your application.
 
 ### Worker Configuration
 

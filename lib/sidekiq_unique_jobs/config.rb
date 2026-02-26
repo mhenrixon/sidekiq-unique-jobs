@@ -24,6 +24,7 @@ module SidekiqUniqueJobs
     :raise_on_config_error,
     :current_redis_version,
     :digest_algorithm,
+    :locksmith_executor
   )
 
   #
@@ -34,6 +35,7 @@ module SidekiqUniqueJobs
     def initialize(*)
       super
       @redis_version_mutex = Mutex.new
+      @default_executor_mutex = Mutex.new
     end
     #
     # @return [Hash<Symbol, SidekiqUniqueJobs::Lock::BaseLock] all available queued locks
@@ -139,6 +141,9 @@ module SidekiqUniqueJobs
     #
     # @return [:legacy] default digest algorithm :modern or :legacy
     DIGEST_ALGORITHM      = :legacy
+    #
+    # @return [nil] by default a bounded ThreadPoolExecutor is built lazily on first use
+    LOCKSMITH_EXECUTOR    = nil
 
     #
     # Returns a default configuration
@@ -206,6 +211,7 @@ module SidekiqUniqueJobs
         RAISE_ON_CONFIG_ERROR,
         REDIS_VERSION,
         DIGEST_ALGORITHM,
+        LOCKSMITH_EXECUTOR,
       )
     end
 
@@ -325,6 +331,29 @@ module SidekiqUniqueJobs
       end
 
       super
+    end
+
+    #
+    # The executor for Locksmith promises
+    #
+    # Returns the user-configured executor if set, otherwise lazily builds a
+    # bounded default to prevent unbounded thread growth.
+    #
+    # @return [Concurrent::AbstractExecutorService]
+    #
+    def locksmith_executor
+      user_configured = super # reads the raw struct slot without calling this override
+      return user_configured if user_configured
+      return @default_locksmith_executor if @default_locksmith_executor
+
+      @default_executor_mutex.synchronize do
+        @default_locksmith_executor ||= Concurrent::ThreadPoolExecutor.new(
+          min_threads: 1,
+          max_threads: 50,
+          max_queue: 100,
+          fallback_policy: :caller_runs,
+        )
+      end
     end
 
     #

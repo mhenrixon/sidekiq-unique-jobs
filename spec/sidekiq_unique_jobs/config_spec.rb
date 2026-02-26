@@ -165,6 +165,28 @@ RSpec.describe SidekiqUniqueJobs::Config do
     end
   end
 
+  describe "#locksmith_executor" do
+    context "when not configured" do
+      it "returns a ThreadPoolExecutor" do
+        expect(config.locksmith_executor).to be_a(Concurrent::ThreadPoolExecutor)
+      end
+
+      it "returns the same instance on subsequent calls" do
+        expect(config.locksmith_executor).to be(config.locksmith_executor)
+      end
+    end
+
+    context "when configured with a custom executor" do
+      let(:custom_executor) { Concurrent::ImmediateExecutor.new }
+
+      before { config.locksmith_executor = custom_executor }
+
+      it "returns the custom executor" do
+        expect(config.locksmith_executor).to be(custom_executor)
+      end
+    end
+  end
+
   # Test backported from spec/unit/on_conflict_spec.rb
   describe "::STRATEGIES" do
     subject { described_class::STRATEGIES }

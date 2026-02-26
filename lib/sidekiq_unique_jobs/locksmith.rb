@@ -297,8 +297,9 @@ module SidekiqUniqueJobs
         })
 
       # NOTE: When debugging, change .value to .value!
+      executor = SidekiqUniqueJobs.config.locksmith_executor
       primed_jid = Concurrent::Promises
-        .future(conn) { |red_con| pop_queued(red_con, timeout) }
+        .future_on(executor, conn) { |red_con| pop_queued(red_con, timeout) }
         .value(concurrent_timeout) # Timeout to prevent indefinite blocking
 
       # If promise times out, primed_jid will be nil
