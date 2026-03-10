@@ -2,7 +2,7 @@
 
 RSpec.describe SidekiqUniqueJobs::Lock::BaseLock do
   let(:lock)     { described_class.new(item, callback) }
-  let(:callback) { -> { p "debug" } }
+  let(:callback) { -> {} }
   let(:strategy) { :replace }
   let(:jid)      { "bogusjobid" }
   let(:item) do

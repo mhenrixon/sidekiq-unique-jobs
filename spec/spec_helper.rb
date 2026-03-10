@@ -8,7 +8,7 @@ if RUBY_ENGINE == "ruby" && RUBY_VERSION >= "2.6"
   begin
     require "pry"
   rescue LoadError
-    puts "Pry is unavailable"
+    # NO OP
   end
 end
 
@@ -50,7 +50,7 @@ Sidekiq.configure_server do |config|
     chain.add SidekiqUniqueJobs::Middleware::Server
   end
 
-  config.error_handlers << ->(ex, ctx_hash) { p ex, ctx_hash }
+  config.error_handlers << ->(ex, ctx_hash) {}
   config.death_handlers << lambda do |job, _ex|
     digest = job["lock_digest"]
     SidekiqUniqueJobs::Digests.new.delete_by_digest(digest) if digest
@@ -123,7 +123,9 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    p EVENTS if ENV["REFLECT_DEBUG"]
+    if ENV["REFLECT_DEBUG"]
+      # Debug output could be added here if needed
+    end
   end
 end
 
