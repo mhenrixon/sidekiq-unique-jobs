@@ -40,11 +40,13 @@ if redis.call("HEXISTS", locked, job_id) == 1 then
   log_debug(locked, "already locked with job_id:", job_id)
   log("Duplicate")
 
-  log_debug("LREM", queued, -1, job_id)
-  redis.call("LREM", queued, -1, job_id)
-
-  log_debug("LREM", primed, 1, job_id)
-  redis.call("LREM", primed, 1, job_id)
+  if limit <= 1 then
+    log_debug("UNLINK", queued, primed)
+    redis.call("UNLINK", queued, primed)
+  else
+    redis.call("LREM", queued, -1, job_id)
+    redis.call("LREM", primed, 1, job_id)
+  end
 
   return job_id
 end
