@@ -53,9 +53,8 @@ log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 -- No queued/primed lists exist, no BLMOVE waiters, no sentinel needed.
 if sync_locked and limit <= 1 then
   if lock_type ~= "until_expired" then
-    -- Non-TTL: HDEL + UNLINK + ZREM = 3 commands
-    log_debug("HDEL", locked, job_id)
-    redis.call("HDEL", locked, job_id)
+    -- Non-TTL: UNLINK + ZREM = 2 commands
+    -- Skip HDEL: UNLINK(locked) deletes the entire hash, making HDEL redundant
     log_debug("UNLINK", digest, info, locked, primed)
     redis.call("UNLINK", digest, info, locked, primed)
     log_debug("ZREM", digests, digest)
