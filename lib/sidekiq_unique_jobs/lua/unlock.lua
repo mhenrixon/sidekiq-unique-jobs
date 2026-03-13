@@ -48,7 +48,23 @@ local redisversion = ARGV[10 + arg_offset]
 ---------  Begin unlock.lua ---------
 log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 
--- Check if this job actually holds the lock
+-- Fast path for sync-locked single locks:
+-- We know the job holds the lock (acquired atomically via queue_and_lock.lua)
+-- No queued/primed lists exist, no BLMOVE waiters, no sentinel needed.
+-- Just: HDEL + UNLINK + ZREM = 3 commands
+if sync_locked and limit <= 1 and lock_type ~= "until_expired" then
+  log_debug("HDEL", locked, job_id)
+  redis.call("HDEL", locked, job_id)
+  log_debug("UNLINK", digest, info, locked, primed)
+  redis.call("UNLINK", digest, info, locked, primed)
+  log_debug("ZREM", digests, digest)
+  redis.call("ZREM", digests, digest)
+  log("Unlocked")
+  log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")
+  return job_id
+end
+
+-- Standard path: check if this job actually holds the lock
 local holds_lock = redis.call("HEXISTS", locked, job_id) == 1
 
 -- Clean up queued/primed entries only if not holding the lock
@@ -111,14 +127,11 @@ else
 end
 
 -- Push sentinel to unblock any waiting BLMOVE
--- Skip for sync-locked single locks: no BLMOVE waiters exist
-if not (sync_locked and limit <= 1) then
-  log_debug("LPUSH", queued, "1")
-  redis.call("LPUSH", queued, "1")
+log_debug("LPUSH", queued, "1")
+redis.call("LPUSH", queued, "1")
 
-  log_debug("PEXPIRE", queued, 5000)
-  redis.call("PEXPIRE", queued, 5000)
-end
+log_debug("PEXPIRE", queued, 5000)
+redis.call("PEXPIRE", queued, 5000)
 
 log("Unlocked")
 log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")
