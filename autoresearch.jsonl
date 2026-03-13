@@ -1,0 +1,19 @@
+{"run": 0, "metric": 34.0, "best": 34.0, "status": "baseline", "commit": "f67f3464", "description": "Baseline measurement: 34 redis commands per lock+unlock cycle", "timestamp": "2026-03-13T07:28:23Z", "details": {"until_executed_commands": 35, "until_expired_commands": 37, "while_executing_commands": 35, "ops_per_sec": 1441}}
+{"run": 1, "metric": 34.0, "best": 34.0, "status": "kept", "commit": "09e14a81", "description": "batch UNLINK queued+primed in lock.lua (marginal, -1 per single cycle)", "timestamp": "2026-03-13T07:30:04Z"}
+{"run": 2, "metric": 29.0, "best": 29.0, "status": "kept", "commit": "682bc47d", "description": "defer LLEN/HLEN in unlock.lua, batch UNLINK calls (-14.7%)", "timestamp": "2026-03-13T07:32:26Z"}
+{"run": 3, "metric": 27.0, "best": 27.0, "status": "kept", "commit": "4d0fc73b", "description": "defer LLEN/HLEN in queue.lua to limit-check branch (-7.4%)", "timestamp": "2026-03-13T07:33:20Z"}
+{"run": 4, "metric": 26.0, "best": 26.0, "status": "kept", "commit": "4c5d5c10", "description": "SET NX in queue.lua to avoid GET+SET on first enqueue (-3.7%)", "timestamp": "2026-03-13T07:34:05Z"}
+{"run": 5, "metric": 25.0, "best": 25.0, "status": "kept", "commit": "a9caad45", "description": "remove redundant locked? pre-check before unlock (-3.8%)", "timestamp": "2026-03-13T07:35:39Z"}
+{"run": 6, "metric": 25.0, "best": 25.0, "status": "reverted", "commit": "n/a", "description": "DEAD END: remove locked? in lock! - broke re-lock semantics (3 failures)", "timestamp": "2026-03-13T07:35:50Z"}
+{"run": 7, "metric": 23.0, "best": 23.0, "status": "kept", "commit": "9c40ab4a", "description": "skip LREM queued/primed in unlock when job holds lock (-8%)", "timestamp": "2026-03-13T07:36:20Z"}
+{"run": 8, "metric": 21.0, "best": 21.0, "status": "kept", "commit": "c5e01986", "description": "skip LREM in lock.lua for single-lock case, just UNLINK (-8.7%)", "timestamp": "2026-03-13T07:36:50Z"}
+{"run": 9, "metric": 19.0, "best": 19.0, "status": "kept", "commit": "0e6fed3b", "description": "fast-path unlock for single-lock, batch all UNLINK (-9.5%)", "timestamp": "2026-03-13T07:37:20Z"}
+{"run": 10, "metric": 19.0, "best": 19.0, "status": "kept", "commit": "3053e523", "description": "UNLINK in lock.lua duplicate check for limit<=1 (correctness)", "timestamp": "2026-03-13T07:38:00Z"}
+{"run": 11, "metric": 13.0, "best": 13.0, "status": "kept", "commit": "061a913c", "description": "merge queue+lock into single Lua script for non-blocking path (-31.6%)", "timestamp": "2026-03-13T07:40:00Z"}
+{"run": 12, "metric": 13.0, "best": 13.0, "status": "kept", "commit": "bd933af8", "description": "skip Ruby-side locked? check for sync lock path", "timestamp": "2026-03-13T07:42:00Z"}
+{"run": 13, "metric": 11.0, "best": 11.0, "status": "kept", "commit": "cbf06116", "description": "skip sentinel LPUSH+PEXPIRE in unlock for sync-locked single locks (-15.4%)", "timestamp": "2026-03-13T08:59:00Z"}
+{"run": 14, "metric": 10.0, "best": 10.0, "status": "kept", "commit": "5de8f4ed", "description": "fast-path unlock for sync-locked single locks, skip HEXISTS (-9.1%)", "timestamp": "2026-03-13T09:00:00Z"}
+{"run": 15, "metric": 9.0, "best": 9.0, "status": "kept", "commit": "3ebbda2c", "description": "use HLEN-first in queue_and_lock.lua for limit=1, skip HEXISTS (-10%)", "timestamp": "2026-03-13T09:02:00Z"}
+{"run": 16, "metric": 9.0, "best": 9.0, "status": "kept", "commit": "1a2a614f", "description": "extend sync fast path in unlock for until_expired (until_expired 13→10)", "timestamp": "2026-03-13T09:04:00Z"}
+{"run": 17, "metric": 8.0, "best": 8.0, "status": "kept", "commit": "cfc10743", "description": "skip redundant HDEL before UNLINK(locked) for sync single-lock (-11.1%)", "timestamp": "2026-03-13T09:06:00Z"}
+{"run": 18, "metric": 8.0, "best": 8.0, "status": "kept", "commit": "3357538e", "description": "simplify SET NX to unconditional SET (code cleanup, no metric change)", "timestamp": "2026-03-13T09:10:00Z"}
