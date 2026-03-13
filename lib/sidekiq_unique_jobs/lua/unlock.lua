@@ -51,14 +51,20 @@ log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 -- Fast path for sync-locked single locks:
 -- We know the job holds the lock (acquired atomically via queue_and_lock.lua)
 -- No queued/primed lists exist, no BLMOVE waiters, no sentinel needed.
--- Just: HDEL + UNLINK + ZREM = 3 commands
-if sync_locked and limit <= 1 and lock_type ~= "until_expired" then
-  log_debug("HDEL", locked, job_id)
-  redis.call("HDEL", locked, job_id)
-  log_debug("UNLINK", digest, info, locked, primed)
-  redis.call("UNLINK", digest, info, locked, primed)
-  log_debug("ZREM", digests, digest)
-  redis.call("ZREM", digests, digest)
+if sync_locked and limit <= 1 then
+  if lock_type ~= "until_expired" then
+    -- Non-TTL: HDEL + UNLINK + ZREM = 3 commands
+    log_debug("HDEL", locked, job_id)
+    redis.call("HDEL", locked, job_id)
+    log_debug("UNLINK", digest, info, locked, primed)
+    redis.call("UNLINK", digest, info, locked, primed)
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  else
+    -- until_expired: don't HDEL (lock persists until TTL), just ZREM from digests
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  end
   log("Unlocked")
   log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")
   return job_id
