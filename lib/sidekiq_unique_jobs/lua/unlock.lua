@@ -28,9 +28,7 @@ local redisversion = ARGV[10]
 
 
 --------  BEGIN Variables --------
-local queued_count = redis.call("LLEN", queued)
-local primed_count = redis.call("LLEN", primed)
-local locked_count = redis.call("HLEN", locked)
+-- Defer LLEN/HLEN calls to where they're needed to avoid unnecessary commands
 ---------  END Variables ---------
 
 
@@ -56,6 +54,9 @@ log_debug("HEXISTS", locked, job_id, "=>", holds_lock)
 
 if not holds_lock then
   -- Job doesn't hold the lock - check if this is an orphaned lock scenario
+  local queued_count = redis.call("LLEN", queued)
+  local primed_count = redis.call("LLEN", primed)
+  local locked_count = redis.call("HLEN", locked)
   if queued_count == 0 and primed_count == 0 and locked_count == 0 then
     log_debug("Orphaned lock - cleaning up")
     -- Continue with cleanup below
@@ -74,40 +75,42 @@ if not holds_lock then
   end
 end
 
-local redis_version = toversion(redisversion)
-
 if lock_type ~= "until_expired" then
-  log_debug("UNLINK", digest, info)
-  redis.call("UNLINK", digest, info)
-
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)
-end
 
-if redis.call("LLEN", primed) == 0 then
-  log_debug("UNLINK", primed)
-  redis.call("UNLINK", primed)
+  log_debug("UNLINK", digest, info)
+  redis.call("UNLINK", digest, info)
 end
 
 local locked_count = redis.call("HLEN", locked)
 
-if locked_count < 1 then
-  log_debug("UNLINK", locked)
-  redis.call("UNLINK", locked)
-end
-
-if limit then
-  if limit <= 1 and locked_count <= 1 then
-    log_debug("ZREM", digests, digest)
-    redis.call("ZREM", digests, digest)
-  end
+-- Determine if we should remove the digest from tracking
+-- For limit > 1, only remove when all locks are released
+local should_remove_digest = false
+if limit and limit > 1 then
+  should_remove_digest = locked_count < 1
 else
-  if locked_count <= 1 then
-    log_debug("ZREM", digests, digest)
-    redis.call("ZREM", digests, digest)
-  end
+  -- For limit <= 1: locked_count is 0 after HDEL (normal types)
+  -- or 1 for until_expired (no HDEL). Both should remove.
+  should_remove_digest = locked_count <= 1
 end
 
+if locked_count < 1 then
+  -- All locks released: batch clean up
+  log_debug("UNLINK", locked, primed)
+  redis.call("UNLINK", locked, primed)
+elseif redis.call("LLEN", primed) == 0 then
+  log_debug("UNLINK", primed)
+  redis.call("UNLINK", primed)
+end
+
+if should_remove_digest then
+  log_debug("ZREM", digests, digest)
+  redis.call("ZREM", digests, digest)
+end
+
+-- Push sentinel to unblock any waiting BLMOVE
 log_debug("LPUSH", queued, "1")
 redis.call("LPUSH", queued, "1")
 
