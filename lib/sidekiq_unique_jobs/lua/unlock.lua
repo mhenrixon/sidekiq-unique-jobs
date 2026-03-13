@@ -72,33 +72,32 @@ if lock_type ~= "until_expired" then
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)
 
-  log_debug("UNLINK", digest, info)
-  redis.call("UNLINK", digest, info)
-end
+  if limit and limit > 1 then
+    -- Multi-lock: need to check if others remain
+    local locked_count = redis.call("HLEN", locked)
 
-local locked_count = redis.call("HLEN", locked)
+    log_debug("UNLINK", digest, info)
+    redis.call("UNLINK", digest, info)
 
--- Determine if we should remove the digest from tracking
--- For limit > 1, only remove when all locks are released
-local should_remove_digest = false
-if limit and limit > 1 then
-  should_remove_digest = locked_count < 1
+    if locked_count < 1 then
+      log_debug("UNLINK", locked, primed)
+      redis.call("UNLINK", locked, primed)
+      log_debug("ZREM", digests, digest)
+      redis.call("ZREM", digests, digest)
+    elseif redis.call("LLEN", primed) == 0 then
+      log_debug("UNLINK", primed)
+      redis.call("UNLINK", primed)
+    end
+  else
+    -- Single-lock (limit <= 1): after HDEL, no locks remain.
+    -- Clean up everything in one batch without checking HLEN.
+    log_debug("UNLINK", digest, info, locked, primed)
+    redis.call("UNLINK", digest, info, locked, primed)
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  end
 else
-  -- For limit <= 1: locked_count is 0 after HDEL (normal types)
-  -- or 1 for until_expired (no HDEL). Both should remove.
-  should_remove_digest = locked_count <= 1
-end
-
-if locked_count < 1 then
-  -- All locks released: batch clean up
-  log_debug("UNLINK", locked, primed)
-  redis.call("UNLINK", locked, primed)
-elseif redis.call("LLEN", primed) == 0 then
-  log_debug("UNLINK", primed)
-  redis.call("UNLINK", primed)
-end
-
-if should_remove_digest then
+  -- until_expired: don't HDEL, but still remove from digests tracking
   log_debug("ZREM", digests, digest)
   redis.call("ZREM", digests, digest)
 end
