@@ -186,6 +186,31 @@ module SidekiqUniqueJobs
     attr_reader :redis_pool
 
     #
+    # Non-blocking lock acquisition using a single combined Lua script.
+    # Eliminates the LMOVE round-trip between separate queue/lock scripts.
+    #
+    # @param [Sidekiq::RedisConnection] conn the redis connection
+    # @yieldparam [string] job_id the sidekiq JID
+    # @yieldreturn [void] whatever the calling block returns
+    def lock_sync!(conn)
+      return yield if locked?(conn)
+
+      locked_jid, elapsed = timed do
+        call_script(:queue_and_lock, key.to_a, argv, conn)
+      end
+
+      return unless locked_jid
+      return unless locked_jid == job_id
+
+      validity = config.pttl - elapsed - drift(config.pttl)
+      return unless validity >= 0 || config.pttl.zero?
+
+      write_lock_info(conn)
+      reflect(:debug, :locked, item, locked_jid)
+      yield
+    end
+
+    #
     # Used to reduce some duplication from the two methods
     #
     # @see lock
@@ -200,16 +225,22 @@ module SidekiqUniqueJobs
     def lock!(conn, primed_method, wait = nil)
       return yield if locked?(conn)
 
-      enqueue(conn) do |queued_jid|
-        reflect(:debug, :queued, item, queued_jid)
+      if wait.nil? && primed_method.name == :primed_sync
+        # Non-blocking fast path: combined queue+lock in one Lua script
+        lock_sync!(conn) { return yield }
+      else
+        # Blocking path: separate queue → BLMOVE → lock scripts
+        enqueue(conn) do |queued_jid|
+          reflect(:debug, :queued, item, queued_jid)
 
-        primed_method.call(conn, wait) do |primed_jid|
-          reflect(:debug, :primed, item, primed_jid)
-          locked_jid = call_script(:lock, key.to_a, argv, conn)
+          primed_method.call(conn, wait) do |primed_jid|
+            reflect(:debug, :primed, item, primed_jid)
+            locked_jid = call_script(:lock, key.to_a, argv, conn)
 
-          if locked_jid
-            reflect(:debug, :locked, item, locked_jid)
-            return yield
+            if locked_jid
+              reflect(:debug, :locked, item, locked_jid)
+              return yield
+            end
           end
         end
       end

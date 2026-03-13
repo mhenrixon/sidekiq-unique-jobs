@@ -1,0 +1,115 @@
+-------- BEGIN keys ---------
+local digest           = KEYS[1]
+local queued           = KEYS[2]
+local primed           = KEYS[3]
+local locked           = KEYS[4]
+local info             = KEYS[5]
+local changelog        = KEYS[6]
+local digests          = KEYS[7]
+local expiring_digests = KEYS[8]
+-------- END keys ---------
+
+
+-------- BEGIN lock arguments ---------
+local job_id       = ARGV[1]
+local pttl         = tonumber(ARGV[2])
+local lock_type    = ARGV[3]
+local limit        = tonumber(ARGV[4])
+local lock_score   = ARGV[5]
+-------- END lock arguments -----------
+
+
+--------  BEGIN injected arguments --------
+local current_time = tonumber(ARGV[6])
+local debug_lua    = tostring(ARGV[7]) == "1"
+local max_history  = tonumber(ARGV[8])
+local script_name  = tostring(ARGV[9]) .. ".lua"
+local redisversion = ARGV[10]
+---------  END injected arguments ---------
+
+
+--------  BEGIN local functions --------
+<%= include_partial "shared/_common.lua" %>
+----------  END local functions ----------
+
+
+---------  BEGIN queue_and_lock.lua ---------
+-- Combined queue + lock script for non-blocking lock acquisition.
+-- Eliminates the LMOVE between separate queue/lock scripts and
+-- removes duplicate HEXISTS checks.
+
+log_debug("BEGIN queue_and_lock digest:", digest, "job_id:", job_id)
+
+-- 1. Check if already locked by this job (re-lock fast path)
+if redis.call("HEXISTS", locked, job_id) == 1 then
+  log_debug(locked, "already locked with job_id:", job_id)
+  log("Duplicate")
+  return job_id
+end
+
+-- 2. Try to claim the digest
+local set_result = redis.call("SET", digest, job_id, "NX")
+if not set_result then
+  -- Digest exists: check who holds it
+  local prev_jid = redis.call("GET", digest)
+  if prev_jid == job_id then
+    log_debug(digest, "already queued with job_id:", job_id)
+    log("Duplicate")
+    return job_id
+  else
+    -- Different job holds the digest: check limits
+    local locked_count = redis.call("HLEN", locked)
+    local queued_count = redis.call("LLEN", queued)
+    if limit > locked_count and queued_count < limit then
+      log_debug("Within limit, replacing", prev_jid, "with", job_id)
+      redis.call("SET", digest, job_id)
+    else
+      log_debug("Limit exceeded:", digest)
+      log("Limit exceeded", prev_jid)
+      return nil
+    end
+  end
+end
+
+-- 3. Check lock limit (for first-time claim path)
+local locked_count = redis.call("HLEN", locked)
+if limit <= locked_count then
+  log_debug("Limit exceeded:", digest, "(", locked_count, "of", limit, ")")
+  log("Limited")
+  return nil
+end
+
+-- 4. Acquire the lock directly (skip LPUSH/LMOVE, go straight to HSET)
+if lock_type == "until_expired" and pttl and pttl > 0 then
+  log_debug("ZADD", expiring_digests, current_time + pttl, digest)
+  redis.call("ZADD", expiring_digests, current_time + pttl, digest)
+else
+  local score
+  if #lock_score == 0 then
+    score = current_time
+  else
+    score = lock_score
+  end
+  log_debug("ZADD", digests, score, digest)
+  redis.call("ZADD", digests, score, digest)
+end
+
+log_debug("HSET", locked, job_id, current_time)
+redis.call("HSET", locked, job_id, current_time)
+
+-- 5. Set TTL if specified
+if pttl and pttl > 0 then
+  log_debug("PEXPIRE", digest, pttl)
+  redis.call("PEXPIRE", digest, pttl)
+
+  log_debug("PEXPIRE", locked, pttl)
+  redis.call("PEXPIRE", locked, pttl)
+
+  log_debug("PEXPIRE", info, pttl)
+  redis.call("PEXPIRE", info, pttl)
+end
+
+log("Locked")
+log_debug("END queue_and_lock digest:", digest, "job_id:", job_id)
+return job_id
+----------  END queue_and_lock.lua ----------
