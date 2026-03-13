@@ -194,7 +194,7 @@ module SidekiqUniqueJobs
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
     def lock_sync!(conn)
-      # Note: locked? check already done by lock!() caller
+      # NOTE: locked? check already done by lock!() caller
 
       locked_jid, elapsed = timed do
         call_script(:queue_and_lock, key.to_a, argv, conn)
