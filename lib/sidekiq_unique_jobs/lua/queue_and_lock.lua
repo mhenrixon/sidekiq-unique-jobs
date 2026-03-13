@@ -57,21 +57,12 @@ if limit <= 1 then
     end
   end
 
-  -- locked_count == 0: no locks held, try to claim the digest
-  local set_result = redis.call("SET", digest, job_id, "NX")
-  if not set_result then
-    local prev_jid = redis.call("GET", digest)
-    if prev_jid == job_id then
-      log_debug(digest, "already queued with job_id:", job_id)
-      log("Duplicate")
-      return job_id
-    else
-      -- For limit=1, if locked_count is 0 but digest exists with different job,
-      -- this is a stale digest. Overwrite it.
-      log_debug("Overwriting stale digest", prev_jid, "with", job_id)
-      redis.call("SET", digest, job_id)
-    end
-  end
+  -- locked_count == 0: no locks held.
+  -- Lua script atomicity guarantees no race between HLEN and HSET,
+  -- so no NX guard is needed. Unconditionally SET the digest key
+  -- (required by middleware, web UI, and other scripts while lock is held).
+  log_debug("SET", digest, job_id)
+  redis.call("SET", digest, job_id)
 else
   -- Multi-lock path: original HEXISTS + limit checking
   if redis.call("HEXISTS", locked, job_id) == 1 then
