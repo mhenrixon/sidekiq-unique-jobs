@@ -40,16 +40,15 @@ local redisversion = ARGV[10]
 ---------  Begin unlock.lua ---------
 log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 
--- Always clean up this job's queued/primed entries first
--- This prevents orphaned entries even if job doesn't hold the lock
-log_debug("LREM", queued, -1, job_id)
-redis.call("LREM", queued, -1, job_id)
-
-log_debug("LREM", primed, -1, job_id)
-redis.call("LREM", primed, -1, job_id)
-
 -- Check if this job actually holds the lock
 local holds_lock = redis.call("HEXISTS", locked, job_id) == 1
+
+-- Clean up queued/primed entries only if not holding the lock
+-- (when holding the lock, lock.lua already UNLINKed both lists)
+if not holds_lock then
+  redis.call("LREM", queued, -1, job_id)
+  redis.call("LREM", primed, -1, job_id)
+end
 log_debug("HEXISTS", locked, job_id, "=>", holds_lock)
 
 if not holds_lock then
