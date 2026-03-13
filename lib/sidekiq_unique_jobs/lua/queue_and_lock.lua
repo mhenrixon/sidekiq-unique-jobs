@@ -40,43 +40,73 @@ local redisversion = ARGV[10]
 
 log_debug("BEGIN queue_and_lock digest:", digest, "job_id:", job_id)
 
--- 1. Check if already locked by this job (re-lock fast path)
-if redis.call("HEXISTS", locked, job_id) == 1 then
-  log_debug(locked, "already locked with job_id:", job_id)
-  log("Duplicate")
-  return job_id
-end
-
--- 2. Try to claim the digest
-local set_result = redis.call("SET", digest, job_id, "NX")
-if not set_result then
-  -- Digest exists: check who holds it
-  local prev_jid = redis.call("GET", digest)
-  if prev_jid == job_id then
-    log_debug(digest, "already queued with job_id:", job_id)
-    log("Duplicate")
-    return job_id
-  else
-    -- Different job holds the digest: check limits
-    local locked_count = redis.call("HLEN", locked)
-    local queued_count = redis.call("LLEN", queued)
-    if limit > locked_count and queued_count < limit then
-      log_debug("Within limit, replacing", prev_jid, "with", job_id)
-      redis.call("SET", digest, job_id)
+if limit <= 1 then
+  -- Single-lock fast path: use HLEN to detect both re-lock and contention
+  -- in one command instead of HEXISTS + HLEN
+  local locked_count = redis.call("HLEN", locked)
+  if locked_count > 0 then
+    -- Something is in the hash — check if it's us (re-lock) or someone else (contention)
+    if redis.call("HEXISTS", locked, job_id) == 1 then
+      log_debug(locked, "already locked with job_id:", job_id)
+      log("Duplicate")
+      return job_id
     else
-      log_debug("Limit exceeded:", digest)
-      log("Limit exceeded", prev_jid)
+      log_debug("Limit exceeded:", digest, "(", locked_count, "of", limit, ")")
+      log("Limited")
       return nil
     end
   end
-end
 
--- 3. Check lock limit (for first-time claim path)
-local locked_count = redis.call("HLEN", locked)
-if limit <= locked_count then
-  log_debug("Limit exceeded:", digest, "(", locked_count, "of", limit, ")")
-  log("Limited")
-  return nil
+  -- locked_count == 0: no locks held, try to claim the digest
+  local set_result = redis.call("SET", digest, job_id, "NX")
+  if not set_result then
+    local prev_jid = redis.call("GET", digest)
+    if prev_jid == job_id then
+      log_debug(digest, "already queued with job_id:", job_id)
+      log("Duplicate")
+      return job_id
+    else
+      -- For limit=1, if locked_count is 0 but digest exists with different job,
+      -- this is a stale digest. Overwrite it.
+      log_debug("Overwriting stale digest", prev_jid, "with", job_id)
+      redis.call("SET", digest, job_id)
+    end
+  end
+else
+  -- Multi-lock path: original HEXISTS + limit checking
+  if redis.call("HEXISTS", locked, job_id) == 1 then
+    log_debug(locked, "already locked with job_id:", job_id)
+    log("Duplicate")
+    return job_id
+  end
+
+  local set_result = redis.call("SET", digest, job_id, "NX")
+  if not set_result then
+    local prev_jid = redis.call("GET", digest)
+    if prev_jid == job_id then
+      log_debug(digest, "already queued with job_id:", job_id)
+      log("Duplicate")
+      return job_id
+    else
+      local locked_count = redis.call("HLEN", locked)
+      local queued_count = redis.call("LLEN", queued)
+      if limit > locked_count and queued_count < limit then
+        log_debug("Within limit, replacing", prev_jid, "with", job_id)
+        redis.call("SET", digest, job_id)
+      else
+        log_debug("Limit exceeded:", digest)
+        log("Limit exceeded", prev_jid)
+        return nil
+      end
+    end
+  end
+
+  local locked_count = redis.call("HLEN", locked)
+  if limit <= locked_count then
+    log_debug("Limit exceeded:", digest, "(", locked_count, "of", limit, ")")
+    log("Limited")
+    return nil
+  end
 end
 
 -- 4. Acquire the lock directly (skip LPUSH/LMOVE, go straight to HSET)
