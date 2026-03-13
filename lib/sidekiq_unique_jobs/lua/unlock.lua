@@ -62,16 +62,10 @@ if not holds_lock then
     -- Continue with cleanup below
   else
     -- Other jobs still hold locks for this digest
-    local result = ""
-    for i,v in ipairs(redis.call("HKEYS", locked)) do
-      result = result .. v .. ","
-    end
-    result = locked .. " (" .. result .. ")"
-    log("Yielding to: " .. result)
-    log_debug("Yielding to", result, locked, "by job", job_id)
-    -- Still return job_id to indicate cleanup completed
-    -- Caller already removed from queued/primed
-    return job_id
+    log("Yielding to other lock holders")
+    log_debug("Yielding to other lock holders for", digest, "by job", job_id)
+    -- Return nil to indicate this job did not hold the lock
+    return nil
   end
 end
 
