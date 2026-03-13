@@ -18,12 +18,20 @@ local lock_score = ARGV[5]
 -------- END lock arguments -----------
 
 
+-------- BEGIN unlock-specific arguments ---------
+-- sync_locked flag: when present (ARGV has 11 elements), shifts injected args by 1
+local has_sync_flag = #ARGV > 10
+local sync_locked   = has_sync_flag and tonumber(ARGV[6]) == 1
+local arg_offset    = has_sync_flag and 1 or 0
+-------- END unlock-specific arguments -----------
+
+
 --------  BEGIN injected arguments --------
-local current_time = tonumber(ARGV[6])
-local debug_lua    = tostring(ARGV[7]) == "1"
-local max_history  = tonumber(ARGV[8])
-local script_name  = tostring(ARGV[9]) .. ".lua"
-local redisversion = ARGV[10]
+local current_time = tonumber(ARGV[6 + arg_offset])
+local debug_lua    = tostring(ARGV[7 + arg_offset]) == "1"
+local max_history  = tonumber(ARGV[8 + arg_offset])
+local script_name  = tostring(ARGV[9 + arg_offset]) .. ".lua"
+local redisversion = ARGV[10 + arg_offset]
 ---------  END injected arguments ---------
 
 
@@ -103,11 +111,14 @@ else
 end
 
 -- Push sentinel to unblock any waiting BLMOVE
-log_debug("LPUSH", queued, "1")
-redis.call("LPUSH", queued, "1")
+-- Skip for sync-locked single locks: no BLMOVE waiters exist
+if not (sync_locked and limit <= 1) then
+  log_debug("LPUSH", queued, "1")
+  redis.call("LPUSH", queued, "1")
 
-log_debug("PEXPIRE", queued, 5000)
-redis.call("PEXPIRE", queued, 5000)
+  log_debug("PEXPIRE", queued, 5000)
+  redis.call("PEXPIRE", queued, 5000)
+end
 
 log("Unlocked")
 log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")

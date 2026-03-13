@@ -71,6 +71,7 @@ module SidekiqUniqueJobs
       @job_id      = item[JID]
       @config      = LockConfig.new(item)
       @redis_pool  = redis_pool
+      @sync_locked = false
     end
 
     #
@@ -131,7 +132,7 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock!(conn = nil)
-      call_script(:unlock, key.to_a, argv, conn) do |unlocked_jid|
+      call_script(:unlock, key.to_a, unlock_argv, conn) do |unlocked_jid|
         if unlocked_jid == job_id
           reflect(:debug, :unlocked, item, unlocked_jid)
           reflect(:unlocked, item)
@@ -205,6 +206,7 @@ module SidekiqUniqueJobs
       validity = config.pttl - elapsed - drift(config.pttl)
       return unless validity >= 0 || config.pttl.zero?
 
+      @sync_locked = true
       write_lock_info(conn)
       reflect(:debug, :locked, item, locked_jid)
       yield
@@ -412,6 +414,12 @@ module SidekiqUniqueJobs
 
     def argv
       [job_id, config.pttl, config.type, config.limit, lock_score]
+    end
+
+    def unlock_argv
+      a = argv
+      a << (@sync_locked ? 1 : 0)
+      a
     end
 
     def lock_score
