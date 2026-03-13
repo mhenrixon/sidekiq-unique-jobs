@@ -60,7 +60,7 @@ module SidekiqUniqueJobs
         [
           total_size.to_i,
           result[0].to_i, # next_cursor
-          result[1].map { |entry| load_json(entry) }.select { |entry| entry.is_a?(Hash) },
+          result[1].map { |entry| load_json(entry) }.grep(Hash),
         ]
       end
     end
