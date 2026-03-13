@@ -193,7 +193,7 @@ module SidekiqUniqueJobs
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
     def lock_sync!(conn)
-      return yield if locked?(conn)
+      # Note: locked? check already done by lock!() caller
 
       locked_jid, elapsed = timed do
         call_script(:queue_and_lock, key.to_a, argv, conn)
@@ -223,12 +223,14 @@ module SidekiqUniqueJobs
     # @yieldparam [string] job_id the sidekiq JID
     # @yieldreturn [void] whatever the calling block returns
     def lock!(conn, primed_method, wait = nil)
-      return yield if locked?(conn)
-
       if wait.nil? && primed_method.name == :primed_sync
         # Non-blocking fast path: combined queue+lock in one Lua script
+        # The Lua script handles the HEXISTS check internally, so we
+        # skip the Ruby-side locked? pre-check here.
         lock_sync!(conn) { return yield }
       else
+        return yield if locked?(conn)
+
         # Blocking path: separate queue → BLMOVE → lock scripts
         enqueue(conn) do |queued_jid|
           reflect(:debug, :queued, item, queued_jid)
