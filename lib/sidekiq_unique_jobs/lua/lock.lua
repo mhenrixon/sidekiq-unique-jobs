@@ -78,11 +78,13 @@ end
 log_debug("HSET", locked, job_id, current_time)
 redis.call("HSET", locked, job_id, current_time)
 
-log_debug("LREM", queued, -1, job_id)
-redis.call("LREM", queued, -1, job_id)
-
+-- Remove job from primed (it was moved here by BLMOVE/LMOVE)
+-- and clean up queued in case of duplicate entries
 log_debug("LREM", primed, 1, job_id)
 redis.call("LREM", primed, 1, job_id)
+
+log_debug("LREM", queued, -1, job_id)
+redis.call("LREM", queued, -1, job_id)
 
 -- The Sidekiq client sets pttl
 if pttl and pttl > 0 then
@@ -96,11 +98,9 @@ if pttl and pttl > 0 then
   redis.call("PEXPIRE", info, pttl)
 end
 
-log_debug("PEXPIRE", queued, 1000)
-redis.call("PEXPIRE", queued, 1000)
-
-log_debug("PEXPIRE", primed, 1000)
-redis.call("PEXPIRE", primed, 1000)
+-- Clean up transient lists immediately instead of letting them linger
+log_debug("UNLINK", queued, primed)
+redis.call("UNLINK", queued, primed)
 
 log("Locked")
 log_debug("END lock digest:", digest, "job_id:", job_id)
