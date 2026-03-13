@@ -27,10 +27,7 @@ local script_name  = tostring(ARGV[9]) .. ".lua"
 
 
 --------  BEGIN Variables --------
-local queued_count = redis.call("LLEN", queued)
-local locked_count = redis.call("HLEN", locked)
-local within_limit = limit > locked_count
-local limit_exceeded = not within_limit
+-- LLEN/HLEN deferred to where needed (only in limit check branch)
 --------   END Variables  --------
 
 
@@ -58,8 +55,10 @@ elseif prev_jid == job_id then
   log("Duplicate")
   return job_id
 else
-  -- TODO: Consider constraining the total count of both locked and queued?
-  if within_limit and queued_count < limit then
+  -- Only compute counts when we need them (different prev_jid exists)
+  local locked_count = redis.call("HLEN", locked)
+  local queued_count = redis.call("LLEN", queued)
+  if limit > locked_count and queued_count < limit then
     log_debug("Within limit:", digest, "(",  locked_count, "of", limit, ")", "queued (", queued_count, "of", limit, ")")
     log_debug("SET", digest, job_id, "(was", prev_jid, ")")
     redis.call("SET", digest, job_id)
