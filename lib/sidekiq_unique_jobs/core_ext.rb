@@ -2,6 +2,8 @@
 
 # :nocov:
 
+# rubocop:disable Style/OneClassPerFile
+
 #
 # Monkey patches for the ruby Hash
 #
@@ -130,3 +132,5 @@ class Array
     end
   end
 end
+
+# rubocop:enable Style/OneClassPerFile

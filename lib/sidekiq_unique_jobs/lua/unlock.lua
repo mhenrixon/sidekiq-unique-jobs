@@ -28,9 +28,7 @@ local redisversion = ARGV[10]
 
 
 --------  BEGIN Variables --------
-local queued_count = redis.call("LLEN", queued)
-local primed_count = redis.call("LLEN", primed)
-local locked_count = redis.call("HLEN", locked)
+-- Defer LLEN/HLEN calls to where they're needed to avoid unnecessary commands
 ---------  END Variables ---------
 
 
@@ -42,72 +40,69 @@ local locked_count = redis.call("HLEN", locked)
 ---------  Begin unlock.lua ---------
 log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 
--- Always clean up this job's queued/primed entries first
--- This prevents orphaned entries even if job doesn't hold the lock
-log_debug("LREM", queued, -1, job_id)
-redis.call("LREM", queued, -1, job_id)
-
-log_debug("LREM", primed, -1, job_id)
-redis.call("LREM", primed, -1, job_id)
-
 -- Check if this job actually holds the lock
 local holds_lock = redis.call("HEXISTS", locked, job_id) == 1
+
+-- Clean up queued/primed entries only if not holding the lock
+-- (when holding the lock, lock.lua already UNLINKed both lists)
+if not holds_lock then
+  redis.call("LREM", queued, -1, job_id)
+  redis.call("LREM", primed, -1, job_id)
+end
 log_debug("HEXISTS", locked, job_id, "=>", holds_lock)
 
 if not holds_lock then
   -- Job doesn't hold the lock - check if this is an orphaned lock scenario
+  local queued_count = redis.call("LLEN", queued)
+  local primed_count = redis.call("LLEN", primed)
+  local locked_count = redis.call("HLEN", locked)
   if queued_count == 0 and primed_count == 0 and locked_count == 0 then
     log_debug("Orphaned lock - cleaning up")
     -- Continue with cleanup below
   else
     -- Other jobs still hold locks for this digest
-    local result = ""
-    for i,v in ipairs(redis.call("HKEYS", locked)) do
-      result = result .. v .. ","
-    end
-    result = locked .. " (" .. result .. ")"
-    log("Yielding to: " .. result)
-    log_debug("Yielding to", result, locked, "by job", job_id)
-    -- Still return job_id to indicate cleanup completed
-    -- Caller already removed from queued/primed
-    return job_id
+    log("Yielding to other lock holders")
+    log_debug("Yielding to other lock holders for", digest, "by job", job_id)
+    -- Return nil to indicate this job did not hold the lock
+    return nil
   end
 end
 
-local redis_version = toversion(redisversion)
-
 if lock_type ~= "until_expired" then
-  log_debug("UNLINK", digest, info)
-  redis.call("UNLINK", digest, info)
-
   log_debug("HDEL", locked, job_id)
   redis.call("HDEL", locked, job_id)
-end
 
-if redis.call("LLEN", primed) == 0 then
-  log_debug("UNLINK", primed)
-  redis.call("UNLINK", primed)
-end
+  if limit and limit > 1 then
+    -- Multi-lock: need to check if others remain
+    local locked_count = redis.call("HLEN", locked)
 
-local locked_count = redis.call("HLEN", locked)
+    log_debug("UNLINK", digest, info)
+    redis.call("UNLINK", digest, info)
 
-if locked_count < 1 then
-  log_debug("UNLINK", locked)
-  redis.call("UNLINK", locked)
-end
-
-if limit then
-  if limit <= 1 and locked_count <= 1 then
+    if locked_count < 1 then
+      log_debug("UNLINK", locked, primed)
+      redis.call("UNLINK", locked, primed)
+      log_debug("ZREM", digests, digest)
+      redis.call("ZREM", digests, digest)
+    elseif redis.call("LLEN", primed) == 0 then
+      log_debug("UNLINK", primed)
+      redis.call("UNLINK", primed)
+    end
+  else
+    -- Single-lock (limit <= 1): after HDEL, no locks remain.
+    -- Clean up everything in one batch without checking HLEN.
+    log_debug("UNLINK", digest, info, locked, primed)
+    redis.call("UNLINK", digest, info, locked, primed)
     log_debug("ZREM", digests, digest)
     redis.call("ZREM", digests, digest)
   end
 else
-  if locked_count <= 1 then
-    log_debug("ZREM", digests, digest)
-    redis.call("ZREM", digests, digest)
-  end
+  -- until_expired: don't HDEL, but still remove from digests tracking
+  log_debug("ZREM", digests, digest)
+  redis.call("ZREM", digests, digest)
 end
 
+-- Push sentinel to unblock any waiting BLMOVE
 log_debug("LPUSH", queued, "1")
 redis.call("LPUSH", queued, "1")
 

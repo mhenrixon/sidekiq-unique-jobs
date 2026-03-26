@@ -40,11 +40,13 @@ if redis.call("HEXISTS", locked, job_id) == 1 then
   log_debug(locked, "already locked with job_id:", job_id)
   log("Duplicate")
 
-  log_debug("LREM", queued, -1, job_id)
-  redis.call("LREM", queued, -1, job_id)
-
-  log_debug("LREM", primed, 1, job_id)
-  redis.call("LREM", primed, 1, job_id)
+  if limit <= 1 then
+    log_debug("UNLINK", queued, primed)
+    redis.call("UNLINK", queued, primed)
+  else
+    redis.call("LREM", queued, -1, job_id)
+    redis.call("LREM", primed, 1, job_id)
+  end
 
   return job_id
 end
@@ -78,11 +80,19 @@ end
 log_debug("HSET", locked, job_id, current_time)
 redis.call("HSET", locked, job_id, current_time)
 
-log_debug("LREM", queued, -1, job_id)
-redis.call("LREM", queued, -1, job_id)
+if limit <= 1 then
+  -- For single-lock (common case): just UNLINK both lists.
+  -- No need to LREM individual entries since we're deleting the whole key.
+  log_debug("UNLINK", queued, primed)
+  redis.call("UNLINK", queued, primed)
+else
+  -- For multi-lock: carefully remove only this job's entries
+  log_debug("LREM", primed, 1, job_id)
+  redis.call("LREM", primed, 1, job_id)
 
-log_debug("LREM", primed, 1, job_id)
-redis.call("LREM", primed, 1, job_id)
+  log_debug("LREM", queued, -1, job_id)
+  redis.call("LREM", queued, -1, job_id)
+end
 
 -- The Sidekiq client sets pttl
 if pttl and pttl > 0 then
@@ -95,12 +105,6 @@ if pttl and pttl > 0 then
   log_debug("PEXPIRE", info, pttl)
   redis.call("PEXPIRE", info, pttl)
 end
-
-log_debug("PEXPIRE", queued, 1000)
-redis.call("PEXPIRE", queued, 1000)
-
-log_debug("PEXPIRE", primed, 1000)
-redis.call("PEXPIRE", primed, 1000)
 
 log("Locked")
 log_debug("END lock digest:", digest, "job_id:", job_id)

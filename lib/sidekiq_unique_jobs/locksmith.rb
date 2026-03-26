@@ -121,8 +121,6 @@ module SidekiqUniqueJobs
     # @return [String] Sidekiq job_id (jid) if successful
     #
     def unlock(conn = nil)
-      return false unless locked?(conn)
-
       unlock!(conn)
     end
 

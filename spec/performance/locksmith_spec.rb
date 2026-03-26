@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/SpecFilePathFormat
 RSpec.describe SidekiqUniqueJobs::Locksmith, :perf do
   let(:locksmith_one)   { described_class.new(item_one) }
   let(:locksmith_two)   { described_class.new(item_two) }
@@ -46,4 +45,3 @@ RSpec.describe SidekiqUniqueJobs::Locksmith, :perf do
     expect { locksmith_one.unlock }.to perform_under(1).ms
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat

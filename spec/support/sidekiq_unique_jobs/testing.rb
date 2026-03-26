@@ -876,8 +876,8 @@ module SidekiqUniqueJobs
       if key
         { key => hgetall(key).to_h }
       else
-        scan_each(match: "*:LOCKED").each_with_object({}) do |redis_key, hash|
-          hash[redis_key] = hgetall(redis_key).to_h
+        scan_each(match: "*:LOCKED").to_h do |redis_key|
+          [redis_key, hgetall(redis_key).to_h]
         end
       end
     end

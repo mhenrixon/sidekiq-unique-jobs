@@ -27,10 +27,7 @@ local script_name  = tostring(ARGV[9]) .. ".lua"
 
 
 --------  BEGIN Variables --------
-local queued_count = redis.call("LLEN", queued)
-local locked_count = redis.call("HLEN", locked)
-local within_limit = limit > locked_count
-local limit_exceeded = not within_limit
+-- LLEN/HLEN deferred to where needed (only in limit check branch)
 --------   END Variables  --------
 
 
@@ -48,25 +45,32 @@ if redis.call("HEXISTS", locked, job_id) == 1 then
   return job_id
 end
 
-local prev_jid = redis.call("GET", digest)
-log_debug("job_id:", job_id, "prev_jid:", prev_jid)
-if not prev_jid or prev_jid == false then
-  log_debug("SET", digest, job_id)
-  redis.call("SET", digest, job_id)
-elseif prev_jid == job_id then
-  log_debug(digest, "already queued with job_id:", job_id)
-  log("Duplicate")
-  return job_id
+-- Try SET NX first: if digest key doesn't exist, claim it in one command
+local set_result = redis.call("SET", digest, job_id, "NX")
+if set_result then
+  log_debug("SET NX", digest, job_id, "=> OK (first enqueue)")
 else
-  -- TODO: Consider constraining the total count of both locked and queued?
-  if within_limit and queued_count < limit then
-    log_debug("Within limit:", digest, "(",  locked_count, "of", limit, ")", "queued (", queued_count, "of", limit, ")")
-    log_debug("SET", digest, job_id, "(was", prev_jid, ")")
-    redis.call("SET", digest, job_id)
+  -- Digest exists: check who holds it
+  local prev_jid = redis.call("GET", digest)
+  log_debug("job_id:", job_id, "prev_jid:", prev_jid)
+
+  if prev_jid == job_id then
+    log_debug(digest, "already queued with job_id:", job_id)
+    log("Duplicate")
+    return job_id
   else
-    log_debug("Limit exceeded:", digest, "(",  locked_count, "of", limit, ")")
-    log("Limit exceeded", prev_jid)
-    return prev_jid
+    -- Different job holds the digest: check limits
+    local locked_count = redis.call("HLEN", locked)
+    local queued_count = redis.call("LLEN", queued)
+    if limit > locked_count and queued_count < limit then
+      log_debug("Within limit:", digest, "(",  locked_count, "of", limit, ")", "queued (", queued_count, "of", limit, ")")
+      log_debug("SET", digest, job_id, "(was", prev_jid, ")")
+      redis.call("SET", digest, job_id)
+    else
+      log_debug("Limit exceeded:", digest, "(",  locked_count, "of", limit, ")")
+      log("Limit exceeded", prev_jid)
+      return prev_jid
+    end
   end
 end
 
