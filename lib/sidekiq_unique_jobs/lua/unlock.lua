@@ -18,12 +18,20 @@ local lock_score = ARGV[5]
 -------- END lock arguments -----------
 
 
+-------- BEGIN unlock-specific arguments ---------
+-- sync_locked flag: when present (ARGV has 11 elements), shifts injected args by 1
+local has_sync_flag = #ARGV > 10
+local sync_locked   = has_sync_flag and tonumber(ARGV[6]) == 1
+local arg_offset    = has_sync_flag and 1 or 0
+-------- END unlock-specific arguments -----------
+
+
 --------  BEGIN injected arguments --------
-local current_time = tonumber(ARGV[6])
-local debug_lua    = tostring(ARGV[7]) == "1"
-local max_history  = tonumber(ARGV[8])
-local script_name  = tostring(ARGV[9]) .. ".lua"
-local redisversion = ARGV[10]
+local current_time = tonumber(ARGV[6 + arg_offset])
+local debug_lua    = tostring(ARGV[7 + arg_offset]) == "1"
+local max_history  = tonumber(ARGV[8 + arg_offset])
+local script_name  = tostring(ARGV[9 + arg_offset]) .. ".lua"
+local redisversion = ARGV[10 + arg_offset]
 ---------  END injected arguments ---------
 
 
@@ -40,7 +48,28 @@ local redisversion = ARGV[10]
 ---------  Begin unlock.lua ---------
 log_debug("BEGIN unlock digest:", digest, "(job_id: " .. job_id ..")")
 
--- Check if this job actually holds the lock
+-- Fast path for sync-locked single locks:
+-- We know the job holds the lock (acquired atomically via queue_and_lock.lua)
+-- No queued/primed lists exist, no BLMOVE waiters, no sentinel needed.
+if sync_locked and limit <= 1 then
+  if lock_type ~= "until_expired" then
+    -- Non-TTL: UNLINK + ZREM = 2 commands
+    -- Skip HDEL: UNLINK(locked) deletes the entire hash, making HDEL redundant
+    log_debug("UNLINK", digest, info, locked, primed)
+    redis.call("UNLINK", digest, info, locked, primed)
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  else
+    -- until_expired: don't HDEL (lock persists until TTL), just ZREM from digests
+    log_debug("ZREM", digests, digest)
+    redis.call("ZREM", digests, digest)
+  end
+  log("Unlocked")
+  log_debug("END unlock digest:", digest, "(job_id: " .. job_id ..")")
+  return job_id
+end
+
+-- Standard path: check if this job actually holds the lock
 local holds_lock = redis.call("HEXISTS", locked, job_id) == 1
 
 -- Clean up queued/primed entries only if not holding the lock
