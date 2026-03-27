@@ -83,6 +83,25 @@ RSpec.describe SidekiqUniqueJobs::LockTTL do
       end
     end
 
+    context "when item lock_ttl is a duration-like object (responds to #to_i)" do
+      let(:duration) do
+        Class.new do
+          def to_i
+            30
+          end
+
+          def inspect
+            "30 seconds"
+          end
+        end.new
+      end
+      let(:item) { { "class" => job_class_name, "lock_ttl" => duration } }
+
+      it "coerces to integer via #to_i" do
+        expect(calculate).to eq(30)
+      end
+    end
+
     context "when item lock_ttl is a function symbol" do
       let(:job_class_name) { "MyOtherUniqueJob" }
       let(:item)           { { "class" => job_class_name, "lock_ttl" => :ttl_fn } }
