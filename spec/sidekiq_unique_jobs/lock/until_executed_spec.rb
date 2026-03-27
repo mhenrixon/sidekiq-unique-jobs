@@ -44,5 +44,30 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExecuted do
       end
       expect(process_one).not_to be_locked # Because we have expiration set to 5000
     end
+
+    context "when error is raised" do
+      let(:block) { -> { raise "Hell" } }
+
+      it "keeps the lock to prevent duplicate enqueuing while in retry set" do
+        process_one.lock
+        expect { process_one.execute(&block) }.to raise_error(RuntimeError, "Hell")
+        expect(process_one).to be_locked
+      end
+
+      it "prevents process_two from locking while job is in retry" do
+        process_one.lock
+        expect { process_one.execute(&block) }.to raise_error(RuntimeError, "Hell")
+        expect(process_two.lock).to be_nil
+      end
+
+      it "reflects execution failed" do
+        allow(process_one).to receive(:reflect)
+
+        process_one.lock
+        expect { process_one.execute(&block) }.to raise_error(RuntimeError, "Hell")
+        expect(process_one).to have_received(:reflect)
+          .with(:execution_failed, item_one, kind_of(RuntimeError))
+      end
+    end
   end
 end
