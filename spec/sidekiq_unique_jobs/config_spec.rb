@@ -197,6 +197,22 @@ RSpec.describe SidekiqUniqueJobs::Config do
     end
   end
 
+  describe "#on_conflict" do
+    it "defaults to nil" do
+      expect(config.on_conflict).to be_nil
+    end
+
+    it "can be set to a symbol" do
+      config.on_conflict = :log
+      expect(config.on_conflict).to eq(:log)
+    end
+
+    it "can be set to a hash" do
+      config.on_conflict = { client: :log, server: :reject }
+      expect(config.on_conflict).to eq({ client: :log, server: :reject })
+    end
+  end
+
   # Test backported from spec/unit/on_conflict_spec.rb
   describe "::STRATEGIES" do
     subject { described_class::STRATEGIES }

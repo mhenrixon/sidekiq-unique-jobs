@@ -25,6 +25,7 @@ module SidekiqUniqueJobs
     :current_redis_version,
     :digest_algorithm,
     :locksmith_executor,
+    :on_conflict,
   )
 
   #
@@ -144,6 +145,9 @@ module SidekiqUniqueJobs
     #
     # @return [nil] by default a bounded ThreadPoolExecutor is built lazily on first use
     LOCKSMITH_EXECUTOR    = nil
+    #
+    # @return [nil] by default no global on_conflict strategy (use per-job config)
+    ON_CONFLICT           = nil
 
     #
     # Returns a default configuration
@@ -212,6 +216,7 @@ module SidekiqUniqueJobs
         REDIS_VERSION,
         DIGEST_ALGORITHM,
         LOCKSMITH_EXECUTOR,
+        ON_CONFLICT,
       )
     end
 

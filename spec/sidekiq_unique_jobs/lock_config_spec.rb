@@ -136,6 +136,46 @@ RSpec.describe SidekiqUniqueJobs::LockConfig do
     end
   end
 
+  describe "#on_conflict" do
+    context "when not set per-job and global config has on_conflict" do
+      let(:item) do
+        {
+          lock: lock_type,
+          class: job_class,
+          lock_limit: lock_limit,
+          lock_timeout: lock_timeout,
+          lock_ttl: lock_ttl,
+          lock_info: lock_info,
+          errors: errors,
+        }
+      end
+
+      it "falls back to global config" do
+        SidekiqUniqueJobs.use_config(on_conflict: :reject) do
+          config = described_class.from_worker(item)
+          expect(config.on_conflict).to eq(:reject)
+        end
+      end
+
+      it "supports hash values from global config" do
+        SidekiqUniqueJobs.use_config(on_conflict: { client: :log, server: :reject }) do
+          config = described_class.from_worker(item)
+          expect(config.on_client_conflict).to eq(:log)
+          expect(config.on_server_conflict).to eq(:reject)
+        end
+      end
+    end
+
+    context "when set per-job and global config also has on_conflict" do
+      it "prefers per-job config" do
+        SidekiqUniqueJobs.use_config(on_conflict: :reject) do
+          config = described_class.from_worker(item)
+          expect(config.on_conflict).to eq(:log)
+        end
+      end
+    end
+  end
+
   describe "#on_client_conflict" do
     subject(:on_client_conflict) { lock_config.on_client_conflict }
 
