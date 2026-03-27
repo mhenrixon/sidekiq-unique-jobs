@@ -89,6 +89,50 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilAndWhileExecuting, redis_db: 3 do
       expect { process_one.execute(&blk) }.not_to raise_error
     end
 
+    context "when client lock has already expired (lock_ttl elapsed)" do
+      it "still executes the job via orphaned lock cleanup" do
+        process_one.lock
+
+        # Simulate TTL expiry by deleting all lock keys from Redis
+        redis do |conn|
+          digest = item_one["lock_digest"]
+          conn.call("UNLINK", digest, "#{digest}:QUEUED", "#{digest}:PRIMED",
+            "#{digest}:LOCKED", "#{digest}:INFO")
+          conn.call("ZREM", "uniquejobs:digests", digest)
+        end
+
+        expect(process_one).not_to be_locked
+
+        executed = false
+        process_one.execute { executed = true }
+        expect(executed).to be(true)
+      end
+    end
+
+    context "when job was enqueued without client middleware (no lock exists)" do
+      it "still executes the job" do
+        # Don't call process_one.lock — simulate direct Redis enqueue
+        executed = false
+        process_one.execute { executed = true }
+        expect(executed).to be(true)
+      end
+    end
+
+    context "when multiple jobs are enqueued and executed sequentially" do
+      it "executes each job exactly once after the previous completes" do
+        results = []
+
+        process_one.lock
+        process_one.execute { results << :one }
+        expect(results).to eq([:one])
+
+        # After process_one completes, process_two should be able to lock and execute
+        process_two.lock
+        process_two.execute { results << :two }
+        expect(results).to eq([:one, :two])
+      end
+    end
+
     context "when worker raises error in runtime lock" do
       before do
         allow(runtime_one.locksmith).to receive(:execute).and_raise(RuntimeError, "Hell")
