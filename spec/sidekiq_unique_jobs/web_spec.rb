@@ -165,42 +165,91 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).to match("/locks/#{digest_one}/jobs/#{jid_two}")
   end
 
-  it "can delete all digests" do
-    lock_one.lock(jid_one, lock_info)
-    lock_two.lock(jid_two, lock_info)
+  describe "delete_all" do
+    let(:expiring_digests) { SidekiqUniqueJobs::ExpiringDigests.new }
 
-    expect(digests.entries).to match_array(expected_digests)
+    context "when only regular locks exist" do
+      before do
+        lock_one.lock(jid_one, lock_info)
+        lock_two.lock(jid_two, lock_info)
+      end
 
-    get "/locks/delete_all"
+      it "deletes all regular locks" do
+        expect(digests.count).to eq(2)
+        expect(expiring_digests.count).to eq(0)
 
-    if last_response.redirect?
-      expect(last_response.status).to eq(302)
-      follow_redirect!
+        get "/locks/delete_all"
 
-      expect(last_request.url).to end_with("/locks")
+        if last_response.redirect?
+          expect(last_response.status).to eq(302)
+          follow_redirect!
+          expect(last_request.url).to end_with("/locks")
+        end
+
+        expect(digests.count).to eq(0)
+        expect(expiring_digests.count).to eq(0)
+      end
     end
 
-    expect(last_response.body).not_to match("/locks/#{digest_one}")
-    expect(last_response.body).not_to match("/locks/#{digest_two}")
+    context "when only expiring locks exist" do
+      before do
+        expiring_digests.add(digest_one)
+        expiring_digests.add(digest_two)
+      end
 
-    expect(digests.entries).to be_empty
-  end
+      it "deletes all expiring locks" do
+        expect(digests.count).to eq(0)
+        expect(expiring_digests.count).to eq(2)
 
-  it "can delete all digests when only expiring locks exist" do
-    expiring_digests = SidekiqUniqueJobs::ExpiringDigests.new
-    expiring_digests.add(digest_one)
-    expiring_digests.add(digest_two)
+        get "/locks/delete_all"
 
-    expect(digests.count).to eq(0)
-    expect(expiring_digests.count).to eq(2)
+        if last_response.redirect?
+          expect(last_response.status).to eq(302)
+          follow_redirect!
+        end
 
-    get "/locks/delete_all"
-
-    if last_response.redirect?
-      expect(last_response.status).to eq(302)
-      follow_redirect!
+        expect(digests.count).to eq(0)
+        expect(expiring_digests.count).to eq(0)
+      end
     end
 
-    expect(expiring_digests.count).to eq(0)
+    context "when both regular and expiring locks exist" do
+      before do
+        lock_one.lock(jid_one, lock_info)
+        expiring_digests.add(digest_two)
+      end
+
+      it "deletes both regular and expiring locks" do
+        expect(digests.count).to eq(1)
+        expect(expiring_digests.count).to eq(1)
+
+        get "/locks/delete_all"
+
+        if last_response.redirect?
+          expect(last_response.status).to eq(302)
+          follow_redirect!
+        end
+
+        expect(digests.count).to eq(0)
+        expect(expiring_digests.count).to eq(0)
+      end
+    end
+
+    context "when no locks exist" do
+      it "does not raise an error" do
+        expect(digests.count).to eq(0)
+        expect(expiring_digests.count).to eq(0)
+
+        get "/locks/delete_all"
+
+        if last_response.redirect?
+          expect(last_response.status).to eq(302)
+          follow_redirect!
+        end
+
+        expect(digests.count).to eq(0)
+        expect(expiring_digests.count).to eq(0)
+      end
+    end
   end
 end
