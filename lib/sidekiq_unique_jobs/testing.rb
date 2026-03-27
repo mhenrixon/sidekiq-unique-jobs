@@ -4,7 +4,7 @@
 # :nodoc:
 
 require "sidekiq"
-require "sidekiq/testing"
+Sidekiq.testing!(:fake)
 require "sidekiq_unique_jobs/rspec/matchers"
 require "sidekiq_unique_jobs/lock/validator"
 require "sidekiq_unique_jobs/lock/client_validator"

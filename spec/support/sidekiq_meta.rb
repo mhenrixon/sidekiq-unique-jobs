@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "sidekiq/testing"
-
 RSpec.configure do |config|
   config.before do |example|
     redis_db = example.metadata.fetch(:redis_db, 0)
