@@ -100,7 +100,8 @@ module Locks
     def enqueue_button(job_name, count)
       button_to enqueue_locks_path,
         params: { job_name: job_name, count: count },
-        class: "btn btn-primary btn-xs join-item" do
+        class: "btn btn-primary btn-xs join-item",
+        "aria-label": "Enqueue #{job_name} x#{count}" do
         plain "x#{count}"
       end
     end

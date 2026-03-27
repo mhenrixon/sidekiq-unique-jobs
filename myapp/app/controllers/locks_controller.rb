@@ -74,13 +74,13 @@ class LocksController < ApplicationController
   def enqueue
     job_name = params[:job_name]
     count = (params[:count] || 1).to_i.clamp(1, 10)
-    job_class = job_name.safe_constantize
 
-    unless job_class
+    unless DEMO_JOBS.key?(job_name)
       redirect_to locks_path, alert: "Unknown job: #{job_name}"
       return
     end
 
+    job_class = job_name.constantize
     args = DEMO_JOBS.dig(job_name, :sample_args) || []
     results = []
 

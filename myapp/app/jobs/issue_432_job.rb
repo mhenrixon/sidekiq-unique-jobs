@@ -36,8 +36,10 @@ class Issue432Job
   end
 
   def log(arguments, action)
-    Rails.logger.debug { "      !!! #{action} #{arguments.inspect} " }
-    "\at #{Time.now.to_i - redis.call('GET', 'start').to_i} sec, " \
-      "counter is #{redis.call('GET', 'counter')}"
+    Rails.logger.debug do
+      "      !!! #{action} #{arguments.inspect} " \
+        "at #{Time.now.to_i - redis.call('GET', 'start').to_i} sec, " \
+        "counter is #{redis.call('GET', 'counter')}"
+    end
   end
 end
