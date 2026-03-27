@@ -21,7 +21,6 @@ AllCops:
     - "lib/sidekiq_unique_jobs/lua/**/*"
     - "lib/sidekiq_unique_jobs/web/views/**/*"
     - "lib/tasks/**/*"
-    - "myapp/**/*"
     - "Sidekiq/**/*"
     - "vendor/**/*"
 

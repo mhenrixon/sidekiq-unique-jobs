@@ -1,43 +1,59 @@
-inherit_from:
-  - ../.rubocop.yml
-
-AllCops:
-  TargetRubyVersion: 2.7
-  Include:
-    - "myapp/**/*"
-    - "**/*.rb"
-
-require:
+plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rails
   - rubocop-rspec
+  - rubocop-thread_safety
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - bin/**/*
+    - db/schema.rb
+    - node_modules/**/*
+    - tmp/**/*
+    - vendor/**/*
 
 Layout/LineLength:
+  Max: 120
   Exclude:
     - db/**/*.rb
-    - config/initializers/devise.rb
 
 Metrics/MethodLength:
-  Max: 13
+  Max: 20
   Exclude:
     - db/**/*.rb
-    - config/initializers/devise.rb
 
 Metrics/BlockLength:
   Exclude:
-    - "db/**/*.rb"
+    - db/**/*.rb
+    - spec/**/*.rb
+    - config/**/*.rb
 
-Naming/FileName:
+Metrics/AbcSize:
+  Max: 30
   Exclude:
-    - Gemfile
-    - Rakefile
-    - Gemfile
-    - Rakefile
+    - db/**/*.rb
 
 Naming/MethodParameterName:
   Enabled: false
 
 Style/Documentation:
-  Exclude:
-    - "**/*.rb"
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Rails/UnknownEnv:
+  Environments:
+    - production
+    - development
+    - test
