@@ -193,10 +193,18 @@ module Locks
       end
     end
 
+    STAT_COLORS = {
+      "info" => "text-info",
+      "warning" => "text-warning",
+      "success" => "text-success",
+      "neutral" => "text-neutral",
+    }.freeze
+
     def state_stat(label, value, color)
+      color_class = STAT_COLORS.fetch(color, "text-base-content")
       div(class: "bg-base-200 rounded-lg p-3 text-center") do
         div(class: "text-xs text-base-content/50 uppercase tracking-wide mb-1") { label }
-        div(class: "text-xl font-bold text-#{color}") { value }
+        div(class: "text-xl font-bold #{color_class}") { value }
       end
     end
 
