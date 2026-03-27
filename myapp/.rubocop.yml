@@ -1,9 +1,11 @@
+# Stop rubocop from inheriting the parent gem's config
+inherit_from: []
+
 plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rails
   - rubocop-rspec
-  - rubocop-thread_safety
 
 AllCops:
   TargetRubyVersion: 3.3

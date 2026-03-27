@@ -2,7 +2,6 @@ plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
-  - rubocop-thread_safety
 
 AllCops:
   NewCops: enable
@@ -21,6 +20,7 @@ AllCops:
     - "lib/sidekiq_unique_jobs/lua/**/*"
     - "lib/sidekiq_unique_jobs/web/views/**/*"
     - "lib/tasks/**/*"
+    - "myapp/**/*"
     - "Sidekiq/**/*"
     - "vendor/**/*"
 
