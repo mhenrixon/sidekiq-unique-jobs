@@ -35,13 +35,19 @@ module SidekiqUniqueJobs
       def execute
         executed = locksmith.execute do
           yield
-        ensure
-          unlock_and_callback
+          item[JID]
         end
 
-        reflect(:execution_failed, item) unless executed
+        if executed
+          unlock_and_callback
+        else
+          reflect(:execution_failed, item)
+        end
 
         nil
+      rescue StandardError => ex
+        reflect(:execution_failed, item, ex)
+        raise
       end
     end
   end
