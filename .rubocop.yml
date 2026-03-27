@@ -191,8 +191,4 @@ Style/GlobalVars:
 Style/ModuleFunction:
   Enabled: false
 
-ThreadSafety/ClassInstanceVariable:
-  Exclude:
-    - lib/sidekiq_unique_jobs/web.rb
-    - lib/sidekiq_unique_jobs/web.rb
 
