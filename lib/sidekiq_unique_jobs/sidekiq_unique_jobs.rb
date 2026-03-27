@@ -108,6 +108,7 @@ module SidekiqUniqueJobs
   # @return [SidekiqUniqueJobs::Config] a default gem configuration
   #
   def reset!
+    @config&.shutdown_executor
     @config = SidekiqUniqueJobs::Config.default
   end
 
