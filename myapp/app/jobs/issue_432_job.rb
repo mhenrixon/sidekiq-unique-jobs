@@ -20,24 +20,24 @@ class Issue432Job
   def perform(*arguments)
     log(arguments, :start)
     sleep 3
-    if redis.get("counter").to_i < 2
+    if redis.call("GET", "counter").to_i < 2
       log(arguments, :raise)
       raise "Need retry!"
     end
     log(arguments, :finish)
   ensure
-    redis.incr "counter"
+    redis.call("INCR", "counter")
   end
 
   private
 
   def redis
-    REDIS
+    @redis ||= RedisClient.new(url: ENV.fetch("REDIS_URL", nil))
   end
 
   def log(arguments, action)
     Rails.logger.debug { "      !!! #{action} #{arguments.inspect} " }
-    "\at #{Time.now.to_i - redis.get('start').to_i} sec, " \
-      "counter is #{redis.get('counter')}"
+    "\at #{Time.now.to_i - redis.call('GET', 'start').to_i} sec, " \
+      "counter is #{redis.call('GET', 'counter')}"
   end
 end

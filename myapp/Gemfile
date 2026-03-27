@@ -1,48 +1,45 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "~> 3.2"
+ruby "~> 3.3"
 
-gem "rails"
+gem "rails", ">= 8.1.0"
 
 gem "pg"
+gem "propshaft"
 gem "puma"
 
-gem "bootsnap"
-gem "devise"
+gem "bootsnap", require: false
 gem "json"
-gem "rack-protection"
 gem "redis"
 gem "sidekiq"
 gem "sidekiq-unique-jobs", path: ".."
-gem "sinatra"
-gem "slim-rails"
 
-gem "cssbundling-rails"
+# Frontend
 gem "importmap-rails"
-gem "sprockets-rails"
 gem "stimulus-rails"
 gem "turbo-rails"
+
+# Views
+gem "daisyui", github: "mhenrixon/daisyui", require: "daisy_ui"
+gem "phlex-rails"
 
 group :development, :test do
   gem "dotenv-rails"
   gem "factory_bot_rails"
   gem "fuubar"
-  gem "listen"
   gem "pry-rails"
   gem "rspec-rails"
 end
 
 group :development do
-  gem "erb_lint", require: false
-  gem "rubocop"
-  gem "rubocop-mhenrixon"
-  gem "rubocop-performance"
-  gem "rubocop-rails"
-  gem "rubocop-rake"
-  gem "rubocop-rspec"
+  gem "rubocop", require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-rails", require: false
+  gem "rubocop-rake", require: false
+  gem "rubocop-rspec", require: false
+  gem "web-console"
 end
 
 group :test do
@@ -50,4 +47,4 @@ group :test do
   gem "capybara-playwright-driver"
 end
 
-gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "tzinfo-data", platforms: [:windows, :jruby]

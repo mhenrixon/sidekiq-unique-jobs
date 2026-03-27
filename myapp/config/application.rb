@@ -20,12 +20,14 @@ Bundler.require(*Rails.groups)
 
 module MyApp
   class Application < Rails::Application
-    config.load_defaults 7.0
+    config.load_defaults 8.1
 
     config.time_zone = "Europe/Berlin"
     config.active_job.queue_adapter = :sidekiq
 
-    # config.eager_load_paths << Rails.root.join("extras")
+    config.autoload_paths << "#{root}/app/views"
+    config.autoload_paths << "#{root}/app/views/layouts"
+    config.autoload_paths << "#{root}/app/views/components"
 
     config.generators do |g|
       g.test_framework :rspec,
