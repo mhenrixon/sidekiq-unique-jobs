@@ -12,7 +12,7 @@ class ApplicationLayout < ApplicationView
   def view_template(&)
     doctype
 
-    html data: { theme: "light" } do
+    html data: { theme: "dracula" } do
       head do
         title { @title }
         meta name: "viewport", content: "width=device-width,initial-scale=1"
@@ -27,9 +27,11 @@ class ApplicationLayout < ApplicationView
         render Navbar.new
         render_flash
 
-        main class: "container mx-auto px-4 py-6 max-w-7xl" do
+        main class: "container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl" do
           yield
         end
+
+        render Footer.new
       end
     end
   end
