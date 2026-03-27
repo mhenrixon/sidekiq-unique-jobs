@@ -427,8 +427,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
     context "when used with execute (blocking path)" do
       it "uses the async path, not lock_sync!" do
-        expect(locksmith_one).not_to receive(:lock_sync!)
+        allow(locksmith_one).to receive(:lock_sync!).and_call_original
         locksmith_one.execute { nil }
+        expect(locksmith_one).not_to have_received(:lock_sync!)
       end
     end
   end
