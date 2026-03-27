@@ -42,5 +42,41 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
       process_one.execute {}
       expect(process_one).to be_locked
     end
+
+    context "when worker returns nil (early exit)" do
+      it "does not reflect execution_failed" do
+        allow(process_one).to receive(:reflect)
+
+        process_one.lock
+        process_one.execute { nil }
+
+        expect(process_one).not_to have_received(:reflect)
+          .with(:execution_failed, anything)
+      end
+    end
+
+    context "when worker returns false" do
+      it "does not reflect execution_failed" do
+        allow(process_one).to receive(:reflect)
+
+        process_one.lock
+        process_one.execute { false }
+
+        expect(process_one).not_to have_received(:reflect)
+          .with(:execution_failed, anything)
+      end
+    end
+
+    context "when lock cannot be acquired" do
+      it "still reflects execution_failed" do
+        allow(process_two).to receive(:reflect)
+
+        process_one.lock
+        process_two.execute { raise "should not run" }
+
+        expect(process_two).to have_received(:reflect)
+          .with(:execution_failed, item_two)
+      end
+    end
   end
 end
