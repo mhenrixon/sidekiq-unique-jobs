@@ -91,11 +91,15 @@ class LocksController < ApplicationController
         job_class.perform_async
       end
       results << jid
+    rescue SystemStackError
+      results << nil
     end
 
     successful = results.compact.size
-    redirect_to locks_path,
-      notice: "Enqueued #{successful}/#{count} #{job_name} jobs"
+    rejected = results.size - successful
+    msg = "Enqueued #{successful}/#{count} #{job_name} jobs"
+    msg += " (#{rejected} rejected by lock)" if rejected.positive?
+    redirect_to locks_path, notice: msg
   end
 
   def flush

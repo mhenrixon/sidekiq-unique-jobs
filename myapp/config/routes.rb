@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  mount RailsIcons::Engine, at: '/rails_icons'
   require "sidekiq_unique_jobs/web"
 
   mount Sidekiq::Web, at: "/sidekiq"
