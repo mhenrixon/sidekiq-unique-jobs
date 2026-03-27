@@ -3,8 +3,6 @@
 require "sidekiq"
 require "sidekiq-unique-jobs"
 
-REDIS = RedisClient.new(url: ENV.fetch("REDIS_URL", nil))
-
 Sidekiq.default_job_options = {
   backtrace: true,
   retry: true,
@@ -33,11 +31,11 @@ Sidekiq.configure_server do |config|
 end
 
 SidekiqUniqueJobs.configure do |config|
-  config.debug_lua       = false # true for debugging
-  config.lock_info       = false # true for debugging
-  config.max_history     = 1000  # keeps n number of changelog entries
-  config.reaper          = :ruby # also :lua but that will lock while cleaning
-  config.reaper_count    = 1000  # Reap maximum this many orphaned locks
-  config.reaper_interval = 10    # Reap every 10 seconds
-  config.reaper_timeout  = 5     # Give the reaper 5 seonds to finish
+  config.debug_lua       = false
+  config.lock_info       = true
+  config.max_history     = 1000
+  config.reaper          = :ruby
+  config.reaper_count    = 1000
+  config.reaper_interval = 10
+  config.reaper_timeout  = 5
 end

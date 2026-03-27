@@ -2,7 +2,6 @@ plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
-  - rubocop-thread_safety
 
 AllCops:
   NewCops: enable
@@ -192,8 +191,4 @@ Style/GlobalVars:
 Style/ModuleFunction:
   Enabled: false
 
-ThreadSafety/ClassInstanceVariable:
-  Exclude:
-    - lib/sidekiq_unique_jobs/web.rb
-    - lib/sidekiq_unique_jobs/web.rb
 

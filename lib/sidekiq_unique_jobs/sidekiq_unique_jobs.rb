@@ -17,7 +17,7 @@ module SidekiqUniqueJobs
   # @return [SidekiqUniqueJobs::Config] the gem configuration
   #
   def config
-    @config ||= reset! # rubocop:disable ThreadSafety/ClassInstanceVariable
+    @config ||= reset!
   end
 
   #
@@ -108,7 +108,7 @@ module SidekiqUniqueJobs
   # @return [SidekiqUniqueJobs::Config] a default gem configuration
   #
   def reset!
-    @config = SidekiqUniqueJobs::Config.default # rubocop:disable ThreadSafety/ClassInstanceVariable
+    @config = SidekiqUniqueJobs::Config.default
   end
 
   #
@@ -288,7 +288,7 @@ module SidekiqUniqueJobs
   # @return [Reflections]
   #
   def reflections
-    @reflections ||= Reflections.new # rubocop:disable ThreadSafety/ClassInstanceVariable
+    @reflections ||= Reflections.new
   end
 
   #

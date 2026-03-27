@@ -2,9 +2,9 @@
 
 require "system_helper"
 
-RSpec.describe "Static pages", type: :system do
-  it "can browse" do
+RSpec.describe "Lock Testing Dashboard", type: :system do
+  it "can browse the dashboard" do
     visit "/"
-    expect(page).to have_selector(".landing", text: "Welcome")
+    expect(page).to have_content("Lock Testing Dashboard")
   end
 end

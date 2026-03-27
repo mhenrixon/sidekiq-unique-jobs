@@ -1,3 +1,20 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-exec overmind start -f Procfile.dev "$@"
+set -eo pipefail
+
+export PORT="${PORT:-3000}"
+export PIDFILE="tmp/pids/server.pid"
+mkdir -p tmp/pids
+rm -f "$PIDFILE"
+
+if command -v hivemind >/dev/null 2>&1; then
+  exec hivemind Procfile.dev
+elif command -v foreman >/dev/null 2>&1; then
+  exec foreman start -f Procfile.dev
+else
+  if ! gem list foreman -i --silent; then
+    echo "Installing foreman..."
+    gem install foreman
+  fi
+  exec foreman start -f Procfile.dev
+fi

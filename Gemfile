@@ -31,7 +31,6 @@ gem "rubocop"
 gem "rubocop-performance"
 gem "rubocop-rake"
 gem "rubocop-rspec"
-gem "rubocop-thread_safety"
 gem "simplecov-sublime", ">= 0.21.2", require: false
 gem "sinatra"
 gem "timecop"

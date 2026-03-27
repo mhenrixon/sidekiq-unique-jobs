@@ -1,3 +1,43 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Import DaisyUI */
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, cyberpunk, dracula;
+}
+
+/* Import Tailwind plugins */
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
+
+/* Configure content sources */
+@source "../../../app/views/**/*.{rb,erb,html}";
+@source "../../../app/helpers/**/*.rb";
+@source "../../../app/javascript/**/*.js";
+
+/* Include DaisyUI gem for class name extraction */
+@source "../../../.bundle/gems/daisyui*/**/*.rb";
+
+/* Theme configuration */
+@theme {
+  --font-family-sans: "Inter var", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Override @tailwindcss/forms checkbox styles for DaisyUI components */
+.toggle,
+.checkbox,
+.radio {
+  background-image: none !important;
+}
+
+.toggle:checked,
+.checkbox:checked,
+.radio:checked {
+  background-image: none !important;
+}
+
+/* Rails form error wrapper */
+.field_with_errors {
+  width: inherit;
+  height: inherit;
+  display: contents;
+}
