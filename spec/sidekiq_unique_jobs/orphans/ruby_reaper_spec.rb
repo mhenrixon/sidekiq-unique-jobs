@@ -130,6 +130,29 @@ RSpec.describe SidekiqUniqueJobs::Orphans::RubyReaper do
     end
   end
 
+  describe "#expired_digests" do
+    context "when until_expired lock has not yet expired" do
+      let(:lock_info) do
+        {
+          "job_id" => job_id,
+          "limit" => 1,
+          "lock" => :until_expired,
+          "time" => now_f,
+          "timeout" => nil,
+          "ttl" => 3600,
+          "lock_args" => [],
+          "worker" => "MyUniqueJob",
+        }
+      end
+
+      it "does not include locks whose expiry time is in the future" do
+        # The expiring_digests score is current_time + pttl (set by Lua)
+        # A lock with TTL 3600s should have score ~= now + 3600
+        expect(service.expired_digests).to be_empty
+      end
+    end
+  end
+
   describe "#call" do
     context "when sidekiq queues are full" do
       before do
