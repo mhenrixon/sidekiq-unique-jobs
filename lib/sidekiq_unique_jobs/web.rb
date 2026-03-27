@@ -64,7 +64,7 @@ module SidekiqUniqueJobs
 
       app.get "/locks/delete_all" do
         digests.delete_by_pattern("*", count: digests.count)
-        expiring_digests.delete_by_pattern("*", count: digests.count)
+        expiring_digests.delete_by_pattern("*", count: expiring_digests.count)
         safe_redirect_to :locks
       end
 

@@ -185,4 +185,22 @@ RSpec.describe SidekiqUniqueJobs::Web do
 
     expect(digests.entries).to be_empty
   end
+
+  it "can delete all digests when only expiring locks exist" do
+    expiring_digests = SidekiqUniqueJobs::ExpiringDigests.new
+    expiring_digests.add(digest_one)
+    expiring_digests.add(digest_two)
+
+    expect(digests.count).to eq(0)
+    expect(expiring_digests.count).to eq(2)
+
+    get "/locks/delete_all"
+
+    if last_response.redirect?
+      expect(last_response.status).to eq(302)
+      follow_redirect!
+    end
+
+    expect(expiring_digests.count).to eq(0)
+  end
 end
