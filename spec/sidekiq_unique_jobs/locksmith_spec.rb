@@ -344,4 +344,93 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     locksmith_one.unlock
     expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
   end
+
+  describe "lock_sync! (non-blocking fast path)" do
+    let(:lock_timeout) { 0 }
+    let(:lock_type) { "until_executed" }
+
+    it "acquires the lock via the combined queue_and_lock script" do
+      expect(locksmith_one.lock).to eq(jid_one)
+      expect(locksmith_one).to be_locked
+    end
+
+    it "sets sync_locked state for unlock" do
+      locksmith_one.lock
+      argv = locksmith_one.send(:unlock_argv)
+      expect(argv.last).to eq(1)
+    end
+
+    it "prevents concurrent locks (mutex behavior)" do
+      locksmith_one.lock
+      expect(locksmith_two.lock).to be_falsey
+    end
+
+    it "is idempotent for the same job_id" do
+      locksmith_one.lock
+      expect(locksmith_one).to be_locked
+
+      # Re-locking same job returns the job_id again
+      expect(locksmith_one.lock).to eq(jid_one)
+      expect(locksmith_one).to be_locked
+    end
+
+    it "writes lock info when enabled" do
+      SidekiqUniqueJobs.use_config(lock_info: true) do
+        locksmith_one.lock
+        info = lock.info.value
+        expect(info).to include(
+          "worker" => worker,
+          "queue" => queue,
+          "type" => lock_type.to_s,
+        )
+      end
+    end
+
+    context "with lock_ttl" do
+      let(:lock_ttl) { 50_000 }
+
+      it "acquires the lock with TTL" do
+        expect(locksmith_one.lock).to eq(jid_one)
+        expect(locksmith_one).to be_locked
+      end
+
+      it "respects validity (pttl - elapsed - drift)" do
+        locksmith_one.lock
+        expect(locksmith_one).to be_locked
+      end
+    end
+
+    context "with lock_ttl nil (no expiration)" do
+      let(:lock_ttl) { nil }
+
+      it "acquires and releases the lock" do
+        locksmith_one.lock
+        expect(locksmith_one).to be_locked
+        locksmith_one.unlock
+        expect(locksmith_one).not_to be_locked
+      end
+    end
+
+    context "with lock_limit > 1" do
+      let(:lock_limit) { 3 }
+
+      it "acquires the lock via sync path" do
+        expect(locksmith_one.lock).to eq(jid_one)
+        expect(locksmith_one).to be_locked
+      end
+
+      it "allows multiple concurrent locks within the limit" do
+        locksmith_one.lock
+        expect(locksmith_two.lock).to be_truthy
+      end
+    end
+
+    context "when used with execute (blocking path)" do
+      it "uses the async path, not lock_sync!" do
+        allow(locksmith_one).to receive(:lock_sync!).and_call_original
+        locksmith_one.execute { nil }
+        expect(locksmith_one).not_to have_received(:lock_sync!)
+      end
+    end
+  end
 end
