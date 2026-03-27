@@ -66,5 +66,17 @@ RSpec.describe SidekiqUniqueJobs::Lock::UntilExpired do
           .with(:execution_failed, anything)
       end
     end
+
+    context "when lock cannot be acquired" do
+      it "still reflects execution_failed" do
+        allow(process_two).to receive(:reflect)
+
+        process_one.lock
+        process_two.execute { raise "should not run" }
+
+        expect(process_two).to have_received(:reflect)
+          .with(:execution_failed, item_two)
+      end
+    end
   end
 end
