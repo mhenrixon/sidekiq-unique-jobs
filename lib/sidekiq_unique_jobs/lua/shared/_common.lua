@@ -12,8 +12,9 @@ end
 local function log_debug( ... )
   if debug_lua ~= true then return end
 
+  local args = {...}
   local result = ""
-  for _,v in ipairs(arg) do
+  for _,v in ipairs(args) do
     result = result .. " " .. tostring(v)
   end
   redis.log(redis.LOG_DEBUG, script_name .. " -" ..  result)
