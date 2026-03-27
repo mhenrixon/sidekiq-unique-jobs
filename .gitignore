@@ -24,3 +24,4 @@ tmp/
 /.bundle/
 /.tool-versions
 /myapp/yarn-error.log
+.claude/settings.local.json
