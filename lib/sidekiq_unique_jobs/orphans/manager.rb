@@ -73,7 +73,7 @@ module SidekiqUniqueJobs
       # @return [<type>] <description>
       #
       def task
-        @task ||= default_task # rubocop:disable ThreadSafety/ClassInstanceVariable
+        @task ||= default_task
       end
 
       #
@@ -101,7 +101,7 @@ module SidekiqUniqueJobs
       # @return [void]
       #
       def task=(task)
-        @task = task # rubocop:disable ThreadSafety/ClassInstanceVariable
+        @task = task
       end
 
       #

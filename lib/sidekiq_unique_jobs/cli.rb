@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
     # :nodoc:
     # rubocop:disable Style/OptionalBooleanParameter
     def self.banner(command, _namespace = nil, _subcommand = false) # rubocop:disable Style/OptionalBooleanParameter
-      "jobs #{@package_name} #{command.usage}" # rubocop:disable ThreadSafety/ClassInstanceVariable
+      "jobs #{@package_name} #{command.usage}"
     end
     # rubocop:enable Style/OptionalBooleanParameter
 
