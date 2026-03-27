@@ -172,7 +172,17 @@ RSpec.describe SidekiqUniqueJobs::Config do
       end
 
       it "returns the same instance on subsequent calls" do
-        expect(config.locksmith_executor).to be(config.locksmith_executor)
+        first_call = config.locksmith_executor
+        expect(config.locksmith_executor).to be(first_call)
+      end
+    end
+
+    context "when shutdown_executor is called" do
+      it "shuts down the default executor and nils it" do
+        executor = config.locksmith_executor
+        config.shutdown_executor
+        expect(executor).to be_shutdown
+        expect(config.locksmith_executor).not_to be(executor)
       end
     end
 

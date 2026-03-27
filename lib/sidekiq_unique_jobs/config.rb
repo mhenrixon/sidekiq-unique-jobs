@@ -24,7 +24,7 @@ module SidekiqUniqueJobs
     :raise_on_config_error,
     :current_redis_version,
     :digest_algorithm,
-    :locksmith_executor
+    :locksmith_executor,
   )
 
   #
@@ -353,6 +353,24 @@ module SidekiqUniqueJobs
           max_queue: 100,
           fallback_policy: :caller_runs,
         )
+      end
+    end
+
+    #
+    # Shuts down the default locksmith executor if one was created
+    #
+    # Only shuts down the internally-created executor, not user-configured ones,
+    # since the user is responsible for managing their own executor lifecycle.
+    #
+    # @return [void]
+    #
+    def shutdown_executor
+      @default_executor_mutex.synchronize do
+        return unless @default_locksmith_executor
+
+        @default_locksmith_executor.shutdown
+        @default_locksmith_executor.wait_for_termination(5)
+        @default_locksmith_executor = nil
       end
     end
 
