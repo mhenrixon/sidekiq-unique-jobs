@@ -5,7 +5,7 @@ module SidekiqUniqueJobs
     #
     # Class DeleteOrphans provides deletion of orphaned digests
     #
-    # @note this is a much slower version of the lua script but does not crash redis
+    # @note this is faster than the ruby reaper but may block redis while executing
     #
     # @author Mikael Henriksson <mikael@mhenrixon.com>
     #
