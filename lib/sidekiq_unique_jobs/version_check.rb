@@ -28,7 +28,7 @@ module SidekiqUniqueJobs
     def self.split_space_separated(str)
       result = []
       current = +""
-      tokens = str.split(" ")
+      tokens = str.split
       tokens.each do |token|
         if current.empty? || "<>=!~".include?(token[0])
           result << current.strip unless current.empty?
