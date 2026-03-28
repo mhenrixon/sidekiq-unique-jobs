@@ -6,8 +6,7 @@ on:
       - "v*"
 
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 jobs:
   test:
@@ -31,7 +30,6 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     outputs:
-      gem_path: ${{ steps.build.outputs.gem_path }}
       gem_name: ${{ steps.build.outputs.gem_name }}
       version: ${{ steps.build.outputs.version }}
 
@@ -56,38 +54,42 @@ jobs:
         id: build
         run: |
           gem build sidekiq-unique-jobs.gemspec --strict
-          GEM_PATH=$(ls sidekiq-unique-jobs-*.gem)
-          echo "gem_path=$GEM_PATH" >> "$GITHUB_OUTPUT"
-          echo "gem_name=$(basename $GEM_PATH)" >> "$GITHUB_OUTPUT"
+          GEM_NAME=$(ls sidekiq-unique-jobs-*.gem)
+          echo "gem_name=$GEM_NAME" >> "$GITHUB_OUTPUT"
           echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
       - name: Verify gem contents
         run: |
-          GEM_PATH=$(ls sidekiq-unique-jobs-*.gem)
-          echo "=== Gem contents ==="
-          gem specification "$GEM_PATH" | head -20
-          echo ""
+          GEM_NAME=$(ls sidekiq-unique-jobs-*.gem)
+          gem unpack "$GEM_NAME" --target /tmp/gem-verify
+
           echo "=== File count ==="
-          gem unpack "$GEM_PATH" --target /tmp/gem-verify
           find /tmp/gem-verify -type f | wc -l
-          echo ""
+
           echo "=== Checking for unwanted files ==="
-          if find /tmp/gem-verify -name "*.rake" -o -name ".git*" -o -name "spec" -type d | grep -q .; then
-            echo "::error::Unwanted files found in gem"
-            find /tmp/gem-verify -name "*.rake" -o -name ".git*" -o -name "spec" -type d
+          UNWANTED=$(find /tmp/gem-verify \( -name "*.rake" -o -name ".git*" -o -name "*.gemspec" \) -print)
+          if [ -n "$UNWANTED" ]; then
+            echo "::error::Unwanted files found in gem:"
+            echo "$UNWANTED"
             exit 1
           fi
+
+          UNWANTED_DIRS=$(find /tmp/gem-verify -type d \( -name "spec" -o -name "test" -o -name "myapp" \) -print)
+          if [ -n "$UNWANTED_DIRS" ]; then
+            echo "::error::Unwanted directories found in gem:"
+            echo "$UNWANTED_DIRS"
+            exit 1
+          fi
+
           echo "No unwanted files found"
 
       - name: Generate checksums
         run: |
-          GEM_PATH=$(ls sidekiq-unique-jobs-*.gem)
-          sha256sum "$GEM_PATH" > "${GEM_PATH}.sha256"
-          sha512sum "$GEM_PATH" > "${GEM_PATH}.sha512"
-          echo "=== SHA256 ==="
-          cat "${GEM_PATH}.sha256"
-          echo "=== SHA512 ==="
-          cat "${GEM_PATH}.sha512"
+          GEM_NAME=$(ls sidekiq-unique-jobs-*.gem)
+          sha256sum "$GEM_NAME" > "$GEM_NAME.sha256"
+          sha512sum "$GEM_NAME" > "$GEM_NAME.sha512"
+          echo "=== SHA256 ===" && cat "$GEM_NAME.sha256"
+          echo "=== SHA512 ===" && cat "$GEM_NAME.sha512"
 
       - name: Upload gem artifact
         uses: actions/upload-artifact@v4
@@ -103,6 +105,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment: rubygems
+    permissions:
+      id-token: write
 
     steps:
       - uses: actions/download-artifact@v4
@@ -118,11 +122,24 @@ jobs:
         with:
           ruby-version: "3.4"
 
-      - name: Push to RubyGems
-        env:
-          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+      - name: Configure RubyGems trusted publishing credentials
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
+
+      - name: Push to RubyGems with Sigstore attestation
         run: |
-          gem push sidekiq-unique-jobs-*.gem
+          GEM_NAME=$(ls sidekiq-unique-jobs-*.gem)
+
+          gem exec sigstore-cli sign "$GEM_NAME" \
+            --bundle "$GEM_NAME.sigstore.json"
+
+          gem push "$GEM_NAME" --attestation "$GEM_NAME.sigstore.json"
+
+      - name: Upload Sigstore bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: sigstore
+          path: sidekiq-unique-jobs-*.gem.sigstore.json
+          if-no-files-found: error
 
   github-release:
     needs: [build, publish-rubygems]
@@ -138,6 +155,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: gem
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sigstore
 
       - name: Determine pre-release
         id: prerelease
@@ -161,8 +182,9 @@ jobs:
 
           gh release create "${{ github.ref_name }}" \
             "$GEM_NAME" \
-            "${GEM_NAME}.sha256" \
-            "${GEM_NAME}.sha512" \
+            "$GEM_NAME.sha256" \
+            "$GEM_NAME.sha512" \
+            "$GEM_NAME.sigstore.json" \
             --generate-notes \
             $PRERELEASE_FLAG \
             --verify-tag
