@@ -18,10 +18,15 @@ module SidekiqUniqueJobs
       end
 
       # Create a new job from the current one.
-      #   This will mess up sidekiq stats because a new job is created
+      #   Sets the RESCHEDULED flag so the middleware skips uniqueness checks,
+      #   avoiding infinite recursion when the lock is still held.
       def call
         if sidekiq_job_class?
-          if job_class.set(queue: item["queue"].to_sym).perform_in(schedule_in, *item[ARGS])
+          jid = job_class
+            .set(queue: item[QUEUE].to_sym, RESCHEDULED => true)
+            .perform_in(schedule_in, *item[ARGS])
+
+          if jid
             reflect(:rescheduled, item)
           else
             reflect(:reschedule_failed, item)

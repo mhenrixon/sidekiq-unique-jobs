@@ -38,6 +38,7 @@ module SidekiqUniqueJobs
   PROCESSES             = "processes"
   QUEUE                 = "queue"
   RETRY                 = "retry"
+  RESCHEDULED           = "rescheduled"
   SCHEDULE              = "schedule"
   TIME                  = "time"
   TIMEOUT               = "timeout"

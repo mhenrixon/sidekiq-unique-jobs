@@ -33,7 +33,7 @@ module SidekiqUniqueJobs
       @queue      = queue
       @redis_pool = redis_pool
       self.job_class = worker_class
-      return yield if unique_disabled?
+      return yield if item.delete(RESCHEDULED) || unique_disabled?
 
       SidekiqUniqueJobs::Job.prepare(item)
 

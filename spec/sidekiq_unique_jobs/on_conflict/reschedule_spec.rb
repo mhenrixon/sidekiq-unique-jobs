@@ -21,7 +21,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
     context "when pushed" do
       before do
         allow(UniqueJobOnConflictReschedule).to receive(:set)
-          .with(queue: :default)
+          .with(queue: :default, "rescheduled" => true)
           .and_return(UniqueJobOnConflictReschedule)
         allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_call_original
       end
@@ -59,7 +59,7 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
     context "when push fails" do
       before do
         allow(UniqueJobOnConflictReschedule).to receive(:set)
-          .with(queue: :default)
+          .with(queue: :default, "rescheduled" => true)
           .and_return(UniqueJobOnConflictReschedule)
         allow(UniqueJobOnConflictReschedule).to receive(:perform_in).and_return(nil)
       end
@@ -83,6 +83,26 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
 
         expect(strategy).to have_received(:reflect)
           .with(:unknown_sidekiq_worker, item)
+      end
+    end
+
+    context "when lock is held and reschedule is triggered" do
+      it "does not cause infinite recursion and schedules the job" do
+        # This is the scenario from issue #846:
+        # Job is locked, a duplicate comes in, reschedule strategy fires,
+        # which calls perform_in, which goes through middleware, which
+        # would try to lock again, fail, and reschedule again → stack overflow.
+        #
+        # The fix sets RESCHEDULED flag so middleware skips uniqueness.
+        expect { call }.to change { schedule_count }.by(1)
+      end
+
+      it "removes the rescheduled flag from the scheduled job" do
+        call
+
+        scheduled_job = Sidekiq::ScheduledSet.new.first
+        expect(scheduled_job).not_to be_nil
+        expect(scheduled_job.item).not_to have_key("rescheduled")
       end
     end
   end
