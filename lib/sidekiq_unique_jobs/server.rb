@@ -8,7 +8,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Server
     include SidekiqUniqueJobs::Connection
-    include SidekiqUniqueJobs::Script::Caller
+    include SidekiqUniqueJobs::Logging
 
     DEATH_HANDLER = (lambda do |job, _ex|
       return unless (digest = job["lock_digest"])
@@ -42,31 +42,33 @@ module SidekiqUniqueJobs
 
       # Run the reaper once (used by tests and manual invocation)
       #
-      # @param conn [Redis, nil] optional connection
       # @return [Integer] number of stale digests removed
-      def reap(conn = nil)
-        if conn
-          do_reap(conn)
+      def reap
+        log_info("Reaper cycle starting")
+
+        count = Orphans::Reaper.call
+
+        if count.positive?
+          log_info("Reaper removed #{count} orphaned digests")
         else
-          SidekiqUniqueJobs.redis { |c| do_reap(c) }
+          log_info("Reaper found no orphans")
         end
+        count
+      rescue => ex
+        log_error("Reaper error: #{ex.class}: #{ex.message}")
+        0
       end
 
       private
 
-      def do_reap(conn)
-        Script::Caller.call_script(
-          :reap,
-          conn,
-          keys: [DIGESTS],
-          argv: [SidekiqUniqueJobs.config.reaper_count],
-        )
-      end
-
       def start_reaper
-        return if reaper_disabled?
+        if reaper_disabled?
+          log_info("Reaper is disabled (config.reaper=#{SidekiqUniqueJobs.config.reaper.inspect})")
+          return
+        end
 
         interval = SidekiqUniqueJobs.config.reaper_interval
+        log_info("Starting reaper (interval=#{interval}s, count=#{SidekiqUniqueJobs.config.reaper_count})")
         @reaper_task = SidekiqUniqueJobs::TimerTask.new(
           run_now: false,
           execution_interval: interval,

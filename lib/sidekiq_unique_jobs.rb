@@ -65,6 +65,7 @@ require "sidekiq_unique_jobs/middleware/server"
 require "sidekiq_unique_jobs/sidekiq_unique_ext"
 require "sidekiq_unique_jobs/on_conflict"
 require "sidekiq_unique_jobs/digests"
+require "sidekiq_unique_jobs/orphans/reaper"
 
 require "sidekiq_unique_jobs/lock_metrics"
 require "sidekiq_unique_jobs/config"
