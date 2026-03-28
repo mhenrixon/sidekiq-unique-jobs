@@ -18,7 +18,6 @@ gem "ostruct"
 
 gem "appraisal"
 gem "faraday-retry"
-gem "gem-release"
 gem "github-markup"
 gem "rack-session"
 gem "rack-test"

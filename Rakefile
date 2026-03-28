@@ -127,12 +127,12 @@ namespace :appraisal do
   end
 end
 
-desc "Release a new gem version"
-task :release do
-  # sh("./update_docs.sh")
-  sh("bundle install")
-  sh("bundle exec gem release --tag --push")
-  Rake::Task["changelog"].invoke
-  sh("bundle exec gem bump --file lib/sidekiq_unique_jobs/version.rb")
-  sh("git push")
+desc "Build gem and verify contents"
+task :build do
+  sh("gem build sidekiq-unique-jobs.gemspec --strict")
+  gem_file = Dir["sidekiq-unique-jobs-*.gem"].first
+  sh("gem unpack #{gem_file} --target /tmp/gem-verify")
+  puts "\n=== Gem contents ==="
+  sh("find /tmp/gem-verify -type f | sort")
+  sh("rm -rf /tmp/gem-verify")
 end

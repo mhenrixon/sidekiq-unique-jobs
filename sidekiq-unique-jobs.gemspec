@@ -22,19 +22,21 @@ Gem::Specification.new do |spec|
 
   raise "RubyGems 2.0 or newer is required to protect against public gem pushes." unless spec.respond_to?(:metadata)
 
-  spec.metadata["homepage_uri"]      = spec.homepage
-  spec.metadata["bug_tracker_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs/issues"
-  spec.metadata["documentation_uri"] = "https://github.com/mhenrixon/sidekiq-unique-jobs"
-  spec.metadata["source_code_uri"]   = "https://github.com/mhenrixon/sidekiq-unique-jobs"
-  spec.metadata["changelog_uri"]     = "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/main/CHANGELOG.md"
-  spec.metadata["funding_uri"]       = "https://github.com/mhenrixon/sidekiq-unique-jobs"
+  spec.metadata = {
+    "bug_tracker_uri" => "https://github.com/mhenrixon/sidekiq-unique-jobs/issues",
+    "documentation_uri" => "https://mhenrixon.github.io/sidekiq-unique-jobs",
+    "source_code_uri" => "https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v#{spec.version}",
+    "changelog_uri" => "https://github.com/mhenrixon/sidekiq-unique-jobs/blob/main/CHANGELOG.md",
+    "funding_uri" => "https://github.com/sponsors/mhenrixon",
+    "rubygems_mfa_required" => "true",
+  }
 
   spec.bindir        = "bin"
   spec.executables   = %w[uniquejobs]
 
   spec.files         = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").select do |file|
-      file.match(%r{^(lib/*|bin/uniquejobs|README|LICENSE|CHANGELOG)})
+      file.match(%r{^(lib/sidekiq|lib/sidekiq-|bin/uniquejobs|README|LICENSE|CHANGELOG)})
     end
   end
 
@@ -45,7 +47,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "concurrent-ruby", "~> 1.0", ">= 1.0.5"
   spec.add_dependency "sidekiq", ">= 8.0.0", "< 10.0.0"
   spec.add_dependency "thor", ">= 1.0", "< 3.0"
-  spec.metadata = {
-    "rubygems_mfa_required" => "true"
-  }
 end
