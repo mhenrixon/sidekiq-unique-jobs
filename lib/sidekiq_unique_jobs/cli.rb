@@ -21,10 +21,8 @@ module SidekiqUniqueJobs
     # :nodoc:
     def list(pattern = "*")
       max_count = options[:count]
-      say "Searching for regular digests"
+      say "Searching for digests"
       list_entries(digests.entries(pattern: pattern, count: max_count), pattern)
-      say "Searching for expiring digests"
-      list_entries(expiring_digests.entries(pattern: pattern, count: max_count), pattern)
     end
 
     desc "del PATTERN", "deletes unique digests from redis by pattern"
@@ -58,11 +56,6 @@ module SidekiqUniqueJobs
       end
 
       # :nodoc:
-      def expiring_digests
-        @expiring_digests ||= SidekiqUniqueJobs::ExpiringDigests.new
-      end
-
-      # :nodoc:
       def console_class
         require "pry"
         Pry
@@ -79,15 +72,13 @@ module SidekiqUniqueJobs
 
       # :nodoc:
       def count_entries_for_del(max_count, pattern)
-        count = digests.entries(pattern: pattern, count: max_count).size +
-                expiring_digests.entries(pattern: pattern, count: max_count).size
+        count = digests.entries(pattern: pattern, count: max_count).size
         say "Would delete #{count} digests matching '#{pattern}'"
       end
 
       # :nodoc:
       def del_entries(max_count, pattern)
-        deleted_count = digests.delete_by_pattern(pattern, count: max_count).to_i +
-                        expiring_digests.delete_by_pattern(pattern, count: max_count).to_i
+        deleted_count = digests.delete_by_pattern(pattern, count: max_count).to_i
         say "Deleted #{deleted_count} digests matching '#{pattern}'"
       end
     end

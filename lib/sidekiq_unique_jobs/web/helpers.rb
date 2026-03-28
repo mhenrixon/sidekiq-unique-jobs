@@ -51,25 +51,7 @@ module SidekiqUniqueJobs
         @digests ||= SidekiqUniqueJobs::Digests.new
       end
 
-      #
-      # The collection of digests
-      #
-      #
-      # @return [SidekiqUniqueJobs::ExpiringDigests] the sorted set with expiring digests
-      #
-      def expiring_digests
-        @expiring_digests ||= SidekiqUniqueJobs::ExpiringDigests.new
-      end
-
-      #
-      # The collection of changelog entries
-      #
-      #
-      # @return [SidekiqUniqueJobs::Digests] the sorted set with digests
-      #
-      def changelog
-        @changelog ||= SidekiqUniqueJobs::Changelog.new
-      end
+      # v9: expiring_digests merged into digests, changelog removed
 
       #
       # Creates url safe parameters
@@ -116,14 +98,8 @@ module SidekiqUniqueJobs
       #
       # @return a redirect to the new subpath
       #
-      def safe_redirect_to(subpath)
-        if respond_to?(:to)
-          # Sinatra-based web UI
-          redirect to(subpath)
-        else
-          # Non-Sinatra based web UI (Sidekiq 4.2+)
-          redirect "#{root_path}#{subpath}"
-        end
+      def redirect_to(subpath)
+        redirect "#{root_path}#{subpath}"
       end
 
       #
@@ -171,33 +147,7 @@ module SidekiqUniqueJobs
         end
       end
 
-      # Copied from sidekiq for compatibility with older versions
-
-      # stuff after ? or form input
-      # uses String keys, no Symbols!
-      def safe_url_params(key)
-        return url_params(key) if Sidekiq::MAJOR >= 8
-
-        if key.is_a?(Symbol)
-          warn do
-            "URL parameter `#{key}` should be accessed via String, not Symbol (at #{caller(3..3).first})"
-          end
-        end
-        request.params[key.to_s]
-      end
-
-      # variables embedded in path, `/metrics/:name`
-      # uses Symbol keys, no Strings!
-      def safe_route_params(key)
-        return route_params(key) if Sidekiq::MAJOR >= 8
-
-        if key.is_a?(String)
-          warn do
-            "Route parameter `#{key}` should be accessed via Symbol, not String (at #{caller(3..3).first})"
-          end
-        end
-        env["rack.route_params"][key.to_sym]
-      end
+      # Sidekiq 8+ parameter access (no compat shims needed)
     end
   end
 end

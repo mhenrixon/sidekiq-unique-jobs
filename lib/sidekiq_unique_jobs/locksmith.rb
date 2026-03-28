@@ -52,7 +52,7 @@ module SidekiqUniqueJobs
     # @return [String, nil] the job_id if locked, nil if not
     #
     def lock(wait: nil) # rubocop:disable Lint/UnusedMethodArgument
-      result = call_script(:lock_v9, key.to_a_v9, lock_argv)
+      result = call_script(:lock_v9, key.to_a, lock_argv)
       return unless result
 
       reflect(:debug, :locked, item, result)
@@ -139,7 +139,7 @@ module SidekiqUniqueJobs
     attr_reader :redis_pool
 
     def do_unlock(conn)
-      result = call_script(:unlock_v9, key.to_a_v9, [job_id, config.type], conn)
+      result = call_script(:unlock_v9, key.to_a, [job_id, config.type], conn)
 
       if result == job_id
         reflect(:debug, :unlocked, item, result)

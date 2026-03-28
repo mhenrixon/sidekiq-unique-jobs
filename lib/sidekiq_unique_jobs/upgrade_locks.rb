@@ -177,7 +177,7 @@ module SidekiqUniqueJobs
 
     # v8→v9: Merge expiring_digests into digests (unified ZSET)
     def merge_expiring_digests
-      expiring_count = conn.call("ZCARD", EXPIRING_DIGESTS)
+      expiring_count = conn.call("ZCARD", "uniquejobs:expiring_digests")
       return if expiring_count.zero?
 
       log_info("Start - Merging #{expiring_count} expiring digests")
@@ -186,7 +186,7 @@ module SidekiqUniqueJobs
       cursor = "0"
       moved = 0
       loop do
-        cursor, entries = conn.call("ZSCAN", EXPIRING_DIGESTS, cursor, "COUNT", "100")
+        cursor, entries = conn.call("ZSCAN", "uniquejobs:expiring_digests", cursor, "COUNT", "100")
         break if entries.empty?
 
         entries.each_slice(2) do |digest, score|
@@ -197,7 +197,7 @@ module SidekiqUniqueJobs
         break if cursor == "0"
       end
 
-      conn.call("UNLINK", EXPIRING_DIGESTS)
+      conn.call("UNLINK", "uniquejobs:expiring_digests")
       log_info("Done - Merged #{moved} expiring digests")
       @count += moved
     end
