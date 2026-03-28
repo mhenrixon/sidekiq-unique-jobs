@@ -187,7 +187,6 @@ module SidekiqUniqueJobs
       moved = 0
       loop do
         cursor, entries = conn.call("ZSCAN", "uniquejobs:expiring_digests", cursor, "COUNT", "100")
-        break if entries.empty?
 
         entries.each_slice(2) do |digest, score|
           conn.call("ZADD", DIGESTS, score, digest)

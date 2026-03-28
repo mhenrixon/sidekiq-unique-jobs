@@ -98,7 +98,7 @@ SidekiqUniqueJobs.configure do |config|
   config.on_conflict       = nil     # Global default conflict strategy
   config.lock_info         = false   # Store lock metadata (useful for debugging)
   config.enabled           = true    # Disable uniqueness globally
-  config.reaper            = :ruby   # Orphaned lock cleanup (:ruby, :none)
+  config.reaper            = :ruby   # Orphaned lock cleanup (:ruby, :lua, true, :none, false)
   config.reaper_count      = 1000    # Max locks to reap per cycle
   config.reaper_interval   = 600     # Seconds between reaper runs
   config.reaper_timeout    = 10      # Max seconds per reaper run

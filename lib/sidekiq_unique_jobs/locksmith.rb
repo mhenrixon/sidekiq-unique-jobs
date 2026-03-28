@@ -91,11 +91,8 @@ module SidekiqUniqueJobs
     # Deletes the lock regardless of if it has a pttl set
     #
     def delete!
-      redis(redis_pool) do |conn|
-        conn.call("HDEL", key.locked, job_id)
-        conn.call("ZREM", key.digests, key.digest)
-        conn.call("UNLINK", key.locked) if conn.call("HLEN", key.locked).zero?
-      end
+      # Force unlock regardless of lock_type (pass "force" to skip until_expired check)
+      call_script(:unlock, key.to_a, [job_id, "force"])
     end
 
     #

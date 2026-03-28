@@ -55,7 +55,7 @@ module SidekiqUniqueJobs
     #
     def lock(job_id, lock_info = {}, score = nil)
       score ||= now_f
-      metadata = dump_json(lock_info.merge("time" => now_f))
+      metadata = dump_json(lock_info.merge("time" => @created_at || now_f))
 
       redis do |conn|
         conn.multi do |pipeline|
@@ -74,6 +74,14 @@ module SidekiqUniqueJobs
     #
     def unlock(job_id)
       locked.del(job_id)
+
+      # Clean up digests ZSET when no more holders
+      redis do |conn|
+        if conn.call("HLEN", key.locked).zero?
+          conn.call("ZREM", DIGESTS, key.digest)
+          conn.call("UNLINK", key.locked)
+        end
+      end
     end
 
     #

@@ -180,31 +180,32 @@ module SidekiqUniqueJobs
         recovered = 0
 
         redis do |conn|
-          conn.call("SCAN", "0", "MATCH", "uniquejobs:working:*", "COUNT", "100").last.each do |working_key|
-            wk_identity = working_key.delete_prefix("uniquejobs:working:")
-            next if wk_identity == @identity
+          cursor = "0"
+          loop do
+            cursor, keys = conn.call("SCAN", cursor, "MATCH", "uniquejobs:working:*", "COUNT", "100")
+            keys.each do |working_key|
+              wk_identity = working_key.delete_prefix("uniquejobs:working:")
+              next if wk_identity == @identity
 
-            # Check if process is alive via heartbeat
-            heartbeat_key = Key.heartbeat(wk_identity)
-            next if conn.call("EXISTS", heartbeat_key).positive?
+              heartbeat_key = Key.heartbeat(wk_identity)
+              next if conn.call("EXISTS", heartbeat_key).positive?
 
-            # Process is dead — recover all its jobs
-            loop do
-              job_json = conn.call("RPOP", working_key)
-              break unless job_json
-
-              parsed = safe_load_json(job_json)
-              queue = if parsed.is_a?(Hash) && parsed["queue"]
-                "queue:#{parsed['queue']}"
-              else
-                "queue:default"
+              # Dead process — use LRANGE + UNLINK (batch, not per-item RPOP)
+              jobs = conn.call("LRANGE", working_key, 0, -1)
+              jobs.each do |job_json|
+                parsed = safe_load_json(job_json)
+                queue = if parsed.is_a?(Hash) && parsed["queue"]
+                  "queue:#{parsed['queue']}"
+                else
+                  "queue:default"
+                end
+                conn.call("LPUSH", queue, job_json)
+                recovered += 1
               end
 
-              conn.call("LPUSH", queue, job_json)
-              recovered += 1
+              conn.call("UNLINK", working_key)
             end
-
-            conn.call("UNLINK", working_key)
+            break if cursor == "0"
           end
         end
 

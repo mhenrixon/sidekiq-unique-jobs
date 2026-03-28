@@ -4,7 +4,7 @@ local digests = KEYS[2]
 local job_id    = ARGV[1]
 local lock_type = ARGV[2]
 
-if lock_type == "until_expired" then
+if lock_type ~= "force" and lock_type == "until_expired" then
   return job_id
 end
 
