@@ -20,7 +20,8 @@
         <td class="text-right"><%= stats[:locked] %></td>
         <td class="text-right"><%= stats[:lock_failed].positive? ? "<span class='text-warning'>#{stats[:lock_failed]}</span>" : stats[:lock_failed] %></td>
         <td class="text-right"><%= stats[:unlocked] %></td>
-        <td class="text-right"><%= stats[:execution_failed].positive? ? "<span class='text-danger'>#{stats[:execution_failed]}</span>" : stats[:execution_failed] %></td>
+        <% failures = stats[:execution_failed] + stats[:unlock_failed] %>
+        <td class="text-right"><%= failures.positive? ? "<span class='text-danger'>#{failures}</span>" : failures %></td>
       </tr>
       <% end %>
     </tbody>

@@ -38,7 +38,7 @@ module SidekiqUniqueJobs
         @strictly_ordered_queues = capsule.mode == :strict
         @queues = capsule.queues.map { |q| "queue:#{q}" }
         @queues.uniq! if @strictly_ordered_queues
-        @identity = identity
+        @identity = "#{Socket.gethostname}:#{Process.pid}:#{SecureRandom.hex(6)}"
         @working_key = Key.working(@identity)
         @done = false
 
@@ -76,6 +76,8 @@ module SidekiqUniqueJobs
       #
       # @param inprogress [Array<UnitOfWork>] jobs to requeue
       def bulk_requeue(inprogress)
+        @done = true
+        @heartbeat_thread&.join(1)
         return if inprogress.empty?
 
         logger.debug { "Re-queueing #{inprogress.size} jobs" }
@@ -95,10 +97,6 @@ module SidekiqUniqueJobs
       end
 
       private
-
-      def identity
-        @identity ||= "#{Socket.gethostname}:#{::Process.pid}"
-      end
 
       # Non-blocking fetch using Lua script: LMOVE + lock validation
       def fetch_nonblocking(conn, queue)
@@ -199,7 +197,7 @@ module SidekiqUniqueJobs
                 else
                   "queue:default"
                 end
-                conn.call("LPUSH", queue, job_json)
+                conn.call("RPUSH", queue, job_json)
                 recovered += 1
               end
 

@@ -115,7 +115,7 @@ module SidekiqUniqueJobs
       if conn
         taken?(conn)
       else
-        redis { |rcon| taken?(rcon) }
+        redis(redis_pool) { |rcon| taken?(rcon) }
       end
     end
 

@@ -45,6 +45,9 @@ module SidekiqUniqueJobs
           pipe.call("EXPIRE", key, METRICS_TTL.to_s)
         end
       end
+    rescue StandardError
+      # Re-merge unflushed data back into counters so it's not lost
+      @mutex.synchronize { data.each { |k, v| @counters[k] += v } }
     end
 
     # Query metrics for the last N minutes
