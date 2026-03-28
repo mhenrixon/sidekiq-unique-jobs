@@ -48,7 +48,7 @@ RSpec.describe SidekiqUniqueJobs::Web do
     ]
   end
 
-  it "can paginate changelogs" do
+  it "can paginate changelogs", skip: "v9: changelog removed from lock Lua scripts" do
     Array.new(190) do |idx|
       expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
     end

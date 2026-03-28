@@ -94,7 +94,7 @@ module SidekiqUniqueJobs
       redis(redis_pool) do |conn|
         conn.call("HDEL", key.locked, job_id)
         conn.call("ZREM", key.digests, key.digest)
-        conn.call("UNLINK", key.locked) if conn.call("HLEN", key.locked) == 0
+        conn.call("UNLINK", key.locked) if conn.call("HLEN", key.locked).zero?
       end
     end
 
@@ -150,7 +150,7 @@ module SidekiqUniqueJobs
     end
 
     def taken?(conn)
-      conn.call("HEXISTS", key.locked, job_id) > 0
+      conn.call("HEXISTS", key.locked, job_id).positive?
     end
 
     def lock_argv
