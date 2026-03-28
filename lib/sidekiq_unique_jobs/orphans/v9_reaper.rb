@@ -12,7 +12,7 @@ module SidekiqUniqueJobs
     class V9Reaper < Reaper
       def call
         call_script(
-          :reap_v9,
+          :reap,
           conn,
           keys: [DIGESTS],
           argv: [reaper_count],
