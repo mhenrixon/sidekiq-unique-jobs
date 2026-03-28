@@ -834,7 +834,7 @@ module SidekiqUniqueJobs
     end
 
     def unique_keys
-      keys("uniquejobs:*") - [SidekiqUniqueJobs::DIGESTS]
+      keys("uniquejobs:*").reject { |k| k == SidekiqUniqueJobs::DIGESTS || k.start_with?("uniquejobs:metrics") }
     end
 
     def expired_keys

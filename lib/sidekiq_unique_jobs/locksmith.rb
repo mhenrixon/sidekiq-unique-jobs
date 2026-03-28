@@ -56,11 +56,13 @@ module SidekiqUniqueJobs
 
       unless result
         reflect(:lock_failed, item)
+        LockMetrics.record(:lock_failed, item)
         return
       end
 
       reflect(:debug, :locked, item, result)
       reflect(:locked, item)
+      LockMetrics.record(:locked, item)
       job_id
     end
 
@@ -146,6 +148,7 @@ module SidekiqUniqueJobs
       if result == job_id
         reflect(:debug, :unlocked, item, result)
         reflect(:unlocked, item)
+        LockMetrics.record(:unlocked, item)
       end
 
       result

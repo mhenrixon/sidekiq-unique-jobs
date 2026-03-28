@@ -50,6 +50,29 @@ module SidekiqUniqueJobs
       @mutex.synchronize { data.each { |k, v| @counters[k] += v } }
     end
 
+    # Record a single event directly to Redis.
+    # Use this from code that may run in the client process (e.g., locksmith)
+    # where the in-memory metrics buffer and flush timer are not available.
+    #
+    # @param event [Symbol] one of EVENTS
+    # @param item [Hash] the Sidekiq job hash (needs "lock" key)
+    def self.record(event, item)
+      lock_type = item.is_a?(Hash) ? (item["lock"] || "unknown").to_s : "unknown"
+      bucket = Time.now.utc.strftime("%y%m%d|%-H:%M")
+      key = "#{METRICS_PREFIX}|#{bucket}"
+
+      Sidekiq.redis do |conn|
+        conn.pipelined do |pipe|
+          pipe.call("HINCRBY", key, "#{lock_type}|#{event}", 1)
+          pipe.call("HINCRBY", key, "total|#{event}", 1)
+          pipe.call("EXPIRE", key, METRICS_TTL.to_s)
+        end
+      end
+    rescue StandardError
+      # Best-effort: don't break lock/unlock if Redis metrics fail
+      nil
+    end
+
     # Query metrics for the last N minutes
     #
     # @param minutes [Integer] how many minutes to look back
