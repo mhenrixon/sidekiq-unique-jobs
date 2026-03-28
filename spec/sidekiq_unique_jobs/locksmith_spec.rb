@@ -202,11 +202,27 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
   end
 
-  it "reflects on unlocked" do
+  it "records locked metric when lock succeeds" do
     locksmith_one.lock
-    allow(locksmith_one).to receive(:reflect)
+
+    results = SidekiqUniqueJobs::LockMetrics.query(minutes: 1)
+    expect(results["until_executed|locked"]).to eq(1)
+  end
+
+  it "records lock_failed metric when lock fails" do
+    locksmith_one.lock
+    locksmith_two.lock
+
+    results = SidekiqUniqueJobs::LockMetrics.query(minutes: 1)
+    expect(results["until_executed|lock_failed"]).to eq(1)
+  end
+
+  it "records unlocked metric on unlock" do
+    locksmith_one.lock
     locksmith_one.unlock
-    expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
+
+    results = SidekiqUniqueJobs::LockMetrics.query(minutes: 1)
+    expect(results["until_executed|unlocked"]).to eq(1)
   end
 
   describe "lock acquisition" do

@@ -2,8 +2,6 @@
 
 RSpec.shared_examples "a lock implementation" do
   before do
-    allow(process_one).to receive(:reflect).and_call_original
-    allow(process_two).to receive(:reflect).and_call_original
     allow(process_one).to receive(:call_strategy).and_call_original
     allow(process_two).to receive(:call_strategy).and_call_original
   end
@@ -30,7 +28,9 @@ RSpec.shared_examples "a lock implementation" do
     it "handles lock failures" do
       process_two.lock
 
-      expect(process_two).to have_received(:reflect).with(:lock_failed, item_two)
+      lock_type = item_two["lock"].to_s
+      results = SidekiqUniqueJobs::LockMetrics.query(minutes: 1)
+      expect(results["#{lock_type}|lock_failed"]).to be >= 1
       expect(process_two).to have_received(:call_strategy).with(origin: :client)
     end
   end

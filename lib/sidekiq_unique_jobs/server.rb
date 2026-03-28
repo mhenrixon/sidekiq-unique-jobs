@@ -83,9 +83,6 @@ module SidekiqUniqueJobs
         @metrics = LockMetrics.new
 
         SidekiqUniqueJobs.reflect do |on|
-          on.locked { |item| @metrics.track(:locked, item) }
-          on.lock_failed { |item| @metrics.track(:lock_failed, item) }
-          on.unlocked { |item| @metrics.track(:unlocked, item) }
           on.unlock_failed { |item| @metrics.track(:unlock_failed, item) }
           on.execution_failed { |item, *| @metrics.track(:execution_failed, item) }
         end
