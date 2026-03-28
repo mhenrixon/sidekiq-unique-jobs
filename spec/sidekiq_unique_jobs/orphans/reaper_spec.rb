@@ -40,7 +40,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
     end
 
     it "removes multiple orphaned locks in one run" do
-      digests = 3.times.map { "uniquejobs:#{SecureRandom.hex(12)}" }
+      digests = Array.new(3) { "uniquejobs:#{SecureRandom.hex(12)}" }
       digests.each { |d| create_lock(d, SecureRandom.hex(12)) }
 
       expect(described_class.call).to eq(3)
@@ -114,7 +114,7 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
       expect(described_class.call).to eq(0)
     end
 
-    it "skips queue scanning when queues are very full" do
+    it "preserves locks when queues are very full (fails closed)" do
       digest = "uniquejobs:#{SecureRandom.hex(12)}"
       create_lock(digest, SecureRandom.hex(12))
 
@@ -124,9 +124,8 @@ RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
         1_001.times { |i| conn.call("LPUSH", "queue:big", "{\"jid\":\"j#{i}\"}") }
       end
 
-      # The digest is not in the queue, but queue scanning is skipped.
-      # It should still be reaped because schedule/retry/process checks find nothing.
-      expect(described_class.call).to eq(1)
+      # Queue scanning is skipped — fail closed, preserve the lock
+      expect(described_class.call).to eq(0)
     end
   end
 end

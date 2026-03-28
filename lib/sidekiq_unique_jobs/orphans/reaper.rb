@@ -58,13 +58,10 @@ module SidekiqUniqueJobs
 
           candidates.each do |digest|
             break if timeout?
+            next if belongs_to_job?(conn, digest)
 
-            if belongs_to_job?(conn, digest)
-              next
-            else
-              orphans << digest
-              break if orphans.size >= @reaper_count
-            end
+            orphans << digest
+            break if orphans.size >= @reaper_count
           end
 
           break if timeout?
@@ -112,7 +109,7 @@ module SidekiqUniqueJobs
       # Check all queues for the digest using string matching.
       # Iterates queue entries in pages, short-circuits on match.
       def enqueued?(conn, digest)
-        return false if queues_very_full?(conn)
+        return true if queues_very_full?(conn)
 
         needle = digest.delete_suffix(RUN_SUFFIX)
         queues = conn.call("SMEMBERS", "queues")
@@ -130,8 +127,10 @@ module SidekiqUniqueJobs
         procs = conn.call("SMEMBERS", PROCESSES)
 
         procs.each do |process|
-          valid, workers = conn.call("EXISTS", process), conn.call("HGETALL", "#{process}:work")
+          valid = conn.call("EXISTS", process)
           next unless valid.positive?
+
+          workers = conn.call("HGETALL", "#{process}:work")
 
           workers.each_slice(2) do |_tid, job_json|
             item = safe_load_json(job_json)
@@ -154,7 +153,7 @@ module SidekiqUniqueJobs
         page = 0
 
         loop do
-          range_start = (page * PAGE_SIZE) - deleted_size
+          range_start = [(page * PAGE_SIZE) - deleted_size, 0].max
           range_end = range_start + PAGE_SIZE - 1
           entries = conn.call("LRANGE", queue_key, range_start, range_end)
 
@@ -166,8 +165,7 @@ module SidekiqUniqueJobs
 
           page += 1
           current_size = conn.call("LLEN", queue_key)
-          deleted_size = initial_size - current_size
-          deleted_size = 0 if deleted_size.negative?
+          deleted_size = [initial_size - current_size, 0].max
         end
 
         false
@@ -190,14 +188,7 @@ module SidekiqUniqueJobs
       def delete_orphans(conn, orphans)
         return if orphans.empty?
 
-        orphans.each_slice(PAGE_SIZE) do |batch|
-          conn.multi do |pipeline|
-            batch.each do |digest|
-              pipeline.call("UNLINK", "#{digest}:LOCKED")
-              pipeline.call("ZREM", DIGESTS, digest)
-            end
-          end
-        end
+        BatchDelete.call(orphans, conn)
       end
 
       def max_score

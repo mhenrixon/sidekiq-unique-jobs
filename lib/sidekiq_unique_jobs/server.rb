@@ -54,7 +54,7 @@ module SidekiqUniqueJobs
           log_info("Reaper found no orphans")
         end
         count
-      rescue => ex
+      rescue StandardError => ex
         log_error("Reaper error: #{ex.class}: #{ex.message}")
         0
       end
