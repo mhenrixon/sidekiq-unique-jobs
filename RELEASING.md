@@ -17,26 +17,23 @@ Releases are fully automated via GitHub Actions with supply chain security built
 ## How to release
 
 ```bash
-# 1. Update the version
-vim lib/sidekiq_unique_jobs/version.rb
+# Stable release
+rake release[1.2.3]
 
-# 2. Commit the version bump
-git add lib/sidekiq_unique_jobs/version.rb
-git commit -m "chore: bump version to X.Y.Z"
+# Pre-release
+rake release[1.2.3.alpha1]
 
-# 3. Tag and push
-git tag vX.Y.Z
-git push origin main --tags
+# Release current version as pre-release (no version bump)
+rake release[pre]
 ```
 
-That's it. The CI pipeline handles everything else:
+The rake task handles everything locally (version bump, commit, push) then runs
+`gh release create` which triggers the CI pipeline:
 
 1. **test** — runs rubocop + rspec against Redis
 2. **build** — verifies tag/version match, builds gem with `--strict`, verifies contents, generates checksums
 3. **publish-rubygems** — verifies checksums, obtains OIDC credentials, signs with Sigstore, pushes to RubyGems
-4. **github-release** — creates GitHub release with auto-generated notes, attaches `.gem` + checksums + Sigstore bundle
-
-Pre-release versions (containing `alpha`, `beta`, `rc`, or `pre`) are automatically flagged as pre-releases on GitHub.
+4. **upload-release-assets** — attaches `.gem` + checksums + Sigstore bundle to the release
 
 ## Initial setup (one-time)
 
@@ -69,7 +66,12 @@ If `RUBYGEMS_API_KEY` exists in repo secrets, it can be removed — trusted publ
 Download the `.sha256` or `.sha512` file from the GitHub release and verify:
 
 ```bash
+# Download release assets
+gh release download vX.Y.Z --repo mhenrixon/sidekiq-unique-jobs
+
+# Verify checksums
 sha256sum -c sidekiq-unique-jobs-X.Y.Z.gem.sha256
+sha512sum -c sidekiq-unique-jobs-X.Y.Z.gem.sha512
 ```
 
 ### Sigstore attestation
