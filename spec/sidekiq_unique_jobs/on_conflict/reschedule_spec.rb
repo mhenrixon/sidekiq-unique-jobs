@@ -96,6 +96,14 @@ RSpec.describe SidekiqUniqueJobs::OnConflict::Reschedule do
         # The fix sets RESCHEDULED flag so middleware skips uniqueness.
         expect { call }.to change { schedule_count }.by(1)
       end
+
+      it "removes the rescheduled flag from the scheduled job" do
+        call
+
+        scheduled_job = Sidekiq::ScheduledSet.new.first
+        expect(scheduled_job).not_to be_nil
+        expect(scheduled_job.item).not_to have_key("rescheduled")
+      end
     end
   end
 
