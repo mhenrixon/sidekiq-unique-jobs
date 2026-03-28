@@ -161,9 +161,7 @@ Benchmark.ips do |x|
   x.config(time: 10, warmup: 2)
 
   x.report("reaper cycle") do
-    SidekiqUniqueJobs.redis do |conn|
-      SidekiqUniqueJobs::Orphans::Reaper.call(conn)
-    end
+    SidekiqUniqueJobs::Server.reap
   end
 end
 
