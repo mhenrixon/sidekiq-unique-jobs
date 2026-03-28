@@ -78,6 +78,7 @@ require "sidekiq_unique_jobs/expiring_digests"
 
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
+require "sidekiq_unique_jobs/fetch/reliable"
 require "sidekiq_unique_jobs/update_version"
 require "sidekiq_unique_jobs/upgrade_locks"
 require "sidekiq_unique_jobs/server"
