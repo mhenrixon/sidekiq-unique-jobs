@@ -120,14 +120,7 @@ module SidekiqUniqueJobs
     # @return [Hash, nil] parsed metadata or nil
     #
     def info
-      @info ||= begin
-        entries = locked_jids(with_values: true)
-        return LockInfoStub.new if entries.empty?
-
-        first_value = entries.values.first
-        parsed = safe_load_json(first_value)
-        parsed.is_a?(Hash) ? LockInfoStub.new(parsed) : LockInfoStub.new
-      end
+      @info ||= build_info
     end
 
     #
@@ -149,6 +142,15 @@ module SidekiqUniqueJobs
 
     private
 
+    def build_info
+      entries = locked_jids(with_values: true)
+      return LockInfoStub.new if entries.empty?
+
+      first_value = entries.values.first
+      parsed = safe_load_json(first_value)
+      parsed.is_a?(Hash) ? LockInfoStub.new(parsed) : LockInfoStub.new
+    end
+
     def parse_metadata_time(value)
       parsed = safe_load_json(value)
       return value.to_f unless parsed.is_a?(Hash)
@@ -168,6 +170,14 @@ module SidekiqUniqueJobs
 
       def [](key)
         @hash[key]
+      end
+
+      def none?
+        @hash.empty?
+      end
+
+      def any?
+        !none?
       end
     end
   end

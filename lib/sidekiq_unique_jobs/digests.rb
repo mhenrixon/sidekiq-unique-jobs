@@ -97,6 +97,5 @@ module SidekiqUniqueJobs
         ]
       end
     end
-
   end
 end

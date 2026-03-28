@@ -28,7 +28,7 @@ module SidekiqUniqueJobs
 
       app.get "/locks/delete_all" do
         digests.delete_by_pattern("*", count: digests.count)
-        redirect_to :locks
+        redirect_to "locks"
       end
 
       app.get "/locks/:digest" do
@@ -40,7 +40,7 @@ module SidekiqUniqueJobs
 
       app.get "/locks/:digest/delete" do
         digests.delete_by_digest(h(route_params(:digest)))
-        redirect_to :locks
+        redirect_to "locks"
       end
 
       app.get "/locks/:digest/jobs/:job_id/delete" do

@@ -29,14 +29,14 @@ RSpec.describe SidekiqUniqueJobs::Server do
     subject(:start) { described_class.start }
 
     before do
-      allow(SidekiqUniqueJobs::UpdateVersion).to receive(:call).and_return(true)
+      allow(SidekiqUniqueJobs::UpgradeLocks).to receive(:call).and_return(true)
       allow(SidekiqUniqueJobs::Orphans::Manager).to receive(:start).and_return(true)
     end
 
     it "starts processes in the background" do
       start
 
-      expect(SidekiqUniqueJobs::UpdateVersion).to have_received(:call)
+      expect(SidekiqUniqueJobs::UpgradeLocks).to have_received(:call)
       expect(SidekiqUniqueJobs::Orphans::Manager).to have_received(:start)
     end
   end

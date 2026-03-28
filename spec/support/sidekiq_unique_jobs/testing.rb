@@ -834,8 +834,7 @@ module SidekiqUniqueJobs
     end
 
     def unique_keys
-      keys("uniquejobs:*") - [SidekiqUniqueJobs::CHANGELOGS, SidekiqUniqueJobs::DIGESTS,
-                              SidekiqUniqueJobs::EXPIRING_DIGESTS]
+      keys("uniquejobs:*") - [SidekiqUniqueJobs::DIGESTS]
     end
 
     def expired_keys
