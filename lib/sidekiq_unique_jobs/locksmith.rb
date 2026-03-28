@@ -53,9 +53,14 @@ module SidekiqUniqueJobs
     #
     def lock(wait: nil) # rubocop:disable Lint/UnusedMethodArgument
       result = call_script(:lock, key.to_a, lock_argv)
-      return unless result
+
+      unless result
+        reflect(:lock_failed, item)
+        return
+      end
 
       reflect(:debug, :locked, item, result)
+      reflect(:locked, item)
       job_id
     end
 

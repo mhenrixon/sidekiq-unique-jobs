@@ -33,7 +33,6 @@ module SidekiqUniqueJobs
 
       def lock
         lock_instance.lock do
-          reflect(:locked, item)
           return yield
         end
       end

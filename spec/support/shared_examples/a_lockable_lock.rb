@@ -28,9 +28,12 @@ RSpec.shared_examples "a lock implementation" do
     end
 
     it "handles lock failures" do
+      locksmith_two = process_two.locksmith
+      allow(locksmith_two).to receive(:reflect).and_call_original
+
       process_two.lock
 
-      expect(process_two).to have_received(:reflect).with(:lock_failed, item_two)
+      expect(locksmith_two).to have_received(:reflect).with(:lock_failed, item_two)
       expect(process_two).to have_received(:call_strategy).with(origin: :client)
     end
   end

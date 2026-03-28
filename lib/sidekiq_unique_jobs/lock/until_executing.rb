@@ -17,7 +17,6 @@ module SidekiqUniqueJobs
       #
       def lock(&block)
         unless (token = locksmith.lock)
-          reflect(:lock_failed, item)
           call_strategy(origin: :client, &block)
 
           return

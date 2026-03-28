@@ -202,6 +202,19 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     end
   end
 
+  it "reflects on locked when lock succeeds" do
+    allow(locksmith_one).to receive(:reflect).and_call_original
+    locksmith_one.lock
+    expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
+  end
+
+  it "reflects on lock_failed when lock fails" do
+    locksmith_one.lock
+    allow(locksmith_two).to receive(:reflect).and_call_original
+    locksmith_two.lock
+    expect(locksmith_two).to have_received(:reflect).with(:lock_failed, item_two)
+  end
+
   it "reflects on unlocked" do
     locksmith_one.lock
     allow(locksmith_one).to receive(:reflect)
