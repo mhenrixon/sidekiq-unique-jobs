@@ -35,6 +35,7 @@ module SidekiqUniqueJobs
     #
     def self.start
       SidekiqUniqueJobs::UpdateVersion.call
+      SidekiqUniqueJobs::Fetch::StartupCleanup.call
       SidekiqUniqueJobs::Orphans::Manager.start
       SidekiqUniqueJobs::Orphans::ReaperResurrector.start
     end

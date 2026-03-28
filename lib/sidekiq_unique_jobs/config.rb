@@ -26,6 +26,7 @@ module SidekiqUniqueJobs
     :digest_algorithm,
     :locksmith_executor,
     :on_conflict,
+    :lock_aware_fetch,
   )
 
   #
@@ -148,6 +149,9 @@ module SidekiqUniqueJobs
     #
     # @return [nil] by default no global on_conflict strategy (use per-job config)
     ON_CONFLICT           = nil
+    #
+    # @return [false] by default the lock-aware fetch is disabled
+    LOCK_AWARE_FETCH      = false
 
     #
     # Returns a default configuration
@@ -217,6 +221,7 @@ module SidekiqUniqueJobs
         DIGEST_ALGORITHM,
         LOCKSMITH_EXECUTOR,
         ON_CONFLICT,
+        LOCK_AWARE_FETCH,
       )
     end
 
