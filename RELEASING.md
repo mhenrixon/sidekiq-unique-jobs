@@ -17,27 +17,23 @@ Releases are fully automated via GitHub Actions with supply chain security built
 ## How to release
 
 ```bash
-# 1. Update the version
-vim lib/sidekiq_unique_jobs/version.rb
+# Stable release
+rake release[1.2.3]
 
-# 2. Commit the version bump
-git add lib/sidekiq_unique_jobs/version.rb
-git commit -m "chore: bump version to X.Y.Z"
-git push origin main
+# Pre-release
+rake release[1.2.3.alpha1]
 
-# 3. Create the release (one command does it all)
-gh release create vX.Y.Z --generate-notes --target main
-
-# For pre-releases:
-gh release create vX.Y.Z-alpha1 --generate-notes --prerelease --target main
+# Release current version as pre-release (no version bump)
+rake release[pre]
 ```
 
-That's it. Creating the GitHub release triggers the CI pipeline:
+The rake task handles everything locally (version bump, commit, push) then runs
+`gh release create` which triggers the CI pipeline:
 
 1. **test** — runs rubocop + rspec against Redis
 2. **build** — verifies tag/version match, builds gem with `--strict`, verifies contents, generates checksums
 3. **publish-rubygems** — verifies checksums, obtains OIDC credentials, signs with Sigstore, pushes to RubyGems
-4. **upload-release-assets** — attaches `.gem` + checksums + Sigstore bundle to the release you created
+4. **upload-release-assets** — attaches `.gem` + checksums + Sigstore bundle to the release
 
 ## Initial setup (one-time)
 
