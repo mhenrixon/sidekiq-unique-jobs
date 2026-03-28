@@ -16,9 +16,13 @@ module SidekiqUniqueJobs
     #
     # @return [true, false]
     def self.satisfied?(version, constraint)
-      # Split on && or space-separated operator+version pairs
-      parts = constraint.to_s.strip.scan(/[<>=!~]+\s*\d+(?:\.\d+)*/)
-      parts = [constraint.to_s] if parts.empty?
+      str = constraint.to_s.strip
+      return Gem::Requirement.new(">= 0").satisfied_by?(Gem::Version.new(version)) if str.empty?
+
+      # Split on && or comma first
+      parts = str.split(/\s*(?:&&|,)\s*/)
+      # If still single part, split on space before operators (e.g., ">= 3.2 <= 4.0")
+      parts = str.split(/\s+(?=[<>=!~])/) if parts.size == 1 && str.include?(" ")
       Gem::Requirement.new(*parts.map(&:strip)).satisfied_by?(Gem::Version.new(version))
     end
 
