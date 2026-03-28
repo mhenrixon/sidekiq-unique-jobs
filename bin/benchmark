@@ -4,26 +4,18 @@
 require "bundler/setup"
 
 # Ensure required gems are available
-dependencies = {
-  "benchmark-ips" => "benchmark/ips",
-  "benchmark-memory" => "benchmark/memory"
-}
-
-dependencies.each do |gem_name, require_path|
-  begin
-    require require_path
-  rescue LoadError
-    puts "Installing #{gem_name} for benchmarking..."
-    system("gem install #{gem_name} --no-document") || abort("Failed to install #{gem_name}")
-    require require_path
-  end
+%w[benchmark/ips benchmark/memory].each do |lib|
+  require lib
+rescue LoadError
+  gem_name = lib.tr("/", "-")
+  abort "Missing #{gem_name}. Install: gem install #{gem_name} --no-document"
 end
 
 require "sidekiq"
 require "sidekiq-unique-jobs"
 require "concurrent"
 
-# Configure Sidekiq and SidekiqUniqueJobs
+# Configure
 Sidekiq.configure_client do |config|
   config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
   config.client_middleware do |chain|
@@ -32,51 +24,35 @@ Sidekiq.configure_client do |config|
 end
 
 SidekiqUniqueJobs.configure do |config|
-  config.debug_lua = false
-  config.max_history = 10
-  config.lock_info = true
+  config.lock_info = false
   config.logger_enabled = false
 end
 
-# Flush Redis before benchmarking
-SidekiqUniqueJobs.redis do |conn|
-  conn.flushdb
-end
+SidekiqUniqueJobs.redis { |conn| conn.call("FLUSHDB") }
 
-puts "=== Sidekiq Unique Jobs Benchmarks ==="
-puts "Ruby Version: #{RUBY_VERSION}"
-puts "Redis Version: #{SidekiqUniqueJobs.redis { |conn| conn.info["redis_version"] }}"
-puts "Sidekiq Version: #{Sidekiq::VERSION}"
-puts "SidekiqUniqueJobs Version: #{SidekiqUniqueJobs::VERSION}"
-puts "============================================"
+puts "=" * 60
+puts "sidekiq-unique-jobs v#{SidekiqUniqueJobs::VERSION} Benchmark"
+puts "=" * 60
+puts "Ruby: #{RUBY_VERSION} | Sidekiq: #{Sidekiq::VERSION}"
+puts "Branch: #{`git rev-parse --abbrev-ref HEAD`.chomp}"
+puts "Commit: #{`git rev-parse --short HEAD`.chomp}"
+puts "=" * 60
 
-# Helper methods
-def create_item(jid: SecureRandom.hex(12), 
-                worker_class: "UniqueJobTest", 
-                queue: "default", 
-                lock_type: "until_executed", 
-                args: ["arg1", "arg2"], 
-                lock_timeout: 0, 
-                lock_ttl: nil, 
-                lock_limit: 1,
-                on_client_conflict: :reject,
-                on_server_conflict: :reject)
+def create_item(lock_type: "until_executed", args: %w[arg1 arg2], lock_ttl: nil, lock_limit: 1)
   {
-    "jid" => jid,
-    "class" => worker_class,
-    "queue" => queue,
+    "jid" => SecureRandom.hex(12),
+    "class" => "BenchmarkJob",
+    "queue" => "default",
     "lock" => lock_type,
     "args" => args,
     "lock_args" => args,
-    "lock_timeout" => lock_timeout,
+    "lock_timeout" => 0,
     "lock_ttl" => lock_ttl,
     "lock_limit" => lock_limit,
-    "on_client_conflict" => on_client_conflict,
-    "on_server_conflict" => on_server_conflict
   }
 end
 
-def prepare_job(item)
+def prepare(item)
   SidekiqUniqueJobs::Job.prepare(item)
   item
 end
@@ -85,224 +61,161 @@ def random_args
   [SecureRandom.hex(8), { "type" => SecureRandom.hex(4) }]
 end
 
-puts "\n=== Benchmark 1: Lock Acquisition ==="
-puts "Testing speed of acquiring locks with different strategies"
+# === Benchmark 1: Lock/Unlock Cycle ===
+puts "\n--- Lock/Unlock Cycle ---"
 
 Benchmark.ips do |x|
   x.config(time: 5, warmup: 2)
-  
-  x.report("until_executed - single lock") do
-    item = prepare_job(create_item(lock_type: "until_executed"))
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock
-    locksmith.unlock
+
+  x.report("until_executed") do
+    item = prepare(create_item(lock_type: "until_executed"))
+    ls = SidekiqUniqueJobs::Locksmith.new(item)
+    ls.lock
+    ls.unlock
   end
-  
-  x.report("until_executed - with block") do
-    item = prepare_job(create_item(lock_type: "until_executed"))
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock {}
+
+  x.report("until_expired (TTL 10s)") do
+    item = prepare(create_item(lock_type: "until_expired", lock_ttl: 10_000))
+    ls = SidekiqUniqueJobs::Locksmith.new(item)
+    ls.lock
+    ls.unlock
   end
-  
-  x.report("until_expired - single lock") do
-    item = prepare_job(create_item(lock_type: "until_expired", lock_ttl: 10_000))
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock
-    locksmith.unlock
+
+  x.report("while_executing") do
+    item = prepare(create_item(lock_type: "while_executing"))
+    ls = SidekiqUniqueJobs::Locksmith.new(item)
+    ls.lock
+    ls.unlock
   end
-  
-  x.report("while_executing - single lock") do
-    item = prepare_job(create_item(lock_type: "while_executing"))
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock
-    locksmith.unlock
-  end
-  
+
   x.compare!
 end
 
-puts "\n=== Benchmark 2: Lock Contention ==="
-puts "Testing performance under lock contention"
+# === Benchmark 2: Contention ===
+puts "\n--- Lock Contention ---"
 
 Benchmark.ips do |x|
   x.config(time: 5, warmup: 2)
-  
-  x.report("no contention - new args each time") do
-    item = prepare_job(create_item(args: random_args))
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock
-    locksmith.unlock
+
+  x.report("no contention (unique args)") do
+    item = prepare(create_item(args: random_args))
+    ls = SidekiqUniqueJobs::Locksmith.new(item)
+    ls.lock
+    ls.unlock
   end
-  
-  x.report("high contention - same args") do
-    item = prepare_job(create_item)
-    locksmith1 = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith1.lock
-    
-    # Try to acquire same lock
-    item2 = prepare_job(create_item(jid: SecureRandom.hex(12)))
-    locksmith2 = SidekiqUniqueJobs::Locksmith.new(item2)
-    locksmith2.lock
-    
-    # Clean up
-    locksmith1.unlock
-    locksmith2.unlock
+
+  x.report("high contention (same args)") do
+    item = prepare(create_item)
+    ls1 = SidekiqUniqueJobs::Locksmith.new(item)
+    ls1.lock
+
+    item2 = prepare(create_item)
+    ls2 = SidekiqUniqueJobs::Locksmith.new(item2)
+    ls2.lock # fails (contention)
+
+    ls1.unlock
   end
-  
+
   x.compare!
 end
 
-puts "\n=== Benchmark 3: Lock Digests ==="
-puts "Testing digest generation performance"
+# === Benchmark 3: Digest Generation ===
+puts "\n--- Digest Generation ---"
 
 Benchmark.ips do |x|
   x.config(time: 5, warmup: 2)
-  
+
   x.report("simple args") do
-    item = create_item(args: ["simple", "args"])
-    SidekiqUniqueJobs::LockDigest.new(item).lock_digest
+    SidekiqUniqueJobs::LockDigest.new(create_item(args: %w[simple args])).lock_digest
   end
-  
+
   x.report("complex args") do
-    item = create_item(args: [
-      { "id" => 123, "type" => "test", "nested" => { "data" => [1, 2, 3] } },
-      ["array", "of", "strings"],
-      "simple string"
-    ])
-    SidekiqUniqueJobs::LockDigest.new(item).lock_digest
+    SidekiqUniqueJobs::LockDigest.new(create_item(args: [
+      { "id" => 123, "nested" => { "data" => [1, 2, 3] } },
+      %w[array of strings],
+    ])).lock_digest
   end
-  
+
   x.compare!
 end
 
-puts "\n=== Benchmark 4: Conflict Resolution ==="
-puts "Testing performance of different conflict strategies"
+# === Benchmark 4: Concurrent Locking ===
+puts "\n--- Concurrent Locking ---"
 
-Benchmark.ips do |x|
-  x.config(time: 5, warmup: 2)
-  
-  x.report("reject strategy") do
-    item = prepare_job(create_item(on_client_conflict: :reject))
-    # First lock
-    locksmith1 = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith1.lock
-    
-    # Attempt second lock
-    item2 = prepare_job(create_item(jid: SecureRandom.hex(12), on_client_conflict: :reject))
-    strategy = SidekiqUniqueJobs::OnConflict::Reject.new(item2)
-    strategy.call
-    
-    locksmith1.unlock
-  end
-  
-  x.report("replace strategy") do
-    item = prepare_job(create_item(on_client_conflict: :replace))
-    # First lock
-    locksmith1 = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith1.lock
-    
-    # Attempt second lock with replace strategy
-    item2 = prepare_job(create_item(jid: SecureRandom.hex(12), on_client_conflict: :replace))
-    strategy = SidekiqUniqueJobs::OnConflict::Replace.new(item2)
-    strategy.call
-    
-    locksmith1.unlock
-  end
-  
-  x.compare!
-end
-
-puts "\n=== Benchmark 5: Concurrent Locking ==="
-puts "Testing performance with concurrent lock requests"
-
-def concurrent_locks(count, lock_type)
-  item_template = create_item(lock_type: lock_type, lock_ttl: 1000)
-  
-  # Create a common set of arguments
-  common_args = random_args
-  
-  # Create concurrent tasks
-  pool = Concurrent::FixedThreadPool.new(10)
+def concurrent_locks(count, threads)
+  pool = Concurrent::FixedThreadPool.new(threads)
   completed = Concurrent::AtomicFixnum.new(0)
   locked = Concurrent::AtomicFixnum.new(0)
-  
-  count.times do |i|
+
+  count.times do
     pool.post do
-      begin
-        item = prepare_job(item_template.merge(
-          "jid" => SecureRandom.hex(12),
-          "args" => common_args,
-          "lock_args" => common_args
-        ))
-        
-        locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-        if locksmith.lock
-          locked.increment
-          locksmith.unlock
-        end
-        completed.increment
-      rescue => e
-        puts "Error in thread #{i}: #{e.message}"
+      item = prepare(create_item(args: random_args))
+      ls = SidekiqUniqueJobs::Locksmith.new(item)
+      if ls.lock
+        locked.increment
+        ls.unlock
       end
+      completed.increment
+    rescue StandardError
+      completed.increment
     end
   end
-  
-  # Wait for all tasks to complete
-  sleep 0.1 until completed.value == count
+
+  sleep 0.1 until completed.value >= count
   pool.shutdown
-  pool.wait_for_termination(5)
-  
+  pool.wait_for_termination(10)
   locked.value
 end
 
-if Benchmark.respond_to?(:bm)
-  Benchmark.bm do |x|
-    [10, 100, 1000].each do |count|
-      x.report("#{count} concurrent until_executed locks") do
-        concurrent_locks(count, "until_executed")
-      end
-    end
+Benchmark.ips do |x|
+  x.config(time: 10, warmup: 2)
 
-    [10, 100, 1000].each do |count|
-      x.report("#{count} concurrent until_expired locks") do
-        concurrent_locks(count, "until_expired")
-      end
-    end
-  end
+  x.report("100 locks / 10 threads") { concurrent_locks(100, 10) }
+  x.report("500 locks / 20 threads") { concurrent_locks(500, 20) }
 end
 
-puts "\n=== Benchmark 6: Memory Usage ==="
-puts "Measuring memory allocation during locking operations"
+# === Benchmark 5: Memory ===
+puts "\n--- Memory Usage ---"
 
 Benchmark.memory do |x|
-  x.report("lock and unlock") do
-    item = prepare_job(create_item)
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.lock
-    locksmith.unlock
+  x.report("lock + unlock") do
+    item = prepare(create_item)
+    ls = SidekiqUniqueJobs::Locksmith.new(item)
+    ls.lock
+    ls.unlock
   end
-  
-  x.report("lock with execute") do
-    item = prepare_job(create_item)
-    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-    locksmith.execute { true }
+
+  x.report("lock + execute") do
+    item = prepare(create_item)
+    ls = SidekiqUniqueJobs::Locksmith.new(item)
+    ls.execute { true }
   end
-  
-  x.report("100 different locks") do
+
+  x.report("100 lock/unlock cycles") do
     100.times do
-      item = prepare_job(create_item(args: random_args))
-      locksmith = SidekiqUniqueJobs::Locksmith.new(item)
-      locksmith.lock
-      locksmith.unlock
+      item = prepare(create_item(args: random_args))
+      ls = SidekiqUniqueJobs::Locksmith.new(item)
+      ls.lock
+      ls.unlock
     end
   end
-  
+
   x.compare!
 end
 
-# Clean up Redis
-SidekiqUniqueJobs.redis do |conn|
-  conn.flushdb
-end
+# === Benchmark 6: Redis Keys Created ===
+puts "\n--- Redis Key Count ---"
 
-puts "\nBenchmarking complete!"
+SidekiqUniqueJobs.redis { |conn| conn.call("FLUSHDB") }
+item = prepare(create_item)
+ls = SidekiqUniqueJobs::Locksmith.new(item)
+ls.lock
+
+keys = SidekiqUniqueJobs.redis { |conn| conn.call("KEYS", "unique*") }
+puts "Keys per lock: #{keys.size}"
+keys.each { |k| puts "  #{k}" }
+
+ls.unlock
+SidekiqUniqueJobs.redis { |conn| conn.call("FLUSHDB") }
+
+puts "\nBenchmark complete!"
