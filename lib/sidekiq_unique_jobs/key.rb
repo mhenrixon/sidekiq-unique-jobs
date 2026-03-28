@@ -10,33 +10,17 @@ module SidekiqUniqueJobs
     #   @return [String] the digest key for which keys are created
     attr_reader :digest
     #
-    # @!attribute [r] queued
-    #   @return [String] the list key with queued job_id's
-    attr_reader :queued
-    #
-    # @!attribute [r] primed
-    #   @return [String] the list key with primed job_id's
-    attr_reader :primed
-    #
     # @!attribute [r] locked
     #   @return [String] the hash key with locked job_id's
     attr_reader :locked
     #
-    # @!attribute [r] info
-    #   @return [String] information about the lock
-    attr_reader :info
-    #
-    # @!attribute [r] changelog
-    #   @return [String] the zset with changelog entries
-    attr_reader :changelog
-    #
     # @!attribute [r] digests
     #   @return [String] the zset with locked digests
     attr_reader :digests
-    #
-    # @!attribute [r] expiring_digests
-    #   @return [String] the zset with locked expiring_digests
-    attr_reader :expiring_digests
+
+    # v8 compatibility — these attributes are deprecated in v9
+    # @deprecated Use {#locked} instead
+    attr_reader :queued, :primed, :info, :changelog, :expiring_digests
 
     #
     # Initialize a new Key
@@ -45,13 +29,37 @@ module SidekiqUniqueJobs
     #
     def initialize(digest)
       @digest           = digest
+      @locked           = suffixed_key("LOCKED")
+      @digests          = DIGESTS
+
+      # v8 compatibility — kept for migration and old Lua scripts
       @queued           = suffixed_key("QUEUED")
       @primed           = suffixed_key("PRIMED")
-      @locked           = suffixed_key("LOCKED")
       @info             = suffixed_key("INFO")
       @changelog        = CHANGELOGS
-      @digests          = DIGESTS
       @expiring_digests = EXPIRING_DIGESTS
+    end
+
+    #
+    # Returns the per-process working list key
+    #
+    # @param [String] identity the process identity (hostname:pid)
+    #
+    # @return [String] the working list key
+    #
+    def self.working(identity)
+      "uniquejobs:working:#{identity}"
+    end
+
+    #
+    # Returns the heartbeat key for a process
+    #
+    # @param [String] identity the process identity (hostname:pid)
+    #
+    # @return [String] the heartbeat key
+    #
+    def self.heartbeat(identity)
+      "uniquejobs:heartbeat:#{identity}"
     end
 
     #
@@ -81,7 +89,16 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Returns all keys as an ordered array
+    # Returns v9 keys as an ordered array (locked, digests)
+    #
+    # @return [Array] an ordered array with v9 keys
+    #
+    def to_a_v9
+      [locked, digests]
+    end
+
+    #
+    # Returns all keys as an ordered array (v8 compatibility)
     #
     # @return [Array] an ordered array with all keys
     #
