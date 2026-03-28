@@ -17,7 +17,7 @@ module SidekiqUniqueJobs
     # @return [true, false]
     def self.satisfied?(version, constraint)
       # Split on && or space-separated operator+version pairs
-      parts = constraint.to_s.strip.scan(/[<>=!~]+\s*[\d.]+/)
+      parts = constraint.to_s.strip.scan(/[<>=!~]+\s*\d+(?:\.\d+)*/)
       parts = [constraint.to_s] if parts.empty?
       Gem::Requirement.new(*parts.map(&:strip)).satisfied_by?(Gem::Version.new(version))
     end
