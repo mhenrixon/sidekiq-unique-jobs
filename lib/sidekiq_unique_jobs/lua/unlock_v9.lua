@@ -20,7 +20,7 @@ local redisversion = ARGV[7]
 
 
 --------  BEGIN local functions --------
-<%= include_partial "shared/_common.lua" %>
+<%= include_partial "shared/_common_v9.lua" %>
 ----------  END local functions ----------
 
 

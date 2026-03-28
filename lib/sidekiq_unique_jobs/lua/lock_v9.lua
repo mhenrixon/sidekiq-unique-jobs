@@ -23,7 +23,7 @@ local redisversion = ARGV[10]
 
 
 --------  BEGIN local functions --------
-<%= include_partial "shared/_common.lua" %>
+<%= include_partial "shared/_common_v9.lua" %>
 ----------  END local functions ----------
 
 
@@ -56,8 +56,9 @@ if lock_type == "until_expired" and pttl and pttl > 0 then
 else
   score = current_time
 end
-log_debug("ZADD", digests, score, string.gsub(locked, ":LOCKED$", ""))
-redis.call("ZADD", digests, score, string.gsub(locked, ":LOCKED$", ""))
+local digest = string.gsub(locked, ":LOCKED$", "")
+log_debug("ZADD", digests, score, digest)
+redis.call("ZADD", digests, score, digest)
 
 -- Set TTL if specified
 if pttl and pttl > 0 then
