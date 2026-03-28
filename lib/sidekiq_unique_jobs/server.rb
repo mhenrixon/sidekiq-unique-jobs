@@ -34,7 +34,7 @@ module SidekiqUniqueJobs
     # @return [void]
     #
     def self.start
-      SidekiqUniqueJobs::UpdateVersion.call
+      SidekiqUniqueJobs::UpgradeLocks.call
       SidekiqUniqueJobs::Orphans::Manager.start
       SidekiqUniqueJobs::Orphans::ReaperResurrector.start
     end

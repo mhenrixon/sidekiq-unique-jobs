@@ -15,8 +15,6 @@ module SidekiqUniqueJobs
       include SidekiqUniqueJobs::Logging
       include SidekiqUniqueJobs::JSON
 
-      require_relative "lua_reaper"
-      require_relative "ruby_reaper"
       require_relative "null_reaper"
       require_relative "v9_reaper"
 
