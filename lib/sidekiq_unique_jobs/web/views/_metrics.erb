@@ -1,0 +1,29 @@
+<% if @metrics_by_type.any? %>
+<div class="header-container">
+  <h4><%= t('Lock Metrics') %> <small class="text-muted">(last hour)</small></h4>
+</div>
+<div class="table_container">
+  <table class="table table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th><%= t('Type') %></th>
+        <th class="text-right"><%= t('Acquired') %></th>
+        <th class="text-right"><%= t('Denied') %></th>
+        <th class="text-right"><%= t('Released') %></th>
+        <th class="text-right"><%= t('Failures') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @metrics_by_type.each do |type, stats| %>
+      <tr<%= ' class="info"' if type == "total" %>>
+        <td><strong><%= type %></strong></td>
+        <td class="text-right"><%= stats[:locked] %></td>
+        <td class="text-right"><%= stats[:lock_failed].positive? ? "<span class='text-warning'>#{stats[:lock_failed]}</span>" : stats[:lock_failed] %></td>
+        <td class="text-right"><%= stats[:unlocked] %></td>
+        <td class="text-right"><%= stats[:execution_failed].positive? ? "<span class='text-danger'>#{stats[:execution_failed]}</span>" : stats[:execution_failed] %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end %>

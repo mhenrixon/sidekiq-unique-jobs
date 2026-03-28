@@ -23,6 +23,8 @@ module SidekiqUniqueJobs
           page_size: @count,
         )
 
+        @metrics_by_type = SidekiqUniqueJobs::LockMetrics.by_type(minutes: 60)
+
         erb(unique_template(:locks))
       end
 

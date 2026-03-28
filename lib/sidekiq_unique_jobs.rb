@@ -70,6 +70,7 @@ require "sidekiq_unique_jobs/sidekiq_unique_ext"
 require "sidekiq_unique_jobs/on_conflict"
 require "sidekiq_unique_jobs/digests"
 
+require "sidekiq_unique_jobs/lock_metrics"
 require "sidekiq_unique_jobs/config"
 require "sidekiq_unique_jobs/sidekiq_unique_jobs"
 require "sidekiq_unique_jobs/fetch/reliable"

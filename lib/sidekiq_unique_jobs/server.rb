@@ -5,58 +5,59 @@ module SidekiqUniqueJobs
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   class Server
-    #
-    # @return [Proc] returns a default death handler for the gem to cleanup dead locks
     DEATH_HANDLER = (lambda do |job, _ex|
       return unless (digest = job["lock_digest"])
 
       SidekiqUniqueJobs::Digests.new.delete_by_digest(digest)
     end).freeze
-    #
-    # Configure the server middleware
-    #
-    #
-    # @return [Sidekiq] the sidekiq configuration
-    #
-    def self.configure(config)
-      config.on(:startup)  { start }
-      config.on(:shutdown) { stop }
 
-      return unless config.respond_to?(:death_handlers)
+    class << self
+      attr_reader :metrics
 
-      config.death_handlers << death_handler
-    end
+      def configure(config)
+        config.on(:startup)  { start }
+        config.on(:shutdown) { stop }
 
-    #
-    # Start the sidekiq unique jobs server process
-    #
-    #
-    # @return [void]
-    #
-    def self.start
-      SidekiqUniqueJobs::UpgradeLocks.call
-      SidekiqUniqueJobs::Orphans::Manager.start
-      SidekiqUniqueJobs::Orphans::ReaperResurrector.start
-    end
+        return unless config.respond_to?(:death_handlers)
 
-    #
-    # Stop the sidekiq unique jobs server process
-    #
-    #
-    # @return [void]
-    #
-    def self.stop
-      SidekiqUniqueJobs::Orphans::Manager.stop
-    end
+        config.death_handlers << death_handler
+      end
 
-    #
-    # A death handler for dead jobs
-    #
-    #
-    # @return [lambda]
-    #
-    def self.death_handler
-      DEATH_HANDLER
+      def start
+        SidekiqUniqueJobs::UpgradeLocks.call
+        start_metrics
+        SidekiqUniqueJobs::Orphans::Manager.start
+        SidekiqUniqueJobs::Orphans::ReaperResurrector.start
+      end
+
+      def stop
+        @flush_task&.shutdown
+        @metrics&.flush
+        SidekiqUniqueJobs::Orphans::Manager.stop
+      end
+
+      def death_handler
+        DEATH_HANDLER
+      end
+
+      private
+
+      def start_metrics
+        @metrics = LockMetrics.new
+
+        SidekiqUniqueJobs.reflect do |on|
+          on.locked { |item| @metrics.track(:locked, item) }
+          on.lock_failed { |item| @metrics.track(:lock_failed, item) }
+          on.unlocked { |item| @metrics.track(:unlocked, item) }
+          on.unlock_failed { |item| @metrics.track(:unlock_failed, item) }
+          on.execution_failed { |item, *| @metrics.track(:execution_failed, item) }
+        end
+
+        @flush_task = SidekiqUniqueJobs::TimerTask.new(run_now: false, execution_interval: 60) do
+          @metrics.flush
+        end
+        @flush_task.execute
+      end
     end
   end
 end
