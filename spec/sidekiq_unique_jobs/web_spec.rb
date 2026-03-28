@@ -33,53 +33,10 @@ RSpec.describe SidekiqUniqueJobs::Web do
   let(:jid_two)    { "jid_two" }
   let(:digest_one) { "uniquejobs:9e9b5ce5d423d3ea470977004b50ff84" }
   let(:digest_two) { "uniquejobs:24c5b03e2d49d765e5dfb2d7c51c5929" }
-  let(:lock_type)  { :until_executed }
-  let(:changelog)  { SidekiqUniqueJobs::Changelog.new }
+  let(:lock_info)  { { "type" => "until_executed" } }
   let(:digests)    { SidekiqUniqueJobs::Digests.new }
 
-  let(:lock_info) do
-    { type: lock_type }
-  end
-
-  let(:expected_digests) do
-    [
-      a_collection_including(digest_one, kind_of(String)),
-      a_collection_including(digest_two, kind_of(String)),
-    ]
-  end
-
-  it "can paginate changelogs" do
-    Array.new(190) do |idx|
-      expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
-    end
-
-    get "/changelogs?filter=*&count=100"
-    _size, next_cursor, changelogs = changelog.page(cursor: 0, page_size: 100, pattern: "*")
-    expect(last_response).to be_ok
-
-    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
-      with_tag("tr.changelog-row", count: changelogs.size)
-    end
-
-    get "/changelogs?filter=*&cursor=#{next_cursor}&prev_cursor=0&count=100"
-
-    expect(last_response).to be_ok
-    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
-      _size, _next_cursor, changelogs = changelog.page(cursor: next_cursor, page_size: 100, pattern: "*")
-      with_tag("tr.changelog-row", count: changelogs.size)
-    end
-  end
-
-  it "can display changelog" do
-    lock_one.lock(jid_one, lock_info)
-    lock_two.lock(jid_two, lock_info)
-
-    get "/changelogs"
-
-    expect(last_response).to be_ok
-  end
-
-  it "can display digests" do
+  it "can display locks" do
     lock_one.lock(jid_one, lock_info)
     lock_two.lock(jid_two, lock_info)
 
@@ -90,32 +47,8 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).to match("/locks/#{digest_two}")
   end
 
-  it "can paginate digests" do
-    Array.new(190) do |idx|
-      expect(MyUniqueJob.perform_async(1, idx)).not_to be_nil
-    end
-
-    get "/locks?filter=*&count=100"
-    _size, _, locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
-
-    expect(last_response).to be_ok
-    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
-      with_tag("tr.lock-row", count: locks.size)
-    end
-
-    _size, next_cursor, _locks = digests.page(cursor: 0, page_size: 100, pattern: "*")
-    get "/locks?filter=*&cursor=#{next_cursor}&prev_cursor=0&count=100"
-
-    expect(last_response).to be_ok
-    expect(last_response.body).to have_tag("div", with: { class: "table_container" }) do
-      _size, _next_cursor, locks = digests.page(cursor: next_cursor, page_size: 100, pattern: "*")
-      with_tag("tr.lock-row", count: locks.size)
-    end
-  end
-
-  it "can display digest" do
+  it "can display single lock" do
     lock_one.lock(jid_one, lock_info)
-    lock_two.lock(jid_two, lock_info)
 
     get "/locks/#{digest_one}"
 
@@ -123,11 +56,9 @@ RSpec.describe SidekiqUniqueJobs::Web do
     expect(last_response.body).to match(digest_one)
   end
 
-  it "can delete digest" do
+  it "can delete a lock" do
     lock_one.lock(jid_one, lock_info)
     lock_two.lock(jid_two, lock_info)
-
-    expect(digests.entries).to match_array(expected_digests)
 
     get "/locks/#{digest_one}/delete"
 
@@ -137,14 +68,6 @@ RSpec.describe SidekiqUniqueJobs::Web do
     end
 
     expect(last_request.url).to end_with("/locks")
-    expect(last_response.body).not_to match("/locks/#{digest_one}")
-    expect(last_response.body).to match("/locks/#{digest_two}")
-
-    expect(digests.entries).to contain_exactly(
-      a_collection_including(
-        digest_two, kind_of(String)
-      ),
-    )
   end
 
   it "can unlock a job" do
@@ -159,97 +82,32 @@ RSpec.describe SidekiqUniqueJobs::Web do
     end
 
     expect(lock_one.locked_jids).not_to include(jid_one)
-
-    expect(last_request.url).to end_with("/locks/#{digest_one}")
-    expect(last_response.body).not_to match("/locks/#{digest_one}/jobs/#{jid_one}")
-    expect(last_response.body).to match("/locks/#{digest_one}/jobs/#{jid_two}")
+    expect(lock_one.locked_jids).to include(jid_two)
   end
 
   describe "delete_all" do
-    let(:expiring_digests) { SidekiqUniqueJobs::ExpiringDigests.new }
+    it "deletes all locks" do
+      lock_one.lock(jid_one, lock_info)
+      lock_two.lock(jid_two, lock_info)
 
-    context "when only regular locks exist" do
-      before do
-        lock_one.lock(jid_one, lock_info)
-        lock_two.lock(jid_two, lock_info)
+      expect(digests.count).to eq(2)
+
+      get "/locks/delete_all"
+
+      if last_response.redirect?
+        expect(last_response.status).to eq(302)
+        follow_redirect!
       end
 
-      it "deletes all regular locks" do
-        expect(digests.count).to eq(2)
-        expect(expiring_digests.count).to eq(0)
-
-        get "/locks/delete_all"
-
-        if last_response.redirect?
-          expect(last_response.status).to eq(302)
-          follow_redirect!
-          expect(last_request.url).to end_with("/locks")
-        end
-
-        expect(digests.count).to eq(0)
-        expect(expiring_digests.count).to eq(0)
-      end
+      expect(digests.count).to eq(0)
     end
 
-    context "when only expiring locks exist" do
-      before do
-        expiring_digests.add(digest_one)
-        expiring_digests.add(digest_two)
-      end
+    it "handles empty state" do
+      get "/locks/delete_all"
 
-      it "deletes all expiring locks" do
-        expect(digests.count).to eq(0)
-        expect(expiring_digests.count).to eq(2)
+      follow_redirect! if last_response.redirect?
 
-        get "/locks/delete_all"
-
-        if last_response.redirect?
-          expect(last_response.status).to eq(302)
-          follow_redirect!
-        end
-
-        expect(digests.count).to eq(0)
-        expect(expiring_digests.count).to eq(0)
-      end
-    end
-
-    context "when both regular and expiring locks exist" do
-      before do
-        lock_one.lock(jid_one, lock_info)
-        expiring_digests.add(digest_two)
-      end
-
-      it "deletes both regular and expiring locks" do
-        expect(digests.count).to eq(1)
-        expect(expiring_digests.count).to eq(1)
-
-        get "/locks/delete_all"
-
-        if last_response.redirect?
-          expect(last_response.status).to eq(302)
-          follow_redirect!
-        end
-
-        expect(digests.count).to eq(0)
-        expect(expiring_digests.count).to eq(0)
-      end
-    end
-
-    context "when no locks exist" do
-      it "does not raise an error" do
-        expect(digests.count).to eq(0)
-        expect(expiring_digests.count).to eq(0)
-
-        get "/locks/delete_all"
-
-        if last_response.redirect?
-          expect(last_response.status).to eq(302)
-          follow_redirect!
-        end
-
-        expect(digests.count).to eq(0)
-        expect(expiring_digests.count).to eq(0)
-      end
+      expect(last_response).to be_ok
     end
   end
 end

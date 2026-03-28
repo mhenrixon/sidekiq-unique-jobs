@@ -102,15 +102,9 @@ RSpec.describe SidekiqUniqueJobs::Digests do
       it "deletes just the specific digest" do
         unique_keys
         expect { delete_by_digest }.to change { digests.entries.size }.by(-1)
-        expect(unique_keys).not_to include(
-          %W[
-            #{digest}:INFO
-            #{digest}:LOCKED
-            #{digest}:QUEUED
-            #{digest}:PRIMED
-          ],
-        )
-        expect(unique_keys).to include(digest.delete_suffix(":RUN"))
+        expect(unique_keys).not_to include("#{digest}:LOCKED")
+        # The non-RUN version should still exist
+        expect(unique_keys).to include("#{digest.delete_suffix(':RUN')}:LOCKED")
       end
     end
   end

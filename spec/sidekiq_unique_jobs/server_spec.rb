@@ -9,19 +9,15 @@ RSpec.describe SidekiqUniqueJobs::Server do
     before do
       allow(config).to receive(:on).with(:startup).and_call_original
       allow(config).to receive(:on).with(:shutdown).and_call_original
-      allow(config.death_handlers).to receive(:<<).and_call_original if Sidekiq.respond_to?(:death_handlers)
+      allow(config.death_handlers).to receive(:<<).and_call_original
     end
 
-    it "configures startup" do
+    it "configures startup and shutdown hooks" do
       configure
 
       expect(config).to have_received(:on).with(:startup)
       expect(config).to have_received(:on).with(:shutdown)
-
-      if Sidekiq.respond_to?(:death_handlers)
-        expect(config.death_handlers).to have_received(:<<)
-          .with(described_class.death_handler)
-      end
+      expect(config.death_handlers).to have_received(:<<).with(described_class::DEATH_HANDLER)
     end
   end
 
@@ -29,35 +25,28 @@ RSpec.describe SidekiqUniqueJobs::Server do
     subject(:start) { described_class.start }
 
     before do
-      allow(SidekiqUniqueJobs::UpdateVersion).to receive(:call).and_return(true)
-      allow(SidekiqUniqueJobs::Orphans::Manager).to receive(:start).and_return(true)
+      allow(SidekiqUniqueJobs::UpgradeLocks).to receive(:call).and_return(true)
     end
 
-    it "starts processes in the background" do
+    it "runs upgrade and starts services" do
       start
 
-      expect(SidekiqUniqueJobs::UpdateVersion).to have_received(:call)
-      expect(SidekiqUniqueJobs::Orphans::Manager).to have_received(:start)
+      expect(SidekiqUniqueJobs::UpgradeLocks).to have_received(:call)
     end
   end
 
-  describe ".stop" do
-    subject(:stop) { described_class.stop }
+  describe ".reap" do
+    it "cleans stale digests" do
+      # Create a stale entry (no LOCKED hash)
+      redis { |conn| conn.call("ZADD", "uniquejobs:digests", Time.now.to_f.to_s, "uniquejobs:stale") }
 
-    before do
-      allow(SidekiqUniqueJobs::Orphans::Manager).to receive(:stop).and_return(true)
-    end
-
-    it "starts processes in the background" do
-      stop
-
-      expect(SidekiqUniqueJobs::Orphans::Manager).to have_received(:stop)
+      expect { described_class.reap }.to change {
+        SidekiqUniqueJobs::Digests.new.count
+      }.by(-1)
     end
   end
 
-  describe ".death_handler" do
-    subject(:death_handler) { described_class.death_handler }
-
+  describe "DEATH_HANDLER" do
     let(:item)    { { "lock_digest" => digest } }
     let(:digest)  { "uniquejobs:abcdefab" }
     let(:digests) { SidekiqUniqueJobs::Digests.new }
@@ -68,7 +57,7 @@ RSpec.describe SidekiqUniqueJobs::Server do
     end
 
     it "deletes digests for dead jobs" do
-      death_handler.call(item, nil)
+      described_class::DEATH_HANDLER.call(item, nil)
 
       expect(digests).to have_received(:delete_by_digest).with(digest)
     end

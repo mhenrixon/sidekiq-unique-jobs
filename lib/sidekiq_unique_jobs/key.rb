@@ -10,33 +10,13 @@ module SidekiqUniqueJobs
     #   @return [String] the digest key for which keys are created
     attr_reader :digest
     #
-    # @!attribute [r] queued
-    #   @return [String] the list key with queued job_id's
-    attr_reader :queued
-    #
-    # @!attribute [r] primed
-    #   @return [String] the list key with primed job_id's
-    attr_reader :primed
-    #
     # @!attribute [r] locked
     #   @return [String] the hash key with locked job_id's
     attr_reader :locked
     #
-    # @!attribute [r] info
-    #   @return [String] information about the lock
-    attr_reader :info
-    #
-    # @!attribute [r] changelog
-    #   @return [String] the zset with changelog entries
-    attr_reader :changelog
-    #
     # @!attribute [r] digests
     #   @return [String] the zset with locked digests
     attr_reader :digests
-    #
-    # @!attribute [r] expiring_digests
-    #   @return [String] the zset with locked expiring_digests
-    attr_reader :expiring_digests
 
     #
     # Initialize a new Key
@@ -44,49 +24,52 @@ module SidekiqUniqueJobs
     # @param [String] digest the digest to use as key
     #
     def initialize(digest)
-      @digest           = digest
-      @queued           = suffixed_key("QUEUED")
-      @primed           = suffixed_key("PRIMED")
-      @locked           = suffixed_key("LOCKED")
-      @info             = suffixed_key("INFO")
-      @changelog        = CHANGELOGS
-      @digests          = DIGESTS
-      @expiring_digests = EXPIRING_DIGESTS
+      @digest  = digest
+      @locked  = "#{digest}:LOCKED"
+      @digests = DIGESTS
     end
 
     #
-    # Provides the only important information about this keys
+    # Returns the per-process working list key
     #
+    # @param [String] identity the process identity (hostname:pid)
     #
-    # @return [String]
+    # @return [String] the working list key
     #
+    def self.working(identity)
+      "uniquejobs:working:#{identity}"
+    end
+
+    #
+    # Returns the heartbeat key for a process
+    #
+    # @param [String] identity the process identity (hostname:pid)
+    #
+    # @return [String] the heartbeat key
+    #
+    def self.heartbeat(identity)
+      "uniquejobs:heartbeat:#{identity}"
+    end
+
     def to_s
       digest
     end
 
-    # @see to_s
     def inspect
       digest
     end
 
-    #
-    # Compares keys by digest
-    #
-    # @param [Key] other the key to compare with
-    #
-    # @return [true, false]
-    #
     def ==(other)
       digest == other.digest
     end
 
     #
-    # Returns all keys as an ordered array
+    # Returns keys for Lua scripts: [locked, digests]
     #
-    # @return [Array] an ordered array with all keys
+    # @return [Array<String>]
     #
     def to_a
-      [digest, queued, primed, locked, info, changelog, digests, expiring_digests]
+      [locked, digests]
     end
 
     private

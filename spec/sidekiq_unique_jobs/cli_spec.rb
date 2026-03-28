@@ -70,9 +70,7 @@ RSpec.describe SidekiqUniqueJobs::Cli, ruby_ver: ">= 2.5" do
     context "when no digests exist" do
       it do
         expect(list).to eq <<~HEADER
-          Searching for regular digests
-          Found 0 digests matching '#{pattern}':
-          Searching for expiring digests
+          Searching for digests
           Found 0 digests matching '#{pattern}':
         HEADER
       end

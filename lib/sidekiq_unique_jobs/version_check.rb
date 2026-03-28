@@ -1,114 +1,52 @@
 # frozen_string_literal: true
 
 module SidekiqUniqueJobs
-  #
-  # Handles checking if a version is compliant with given constraint
+  # Thin wrapper around Gem::Requirement for version constraint checking
   #
   # @author Mikael Henriksson <mikael@mhenrixon.com>
-  #
   class VersionCheck
-    PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m.freeze # rubocop:disable Layout/LineLength, Lint/MixedRegexpCaptureTypes
-
+    # Check if a version satisfies a constraint
     #
-    # Checks if a version is constraint is satisfied
-    #
-    # @example A satisfied constraint
+    # @example
     #   VersionCheck.satisfied?("5.0.0", ">= 4.0.0") #=> true
+    #   VersionCheck.satisfied?("3.0.0", ">= 4.0.0") #=> false
     #
-    # @example An unsatisfied constraint
-    #   VersionCheck.satisfied?("5.0.0", "<= 4.0.0") #=> false
+    # @param [String] version the version to check
+    # @param [String] constraint one or more version constraints (space or && separated)
     #
-    #
-    # @param [String] version a version string `5.0.0`
-    # @param [String] constraint a version constraint `>= 5.0.0 <= 5.1.1`
-    #
-    # @return [true, false] <description>
-    #
+    # @return [true, false]
     def self.satisfied?(version, constraint)
-      new(version, constraint).satisfied?
+      str = constraint.to_s.strip
+      return Gem::Requirement.new(">= 0").satisfied_by?(Gem::Version.new(version)) if str.empty?
+
+      parts = str.split("&&").flat_map { |s| s.split(",") }.map(&:strip).reject(&:empty?)
+      parts = split_space_separated(str) if parts.size == 1
+      Gem::Requirement.new(*parts).satisfied_by?(Gem::Version.new(version))
     end
 
-    #
-    # Checks if a version is constraint is unfulfilled
-    #
-    # @example A satisfied constraint
-    #   VersionCheck.unfulfilled?("5.0.0", ">= 4.0.0") #=> false
-    #
-    # @example An unfulfilled constraint
-    #   VersionCheck.unfulfilled?("5.0.0", "<= 4.0.0") #=> true
-    #
-    #
-    # @param [String] version a version string `5.0.0`
-    # @param [String] constraint a version constraint `>= 5.0.0 <= 5.1.1`
-    #
-    # @return [true, false] <description>
-    #
-    def self.unfulfilled?(version, constraint)
-      !satisfied?(version, constraint)
-    end
-
-    #
-    # @!attribute [r] version
-    #   @return [String] a version string `5.0.0`
-    attr_reader :version
-    #
-    # @!attribute [r] match
-    #   @return [String] a version constraint `>= 5.0.0 <= 5.1.1`
-    attr_reader :match
-
-    #
-    # Initialize a new VersionCheck instance
-    #
-    # @param [String] version a version string `5.0.0`
-    # @param [String] constraint a version constraint `>= 5.0.0 <= 5.1.1`
-    #
-    def initialize(version, constraint)
-      @version   = Gem::Version.new(version)
-      @match     = PATTERN.match(constraint.to_s)
-
-      raise ArgumentError, "A version (eg. 5.0) is required to compare against" unless @version
-      raise ArgumentError, "At least one operator and version is required (eg. >= 5.1)" unless constraint
-    end
-
-    #
-    # Checks if all constraints were met
-    #
-    #
-    # @return [true,false]
-    #
-    def satisfied?
-      constraints.all? do |expected, operator|
-        compare(expected, operator)
+    # Split ">= 3.2 <= 4.0" into [">= 3.2", "<= 4.0"] without regex
+    def self.split_space_separated(str)
+      result = []
+      current = +""
+      tokens = str.split
+      tokens.each do |token|
+        if current.empty? || "<>=!~".include?(token[0])
+          result << current.strip unless current.empty?
+          current = token
+        else
+          current = "#{current} #{token}"
+        end
       end
-    end
-
-    private
-
-    def compare(expected, operator)
-      Gem::Version.new(version).send(operator, Gem::Version.new(expected))
-    end
-
-    def constraints
-      result = { version_one => operator_one }
-      result[version_two] = operator_two if version_two
-
+      result << current.strip unless current.empty?
       result
     end
+    private_class_method :split_space_separated
 
-    def version_one
-      match[:version1]
-    end
-
-    def operator_one
-      match[:operator1]
-    end
-
-    def version_two
-      match[:version2]
-    end
-
-    def operator_two
-      match[:operator2]
+    # Inverse of satisfied?
+    #
+    # @return [true, false]
+    def self.unfulfilled?(version, constraint)
+      !satisfied?(version, constraint)
     end
   end
 end

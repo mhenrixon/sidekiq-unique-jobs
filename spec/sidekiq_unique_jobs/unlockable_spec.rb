@@ -22,12 +22,14 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     )
   end
 
+  # v9: push creates 1 unique key (digest:LOCKED)
+  # uniquejobs:digests is excluded by the unique_keys helper
   describe ".unlock" do
     subject(:unlock) { described_class.unlock(item) }
 
     specify do
-      expect { push_item(item) }.to change { unique_keys.size }.by(3)
-      expect { unlock }.to change { unique_keys.size }.by(-2)
+      expect { push_item(item) }.to change { unique_keys.size }.by(1)
+      expect { unlock }.to change { unique_keys.size }.by(-1)
     end
   end
 
@@ -35,8 +37,8 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     subject(:unlock!) { described_class.unlock!(item) }
 
     specify do
-      expect { push_item(item) }.to change { unique_keys.size }.by(3)
-      expect { unlock! }.to change { unique_keys.size }.by(-2)
+      expect { push_item(item) }.to change { unique_keys.size }.by(1)
+      expect { unlock! }.to change { unique_keys.size }.by(-1)
     end
   end
 
@@ -44,7 +46,7 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     subject(:delete) { described_class.delete(item) }
 
     specify do
-      expect { push_item(item) }.to change { unique_keys.size }.by(3)
+      expect { push_item(item) }.to change { unique_keys.size }.by(1)
       expect { delete }.not_to change { unique_keys.size }
     end
   end
@@ -53,8 +55,8 @@ RSpec.describe SidekiqUniqueJobs::Unlockable do
     subject(:delete!) { described_class.delete!(item) }
 
     specify do
-      expect { push_item(item) }.to change { unique_keys.size }.by(3)
-      expect { delete! }.to change { unique_keys.size }.by(-3)
+      expect { push_item(item) }.to change { unique_keys.size }.by(1)
+      expect { delete! }.to change { unique_keys.size }.by(-1)
     end
   end
 end

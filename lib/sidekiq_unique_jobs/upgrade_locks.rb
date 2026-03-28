@@ -56,9 +56,8 @@ module SidekiqUniqueJobs
 
         log_info("Start - Upgrading Locks")
 
-        # upgrade_v6_locks
-        # delete_unused_v6_keys
-        # delete_supporting_v6_keys
+        upgrade_v8_to_v9
+        merge_expiring_digests
 
         conn.hset(upgraded_key, version, now_f)
         log_info("Done - Upgrading Locks")
@@ -123,10 +122,83 @@ module SidekiqUniqueJobs
     def batch_scan(match:, count:)
       cursor = "0"
       loop do
-        cursor, values = conn.scan(cursor, match: match, count: count)
-        yield values
+        result = conn.call("SCAN", cursor, "MATCH", match, "COUNT", count.to_s)
+        cursor = result[0]
+        values = result[1]
+        yield values if values && !values.empty?
         break if cursor == "0"
       end
+    end
+
+    # v8→v9: Remove obsolete keys (QUEUED, PRIMED, INFO, digest STRING)
+    # and their :RUN variants. The LOCKED hash is kept as-is.
+    def upgrade_v8_to_v9
+      log_info("Start - Removing v8 obsolete keys")
+
+      v8_suffixes = %w[QUEUED PRIMED INFO]
+      count = 0
+
+      batch_scan(match: "uniquejobs:*:LOCKED", count: BATCH_SIZE) do |locked_keys|
+        locked_keys.each do |locked_key|
+          digest = locked_key.delete_suffix(":LOCKED")
+          keys_to_delete = []
+
+          # The old digest STRING key
+          keys_to_delete << digest if conn.call("TYPE", digest) == "string"
+
+          # Old suffix keys
+          v8_suffixes.each do |suffix|
+            key = "#{digest}:#{suffix}"
+            keys_to_delete << key if conn.call("EXISTS", key).positive?
+          end
+
+          # :RUN variants
+          run_digest = "#{digest}:RUN"
+          keys_to_delete << run_digest if conn.call("EXISTS", run_digest).positive?
+          v8_suffixes.each do |suffix|
+            key = "#{run_digest}:#{suffix}"
+            keys_to_delete << key if conn.call("EXISTS", key).positive?
+          end
+          run_locked = "#{run_digest}:LOCKED"
+          run_info = "#{run_digest}:INFO"
+          keys_to_delete << run_locked if conn.call("EXISTS", run_locked).positive?
+          keys_to_delete << run_info if conn.call("EXISTS", run_info).positive?
+
+          next if keys_to_delete.empty?
+
+          conn.call("UNLINK", *keys_to_delete)
+          count += keys_to_delete.size
+        end
+      end
+
+      log_info("Done - Removed #{count} v8 obsolete keys")
+      @count += count
+    end
+
+    # v8→v9: Merge expiring_digests into digests (unified ZSET)
+    def merge_expiring_digests
+      expiring_count = conn.call("ZCARD", "uniquejobs:expiring_digests")
+      return if expiring_count.zero?
+
+      log_info("Start - Merging #{expiring_count} expiring digests")
+
+      # Move all entries from expiring_digests to digests (preserving scores)
+      cursor = "0"
+      moved = 0
+      loop do
+        cursor, entries = conn.call("ZSCAN", "uniquejobs:expiring_digests", cursor, "COUNT", "100")
+
+        entries.each_slice(2) do |digest, score|
+          conn.call("ZADD", DIGESTS, score, digest)
+          moved += 1
+        end
+
+        break if cursor == "0"
+      end
+
+      conn.call("UNLINK", "uniquejobs:expiring_digests")
+      log_info("Done - Merged #{moved} expiring digests")
+      @count += moved
     end
 
     def version

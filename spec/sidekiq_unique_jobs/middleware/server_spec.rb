@@ -11,11 +11,24 @@ RSpec.describe SidekiqUniqueJobs::Middleware::Server, redis_db: 9 do
         jid = UntilExecutedJob.perform_async
         item = Sidekiq::Queue.new(queue).find_job(jid).item
         digest = "uniquejobs:41459093fde370420ea1d1f446b60281"
-        expect(get(digest)).to eq(jid)
-        set(digest, "NOT_DELETED")
+        locked_key = "#{digest}:LOCKED"
+
+        # Verify the lock is held by this jid
+        redis do |conn|
+          expect(conn.call("HEXISTS", locked_key, jid)).to eq(1)
+        end
+
+        # Tamper: replace the lock holder with a different jid
+        redis do |conn|
+          conn.call("HDEL", locked_key, jid)
+          conn.call("HSET", locked_key, "OTHER_JID", "1234")
+        end
 
         middleware.call(UntilExecutedJob.new, item, queue) do
-          expect(get(digest)).to eq("NOT_DELETED")
+          # The lock should still belong to OTHER_JID, not to this job
+          redis do |conn|
+            expect(conn.call("HEXISTS", locked_key, "OTHER_JID")).to eq(1)
+          end
         end
       end
     end

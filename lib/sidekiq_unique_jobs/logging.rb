@@ -29,11 +29,11 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_debug(message_or_exception = nil, item = nil, &block)
+    def log_debug(message_or_exception = nil, item = nil, &)
       return unless logging?
 
       message = build_message(message_or_exception, item)
-      logger.debug(message, &block)
+      logger.debug(message, &)
       nil
     end
 
@@ -46,11 +46,11 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_info(message_or_exception = nil, item = nil, &block)
+    def log_info(message_or_exception = nil, item = nil, &)
       return unless logging?
 
       message = build_message(message_or_exception, item)
-      logger.info(message, &block)
+      logger.info(message, &)
       nil
     end
 
@@ -63,11 +63,11 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_warn(message_or_exception = nil, item = nil, &block)
+    def log_warn(message_or_exception = nil, item = nil, &)
       return unless logging?
 
       message = build_message(message_or_exception, item)
-      logger.warn(message, &block)
+      logger.warn(message, &)
       nil
     end
 
@@ -80,11 +80,11 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_error(message_or_exception = nil, item = nil, &block)
+    def log_error(message_or_exception = nil, item = nil, &)
       return unless logging?
 
       message = build_message(message_or_exception, item)
-      logger.error(message, &block)
+      logger.error(message, &)
       nil
     end
 
@@ -97,11 +97,11 @@ module SidekiqUniqueJobs
     #
     # @yield [String, Exception] the message or exception to use for log message
     #
-    def log_fatal(message_or_exception = nil, item = nil, &block)
+    def log_fatal(message_or_exception = nil, item = nil, &)
       return unless logging?
 
       message = build_message(message_or_exception, item)
-      logger.fatal(message, &block)
+      logger.fatal(message, &)
 
       nil
     end
@@ -153,8 +153,8 @@ module SidekiqUniqueJobs
     #
     # @yield
     #
-    def with_configured_loggers_context(&block)
-      logger_method.call(logging_context, &block)
+    def with_configured_loggers_context(&)
+      logger_method.call(logging_context, &)
     end
 
     #

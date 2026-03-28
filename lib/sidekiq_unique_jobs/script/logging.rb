@@ -30,8 +30,8 @@ module SidekiqUniqueJobs
       #
       # @yield [String, Exception] the message or exception to use for log message
       #
-      def log_debug(message_or_exception = nil, &block)
-        logger.debug(message_or_exception, &block)
+      def log_debug(message_or_exception = nil, &)
+        logger.debug(message_or_exception, &)
         nil
       end
 
@@ -44,8 +44,8 @@ module SidekiqUniqueJobs
       #
       # @yield [String, Exception] the message or exception to use for log message
       #
-      def log_info(message_or_exception = nil, &block)
-        logger.info(message_or_exception, &block)
+      def log_info(message_or_exception = nil, &)
+        logger.info(message_or_exception, &)
         nil
       end
 
@@ -58,8 +58,8 @@ module SidekiqUniqueJobs
       #
       # @yield [String, Exception] the message or exception to use for log message
       #
-      def log_warn(message_or_exception = nil, &block)
-        logger.warn(message_or_exception, &block)
+      def log_warn(message_or_exception = nil, &)
+        logger.warn(message_or_exception, &)
         nil
       end
 
@@ -72,8 +72,8 @@ module SidekiqUniqueJobs
       #
       # @yield [String, Exception] the message or exception to use for log message
       #
-      def log_error(message_or_exception = nil, &block)
-        logger.error(message_or_exception, &block)
+      def log_error(message_or_exception = nil, &)
+        logger.error(message_or_exception, &)
         nil
       end
 
@@ -86,8 +86,8 @@ module SidekiqUniqueJobs
       #
       # @yield [String, Exception] the message or exception to use for log message
       #
-      def log_fatal(message_or_exception = nil, &block)
-        logger.fatal(message_or_exception, &block)
+      def log_fatal(message_or_exception = nil, &)
+        logger.fatal(message_or_exception, &)
         nil
       end
     end

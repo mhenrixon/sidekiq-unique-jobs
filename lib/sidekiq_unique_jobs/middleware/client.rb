@@ -25,8 +25,8 @@ module SidekiqUniqueJobs
       #
       # @yield when uniqueness is disable
       # @yield when the lock is successful
-      def call(*, &block)
-        lock(&block)
+      def call(*, &)
+        lock(&)
       end
 
       private

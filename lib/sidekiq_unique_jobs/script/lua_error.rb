@@ -20,7 +20,7 @@ module SidekiqUniqueJobs
       # modifies the backtrace to include the lua script itself in a reasonable
       # way.
 
-      PATTERN  = /ERR Error (compiling|running) script \(.*?\): .*?:(\d+): (.*)/.freeze
+      PATTERN  = /ERR Error (compiling|running) script \(.*?\): .*?:(\d+): (.*)/
       LIB_PATH = File.expand_path("..", __dir__).freeze
       CONTEXT_LINE_NUMBER = 2
 

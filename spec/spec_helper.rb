@@ -27,7 +27,7 @@ LOGLEVEL     = ENV.fetch("LOGLEVEL", "ERROR").upcase
 SUPPORT_DIR  = Pathname.new(File.join(File.dirname(__FILE__), "support"))
 SCRIPTS_PATH = SUPPORT_DIR.join("lua")
 
-Dir[SUPPORT_DIR.join("**", "*.rb")].sort.each { |f| require f }
+Dir[SUPPORT_DIR.join("**", "*.rb")].each { |f| require f }
 
 if Sidekiq.respond_to?(:default_job_options)
   ORIGINAL_SIDEKIQ_OPTIONS = Sidekiq.default_job_options
@@ -85,8 +85,8 @@ end
 
 require "sidekiq/redis_connection"
 
-Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].sort.each { |f| require f }
-Dir[File.join(File.dirname(__FILE__), "..", "examples", "**", "*.rb")].sort.each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), "support", "**", "*.rb")].each { |f| require f }
+Dir[File.join(File.dirname(__FILE__), "..", "examples", "**", "*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   config.define_derived_metadata do |meta|

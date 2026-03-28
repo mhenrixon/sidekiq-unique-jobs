@@ -15,8 +15,8 @@ module SidekiqUniqueJobs
     #
     # @return [void]
     #
-    def reflect(reflection, *args)
-      SidekiqUniqueJobs.reflections.dispatch(reflection, *args)
+    def reflect(reflection, *)
+      SidekiqUniqueJobs.reflections.dispatch(reflection, *)
       nil
     rescue UniqueJobsError => ex
       SidekiqUniqueJobs.logger.error(ex)

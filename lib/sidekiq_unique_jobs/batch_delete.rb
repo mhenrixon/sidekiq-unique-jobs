@@ -11,15 +11,6 @@ module SidekiqUniqueJobs
     # @return [Integer] the default batch size
     BATCH_SIZE = 500
 
-    #
-    # @return [Array<String>] Supported key suffixes
-    SUFFIXES = %w[
-      QUEUED
-      PRIMED
-      LOCKED
-      INFO
-    ].freeze
-
     # includes "SidekiqUniqueJobs::Connection"
     # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
@@ -91,7 +82,6 @@ module SidekiqUniqueJobs
           chunk.each do |digest|
             del_digest(pipeline, digest)
             pipeline.zrem(SidekiqUniqueJobs::DIGESTS, digest)
-            pipeline.zrem(SidekiqUniqueJobs::EXPIRING_DIGESTS, digest)
             @count += 1
           end
         end
@@ -101,16 +91,7 @@ module SidekiqUniqueJobs
     end
 
     def del_digest(pipeline, digest)
-      removable_keys = keys_for_digest(digest)
-
-      pipeline.unlink(*removable_keys)
-    end
-
-    def keys_for_digest(digest)
-      [digest, "#{digest}:RUN"].each_with_object([]) do |key, digest_keys|
-        digest_keys.push(key)
-        digest_keys.concat(SUFFIXES.map { |suffix| "#{key}:#{suffix}" })
-      end
+      pipeline.unlink("#{digest}:LOCKED")
     end
 
     def redis_version

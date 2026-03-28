@@ -38,8 +38,8 @@ module SidekiqUniqueJobs
       #
       # @return [true,false,String,Integer,Float,nil] returns the return value of the lua script
       #
-      def call_script(file_name, *args)
-        conn, keys, argv = extract_args(*args)
+      def call_script(file_name, *)
+        conn, keys, argv = extract_args(*)
         return do_call(file_name, conn, keys, argv) if conn
 
         pool = defined?(redis_pool) ? redis_pool : nil

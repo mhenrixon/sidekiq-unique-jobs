@@ -9,9 +9,9 @@ GIT
 PATH
   remote: ..
   specs:
-    sidekiq-unique-jobs (8.0.13)
+    sidekiq-unique-jobs (9.0.0.alpha1)
       concurrent-ruby (~> 1.0, >= 1.0.5)
-      sidekiq (>= 7.0.0, < 9.0.0)
+      sidekiq (>= 8.0.0, < 10.0.0)
       thor (>= 1.0, < 3.0)
 
 GEM

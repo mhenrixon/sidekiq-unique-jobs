@@ -7,21 +7,12 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class Lock
-    # includes "SidekiqUniqueJobs::Connection"
-    # @!parse include SidekiqUniqueJobs::Connection
     include SidekiqUniqueJobs::Connection
-
-    # includes "SidekiqUniqueJobs::Timing"
-    # @!parse include SidekiqUniqueJobs::Timing
     include SidekiqUniqueJobs::Timing
-
-    # includes "SidekiqUniqueJobs::JSON"
-    # @!parse include SidekiqUniqueJobs::JSON
     include SidekiqUniqueJobs::JSON
 
-    #
     # @!attribute [r] key
-    #   @return [String] the entity redis key
+    #   @return [Key] the lock key
     attr_reader :key
 
     #
@@ -43,10 +34,10 @@ module SidekiqUniqueJobs
     # Initialize a new lock
     #
     # @param [String, Key] key either a digest or an instance of a {Key}
-    # @param [Timstamp, Float] time nil optional timestamp to initiate this lock with
+    # @param [Float] time optional timestamp to initiate this lock with
     #
     def initialize(key, time: nil)
-      @key = get_key(key)
+      @key = key.is_a?(SidekiqUniqueJobs::Key) ? key : SidekiqUniqueJobs::Key.new(key)
       time = time.to_f unless time.is_a?(Float)
       return unless time.nonzero?
 
@@ -56,54 +47,21 @@ module SidekiqUniqueJobs
     #
     # Locks a job_id
     #
-    # @note intended only for testing purposes
-    #
     # @param [String] job_id a sidekiq JID
     # @param [Hash] lock_info information about the lock
+    # @param [Float] score the ZADD score
     #
     # @return [void]
     #
     def lock(job_id, lock_info = {}, score = nil)
       score ||= now_f
+      metadata = dump_json(lock_info.merge("time" => @created_at || now_f))
+
       redis do |conn|
         conn.multi do |pipeline|
-          pipeline.set(key.digest, job_id)
-          pipeline.hset(key.locked, job_id, now_f)
-          info.set(lock_info, pipeline)
-          add_digest_to_set(pipeline, lock_info, score)
-          pipeline.zadd(key.changelog, score, changelog_json(job_id, "queue.lua", "Queued"))
-          pipeline.zadd(key.changelog, score, changelog_json(job_id, "lock.lua", "Locked"))
+          pipeline.call("HSET", key.locked, job_id, metadata)
+          pipeline.call("ZADD", key.digests, score.to_s, key.digest)
         end
-      end
-    end
-
-    #
-    # Create the :QUEUED key
-    #
-    # @note intended only for testing purposes
-    #
-    # @param [String] job_id a sidekiq JID
-    #
-    # @return [void]
-    #
-    def queue(job_id)
-      redis do |conn|
-        conn.lpush(key.queued, job_id)
-      end
-    end
-
-    #
-    # Create the :PRIMED key
-    #
-    # @note intended only for testing purposes
-    #
-    # @param [String] job_id a sidekiq JID
-    #
-    # @return [void]
-    #
-    def prime(job_id)
-      redis do |conn|
-        conn.lpush(key.primed, job_id)
       end
     end
 
@@ -112,57 +70,52 @@ module SidekiqUniqueJobs
     #
     # @param [String] job_id a sidekiq JID
     #
-    # @return [true] when job_id was removed
-    # @return [false] when job_id wasn't locked
+    # @return [Integer] number of fields removed
     #
     def unlock(job_id)
       locked.del(job_id)
-    end
 
-    #
-    # Deletes all the redis keys for this lock
-    #
-    #
-    # @return [Integer] the number of keys deleted in redis
-    #
-    def del
+      # Clean up digests ZSET when no more holders
       redis do |conn|
-        conn.multi do |pipeline|
-          pipeline.zrem(DIGESTS, key.digest)
-          pipeline.del(key.digest, key.queued, key.primed, key.locked, key.info)
+        if conn.call("HLEN", key.locked).zero?
+          conn.call("ZREM", DIGESTS, key.digest)
+          conn.call("UNLINK", key.locked)
         end
       end
     end
 
     #
-    # Returns either the time the lock was initialized with or
-    #   the first changelog entry's timestamp
+    # Deletes all the redis keys for this lock
     #
+    # @return [void]
     #
-    # @return [Float] a floaty timestamp represantation
-    #
-    def created_at
-      @created_at ||= changelogs.first&.[]("time")
+    def del
+      redis do |conn|
+        conn.multi do |pipeline|
+          pipeline.call("ZREM", DIGESTS, key.digest)
+          pipeline.call("UNLINK", key.locked)
+        end
+      end
     end
 
     #
-    # Returns all job_id's for this lock
+    # Returns either the initialized time or the earliest lock timestamp
     #
-    # @note a JID can be present in 3 different places
+    # @return [Float] a timestamp
     #
-    #
-    # @return [Array<String>] an array with JIDs
-    #
-    def all_jids
-      (queued_jids + primed_jids + locked_jids).uniq
+    def created_at
+      return @created_at if @created_at
+
+      first_entry = locked_jids(with_values: true).values.first
+      @created_at = first_entry ? parse_metadata_time(first_entry) : now_f
     end
 
     #
     # Returns a collection of locked job_id's
     #
-    # @param [true, false] with_values false provide the timestamp for the lock
+    # @param [true, false] with_values provide the metadata for each lock
     #
-    # @return [Hash<String, Float>] when given `with_values: true`
+    # @return [Hash<String, String>] when given `with_values: true`
     # @return [Array<String>] when given `with_values: false`
     #
     def locked_jids(with_values: false)
@@ -170,71 +123,16 @@ module SidekiqUniqueJobs
     end
 
     #
-    # Returns the queued JIDs
+    # Returns lock metadata from the LOCKED hash value (JSON)
     #
+    # @return [Hash, nil] parsed metadata or nil
     #
-    # @return [Array<String>] an array with queued job_ids
-    #
-    def queued_jids
-      queued.entries
-    end
-
-    #
-    # Returns the primed JIDs
-    #
-    #
-    # @return [Array<String>] an array with primed job_ids
-    #
-    def primed_jids
-      primed.entries
-    end
-
-    #
-    # Returns all matching changelog entries for this lock
-    #
-    #
-    # @return [Array<Hash>] an array with changelogs
-    #
-    def changelogs
-      changelog.entries(pattern: "*#{key.digest}*")
-    end
-
-    #
-    # The digest key
-    #
-    # @note Used for exists checks to avoid enqueuing
-    #   the same lock twice
-    #
-    #
-    # @return [Redis::String] a string representation of the key
-    #
-    def digest
-      @digest ||= Redis::String.new(key.digest)
-    end
-
-    #
-    # The queued list
-    #
-    #
-    # @return [Redis::List] for queued JIDs
-    #
-    def queued
-      @queued ||= Redis::List.new(key.queued)
-    end
-
-    #
-    # The primed list
-    #
-    #
-    # @return [Redis::List] for primed JIDs
-    #
-    def primed
-      @primed ||= Redis::List.new(key.primed)
+    def info
+      @info ||= build_info
     end
 
     #
     # The locked hash
-    #
     #
     # @return [Redis::Hash] for locked JIDs
     #
@@ -242,106 +140,52 @@ module SidekiqUniqueJobs
       @locked ||= Redis::Hash.new(key.locked)
     end
 
-    #
-    # Information about the lock
-    #
-    #
-    # @return [Redis::Hash] with lock information
-    #
-    def info
-      @info ||= LockInfo.new(key.info)
-    end
-
-    #
-    # A sorted set with changelog entries
-    #
-    # @see Changelog for more information
-    #
-    #
-    # @return [Changelog]
-    #
-    def changelog
-      @changelog ||= Changelog.new
-    end
-
-    #
-    # A nicely formatted string with information about this lock
-    #
-    #
-    # @return [String]
-    #
     def to_s
-      <<~MESSAGE
-        Lock status for #{key}
-
-                  value: #{digest.value}
-                   info: #{info.value}
-            queued_jids: #{queued_jids}
-            primed_jids: #{primed_jids}
-            locked_jids: #{locked_jids}
-             changelogs: #{changelogs}
-      MESSAGE
+      "Lock(#{key.digest})"
     end
 
-    #
-    # @see to_s
-    #
     def inspect
       to_s
     end
 
     private
 
-    #
-    # Ensure the key is a {Key}
-    #
-    # @param [String, Key] key
-    #
-    # @return [Key]
-    #
-    def get_key(key)
-      if key.is_a?(SidekiqUniqueJobs::Key)
-        key
-      else
-        SidekiqUniqueJobs::Key.new(key)
+    def build_info
+      entries = locked_jids(with_values: true)
+      return LockInfoStub.new if entries.empty?
+
+      first_value = entries.values.first
+      parsed = safe_load_json(first_value)
+      parsed.is_a?(Hash) ? LockInfoStub.new(parsed) : LockInfoStub.new
+    end
+
+    def parse_metadata_time(value)
+      parsed = safe_load_json(value)
+      return value.to_f unless parsed.is_a?(Hash)
+
+      parsed["time"]&.to_f || now_f
+    end
+
+    # Minimal struct to provide .value and hash-like access for web UI compat
+    class LockInfoStub
+      def initialize(hash = {})
+        @hash = hash
       end
-    end
 
-    #
-    # Generate a changelog entry for the given arguments
-    #
-    # @param [String] job_id a sidekiq JID
-    # @param [String] script the name of the script generating this entry
-    # @param [String] message a descriptive message for later review
-    #
-    # @return [String] a JSON string matching the Lua script structure
-    #
-    def changelog_json(job_id, script, message)
-      dump_json(
-        digest: key.digest,
-        job_id: job_id,
-        script: script,
-        message: message,
-        time: now_f,
-      )
-    end
+      def value
+        @hash
+      end
 
-    #
-    # Add the digest to the correct sorted set
-    #
-    # @param [Object] pipeline a redis pipeline object for issue commands
-    # @param [Hash] lock_info the lock info relevant to the digest
-    #
-    # @return [nil]
-    #
-    def add_digest_to_set(pipeline, lock_info, score = nil)
-      score ||= now_f
-      digest_string = key.digest
+      def [](key)
+        @hash[key]
+      end
 
-      if lock_info["lock"] == :until_expired
-        pipeline.zadd(key.expiring_digests, score + lock_info["ttl"], digest_string)
-      else
-        pipeline.zadd(key.digests, score, digest_string)
+      def none?
+        @hash.empty?
+      end
+
+      def any?
+        !none?
       end
     end
   end

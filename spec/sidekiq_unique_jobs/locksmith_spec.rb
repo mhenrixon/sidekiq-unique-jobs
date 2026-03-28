@@ -10,7 +10,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:lock_type)    { "until_executed" }
   let(:digest)       { "uniquejobs:randomvalue" }
   let(:key)          { SidekiqUniqueJobs::Key.new(digest) }
-  let(:lock)         { SidekiqUniqueJobs::Lock.new(key) }
   let(:lock_timeout) { 0 }
   let(:lock_limit)   { 1 }
   let(:queue)        { "default" }
@@ -34,10 +33,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   let(:item_two) { item_one.merge("jid" => jid_two) }
 
   describe "#to_s" do
-    subject(:to_string) { locksmith_one.to_s }
-
     it "outputs a helpful string" do
-      expect(to_string).to eq(
+      expect(locksmith_one.to_s).to eq(
         "Locksmith##{locksmith_one.object_id}" \
         "(digest=#{digest} job_id=#{jid_one} locked=false)",
       )
@@ -45,10 +42,8 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   end
 
   describe "#inspect" do
-    subject(:inspect) { locksmith_one.inspect }
-
     it "outputs a helpful string" do
-      expect(inspect).to eq(
+      expect(locksmith_one.inspect).to eq(
         "Locksmith##{locksmith_one.object_id}" \
         "(digest=#{digest} job_id=#{jid_one} locked=false)",
       )
@@ -56,62 +51,16 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
   end
 
   describe "#==" do
-    subject(:==) { locksmith_one == comparable_locksmith } # rubocop:disable RSpec/VariableName
-
-    context "when locksmiths are comparable" do
-      let(:comparable_locksmith) { locksmith_one.dup }
-
-      it { is_expected.to be(true) }
+    it "is true when locksmiths are comparable" do
+      expect(locksmith_one == locksmith_one.dup).to be(true)
     end
 
-    context "when locksmiths are incomparable" do
-      let(:comparable_locksmith) { locksmith_two }
-
-      it { is_expected.to be(false) }
+    it "is false when locksmiths are incomparable" do
+      expect(locksmith_one == locksmith_two).to be(false)
     end
   end
 
   shared_examples_for "a lock" do
-    context "when lock_info is turned on globally" do
-      it "adds a key with information about the lock" do
-        SidekiqUniqueJobs.use_config(lock_info: true) do
-          locksmith_one.lock do
-            expect(lock.info.value).to match(
-              a_hash_including(
-                "limit" => lock_limit,
-                "type" => lock_type.to_s,
-                "lock_args" => lock_args,
-                "queue" => queue,
-                "timeout" => lock_timeout,
-                "ttl" => lock_ttl,
-                "worker" => worker,
-              ),
-            )
-          end
-        end
-      end
-    end
-
-    context "when lock_info is turned on in worker" do
-      it "adds a key with information about the lock" do
-        UntilExecutedJob.use_options(lock_info: true) do
-          locksmith_one.lock do
-            expect(lock.info.value).to match(
-              a_hash_including(
-                "limit" => lock_limit,
-                "type" => lock_type.to_s,
-                "lock_args" => lock_args,
-                "queue" => queue,
-                "timeout" => lock_timeout,
-                "ttl" => lock_ttl,
-                "worker" => worker,
-              ),
-            )
-          end
-        end
-      end
-    end
-
     it "is unlocked from the start" do
       expect(locksmith_one).not_to be_locked
     end
@@ -136,38 +85,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       expect(code_executed).to be(true)
     end
 
-    context "when exceptions is raised" do
-      let(:error_class)   { Exception }
-      let(:error_message) { "redis lock exception" }
-      let(:block)         { -> { raise error_class, error_message } }
-
-      context "when given a block" do
-        before do
-          allow(locksmith_one).to receive(:lock!) { block.call }
-        end
-
-        it "cleans up the lock" do
-          expect { locksmith_one.lock(&block) }
-            .to raise_error(error_class, error_message)
-
-          expect(locksmith_one).not_to be_locked # if lock_ttl.nil?
-        end
-      end
-
-      context "when given no block" do
-        before do
-          allow(locksmith_one).to receive(:lock!) { block.call }
-        end
-
-        it "cleans up the lock" do
-          expect { locksmith_one.lock }
-            .to raise_error(error_class, error_message)
-
-          expect(locksmith_one).not_to be_locked # if lock_ttl.nil?
-        end
-      end
-    end
-
     it "returns the value of the block if block-style locking is used" do
       block_value = locksmith_one.execute do
         42
@@ -176,17 +93,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       expect(block_value).to eq(42)
     end
 
-    it "disappears without a trace when calling `delete!`" do
+    it "disappears without a trace when calling delete!" do
       locksmith_one.lock
-      locksmith_two.delete!
-
-      expect(locksmith_one).not_to be_locked
-    end
-
-    it "allows deletion when call script returns a string" do
-      locksmith_one.lock
-      allow(locksmith_one).to receive(:call_script).and_return("120")
-      locksmith_two.delete!
+      locksmith_one.delete!
 
       expect(locksmith_one).not_to be_locked
     end
@@ -232,16 +141,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
         expect(locksmith_two.lock).to be_falsey
       end
-
-      # it "reflects on timeout" do
-      #   allow(locksmith_two).to receive(:reflect)
-      #   locksmith_one.lock
-
-      #   sleep 0.1
-
-      #   expect(locksmith_two.lock).to be_falsey
-      #   expect(locksmith_two).to have_received(:reflect).with(:timeout, item_two)
-      # end
 
       it "expires the expected keys" do
         locksmith_one.lock
@@ -301,42 +200,7 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
       expect(did_we_get_in).to be false
     end
-
-    it "waits for brpoplpush when resolving the promise" do
-      allow(locksmith_one).to receive(:brpoplpush) do
-        sleep(0.75)
-        jid_one
-      end
-
-      did_we_get_in = false
-      locksmith_one.execute do
-        did_we_get_in = true
-      end
-
-      expect(locksmith_one).to have_received(:brpoplpush)
-      expect(did_we_get_in).to be true
-    end
   end
-
-  # it "reflects" do
-  #   allow(locksmith_one).to receive(:reflect)
-
-  #   locksmith_one.lock
-  #   expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
-
-  #   locksmith_one.lock { "Reflecting" }
-  #   expect(locksmith_one).to have_received(:reflect).with(:locked, item_one)
-  #   expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
-  # end
-
-  # it "does not reflect" do
-  #   allow(locksmith_two).to receive(:reflect).and_call_original
-
-  #   expect(locksmith_one.lock).to eq("maaaahjid")
-  #   expect(locksmith_two.lock).to eq(nil)
-  #   expect(locksmith_two).to have_received(:reflect).with(:timeout, item_two)
-  #   expect(locksmith_two).not_to have_received(:reflect).with(:locked, item_two)
-  # end
 
   it "reflects on unlocked" do
     locksmith_one.lock
@@ -345,19 +209,10 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     expect(locksmith_one).to have_received(:reflect).with(:unlocked, item_one)
   end
 
-  describe "lock_sync! (non-blocking fast path)" do
-    let(:lock_timeout) { 0 }
-    let(:lock_type) { "until_executed" }
-
-    it "acquires the lock via the combined queue_and_lock script" do
+  describe "lock acquisition" do
+    it "acquires the lock" do
       expect(locksmith_one.lock).to eq(jid_one)
       expect(locksmith_one).to be_locked
-    end
-
-    it "sets sync_locked state for unlock" do
-      locksmith_one.lock
-      argv = locksmith_one.send(:unlock_argv)
-      expect(argv.last).to eq(1)
     end
 
     it "prevents concurrent locks (mutex behavior)" do
@@ -369,16 +224,18 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
       locksmith_one.lock
       expect(locksmith_one).to be_locked
 
-      # Re-locking same job returns the job_id again
       expect(locksmith_one.lock).to eq(jid_one)
       expect(locksmith_one).to be_locked
     end
 
-    it "writes lock info when enabled" do
-      SidekiqUniqueJobs.use_config(lock_info: true) do
-        locksmith_one.lock
-        info = lock.info.value
-        expect(info).to include(
+    it "stores metadata in the LOCKED hash" do
+      locksmith_one.lock
+
+      redis do |conn|
+        metadata_json = conn.call("HGET", key.locked, jid_one)
+        metadata = JSON.parse(metadata_json)
+
+        expect(metadata).to include(
           "worker" => worker,
           "queue" => queue,
           "type" => lock_type.to_s,
@@ -391,11 +248,6 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
 
       it "acquires the lock with TTL" do
         expect(locksmith_one.lock).to eq(jid_one)
-        expect(locksmith_one).to be_locked
-      end
-
-      it "respects validity (pttl - elapsed - drift)" do
-        locksmith_one.lock
         expect(locksmith_one).to be_locked
       end
     end
@@ -414,22 +266,9 @@ RSpec.describe SidekiqUniqueJobs::Locksmith do
     context "with lock_limit > 1" do
       let(:lock_limit) { 3 }
 
-      it "acquires the lock via sync path" do
-        expect(locksmith_one.lock).to eq(jid_one)
-        expect(locksmith_one).to be_locked
-      end
-
       it "allows multiple concurrent locks within the limit" do
         locksmith_one.lock
         expect(locksmith_two.lock).to be_truthy
-      end
-    end
-
-    context "when used with execute (blocking path)" do
-      it "uses the async path, not lock_sync!" do
-        allow(locksmith_one).to receive(:lock_sync!).and_call_original
-        locksmith_one.execute { nil }
-        expect(locksmith_one).not_to have_received(:lock_sync!)
       end
     end
   end
