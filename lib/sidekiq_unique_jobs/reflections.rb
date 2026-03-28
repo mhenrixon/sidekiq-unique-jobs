@@ -50,9 +50,9 @@ module SidekiqUniqueJobs
     #
     # @return [void] <description>
     #
-    def dispatch(reflection, *args)
+    def dispatch(reflection, *)
       if (block = @reflections[reflection])
-        block.call(*args)
+        block.call(*)
 
         if DEPRECATIONS.key?(reflection)
           replacement, removal_version = DEPRECATIONS[reflection]

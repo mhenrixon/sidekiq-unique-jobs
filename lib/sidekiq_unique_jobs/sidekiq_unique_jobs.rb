@@ -120,8 +120,8 @@ module SidekiqUniqueJobs
   # @return [true, false] the previous value of enable when given a block
   #
   # @yieldreturn [void] temporarily enable sidekiq unique jobs while executing a block of code
-  def enable!(&block)
-    toggle(true, &block)
+  def enable!(&)
+    toggle(true, &)
   end
 
   #
@@ -132,8 +132,8 @@ module SidekiqUniqueJobs
   # @return [true, false] the previous value of enable when given a block
   #
   # @yieldreturn [void] temporarily disable sidekiq unique jobs while executing a block of code
-  def disable!(&block)
-    toggle(false, &block)
+  def disable!(&)
+    toggle(false, &)
   end
 
   #

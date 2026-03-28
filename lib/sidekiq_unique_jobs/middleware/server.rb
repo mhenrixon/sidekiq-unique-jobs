@@ -23,8 +23,8 @@ module SidekiqUniqueJobs
       #
       # @yield when uniqueness is disabled
       # @yield when owning the lock
-      def call(*, &block)
-        lock_instance.execute(&block)
+      def call(*, &)
+        lock_instance.execute(&)
       end
     end
   end

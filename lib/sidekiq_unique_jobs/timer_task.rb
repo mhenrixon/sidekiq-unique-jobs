@@ -222,8 +222,8 @@ module SidekiqUniqueJobs
     # @example
     #   task = Concurrent::TimerTask.execute(execution_interval: 10){ print "Hello World\n" }
     #   task.running? #=> true
-    def self.execute(opts = {}, &task)
-      TimerTask.new(opts, &task).execute
+    def self.execute(opts = {}, &)
+      TimerTask.new(opts, &).execute
     end
 
     # @!attribute [rw] execution_interval

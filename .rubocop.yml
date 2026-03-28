@@ -5,7 +5,7 @@ plugins:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.2
   Include:
     - "**/examples/**/*.rb"
     - "**/*.rb"

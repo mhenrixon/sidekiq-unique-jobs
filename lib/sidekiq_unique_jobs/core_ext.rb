@@ -41,8 +41,8 @@ class Hash
     #
     # @return [Hash<String>]
     #
-    def deep_transform_keys(&block)
-      _deep_transform_keys_in_object(self, &block)
+    def deep_transform_keys(&)
+      _deep_transform_keys_in_object(self, &)
     end
   end
 

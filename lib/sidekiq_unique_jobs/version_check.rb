@@ -7,7 +7,7 @@ module SidekiqUniqueJobs
   # @author Mikael Henriksson <mikael@mhenrixon.com>
   #
   class VersionCheck
-    PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m.freeze # rubocop:disable Layout/LineLength, Lint/MixedRegexpCaptureTypes
+    PATTERN = /(?<operator1>[<>=]+)?\s?(?<version1>(\d+.?)+)(\s+&&\s+)?(?<operator2>[<>=]+)?\s?(?<version2>(\d+.?)+)?/m # rubocop:disable Lint/MixedRegexpCaptureTypes
 
     #
     # Checks if a version is constraint is satisfied
