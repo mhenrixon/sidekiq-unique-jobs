@@ -1,5 +1,135 @@
 # Changelog
 
+## [Unreleased](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/HEAD)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.13...HEAD)
+
+**Implemented enhancements:**
+
+- unique\_until\_and\_while\_executing without hanging on threads? [\#381](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/381)
+- Conflict strategy "update"? [\#325](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/325)
+- Feature Request: Unique scheduled jobs [\#247](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/247)
+- Feature Request: unique: :around\_executing [\#184](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/184)
+- feat\(config\): add global on\_conflict setting [\#936](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/936) ([mhenrixon](https://github.com/mhenrixon))
+- feat\(config\): support ActiveSupport::Duration for lock\_ttl [\#934](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/934) ([mhenrixon](https://github.com/mhenrixon))
+- feat\(myapp\): upgrade to Rails 8.1 with Phlex + daisyUI and add locksmith tests [\#929](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/929) ([mhenrixon](https://github.com/mhenrixon))
+- chore: add Claude Code commands and rules [\#928](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/928) ([mhenrixon](https://github.com/mhenrixon))
+- perf: reduce Redis commands per lock lifecycle by 76.5% [\#923](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/923) ([mhenrixon](https://github.com/mhenrixon))
+- perf: reduce Redis commands per lock lifecycle by 44% [\#922](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/922) ([mhenrixon](https://github.com/mhenrixon))
+
+**Fixed bugs:**
+
+- Using `:until_executed`, you can get many duplicates to appear in the RetrySet [\#890](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/890)
+- Different digests in v7 vs v6 [\#649](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/649)
+- Duplicated jobs on the queue [\#553](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/553)
+- Number of retry on conflict reschedule [\#331](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/331)
+- fix\(reschedule\): prevent infinite recursion when lock is held [\#940](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/940) ([mhenrixon](https://github.com/mhenrixon))
+- test\(reaper\): add regression tests for orphan/reaper edge cases [\#939](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/939) ([mhenrixon](https://github.com/mhenrixon))
+- test\(lock\): add regression tests for until\_and\_while\_executing edge cases [\#938](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/938) ([mhenrixon](https://github.com/mhenrixon))
+- fix\(lua\): replace deprecated global arg with {...} in log\_debug [\#937](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/937) ([mhenrixon](https://github.com/mhenrixon))
+- fix\(web\): use correct count when deleting expiring locks [\#935](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/935) ([mhenrixon](https://github.com/mhenrixon))
+- fix\(lock\): prevent false execution\_failed when worker returns nil/false [\#932](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/932) ([mhenrixon](https://github.com/mhenrixon))
+- feat: configurable locksmith executor to prevent unbounded thread growth [\#930](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/930) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Remove sidekiq/testing dependency [\#919](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/919)
+- After Node Restart/Failover/Update for scheduled jobs: NOSCRIPT No matching script. Please use EVAL [\#914](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/914)
+- Support ActiveSupport::Duration for lock\_ttl option [\#908](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/908)
+- Using sidekiq‐unique‐jobs with sidekiq‐batch [\#894](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/894)
+- Unique queue while executing [\#893](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/893)
+- unique\_args doesn't work, sidekiq-unique-jobs generates two different digests [\#891](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/891)
+- Delete All button for expiring locks is crashing [\#887](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/887)
+- Early exit from job triggers `execution_failed` [\#885](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/885)
+- Lua debugging seems to be broken [\#877](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/877)
+- Can a job acquire several locks? [\#873](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/873)
+- Lua Reaper comment is saying it is slower than itself [\#870](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/870)
+- Add on\_conflict to global config [\#865](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/865)
+- Clarification on reschedule\_failed callback behavior [\#864](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/864)
+- Jobs silently fail when lock\_ttl is reached and until\_and\_while\_executing strategy is used [\#862](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/862)
+- lock\_prefix argument is not respected [\#850](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/850)
+- until\_and\_while\_executing with separate server and client lock\_args broken since 8.0.8 [\#846](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/846)
+- Issue with until\_and\_while\_executing lock when job is not enqueued through sidekiq [\#841](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/841)
+- Read Timeouts and high CPU spike after upgrading from 8.0.5 to 8.0.10  [\#840](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/840)
+- Conflicts with sidekiq-lock gem [\#839](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/839)
+- Problems with reaper and long running jobs [\#779](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/779)
+- My configuration is correct or not. Because uniq job not remove all job process in sidekiq ? [\#767](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/767)
+- Unlock jobs when queue is deleted [\#746](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/746)
+- Got often got Limit exceeded message in changelog [\#745](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/745)
+- until and while executing with different arguments for client/server [\#742](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/742)
+- Locks can't be found in UI? [\#735](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/735)
+- Jobs are being allowed to run even though there is a lock [\#734](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/734)
+- Unexpected behavior with until\_and\_while\_executing [\#711](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/711)
+- Ambiguity about `death_handers` [\#703](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/703)
+- Conflict resolution documentation [\#692](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/692)
+- Locks not being released after Heroku dyno restart [\#691](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/691)
+- Run jobs in sequence \(run 1 job at a time\) [\#687](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/687)
+- 10X increase in read ops/sec after upgrade from v6 to v7 [\#684](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/684)
+- after\_unlock callback is not executed when using until\_and\_while\_executing [\#678](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/678)
+- until\_executed and lock\_expiration. [\#676](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/676)
+- Queue up conflicted jobs and release later [\#664](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/664)
+- Ruby Reaper deletes :until\_expired locks before their TTL has elapsed [\#662](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/662)
+- Documentation example for MiniTest appears to use improper assert [\#658](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/658)
+- Changelogs are not ordered [\#654](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/654)
+- Sidekiq not processing jobs [\#650](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/650)
+- until\_and\_while\_executing job timeout on the server [\#632](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/632)
+- until\_and\_while\_executing jobs can conflict with themselves [\#630](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/630)
+- Similar but unique keys are being treated as non-unique and conflicting with lock [\#628](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/628)
+- Nil timeout not behaving as expected [\#625](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/625)
+- Please try v7.1.5 [\#617](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/617)
+- :replace is incompatible with the server process [\#597](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/597)
+- Using on\_conflict: :reject will delete the currently running lock [\#590](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/590)
+- Don't lock on failure when retry: false \(until\_and\_while\_executing\) [\#588](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/588)
+- I failed to make use of the gem without inspecting the source code with a debugger [\#533](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/533)
+- Documentation Improvement [\#525](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/525)
+
+**Merged pull requests:**
+
+- docs\(orphans\): fix incorrect comments on LuaReaper and RubyReaper [\#933](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/933) ([mhenrixon](https://github.com/mhenrixon))
+- fix\(lock\): preserve until\_executed lock on job failure to prevent retry duplicates [\#931](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/931) ([mhenrixon](https://github.com/mhenrixon))
+
+## [v8.0.13](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.13) (2026-01-10)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.12...v8.0.13)
+
+**Fixed bugs:**
+
+- fix\(perf\): revert count change for quick return [\#911](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/911) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- `sidekiq-unique-jobs` 8.0.12 performance regressions [\#910](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/910)
+- digests are not reaped on Sidekiq \>= 8 [\#900](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/900)
+
+## [v8.0.12](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.12) (2025-12-12)
+
+[Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.11...v8.0.12)
+
+**Implemented enhancements:**
+
+- Improved exception handling [\#895](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/895) ([mhenrixon](https://github.com/mhenrixon))
+
+**Closed issues:**
+
+- Set ActiveSupport::Duration to lock\_ttl, the key is not expired [\#882](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/882)
+- Add support for Sidekiq 8.0+ [\#874](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/874)
+- Documentation - Diagram - Redis keys [\#380](https://github.com/mhenrixon/sidekiq-unique-jobs/issues/380)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump actions/upload-pages-artifact from 3 to 4 [\#907](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/907) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump actions/checkout from 4 to 6 [\#906](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/906) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Handle sidekiq \>= 8 job payload timestamps [\#905](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/905) ([jbielick](https://github.com/jbielick))
+- chore\(deps\): bump brace-expansion from 1.1.11 to 1.1.12 in /myapp [\#899](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/899) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump js-yaml from 4.1.0 to 4.1.1 in /myapp [\#898](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/898) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump playwright from 1.35.1 to 1.55.1 in /myapp [\#897](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/897) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump trix from 2.0.7 to 2.1.15 in /myapp [\#896](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/896) ([dependabot[bot]](https://github.com/apps/dependabot))
+- README.md Workers instead of Worker [\#888](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/888) ([vinnyglennon](https://github.com/vinnyglennon))
+- Fix ignored custom lock prefix [\#886](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/886) ([luis30n](https://github.com/luis30n))
+- Raise unexpected type error for lock ttl [\#884](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/884) ([tazoo](https://github.com/tazoo))
+- Fix comment about successful reschedule [\#875](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/875) ([artofhuman](https://github.com/artofhuman))
+- chore\(deps\): bump actions/configure-pages from 4 to 5 [\#844](https://github.com/mhenrixon/sidekiq-unique-jobs/pull/844) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v8.0.11](https://github.com/mhenrixon/sidekiq-unique-jobs/tree/v8.0.11) (2025-05-25)
 
 [Full Changelog](https://github.com/mhenrixon/sidekiq-unique-jobs/compare/v8.0.10...v8.0.11)

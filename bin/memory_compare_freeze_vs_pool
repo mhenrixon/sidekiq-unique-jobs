@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "memory_profiler"
+require "sidekiq-unique-jobs"
+require "sidekiq_unique_jobs/testing"
+
+SidekiqUniqueJobs.configure do |config|
+  config.enabled = true
+  config.logger.level = Logger::ERROR
+end
+
+# Re-implement Key class with pooling for comparison
+module SidekiqUniqueJobs
+  class PooledKey < Key
+    @key_cache = {}
+
+    def self.create(digest)
+      @key_cache[digest] ||= new(digest)
+    end
+  end
+end
+
+puts "Running memory comparison: String freezing vs Object pooling"
+puts "--------------------------------------------------------"
+
+NUM_ITERATIONS = 100_000
+
+# Create a large number of random digests - some repeated, some unique
+digests = Array.new(NUM_ITERATIONS) do |i|
+  # Create some repetition by having only 10k unique values
+  "unique:digest:#{i % 10_000}:#{rand(100)}"
+end
+
+puts "Testing with #{NUM_ITERATIONS} iterations (#{digests.uniq.size} unique digests)"
+
+# Test with frozen strings only (current implementation)
+report_frozen = MemoryProfiler.report do
+  digests.each do |digest|
+    SidekiqUniqueJobs::Key.new(digest)
+  end
+end
+
+# Test with object pooling
+report_pooled = MemoryProfiler.report do
+  digests.each do |digest|
+    SidekiqUniqueJobs::PooledKey.create(digest)
+  end
+end
+
+puts "\nWith frozen strings only:"
+puts "------------------------"
+puts "Total allocated objects: #{report_frozen.total_allocated}"
+puts "Total allocated memory: #{report_frozen.total_allocated_memsize} bytes"
+puts "Total retained objects: #{report_frozen.total_retained}"
+puts "Total retained memory: #{report_frozen.total_retained_memsize} bytes"
+
+puts "\nWith object pooling:"
+puts "-------------------"
+puts "Total allocated objects: #{report_pooled.total_allocated}"
+puts "Total allocated memory: #{report_pooled.total_allocated_memsize} bytes"
+puts "Total retained objects: #{report_pooled.total_retained}"
+puts "Total retained memory: #{report_pooled.total_retained_memsize} bytes"
+
+puts "\nDetailed allocation information:"
+puts "-------------------------------"
+puts "Frozen strings approach - allocated by class:"
+report_frozen.allocated_objects_by_class.each do |klass, count|
+  puts "  #{klass}: #{count} objects"
+end
+
+puts "\nObject pooling approach - allocated by class:"
+report_pooled.allocated_objects_by_class.each do |klass, count|
+  puts "  #{klass}: #{count} objects"
+end
+
+puts "\nMemory savings with object pooling vs frozen strings:"
+puts "---------------------------------------------------"
+memory_diff = report_frozen.total_allocated_memsize - report_pooled.total_allocated_memsize
+puts "#{memory_diff} bytes (#{(memory_diff.to_f / report_frozen.total_allocated_memsize * 100).round(2)}%)"
+
+# Clean up to avoid affecting further tests
+SidekiqUniqueJobs.send(:remove_const, :PooledKey)

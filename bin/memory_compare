@@ -1,0 +1,105 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "objspace"
+require "memory_profiler"
+require "sidekiq"
+require "sidekiq-unique-jobs"
+
+# Configure Sidekiq and SidekiqUniqueJobs
+Sidekiq.configure_client do |config|
+  config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+  config.client_middleware do |chain|
+    chain.add SidekiqUniqueJobs::Middleware::Client
+  end
+end
+
+SidekiqUniqueJobs.configure do |config|
+  config.debug_lua = false
+  config.max_history = 10
+  config.lock_info = true
+end
+
+# Clear Redis
+SidekiqUniqueJobs.redis do |conn|
+  conn.flushdb
+end
+
+# Helper methods
+def create_item(jid: SecureRandom.hex(12), 
+                worker_class: "UniqueJobTest", 
+                queue: "default", 
+                lock_type: "until_executed", 
+                args: ["arg1", "arg2"], 
+                lock_timeout: 0, 
+                lock_ttl: nil, 
+                lock_limit: 1)
+  item = {
+    "jid" => jid,
+    "class" => worker_class,
+    "queue" => queue,
+    "lock" => lock_type,
+    "args" => args,
+    "lock_args" => args,
+    "lock_timeout" => lock_timeout,
+    "lock_ttl" => lock_ttl,
+    "lock_limit" => lock_limit,
+  }
+  SidekiqUniqueJobs::Job.prepare(item)
+  item
+end
+
+puts "=== Memory Analysis After Key Pooling Implementation ==="
+
+# Analyze memory usage with multiple locks (this is where we should see improvement)
+puts "\nMultiple lock creations (100 locks with the same digest)"
+report = MemoryProfiler.report do
+  # Use the same digest for all locks to maximize key reuse
+  digest = "test:#{SecureRandom.hex(8)}"
+  item_base = create_item(args: ["fixed_arg"])
+  item_base["lock_digest"] = digest
+  
+  100.times do |i|
+    item = item_base.merge("jid" => "jid_#{i}")
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
+  end
+end
+
+puts report.pretty_print(scale_bytes: true, detailed_report: false)
+
+# Now test with different digests to compare
+puts "\nMultiple lock creations (100 locks with different digests)"
+report = MemoryProfiler.report do
+  100.times do |i|
+    digest = "test:#{SecureRandom.hex(8)}"
+    item = create_item(jid: "jid_#{i}", args: ["arg_#{i}"])
+    item["lock_digest"] = digest
+    
+    locksmith = SidekiqUniqueJobs::Locksmith.new(item)
+    locksmith.lock
+    locksmith.unlock
+  end
+end
+
+puts report.pretty_print(scale_bytes: true, detailed_report: false)
+
+# Check the Key cache size
+key_cache_size = ObjectSpace.each_object(SidekiqUniqueJobs::Key).count
+puts "\nNumber of Key objects in memory: #{key_cache_size}"
+
+# Check if the cache is working properly
+puts "\nTesting Key object reuse"
+digest = "test:reuse_test"
+first_key = SidekiqUniqueJobs::Key.create(digest)
+second_key = SidekiqUniqueJobs::Key.create(digest)
+
+puts "Same object? #{first_key.object_id == second_key.object_id}"
+puts "Same digest? #{first_key.digest == second_key.digest}"
+
+# Clean up Redis
+SidekiqUniqueJobs.redis do |conn|
+  conn.flushdb
+end
