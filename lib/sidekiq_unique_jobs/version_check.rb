@@ -19,12 +19,28 @@ module SidekiqUniqueJobs
       str = constraint.to_s.strip
       return Gem::Requirement.new(">= 0").satisfied_by?(Gem::Version.new(version)) if str.empty?
 
-      # Split on && or comma first
-      parts = str.split(/\s*(?:&&|,)\s*/)
-      # If still single part, split on space before operators (e.g., ">= 3.2 <= 4.0")
-      parts = str.split(/\s+(?=[<>=!~])/) if parts.size == 1 && str.include?(" ")
-      Gem::Requirement.new(*parts.map(&:strip)).satisfied_by?(Gem::Version.new(version))
+      parts = str.split("&&").flat_map { |s| s.split(",") }.map(&:strip).reject(&:empty?)
+      parts = split_space_separated(str) if parts.size == 1
+      Gem::Requirement.new(*parts).satisfied_by?(Gem::Version.new(version))
     end
+
+    # Split ">= 3.2 <= 4.0" into [">= 3.2", "<= 4.0"] without regex
+    def self.split_space_separated(str)
+      result = []
+      current = +""
+      tokens = str.split(" ")
+      tokens.each do |token|
+        if current.empty? || "<>=!~".include?(token[0])
+          result << current.strip unless current.empty?
+          current = token
+        else
+          current = "#{current} #{token}"
+        end
+      end
+      result << current.strip unless current.empty?
+      result
+    end
+    private_class_method :split_space_separated
 
     # Inverse of satisfied?
     #
