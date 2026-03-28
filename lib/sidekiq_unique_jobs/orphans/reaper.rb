@@ -18,16 +18,17 @@ module SidekiqUniqueJobs
       require_relative "lua_reaper"
       require_relative "ruby_reaper"
       require_relative "null_reaper"
+      require_relative "v9_reaper"
 
       #
       # @return [Hash<Symbol, SidekiqUniqueJobs::Orphans::Reaper] the current implementation of reapers
       REAPERS = {
-        lua: SidekiqUniqueJobs::Orphans::RubyReaper,
-        ruby: SidekiqUniqueJobs::Orphans::RubyReaper,
+        lua: SidekiqUniqueJobs::Orphans::V9Reaper,
+        ruby: SidekiqUniqueJobs::Orphans::V9Reaper,
         none: SidekiqUniqueJobs::Orphans::NullReaper,
         nil => SidekiqUniqueJobs::Orphans::NullReaper,
         false => SidekiqUniqueJobs::Orphans::NullReaper,
-        true => SidekiqUniqueJobs::Orphans::RubyReaper,
+        true => SidekiqUniqueJobs::Orphans::V9Reaper,
       }.freeze
 
       #
