@@ -36,13 +36,75 @@ RSpec.describe SidekiqUniqueJobs::Server do
   end
 
   describe ".reap" do
-    it "cleans stale digests" do
-      # Create a stale entry (no LOCKED hash)
-      redis { |conn| conn.call("ZADD", "uniquejobs:digests", Time.now.to_f.to_s, "uniquejobs:stale") }
+    let(:old_score) { (Time.now.to_f - 60).to_s }
+
+    it "cleans stale digests with no LOCKED hash" do
+      redis { |conn| conn.call("ZADD", "uniquejobs:digests", old_score, "uniquejobs:stale") }
 
       expect { described_class.reap }.to change {
         SidekiqUniqueJobs::Digests.new.count
       }.by(-1)
+    end
+
+    it "cleans orphaned locks where LOCKED hash exists but JID is not in any Sidekiq set" do
+      digest = "uniquejobs:#{SecureRandom.hex(12)}"
+      locked = "#{digest}:LOCKED"
+
+      redis do |conn|
+        conn.call("ZADD", "uniquejobs:digests", old_score, digest)
+        conn.call("HSET", locked, SecureRandom.hex(12), '{"type":"until_executed"}')
+      end
+
+      expect { described_class.reap }.to change {
+        SidekiqUniqueJobs::Digests.new.count
+      }.by(-1)
+
+      redis do |conn|
+        expect(conn.call("EXISTS", locked)).to eq(0)
+      end
+    end
+
+    it "preserves locks for jobs still in a queue" do
+      digest = "uniquejobs:#{SecureRandom.hex(12)}"
+      locked = "#{digest}:LOCKED"
+      jid = SecureRandom.hex(12)
+      job = { "jid" => jid, "class" => "TestWorker", "queue" => "default", "lock_digest" => digest }.to_json
+
+      redis do |conn|
+        conn.call("ZADD", "uniquejobs:digests", old_score, digest)
+        conn.call("HSET", locked, jid, '{"type":"until_executed"}')
+        conn.call("SADD", "queues", "default")
+        conn.call("LPUSH", "queue:default", job)
+      end
+
+      expect { described_class.reap }.not_to(change { SidekiqUniqueJobs::Digests.new.count })
+
+      redis do |conn|
+        expect(conn.call("EXISTS", locked)).to eq(1)
+      end
+    end
+
+    it "preserves locks for jobs in the retry set" do
+      digest = "uniquejobs:#{SecureRandom.hex(12)}"
+      locked = "#{digest}:LOCKED"
+      jid = SecureRandom.hex(12)
+      job = { "jid" => jid, "class" => "TestWorker", "queue" => "default", "lock_digest" => digest }.to_json
+
+      redis do |conn|
+        conn.call("ZADD", "uniquejobs:digests", old_score, digest)
+        conn.call("HSET", locked, jid, '{"type":"until_executed"}')
+        conn.call("ZADD", "retry", Time.now.to_f.to_s, job)
+      end
+
+      expect { described_class.reap }.not_to(change { SidekiqUniqueJobs::Digests.new.count })
+    end
+
+    it "returns the count of reaped digests" do
+      3.times do |i|
+        redis { |conn| conn.call("ZADD", "uniquejobs:digests", old_score, "uniquejobs:stale#{i}") }
+      end
+
+      expect(described_class.reap).to eq(3)
     end
   end
 
