@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe SidekiqUniqueJobs::Orphans::Reaper do
+  around do |example|
+    SidekiqUniqueJobs.use_config(reaper_timeout: 10, reaper_count: 1_000) do
+      example.run
+    end
+  end
+
   let(:digests_key) { "uniquejobs:digests" }
   let(:old_score) { (Time.now.to_f - 60).to_s }
 

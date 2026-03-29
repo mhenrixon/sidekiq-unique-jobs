@@ -92,6 +92,8 @@ module SidekiqUniqueJobs
       # Check a sorted set (schedule/retry) for the digest using ZSCAN MATCH.
       # The digest is embedded in the JSON member, so we pattern-match.
       def in_sorted_set?(conn, key, digest)
+        return true if timeout?
+
         pattern = "*#{digest.delete_suffix(RUN_SUFFIX)}*"
         cursor, entries = conn.call("ZSCAN", key, "0", "MATCH", pattern, "COUNT", PAGE_SIZE.to_s)
 
@@ -99,6 +101,8 @@ module SidekiqUniqueJobs
 
         # Continue scanning if first page didn't exhaust the set
         until cursor == "0"
+          return true if timeout?
+
           cursor, entries = conn.call("ZSCAN", key, cursor, "MATCH", pattern, "COUNT", PAGE_SIZE.to_s)
           return true if entries.any?
         end
@@ -123,10 +127,14 @@ module SidekiqUniqueJobs
 
       # Check active processes for the digest in their work hashes.
       def active?(conn, digest)
+        return true if timeout?
+
         needle = digest.delete_suffix(RUN_SUFFIX)
         procs = conn.call("SMEMBERS", PROCESSES)
 
         procs.each do |process|
+          return true if timeout?
+
           valid = conn.call("EXISTS", process)
           next unless valid.positive?
 
@@ -153,6 +161,8 @@ module SidekiqUniqueJobs
         page = 0
 
         loop do
+          return true if timeout?
+
           range_start = [(page * PAGE_SIZE) - deleted_size, 0].max
           range_end = range_start + PAGE_SIZE - 1
           entries = conn.call("LRANGE", queue_key, range_start, range_end)
