@@ -21,13 +21,8 @@ class Navbar < ApplicationComponent
               plain "Dashboard"
             end
           end
-          li do
-            a(href: "/sidekiq", target: "_blank", class: "font-medium gap-1") do
-              hero("server-stack", variant: :outline, class: "w-4 h-4")
-              plain "Sidekiq Web"
-              hero("arrow-top-right-on-square", variant: :mini, class: "w-3 h-3 opacity-50")
-            end
-          end
+
+          sidekiq_dropdown
         end
       end
 
@@ -41,8 +36,51 @@ class Navbar < ApplicationComponent
             class: "menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow-lg border border-base-300",
           ) do
             li { link_to "Dashboard", locks_path }
-            li { a(href: "/sidekiq", target: "_blank") { "Sidekiq Web" } }
+            li do
+              details do
+                summary { "Sidekiq Admin" }
+                ul do
+                  sidekiq_nav_items
+                end
+              end
+            end
           end
+        end
+      end
+    end
+  end
+
+  private
+
+  def sidekiq_dropdown
+    li do
+      details do
+        summary(class: "font-medium gap-1") do
+          hero("server-stack", variant: :outline, class: "w-4 h-4")
+          plain "Sidekiq Admin"
+        end
+        ul(class: "bg-base-100 rounded-box z-50 w-48 p-2 shadow-lg border border-base-300") do
+          sidekiq_nav_items
+        end
+      end
+    end
+  end
+
+  def sidekiq_nav_items
+    nav_items = [
+      { path: "/sidekiq", label: "Dashboard", icon: "chart-bar" },
+      { path: "/sidekiq/queues", label: "Queues", icon: "queue-list" },
+      { path: "/sidekiq/retries", label: "Retries", icon: "arrow-path" },
+      { path: "/sidekiq/scheduled", label: "Scheduled", icon: "clock" },
+      { path: "/sidekiq/dead", label: "Dead", icon: "x-circle" },
+      { path: "/sidekiq/locks", label: "Locks (SUJ)", icon: "lock-closed" },
+    ]
+
+    nav_items.each do |item|
+      li do
+        a(href: item[:path], class: "gap-2") do
+          hero(item[:icon], variant: :mini, class: "w-4 h-4")
+          plain item[:label]
         end
       end
     end

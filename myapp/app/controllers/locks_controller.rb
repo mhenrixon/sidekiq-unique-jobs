@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LocksController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:enqueue, :flush]
+  skip_before_action :verify_authenticity_token, only: [:enqueue, :flush, :load_test]
 
   DEMO_JOBS = {
     "MyJob" => {
@@ -56,6 +56,7 @@ class LocksController < ApplicationController
       jobs: DEMO_JOBS,
       digests: fetch_digests,
       queue_stats: fetch_queue_stats,
+      reaper_config: reaper_config,
     )
   end
 
@@ -102,6 +103,31 @@ class LocksController < ApplicationController
     redirect_to locks_path, notice: msg
   end
 
+  def load_test
+    count = (params[:count] || 50).to_i.clamp(1, 500)
+
+    Thread.new do
+      enqueued = 0
+      rejected = 0
+
+      count.times do
+        job_name, info = DEMO_JOBS.to_a.sample
+        job_class = job_name.constantize
+        args = info[:sample_args] || []
+
+        jid = args.any? ? job_class.perform_async(*args) : job_class.perform_async
+        jid ? (enqueued += 1) : (rejected += 1)
+      rescue StandardError => e
+        Rails.logger.warn("Load test enqueue failed: #{e.class}: #{e.message}")
+        rejected += 1
+      end
+
+      Rails.logger.info("Load test complete: #{enqueued} enqueued, #{rejected} rejected out of #{count}")
+    end
+
+    redirect_to locks_path, notice: "Load test started: firing #{count} random jobs in background"
+  end
+
   def flush
     SidekiqUniqueJobs::Digests.new.delete_by_pattern("*")
     redirect_to locks_path, notice: "All lock digests flushed"
@@ -112,58 +138,60 @@ class LocksController < ApplicationController
   def fetch_digests
     digests = SidekiqUniqueJobs::Digests.new
     entries = digests.entries(pattern: "*", count: 100)
-    entries.map do |digest|
-      info = lock_info_for(digest)
-      { digest: digest, info: info }
+    entries.map do |digest_str, _score|
+      lock = SidekiqUniqueJobs::Lock.new(digest_str)
+      info = lock.info
+      {
+        digest: digest_str,
+        info: {
+          "worker" => info["worker"],
+          "type" => info["type"],
+          "queue" => info["queue"],
+        },
+      }
     end
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("Failed to fetch digests: #{e.message}")
     []
   end
 
   def fetch_digests_for_job(job_name)
     digests = SidekiqUniqueJobs::Digests.new
-    entries = digests.entries(pattern: "*#{job_name}*", count: 100)
-    entries.map do |digest|
-      info = lock_info_for(digest)
-      key = SidekiqUniqueJobs::Key.new(digest)
-      lock_state = fetch_lock_state(key)
-      { digest: digest, info: info, key: key, state: lock_state }
+    all_entries = digests.entries(pattern: "*", count: 500)
+    all_entries.filter_map do |digest_str, _score|
+      lock = SidekiqUniqueJobs::Lock.new(digest_str)
+      info = lock.info
+      next unless info["worker"] == job_name
+
+      jids = lock.locked_jids
+      pttl = redis { |conn| conn.call("PTTL", "#{digest_str}:LOCKED") }
+      {
+        digest: digest_str,
+        info: info.value,
+        locked_jids: jids,
+        pttl: pttl,
+      }
     end
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("Failed to fetch digests for #{job_name}: #{e.message}")
     []
   end
 
-  def lock_info_for(digest)
-    key = SidekiqUniqueJobs::Key.new(digest)
-    info_json = redis { |conn| conn.get(key.info) }
-    return {} unless info_json
-
-    JSON.parse(info_json)
-  rescue JSON::ParserError
-    {}
-  end
-
-  def fetch_lock_state(key)
-    redis do |conn|
-      {
-        queued: conn.llen(key.queued),
-        primed: conn.llen(key.primed),
-        locked: conn.hgetall(key.locked),
-        pttl: conn.pttl(key.digest),
-      }
-    end
-  rescue => e
-    Rails.logger.error("Failed to fetch lock state: #{e.message}")
-    { queued: 0, primed: 0, locked: {}, pttl: -2 }
-  end
-
   def fetch_queue_stats
     Sidekiq::Stats.new
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("Failed to fetch queue stats: #{e.message}")
     nil
+  end
+
+  def reaper_config
+    config = SidekiqUniqueJobs.config
+    {
+      reaper: config.reaper,
+      interval: config.reaper_interval,
+      timeout: config.reaper_timeout,
+      count: config.reaper_count,
+    }
   end
 
   def redis(&block)

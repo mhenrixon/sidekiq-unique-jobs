@@ -14,16 +14,18 @@ module Locks
       while_enqueued: { badge: "badge-primary", icon: "queue-list" },
     }.freeze
 
-    def initialize(jobs:, digests:, queue_stats:)
+    def initialize(jobs:, digests:, queue_stats:, reaper_config:)
       @jobs = jobs
       @digests = digests
       @queue_stats = queue_stats
+      @reaper_config = reaper_config
     end
 
     def view_template
       div(class: "space-y-8") do
         page_header
         stats_section if @queue_stats
+        reaper_section
         jobs_section
         active_locks_section
       end
@@ -39,7 +41,8 @@ module Locks
             p(class: "py-3 text-base-content/60") do
               plain "Test sidekiq-unique-jobs lock types, enqueue jobs, and inspect active locks in real time"
             end
-            div(class: "flex gap-2 justify-center") do
+            div(class: "flex gap-2 justify-center flex-wrap") do
+              load_test_buttons
               button_to flush_locks_path,
                 method: :delete,
                 class: "btn btn-error btn-outline btn-sm gap-2",
@@ -49,6 +52,17 @@ module Locks
               end
             end
           end
+        end
+      end
+    end
+
+    def load_test_buttons
+      [50, 100, 250].each do |count|
+        button_to load_test_locks_path,
+          params: { count: count },
+          class: "btn btn-warning btn-sm gap-2" do
+          hero("bolt", variant: :mini, class: "w-4 h-4")
+          plain "Fire #{count} Jobs"
         end
       end
     end
@@ -69,6 +83,38 @@ module Locks
         end
         div(class: "stat-title") { title }
         div(class: "stat-value #{color_class} text-2xl") { value }
+      end
+    end
+
+    def reaper_section
+      div(class: "card bg-base-100 shadow-sm") do
+        div(class: "card-body p-5") do
+          div(class: "flex items-center gap-3 mb-3") do
+            div(class: "p-2 rounded-lg bg-base-200") do
+              hero("arrow-path", variant: :outline, class: "w-5 h-5 text-success")
+            end
+            h3(class: "font-semibold text-lg") { "Reaper Status" }
+            if @reaper_config[:reaper] && @reaper_config[:reaper] != :none
+              span(class: "badge badge-success badge-sm") { "Active" }
+            else
+              span(class: "badge badge-error badge-sm") { "Disabled" }
+            end
+          end
+
+          div(class: "grid grid-cols-2 md:grid-cols-4 gap-4 text-sm") do
+            reaper_stat("Mode", @reaper_config[:reaper].to_s)
+            reaper_stat("Interval", "#{@reaper_config[:interval]}s")
+            reaper_stat("Timeout", "#{@reaper_config[:timeout]}s")
+            reaper_stat("Batch Size", @reaper_config[:count].to_s)
+          end
+        end
+      end
+    end
+
+    def reaper_stat(label, value)
+      div do
+        div(class: "text-base-content/50 text-xs uppercase tracking-wide") { label }
+        div(class: "font-mono font-semibold") { value }
       end
     end
 
