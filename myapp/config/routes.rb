@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :locks, only: [:index, :show] do
     collection do
       post :enqueue
+      post :load_test
       delete :flush
     end
   end

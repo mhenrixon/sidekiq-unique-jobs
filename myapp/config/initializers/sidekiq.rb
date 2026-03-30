@@ -28,6 +28,8 @@ Sidekiq.configure_server do |config|
   end
 
   SidekiqUniqueJobs::Server.configure(config)
+
+  config[:fetch_class] = SidekiqUniqueJobs::Fetch::Reliable
 end
 
 SidekiqUniqueJobs.configure do |config|

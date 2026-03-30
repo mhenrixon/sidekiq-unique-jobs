@@ -20,6 +20,7 @@ module SidekiqUniqueJobs
       :reschedule_failed,
       :rescheduled,
       :timeout,
+      :uniqueness_lapsed,
       :unknown_sidekiq_worker,
       :unlock_failed,
       :unlocked,

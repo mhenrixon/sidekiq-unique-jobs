@@ -1,0 +1,5 @@
+---
+:concurrency: 10
+:queues:
+  - default
+  - my_queue_name

@@ -139,8 +139,9 @@ module Locks
     end
 
     def lock_detail_card(entry)
-      state = entry[:state] || {}
       info = entry[:info] || {}
+      locked_jids = entry[:locked_jids] || []
+      pttl = entry[:pttl]
 
       div(class: "card bg-base-100 shadow-sm") do
         div(class: "card-body gap-4") do
@@ -149,24 +150,21 @@ module Locks
             code(class: "text-sm font-mono break-all text-base-content/70") { entry[:digest].to_s }
           end
 
-          div(class: "grid grid-cols-2 md:grid-cols-4 gap-4") do
-            state_stat("Queued", state[:queued].to_s, "info")
-            state_stat("Primed", state[:primed].to_s, "warning")
-            state_stat("Locked", (state[:locked] || {}).size.to_s, "success")
-            state_stat("PTTL", format_pttl(state[:pttl]), "neutral")
+          div(class: "grid grid-cols-2 gap-4") do
+            state_stat("Holders", locked_jids.size.to_s, "success")
+            state_stat("PTTL", format_pttl(pttl), "neutral")
           end
 
-          if (locked = state[:locked]) && locked.any?
+          if locked_jids.any?
             div do
               h4(class: "font-semibold text-sm mb-2 flex items-center gap-1") do
                 hero("key", variant: :mini, class: "w-4 h-4")
                 plain "Locked JIDs"
               end
               div(class: "flex flex-wrap gap-2") do
-                locked.each do |jid, val|
+                locked_jids.each do |jid|
                   div(class: "badge badge-success badge-outline gap-1 font-mono text-xs") do
                     plain jid
-                    span(class: "opacity-50") { "(#{val})" }
                   end
                 end
               end

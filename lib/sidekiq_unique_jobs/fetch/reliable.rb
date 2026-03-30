@@ -108,7 +108,7 @@ module SidekiqUniqueJobs
 
         if lock_valid.zero?
           parsed = safe_load_json(job_json)
-          reflect(:lock_expired_at_fetch, parsed) if parsed.is_a?(Hash)
+          reflect(:uniqueness_lapsed, parsed) if parsed.is_a?(Hash)
         end
 
         UnitOfWork.new(queue, job_json, @config, @working_key)
@@ -119,13 +119,12 @@ module SidekiqUniqueJobs
         job_json = conn.blocking_call(TIMEOUT, "BLMOVE", queue, @working_key, "RIGHT", "LEFT", TIMEOUT)
         return unless job_json
 
-        # Validate lock in a separate step (not atomic, but job is already safe in working list)
-        validate_lock(job_json)
+        validate_lock(conn, job_json)
 
         UnitOfWork.new(queue, job_json, @config, @working_key)
       end
 
-      def validate_lock(job_json)
+      def validate_lock(conn, job_json)
         parsed = safe_load_json(job_json)
         return unless parsed.is_a?(Hash)
 
@@ -133,9 +132,7 @@ module SidekiqUniqueJobs
         jid = parsed[JID]
         return unless digest && jid
 
-        redis do |conn|
-          reflect(:lock_expired_at_fetch, parsed) unless conn.call("HEXISTS", "#{digest}:LOCKED", jid).positive?
-        end
+        reflect(:uniqueness_lapsed, parsed) unless conn.call("HEXISTS", "#{digest}:LOCKED", jid).positive?
       rescue StandardError
         # Never prevent job processing
       end
