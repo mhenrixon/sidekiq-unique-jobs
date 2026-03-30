@@ -108,7 +108,7 @@ module SidekiqUniqueJobs
 
         if lock_valid.zero?
           parsed = safe_load_json(job_json)
-          reflect(:lock_expired_at_fetch, parsed) if parsed.is_a?(Hash)
+          reflect(:uniqueness_lapsed, parsed) if parsed.is_a?(Hash)
         end
 
         UnitOfWork.new(queue, job_json, @config, @working_key)
@@ -132,7 +132,7 @@ module SidekiqUniqueJobs
         jid = parsed[JID]
         return unless digest && jid
 
-        reflect(:lock_expired_at_fetch, parsed) unless conn.call("HEXISTS", "#{digest}:LOCKED", jid).positive?
+        reflect(:uniqueness_lapsed, parsed) unless conn.call("HEXISTS", "#{digest}:LOCKED", jid).positive?
       rescue StandardError
         # Never prevent job processing
       end
