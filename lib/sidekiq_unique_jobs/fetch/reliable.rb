@@ -98,15 +98,6 @@ module SidekiqUniqueJobs
 
       private
 
-      # Lock types where the lock should exist at fetch time.
-      # while_executing creates its lock at execution, so lock_valid=0 is expected.
-      LOCK_REQUIRED_AT_FETCH = %w[
-        until_executed
-        until_executing
-        until_expired
-        until_and_while_executing
-      ].freeze
-
       # Non-blocking fetch using Lua script: LMOVE + lock validation
       def fetch_nonblocking(conn, queue)
         result = call_script(:fetch, [queue, @working_key], [], conn)
@@ -117,11 +108,7 @@ module SidekiqUniqueJobs
 
         if lock_valid.zero?
           parsed = safe_load_json(job_json)
-          if parsed.is_a?(Hash) && lock_required_at_fetch?(parsed)
-            reflect(:lock_expired_at_fetch, parsed)
-            discard_expired_job(conn, job_json)
-            return
-          end
+          reflect(:lock_expired_at_fetch, parsed) if parsed.is_a?(Hash)
         end
 
         UnitOfWork.new(queue, job_json, @config, @working_key)
@@ -132,41 +119,22 @@ module SidekiqUniqueJobs
         job_json = conn.blocking_call(TIMEOUT, "BLMOVE", queue, @working_key, "RIGHT", "LEFT", TIMEOUT)
         return unless job_json
 
-        if expired_lock?(conn, job_json)
-          discard_expired_job(conn, job_json)
-          return
-        end
+        validate_lock(conn, job_json)
 
         UnitOfWork.new(queue, job_json, @config, @working_key)
       end
 
-      def expired_lock?(conn, job_json)
+      def validate_lock(conn, job_json)
         parsed = safe_load_json(job_json)
-        return false unless parsed.is_a?(Hash)
-        return false unless lock_required_at_fetch?(parsed)
+        return unless parsed.is_a?(Hash)
 
         digest = parsed[LOCK_DIGEST]
         jid = parsed[JID]
-        return false unless digest && jid
+        return unless digest && jid
 
-        unless conn.call("HEXISTS", "#{digest}:LOCKED", jid).positive?
-          reflect(:lock_expired_at_fetch, parsed)
-          return true
-        end
-
-        false
+        reflect(:lock_expired_at_fetch, parsed) unless conn.call("HEXISTS", "#{digest}:LOCKED", jid).positive?
       rescue StandardError
-        false
-      end
-
-      def lock_required_at_fetch?(parsed)
-        lock_type = parsed[LOCK] || parsed[LOCK_TYPE]
-        LOCK_REQUIRED_AT_FETCH.include?(lock_type.to_s)
-      end
-
-      # Remove the expired job from the working list — it won't be processed
-      def discard_expired_job(conn, job_json)
-        conn.call("LREM", @working_key, 1, job_json)
+        # Never prevent job processing
       end
 
       def queues_cmd
