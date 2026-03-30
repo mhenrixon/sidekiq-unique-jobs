@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class Navbar < ApplicationComponent
+# Named AppNavbar to avoid collision with DaisyUI::Navbar from Phlex::Kit
+class AppNavbar < ApplicationComponent
   include Phlex::Rails::Helpers::LinkTo
 
   SIDEKIQ_LINKS = [
@@ -13,7 +14,7 @@ class Navbar < ApplicationComponent
   ].freeze
 
   def view_template
-    nav(class: "bg-neutral text-neutral-content px-4 py-2") do
+    div(class: "bg-neutral text-neutral-content px-4 py-2") do
       div(class: "max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2") do
         # Logo
         link_to root_path, class: "flex items-center gap-2 font-bold text-lg hover:opacity-80" do
