@@ -104,7 +104,7 @@ class LocksController < ApplicationController
   end
 
   def load_test
-    count = (params[:count] || 50).to_i.clamp(1, 500)
+    count = (params[:count] || 50).to_i.clamp(1, 2_000)
 
     Thread.new do
       enqueued = 0
@@ -113,7 +113,7 @@ class LocksController < ApplicationController
       count.times do
         job_name, info = DEMO_JOBS.to_a.sample
         job_class = job_name.constantize
-        args = info[:sample_args] || []
+        args = randomize_args(info[:sample_args] || [])
 
         jid = args.any? ? job_class.perform_async(*args) : job_class.perform_async
         jid ? (enqueued += 1) : (rejected += 1)
@@ -192,6 +192,20 @@ class LocksController < ApplicationController
       timeout: config.reaper_timeout,
       count: config.reaper_count,
     }
+  end
+
+  # Randomize args so each enqueue produces a different lock digest,
+  # exercising the lock lifecycle more realistically under load.
+  def randomize_args(sample_args)
+    return [] if sample_args.empty?
+
+    sample_args.map do |arg|
+      case arg
+      when String then "#{arg}-#{SecureRandom.hex(4)}"
+      when Hash then arg.transform_values { |v| "#{v}-#{SecureRandom.hex(4)}" }
+      else arg
+      end
+    end
   end
 
   def redis(&block)

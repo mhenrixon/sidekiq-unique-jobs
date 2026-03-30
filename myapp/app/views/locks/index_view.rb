@@ -57,7 +57,7 @@ module Locks
     end
 
     def load_test_buttons
-      [50, 100, 250].each do |count|
+      [50, 250, 500, 1_000].each do |count|
         button_to load_test_locks_path,
           params: { count: count },
           class: "btn btn-warning btn-sm gap-2" do
