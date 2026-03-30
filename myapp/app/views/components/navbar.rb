@@ -13,27 +13,25 @@ class Navbar < ApplicationComponent
   ].freeze
 
   def view_template
-    nav(class: "bg-base-100 border-b border-base-300 px-4 py-3") do
-      div(class: "max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3") do
+    nav(class: "bg-neutral text-neutral-content px-4 py-2") do
+      div(class: "max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2") do
         # Logo
-        link_to root_path, class: "flex items-center gap-2 text-xl font-bold hover:opacity-80" do
-          hero("lock-closed", variant: :solid, class: "w-6 h-6 text-primary")
+        link_to root_path, class: "flex items-center gap-2 font-bold text-lg hover:opacity-80" do
+          hero("lock-closed", variant: :solid, class: "w-5 h-5 text-primary")
           span { "SUJ" }
-          span(class: "badge badge-primary badge-sm") { "test" }
+          span(class: "badge badge-primary badge-xs") { "test" }
         end
 
         # Navigation links
         div(class: "flex items-center gap-1 flex-wrap") do
-          link_to locks_path, class: "btn btn-ghost btn-sm gap-1" do
-            hero("squares-2x2", variant: :mini, class: "w-4 h-4")
+          link_to locks_path, class: "btn btn-ghost btn-sm text-neutral-content" do
             plain "Dashboard"
           end
 
-          div(class: "divider divider-horizontal mx-0")
+          span(class: "opacity-30") { "|" }
 
           SIDEKIQ_LINKS.each do |item|
-            a(href: item[:path], class: "btn btn-ghost btn-sm btn-xs gap-1") do
-              hero(item[:icon], variant: :mini, class: "w-3.5 h-3.5 opacity-60")
+            a(href: item[:path], class: "btn btn-ghost btn-xs text-neutral-content") do
               plain item[:label]
             end
           end
