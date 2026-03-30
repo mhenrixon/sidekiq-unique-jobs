@@ -93,7 +93,7 @@ jobs:
           echo "=== SHA512 ===" && cat "$GEM_NAME.sha512"
 
       - name: Upload gem artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gem
           path: |
@@ -136,7 +136,7 @@ jobs:
           gem push "$GEM_NAME" --attestation "$GEM_NAME.sigstore.json"
 
       - name: Upload Sigstore bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sigstore
           path: sidekiq-unique-jobs-*.gem.sigstore.json
