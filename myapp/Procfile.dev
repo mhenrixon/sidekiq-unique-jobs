@@ -1,3 +1,12 @@
 web: unset PORT && bin/rails server
 css: bun run watch:css
-job: bin/sidekiq
+job1: bin/sidekiq
+job2: bin/sidekiq
+job3: bin/sidekiq
+job4: bin/sidekiq
+job5: bin/sidekiq
+job6: bin/sidekiq
+job7: bin/sidekiq
+job8: bin/sidekiq
+job9: bin/sidekiq
+job10: bin/sidekiq
