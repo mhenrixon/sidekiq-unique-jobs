@@ -107,6 +107,52 @@ RSpec.describe SidekiqUniqueJobs::Fetch::Reliable do
     end
   end
 
+  describe "expired lock discard" do
+    it "discards jobs whose lock expired at fetch time for lock types that require it" do
+      digest = job_hash["lock_digest"]
+      # Enqueue job but do NOT create a LOCKED hash — simulates expired lock
+      redis { |conn| conn.call("LPUSH", queue_key, job_json) }
+
+      expect(redis { |conn| conn.call("LLEN", queue_key) }).to eq(1)
+
+      # Use the Lua fetch script directly (same as fetch_nonblocking)
+      result = SidekiqUniqueJobs::Script::Caller.call_script(
+        :fetch,
+        [queue_key, working_key],
+        [],
+      )
+
+      job, lock_valid = result
+      expect(job).not_to be_nil
+      expect(lock_valid).to eq(0)
+
+      # Verify the job is recognized as needing a lock at fetch
+      parsed = JSON.parse(job)
+      expect(described_class::LOCK_REQUIRED_AT_FETCH).to include(parsed["lock"])
+    end
+
+    it "does not discard while_executing jobs with no lock at fetch" do
+      while_exec_hash = job_hash.merge("lock" => "while_executing")
+      while_exec_json = dump_json(while_exec_hash)
+
+      redis { |conn| conn.call("LPUSH", queue_key, while_exec_json) }
+
+      result = SidekiqUniqueJobs::Script::Caller.call_script(
+        :fetch,
+        [queue_key, working_key],
+        [],
+      )
+
+      job, lock_valid = result
+      expect(job).not_to be_nil
+      expect(lock_valid).to eq(0)
+
+      # while_executing is NOT in LOCK_REQUIRED_AT_FETCH
+      parsed = JSON.parse(job)
+      expect(described_class::LOCK_REQUIRED_AT_FETCH).not_to include(parsed["lock"])
+    end
+  end
+
   describe "orphan recovery" do
     let(:dead_identity) { "dead-host:99999" }
     let(:dead_working_key) { SidekiqUniqueJobs::Key.working(dead_identity) }
